@@ -232,7 +232,7 @@ Child button(OnPress onPress, ButtonStyle style, Str t) {
            button(std::move(onPress), style);
 }
 
-Child button(OnPress onPress, ButtonStyle style, Media::Icon i) {
+Child button(OnPress onPress, ButtonStyle style, Gfx::Icon i) {
     return icon(i) |
            insets({6, 6}) |
            center() |
@@ -240,7 +240,7 @@ Child button(OnPress onPress, ButtonStyle style, Media::Icon i) {
            button(std::move(onPress), style);
 }
 
-Child button(OnPress onPress, ButtonStyle style, Media::Icon i, Str t) {
+Child button(OnPress onPress, ButtonStyle style, Gfx::Icon i, Str t) {
     return hflow(8, Math::Align::CENTER, icon(i), text(t)) |
            insets({12, 6, 16, 6}) |
            minSize({UNCONSTRAINED, 36}) |

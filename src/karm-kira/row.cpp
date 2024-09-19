@@ -1,6 +1,9 @@
 #include <karm-ui/anim.h>
 #include <karm-ui/layout.h>
 #include <karm-ui/reducer.h>
+#include <mdi/chevron-down.h>
+#include <mdi/chevron-up.h>
+#include <mdi/drag-vertical-variant.h>
 
 #include "checkbox.h"
 #include "color-input.h"

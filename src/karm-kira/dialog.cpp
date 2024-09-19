@@ -2,6 +2,7 @@
 #include <karm-ui/dialog.h>
 #include <karm-ui/drag.h>
 #include <karm-ui/input.h>
+#include <mdi/close.h>
 
 #include "dialog.h"
 
@@ -28,7 +29,7 @@ Ui::Child dialogTitleBar(String title) {
         Ui::hflow(
             Ui::titleSmall(title) | Ui::vcenter(),
             Ui::grow(NONE),
-            button(Ui::closeDialog, Ui::ButtonStyle::subtle(), Mdi::CLOSE)
+            Ui::button(Ui::closeDialog, Ui::ButtonStyle::subtle(), Mdi::CLOSE)
         ) |
             Ui::insets({16, 4, 4, 4}),
         Ui::separator()

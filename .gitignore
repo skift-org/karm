@@ -12,3 +12,4 @@ _local/
 *._local
 *.trace
 .mypy_cache
+.cache

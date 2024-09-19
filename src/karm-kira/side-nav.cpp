@@ -2,6 +2,8 @@
 #include <karm-ui/layout.h>
 #include <karm-ui/reducer.h>
 #include <karm-ui/scroll.h>
+#include <mdi/chevron-down.h>
+#include <mdi/chevron-up.h>
 
 #include "side-nav.h"
 

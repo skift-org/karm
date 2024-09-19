@@ -138,9 +138,9 @@ inline auto button(OnPress onPress, ButtonStyle style) {
 
 Child button(OnPress onPress, ButtonStyle style, Str t);
 
-Child button(OnPress onPress, ButtonStyle style, Media::Icon i);
+Child button(OnPress onPress, ButtonStyle style, Gfx::Icon i);
 
-Child button(OnPress onPress, ButtonStyle style, Media::Icon i, Str t);
+Child button(OnPress onPress, ButtonStyle style, Gfx::Icon i, Str t);
 
 Child button(OnPress onPress, Child child);
 

@@ -8,6 +8,10 @@
             "git": "https://github.com/cute-engineering/ce-heap.git",
             "tag": "v1.1.0"
         },
+        "cute-engineering/ce-mdi": {
+            "git": "https://github.com/cute-engineering/ce-mdi.git",
+            "tag": "v0.2.0"
+        },
         "cute-engineering/ce-libc": {
             "git": "https://github.com/cute-engineering/ce-libc.git",
             "tag": "v1.1.0"
