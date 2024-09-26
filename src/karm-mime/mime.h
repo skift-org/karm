@@ -33,7 +33,8 @@ struct Mime {
     }
 
     bool is(Mime const &other) const {
-        return type() == other.type() and subtype() == other.subtype();
+        return type() == other.type() and
+               subtype() == other.subtype();
     }
 
     Str str() const {

@@ -366,7 +366,7 @@ struct Slider : public ProxyNode<Slider> {
     }
 
     void bubble(App::Event &e) override {
-        if (auto *dv = e.is<DragEvent>()) {
+        if (auto dv = e.is<DragEvent>()) {
             if (dv->type == DragEvent::DRAG) {
                 auto max = bound().width - bound().height;
                 auto value = max * _value;

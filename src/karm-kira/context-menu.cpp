@@ -25,7 +25,7 @@ struct ContextMenu : public Ui::ProxyNode<ContextMenu> {
         if (event.accepted())
             return;
 
-        if (auto *e = event.is<App::MouseEvent>()) {
+        if (auto e = event.is<App::MouseEvent>()) {
             if (e->type == App::MouseEvent::PRESS and
                 e->button == App::MouseButton::RIGHT and
                 bound().contains(e->pos)) {
