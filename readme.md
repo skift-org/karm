@@ -4,11 +4,13 @@
     <img src="doc/assets/logo.svg" width="200"s>
 </p>
 <p align="center">
-    A framework for modern C++ applications
+    A batteries included framework for modern cross-platform C++ applications
 </p>
 <br/>
 <br/>
 <br/>
+
+![](doc/assets/capture.png)
 
 ## License
 
