@@ -242,7 +242,7 @@ Child button(OnPress onPress, ButtonStyle style, Gfx::Icon i) {
 
 Child button(OnPress onPress, ButtonStyle style, Gfx::Icon i, Str t) {
     return hflow(8, Math::Align::CENTER, icon(i), text(t)) |
-           insets({12, 6, 16, 6}) |
+           insets({6, 16, 6, 12}) |
            minSize({UNCONSTRAINED, 36}) |
            button(std::move(onPress), style);
 }
