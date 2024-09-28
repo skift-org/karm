@@ -23,7 +23,7 @@ struct Insets {
     constexpr Insets(T top, T horizontal, T bottom)
         : start(horizontal), top(top), end(horizontal), bottom(bottom) {}
 
-    constexpr Insets( T top, T end, T bottom, T start)
+    constexpr Insets(T top, T end, T bottom, T start)
         : start(start), top(top), end(end), bottom(bottom) {}
 
     constexpr bool zero() const {

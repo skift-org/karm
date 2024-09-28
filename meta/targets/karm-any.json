@@ -18,8 +18,7 @@
         "karm-ui-backend": "sdl"
     },
     "routing": {
-        "stdc-math": "ce-libm-host",
-        "__main__": "vaev-tools"
+        "stdc-math": "ce-libm-host"
     },
     "tools": {
         "cc": {
