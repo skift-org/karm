@@ -7,10 +7,12 @@
     A batteries included framework for modern cross-platform C++ applications
 </p>
 <br/>
-<br/>
-<br/>
+
 
 ![](doc/assets/capture.png)
+
+<br/>
+<br/>
 
 ## License
 
