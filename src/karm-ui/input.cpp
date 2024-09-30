@@ -226,7 +226,7 @@ Child button(OnPress onPress, ButtonStyle style, Child child) {
 
 Child button(OnPress onPress, ButtonStyle style, Str t) {
     return text(t) |
-           insets({16, 6}) |
+           insets({6, 16}) |
            center() |
            minSize({UNCONSTRAINED, 36}) |
            button(std::move(onPress), style);
@@ -234,7 +234,7 @@ Child button(OnPress onPress, ButtonStyle style, Str t) {
 
 Child button(OnPress onPress, ButtonStyle style, Gfx::Icon i) {
     return icon(i) |
-           insets({6, 6}) |
+           insets(6) |
            center() |
            minSize({36, 36}) |
            button(std::move(onPress), style);
