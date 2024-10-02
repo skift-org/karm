@@ -56,9 +56,9 @@ always_inline constexpr Res<T> checkedSub(T lhs, T rhs) {
 
 template <typename T>
 always_inline constexpr T saturatingSub(T lhs, T rhs) {
-    if (willSubOverflow(lhs, rhs))
+    if (willSubOverflow(lhs, rhs)) [[unlikely]]
         return Limits<T>::MAX;
-    if (willSubUnderflow(lhs, rhs))
+    if (willSubUnderflow(lhs, rhs)) [[unlikely]]
         return Limits<T>::MIN;
     return lhs - rhs;
 }
@@ -72,7 +72,7 @@ always_inline constexpr Res<T> checkedInc(T val) {
 
 template <typename T>
 always_inline constexpr T saturatingInc(T val) {
-    if (willAddOverflow(val, 1))
+    if (willAddOverflow(val, 1)) [[unlikely]]
         return Limits<T>::MAX;
     return val + 1;
 }
@@ -86,7 +86,7 @@ always_inline constexpr Res<T> checkedDec(T op) {
 
 template <typename T>
 always_inline constexpr T saturatingDec(T val) {
-    if (val == Limits<T>::MIN)
+    if (val == Limits<T>::MIN) [[unlikely]]
         return Limits<T>::MIN;
     return val - 1;
 }
