@@ -14,11 +14,11 @@ struct Cursor {
 
     constexpr Cursor() = default;
 
-    always_inline constexpr Cursor(T const &ref)
-        : Cursor(&ref, 1) {
+    always_inline constexpr Cursor(T const *ref)
+        : Cursor(ref, ref ? 1 : 0) {
     }
 
-    always_inline constexpr Cursor(T const *ptr, usize len = 0)
+    always_inline constexpr Cursor(T const *ptr, usize len)
         : _begin(ptr), _end(ptr + len) {
         if (_begin == nullptr and _begin != _end) [[unlikely]]
             panic("null pointer with non-zero length");
@@ -127,11 +127,11 @@ struct MutCursor {
 
     constexpr MutCursor() = default;
 
-    always_inline constexpr MutCursor(T &ref)
-        : MutCursor(&ref, 1) {
+    always_inline constexpr MutCursor(T *ref)
+        : MutCursor(ref, ref ? 1 : 0) {
     }
 
-    always_inline constexpr MutCursor(T *ptr, usize len = 0)
+    always_inline constexpr MutCursor(T *ptr, usize len)
         : _begin(ptr), _end(ptr + len) {
         if (_begin == nullptr and _begin != _end) [[unlikely]]
             panic("null pointer with non-zero length");
@@ -199,11 +199,13 @@ struct MutCursor {
         return &peek();
     }
 
-    always_inline constexpr T next() {
+    always_inline constexpr T &next() {
         if (ended()) [[unlikely]]
             panic("next() called on ended cursor");
 
-        return *_begin++;
+        T &r = *_begin;
+        _begin++;
+        return r;
     }
 
     always_inline constexpr MutSlice<T> next(usize n) {
