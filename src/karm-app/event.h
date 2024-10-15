@@ -24,14 +24,14 @@ struct Event {
     MutCursor<T> is() {
         if (id() != Meta::idOf<T>())
             return nullptr;
-        return {&unwrap<T>(), 1};
+        return &unwrap<T>();
     }
 
     template <typename T>
     Cursor<T> is() const {
         if (id() != Meta::idOf<T>())
             return nullptr;
-        return {&unwrap<T>(), 1};
+        return &unwrap<T>();
     }
 
     template <typename T>

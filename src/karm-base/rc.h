@@ -246,7 +246,7 @@ struct Strong {
             return nullptr;
         }
 
-        return {&_cell->unwrap<U>(), 1};
+        return &_cell->unwrap<U>();
     }
 
     template <typename U>
@@ -260,7 +260,7 @@ struct Strong {
             return nullptr;
         }
 
-        return {&_cell->unwrap<U>(), 1};
+        return &_cell->unwrap<U>();
     }
 
     Meta::Type<> inspect() const {

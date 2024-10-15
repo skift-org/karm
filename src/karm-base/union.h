@@ -155,14 +155,14 @@ struct Union {
     always_inline MutCursor<T> is() {
         if (_index != Meta::indexOf<T, Ts...>())
             return nullptr;
-        return {(T *)_buf, 1};
+        return (T *)_buf;
     }
 
     template <Meta::Contains<Ts...> T>
     always_inline Cursor<T> is() const {
         if (_index != Meta::indexOf<T, Ts...>())
             return nullptr;
-        return {(T const *)_buf, 1};
+        return (T const *)_buf;
     }
 
     always_inline usize index() const { return _index; }

@@ -14,8 +14,8 @@ struct Cursor {
 
     constexpr Cursor() = default;
 
-    always_inline constexpr Cursor(T const *ref)
-        : Cursor(ref, ref ? 1 : 0) {
+    always_inline constexpr Cursor(T const *ptr)
+        : Cursor(ptr, ptr ? 1 : 0) {
     }
 
     always_inline constexpr Cursor(T const *ptr, usize len)
@@ -127,8 +127,8 @@ struct MutCursor {
 
     constexpr MutCursor() = default;
 
-    always_inline constexpr MutCursor(T *ref)
-        : MutCursor(ref, ref ? 1 : 0) {
+    always_inline constexpr MutCursor(T *ptr)
+        : MutCursor(ptr, ptr ? 1 : 0) {
     }
 
     always_inline constexpr MutCursor(T *ptr, usize len)
