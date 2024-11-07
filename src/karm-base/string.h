@@ -32,7 +32,7 @@ struct _Str : public Slice<U> {
         return *this <=> _Str<E>(cstr);
     }
 
-    always_inline constexpr auto operator==(Unit const *cstr) const
+    always_inline constexpr bool operator==(Unit const *cstr) const
         requires(Meta::Same<Unit, char>)
     {
         return *this == _Str<E>(cstr);
@@ -86,7 +86,7 @@ struct _InlineString {
         return str() <=> _Str<E>(cstr);
     }
 
-    always_inline auto operator==(Unit const *cstr) const
+    always_inline bool operator==(Unit const *cstr) const
         requires(Meta::Same<Unit, char>)
     {
         return str() == _Str<E>(cstr);
@@ -181,7 +181,7 @@ struct _String {
         return str() <=> _Str<E>(cstr);
     }
 
-    always_inline auto operator==(Unit const *cstr) const
+    always_inline bool operator==(Unit const *cstr) const
         requires(Meta::Same<Unit, char>)
     {
         return str() == _Str<E>(cstr);
