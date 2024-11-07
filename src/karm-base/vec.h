@@ -23,17 +23,7 @@ struct _Vec {
 
     // MARK: Collection
 
-    bool contains(T const &val) const {
-        for (auto const &v : *this) {
-            if (v == val) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    bool removeAll(T const &val) {
+    bool removeAll(Meta::Equatable<T> auto const &val) {
         bool changed = false;
 
         for (usize i = 1; i < _buf.len() + 1; i++) {
@@ -80,6 +70,16 @@ struct _Vec {
     T removeAt(usize index) { return _buf.removeAt(index); }
 
     void removeRange(usize index, usize count) { _buf.removeRange(index, count); }
+
+    void removeUnordered(usize index) {
+        if (len() <= 1) [[unlikely]] {
+            clear();
+            return;
+        }
+
+        std::swap(_buf[index], _buf[_buf.len() - 1]);
+        _buf.trunc(_buf.len() - 1);
+    }
 
     // MARK: Front Access
 
