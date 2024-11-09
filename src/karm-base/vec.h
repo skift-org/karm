@@ -93,7 +93,7 @@ struct _Vec {
     }
 
     template <typename... Args>
-    T &emplaceFront(Args &&...args) {
+    T &emplaceFront(Args &&...args) lifetimebound {
         return _buf.emplace(0, std::forward<Args>(args)...);
     }
 
@@ -111,7 +111,7 @@ struct _Vec {
     }
 
     template <typename... Args>
-    T &emplaceBack(Args &&...args) {
+    T &emplaceBack(Args &&...args) lifetimebound {
         return _buf.emplace(len(), std::forward<Args>(args)...);
     }
 
@@ -123,18 +123,18 @@ struct _Vec {
 
     constexpr usize len() const { return _buf.len(); }
 
-    constexpr T *buf() { return _buf.buf(); }
+    constexpr T *buf() lifetimebound { return _buf.buf(); }
 
-    constexpr T const *buf() const { return _buf.buf(); }
+    constexpr T const *buf() const lifetimebound { return _buf.buf(); }
 
-    constexpr T &operator[](usize i) {
+    constexpr T &operator[](usize i) lifetimebound {
         if (i >= len()) [[unlikely]]
             panic("index out of bounds");
 
         return _buf[i];
     }
 
-    constexpr T const &operator[](usize i) const {
+    constexpr T const &operator[](usize i) const lifetimebound {
         if (i >= len()) [[unlikely]]
             panic("index out of bounds");
 

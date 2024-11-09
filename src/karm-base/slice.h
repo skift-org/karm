@@ -5,6 +5,8 @@
 
 namespace Karm {
 
+#pragma clang unsafe_buffer_usage begin
+
 using Byte = u8;
 
 inline constexpr Byte operator""_byte(unsigned long long arg) noexcept {
@@ -626,5 +628,7 @@ always_inline Match endWith(Sliceable auto const &slice, Sliceable auto const &s
 
     return Match::YES;
 }
+
+#pragma clang unsafe_buffer_usage end
 
 } // namespace Karm
