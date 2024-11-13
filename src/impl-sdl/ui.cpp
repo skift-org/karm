@@ -1,7 +1,7 @@
 #include <SDL.h>
-#include <karm-ui/drag.h>
 #include <karm-image/loader.h>
 #include <karm-pkg/bundle.h>
+#include <karm-ui/drag.h>
 
 #include <karm-ui/_embed.h>
 
@@ -609,19 +609,25 @@ Res<Strong<Host>> makeHost(Child root) {
     if (not window)
         return Error::other(SDL_GetError());
 
-    auto const image = try$(Image::loadOrFallback(try$(Pkg::currentBundle()).url() / "images/icon.qoi"_path));
-    SDL_Surface* icon_surface = SDL_CreateRGBSurface(0, image.width(), image.height(), 32,
-                                                     0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+    auto const url = try$(Pkg::currentBundle()).url() / "images/icon.qoi"_path;
+    auto const defaultUrl = "bundle://karm-ui/images/icon.qoi"_url;
+    auto const image = Image::load(url).unwrapOrElse([&] {
+        return Image::loadOrFallback(defaultUrl).take();
+    });
+
+    SDL_Surface *icon_surface = SDL_CreateRGBSurface(0, image.width(), image.height(), 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
     if (not icon_surface)
         return Error::other(SDL_GetError());
     defer$(SDL_FreeSurface(icon_surface));
-    Gfx::MutPixels pixels   {
+
+    Gfx::MutPixels pixels{
         icon_surface->pixels,
-            {icon_surface->w, icon_surface->h},
-            (usize)icon_surface->pitch,
-            Gfx::BGRA8888,
+        {icon_surface->w, icon_surface->h},
+        (usize)icon_surface->pitch,
+        Gfx::BGRA8888,
     };
     blitUnsafe(pixels, image.pixels());
+
     SDL_SetWindowIcon(window, icon_surface);
     auto host = makeStrong<SdlHost>(root, window);
 
