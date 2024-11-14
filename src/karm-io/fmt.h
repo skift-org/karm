@@ -1,6 +1,7 @@
 #pragma once
 
 #include <karm-base/box.h>
+#include <karm-base/cow.h>
 #include <karm-base/endian.h>
 #include <karm-base/enum.h>
 #include <karm-base/rc.h>
@@ -745,6 +746,23 @@ struct Formatter<Box<T>> {
     }
 
     Res<usize> format(Io::TextWriter &writer, Box<T> const &val) {
+        return formatter.format(writer, *val);
+    }
+};
+
+template <typename T>
+struct Formatter<Cow<T>> {
+    Formatter<T> formatter;
+
+    void parse(Io::SScan &scan) {
+        if constexpr (requires() {
+                          formatter.parse(scan);
+                      }) {
+            formatter.parse(scan);
+        }
+    }
+
+    Res<usize> format(Io::TextWriter &writer, Cow<T> const &val) {
         return formatter.format(writer, *val);
     }
 };
