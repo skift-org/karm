@@ -10,7 +10,6 @@ using Id = usize;
 
 template <typename T>
 static constexpr Id idOf() {
-
     char const *cstr = __PRETTY_FUNCTION__;
     usize len = sizeof(__PRETTY_FUNCTION__);
     usize hash = 0uz;
