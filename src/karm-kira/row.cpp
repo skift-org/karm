@@ -9,6 +9,7 @@
 #include "color-input.h"
 #include "radio.h"
 #include "row.h"
+#include "select.h"
 #include "slider.h"
 #include "toggle.h"
 
@@ -40,14 +41,13 @@ Ui::Child rowContent(Opt<Ui::Child> leading, String title, Opt<String> subtitle,
     auto trail = trailing
                      ? *trailing |
                            Ui::center() |
-                           Ui::sizing(26, {Ui::UNCONSTRAINED, 26}) |
-                           Ui::insets({0, 12, 0, 0})
+                           Ui::sizing(26, {Ui::UNCONSTRAINED, 26})
                      : Ui::empty();
 
     return minSize(
         {Ui::UNCONSTRAINED, 48},
         insets(
-            {0, 12},
+            {0, 16},
             hflow(
                 0,
                 Math::Align::VCENTER | Math::Align::HFILL,
@@ -140,6 +140,15 @@ Ui::Child sliderRow(f64 value, Ui::OnChange<f64> onChange, String title) {
     );
 }
 
+Ui::Child selectRow(Ui::Child value, Ui::Slots options, String title) {
+    return rowContent(
+        NONE,
+        title,
+        NONE,
+        Kr::select(std::move(value), std::move(options))
+    );
+}
+
 Ui::Child colorRow(Gfx::Color c, Ui::OnChange<Gfx::Color> onChange, String title) {
     return rowContent(
         NONE,
@@ -165,9 +174,10 @@ Ui::Child treeRow(Opt<Ui::Slot> leading, String title, Opt<String> subtitle, Ui:
                 )
             ),
             state ? insets(
-                        {0, 0, 0, 38},
+                        {0, 0, 0, 0},
                         child()
-                    ) | slideIn(Ui::SlideFrom::TOP)
+                    ) | slideIn(Ui::SlideFrom::TOP) |
+                        Ui::grow()
                   : Ui::empty()
         );
     });
