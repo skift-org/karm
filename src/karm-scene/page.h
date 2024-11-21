@@ -5,9 +5,17 @@
 namespace Karm::Scene {
 
 struct Page : public Stack {
+    Math::Vec2i _size;
+
+    Page(Math::Vec2i size) : _size(size) {}
+
     void print(Print::Printer &doc) override {
         Stack::print(doc);
         paint(doc.beginPage());
+    }
+
+    Math::Recti bound() override {
+        return _size;
     }
 
     void repr(Io::Emit &e) const override {

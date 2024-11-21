@@ -355,16 +355,49 @@ struct Canvas : public View<Canvas> {
     }
 
     Math::Vec2i size(Math::Vec2i, Hint hint) override {
-        if (hint == Hint::MIN) {
+        if (hint == Hint::MIN)
             return 0;
-        }
-
         return _bound.wh;
     }
 };
 
 Child canvas(OnPaint onPaint) {
     return makeStrong<Canvas>(std::move(onPaint));
+}
+
+struct SceneCanvas : public View<SceneCanvas> {
+    Strong<Scene::Node> _scene;
+
+    SceneCanvas(Strong<Scene::Node> scene)
+        : _scene(std::move(scene)) {}
+
+    void reconcile(SceneCanvas &o) override {
+        _scene = o._scene;
+        View<SceneCanvas>::reconcile(o);
+    }
+
+    void paint(Gfx::Canvas &g, Math::Recti) override {
+        g.push();
+        g.clip(_bound);
+        g.origin(_bound.xy.cast<f64>());
+        g.scale(_bound.size().cast<f64>() / _scene->bound().size().cast<f64>());
+
+        _scene->paint(g);
+
+        g.pop();
+    }
+
+    Math::Vec2i size(Math::Vec2i, Hint hint) override {
+        if (hint == Hint::MIN) {
+            return 0;
+        }
+
+        return _scene->bound().size();
+    }
+};
+
+Child canvas(Strong<Scene::Node> child) {
+    return makeStrong<SceneCanvas>(std::move(child));
 }
 
 // MARK: Filter ----------------------------------------------------------------
