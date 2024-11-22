@@ -376,13 +376,19 @@ struct SceneCanvas : public View<SceneCanvas> {
         View<SceneCanvas>::reconcile(o);
     }
 
-    void paint(Gfx::Canvas &g, Math::Recti) override {
+    void paint(Gfx::Canvas &g, Math::Recti rect) override {
         g.push();
         g.clip(_bound);
         g.origin(_bound.xy.cast<f64>());
         g.scale(_bound.size().cast<f64>() / _scene->bound().size().cast<f64>());
 
-        _scene->paint(g);
+        Math::Trans2f trans;
+        trans = trans.translated(-_bound.xy.cast<f64>());
+        trans = trans.scaled(_bound.size().cast<f64>() / _scene->bound().size().cast<f64>());
+
+        auto rectInScene = trans.inverse().apply(rect.cast<f64>()).bound();
+
+        _scene->paint(g, Math::Rectf::MAX);
 
         g.pop();
     }
@@ -392,7 +398,7 @@ struct SceneCanvas : public View<SceneCanvas> {
             return 0;
         }
 
-        return _scene->bound().size();
+        return _scene->bound().size().ceil().cast<isize>();
     }
 };
 
