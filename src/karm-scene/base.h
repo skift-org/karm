@@ -17,7 +17,7 @@ struct Node {
     /// The bounding rectangle of the node
     virtual Math::Rectf bound() { return {}; }
 
-    virtual void paint(Gfx::Canvas &, Math::Rectf) {}
+    virtual void paint(Gfx::Canvas &, Math::Rectf = Math::Rectf::MAX) {}
 
     virtual void print(Print::Printer &) {}
 
