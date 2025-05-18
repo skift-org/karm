@@ -36,7 +36,6 @@ export Ui::Child aboutDialog(String name) {
             Ui::hflow(6, Math::Align::CENTER, dialogTitle(name), versionBadge()),
             dialogDescription(
                 "Copyright © 2018-2025 The skiftOS Developers\n"
-                "Copyright © 2024-2025 Odoo S.A.\n"
                 "\n"
                 "All rights reserved."s
             ),

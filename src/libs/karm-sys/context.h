@@ -15,6 +15,14 @@ struct Service {
 struct Context :
     Meta::Pinned {
     Vec<Rc<Service>> _srvs;
+    static Context* _global;
+
+
+    Context() {
+        if (_global)
+            panic("context already exists");
+        _global = this;
+    }
 
     template <typename T>
     T& use() {
@@ -30,6 +38,12 @@ struct Context :
         _srvs.pushBack(makeRc<T>(std::forward<Args>(args)...));
     }
 };
+
+static inline Context& globalContext() {
+    if (not Context::_global)
+        panic("no global context");
+    return *Context::_global;
+}
 
 struct ArgsHook :
     Service {
