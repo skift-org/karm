@@ -35,8 +35,6 @@ static inline u32 G(u32 x, u32 y, u32 z) { return (x & z) | (y & ~z); }
 static inline u32 H(u32 x, u32 y, u32 z) { return x ^ y ^ z; }
 static inline u32 I(u32 x, u32 y, u32 z) { return y ^ (x | ~z); }
 
-static inline u32 rotl(u32 x, u32 n) { return (x << n) | (x >> (32 - n)); }
-
 Md5::Md5() : _state{0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476}, _bitlen{0}, _datalen{0} {}
 
 void Md5::update(Bytes bytes) {
@@ -74,7 +72,7 @@ void Md5::transform() {
         a = d;
         d = c;
         c = b;
-        b += rotl(temp, MD5_S[i]);
+        b += Karm::rotl(temp, MD5_S[i]);
     }
 
     // round 2
@@ -84,7 +82,7 @@ void Md5::transform() {
         a = d;
         d = c;
         c = b;
-        b += rotl(temp, MD5_S[i]);
+        b += Karm::rotl(temp, MD5_S[i]);
     }
 
     // round 3
@@ -94,7 +92,7 @@ void Md5::transform() {
         a = d;
         d = c;
         c = b;
-        b += rotl(temp, MD5_S[i]);
+        b += Karm::rotl(temp, MD5_S[i]);
     }
 
     // round 4
@@ -104,7 +102,7 @@ void Md5::transform() {
         a = d;
         d = c;
         c = b;
-        b += rotl(temp, MD5_S[i]);
+        b += Karm::rotl(temp, MD5_S[i]);
     }
 
     _state[0] += a;

@@ -13,3 +13,4 @@ _local/
 *.trace
 compile_commands.json
 html/
+path/to/venv
