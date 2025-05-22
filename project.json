@@ -3,7 +3,7 @@
     "id": "skift-org/karm",
     "type": "project",
     "version": "v0.1.0",
-    "description": "  A batteries included framework for modern cross-platform C++ applications",
+    "description": "A batteries included framework for modern cross-platform C++ applications",
     "extern": {
         "cute-engineering/ce-heap": {
             "git": "https://github.com/cute-engineering/ce-heap.git",
@@ -11,7 +11,7 @@
         },
         "cute-engineering/ce-mdi": {
             "git": "https://github.com/cute-engineering/ce-mdi.git",
-            "tag": "v0.4.0"
+            "tag": "v0.5.0"
         },
         "cute-engineering/ce-libc": {
             "git": "https://github.com/cute-engineering/ce-libc.git",
