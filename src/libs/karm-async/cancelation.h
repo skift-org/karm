@@ -1,19 +1,18 @@
 #pragma once
 
+#include <karm-base/rc.h>
 #include <karm-base/res.h>
 
 namespace Karm::Async {
 
 struct Cancelation : Meta::Pinned {
     struct Token {
-        Cancelation* _c = nullptr;
+        Rc<Cancelation> _c;
 
-        Token() = default;
-
-        Token(Cancelation& c) : _c{&c} {}
+        Token(Rc<Cancelation> c) : _c{c} {}
 
         bool canceled() const {
-            return _c and _c->canceled();
+            return _c->canceled();
         }
 
         Res<> errorIfCanceled() const {
@@ -22,6 +21,11 @@ struct Cancelation : Meta::Pinned {
             return Ok();
         }
     };
+
+    static Tuple<Rc<Cancelation>, Token> create() {
+        auto cancelation = makeRc<Cancelation>();
+        return {cancelation, Token{cancelation}};
+    }
 
     bool _canceled = false;
 
@@ -35,10 +39,6 @@ struct Cancelation : Meta::Pinned {
 
     bool canceled() const {
         return _canceled;
-    }
-
-    Token token() {
-        return Token{*this};
     }
 };
 
