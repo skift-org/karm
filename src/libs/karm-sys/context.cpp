@@ -2,6 +2,6 @@
 
 namespace Karm::Sys {
 
-Context* Context::_global = nullptr;
+Context* Context::_root = nullptr;
 
 } // namespace Karm::Sys

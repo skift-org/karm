@@ -15,13 +15,12 @@ struct Service {
 struct Context :
     Meta::Pinned {
     Vec<Rc<Service>> _srvs;
-    static Context* _global;
+    static Context* _root;
 
 
     Context() {
-        if (_global)
-            panic("context already exists");
-        _global = this;
+        if (not _root)
+            _root = this;
     }
 
     template <typename T>
@@ -39,10 +38,10 @@ struct Context :
     }
 };
 
-static inline Context& globalContext() {
-    if (not Context::_global)
+static inline Context& rootContext() {
+    if (not Context::_root)
         panic("no global context");
-    return *Context::_global;
+    return *Context::_root;
 }
 
 struct ArgsHook :
