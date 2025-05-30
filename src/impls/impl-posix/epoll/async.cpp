@@ -26,6 +26,7 @@ struct EpollSched : Sys::Sched {
         close(_epollFd);
     }
 
+    [[clang::coro_wrapper]]
     Async::Task<> waitFor(epoll_event ev, int fd) {
         usize id = _id++;
         auto promise = Async::Promise<>();
