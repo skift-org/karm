@@ -55,7 +55,7 @@ union Ellipse {
     }
 
     template <typename U>
-    constexpr Ellipse<U> cast() {
+    constexpr Ellipse<U> cast() const {
         return {center.template cast<U>(), radii.template cast<U>()};
     }
 
