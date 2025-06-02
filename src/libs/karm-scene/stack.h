@@ -22,9 +22,15 @@ struct Stack : Node {
 
     Math::Rectf bound() override {
         Math::Rectf rect;
-        for (auto& child : _children)
-            rect = rect.mergeWith(child->bound());
-
+        bool first = true;
+        for (auto& child : _children) {
+            if (first) {
+                rect = child->bound();
+                first = false;
+            } else {
+                rect = rect.mergeWith(child->bound());
+            }
+        }
         return rect;
     }
 

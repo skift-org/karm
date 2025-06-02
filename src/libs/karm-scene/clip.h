@@ -1,20 +1,18 @@
 #pragma once
 
-#include "stack.h"
+#include "proxy.h"
 
 namespace Karm::Scene {
 
-struct Clip : Stack {
+struct Clip : Proxy {
     Union<Math::Path, Math::Rectf> _clipArea;
     Gfx::FillRule _rule;
 
-    Clip() = delete;
+    Clip(Rc<Node> node, Math::Path path, Gfx::FillRule rule = Gfx::FillRule::NONZERO)
+        : Proxy(node), _clipArea(path), _rule(rule) {}
 
-    Clip(Math::Path path, Gfx::FillRule rule = Gfx::FillRule::NONZERO)
-        : Stack(), _clipArea(path), _rule(rule) {}
-
-    Clip(Math::Rectf rect)
-        : Stack(), _clipArea(rect), _rule(Gfx::FillRule::NONZERO) {}
+    Clip(Rc<Node> node, Math::Rectf rect)
+        : Proxy(node), _clipArea(rect), _rule(Gfx::FillRule::NONZERO) {}
 
     void paint(Gfx::Canvas& g, Math::Rectf r, PaintOptions o) override {
         g.push();
@@ -27,22 +25,13 @@ struct Clip : Stack {
             g.clip(*rect);
         }
 
-        Stack::paint(g, r, o);
+        Proxy::paint(g, r, o);
 
         g.pop();
     }
 
     void repr(Io::Emit& e) const override {
-        e("(clip");
-        if (_children) {
-            e.indentNewline();
-            for (auto& child : _children) {
-                child->repr(e);
-                e.newline();
-            }
-            e.deindent();
-        }
-        e(")");
+        e("(clip content:{})", _node);
     }
 };
 

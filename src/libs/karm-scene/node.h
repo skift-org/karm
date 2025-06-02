@@ -20,7 +20,7 @@ struct Node {
     /// The bounding rectangle of the node
     virtual Math::Rectf bound() { return {}; }
 
-    virtual void paint(Gfx::Canvas&, Math::Rectf = Math::Rectf::MAX, PaintOptions = {}) {}
+    virtual void paint(Gfx::Canvas&, Math::Rectf, PaintOptions = {}) {}
 
     virtual void repr(Io::Emit& e) const {
         e("(node z:{})", zIndex);
@@ -35,7 +35,7 @@ struct Node {
         Gfx::CpuCanvas g;
         g.begin(*surface);
         g.scale(density);
-        paint(g);
+        paint(g, Math::Rectf{size});
         g.end();
 
         return surface;

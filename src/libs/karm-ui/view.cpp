@@ -465,7 +465,7 @@ struct SceneCanvas : View<SceneCanvas> {
 
         auto rectInScene = trans.inverse().apply(rect.cast<f64>()).bound();
 
-        _scene->paint(g, Math::Rectf::MAX, _options);
+        _scene->paint(g, rectInScene, _options);
 
         g.pop();
     }
