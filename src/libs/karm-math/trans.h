@@ -44,16 +44,16 @@ union Trans2 {
         T c = cos(angle);
         T s = sin(angle);
         return {
-            c, -s,
-            s, c,
+            c, s,
+            -s, c,
             0, 0
         };
     }
 
     static constexpr Trans2 skew(Vec2<T> v) {
         return {
-            1, v.x,
-            v.y, 1,
+            1, v.y,
+            v.x, 1,
             0, 0
         };
     }

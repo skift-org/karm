@@ -130,7 +130,7 @@ struct Gradient {
 
     always_inline f64 transform(Math::Vec2f pos) const {
         pos = pos - _start;
-        pos = pos.rotate(-(_end - _start).angle());
+        pos = pos.rotate((_end - _start).angle());
         f64 scale = (_end - _start).len();
         pos = pos / scale;
 

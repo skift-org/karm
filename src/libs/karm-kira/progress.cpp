@@ -26,7 +26,7 @@ struct Progress : Ui::View<Progress> {
         g.clip(bound());
 
         g.translate(bound().center().cast<f64>());
-        g.rotate(-_spin);
+        g.rotate(_spin);
 
         g.beginPath();
         g.arc({
