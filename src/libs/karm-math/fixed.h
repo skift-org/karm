@@ -164,7 +164,7 @@ struct Fixed {
 
     constexpr Frac<Fixed> operator/(Fixed const& rhs) const;
 
-    constexpr Fixed operator/(Frac<Fixed> const& rhs) const;
+    constexpr Frac<Fixed> operator/(Frac<Fixed> const& rhs) const;
 
     constexpr Fixed& operator+=(Fixed const& rhs) {
         return *this = *this + rhs;
@@ -210,8 +210,8 @@ constexpr Frac<Fixed<T, F>> Fixed<T, F>::operator/(Fixed<T, F> const& rhs) const
 }
 
 template <Meta::SignedIntegral T, usize F>
-constexpr Fixed<T, F> Fixed<T, F>::operator/(Frac<Fixed<T, F>> const& rhs) const {
-    return fromRaw(saturatingDiv(_val, rhs._num) * rhs._deno);
+constexpr Frac<Fixed<T, F>> Fixed<T, F>::operator/(Frac<Fixed<T, F>> const& rhs) const {
+    return Frac<Fixed<T, F>>{fromRaw(_val) * rhs._deno, rhs._num};
 }
 
 using i24f8 = Fixed<i32, 8>;
