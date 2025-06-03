@@ -89,7 +89,7 @@ struct [[nodiscard]] Opt {
     always_inline constexpr Opt& operator=(U&& value) {
         clear();
         _present = true;
-        std::construct_at(&_value, std::move(value));
+        std::construct_at(&_value, std::forward<U>(value));
         return *this;
     }
 
@@ -409,7 +409,7 @@ struct [[nodiscard]] Opt<T> {
         requires(not Meta::Same<Meta::RemoveConstVolatileRef<U>, Opt<T>> and Meta::MoveConstructible<T, U>)
     always_inline constexpr Opt& operator=(U&& value) {
         clear();
-        std::construct_at(&_value, std::move(value));
+        std::construct_at(&_value, std::forward<U>(value));
         return *this;
     }
 
