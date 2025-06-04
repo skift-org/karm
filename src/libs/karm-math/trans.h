@@ -191,8 +191,8 @@ union Trans2 {
         return {
             yy / det, -xy / det,
             -yx / det, xx / det,
-            -(ox * yy - oy * xy) / det,
-            -(oy * xx - ox * yx) / det
+            -(ox * yy - oy * yx) / det,
+            -(oy * xx - ox * xy) / det
         };
     }
 
