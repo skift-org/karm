@@ -73,12 +73,15 @@ Math::Rectf Path::bound() {
 // MARK: Flattening ------------------------------------------------------------
 
 void Path::_flattenClose() {
-    auto end = _verts[last(_contours).end - 1];
-    auto start = _verts[last(_contours).start];
-
-    if (Math::epsilonEq(start, end, 0.001)) {
-        _verts.popBack();
-        last(_contours).end--;
+    if(_contours.len() > 1){
+        auto end = _verts[last(_contours).end - 1];
+        auto start = _verts[last(_contours).start];
+    
+        // NOTE: remove last edge if it is manually closing the path, since 'z' should be the one closing
+        if (Math::epsilonEq(start, end, 0.001)) {
+            _verts.popBack();
+            last(_contours).end--;
+        }
     }
 
     last(_contours).close = true;
@@ -448,6 +451,9 @@ void Path::arc(Math::Arcf arc) {
 
 void Path::path(Math::Path const& path) {
     for (auto contour : path.iterContours()) {
+        if (contour.len() == 0)
+            panic("it is not possible to have an empty contour at this point");
+
         moveTo(first(contour));
         for (auto v : next(contour, 1)) {
             lineTo(v);
