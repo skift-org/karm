@@ -257,48 +257,55 @@ void Path::evalOp(Op op) {
     case CLOSE:
         op.p = _verts[last(_contours).start];
         _flattenClose();
+        _lastCp = op.p;
         break;
 
     case MOVE_TO:
         _contours.pushBack({_verts.len(), _verts.len(), false});
         _flattenLineTo(op.p);
+        _lastCp = op.p;
         break;
 
     case LINE_TO:
         _flattenLineTo(op.p);
+        _lastCp = op.p;
         break;
 
     case HLINE_TO:
         op.p = {op.p.x, _lastP.y};
         _flattenLineTo(op.p);
+        _lastCp = op.p;
         break;
 
     case VLINE_TO:
         op.p = {_lastP.x, op.p.y};
         _flattenLineTo(op.p);
+        _lastCp = op.p;
         break;
 
     case CUBIC_TO:
         if (op.flags & SMOOTH)
             op.cp1 = _lastP * 2 - _lastCp;
         _flattenCurveTo(Math::Curvef::cubic(_lastP, op.cp1, op.cp2, op.p));
+        _lastCp = op.cp2;
         break;
 
     case QUAD_TO:
         if (op.flags & SMOOTH)
             op.cp2 = _lastP * 2 - _lastCp;
         _flattenCurveTo(Math::Curvef::quadratic(_lastP, op.cp2, op.p));
+        _lastCp = op.cp2;
         break;
 
     case ARC_TO:
         _flattenArcTo(_lastP, op.radii, op.angle, op.flags, op.p);
+        _lastCp = op.p;
         break;
 
     default:
         panic("unknown path opcode");
     }
 
-    _lastCp = op.cp2;
     _lastP = op.p;
 }
 
