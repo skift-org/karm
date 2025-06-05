@@ -170,20 +170,20 @@ union Trans2 {
         return res;
     }
 
-    constexpr Trans2 rotated(T angle) {
-        return multiply(rotate(angle));
+    constexpr Trans2 rotated(T angle) const {
+        return rotate(angle).multiply(*this);
     }
 
-    constexpr Trans2 skewed(Vec2<T> v) {
-        return multiply(skew(v));
+    constexpr Trans2 skewed(Vec2<T> v) const {
+        return skew(v).multiply(*this);
     }
 
-    constexpr Trans2 scaled(Vec2<T> v) {
-        return multiply(scale(v));
+    constexpr Trans2 scaled(Vec2<T> v) const {
+        return scale(v).multiply(*this);
     }
 
-    constexpr Trans2 translated(Vec2<T> v) {
-        return multiply(translate(v));
+    constexpr Trans2 translated(Vec2<T> v) const {
+        return translate(v).multiply(*this);
     }
 
     constexpr Trans2 inverse() const {
