@@ -57,13 +57,13 @@ test$("transform-composite-1") {
     auto m1 = Trans2f::translate({1.0, 1.0}).scaled({2.0, 2.0});
     auto m2 = Trans2f::scale({2.0, 2.0}).translated({1.0, 1.0});
 
-    expectEq$(m1.apply(a), (Vec2<f64>{4.0, 2.0}));
-    expectEq$(m1.apply(b), (Vec2<f64>{2.0, 4.0}));
-    expectEq$(m1.apply(c), (Vec2<f64>{4.0, 4.0}));
+    expectEq$(m1.apply(a), (Vec2<f64>{3.0, 1.0}));
+    expectEq$(m1.apply(b), (Vec2<f64>{1.0, 3.0}));
+    expectEq$(m1.apply(c), (Vec2<f64>{3.0, 3.0}));
 
-    expectEq$(m2.apply(a), (Vec2<f64>{3.0, 1.0}));
-    expectEq$(m2.apply(b), (Vec2<f64>{1.0, 3.0}));
-    expectEq$(m2.apply(c), (Vec2<f64>{3.0, 3.0}));
+    expectEq$(m2.apply(a), (Vec2<f64>{4.0, 2.0}));
+    expectEq$(m2.apply(b), (Vec2<f64>{2.0, 4.0}));
+    expectEq$(m2.apply(c), (Vec2<f64>{4.0, 4.0}));
 
     return Ok();
 }
@@ -76,13 +76,13 @@ test$("transform-composite-2") {
     auto m1 = Trans2f::translate({1.0, 1.0}).rotated(Math::PI / 2.0);
     auto m2 = Trans2f::rotate(Math::PI / 2.0).translated({1.0, 1.0});
 
-    expectEq$(m1.apply(a), (Vec2<f64>{-1.0, 2.0}));
-    expectEq$(m1.apply(b), (Vec2<f64>{-2.0, 1.0}));
-    expectEq$(m1.apply(c), (Vec2<f64>{-2.0, 2.0}));
+    expectEq$(m1.apply(a), (Vec2<f64>{1.0, 2.0}));
+    expectEq$(m1.apply(b), (Vec2<f64>{0.0, 1.0}));
+    expectEq$(m1.apply(c), (Vec2<f64>{0.0, 2.0}));
 
-    expectEq$(m2.apply(a), (Vec2<f64>{1.0, 2.0}));
-    expectEq$(m2.apply(b), (Vec2<f64>{0.0, 1.0}));
-    expectEq$(m2.apply(c), (Vec2<f64>{0.0, 2.0}));
+    expectEq$(m2.apply(a), (Vec2<f64>{-1.0, 2.0}));
+    expectEq$(m2.apply(b), (Vec2<f64>{-2.0, 1.0}));
+    expectEq$(m2.apply(c), (Vec2<f64>{-2.0, 2.0}));
 
     return Ok();
 }
