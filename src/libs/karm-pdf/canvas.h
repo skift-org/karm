@@ -22,15 +22,21 @@ struct FontManager {
     }
 };
 
+// 8.4.5 Graphics state parameter dictionaries
+struct GraphicalStateDict{
+    f64 opacity;
+};
+
 struct Canvas : Gfx::Canvas {
     Io::Emit _e;
     Math::Vec2f _mediaBox{};
     Math::Vec2f _p{};
 
     MutCursor<FontManager> _fontManager;
+    Vec<GraphicalStateDict>& _graphicalStates;
 
-    Canvas(Io::Emit e, Math::Vec2f mediaBox, MutCursor<FontManager> fontManager)
-        : _e{e}, _mediaBox{mediaBox}, _fontManager{fontManager} {}
+    Canvas(Io::Emit e, Math::Vec2f mediaBox, MutCursor<FontManager> fontManager, Vec<GraphicalStateDict>& graphicalStates)
+        : _e{e}, _mediaBox{mediaBox}, _fontManager{fontManager}, _graphicalStates(graphicalStates) {}
 
     Math::Vec2f _mapPoint(Math::Vec2f p, Flags<Math::Path::Option> options) {
         if (options & Math::Path::RELATIVE)

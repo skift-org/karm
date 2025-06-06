@@ -17,10 +17,11 @@ struct PdfPrinter : FilePrinter {
     Vec<PdfPage> _pages;
     Opt<Pdf::Canvas> _canvas;
     Pdf::FontManager fontManager;
+    Vec<Pdf::GraphicalStateDict> graphicalStates;
 
     Gfx::Canvas& beginPage(PaperStock paper) override {
         auto& page = _pages.emplaceBack(paper);
-        _canvas = Pdf::Canvas{page.data, paper.size(), &fontManager};
+        _canvas = Pdf::Canvas{page.data, paper.size(), &fontManager, graphicalStates};
 
         // NOTE: PDF has the coordinate system origin at the bottom left corner.
         //       But we want to have it at the top left corner.
@@ -58,6 +59,24 @@ struct PdfPrinter : FilePrinter {
             fontManagerId2FontObjRef.put(id, fontRef);
         }
 
+        // Graphical States
+        Pdf::Dict graphicalStatesDict;
+        for(usize i = 0; i < graphicalStates.len(); ++i) {
+            auto stateRef = alloc.alloc();
+            file.add(
+                stateRef,
+                Pdf::Dict{
+                    {"Type"s, Pdf::Name{"ExtGState"s}},
+                    {"ca"s, graphicalStates[i].opacity},
+                }
+            );
+
+            graphicalStatesDict.put(
+                Pdf::Name{Io::format("GS{}", i)},
+                stateRef
+            );
+        }
+
         // Page
         for (auto& p : _pages) {
             Pdf::Ref pageRef = alloc.alloc();
@@ -93,6 +112,10 @@ struct PdfPrinter : FilePrinter {
                                 "Font"s,
                                 pageFontsDict,
                             },
+                            {
+                                "ExtGState"s,
+                                graphicalStatesDict
+                            }
                         },
                     }
                 }
