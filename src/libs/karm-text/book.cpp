@@ -233,7 +233,7 @@ Opt<Rc<Fontface>> FontBook::queryExact(FontQuery query) const {
 }
 
 Opt<Rc<Fontface>> FontBook::queryClosest(FontQuery query) const {
-    Str desiredfamily = _resolveFamily(query.family);
+    Str desired = _resolveFamily(query.family);
 
     Opt<Rc<Fontface>> matchingFace;
     auto matchingFamily = ""s;
@@ -249,7 +249,7 @@ Opt<Rc<Fontface>> FontBook::queryClosest(FontQuery query) const {
         auto currStyle = matchingStyle;
         auto currWeight = matchingWeight;
 
-        currFamily = _pickFamily(attrs.family, matchingFamily, desiredfamily);
+        currFamily = _pickFamily(attrs.family, matchingFamily, desired);
 
         if (attrs.family != currFamily)
             continue;

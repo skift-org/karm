@@ -181,7 +181,6 @@ struct Set {
     }
 
     void put(T const& t) {
-        breakpoint();
         auto* slot = lookup(t);
         if (not slot) {
             ensureForInsert();

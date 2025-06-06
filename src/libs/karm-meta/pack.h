@@ -31,7 +31,7 @@ struct _IndexCast;
 
 template <typename Data, typename T>
 struct _IndexCast<Data, T> {
-    static auto eval(usize, Data* ptr, auto func) {
+    always_inline static auto eval(usize, Data* ptr, auto func) {
         using U = CopyConst<Data, T>;
         return func(*reinterpret_cast<U*>(ptr));
     }
@@ -39,7 +39,7 @@ struct _IndexCast<Data, T> {
 
 template <typename Data, typename T, typename... Ts>
 struct _IndexCast<Data, T, Ts...> {
-    static auto eval(usize index, Data* ptr, auto func) {
+    always_inline static auto eval(usize index, Data* ptr, auto func) {
         using U = CopyConst<Data, T>;
 
         return index == 0 ? func(*reinterpret_cast<U*>(ptr))
@@ -48,13 +48,13 @@ struct _IndexCast<Data, T, Ts...> {
 };
 
 template <typename... Ts>
-static auto indexCast(usize index, auto* ptr, auto func) {
+always_inline static auto indexCast(usize index, auto* ptr, auto func) {
     return _IndexCast<RemoveRef<decltype(*ptr)>, Ts...>::eval(index, ptr, func);
 }
 
 template <typename T, typename... Ts>
 struct _Any {
-    static auto eval(auto func)
+    always_inline static auto eval(auto func)
         requires(not Meta::Same<decltype(func.template operator()<T>()), void>)
     {
         auto test = func.template operator()<T>();
@@ -62,7 +62,7 @@ struct _Any {
         return test;
     }
 
-    static auto eval(auto func)
+    always_inline static auto eval(auto func)
         requires(Meta::Same<decltype(func.template operator()<T>()), void>)
     {
         func.template operator()<T>();
@@ -71,7 +71,7 @@ struct _Any {
 };
 
 template <typename... Ts>
-static auto any(auto func) {
+always_inline static auto any(auto func) {
     if constexpr (sizeof...(Ts) == 0)
         return;
     else
