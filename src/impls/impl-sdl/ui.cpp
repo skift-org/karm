@@ -661,4 +661,9 @@ Res<Rc<Host>> makeHost(Child root) {
     return Ok(host);
 }
 
+Async::Task<> runAsync(Sys::Context& , Child root) {
+    auto host = co_try$(makeHost(std::move(root)));
+    co_return co_await host->runAsync();
+}
+
 } // namespace Karm::Ui::_Embed

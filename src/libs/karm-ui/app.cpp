@@ -10,12 +10,11 @@ import :_embed;
 
 namespace Karm::Ui {
 
-export Async::Task<> runAsync(Sys::Context&, Child root) {
-    auto host = co_try$(_Embed::makeHost(root));
-    co_return co_await host->runAsync();
+export Async::Task<> runAsync(Sys::Context& ctx, Child root) {
+    co_return co_await _Embed::runAsync(ctx, std::move(root));
 }
 
-export void mountApp(Cli::Command& cmd, Slot rootSlot) {
+export void mountApp(Cli::Command& cmd, Slot rootSlot) { 
     Cli::Flag mobileArg = Cli::flag(NONE, "mobile"s, "Show mobile layout."s);
 
     cmd.option(mobileArg);
