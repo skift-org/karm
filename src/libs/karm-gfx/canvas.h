@@ -37,6 +37,9 @@ struct Canvas : Meta::NoCopy {
     // Set the current stroke style.
     virtual void strokeStyle(Stroke style) = 0;
 
+    // Set the opacity of the current context.
+    virtual void opacity(f64 opacity) = 0;
+
     // Set the origin of the current context.
     virtual void origin(Math::Vec2f p);
 

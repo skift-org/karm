@@ -26,6 +26,10 @@ void Canvas::strokeStyle(Gfx::Stroke) {
     logDebugIf(DEBUG_CANVAS, "pdf: strokeStyle() operation not implemented");
 }
 
+void Canvas::opacity(f64) {
+    logDebugIf(DEBUG_CANVAS, "pdf: opacity() operation not implemented");
+}
+
 void Canvas::transform(Math::Trans2f trans) {
     _e.ln("{} {} {} {} {} {} cm", trans.xx, trans.xy, trans.yx, trans.yy, trans.ox, trans.oy);
 }

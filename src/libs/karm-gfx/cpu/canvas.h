@@ -27,6 +27,7 @@ struct CpuCanvas : Canvas {
         Math::Trans2f trans = Math::Trans2f::identity();
         Opt<Rc<Surface>> clipMask = NONE;
         Math::Recti clipBound = {0, 0};
+        float opacity = 1.0;
     };
 
     Opt<MutPixels> _pixels{};
@@ -66,6 +67,8 @@ struct CpuCanvas : Canvas {
     void fillStyle(Fill style) override;
 
     void strokeStyle(Stroke style) override;
+
+    void opacity(f64 opacity) override;
 
     void transform(Math::Trans2f trans) override;
 

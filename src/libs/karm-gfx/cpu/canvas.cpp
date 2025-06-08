@@ -63,6 +63,10 @@ void CpuCanvas::strokeStyle(Stroke style) {
     current().stroke = style;
 }
 
+void CpuCanvas::opacity(f64 opacity) {
+    current().opacity = opacity;
+}
+
 void CpuCanvas::transform(Math::Trans2f trans) {
     auto& t = current().trans;
     t = trans.multiply(t);
@@ -71,6 +75,7 @@ void CpuCanvas::transform(Math::Trans2f trans) {
 // MARK: Path Operations -------------------------------------------------------
 
 void CpuCanvas::_fillImpl(auto fill, auto format, FillRule fillRule) {
+    auto opacity = current().opacity;
     if (current().clipMask.has()) {
         auto& clipMask = *current().clipMask.unwrap();
         _rast.fill(_poly, current().clip, fillRule, [&](CpuRast::Frag frag) {
@@ -78,7 +83,7 @@ void CpuCanvas::_fillImpl(auto fill, auto format, FillRule fillRule) {
 
             auto* pixel = mutPixels().pixelUnsafe(frag.xy);
             auto color = fill.sample(frag.uv);
-            color.alpha *= frag.a * (mask / 255.0);
+            color.alpha *= frag.a * (mask / 255.0) * opacity;
             auto c = format.load(pixel);
             c = color.blendOver(c);
             format.store(pixel, c);
@@ -87,7 +92,7 @@ void CpuCanvas::_fillImpl(auto fill, auto format, FillRule fillRule) {
         _rast.fill(_poly, current().clip, fillRule, [&](CpuRast::Frag frag) {
             auto* pixel = mutPixels().pixelUnsafe(frag.xy);
             auto color = fill.sample(frag.uv);
-            color.alpha *= frag.a;
+            color.alpha *= frag.a * opacity;
             auto c = format.load(pixel);
             c = color.blendOver(c);
             format.store(pixel, c);
@@ -96,6 +101,7 @@ void CpuCanvas::_fillImpl(auto fill, auto format, FillRule fillRule) {
 
 void CpuCanvas::_FillSmoothImpl(auto fill, auto format, FillRule fillRule) {
     Math::Vec2f last = {0, 0};
+    auto opacity = current().opacity;
     auto fillComponent = [&](auto comp, Math::Vec2f pos) {
         _poly.offset(pos - last);
         last = pos;
@@ -107,7 +113,7 @@ void CpuCanvas::_FillSmoothImpl(auto fill, auto format, FillRule fillRule) {
 
                 auto pixel = mutPixels().pixelUnsafe(frag.xy);
                 auto color = fill.sample(frag.uv);
-                color.alpha *= frag.a * (mask / 255.0);
+                color.alpha *= frag.a * (mask / 255.0) * opacity;
                 auto c = format.load(pixel);
                 c = color.blendOverComponent(c, comp);
                 format.store(pixel, c);
@@ -116,7 +122,7 @@ void CpuCanvas::_FillSmoothImpl(auto fill, auto format, FillRule fillRule) {
             _rast.fill(_poly, current().clip, fillRule, [&](CpuRast::Frag frag) {
                 auto pixel = mutPixels().pixelUnsafe(frag.xy);
                 auto color = fill.sample(frag.uv);
-                color.alpha *= frag.a;
+                color.alpha *= frag.a * opacity;
                 auto c = format.load(pixel);
                 c = color.blendOverComponent(c, comp);
                 format.store(pixel, c);

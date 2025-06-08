@@ -55,6 +55,8 @@ struct Canvas : Gfx::Canvas {
 
     void strokeStyle(Gfx::Stroke) override;
 
+    void opacity(f64 opacity) override;
+
     void transform(Math::Trans2f trans) override;
 
     // MARK: Path Operations ---------------------------------------------------
