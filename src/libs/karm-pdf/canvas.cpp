@@ -44,57 +44,57 @@ void Canvas::closePath() {
     _e.ln("h");
 }
 
-void Canvas::moveTo(Math::Vec2f p, Math::Path::Flags flags) {
-    p = _mapPointAndUpdate(p, flags);
+void Canvas::moveTo(Math::Vec2f p, Flags<Math::Path::Option> options) {
+    p = _mapPointAndUpdate(p, options);
     _e.ln("{:.2} {:.2} m", p.x, p.y);
 }
 
-void Canvas::lineTo(Math::Vec2f p, Math::Path::Flags flags) {
-    p = _mapPointAndUpdate(p, flags);
+void Canvas::lineTo(Math::Vec2f p, Flags<Math::Path::Option> options) {
+    p = _mapPointAndUpdate(p, options);
     _e.ln("{:.2} {:.2} l", p.x, p.y);
 }
 
-void Canvas::hlineTo(f64 x, Math::Path::Flags flags) {
-    auto p = _mapPoint({x, 0}, flags);
+void Canvas::hlineTo(f64 x, Flags<Math::Path::Option> options) {
+    auto p = _mapPoint({x, 0}, options);
     _e.ln("{:.2} 0 l", p.x);
 }
 
-void Canvas::vlineTo(f64 y, Math::Path::Flags flags) {
-    auto p = _mapPoint({0, y}, flags);
+void Canvas::vlineTo(f64 y, Flags<Math::Path::Option> options) {
+    auto p = _mapPoint({0, y}, options);
     _e.ln("0 {:.2} l", p.y);
 }
 
-void Canvas::cubicTo(Math::Vec2f cp1, Math::Vec2f cp2, Math::Vec2f p, Math::Path::Flags flags) {
-    cp1 = _mapPoint(cp1, flags);
-    cp2 = _mapPoint(cp2, flags);
-    p = _mapPointAndUpdate(p, flags);
+void Canvas::cubicTo(Math::Vec2f cp1, Math::Vec2f cp2, Math::Vec2f p, Flags<Math::Path::Option> options) {
+    cp1 = _mapPoint(cp1, options);
+    cp2 = _mapPoint(cp2, options);
+    p = _mapPointAndUpdate(p, options);
     _e.ln("{:.2} {:.2} {:.2} {:.2} {:.2} {:.2} c", cp1.x, cp1.y, cp2.x, cp2.y, p.x, p.y);
 }
 
-void Canvas::quadTo(Math::Vec2f cp, Math::Vec2f p, Math::Path::Flags flags) {
+void Canvas::quadTo(Math::Vec2f cp, Math::Vec2f p, Flags<Math::Path::Option> options) {
     auto curve = Math::Curvef::quadratic(_p, cp, p);
-    cubicTo(curve.b, curve.c, curve.d, flags);
+    cubicTo(curve.b, curve.c, curve.d, options);
 }
 
-void Canvas::arcTo(Math::Vec2f, f64, Math::Vec2f, Math::Path::Flags) {
+void Canvas::arcTo(Math::Vec2f, f64, Math::Vec2f, Flags<Math::Path::Option>) {
     logDebugIf(DEBUG_CANVAS, "pdf: arcTo() operation not implemented");
 }
 
 void Canvas::line(Math::Edgef line) {
-    moveTo(line.start, Math::Path::DEFAULT);
-    lineTo(line.end, Math::Path::DEFAULT);
+    moveTo(line.start, {});
+    lineTo(line.end, {});
 }
 
 void Canvas::curve(Math::Curvef curve) {
-    moveTo(curve.a, Math::Path::DEFAULT);
-    cubicTo(curve.b, curve.c, curve.d, Math::Path::DEFAULT);
+    moveTo(curve.a, {});
+    cubicTo(curve.b, curve.c, curve.d, {});
 }
 
 void Canvas::rect(Math::Rectf rect, Math::Radiif) {
-    moveTo(rect.topStart(), Math::Path::DEFAULT);
-    lineTo(rect.topEnd(), Math::Path::DEFAULT);
-    lineTo(rect.bottomEnd(), Math::Path::DEFAULT);
-    lineTo(rect.bottomStart(), Math::Path::DEFAULT);
+    moveTo(rect.topStart(), {});
+    lineTo(rect.topEnd(), {});
+    lineTo(rect.bottomEnd(), {});
+    lineTo(rect.bottomStart(), {});
     closePath();
 }
 
@@ -109,9 +109,9 @@ void Canvas::arc(Math::Arcf) {
 void Canvas::path(Math::Path const& path) {
     // FIXME: use list of ops
     for (auto& contour : path.iterContours()) {
-        moveTo(contour[0], Math::Path::DEFAULT);
+        moveTo(contour[0], {});
         for (auto& vert : next(contour)) {
-            lineTo(vert, Math::Path::DEFAULT);
+            lineTo(vert, {});
         }
         closePath();
     }

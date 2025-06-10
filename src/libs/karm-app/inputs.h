@@ -1,6 +1,6 @@
 #pragma once
 
-#include <karm-base/enum.h>
+#include <karm-base/flags.h>
 #include <karm-math/vec.h>
 
 #include "event.h"
@@ -10,8 +10,6 @@ namespace Karm::App {
 // MARK: Keyboard --------------------------------------------------------------
 
 enum struct KeyMod : u16 {
-    NONE = 0,
-
     LSHIFT = 1 << 0,
     RSHIFT = 1 << 1,
     LCTRL = 1 << 2,
@@ -33,11 +31,9 @@ enum struct KeyMod : u16 {
     SUPER = 1 << 15,
 };
 
-FlagsEnum$(KeyMod);
-
-static inline bool match(KeyMod in, KeyMod mods) {
-    KeyMod either = KeyMod::NONE;
-    KeyMod mask = KeyMod::NONE;
+static inline bool match(Flags<KeyMod> in, Flags<KeyMod> mods) {
+    Flags<KeyMod> either = {};
+    Flags<KeyMod> mask = {};
 
     // Removing the non-combinable modifiers from the matching
     // Because eg: NumLock + A should be considered exactly like A
@@ -57,25 +53,25 @@ static inline bool match(KeyMod in, KeyMod mods) {
     if (static_cast<bool>(in & KeyMod::LSHIFT) or
         static_cast<bool>(in & KeyMod::RSHIFT)) {
         either |= KeyMod::SHIFT;
-        mask |= KeyMod::LSHIFT | KeyMod::RSHIFT;
+        mask |= Flags{KeyMod::LSHIFT, KeyMod::RSHIFT};
     }
 
     if (static_cast<bool>(in & KeyMod::LCTRL) or
         static_cast<bool>(in & KeyMod::RCTRL)) {
         either |= KeyMod::CTRL;
-        mask |= KeyMod::LCTRL | KeyMod::RCTRL;
+        mask |= Flags{KeyMod::LCTRL, KeyMod::RCTRL};
     }
 
     if (static_cast<bool>(in & KeyMod::LALT) or
         static_cast<bool>(in & KeyMod::RALT)) {
         either |= KeyMod::ALT;
-        mask |= KeyMod::LALT | KeyMod::RALT;
+        mask |= Flags{KeyMod::LALT, KeyMod::RALT};
     }
 
     if (static_cast<bool>(in & KeyMod::LSUPER) or
         static_cast<bool>(in & KeyMod::RSUPER)) {
         either |= KeyMod::SUPER;
-        mask |= KeyMod::LSUPER | KeyMod::RSUPER;
+        mask |= Flags{KeyMod::LSUPER, KeyMod::RSUPER};
     }
 
     return (((in | either) & mods) == mods) and
@@ -129,6 +125,7 @@ struct KeyboardEvent {
     enum {
         PRESS,
         RELEASE,
+        REPEATE,
     } type;
 
     /// The code of the key that was pressed or released
@@ -139,12 +136,12 @@ struct KeyboardEvent {
     /// This value is independent of the current keyboard layout
     Key code;
 
-    KeyMod mods = KeyMod::NONE;
+    Flags<KeyMod> mods;
 };
 
 struct TypeEvent {
     Rune rune;
-    KeyMod mods = KeyMod::NONE;
+    Flags<KeyMod> mods = {};
 };
 
 // MARK: Mouse -----------------------------------------------------------------
@@ -159,8 +156,6 @@ enum struct MouseButton : u8 {
     X2 = 1 << 4,
 };
 
-FlagsEnum$(MouseButton);
-
 struct MouseEvent {
     enum {
         PRESS,
@@ -172,11 +167,11 @@ struct MouseEvent {
     Math::Vec2i pos{};
     Math::Vec2f scroll{};
     Math::Vec2i delta{};
-    MouseButton buttons{};
+    Flags<MouseButton> buttons{};
     KeyMod mods{};
     MouseButton button{};
 
-    bool pressed(MouseButton button) const {
+    bool pressed(Flags<MouseButton> button) const {
         return (bool)(buttons & button);
     }
 

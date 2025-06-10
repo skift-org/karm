@@ -70,9 +70,9 @@ Duration uptime();
 
 // MARK: Memory Managment ------------------------------------------------------
 
-Res<Sys::MmapResult> memMap(Sys::MmapOptions const& options);
+Res<Sys::MmapResult> memMap(Sys::MmapProps const& options);
 
-Res<Sys::MmapResult> memMap(Sys::MmapOptions const& options, Rc<Sys::Fd> fd);
+Res<Sys::MmapResult> memMap(Sys::MmapProps const& options, Rc<Sys::Fd> fd);
 
 Res<> memUnmap(void const* buf, usize len);
 

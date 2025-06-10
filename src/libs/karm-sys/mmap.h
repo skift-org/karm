@@ -9,7 +9,7 @@ namespace Karm::Sys {
 
 struct Mmap :
     Meta::NoCopy {
-    using enum MmapFlags;
+    using enum MmapOption;
 
     usize _paddr{};
     void const* _buf{};
@@ -79,7 +79,7 @@ struct Mmap :
 struct MutMmap :
     Io::Flusher,
     Meta::NoCopy {
-    using enum MmapFlags;
+    using enum MmapOption;
 
     usize _paddr{};
     void* _buf{};
@@ -177,60 +177,60 @@ struct MutMmap :
 };
 
 struct _Mmap {
-    using enum MmapFlags;
+    using enum MmapOption;
 
-    MmapOptions _options{};
+    MmapProps _props{};
     Opt<Rc<Fd>> _fd;
 
     _Mmap& read() {
-        _options.flags |= READ;
+        _props.options |= READ;
         return *this;
     }
 
     _Mmap& write() {
-        _options.flags |= WRITE;
+        _props.options |= WRITE;
         return *this;
     }
 
     _Mmap& exec() {
-        _options.flags |= EXEC;
+        _props.options |= EXEC;
         return *this;
     }
 
     _Mmap& stack() {
-        _options.flags |= STACK;
+        _props.options |= STACK;
         return *this;
     }
 
     _Mmap& paddr(usize paddr) {
-        _options.paddr = paddr;
+        _props.paddr = paddr;
         return *this;
     }
 
     _Mmap& vaddr(usize paddr) {
-        _options.vaddr = paddr;
+        _props.vaddr = paddr;
         return *this;
     }
 
     _Mmap& offset(usize offset) {
-        _options.offset = offset;
+        _props.offset = offset;
         return *this;
     }
 
     _Mmap& size(usize size) {
-        _options.size = size;
+        _props.size = size;
         return *this;
     }
 
     Res<Mmap> map() {
-        _options.flags |= READ;
-        MmapResult range = try$(_Embed::memMap(_options));
+        _props.options |= READ;
+        MmapResult range = try$(_Embed::memMap(_props));
         return Ok(Mmap{range.paddr, (void const*)range.vaddr, range.size});
     }
 
     Res<Mmap> map(Rc<Fd> fd) {
-        _options.flags |= READ;
-        MmapResult range = try$(_Embed::memMap(_options, fd));
+        _props.options |= READ;
+        MmapResult range = try$(_Embed::memMap(_props, fd));
         return Ok(Mmap{range.paddr, (void const*)range.vaddr, range.size});
     }
 
@@ -239,14 +239,14 @@ struct _Mmap {
     }
 
     Res<MutMmap> mapMut() {
-        _options.flags |= WRITE;
-        MmapResult range = try$(_Embed::memMap(_options));
+        _props.options |= WRITE;
+        MmapResult range = try$(_Embed::memMap(_props));
         return Ok(MutMmap{range.paddr, (void*)range.vaddr, range.size});
     }
 
     Res<MutMmap> mapMut(Rc<Fd> fd) {
-        _options.flags |= WRITE;
-        MmapResult result = try$(_Embed::memMap(_options, fd));
+        _props.options |= WRITE;
+        MmapResult result = try$(_Embed::memMap(_props, fd));
         return Ok(MutMmap{result.paddr, (void*)result.vaddr, result.size});
     }
 

@@ -456,25 +456,25 @@ struct SceneCanvas : View<SceneCanvas> {
     void paint(Gfx::Canvas& g, Math::Recti rect) override {
         g.push();
         g.clip(_bound);
-        g.origin(_bound.xy.cast<f64>());
-        g.scale(_bound.size().cast<f64>() / _scene->bound().size().cast<f64>());
 
-        Math::Trans2f trans;
-        trans = trans.translated(-_bound.xy.cast<f64>());
-        trans = trans.scaled(_bound.size().cast<f64>() / _scene->bound().size().cast<f64>());
+        auto transform =
+            Math::Trans2f::translate(_bound.xy.cast<f64>())
+                .scaled(_bound.size().cast<f64>() / _scene->bound().size().cast<f64>());
+        g.transform(transform);
 
-        auto rectInScene = trans.inverse().apply(rect.cast<f64>()).bound();
-
-        _scene->paint(g, rectInScene, _options);
+        auto clip =
+            transform
+                .inverse()
+                .apply(rect.cast<f64>())
+                .bound();
+        _scene->paint(g, clip, _options);
 
         g.pop();
     }
 
     Math::Vec2i size(Math::Vec2i, Hint hint) override {
-        if (hint == Hint::MIN) {
+        if (hint == Hint::MIN)
             return 0;
-        }
-
         return _scene->bound().size().ceil().cast<isize>();
     }
 };

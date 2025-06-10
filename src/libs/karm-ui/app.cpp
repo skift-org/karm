@@ -14,7 +14,7 @@ export Async::Task<> runAsync(Sys::Context& ctx, Child root) {
     co_return co_await _Embed::runAsync(ctx, std::move(root));
 }
 
-export void mountApp(Cli::Command& cmd, Slot rootSlot) { 
+export void mountApp(Cli::Command& cmd, Slot rootSlot) {
     Cli::Flag mobileArg = Cli::flag(NONE, "mobile"s, "Show mobile layout."s);
 
     cmd.option(mobileArg);

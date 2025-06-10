@@ -338,28 +338,28 @@ Duration uptime() {
 
 // MARK: Memory Managment ------------------------------------------------------
 
-isize mmapOptionsToProt(MmapOptions const& options) {
+isize MmapPropsToProt(MmapProps const& options) {
     isize prot = 0;
 
-    if (options.flags & MmapFlags::READ)
+    if (options.options & MmapOption::READ)
         prot |= PROT_READ;
 
-    if (options.flags & MmapFlags::WRITE)
+    if (options.options & MmapOption::WRITE)
         prot |= PROT_WRITE;
 
-    if (options.flags & MmapFlags::EXEC)
+    if (options.options & MmapOption::EXEC)
         prot |= PROT_EXEC;
 
     return prot;
 }
 
-Res<MmapResult> memMap(MmapOptions const& options) {
-    void* addr = mmap((void*)options.vaddr, options.size, mmapOptionsToProt(options), MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+Res<MmapResult> memMap(MmapProps const& options) {
+    void* addr = mmap((void*)options.vaddr, options.size, MmapPropsToProt(options), MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
 
     if (addr == MAP_FAILED)
         return Posix::fromLastErrno();
 
-    if (options.flags & MmapFlags::PREFETCH) {
+    if (options.options & MmapOption::PREFETCH) {
         if (madvise(addr, options.size, MADV_WILLNEED) < 0)
             return Posix::fromLastErrno();
     }
@@ -367,14 +367,14 @@ Res<MmapResult> memMap(MmapOptions const& options) {
     return Ok(MmapResult{0, (usize)addr, (usize)options.size});
 }
 
-Res<MmapResult> memMap(MmapOptions const& options, Rc<Fd> maybeFd) {
+Res<MmapResult> memMap(MmapProps const& options, Rc<Fd> maybeFd) {
     Rc<Posix::Fd> fd = try$(maybeFd.cast<Posix::Fd>());
     usize size = options.size;
 
     if (size == 0)
         size = try$(Io::size(*fd));
 
-    void* addr = mmap((void*)options.vaddr, size, mmapOptionsToProt(options), MAP_SHARED, fd->_raw, options.offset);
+    void* addr = mmap((void*)options.vaddr, size, MmapPropsToProt(options), MAP_SHARED, fd->_raw, options.offset);
 
     if (addr == MAP_FAILED)
         return Posix::fromLastErrno();

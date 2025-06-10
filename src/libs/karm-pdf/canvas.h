@@ -12,7 +12,7 @@ struct FontManager {
     Map<_Cell<NoLock>*, Tuple<usize, Rc<Text::Fontface>>> mapping;
 
     usize getFontId(Rc<Text::Fontface> font) {
-        auto addr = font._cell;
+        auto* addr = font._cell;
         if (auto id = mapping.tryGet(addr))
             return id.unwrap().v0;
 
@@ -32,14 +32,14 @@ struct Canvas : Gfx::Canvas {
     Canvas(Io::Emit e, Math::Vec2f mediaBox, MutCursor<FontManager> fontManager)
         : _e{e}, _mediaBox{mediaBox}, _fontManager{fontManager} {}
 
-    Math::Vec2f _mapPoint(Math::Vec2f p, Math::Path::Flags flags) {
-        if (flags & Math::Path::RELATIVE)
+    Math::Vec2f _mapPoint(Math::Vec2f p, Flags<Math::Path::Option> options) {
+        if (options & Math::Path::RELATIVE)
             return p + _p;
         return p;
     }
 
-    Math::Vec2f _mapPointAndUpdate(Math::Vec2f p, Math::Path::Flags flags) {
-        if (flags & Math::Path::RELATIVE)
+    Math::Vec2f _mapPointAndUpdate(Math::Vec2f p, Flags<Math::Path::Option> options) {
+        if (options & Math::Path::RELATIVE)
             p = p + _p;
         _p = p;
         return p;
@@ -65,19 +65,19 @@ struct Canvas : Gfx::Canvas {
 
     void closePath() override;
 
-    void moveTo(Math::Vec2f p, Math::Path::Flags flags) override;
+    void moveTo(Math::Vec2f p, Flags<Math::Path::Option> options) override;
 
-    void lineTo(Math::Vec2f p, Math::Path::Flags flags) override;
+    void lineTo(Math::Vec2f p, Flags<Math::Path::Option> options) override;
 
-    void hlineTo(f64 x, Math::Path::Flags flags) override;
+    void hlineTo(f64 x, Flags<Math::Path::Option> options) override;
 
-    void vlineTo(f64 y, Math::Path::Flags flags) override;
+    void vlineTo(f64 y, Flags<Math::Path::Option> options) override;
 
-    void cubicTo(Math::Vec2f cp1, Math::Vec2f cp2, Math::Vec2f p, Math::Path::Flags flags) override;
+    void cubicTo(Math::Vec2f cp1, Math::Vec2f cp2, Math::Vec2f p, Flags<Math::Path::Option> options) override;
 
-    void quadTo(Math::Vec2f cp, Math::Vec2f p, Math::Path::Flags flags) override;
+    void quadTo(Math::Vec2f cp, Math::Vec2f p, Flags<Math::Path::Option> options) override;
 
-    void arcTo(Math::Vec2f radii, f64 angle, Math::Vec2f p, Math::Path::Flags flags) override;
+    void arcTo(Math::Vec2f radii, f64 angle, Math::Vec2f p, Flags<Math::Path::Option> options) override;
 
     void line(Math::Edgef line) override;
 

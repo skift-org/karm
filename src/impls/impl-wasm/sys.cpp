@@ -135,7 +135,7 @@ Res<Rc<Fd>> listenIpc(Mime::Url) {
 
 // MARK: Memory Managment ------------------------------------------------------
 
-Res<MmapResult> memMap(MmapOptions const&, Rc<Fd>) {
+Res<MmapResult> memMap(MmapProps const&, Rc<Fd>) {
     return Error::notImplemented("file mapping not supported");
 }
 

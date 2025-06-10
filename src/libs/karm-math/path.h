@@ -1,6 +1,6 @@
 #pragma once
 
-#include <karm-base/enum.h>
+#include <karm-base/flags.h>
 #include <karm-base/string.h>
 #include <karm-base/vec.h>
 #include <karm-io/expr.h>
@@ -17,7 +17,7 @@
 namespace Karm::Math {
 
 struct Path {
-    enum Code {
+    enum struct Code {
         NOP,
         CLEAR,
         CLOSE,
@@ -30,18 +30,20 @@ struct Path {
         ARC_TO,
     };
 
-    enum Flags {
-        DEFAULT = 0,
+    using enum Code;
 
+    enum struct Option {
         LARGE = 1 << 1,
         SWEEP = 1 << 2,
         SMOOTH = 1 << 3,
         RELATIVE = 1 << 4,
     };
 
+    using enum Option;
+
     struct Op {
         Code code{};
-        Flags flags{};
+        Flags<Option> options{};
 
         Math::Vec2f radii{};
         f64 angle{};
@@ -49,20 +51,20 @@ struct Path {
         Math::Vec2f cp2{};
         Math::Vec2f p{};
 
-        Op(Code code, Flags flags = DEFAULT)
-            : code(code), flags(flags) {}
+        Op(Code code, Flags<Option> options = {})
+            : code(code), options(options) {}
 
-        Op(Code code, Math::Vec2f p, Flags flags = DEFAULT)
-            : code(code), flags(flags), p(p) {}
+        Op(Code code, Math::Vec2f p, Flags<Option> options = {})
+            : code(code), options(options), p(p) {}
 
-        Op(Code code, Math::Vec2f cp2, Math::Vec2f p, Flags flags = DEFAULT)
-            : code(code), flags(flags), cp2(cp2), p(p) {}
+        Op(Code code, Math::Vec2f cp2, Math::Vec2f p, Flags<Option> options = {})
+            : code(code), options(options), cp2(cp2), p(p) {}
 
-        Op(Code code, Math::Vec2f cp1, Math::Vec2f cp2, Math::Vec2f p, Flags flags = DEFAULT)
-            : code(code), flags(flags), cp1(cp1), cp2(cp2), p(p) {}
+        Op(Code code, Math::Vec2f cp1, Math::Vec2f cp2, Math::Vec2f p, Flags<Option> options = {})
+            : code(code), options(options), cp1(cp1), cp2(cp2), p(p) {}
 
-        Op(Code code, Math::Vec2f radii, f64 angle, Math::Vec2f p, Flags flags = DEFAULT)
-            : code(code), flags(flags), radii(radii), angle(angle), p(p) {}
+        Op(Code code, Math::Vec2f radii, f64 angle, Math::Vec2f p, Flags<Option> options = {})
+            : code(code), options(options), radii(radii), angle(angle), p(p) {}
 
         void repr(Io::Emit& e) const;
     };
@@ -113,7 +115,7 @@ struct Path {
 
     void _flattenCurveTo(Math::Curvef c, isize depth = 0);
 
-    void _flattenArcTo(Math::Vec2f start, Math::Vec2f radii, f64 angle, Flags flags, Math::Vec2f point);
+    void _flattenArcTo(Math::Vec2f start, Math::Vec2f radii, f64 angle, Flags<Option> options, Math::Vec2f point);
 
     // MARK: Operations --------------------------------------------------------
 
@@ -123,23 +125,23 @@ struct Path {
 
     void close();
 
-    void moveTo(Math::Vec2f p, Flags flags = DEFAULT);
+    void moveTo(Math::Vec2f p, Flags<Option> options = {});
 
-    void lineTo(Math::Vec2f p, Flags flags = DEFAULT);
+    void lineTo(Math::Vec2f p, Flags<Option> options = {});
 
-    void hlineTo(f64 x, Flags flags = DEFAULT);
+    void hlineTo(f64 x, Flags<Option> options = {});
 
-    void vlineTo(f64 y, Flags flags = DEFAULT);
+    void vlineTo(f64 y, Flags<Option> options = {});
 
-    void cubicTo(Math::Vec2f cp1, Math::Vec2f cp2, Math::Vec2f p, Flags flags = DEFAULT);
+    void cubicTo(Math::Vec2f cp1, Math::Vec2f cp2, Math::Vec2f p, Flags<Option> options = {});
 
-    void smoothCubicTo(Math::Vec2f cp2, Math::Vec2f p, Flags flags = DEFAULT);
+    void smoothCubicTo(Math::Vec2f cp2, Math::Vec2f p, Flags<Option> options = {});
 
-    void quadTo(Math::Vec2f cp, Math::Vec2f p, Flags flags = DEFAULT);
+    void quadTo(Math::Vec2f cp, Math::Vec2f p, Flags<Option> options = {});
 
-    void smoothQuadTo(Math::Vec2f p, Flags flags = DEFAULT);
+    void smoothQuadTo(Math::Vec2f p, Flags<Option> options = {});
 
-    void arcTo(Math::Vec2f radii, f64 angle, Math::Vec2f p, Flags flags = DEFAULT);
+    void arcTo(Math::Vec2f radii, f64 angle, Math::Vec2f p, Flags<Option> options = {});
 
     // MARK: Shapes ------------------------------------------------------------
 
@@ -180,7 +182,5 @@ struct Path {
         e(")");
     }
 };
-
-FlagsEnum$(Path::Flags);
 
 } // namespace Karm::Math

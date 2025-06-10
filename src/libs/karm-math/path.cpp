@@ -41,16 +41,16 @@ void Path::Op::repr(Io::Emit& e) const {
         break;
     }
 
-    if (flags & LARGE)
+    if (options & LARGE)
         e(" LARGE");
 
-    if (flags & RELATIVE)
+    if (options & RELATIVE)
         e(" RELATIVE");
 
-    if (flags & SWEEP)
+    if (options & SWEEP)
         e(" SWEEP");
 
-    if (flags & SMOOTH)
+    if (options & SMOOTH)
         e(" SMOOTH");
 
     e(")");
@@ -73,10 +73,10 @@ Math::Rectf Path::bound() {
 // MARK: Flattening ------------------------------------------------------------
 
 void Path::_flattenClose() {
-    if(_contours.len() > 1){
+    if (_contours.len() > 1) {
         auto end = _verts[last(_contours).end - 1];
         auto start = _verts[last(_contours).start];
-    
+
         // NOTE: remove last edge if it is manually closing the path, since 'z' should be the one closing
         if (Math::epsilonEq(start, end, 0.001)) {
             _verts.popBack();
@@ -119,7 +119,7 @@ void Path::_flattenCurveTo(Math::Curvef curve, isize depth) {
     _flattenCurveTo(right, depth + 1);
 }
 
-void Path::_flattenArcTo(Math::Vec2f start, Math::Vec2f radii, f64 angle, Flags flags, Math::Vec2f point) {
+void Path::_flattenArcTo(Math::Vec2f start, Math::Vec2f radii, f64 angle, Flags<Option> options, Math::Vec2f point) {
     // Ported from canvg (https://github.com/canvg/canvg)
     f64 x1 = start.x;
     f64 y1 = start.y;
@@ -171,8 +171,8 @@ void Path::_flattenArcTo(Math::Vec2f start, Math::Vec2f radii, f64 angle, Flags 
     if (sb > 0.0)
         s = Math::sqrt(sa / sb);
 
-    bool fa = flags & LARGE;
-    bool fs = flags & SWEEP;
+    bool fa = options & LARGE;
+    bool fs = options & SWEEP;
 
     if (fa == fs) {
         s = -s;
@@ -242,11 +242,11 @@ void Path::evalOp(Op op) {
         return;
     }
 
-    if (op.flags & RELATIVE) {
+    if (op.options & RELATIVE) {
         op.cp1 = _lastP + op.cp1;
         op.cp2 = _lastP + op.cp2;
         op.p = _lastP + op.p;
-        op.flags = op.flags & ~RELATIVE;
+        op.options.unset(RELATIVE);
     }
 
     switch (op.code) {
@@ -287,21 +287,21 @@ void Path::evalOp(Op op) {
         break;
 
     case CUBIC_TO:
-        if (op.flags & SMOOTH)
+        if (op.options & SMOOTH)
             op.cp1 = _lastP * 2 - _lastCp;
         _flattenCurveTo(Math::Curvef::cubic(_lastP, op.cp1, op.cp2, op.p));
         _lastCp = op.cp2;
         break;
 
     case QUAD_TO:
-        if (op.flags & SMOOTH)
+        if (op.options & SMOOTH)
             op.cp2 = _lastP * 2 - _lastCp;
         _flattenCurveTo(Math::Curvef::quadratic(_lastP, op.cp2, op.p));
         _lastCp = op.cp2;
         break;
 
     case ARC_TO:
-        _flattenArcTo(_lastP, op.radii, op.angle, op.flags, op.p);
+        _flattenArcTo(_lastP, op.radii, op.angle, op.options, op.p);
         _lastCp = op.p;
         break;
 
@@ -322,40 +322,40 @@ void Path::close() {
     evalOp(CLOSE);
 }
 
-void Path::moveTo(Math::Vec2f p, Flags flags) {
-    evalOp({MOVE_TO, p, flags});
+void Path::moveTo(Math::Vec2f p, Flags<Option> options) {
+    evalOp({MOVE_TO, p, options});
 }
 
-void Path::lineTo(Math::Vec2f p, Flags flags) {
-    evalOp({LINE_TO, p, flags});
+void Path::lineTo(Math::Vec2f p, Flags<Option> options) {
+    evalOp({LINE_TO, p, options});
 }
 
-void Path::hlineTo(f64 x, Flags flags) {
-    evalOp({HLINE_TO, {x, 0}, flags});
+void Path::hlineTo(f64 x, Flags<Option> options) {
+    evalOp({HLINE_TO, {x, 0}, options});
 }
 
-void Path::vlineTo(f64 y, Flags flags) {
-    evalOp({VLINE_TO, {0, y}, flags});
+void Path::vlineTo(f64 y, Flags<Option> options) {
+    evalOp({VLINE_TO, {0, y}, options});
 }
 
-void Path::cubicTo(Math::Vec2f cp1, Math::Vec2f cp2, Math::Vec2f p, Flags flags) {
-    evalOp({CUBIC_TO, cp1, cp2, p, flags});
+void Path::cubicTo(Math::Vec2f cp1, Math::Vec2f cp2, Math::Vec2f p, Flags<Option> options) {
+    evalOp({CUBIC_TO, cp1, cp2, p, options});
 }
 
-void Path::smoothCubicTo(Math::Vec2f cp2, Math::Vec2f p, Flags flags) {
-    evalOp({CUBIC_TO, {}, cp2, p, flags | SMOOTH});
+void Path::smoothCubicTo(Math::Vec2f cp2, Math::Vec2f p, Flags<Option> options) {
+    evalOp({CUBIC_TO, {}, cp2, p, options | SMOOTH});
 }
 
-void Path::quadTo(Math::Vec2f cp, Math::Vec2f p, Flags flags) {
-    evalOp({QUAD_TO, cp, p, flags});
+void Path::quadTo(Math::Vec2f cp, Math::Vec2f p, Flags<Option> options) {
+    evalOp({QUAD_TO, cp, p, options});
 }
 
-void Path::smoothQuadTo(Math::Vec2f p, Flags flags) {
-    evalOp({QUAD_TO, {}, p, flags | SMOOTH});
+void Path::smoothQuadTo(Math::Vec2f p, Flags<Option> options) {
+    evalOp({QUAD_TO, {}, p, options | SMOOTH});
 }
 
-void Path::arcTo(Math::Vec2f radii, f64 angle, Math::Vec2f p, Flags flags) {
-    evalOp({ARC_TO, radii, angle, p, flags});
+void Path::arcTo(Math::Vec2f radii, f64 angle, Math::Vec2f p, Flags<Option> options) {
+    evalOp({ARC_TO, radii, angle, p, options});
 }
 
 // MARK: Shapes ----------------------------------------------------------------
@@ -481,8 +481,9 @@ Opt<Math::Vec2f> _nextVec2f(Io::SScan& s) {
 }
 
 Opt<Path::Op> Path::parseOp(Io::SScan& s, Rune opcode) {
-    Flags flags{};
-    flags |= isAsciiLower(opcode) ? RELATIVE : DEFAULT;
+    Flags<Option> options{};
+
+    options.set(RELATIVE, isAsciiLower(opcode));
     opcode = toAsciiLower(opcode);
 
     auto nextSep = [&] {
@@ -502,31 +503,31 @@ Opt<Path::Op> Path::parseOp(Io::SScan& s, Rune opcode) {
 
     switch (opcode) {
     case 'm': // move to
-        return Op{MOVE_TO, try$(nextCoordPair()), flags};
+        return Op{MOVE_TO, try$(nextCoordPair()), options};
 
     case 'z': // close
-        return Op{CLOSE, flags};
+        return Op{CLOSE, options};
 
     case 'l': // line to
-        return Op{LINE_TO, try$(nextCoordPair()), flags};
+        return Op{LINE_TO, try$(nextCoordPair()), options};
 
     case 'h': // horizontal line to
-        return Op{HLINE_TO, try$(nextCoord()), flags};
+        return Op{HLINE_TO, try$(nextCoord()), options};
 
     case 'v': // vertical line to
-        return Op{VLINE_TO, try$(nextCoord()), flags};
+        return Op{VLINE_TO, try$(nextCoord()), options};
 
     case 'c': // cubic to
-        return Op{CUBIC_TO, try$(nextCoordPair()), try$(nextCoordPair()), try$(nextCoordPair()), flags};
+        return Op{CUBIC_TO, try$(nextCoordPair()), try$(nextCoordPair()), try$(nextCoordPair()), options};
 
     case 's': // smooth cubic to
-        return Op{CUBIC_TO, {}, try$(nextCoordPair()), try$(nextCoordPair()), flags | SMOOTH};
+        return Op{CUBIC_TO, {}, try$(nextCoordPair()), try$(nextCoordPair()), options | SMOOTH};
 
     case 'q': // quad to
-        return Op{QUAD_TO, try$(nextCoordPair()), try$(nextCoordPair()), flags};
+        return Op{QUAD_TO, try$(nextCoordPair()), try$(nextCoordPair()), options};
 
     case 't': // smooth quad to
-        return Op{QUAD_TO, {}, try$(nextCoordPair()), flags | SMOOTH};
+        return Op{QUAD_TO, {}, try$(nextCoordPair()), options | SMOOTH};
 
     case 'a': // arc to
     {
@@ -534,13 +535,14 @@ Opt<Path::Op> Path::parseOp(Io::SScan& s, Rune opcode) {
         auto angle = try$(nextCoord());
 
         nextSep();
-        flags |= s.next() == '1' ? LARGE : DEFAULT;
-
+        if (s.next() == '1')
+            options |= LARGE;
         nextSep();
-        flags |= s.next() == '1' ? SWEEP : DEFAULT;
+        if (s.next() == '1')
+            options |= SWEEP;
 
         auto p = try$(nextCoordPair());
-        return Op{ARC_TO, radii, angle, p, flags};
+        return Op{ARC_TO, radii, angle, p, options};
     }
 
     default:

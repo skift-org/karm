@@ -16,8 +16,6 @@ Async::Task<> sleepyBoy() {
     co_trya$(globalSched().sleepAsync(start + duration));
     auto end = Sys::instant();
 
-    logDebug("slept for {}ms", (end - start).toMSecs());
-
     if (end - start < duration - Duration::fromMSecs(10))
         co_return Error::other("sleepAsync woke up too early");
 

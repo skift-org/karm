@@ -268,46 +268,47 @@ struct SdlHost : Host {
         // clang-format on
     }
 
-    static App::KeyMod _fromSdlMod(u16 sdl) {
-        App::KeyMod mod = App::KeyMod::NONE;
+    static Flags<App::KeyMod> _fromSdlMod(u16 sdl) {
+        Flags<App::KeyMod> mods;
+        ;
 
         if (sdl & KMOD_LSHIFT)
-            mod |= App::KeyMod::LSHIFT;
+            mods |= App::KeyMod::LSHIFT;
 
         if (sdl & KMOD_RSHIFT)
-            mod |= App::KeyMod::RSHIFT;
+            mods |= App::KeyMod::RSHIFT;
 
         if (sdl & KMOD_LCTRL)
-            mod |= App::KeyMod::LCTRL;
+            mods |= App::KeyMod::LCTRL;
 
         if (sdl & KMOD_RCTRL)
-            mod |= App::KeyMod::RCTRL;
+            mods |= App::KeyMod::RCTRL;
 
         if (sdl & KMOD_LALT)
-            mod |= App::KeyMod::LALT;
+            mods |= App::KeyMod::LALT;
 
         if (sdl & KMOD_RALT)
-            mod |= App::KeyMod::RALT;
+            mods |= App::KeyMod::RALT;
 
         if (sdl & KMOD_LGUI)
-            mod |= App::KeyMod::LSUPER;
+            mods |= App::KeyMod::LSUPER;
 
         if (sdl & KMOD_RGUI)
-            mod |= App::KeyMod::RSUPER;
+            mods |= App::KeyMod::RSUPER;
 
         if (sdl & KMOD_NUM)
-            mod |= App::KeyMod::NUM;
+            mods |= App::KeyMod::NUM;
 
         if (sdl & KMOD_CAPS)
-            mod |= App::KeyMod::CAPS;
+            mods |= App::KeyMod::CAPS;
 
         if (sdl & KMOD_MODE)
-            mod |= App::KeyMod::MODE;
+            mods |= App::KeyMod::MODE;
 
         if (sdl & KMOD_SCROLL)
-            mod |= App::KeyMod::SCROLL;
+            mods |= App::KeyMod::SCROLL;
 
-        return mod;
+        return mods;
     }
 
     static App::KeyboardEvent _fromSdlKeyboardEvent(SDL_KeyboardEvent const& sdl) {
@@ -336,10 +337,8 @@ struct SdlHost : Host {
             break;
 
         case SDL_KEYDOWN: {
-            if (sdlEvent.key.repeat)
-                return;
             auto ev = _fromSdlKeyboardEvent(sdlEvent.key);
-            ev.type = App::KeyboardEvent::PRESS;
+            ev.type = sdlEvent.key.repeat ? App::KeyboardEvent::REPEATE : App::KeyboardEvent::PRESS;
             event<App::KeyboardEvent>(*this, ev);
             break;
         }
@@ -366,10 +365,10 @@ struct SdlHost : Host {
             Math::Vec2<i32> screenPos = {};
             SDL_GetGlobalMouseState(&screenPos.x, &screenPos.y);
 
-            auto buttons = App::MouseButton::NONE;
-            buttons |= (sdlEvent.motion.state & SDL_BUTTON_LMASK) ? App::MouseButton::LEFT : App::MouseButton::NONE;
-            buttons |= (sdlEvent.motion.state & SDL_BUTTON_MMASK) ? App::MouseButton::MIDDLE : App::MouseButton::NONE;
-            buttons |= (sdlEvent.motion.state & SDL_BUTTON_RMASK) ? App::MouseButton::RIGHT : App::MouseButton::NONE;
+            Flags<App::MouseButton> buttons;
+            buttons.set(App::MouseButton::LEFT, sdlEvent.motion.state & SDL_BUTTON_LMASK);
+            buttons.set(App::MouseButton::MIDDLE, sdlEvent.motion.state & SDL_BUTTON_MMASK);
+            buttons.set(App::MouseButton::RIGHT, sdlEvent.motion.state & SDL_BUTTON_RMASK);
 
             // do the hit test and update the cursor
 
@@ -432,10 +431,10 @@ struct SdlHost : Host {
                 return;
             }
 
-            App::MouseButton buttons = App::MouseButton::NONE;
-            buttons |= (sdlEvent.motion.state & SDL_BUTTON_LMASK) ? App::MouseButton::LEFT : App::MouseButton::NONE;
-            buttons |= (sdlEvent.motion.state & SDL_BUTTON_MMASK) ? App::MouseButton::MIDDLE : App::MouseButton::NONE;
-            buttons |= (sdlEvent.motion.state & SDL_BUTTON_RMASK) ? App::MouseButton::RIGHT : App::MouseButton::NONE;
+            Flags<App::MouseButton> buttons;
+            buttons.set(App::MouseButton::LEFT, sdlEvent.motion.state & SDL_BUTTON_LMASK);
+            buttons.set(App::MouseButton::MIDDLE, sdlEvent.motion.state & SDL_BUTTON_MMASK);
+            buttons.set(App::MouseButton::RIGHT, sdlEvent.motion.state & SDL_BUTTON_RMASK);
 
             App::MouseButton button = App::MouseButton::NONE;
             if (sdlEvent.button.button == SDL_BUTTON_LEFT) {
@@ -463,10 +462,10 @@ struct SdlHost : Host {
                 return;
             }
 
-            App::MouseButton buttons = App::MouseButton::NONE;
-            buttons |= (sdlEvent.motion.state & SDL_BUTTON_LMASK) ? App::MouseButton::LEFT : App::MouseButton::NONE;
-            buttons |= (sdlEvent.motion.state & SDL_BUTTON_MMASK) ? App::MouseButton::MIDDLE : App::MouseButton::NONE;
-            buttons |= (sdlEvent.motion.state & SDL_BUTTON_RMASK) ? App::MouseButton::RIGHT : App::MouseButton::NONE;
+            Flags<App::MouseButton> buttons;
+            buttons.set(App::MouseButton::LEFT, sdlEvent.motion.state & SDL_BUTTON_LMASK);
+            buttons.set(App::MouseButton::MIDDLE, sdlEvent.motion.state & SDL_BUTTON_MMASK);
+            buttons.set(App::MouseButton::RIGHT, sdlEvent.motion.state & SDL_BUTTON_RMASK);
 
             App::MouseButton button = App::MouseButton::NONE;
             if (sdlEvent.button.button == SDL_BUTTON_LEFT) {
@@ -661,7 +660,7 @@ Res<Rc<Host>> makeHost(Child root) {
     return Ok(host);
 }
 
-Async::Task<> runAsync(Sys::Context& , Child root) {
+Async::Task<> runAsync(Sys::Context&, Child root) {
     auto host = co_try$(makeHost(std::move(root)));
     co_return co_await host->runAsync();
 }

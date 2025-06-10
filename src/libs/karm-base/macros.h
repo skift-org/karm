@@ -16,42 +16,6 @@ namespace Karm {
 #    define no_unique_address no_unique_address
 #endif
 
-// MARK: Enum ------------------------------------------------------------------
-
-#define FlagsEnum$(T)                              \
-    inline T operator~(T a) {                      \
-        using U = ::Karm::Meta::UnderlyingType<T>; \
-        return (T) ~(U)a;                          \
-    }                                              \
-    inline T operator|(T a, T b) {                 \
-        using U = ::Karm::Meta::UnderlyingType<T>; \
-        return (T)((U)a | (U)b);                   \
-    }                                              \
-    inline T operator&(T a, T b) {                 \
-        using U = ::Karm::Meta::UnderlyingType<T>; \
-        return (T)((U)a & (U)b);                   \
-    }                                              \
-    inline T operator^(T a, T b) {                 \
-        using U = ::Karm::Meta::UnderlyingType<T>; \
-        return (T)((U)a ^ (U)b);                   \
-    }                                              \
-    inline bool operator!(T a) {                   \
-        using U = ::Karm::Meta::UnderlyingType<T>; \
-        return not(U) a;                           \
-    }                                              \
-    inline T& operator|=(T& a, T b) {              \
-        using U = ::Karm::Meta::UnderlyingType<T>; \
-        return (T&)((U&)a |= (U)b);                \
-    }                                              \
-    inline T& operator&=(T& a, T b) {              \
-        using U = ::Karm::Meta::UnderlyingType<T>; \
-        return (T&)((U&)a &= (U)b);                \
-    }                                              \
-    inline T& operator^=(T& a, T b) {              \
-        using U = ::Karm::Meta::UnderlyingType<T>; \
-        return (T&)((U&)a ^= (U)b);                \
-    }
-
 // MARK: Try -------------------------------------------------------------------
 
 // Give us a symbole to break one when debbuging error handling.

@@ -17,7 +17,6 @@ struct Context :
     Vec<Rc<Service>> _srvs;
     static Context* _root;
 
-
     Context() {
         if (not _root)
             _root = this;

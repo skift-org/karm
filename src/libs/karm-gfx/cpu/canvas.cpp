@@ -153,32 +153,32 @@ void CpuCanvas::closePath() {
     _path.close();
 }
 
-void CpuCanvas::moveTo(Math::Vec2f p, Math::Path::Flags flags) {
-    _path.moveTo(p, flags);
+void CpuCanvas::moveTo(Math::Vec2f p, Flags<Math::Path::Option> options) {
+    _path.moveTo(p, options);
 }
 
-void CpuCanvas::lineTo(Math::Vec2f p, Math::Path::Flags flags) {
-    _path.lineTo(p, flags);
+void CpuCanvas::lineTo(Math::Vec2f p, Flags<Math::Path::Option> options) {
+    _path.lineTo(p, options);
 }
 
-void CpuCanvas::hlineTo(f64 x, Math::Path::Flags flags) {
-    _path.hlineTo(x, flags);
+void CpuCanvas::hlineTo(f64 x, Flags<Math::Path::Option> options) {
+    _path.hlineTo(x, options);
 }
 
-void CpuCanvas::vlineTo(f64 y, Math::Path::Flags flags) {
-    _path.vlineTo(y, flags);
+void CpuCanvas::vlineTo(f64 y, Flags<Math::Path::Option> options) {
+    _path.vlineTo(y, options);
 }
 
-void CpuCanvas::cubicTo(Math::Vec2f cp1, Math::Vec2f cp2, Math::Vec2f p, Math::Path::Flags flags) {
-    _path.cubicTo(cp1, cp2, p, flags);
+void CpuCanvas::cubicTo(Math::Vec2f cp1, Math::Vec2f cp2, Math::Vec2f p, Flags<Math::Path::Option> options) {
+    _path.cubicTo(cp1, cp2, p, options);
 }
 
-void CpuCanvas::quadTo(Math::Vec2f cp, Math::Vec2f p, Math::Path::Flags flags) {
-    _path.quadTo(cp, p, flags);
+void CpuCanvas::quadTo(Math::Vec2f cp, Math::Vec2f p, Flags<Math::Path::Option> options) {
+    _path.quadTo(cp, p, options);
 }
 
-void CpuCanvas::arcTo(Math::Vec2f radii, f64 angle, Math::Vec2f p, Math::Path::Flags flags) {
-    _path.arcTo(radii, angle, p, flags);
+void CpuCanvas::arcTo(Math::Vec2f radii, f64 angle, Math::Vec2f p, Flags<Math::Path::Option> options) {
+    _path.arcTo(radii, angle, p, options);
 }
 
 void CpuCanvas::line(Math::Edgef line) {

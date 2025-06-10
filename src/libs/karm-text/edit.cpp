@@ -13,7 +13,7 @@ Opt<Action> Action::fromEvent(App::Event& e) {
         return Action{TYPE, te->rune};
     } else if (
         auto ke = e.is<App::KeyboardEvent>();
-        ke and ke->type == App::KeyboardEvent::PRESS
+        ke and (ke->type == App::KeyboardEvent::PRESS or ke->type == App::KeyboardEvent::REPEATE)
     ) {
         bool shift = App::match(ke->mods, App::KeyMod::SHIFT);
         bool ctrl = App::match(ke->mods, App::KeyMod::CTRL);

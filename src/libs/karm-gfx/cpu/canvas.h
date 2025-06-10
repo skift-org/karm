@@ -84,19 +84,19 @@ struct CpuCanvas : Canvas {
 
     void closePath() override;
 
-    void moveTo(Math::Vec2f p, Math::Path::Flags flags) override;
+    void moveTo(Math::Vec2f p, Flags<Math::Path::Option> options) override;
 
-    void lineTo(Math::Vec2f p, Math::Path::Flags flags) override;
+    void lineTo(Math::Vec2f p, Flags<Math::Path::Option> options) override;
 
-    void hlineTo(f64 x, Math::Path::Flags flags) override;
+    void hlineTo(f64 x, Flags<Math::Path::Option> options) override;
 
-    void vlineTo(f64 y, Math::Path::Flags flags) override;
+    void vlineTo(f64 y, Flags<Math::Path::Option> options) override;
 
-    void cubicTo(Math::Vec2f cp1, Math::Vec2f cp2, Math::Vec2f p, Math::Path::Flags flags) override;
+    void cubicTo(Math::Vec2f cp1, Math::Vec2f cp2, Math::Vec2f p, Flags<Math::Path::Option> options) override;
 
-    void quadTo(Math::Vec2f cp, Math::Vec2f p, Math::Path::Flags flags) override;
+    void quadTo(Math::Vec2f cp, Math::Vec2f p, Flags<Math::Path::Option> options) override;
 
-    void arcTo(Math::Vec2f radii, f64 angle, Math::Vec2f p, Math::Path::Flags flags) override;
+    void arcTo(Math::Vec2f radii, f64 angle, Math::Vec2f p, Flags<Math::Path::Option> options) override;
 
     void line(Math::Edgef line) override;
 
