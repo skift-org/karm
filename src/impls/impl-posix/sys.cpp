@@ -476,11 +476,17 @@ Async::Task<Vec<Ip>> ipLookupAsync(Str host) {
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
 
+    Vec<Ip> ips;
+    if (host == "localhost") {
+        ips.pushBack(Ip4::localhost());
+        ips.pushBack(Ip6::localhost());
+        co_return Ok(ips);
+    }
+
     struct addrinfo* res;
     if (getaddrinfo(host.buf(), nullptr, &hints, &res) < 0)
         co_return Posix::fromLastErrno();
 
-    Vec<Ip> ips;
     for (auto* p = res; p; p = p->ai_next) {
         if (p->ai_family == AF_INET) {
             struct sockaddr_in* addr = (struct sockaddr_in*)p->ai_addr;
