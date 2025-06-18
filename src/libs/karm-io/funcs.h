@@ -37,6 +37,38 @@ static inline Res<String> readAllUtf8(Readable auto& reader) {
     return Ok(writer.take());
 }
 
+static inline Res<Tuple<usize, bool>> readLine(Readable auto& reader, Writable auto& writer, Bytes delim) {
+    if (delim.len() > 16)
+        panic("delimiter string too large");
+
+    u8 b;
+    usize result = 0;
+    Ring<u8> lastBytes{delim.len()};
+
+    while (true) {
+        auto read = try$(reader.read({&b, 1}));
+
+        if (read == 0)
+            return Ok(Tuple<usize, bool>{result, false});
+
+        result += read;
+
+        if (lastBytes.rem() == 0)
+            lastBytes.popFront();
+        lastBytes.pushBack(b);
+
+        auto written = try$(writer.write({&b, 1}));
+        if (written != read)
+            return Error::writeZero();
+
+        if (lastBytes == delim) {
+            result -= delim.len();
+            break;
+        }
+    }
+    return Ok(Tuple<usize, bool>{result, true});
+}
+
 // MARK: Write -----------------------------------------------------------------
 
 static inline Res<usize> pwrite(Writable auto& writer, Bytes bytes, Seek seek) {
@@ -113,38 +145,6 @@ static inline Res<usize> copy(Readable auto& reader, Writable auto& writer, usiz
         size -= read;
     }
     return Ok(result);
-}
-
-static inline Res<Tuple<usize, bool>> readLine(Readable auto& reader, Writable auto& writer, Bytes delim) {
-    if (delim.len() > 16)
-        panic("delimiter string too large");
-
-    u8 b;
-    usize result = 0;
-    Ring<u8> lastBytes{delim.len()};
-
-    while (true) {
-        auto read = try$(reader.read({&b, 1}));
-
-        if (read == 0)
-            return Ok(Tuple<usize, bool>{result, false});
-
-        result += read;
-
-        if (lastBytes.rem() == 0)
-            lastBytes.popFront();
-        lastBytes.pushBack(b);
-
-        auto written = try$(writer.write({&b, 1}));
-        if (written != read)
-            return Error::writeZero();
-
-        if (lastBytes == delim) {
-            result -= delim.len();
-            break;
-        }
-    }
-    return Ok(Tuple<usize, bool>{result, true});
 }
 
 } // namespace Karm::Io
