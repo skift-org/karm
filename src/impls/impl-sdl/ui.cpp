@@ -8,10 +8,13 @@ module;
 #include <karm-logger/logger.h>
 #include <karm-pkg/bundle.h>
 #include <karm-sys/time.h>
+#include <karm-sys/context.h>
 
-module Karm.Ui:_embed;
+module Karm.Ui;
 
-import Karm.Ui;
+import :host;
+import :node;
+import :drag;
 
 namespace Karm::Ui::_Embed {
 
@@ -632,7 +635,7 @@ static Res<> _setWindowIcon(SDL_Window* window) {
     return Ok();
 }
 
-Res<Rc<Host>> makeHost(Child root) {
+static Res<Rc<Host>> makeHost(Child root) {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
 
     auto size = root->size({1024, 720}, Hint::MIN);

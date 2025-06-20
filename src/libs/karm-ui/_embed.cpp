@@ -1,18 +1,13 @@
 module;
 
-#include <karm-base/rc.h>
 #include <karm-sys/context.h>
 
 export module Karm.Ui:_embed;
 
-namespace Karm::Ui {
-
-struct Node;
-
-} // namespace Karm::Ui
+import :node;
 
 namespace Karm::Ui::_Embed {
 
-Async::Task<> runAsync(Sys::Context&, Rc<Node> root);
+export Async::Task<> runAsync(Sys::Context&, Child root);
 
 } // namespace Karm::Ui::_Embed
