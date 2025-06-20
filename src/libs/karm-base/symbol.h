@@ -59,19 +59,41 @@ struct _SymbolBuf {
     }
 };
 
+/// A symbol is a unique string that is interned in a global registry.
+/// It is used to represent identifiers in a way that allows for fast comparisons and lookups.
+/// Symbols are immutable and can be compared by pointer equality.
+/// They are typically used for identifiers in languages, such as HTML tags, attributes, and other
+/// names that are used frequently and need to be compared often.
 struct Symbol {
     static Set<Rc<_SymbolBuf>> _registry;
     Rc<_SymbolBuf> _buf;
 
+    /// Symbol representing an empty string.
+    static Symbol EMPTY;
+
     static Symbol from(Str str);
+
+    Str str() const {
+        return Str(*_buf);
+    }
 
     bool operator==(Symbol const& other) const {
         return _buf._cell == other._buf._cell;
     }
 
-    Str str() const {
-        return Str(*_buf);
+    bool operator==(Str const& other) const {
+        return str() == other;
+    }
+
+    auto operator<=>(Symbol const& other) const {
+        return str() <=> other.str();
+    }
+
+    explicit operator bool() const {
+        return str().len() > 0;
     }
 };
+
+inline Symbol Symbol::EMPTY = Symbol::from("");
 
 } // namespace Karm

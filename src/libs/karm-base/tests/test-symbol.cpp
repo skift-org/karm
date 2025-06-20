@@ -3,7 +3,7 @@
 
 namespace Karm::Tests {
 
-test$("Karm.Base/symbol") {
+test$("symbol-equality") {
     auto sym0 = Symbol::from("test");
     auto sym1 = Symbol::from("test");
     auto sym2 = Symbol::from("test but different");
