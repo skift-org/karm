@@ -642,7 +642,7 @@ struct [[nodiscard]] Opt<T> {
 
     u64 hash() const {
         if (has())
-            return hashCombine(hash(true), unwrap());
+            return hash(hash(true), unwrap());
         return hash(false);
     }
 };
