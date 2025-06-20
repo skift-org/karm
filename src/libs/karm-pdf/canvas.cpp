@@ -19,9 +19,9 @@ void Canvas::pop() {
 
 void Canvas::fillStyle(Gfx::Fill fill) {
     auto color = fill.unwrap<Gfx::Color>();
-    if(color.alpha == 0) 
+    if (color.alpha == 0)
         return;
-    
+
     if (color.alpha == 255) {
         _e.ln("{:.3} {:.3} {:.3} rg", color.red / 255.0, color.green / 255.0, color.blue / 255.0);
         return;

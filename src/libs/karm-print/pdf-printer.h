@@ -61,7 +61,7 @@ struct PdfPrinter : FilePrinter {
 
         // Graphical States
         Pdf::Dict graphicalStatesDict;
-        for(usize i = 0; i < graphicalStates.len(); ++i) {
+        for (usize i = 0; i < graphicalStates.len(); ++i) {
             auto stateRef = alloc.alloc();
             file.add(
                 stateRef,
@@ -112,10 +112,8 @@ struct PdfPrinter : FilePrinter {
                                 "Font"s,
                                 pageFontsDict,
                             },
-                            {
-                                "ExtGState"s,
-                                graphicalStatesDict
-                            }
+                            {"ExtGState"s,
+                             graphicalStatesDict}
                         },
                     }
                 }

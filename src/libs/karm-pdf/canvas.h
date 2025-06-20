@@ -23,7 +23,7 @@ struct FontManager {
 };
 
 // 8.4.5 Graphics state parameter dictionaries
-struct GraphicalStateDict{
+struct GraphicalStateDict {
     f64 opacity;
 };
 

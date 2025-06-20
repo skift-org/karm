@@ -141,9 +141,11 @@ struct Margins {
     _Named named;
     Math::Insetsf custom = 20 * UNIT;
 
-    Margins(_Named named) : named(named) {}
+    Margins(_Named named)
+        : named(named) {}
 
-    Margins(Math::Insetsf custom) : named(_Named::CUSTOM), custom(custom) {}
+    Margins(Math::Insetsf custom)
+        : named(_Named::CUSTOM), custom(custom) {}
 
     bool operator==(_Named named) const {
         return this->named == named;
