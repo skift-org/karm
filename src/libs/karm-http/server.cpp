@@ -16,7 +16,9 @@ export struct Service {
 };
 
 export struct Server {
-    static Rc<Server> simple(Rc<Service> srv);
+    static Rc<Server> simple(Rc<Service>) {
+        notImplemented();
+    }
 
     Rc<Service> _srv;
     virtual ~Server() = default;
