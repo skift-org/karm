@@ -1,4 +1,5 @@
 #include "symbol.h"
+#include "set.h"
 
 namespace Karm {
 
@@ -11,7 +12,7 @@ Symbol Symbol::from(Str str) {
     auto& registry = _symboleRegistry();
     registry.ensureForInsert();
     auto* slot = registry.lookup(str);
-    if (slot->state) {
+    if (slot and slot->state == Set<Rc<_SymbolBuf>>::State::USED) {
         return {slot->unwrap()};
     }
 

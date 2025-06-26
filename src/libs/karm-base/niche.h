@@ -2,6 +2,8 @@
 
 #include <karm-meta/traits.h>
 
+#include "float.h"
+
 namespace Karm {
 
 template <typename T>
@@ -40,6 +42,27 @@ struct Niche<T> {
         }
     };
 };
+
+template <typename T>
+    requires requires { FloatBits<T>::mantissaBits; }
+struct Niche<T> {
+    struct Content {
+        FloatBits<T> bits;
+
+        static constexpr FloatBits<T> _none = {
+            .sign = 1,
+            .exponent = FloatBits<T>::exponentMax,
+            .mantissa = static_cast<decltype(FloatBits<T>::mantissaMax)>(0b11) << (FloatBits<T>::mantissaBits - 2)
+        };
+
+        constexpr Content() : bits(_none) {}
+
+        constexpr bool has() const {
+            return not(bits.sign == _none.sign and bits.exponent == _none.exponent and bits.mantissa == _none.mantissa);
+        }
+    };
+};
+
 
 inline char const* NICHE_PTR = reinterpret_cast<char const*>(0x1);
 

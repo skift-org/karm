@@ -1,5 +1,4 @@
 #include <karm-base/opt.h>
-#include <karm-math/float.h>
 #include <karm-test/macros.h>
 
 namespace Karm::Math::Tests {

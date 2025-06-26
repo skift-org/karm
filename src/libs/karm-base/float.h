@@ -2,9 +2,7 @@
 
 #include <karm-base/base.h>
 
-#include "const.h"
-
-namespace Karm::Math {
+namespace Karm { 
 
 template <typename T>
 union FloatBits;
@@ -91,24 +89,4 @@ static_assert(sizeof(FloatBits<f128>) == sizeof(f128));
 
 #endif
 
-} // namespace Karm::Math
-
-template <typename T>
-    requires requires { Math::FloatBits<T>::mantissaBits; }
-struct Karm::Niche<T> {
-    struct Content {
-        Math::FloatBits<T> bits;
-
-        static constexpr Math::FloatBits<T> _none = {
-            .sign = 1,
-            .exponent = Math::FloatBits<T>::exponentMax,
-            .mantissa = static_cast<decltype(Math::FloatBits<T>::mantissaMax)>(0b11) << (Math::FloatBits<T>::mantissaBits - 2)
-        };
-
-        constexpr Content() : bits(_none) {}
-
-        constexpr bool has() const {
-            return not(bits.sign == _none.sign and bits.exponent == _none.exponent and bits.mantissa == _none.mantissa);
-        }
-    };
-};
+} // namespace Karm

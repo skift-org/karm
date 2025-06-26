@@ -131,7 +131,6 @@ struct Set {
 
         auto* oldSlots = std::exchange(_slots, new Slot[desired]);
         usize oldCap = std::exchange(_cap, desired);
-        _len = 0;
 
         for (usize i = 0; i < _cap; i++)
             _slots[i].state = State::FREE;
@@ -158,7 +157,7 @@ struct Set {
 
         usize start = hash(u) % self._cap;
         usize i = start;
-        Slot* deadSlot = nullptr;
+        Meta::CopyConst<Self, Slot>* deadSlot = nullptr;
         while (self._slots[i].state != State::FREE) {
             auto& s = self._slots[i];
 

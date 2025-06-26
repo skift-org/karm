@@ -3,9 +3,9 @@
 #include <karm-base/clamp.h>
 #include <karm-base/endian.h>
 #include <karm-base/limits.h>
+#include <karm-base/float.h>
 
 #include "const.h"
-#include "float.h"
 
 namespace Karm::Math {
 

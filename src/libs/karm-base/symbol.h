@@ -1,7 +1,6 @@
 #pragma once
 
 #include "rc.h"
-#include "set.h"
 #include "string.h"
 
 namespace Karm {
@@ -65,7 +64,6 @@ struct _SymbolBuf {
 /// They are typically used for identifiers in languages, such as HTML tags, attributes, and other
 /// names that are used frequently and need to be compared often.
 struct Symbol {
-    static Set<Rc<_SymbolBuf>> _registry;
     Rc<_SymbolBuf> _buf;
 
     /// Symbol representing an empty string.
