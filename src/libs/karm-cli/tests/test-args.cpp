@@ -45,8 +45,8 @@ testAsync$("karm-cli-args-simple-command") {
 
     Vec<Str> args = {};
 
-    Sys::Context ctx;
-    co_trya$(cmd.execAsync(ctx, args));
+    // instead of creating a new context, use the existing one
+    co_trya$(cmd.execAsync(Sys::globalContext(), args));
 
     if (not cmd)
         co_return Error::other("command not invoked");
@@ -63,8 +63,8 @@ testAsync$("karm-cli-args-nested-command") {
 
     Array<Str, 1> args = {"sub"s};
 
-    Sys::Context ctx;
-    co_trya$(cmd.execAsync(ctx, args));
+    // instead of creating a new context, use the existing one
+    co_trya$(cmd.execAsync(Sys::globalContext(), args));
 
     if (not cmd)
         co_return Error::other("command not invoked");
