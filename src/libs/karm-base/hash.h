@@ -39,7 +39,7 @@ static constexpr u64 hash(T const& t)
     return t.hash();
 }
 
-static constexpr i64 hash(Meta::Enum auto const& v) {
+static constexpr u64 hash(Meta::Enum auto const& v) {
     return hash(toUnderlyingType(v));
 }
 
