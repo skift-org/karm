@@ -10,10 +10,10 @@ union FloatBits;
 template <>
 union FloatBits<f32> {
     static constexpr int mantissaBits = 23;
-    static constexpr u32 mantissaMax = (((u32)1) << 23) - 1;
+    static constexpr u32 mantissaMax = (((u32)1) << mantissaBits) - 1;
     static constexpr int exponentBias = 127;
     static constexpr int exponentBits = 8;
-    static constexpr unsigned exponentMax = 255;
+    static constexpr unsigned exponentMax = (1 << exponentBits) - 1;
 
     struct [[gnu::packed]] {
 #if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
@@ -36,10 +36,10 @@ static_assert(sizeof(FloatBits<f32>) == sizeof(f32));
 template <>
 union FloatBits<f64> {
     static constexpr int mantissaBits = 52;
-    static constexpr u64 mantissaMax = (((u64)1) << 52) - 1;
+    static constexpr u64 mantissaMax = (((u64)1) << mantissaBits) - 1;
     static constexpr int exponentBias = 1023;
     static constexpr int exponentBits = 11;
-    static constexpr unsigned exponentMax = 2047;
+    static constexpr unsigned exponentMax = (1 << exponentBits) - 1;
 
     struct [[gnu::packed]] {
 #if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
@@ -64,10 +64,10 @@ static_assert(sizeof(FloatBits<f64>) == sizeof(f64));
 template <>
 union FloatBits<f128> {
     static constexpr int mantissaBits = 112;
-    static constexpr u128 mantissaMax = (((u128)1) << 112) - 1;
+    static constexpr u128 mantissaMax = (((u128)1) << mantissaBits) - 1;
     static constexpr int exponentBias = 16383;
     static constexpr int exponentBits = 15;
-    static constexpr unsigned exponentMax = 32767;
+    static constexpr unsigned exponentMax = (1 << exponentBits) - 1;
 
     struct [[gnu::packed]] {
 #    if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
