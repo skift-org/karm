@@ -95,3 +95,11 @@ struct Symbol {
 inline Symbol Symbol::EMPTY = Symbol::from("");
 
 } // namespace Karm
+
+inline constexpr Karm::Symbol operator""_sym(char const* buf, usize len) {
+    return Karm::Symbol::from({buf, len});
+}
+
+inline constexpr Karm::Symbol operator""_sym(char const* buf) {
+    return Karm::Symbol::from(buf);
+}
