@@ -1,16 +1,21 @@
-#pragma once
+module;
 
-#include "ptr.h"
+#include <karm-base/base.h>
+#include <karm-meta/nocopy.h>
+
+export module Karm.Gc:heap;
+
+import :ref;
 
 namespace Karm::Gc {
 
-struct Cell {
+export struct Cell {
     Cell* _next = nullptr;
 
     virtual ~Cell() = default;
 };
 
-template <typename T>
+export template <typename T>
 struct _Cell : Cell {
     T store;
 
@@ -20,7 +25,7 @@ struct _Cell : Cell {
     }
 };
 
-struct Heap : Meta::Pinned {
+export struct Heap : Meta::Pinned {
     Cell* _root = nullptr;
     Cell* _last = nullptr;
 

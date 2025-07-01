@@ -2,6 +2,7 @@ export module Karm;
 
 export import Karm.Aio;
 export import Karm.Cli;
+export import Karm.Gc;
 export import Karm.Http;
 export import Karm.Icu;
 export import Karm.Kira;

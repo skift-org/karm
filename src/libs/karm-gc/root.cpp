@@ -1,11 +1,11 @@
-#pragma once
+export module Karm.Gc:root;
 
-#include "ptr.h"
+import :ptr;
 
 namespace Karm::Gc {
 
 // FIXME: Proper handling of root references
-template <typename T>
+export template <typename T>
 using Root = Ref<T>;
 
 } // namespace Karm::Gc
