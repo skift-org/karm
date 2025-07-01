@@ -4,7 +4,6 @@
 #include <karm-app/_embed.h>
 #include <karm-app/prefs.h>
 #include <karm-json/parse.h>
-#include <karm-logger/logger.h>
 #include <karm-mime/url.h>
 #include <karm-pkg/_embed.h>
 #include <karm-sys/dir.h>
@@ -62,7 +61,6 @@ Prefs& globalPrefs() {
     if (not _globalPrefs) {
         auto url = _resolveConfigDir().unwrap("could not resolve preferences directory");
         Sys::Dir::openOrCreate(url).unwrap("could not create preferences directory");
-        logInfo("preferences stored at {}", url);
         _globalPrefs = XdgConfigPrefs{url / "configs.json"};
     }
     return *_globalPrefs;

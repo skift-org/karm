@@ -1,5 +1,4 @@
 #include <karm-io/aton.h>
-#include <karm-logger/logger.h>
 
 #include "path.h"
 #include "trans.h"
@@ -89,7 +88,7 @@ void Path::_flattenClose() {
 
 void Path::_flattenLineTo(Math::Vec2f p) {
     if (not _contours.len()) {
-        logError("path: moveTo must be called before lineTo");
+        // moveTo must be called before lineTo
         return;
     }
 
@@ -238,7 +237,7 @@ void Path::evalOp(Op op) {
         last(_contours).close and
         op.code != MOVE_TO and
         op.code != CLEAR) {
-        logError("path: can't evalOp on closed path");
+        // can't evalOp on closed path
         return;
     }
 
@@ -577,9 +576,8 @@ bool Path::evalSvg(Str svg) {
 
 Path Path::fromSvg(Str svg) {
     Path p;
-    if (not p.evalSvg(svg)) {
-        logWarn("couldn't create SVG from input");
-    }
+    // eval path might fail, in this case you get an empty path
+    (void)p.evalSvg(svg); 
     return p;
 }
 

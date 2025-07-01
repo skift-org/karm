@@ -1,6 +1,7 @@
-#include <karm-cli/args.h>
 #include <karm-sys/entry.h>
 #include <karm-test/driver.h>
+
+import Karm.Cli;
 
 Async::Task<> entryPointAsync(Sys::Context& ctx) {
     auto globArg = Cli::option<Str>(

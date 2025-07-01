@@ -10,8 +10,7 @@
         ]
     },
     "requires": [
-        "karm-sys-async-impl",
-        "karm-logger"
+        "karm-sys-async-impl"
     ],
     "provides": [
         "karm-sys-impl",

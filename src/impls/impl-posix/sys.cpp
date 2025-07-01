@@ -17,11 +17,11 @@
 
 //
 #include <karm-io/funcs.h>
-#include <karm-logger/logger.h>
 #include <karm-sys/_embed.h>
 #include <karm-sys/addr.h>
 #include <karm-sys/launch.h>
 #include <karm-sys/proc.h>
+#include <karm-sys/chan.h>
 
 #include "fd.h"
 #include "utils.h"
@@ -46,7 +46,7 @@ Res<Mime::Path> resolve(Mime::Url const& url) {
         auto const* runtimeDir = getenv("XDG_RUNTIME_DIR");
         if (not runtimeDir) {
             runtimeDir = "/tmp/";
-            logWarn("XDG_RUNTIME_DIR not set, falling back on {}", runtimeDir);
+            Sys::errln("XDG_RUNTIME_DIR not set, falling back on {}", runtimeDir);
         }
 
         auto path = url.path;

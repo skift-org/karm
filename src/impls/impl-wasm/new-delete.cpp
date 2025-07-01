@@ -1,7 +1,6 @@
 #include <ce-heap/libheap.h>
 #include <karm-base/bits.h>
 #include <karm-base/lock.h>
-#include <karm-logger/logger.h>
 
 #include "externs.h"
 #include "karm-base/align.h"
@@ -25,9 +24,9 @@ static Heap* _ensureHeap() {
             size = alignUp(size, PAGE_SIZE);
             _heapBase.set(BitsRange{(usize)ptr / PAGE_SIZE, size / PAGE_SIZE}, false);
         },
-        .log = [](void*, enum HeapLogType type, char const* msg, va_list) {
+        .log = [](void*, enum HeapLogType type, char const*, va_list) {
             if (type == HEAP_ERROR)
-                logError("heap: {}", msg);
+                panic("heap error");
         },
         .root = nullptr,
         .best = nullptr,

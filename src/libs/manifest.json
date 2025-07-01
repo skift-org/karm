@@ -8,9 +8,15 @@
     },
     "requires": [
         "karm-aio",
+        "karm-cli",
         "karm-http",
         "karm-icu",
         "karm-kira",
-        "karm-kv"
+        "karm-kv",
+        "karm-pdf",
+        "karm-print",
+        "karm-scene",
+        "karm-tty",
+        "karm-ui"
     ]
 }

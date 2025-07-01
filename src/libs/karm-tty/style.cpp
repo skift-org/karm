@@ -1,10 +1,12 @@
-#pragma once
+module;
 
 #include <karm-io/emit.h>
 
-namespace Karm::Cli {
+export module Karm.Tty:style;
 
-enum Color {
+namespace Karm::Tty {
+
+export enum Color {
     _COLOR_UNDEF = -1,
 
     BLACK = 0,
@@ -26,7 +28,7 @@ enum Color {
     WHITE = 67,
 };
 
-static inline Color random(usize seed) {
+export Color random(usize seed) {
     if (seed & 1) {
         return (Color)(((seed >> 1) % 7) + 1);
     } else {
@@ -36,22 +38,22 @@ static inline Color random(usize seed) {
 
 // clang-format off
 
-inline constexpr Array LIGHT_COLORS = {
+export constexpr Array LIGHT_COLORS = {
     GRAY_DARK,RED_LIGHT,GREEN_LIGHT,YELLOW_LIGHT,BLUE_LIGHT,MAGENTA_LIGHT,CYAN_LIGHT,WHITE,
 };
 
-inline constexpr Array DARK_COLORS = {
+export constexpr Array DARK_COLORS = {
     BLACK,RED,GREEN,YELLOW,BLUE,MAGENTA,CYAN,GRAY_LIGHT,
 };
 
-inline constexpr Array COLORS = {
+export constexpr Array COLORS = {
     BLACK,RED,GREEN,YELLOW,BLUE,MAGENTA,CYAN,GRAY_LIGHT,
     GRAY_DARK,RED_LIGHT,GREEN_LIGHT,YELLOW_LIGHT,BLUE_LIGHT,MAGENTA_LIGHT,CYAN_LIGHT,WHITE,
 };
 
 // clang-format on
 
-struct Style {
+export struct Style {
     bool _reset{};
     Color _fg{_COLOR_UNDEF};
     Color _bg{_COLOR_UNDEF};
@@ -118,11 +120,11 @@ struct Style {
             e("\x1b[0m"s);
         }
 
-        if (_fg != Karm::Cli::_COLOR_UNDEF) {
+        if (_fg != Karm::Tty::_COLOR_UNDEF) {
             e("\x1b[{}m", _fg + 30);
         }
 
-        if (_bg != Karm::Cli::_COLOR_UNDEF) {
+        if (_bg != Karm::Tty::_COLOR_UNDEF) {
             e("\x1b[{}m", _bg + 40);
         }
 
@@ -149,31 +151,32 @@ struct Style {
     }
 };
 
-inline constexpr Style reset() {
+export constexpr Style reset() {
     Style style;
     style._reset = true;
     return style;
 };
 
-inline constexpr Style style(auto... args) {
+export constexpr Style style(auto... args) {
     return Style{args...};
 }
 
-template <typename T>
+export template <typename T>
 struct Styled {
     T _inner;
     Style _color;
 };
 
-inline auto styled(auto inner, Style style) {
-    return Styled<decltype(inner)>{inner, style};
+export template <typename T>
+Styled<T> operator|(T inner, Style style) {
+    return Styled<T>{inner, style};
 }
 
 } // namespace Karm::Cli
 
-template <typename T>
-struct Karm::Io::Formatter<Karm::Cli::Styled<T>> {
-    Formatter<Karm::Cli::Style> _styleFmt{};
+export template <typename T>
+struct Karm::Io::Formatter<Karm::Tty::Styled<T>> {
+    Formatter<Karm::Tty::Style> _styleFmt{};
     Formatter<T> _innerFmt{};
 
     void parse(Io::SScan& scan) {
@@ -184,7 +187,7 @@ struct Karm::Io::Formatter<Karm::Cli::Styled<T>> {
         }
     }
 
-    Res<> format(Io::TextWriter& writer, Karm::Cli::Styled<T> const& val) {
+    Res<> format(Io::TextWriter& writer, Karm::Tty::Styled<T> const& val) {
 #ifdef __ck_sys_terminal_ansi__
         try$(_styleFmt.format(writer, val._color));
         try$(_innerFmt.format(writer, val._inner));

@@ -4,6 +4,7 @@
     "type": "exe",
     "requires": [
         "karm-gfx",
-        "karm-sys"
+        "karm-sys",
+        "karm-cli"
     ]
 }

@@ -4,6 +4,7 @@
     "type": "lib",
     "description": "A key-value store library",
     "requires": [
-        "karm-sys"
+        "karm-sys",
+        "karm-logger"
     ]
 }

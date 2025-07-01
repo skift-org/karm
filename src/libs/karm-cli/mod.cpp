@@ -1,19 +1,20 @@
-#pragma once
+module;
 
 #include <karm-base/func.h>
 #include <karm-base/opt.h>
 #include <karm-base/rc.h>
 #include <karm-base/string.h>
 #include <karm-base/vec.h>
-#include <karm-logger/logger.h>
 #include <karm-sys/chan.h>
 #include <karm-sys/context.h>
+
+export module Karm.Cli;
 
 namespace Karm::Cli {
 
 // MARK: Tokenizer -------------------------------------------------------------
 
-struct Token {
+export struct Token {
     enum struct Kind {
         OPERAND,
         OPTION,
@@ -51,39 +52,83 @@ struct Token {
     }
 };
 
-void tokenize(Str arg, Vec<Token>& out);
+export void tokenize(Str arg, Vec<Token>& out) {
+    if (arg == "--"s) {
+        out.pushBack(Token::EXTRA);
+    } else if (arg == "-"s) {
+        out.pushBack("-"s);
+    } else if (startWith(arg, "--"s) == Match::PARTIAL) {
+        out.emplaceBack(Token::OPTION, next(arg, 2));
+    } else if (startWith(arg, "-"s) == Match::PARTIAL) {
+        Str flags = next(arg, 1);
+        for (auto r : iterRunes(flags))
+            out.emplaceBack(r);
+    } else {
+        out.pushBack(arg);
+    }
+}
 
-void tokenize(Slice<Str> args, Vec<Token>& out);
+export void tokenize(Slice<Str> args, Vec<Token>& out) {
+    for (auto& arg : args)
+        tokenize(arg, out);
+}
 
-void tokenize(int argc, char** argv, Vec<Token>& out);
+export void tokenize(int argc, char** argv, Vec<Token>& out) {
+    for (int i = 0; i < argc; ++i)
+        tokenize(Str::fromNullterminated(argv[i]), out);
+}
 
 // MARK: Values ----------------------------------------------------------------
 
-template <typename T>
+export template <typename T>
 struct ValueParser;
 
-template <>
+export template <>
 struct ValueParser<bool> {
-    static Res<> usage(Io::TextWriter& w);
+    static Res<> usage(Io::TextWriter& w) {
+        return w.writeStr("true|false"s);
+    }
 
-    static Res<bool> parse(Cursor<Token>&);
+    static Res<bool> parse(Cursor<Token>&) {
+        return Ok(true);
+    }
 };
 
-template <>
+export template <>
 struct ValueParser<isize> {
-    static Res<> usage(Io::TextWriter& w);
+    static Res<> usage(Io::TextWriter& w) {
+        return w.writeStr("integer"s);
+    }
 
-    static Res<isize> parse(Cursor<Token>& c);
+    static Res<isize> parse(Cursor<Token>& c) {
+        if (c.ended() or c->kind != Token::OPERAND)
+            return Error::other("missing value");
+
+        auto value = c.next().value;
+
+        auto result = Io::atoi(value);
+        if (not result)
+            return Error::other("expected integer");
+
+        return Ok(result.unwrap());
+    }
 };
 
-template <>
+export template <>
 struct ValueParser<Str> {
-    static Res<> usage(Io::TextWriter& w);
+    static Res<> usage(Io::TextWriter& w) {
+        return w.writeStr("string"s);
+    }
 
-    static Res<Str> parse(Cursor<Token>& c);
+    static Res<Str> parse(Cursor<Token>& c) {
+        if (c.ended() or c->kind != Token::OPERAND)
+            return Error::other("missing value");
+
+        return Ok(c.next().value);
+    }
 };
 
-template <typename T>
+export template <typename T>
 struct ValueParser<Vec<T>> {
     static Res<> usage(Io::TextWriter& w) {
         ValueParser<T>::usage(w);
@@ -101,7 +146,7 @@ struct ValueParser<Vec<T>> {
     }
 };
 
-template <typename T>
+export template <typename T>
 struct ValueParser<Opt<T>> {
     static Res<> usage(Io::TextWriter& w) {
         return ValueParser<T>::usage(w);
@@ -117,13 +162,13 @@ struct ValueParser<Opt<T>> {
 
 // MARK: Options ---------------------------------------------------------------
 
-enum struct OptionKind {
+export enum struct OptionKind {
     OPTION,
     OPERAND,
     EXTRA,
 };
 
-struct _OptionImpl {
+export struct _OptionImpl {
     OptionKind kind;
     Opt<Rune> shortName;
     String longName;
@@ -160,7 +205,7 @@ struct _OptionImpl {
     }
 };
 
-template <typename T>
+export template <typename T>
 struct OptionImpl : _OptionImpl {
     Opt<T> value;
 
@@ -179,7 +224,7 @@ struct OptionImpl : _OptionImpl {
     }
 };
 
-template <typename T>
+export template <typename T>
 struct Option {
     Rc<OptionImpl<T>> _impl;
 
@@ -199,29 +244,29 @@ struct Option {
     }
 };
 
-using Flag = Option<bool>;
+export using Flag = Option<bool>;
 
-static inline Flag flag(Opt<Rune> shortName, String longName, String description) {
+export Flag flag(Opt<Rune> shortName, String longName, String description) {
     return makeRc<OptionImpl<bool>>(OptionKind::OPTION, shortName, longName, description, false);
 }
 
-template <typename T>
-static inline Option<T> option(Opt<Rune> shortName, String longName, String description, Opt<T> defaultValue = NONE) {
+export template <typename T>
+ Option<T> option(Opt<Rune> shortName, String longName, String description, Opt<T> defaultValue = NONE) {
     return makeRc<OptionImpl<T>>(OptionKind::OPTION, shortName, longName, description, defaultValue);
 }
 
-template <typename T>
-static inline Option<T> operand(String longName, String description, T defaultValue = {}) {
+export template <typename T>
+ Option<T> operand(String longName, String description, T defaultValue = {}) {
     return makeRc<OptionImpl<T>>(OptionKind::OPERAND, NONE, longName, description, defaultValue);
 }
 
-static inline Option<Vec<Str>> extra(String description) {
+export Option<Vec<Str>> extra(String description) {
     return makeRc<OptionImpl<Vec<Str>>>(OptionKind::EXTRA, NONE, ""s, description, Vec<Str>{});
 }
 
 // MARK: Command ---------------------------------------------------------------
 
-struct Command : Meta::Pinned {
+export struct Command : Meta::Pinned {
     using Callback = Func<Async::Task<>(Sys::Context&)>;
 
     struct Props {

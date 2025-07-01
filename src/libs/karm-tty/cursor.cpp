@@ -1,10 +1,12 @@
-#pragma once
+module;
 
 #include <karm-io/emit.h>
 
-namespace Karm::Cli {
+export module Karm.Tty:cursor;
 
-struct Cmd {
+namespace Karm::Tty {
+
+export struct Cmd {
     enum Type {
         SAVE,
         RESTORE,
@@ -107,75 +109,75 @@ struct Cmd {
     void repr([[maybe_unused]] Io::Emit& e) const {
 #ifdef __ck_sys_terminal_ansi__
         switch (_type) {
-        case Cli::Cmd::SAVE:
+        case Tty::Cmd::SAVE:
             e("\x1b[s");
             break;
 
-        case Cli::Cmd::RESTORE:
+        case Tty::Cmd::RESTORE:
             e("\x1b[u");
             break;
 
-        case Cli::Cmd::UP:
+        case Tty::Cmd::UP:
             e("\x1b[{}A", _row);
             break;
 
-        case Cli::Cmd::DOWN:
+        case Tty::Cmd::DOWN:
             e("\x1b[{}B", _row);
             break;
 
-        case Cli::Cmd::FORWARD:
+        case Tty::Cmd::FORWARD:
             e("\x1b[{}C", _col);
             break;
 
-        case Cli::Cmd::BACKWARD:
+        case Tty::Cmd::BACKWARD:
             e("\x1b[{}D", _col);
             break;
 
-        case Cli::Cmd::NEXTLINE:
+        case Tty::Cmd::NEXTLINE:
             e("\x1b[{}E", _row);
             break;
 
-        case Cli::Cmd::PREVLINE:
+        case Tty::Cmd::PREVLINE:
             e("\x1b[{}F", _row);
             break;
 
-        case Cli::Cmd::HORIZONTAL:
+        case Tty::Cmd::HORIZONTAL:
             e("\x1b[{}G", _col);
             break;
 
-        case Cli::Cmd::POSITION:
+        case Tty::Cmd::POSITION:
             e("\x1b[{};{}H", _row, _col);
             break;
 
-        case Cli::Cmd::HIDE:
+        case Tty::Cmd::HIDE:
             e("\x1b[?25l");
             break;
 
-        case Cli::Cmd::SHOW:
+        case Tty::Cmd::SHOW:
             e("\x1b[?25h");
             break;
 
-        case Cli::Cmd::CLEAR_DISPLAY:
+        case Tty::Cmd::CLEAR_DISPLAY:
             e("\x1b[2J");
             break;
 
-        case Cli::Cmd::CLEAR_DISPLAY_AFTER:
+        case Tty::Cmd::CLEAR_DISPLAY_AFTER:
             e("\x1b[J");
             break;
 
-        case Cli::Cmd::CLEAR_DISPLAY_BEFORE:
+        case Tty::Cmd::CLEAR_DISPLAY_BEFORE:
             e("\x1b[1J");
             break;
 
-        case Cli::Cmd::CLEAR_LINE:
+        case Tty::Cmd::CLEAR_LINE:
             e("\x1b[2K");
             break;
 
-        case Cli::Cmd::CLEAR_LINE_AFTER:
+        case Tty::Cmd::CLEAR_LINE_AFTER:
             e("\x1b[K");
             break;
 
-        case Cli::Cmd::CLEAR_LINE_BEFORE:
+        case Tty::Cmd::CLEAR_LINE_BEFORE:
             e("\x1b[1K");
             break;
 

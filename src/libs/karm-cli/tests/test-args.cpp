@@ -1,5 +1,7 @@
-#include <karm-cli/args.h>
 #include <karm-test/macros.h>
+#include <karm-sys/context.h>
+
+import Karm.Cli;
 
 namespace Karm::Cli::Tests {
 

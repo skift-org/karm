@@ -1,17 +1,18 @@
 #pragma once
 
 #include <karm-base/loc.h>
-#include <karm-cli/style.h>
 #include <karm-io/fmt.h>
 
 #include "_embed.h"
+
+import Karm.Tty;
 
 namespace Karm {
 
 struct Level {
     isize value;
     char const* name;
-    Cli::Style style;
+    Tty::Style style;
 };
 
 struct Format {
@@ -27,13 +28,13 @@ struct Format {
     }
 };
 
-static constexpr Level PRINT = {-2, "print", Cli::BLUE};
-static constexpr Level YAP = {-1, "yappin'", Cli::GREEN};
-static constexpr Level DEBUG = {0, "debug", Cli::BLUE};
-static constexpr Level INFO = {1, "info ", Cli::GREEN};
-static constexpr Level WARNING = {2, "warn ", Cli::YELLOW};
-static constexpr Level ERROR = {3, "error", Cli::RED};
-static constexpr Level FATAL = {4, "fatal", Cli::style(Cli::RED).bold()};
+static constexpr Level PRINT = {-2, "print", Tty::BLUE};
+static constexpr Level YAP = {-1, "yappin'", Tty::GREEN};
+static constexpr Level DEBUG = {0, "debug", Tty::BLUE};
+static constexpr Level INFO = {1, "info ", Tty::GREEN};
+static constexpr Level WARNING = {2, "warn ", Tty::YELLOW};
+static constexpr Level ERROR = {3, "error", Tty::RED};
+static constexpr Level FATAL = {4, "fatal", Tty::style(Tty::RED).bold()};
 
 inline void _catch(Res<> res) {
     if (res)
@@ -55,13 +56,13 @@ inline void _log(Level level, Format fmt, Io::_Args& args) {
     Logger::_Embed::loggerLock();
 
     if (level.value != -2) {
-        _catch(Io::format(Logger::_Embed::loggerOut(), "{} ", Cli::styled(level.name, level.style)));
-        _catch(Io::format(Logger::_Embed::loggerOut(), "{}{}:{}: ", Cli::reset().fg(Cli::GRAY_DARK), fmt.loc.file, fmt.loc.line));
+        _catch(Io::format(Logger::_Embed::loggerOut(), "{} ", level.name | level.style));
+        _catch(Io::format(Logger::_Embed::loggerOut(), "{}{}:{}: ", Tty::reset().fg(Tty::GRAY_DARK), fmt.loc.file, fmt.loc.line));
     }
 
-    _catch(Io::format(Logger::_Embed::loggerOut(), "{}", Cli::reset()));
+    _catch(Io::format(Logger::_Embed::loggerOut(), "{}", Tty::reset()));
     _catch(Io::_format(Logger::_Embed::loggerOut(), fmt.str, args));
-    _catch(Io::format(Logger::_Embed::loggerOut(), "{}\n", Cli::reset()));
+    _catch(Io::format(Logger::_Embed::loggerOut(), "{}\n", Tty::reset()));
     _catch(Logger::_Embed::loggerOut().flush());
 
     Logger::_Embed::loggerUnlock();

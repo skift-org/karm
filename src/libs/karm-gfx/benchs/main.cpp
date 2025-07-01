@@ -1,7 +1,8 @@
-#include <karm-cli/cursor.h>
 #include <karm-gfx/cpu/canvas.h>
 #include <karm-sys/entry.h>
 #include <karm-sys/time.h>
+
+import Karm.Cli;
 
 Async::Task<> entryPointAsync(Sys::Context&) {
     Vec<Duration> samples;

@@ -1,9 +1,10 @@
 module;
 
-#include <karm-cli/args.h>
 #include <karm-sys/context.h>
 
 export module Karm.Ui:app;
+
+import Karm.Cli;
 
 import :host;
 import :_embed;

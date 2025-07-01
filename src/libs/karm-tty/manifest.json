@@ -1,11 +1,9 @@
 {
     "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
-    "id": "karm-logger",
+    "id": "karm-tty",
     "type": "lib",
-    "description": "A simple logger",
+    "description": "Terminal escape sequences and terminal I/O",
     "requires": [
-        "karm-logger-impl",
-        "karm-io",
-        "karm-tty"
+        "karm-io"
     ]
 }

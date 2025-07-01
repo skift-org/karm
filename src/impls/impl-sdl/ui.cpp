@@ -5,7 +5,6 @@ module;
 #include <karm-app/inputs.h>
 #include <karm-gfx/canvas.h>
 #include <karm-image/loader.h>
-#include <karm-logger/logger.h>
 #include <karm-pkg/bundle.h>
 #include <karm-sys/context.h>
 #include <karm-sys/time.h>
@@ -652,10 +651,7 @@ static Res<Rc<Host>> makeHost(Child root) {
     if (not window)
         return Error::other(SDL_GetError());
 
-    auto iconRes = _setWindowIcon(window);
-    if (not iconRes)
-        logWarn("could not set window icon: {}", iconRes);
-
+    try$(_setWindowIcon(window));
     auto host = makeRc<SdlHost>(root, window);
 
     SDL_SetWindowHitTest(window, _hitTestCallback, (void*)&host.unwrap());
