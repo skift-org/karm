@@ -6,6 +6,7 @@
     "requires": [
         "karm-sys",
         "karm-text",
-        "karm-print"
+        "karm-print",
+        "fonts-all"
     ]
 }

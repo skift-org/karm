@@ -1,12 +1,15 @@
-#pragma once
+module;
 
 #include <karm-gfx/cpu/canvas.h>
 #include <karm-image/saver.h>
-#include <karm-print/file-printer.h>
+
+export module Karm.Print:image_printer;
+
+import :file_printer;
 
 namespace Karm::Print {
 
-struct ImagePrinter : FilePrinter {
+export struct ImagePrinter : FilePrinter {
     static constexpr isize GAPS = 16;
 
     Vec<Rc<Gfx::Surface>> _pages;

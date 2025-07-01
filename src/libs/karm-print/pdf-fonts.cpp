@@ -1,12 +1,14 @@
-#pragma once
+module;
 
 #include <karm-pdf/canvas.h>
 #include <karm-pdf/values.h>
 #include <karm-text/ttf.h>
 
+export module Karm.Print:pdf_fonts;
+
 namespace Karm::Print {
 
-struct TtfGlyphInfoAdapter {
+export struct TtfGlyphInfoAdapter {
 
     usize const CODESPACE = 1 << 16;
 
@@ -112,7 +114,7 @@ struct TtfGlyphInfoAdapter {
     }
 };
 
-struct TrueTypeFontAdapter {
+export struct TrueTypeFontAdapter {
 
     Rc<Text::TtfFontface> _font;
 

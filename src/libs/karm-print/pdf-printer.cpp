@@ -1,10 +1,13 @@
-#pragma once
+module;
 
 #include <karm-pdf/canvas.h>
 #include <karm-pdf/values.h>
+#include <karm-text/ttf.h>
 
-#include "file-printer.h"
-#include "karm-print/pdf-font-printer.h"
+export module Karm.Print:pdf_printer;
+
+import :file_printer;
+import :pdf_fonts;
 
 namespace Karm::Print {
 
@@ -13,7 +16,7 @@ struct PdfPage {
     Io::StringWriter data;
 };
 
-struct PdfPrinter : FilePrinter {
+export struct PdfPrinter : FilePrinter {
     Vec<PdfPage> _pages;
     Opt<Pdf::Canvas> _canvas;
     Pdf::FontManager fontManager;

@@ -1,15 +1,17 @@
-#pragma once
+module;
 
 #include <karm-scene/node.h>
 #include <karm-scene/stack.h>
 #include <karm-scene/viewbox.h>
 
-#include "paper.h"
-#include "printer.h"
+export module Karm.Print:page;
+
+import :paper;
+import :printer;
 
 namespace Karm::Print {
 
-struct Page {
+export struct Page {
     PaperStock _paper;
     Rc<Scene::Node> _content;
 
