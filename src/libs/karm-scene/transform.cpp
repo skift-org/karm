@@ -1,10 +1,15 @@
-#pragma once
+module;
 
-#include "proxy.h"
+#include <karm-gfx/canvas.h>
+#include <karm-io/emit.h>
+
+export module Karm.Scene:transform;
+
+import :proxy;
 
 namespace Karm::Scene {
 
-struct Transform : Proxy {
+export struct Transform : Proxy {
     Math::Trans2f _transform;
 
     Transform(Rc<Node> node, Math::Trans2f transform)

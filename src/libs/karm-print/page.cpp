@@ -1,11 +1,9 @@
 module;
 
-#include <karm-scene/node.h>
-#include <karm-scene/stack.h>
-#include <karm-scene/viewbox.h>
 
 export module Karm.Print:page;
 
+import Karm.Scene;
 import :paper;
 import :printer;
 

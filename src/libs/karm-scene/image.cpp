@@ -1,8 +1,12 @@
-#pragma once
+module;
 
 #include <karm-image/picture.h>
+#include <karm-gfx/canvas.h>
+#include <karm-io/emit.h>
 
-#include "node.h"
+export module Karm.Scene:image;
+
+import :node;
 
 namespace Karm::Scene {
 

@@ -1,10 +1,15 @@
-#pragma once
+module;
 
-#include "proxy.h"
+#include <karm-gfx/canvas.h>
+#include <karm-io/emit.h>
+
+export module Karm.Scene:clip;
+
+import :proxy;
 
 namespace Karm::Scene {
 
-struct Clip : Proxy {
+export struct Clip : Proxy {
     Union<Math::Path, Math::Rectf> _clipArea;
     Gfx::FillRule _rule;
 

@@ -1,10 +1,17 @@
-#pragma once
+module;
 
-#include "node.h"
+#include <karm-base/rc.h>
+#include <karm-base/vec.h>
+#include <karm-gfx/canvas.h>
+#include <karm-io/emit.h>
+
+export module Karm.Scene:stack;
+
+import :node;
 
 namespace Karm::Scene {
 
-struct Stack : Node {
+export struct Stack : Node {
     Vec<Rc<Node>> _children;
 
     void add(Rc<Node> child) {

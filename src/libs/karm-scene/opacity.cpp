@@ -1,10 +1,15 @@
-#pragma once
+module;
 
-#include "proxy.h"
+#include <karm-gfx/canvas.h>
+#include <karm-io/emit.h>
+
+export module Karm.Scene:opacity;
+
+import :proxy;
 
 namespace Karm::Scene {
 
-struct Opacity : Proxy {
+export struct Opacity : Proxy {
     f64 _opacity;
 
     Opacity(Rc<Node> node, f64 opacity)

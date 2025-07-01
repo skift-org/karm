@@ -1,10 +1,17 @@
-#pragma once
+module;
 
-#include "node.h"
+#include <karm-base/rc.h>
+#include <karm-gfx/canvas.h>
+#include <karm-io/emit.h>
+
+
+export module Karm.Scene:proxy;
+
+import :node;
 
 namespace Karm::Scene {
 
-struct Proxy : Node {
+export struct Proxy : Node {
     Rc<Node> _node;
 
     Proxy(Rc<Node> node)

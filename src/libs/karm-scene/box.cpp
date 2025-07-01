@@ -1,14 +1,16 @@
-#pragma once
+module;
 
 #include <karm-base/vec.h>
 #include <karm-gfx/borders.h>
 #include <karm-gfx/outline.h>
 
-#include "node.h"
+export module Karm.Scene:box;
+
+import :node;
 
 namespace Karm::Scene {
 
-struct Box : Node {
+export struct Box : Node {
     Math::Rectf _bound;
     Gfx::Borders _borders;
     Gfx::Outline _outline;

@@ -1,18 +1,19 @@
+module;
 
-#include "node.h"
+#include <karm-gfx/canvas.h>
+#include <karm-io/emit.h>
+
+export module Karm.Scene:viewbox;
+
+import :proxy;
 
 namespace Karm::Scene {
 
-struct Viewbox : Node {
-    Rc<Node> _content;
+struct Viewbox : Proxy {
     Math::Rectf _viewbox;
 
-    Viewbox(Math::Rectf viewbox, Rc<Node> content)
-        : _content(content), _viewbox(viewbox) {}
-
-    void prepare() override {
-        _content->prepare();
-    }
+    Viewbox(Rc<Node> node, Math::Rectf viewbox)
+        : Proxy(node), _viewbox(viewbox) {}
 
     Math::Rectf bound() override {
         return _viewbox.size();
@@ -25,12 +26,12 @@ struct Viewbox : Node {
         g.push();
         g.origin(_viewbox.xy);
         g.clip(_viewbox);
-        _content->paint(g, r, o);
+        Proxy::paint(g, r, o);
         g.pop();
     }
 
     void repr(Io::Emit& e) const override {
-        e("(viewbox {} content:{})", _viewbox, _content);
+        e("(viewbox {} content:{})", _viewbox, _node);
     }
 };
 

@@ -1,15 +1,17 @@
-#pragma once
+module;
 
 #include <karm-gfx/cpu/canvas.h>
 #include <karm-io/emit.h>
 
+export module Karm.Scene:node;
+
 namespace Karm::Scene {
 
-struct PaintOptions {
+export struct PaintOptions {
     bool showBackgroundGraphics = true;
 };
 
-struct Node {
+export struct Node {
     isize zIndex = 0;
 
     virtual ~Node() = default;

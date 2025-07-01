@@ -1,12 +1,14 @@
-#pragma once
+module;
 
 #include <karm-text/prose.h>
 
-#include "node.h"
+export module Karm.Scene:text;
+
+import :node;
 
 namespace Karm::Scene {
 
-struct Text : Node {
+export struct Text : Node {
     Math::Vec2f _origin;
     Rc<Karm::Text::Prose> _prose;
 

@@ -1,10 +1,15 @@
-#pragma once
+module;
 
-#include "proxy.h"
+#include <karm-gfx/canvas.h>
+#include <karm-io/emit.h>
+
+export module Karm.Scene:clear;
+
+import :proxy;
 
 namespace Karm::Scene {
 
-struct Clear : Proxy {
+export struct Clear : Proxy {
     Gfx::Color color;
 
     Clear(Rc<Node> node, Gfx::Color color)

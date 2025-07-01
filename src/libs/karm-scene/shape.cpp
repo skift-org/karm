@@ -1,12 +1,15 @@
-#pragma once
+module;
 
-#include <karm-gfx/stroke.h>
+#include <karm-gfx/canvas.h>
+#include <karm-io/emit.h>
 
-#include "node.h"
+export module Karm.Scene:shape;
+
+import :node;
 
 namespace Karm::Scene {
 
-struct Shape : Node {
+export struct Shape : Node {
     Math::Path _path;
     Opt<Gfx::Stroke> _stroke;
     Opt<Gfx::Fill> _fill;
