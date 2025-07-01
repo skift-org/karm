@@ -2,7 +2,7 @@
 
 #include <karm-base/base.h>
 
-namespace Karm { 
+namespace Karm {
 
 template <typename T>
 union FloatBits;

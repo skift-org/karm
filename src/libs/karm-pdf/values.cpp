@@ -1,111 +1,97 @@
-#include "values.h"
+module;
+
+#include <karm-base/map.h>
+#include <karm-io/emit.h>
+
+export module Karm.Pdf:values;
 
 namespace Karm::Pdf {
 
-void Name::write(Io::Emit& e) const {
-    e("/{}", str());
-}
+export struct Value;
 
-void Array::write(Io::Emit& e) const {
-    e('[');
-    for (usize i = 0; i < len(); ++i) {
-        if (i > 0) {
-            e(' ');
-        }
-        buf()[i].write(e);
-    }
-    e(']');
-}
+export struct Ref {
+    usize num{};
+    usize gen{};
 
-void Dict::write(Io::Emit& e) const {
-    e("<<\n");
-    for (auto const& [k, v] : iter()) {
-        e('/');
-        e(k);
-        e(' ');
-        v.write(e);
-        e('\n');
-    }
-    e(">>");
-}
-
-void Stream::write(Io::Emit& e) const {
-    dict.write(e);
-    e("stream\n");
-    (void)e.flush();
-    (void)e.write(data);
-    e("\nendstream\n");
-}
-
-void Value::write(Io::Emit& e) const {
-    visit(Visitor{
-        [&](None) {
-            e("null");
-        },
-        [&](Ref const& ref) {
-            e("{} {} R", ref.num, ref.gen);
-        },
-        [&](bool b) {
-            e(b ? "true" : "false");
-        },
-        [&](isize i) {
-            e("{}", i);
-        },
-        [&](usize i) {
-            e("{}", i);
-        },
-        [&](f64 f) {
-            e("{}", f);
-        },
-        [&](String const& s) {
-            e("({})", s);
-        },
-        [&](auto const& v) {
-            v.write(e);
-        },
-    });
-}
-
-Res<> File::write(Io::Writer& w) const {
-    Io::Count count{w};
-    Io::TextEncoder<> enc{w};
-    Io::Emit e{enc};
-    e("%{}\n", header);
-    e("%Powered By Karm PDF 🐢🏳️‍⚧️🦔\n", header);
-
-    XRef xref;
-
-    for (auto const& [k, v] : body.iter()) {
-        try$(e.flush());
-        xref.add(try$(Io::tell(count)), k.gen);
-        e("{} {} obj\n", k.num, k.gen);
-        v.write(e);
-        e("\nendobj\n");
+    Ref alloc() {
+        return {++num, gen};
     }
 
-    try$(e.flush());
-    auto startxref = try$(Io::tell(count));
-    e("xref\n");
-    xref.write(e);
+    bool operator==(Ref const& other) const = default;
+    auto operator<=>(Ref const& other) const = default;
+};
 
-    e("trailer\n");
-    trailer.write(e);
+export struct Name : String {
+    using String::String;
 
-    e("startxref\n");
-    e("{}\n", startxref);
-    e("%%EOF");
+    void write(Io::Emit& e) const;
+};
 
-    return Ok();
-}
+export struct Array : Vec<Value> {
+    using Vec<Value>::Vec;
 
-void XRef::write(Io::Emit& e) const {
-    e("1 {}\n", entries.len());
-    for (usize i = 0; i < entries.len(); ++i) {
-        auto const& entry = entries[i];
-        if (entry.used) {
-            e("{:010} {:05} n\n", entry.offset, entry.gen);
-        }
+    void write(Io::Emit& e) const;
+};
+
+export struct Dict : Map<Name, Value> {
+    using Map<Name, Value>::Map;
+
+    void write(Io::Emit& e) const;
+};
+
+export struct Stream {
+    Dict dict;
+    Buf<u8> data;
+
+    void write(Io::Emit& e) const;
+};
+
+export using _Value = Union<
+    None,
+    Ref,
+    bool,
+    isize,
+    usize,
+    f64,
+    String,
+    Name,
+    Array,
+    Dict,
+    Stream>;
+
+export struct Value : _Value {
+    using _Value::_Value;
+
+    void write(Io::Emit& e) const;
+};
+
+export struct File {
+    String header;
+    Map<Ref, Value> body;
+    Dict trailer;
+
+    Ref add(Ref ref, Value Value) {
+        body.put(ref, Value);
+        return ref;
     }
-}
+
+    Res<> write(Io::Writer& e) const;
+};
+
+export struct XRef {
+    struct Entry {
+        usize offset;
+        usize gen;
+        bool used;
+    };
+
+    Vec<Entry> entries;
+
+    void add(usize offset, usize gen) {
+        entries.pushBack({offset, gen, true});
+    }
+
+    void write(Io::Emit& e) const;
+};
 
 } // namespace Karm::Pdf

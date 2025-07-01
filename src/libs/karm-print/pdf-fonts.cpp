@@ -1,10 +1,10 @@
 module;
 
-#include <karm-pdf/canvas.h>
-#include <karm-pdf/values.h>
 #include <karm-text/ttf.h>
 
 export module Karm.Print:pdf_fonts;
+
+import Karm.Pdf;
 
 namespace Karm::Print {
 

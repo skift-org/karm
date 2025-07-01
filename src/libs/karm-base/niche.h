@@ -63,7 +63,6 @@ struct Niche<T> {
     };
 };
 
-
 inline char const* NICHE_PTR = reinterpret_cast<char const*>(0x1);
 
 } // namespace Karm

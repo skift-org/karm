@@ -2,8 +2,8 @@
 
 #include <karm-base/clamp.h>
 #include <karm-base/endian.h>
-#include <karm-base/limits.h>
 #include <karm-base/float.h>
+#include <karm-base/limits.h>
 
 #include "const.h"
 

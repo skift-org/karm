@@ -9,7 +9,7 @@ import :proxy;
 
 namespace Karm::Scene {
 
-struct Viewbox : Proxy {
+export struct Viewbox : Proxy {
     Math::Rectf _viewbox;
 
     Viewbox(Rc<Node> node, Math::Rectf viewbox)

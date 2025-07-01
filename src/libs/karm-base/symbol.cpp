@@ -1,4 +1,5 @@
 #include "symbol.h"
+
 #include "set.h"
 
 namespace Karm {

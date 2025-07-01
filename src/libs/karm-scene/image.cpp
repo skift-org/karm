@@ -1,7 +1,7 @@
 module;
 
-#include <karm-image/picture.h>
 #include <karm-gfx/canvas.h>
+#include <karm-image/picture.h>
 #include <karm-io/emit.h>
 
 export module Karm.Scene:image;

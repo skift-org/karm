@@ -7,8 +7,8 @@ module;
 #include <karm-image/loader.h>
 #include <karm-logger/logger.h>
 #include <karm-pkg/bundle.h>
-#include <karm-sys/time.h>
 #include <karm-sys/context.h>
+#include <karm-sys/time.h>
 
 module Karm.Ui;
 

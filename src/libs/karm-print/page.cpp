@@ -1,5 +1,6 @@
 module;
 
+#include <karm-io/emit.h>
 
 export module Karm.Print:page;
 
@@ -17,7 +18,7 @@ export struct Page {
         : _paper(paper), _content(content ? content.take() : makeRc<Scene::Stack>()) {}
 
     Rc<Scene::Node> content() const {
-        return makeRc<Scene::Viewbox>(_paper.size(), _content);
+        return makeRc<Scene::Viewbox>(_content, _paper.size());
     }
 
     void print(Printer& doc, Scene::PaintOptions o = {.showBackgroundGraphics = false}) {
