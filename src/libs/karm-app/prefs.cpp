@@ -1,22 +1,39 @@
-#include "prefs.h"
+module;
 
-#include "_embed.h"
+#include <karm-async/task.h>
+#include <karm-json/values.h>
+
+export module Karm.App:prefs;
+
+import :_embed;
 
 namespace Karm::App {
 
-Async::Task<Json::Value> MockPrefs::loadAsync(String key, Json::Value defaultValue) {
-    auto item = _store.access(key);
-    if (item)
-        co_return *item;
-    co_return defaultValue;
-}
+export struct Prefs {
+    virtual ~Prefs() = default;
 
-Async::Task<> MockPrefs::saveAsync(String key, Json::Value value) {
-    _store.put(key, value);
-    co_return Ok();
-}
+    virtual Async::Task<Json::Value> loadAsync(String key, Json::Value defaultValue = NONE) = 0;
 
-Prefs& globalPrefs() {
+    virtual Async::Task<> saveAsync(String key, Json::Value value) = 0;
+};
+
+export struct MockPrefs : Prefs {
+    Json::Object _store;
+
+    Async::Task<Json::Value> loadAsync(String key, Json::Value defaultValue = NONE) override {
+        auto item = _store.access(key);
+        if (item)
+            co_return *item;
+        co_return defaultValue;
+    }
+
+    Async::Task<> saveAsync(String key, Json::Value value) override {
+        _store.put(key, value);
+        co_return Ok();
+    }
+};
+
+export Prefs& globalPrefs() {
     return _Embed::globalPrefs();
 }
 

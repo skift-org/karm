@@ -5,6 +5,7 @@
     "description": "Application host",
     "requires": [
         "karm-base",
-        "karm-math"
+        "karm-math",
+        "karm-app-impl"
     ]
 }

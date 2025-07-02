@@ -4,6 +4,7 @@
     "type": "lib",
     "description": "Manipulate, layout and render text",
     "requires": [
+        "karm-app",
         "karm-gfx",
         "karm-sys",
         "karm-pkg",

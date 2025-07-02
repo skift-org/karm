@@ -1,8 +1,6 @@
 module;
 
 #include <SDL.h>
-#include <karm-app/host.h>
-#include <karm-app/inputs.h>
 #include <karm-gfx/canvas.h>
 #include <karm-image/loader.h>
 #include <karm-pkg/bundle.h>
@@ -11,6 +9,7 @@ module;
 
 module Karm.Ui;
 
+import Karm.App;
 import :host;
 import :node;
 import :drag;
@@ -617,7 +616,7 @@ static Res<> _setWindowIcon(SDL_Window* window) {
     auto* surface = SDL_CreateRGBSurface(0, image.width(), image.height(), 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
     if (not surface)
         return Error::other(SDL_GetError());
-    Defer defer{[&] {
+    Defer _{[&] {
         SDL_FreeSurface(surface);
     }};
 

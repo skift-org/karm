@@ -1,13 +1,12 @@
 module;
 
-#include <karm-app/form-factor.h>
-#include <karm-app/inputs.h>
 #include <karm-gfx/shadow.h>
 #include <karm-math/align.h>
 
 export module Karm.Kira:dialog;
 
 import Karm.Ui;
+import Karm.App;
 import Mdi;
 import :separator;
 

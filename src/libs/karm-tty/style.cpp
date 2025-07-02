@@ -172,7 +172,7 @@ Styled<T> operator|(T inner, Style style) {
     return Styled<T>{inner, style};
 }
 
-} // namespace Karm::Cli
+} // namespace Karm::Tty
 
 export template <typename T>
 struct Karm::Io::Formatter<Karm::Tty::Styled<T>> {

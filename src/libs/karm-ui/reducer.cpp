@@ -1,6 +1,5 @@
 module;
 
-#include <karm-app/event.h>
 #include <karm-async/run.h>
 #include <karm-async/task.h>
 #include <karm-base/func.h>
@@ -8,6 +7,7 @@ module;
 
 export module Karm.Ui:reducer;
 
+import Karm.App;
 import :funcs;
 
 namespace Karm::Ui {

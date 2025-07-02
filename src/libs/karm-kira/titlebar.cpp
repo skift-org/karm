@@ -1,10 +1,10 @@
 module;
 
-#include <karm-app/host.h>
 #include <karm-gfx/icon.h>
 
 export module Karm.Kira:titlebar;
 
+import Karm.App;
 import Karm.Ui;
 import Mdi;
 import :aboutDialog;

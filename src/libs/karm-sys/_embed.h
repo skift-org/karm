@@ -42,6 +42,10 @@ Res<Rc<Sys::Fd>> createErr();
 
 Res<Vec<Sys::DirEntry>> readDir(Mime::Url const& url);
 
+Res<> createDir(Mime::Url const& url);
+
+Res<Vec<Sys::DirEntry>> readDirOrCreate(Mime::Url const& url);
+
 Res<Stat> stat(Mime::Url const& url);
 
 // MARK: User interactions -----------------------------------------------------

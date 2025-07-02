@@ -1,16 +1,16 @@
-#pragma once
+module;
 
 #include <karm-base/box.h>
 #include <karm-base/cursor.h>
 #include <karm-meta/id.h>
 
-#include "event.h"
+export module Karm.App:event;
 
 namespace Karm::App {
 
 // MARK: Event -----------------------------------------------------------------
 
-struct Event {
+export struct Event {
     bool _accepted = false;
 
     virtual ~Event() = default;
@@ -53,7 +53,7 @@ struct Event {
     }
 };
 
-template <typename T>
+export template <typename T>
 struct _Event : Event {
     T _buf;
 
@@ -74,14 +74,14 @@ struct _Event : Event {
     }
 };
 
-template <typename T, typename... Args>
+export template <typename T, typename... Args>
 Box<Event> makeEvent(Args&&... args) {
     return makeBox<_Event<T>>(std::forward<Args>(args)...);
 }
 
 // MARK: Dispatch --------------------------------------------------------------
 
-struct Dispatch {
+export struct Dispatch {
     virtual ~Dispatch() = default;
 
     virtual void event(App::Event&) = 0;

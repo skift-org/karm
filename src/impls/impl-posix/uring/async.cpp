@@ -342,9 +342,9 @@ struct UringSched : Sys::Sched {
         if (_inWait)
             panic("nested wait");
         _inWait = true;
-        Defer defer = [&] {
+        Defer _{[&] {
             _inWait = false;
-        };
+        }};
 
         Instant now = Sys::instant();
 

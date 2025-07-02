@@ -79,7 +79,7 @@ struct EpollSched : Sys::Sched {
         int timeFd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK);
         if (timeFd < 0)
             co_return Posix::fromLastErrno();
-        Defer defer{[&] {
+        Defer _{[&] {
             close(timeFd);
         }};
 

@@ -1,5 +1,5 @@
-#include <karm-test/macros.h>
 #include <karm-sys/context.h>
+#include <karm-test/macros.h>
 
 import Karm.Cli;
 

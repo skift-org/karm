@@ -17,11 +17,12 @@
 
 //
 #include <karm-io/funcs.h>
+#include <karm-base/defer.h>
 #include <karm-sys/_embed.h>
 #include <karm-sys/addr.h>
+#include <karm-sys/chan.h>
 #include <karm-sys/launch.h>
 #include <karm-sys/proc.h>
-#include <karm-sys/chan.h>
 
 #include "fd.h"
 #include "utils.h"
@@ -193,6 +194,55 @@ Res<Vec<DirEntry>> readDir(Mime::Url const& url) {
         return Posix::fromLastErrno();
 
     return Ok(entries);
+}
+
+Res<> createDir(Mime::Url const& url) {
+    String str = try$(resolve(url)).str();
+
+    if (::mkdir(str.buf(), 0755) < 0) {
+        if (errno == EEXIST) {
+            return Error::alreadyExists("directory already exists");
+        }
+        return Posix::fromLastErrno();
+    }
+
+    return Ok();
+}
+
+Res<Vec<Sys::DirEntry>> readDirOrCreate(Mime::Url const& url) {
+    String str = try$(resolve(url)).str();
+
+    DIR* dir = ::opendir(str.buf());
+    Defer _{[&]() {
+        if (dir) 
+            ::closedir(dir);
+    }};
+
+    if (dir) {
+        Vec<DirEntry> entries;
+        dirent* entry;
+        errno = 0;
+        while ((entry = ::readdir(dir))) {
+            try$(Posix::consumeErrno());
+
+            if (strcmp(entry->d_name, ".") == 0 or
+                strcmp(entry->d_name, "..") == 0) {
+                continue;
+            }
+
+            entries.pushBack(DirEntry{
+                Str::fromNullterminated(entry->d_name),
+                entry->d_type == DT_DIR ? Sys::Type::DIR : Sys::Type::FILE,
+            });
+        }
+
+        return Ok(entries);
+    } else {
+        if (errno != ENOENT)
+            return Posix::fromLastErrno();
+        try$(createDir(url));
+        return Ok(Vec<DirEntry>{});
+    }
 }
 
 Res<Stat> stat(Mime::Url const& url) {

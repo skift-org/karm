@@ -37,9 +37,9 @@ Res<> hardenSandbox() {
     if (!ctx)
         return Posix::fromLastErrno();
 
-    Defer cleanupSeccomp = [&] {
+    Defer _ {[&] {
         seccomp_release(ctx);
-    };
+    }};
 
 #define ITER(SYSCALL)                                                                    \
     if (auto it = seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(SYSCALL), 0); it < 0) { \

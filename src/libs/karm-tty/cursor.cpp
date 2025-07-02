@@ -188,4 +188,4 @@ export struct Cmd {
     }
 };
 
-} // namespace Karm::Cli
+} // namespace Karm::Tty

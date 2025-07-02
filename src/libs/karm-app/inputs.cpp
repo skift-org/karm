@@ -1,15 +1,17 @@
-#pragma once
+module;
 
 #include <karm-base/flags.h>
 #include <karm-math/vec.h>
 
-#include "event.h"
+export module Karm.App:inputs;
+
+import :event;
 
 namespace Karm::App {
 
 // MARK: Keyboard --------------------------------------------------------------
 
-enum struct KeyMod : u16 {
+export enum struct KeyMod : u16 {
     LSHIFT = 1 << 0,
     RSHIFT = 1 << 1,
     LCTRL = 1 << 2,
@@ -31,7 +33,7 @@ enum struct KeyMod : u16 {
     SUPER = 1 << 15,
 };
 
-static inline bool match(Flags<KeyMod> in, Flags<KeyMod> mods) {
+export bool match(Flags<KeyMod> in, Flags<KeyMod> mods) {
     Flags<KeyMod> either = {};
     Flags<KeyMod> mask = {};
 
@@ -78,12 +80,12 @@ static inline bool match(Flags<KeyMod> in, Flags<KeyMod> mods) {
            ((in & (mods | mask)) == in);
 }
 
-enum struct KeyMotion {
+export enum struct KeyMotion {
     RELEASED,
     PRESSED,
 };
 
-struct Key {
+export struct Key {
     enum struct Code {
 #define KEY(name, code) name = code,
 #include "defs/keys.inc"
@@ -121,7 +123,7 @@ struct Key {
     }
 };
 
-struct KeyboardEvent {
+export struct KeyboardEvent {
     enum {
         PRESS,
         RELEASE,
@@ -139,14 +141,14 @@ struct KeyboardEvent {
     Flags<KeyMod> mods;
 };
 
-struct TypeEvent {
+export struct TypeEvent {
     Rune rune;
     Flags<KeyMod> mods = {};
 };
 
 // MARK: Mouse -----------------------------------------------------------------
 
-enum struct MouseButton : u8 {
+export enum struct MouseButton : u8 {
     NONE = 0,
 
     LEFT = 1 << 0,
@@ -156,7 +158,7 @@ enum struct MouseButton : u8 {
     X2 = 1 << 4,
 };
 
-struct MouseEvent {
+export struct MouseEvent {
     enum {
         PRESS,
         RELEASE,
@@ -180,10 +182,10 @@ struct MouseEvent {
     }
 };
 
-struct MouseLeaveEvent {
+export struct MouseLeaveEvent {
 };
 
-struct MouseEnterEvent {
+export struct MouseEnterEvent {
 };
 
 } // namespace Karm::App

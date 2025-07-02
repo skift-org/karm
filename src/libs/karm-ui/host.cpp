@@ -1,6 +1,5 @@
 module;
 
-#include <karm-app/host.h>
 #include <karm-base/ring.h>
 #include <karm-gfx/cpu/canvas.h>
 #include <karm-logger/logger.h>
@@ -9,6 +8,7 @@ module;
 
 export module Karm.Ui:host;
 
+import Karm.App;
 import :node;
 import :atoms;
 

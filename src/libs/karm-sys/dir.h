@@ -23,7 +23,7 @@ struct Dir {
 
     static Res<Dir> open(Mime::Url url);
 
-    static Res<Dir> create(Mime::Url url);
+    static Res<> create(Mime::Url url);
 
     static Res<Dir> openOrCreate(Mime::Url url);
 

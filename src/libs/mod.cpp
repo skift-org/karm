@@ -1,6 +1,7 @@
 export module Karm;
 
 export import Karm.Aio;
+export import Karm.App;
 export import Karm.Cli;
 export import Karm.Gc;
 export import Karm.Http;

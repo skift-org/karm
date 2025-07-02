@@ -1,10 +1,10 @@
 module;
 
-#include <karm-app/event.h>
 #include <karm-math/rect.h>
 
 export module Karm.Kira:resizable;
 
+import Karm.App;
 import Karm.Ui;
 
 namespace Karm::Kira {

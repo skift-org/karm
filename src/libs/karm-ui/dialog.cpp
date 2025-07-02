@@ -1,12 +1,11 @@
 module;
 
-#include <karm-app/event.h>
-#include <karm-app/inputs.h>
 #include <karm-gfx/canvas.h>
 #include <karm-math/easing.h>
 
 export module Karm.Ui:dialog;
 
+import Karm.App;
 import :anim;
 import :funcs;
 import :atoms;

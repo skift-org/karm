@@ -1,12 +1,12 @@
 module;
 
-#include <karm-app/inputs.h>
 #include <karm-gfx/canvas.h>
 #include <karm-gfx/shadow.h>
 #include <karm-math/align.h>
 
 export module Karm.Kira:colorInput;
 
+import Karm.App;
 import Karm.Ui;
 import :dialog;
 

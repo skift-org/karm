@@ -1,6 +1,5 @@
 module;
 
-#include <karm-app/event.h>
 #include <karm-base/checked.h>
 #include <karm-base/func.h>
 #include <karm-base/hash.h>
@@ -8,6 +7,8 @@ module;
 #include <karm-sys/async.h>
 
 export module Karm.Ui:node;
+
+import Karm.App;
 
 namespace Karm::Ui {
 

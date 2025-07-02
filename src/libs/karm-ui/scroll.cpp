@@ -1,11 +1,11 @@
 module;
 
-#include <karm-app/inputs.h>
 #include <karm-gfx/canvas.h>
 #include <karm-math/flow.h>
 
 export module Karm.Ui:scroll;
 
+import Karm.App;
 import :anim;
 import :node;
 import :atoms;

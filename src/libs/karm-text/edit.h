@@ -1,6 +1,9 @@
 #pragma once
 
-#include <karm-app/inputs.h>
+#include <karm-base/string.h>
+#include <karm-base/vec.h>
+
+import Karm.App;
 
 namespace Karm::Text {
 

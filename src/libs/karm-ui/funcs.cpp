@@ -1,11 +1,11 @@
 module;
 
-#include <karm-app/inputs.h>
 #include <karm-base/func.h>
 #include <karm-math/rect.h>
 
 export module Karm.Ui:funcs;
 
+import Karm.App;
 import :node;
 
 namespace Karm::Ui {

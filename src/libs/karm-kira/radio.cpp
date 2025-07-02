@@ -1,10 +1,10 @@
 module;
 
-#include <karm-app/event.h>
 #include <karm-gfx/canvas.h>
 
 export module Karm.Kira:radio;
 
+import Karm.App;
 import Karm.Ui;
 
 namespace Karm::Kira {

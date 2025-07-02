@@ -1,10 +1,11 @@
 module;
 
-#include <karm-app/inputs.h>
 #include <karm-base/func.h>
+#include <karm-base/flags.h>
 
 export module Karm.Ui:intent;
 
+import Karm.App;
 import :node;
 import :funcs;
 

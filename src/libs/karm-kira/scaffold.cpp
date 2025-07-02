@@ -1,12 +1,11 @@
 module;
 
-#include <karm-app/form-factor.h>
-#include <karm-app/inputs.h>
 #include <karm-gfx/icon.h>
 
 export module Karm.Kira:scaffold;
 
 import Mdi;
+import Karm.App;
 import Karm.Ui;
 import :titlebar;
 import :toolbar;

@@ -577,7 +577,7 @@ bool Path::evalSvg(Str svg) {
 Path Path::fromSvg(Str svg) {
     Path p;
     // eval path might fail, in this case you get an empty path
-    (void)p.evalSvg(svg); 
+    (void)p.evalSvg(svg);
     return p;
 }
 

@@ -251,12 +251,12 @@ export Flag flag(Opt<Rune> shortName, String longName, String description) {
 }
 
 export template <typename T>
- Option<T> option(Opt<Rune> shortName, String longName, String description, Opt<T> defaultValue = NONE) {
+Option<T> option(Opt<Rune> shortName, String longName, String description, Opt<T> defaultValue = NONE) {
     return makeRc<OptionImpl<T>>(OptionKind::OPTION, shortName, longName, description, defaultValue);
 }
 
 export template <typename T>
- Option<T> operand(String longName, String description, T defaultValue = {}) {
+Option<T> operand(String longName, String description, T defaultValue = {}) {
     return makeRc<OptionImpl<T>>(OptionKind::OPERAND, NONE, longName, description, defaultValue);
 }
 
