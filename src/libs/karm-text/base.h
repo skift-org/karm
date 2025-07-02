@@ -251,7 +251,7 @@ struct Family : _Family {
     }
 
     void repr(Io::Emit& e) const {
-        e("{}", static_cast<Union<GenericFamily, String>>(*this));
+        e("{}", *static_cast<_Family const*>(this));
     }
 };
 

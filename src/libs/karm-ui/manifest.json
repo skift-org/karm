@@ -9,6 +9,7 @@
         "karm-image",
         "karm-text",
         "karm-gfx",
-        "karm-app"
+        "karm-app",
+        "karm-scene"
     ]
 }

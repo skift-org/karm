@@ -10,7 +10,7 @@ import :node;
 
 namespace Karm::Scene {
 
-struct Image : Node {
+export struct Image : Node {
     Math::Rectf _bound;
     ::Image::Picture _picture;
 

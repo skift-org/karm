@@ -9,12 +9,12 @@ import :printer;
 
 namespace Karm::Print {
 
-struct FilePrinterProps {
+export struct FilePrinterProps {
     /// Pixel density for raster formats (ignored for vector formats)
     f64 density = 1;
 };
 
-struct FilePrinter : Printer {
+export struct FilePrinter : Printer {
     static Res<Rc<FilePrinter>> create(Mime::Uti uti, FilePrinterProps props = {});
 
     virtual Res<> write(Io::Writer& w) = 0;
