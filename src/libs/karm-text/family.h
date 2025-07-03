@@ -30,11 +30,11 @@ struct FontFamily : Fontface {
     FontFamily(Vec<Member> members) : _members(std::move(members)) {}
 
     struct Builder : Meta::NoCopy {
-        FontBook const& book;
+        FontBook& book;
         Vec<Member> members = {};
         FontAdjust adjust = {};
 
-        Builder(FontBook const& book) : book(book) {}
+        Builder(FontBook& book) : book(book) {}
 
         Builder& add(FontQuery query);
 
@@ -47,7 +47,7 @@ struct FontFamily : Fontface {
         Rc<FontFamily> bake();
     };
 
-    static Builder make(FontBook const& book);
+    static Builder make(FontBook & book);
 
     FontMetrics metrics() const override;
     BaselineSet baselineSet() override;

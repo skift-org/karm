@@ -16,8 +16,8 @@
 #include <unistd.h>
 
 //
-#include <karm-io/funcs.h>
 #include <karm-base/defer.h>
+#include <karm-io/funcs.h>
 #include <karm-sys/_embed.h>
 #include <karm-sys/addr.h>
 #include <karm-sys/chan.h>
@@ -214,7 +214,7 @@ Res<Vec<Sys::DirEntry>> readDirOrCreate(Mime::Url const& url) {
 
     DIR* dir = ::opendir(str.buf());
     Defer _{[&]() {
-        if (dir) 
+        if (dir)
             ::closedir(dir);
     }};
 

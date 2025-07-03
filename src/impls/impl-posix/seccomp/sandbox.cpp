@@ -37,7 +37,7 @@ Res<> hardenSandbox() {
     if (!ctx)
         return Posix::fromLastErrno();
 
-    Defer _ {[&] {
+    Defer _{[&] {
         seccomp_release(ctx);
     }};
 

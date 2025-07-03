@@ -26,7 +26,6 @@ Res<> FontBook::load(Mime::Url const& url, Opt<FontAttrs> attrs) {
 }
 
 Res<> FontBook::loadAll() {
-
     auto bundles = try$(Pkg::installedBundles());
     for (auto& bundle : bundles) {
         auto maybeDir = Sys::Dir::open(bundle.url() / "fonts");
@@ -70,9 +69,9 @@ static Str _peekWord(Io::SScan s) {
     return _nextWord(s);
 }
 
-Str commonFamily(Str lhs, Str rhs) {
-    Io::SScan l(lhs);
-    Io::SScan r(rhs);
+Symbol commonFamily(Symbol lhs, Symbol rhs) {
+    Io::SScan l(lhs.str());
+    Io::SScan r(rhs.str());
 
     l.eat(Re::space());
     r.eat(Re::space());
@@ -91,11 +90,11 @@ Str commonFamily(Str lhs, Str rhs) {
         _nextWord(r);
     } while (not(l.ended() or l.ended()));
 
-    return r.end();
+    return Symbol::from(r.end());
 }
 
-Vec<String> FontBook::families() const {
-    Vec<String> families;
+Vec<Symbol> FontBook::families()  {
+    Vec<Symbol> families;
     for (auto& info : _faces) {
         bool found = false;
         for (auto& f : families) {
@@ -118,7 +117,7 @@ Vec<String> FontBook::families() const {
 // MARK: Font Matching ---------------------------------------------------------
 // https://www.w3.org/TR/css-fonts-3/#font-matching-algorithm
 
-Str _pickFamily(Str curr, Str best, Str desired) {
+Symbol _pickFamily(Symbol curr, Symbol best, Symbol desired) {
     if (curr == desired)
         return curr;
 
@@ -128,7 +127,7 @@ Str _pickFamily(Str curr, Str best, Str desired) {
     auto currPrefix = commonFamily(curr, desired);
     auto bestPrefix = commonFamily(best, desired);
 
-    if (currPrefix.len() > bestPrefix.len())
+    if (currPrefix.str().len() > bestPrefix.str().len())
         return curr;
 
     return best;
@@ -210,13 +209,11 @@ FontStyle _pickFontStyle(FontStyle curr, FontStyle best, FontStyle desired) {
     return best;
 }
 
-Str FontBook::_resolveFamily(Family const& family) const {
-    if (auto gf = family.is<GenericFamily>())
-        return _genericFamily[toUnderlyingType(*gf)];
-    return family.unwrap<String>();
+Symbol FontBook::_resolveFamily(Symbol family) {
+    return _genericFamily.getOrDefault(family, family);
 }
 
-Opt<Rc<Fontface>> FontBook::queryExact(FontQuery query) const {
+Opt<Rc<Fontface>> FontBook::queryExact(FontQuery query) {
     auto family = _resolveFamily(query.family);
 
     for (auto& info : _faces) {
@@ -232,11 +229,11 @@ Opt<Rc<Fontface>> FontBook::queryExact(FontQuery query) const {
     return NONE;
 }
 
-Opt<Rc<Fontface>> FontBook::queryClosest(FontQuery query) const {
-    Str desired = _resolveFamily(query.family);
+Opt<Rc<Fontface>> FontBook::queryClosest(FontQuery query) {
+    auto desired = _resolveFamily(query.family);
 
     Opt<Rc<Fontface>> matchingFace;
-    auto matchingFamily = ""s;
+    auto matchingFamily = ""_sym;
     auto matchingStretch = FontStretch::NO_MATCH;
     auto matchingStyle = FontStyle::NO_MATCH;
     auto matchingWeight = FontWeight::NO_MATCH;
@@ -290,7 +287,7 @@ Opt<Rc<Fontface>> FontBook::queryClosest(FontQuery query) const {
     return matchingFace;
 }
 
-Vec<Rc<Fontface>> FontBook::queryFamily(String family) const {
+Vec<Rc<Fontface>> FontBook::queryFamily(Symbol family) {
     Vec<Rc<Fontface>> res;
     for (auto& info : _faces)
         if (commonFamily(info.attrs.family, family) == family)

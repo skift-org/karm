@@ -4,12 +4,12 @@
 namespace Karm::Text::Tests {
 
 test$("karm-text-common-family") {
-    expectEq$(commonFamily("Noto", "Noto"), "Noto");
-    expectEq$(commonFamily("Not", "Noto"), "");
-    expectEq$(commonFamily("Noto", "Arial"), "");
-    expectEq$(commonFamily("Noto Sans Condensed", "Noto Sans Condensed Bold"), "Noto Sans Condensed");
-    expectEq$(commonFamily("Noto Sans ExtraCondensed", "Noto Sans Condensed Bold"), "Noto Sans");
-    expectEq$(commonFamily("Comic Sans", "Comic Serif"), "Comic");
+    expectEq$(commonFamily("Noto"_sym, "Noto"_sym), "Noto"_sym);
+    expectEq$(commonFamily("Not"_sym, "Noto"_sym), ""_sym);
+    expectEq$(commonFamily("Noto"_sym, "Arial"_sym), ""_sym);
+    expectEq$(commonFamily("Noto Sans Condensed"_sym, "Noto Sans Condensed Bold"_sym), "Noto Sans Condensed"_sym);
+    expectEq$(commonFamily("Noto Sans ExtraCondensed"_sym, "Noto Sans Condensed Bold"_sym), "Noto Sans"_sym);
+    expectEq$(commonFamily("Comic Sans"_sym, "Comic Serif"_sym), "Comic"_sym);
 
     return Ok();
 }

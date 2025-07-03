@@ -71,4 +71,4 @@ Prefs& globalPrefs() {
     return *_globalPrefs;
 }
 
-} // namespace Karm::App::_Ember
+} // namespace Karm::App::_Embed

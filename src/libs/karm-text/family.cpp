@@ -50,7 +50,7 @@ Rc<FontFamily> FontFamily::Builder::bake() {
     return makeRc<FontFamily>(std::move(members));
 }
 
-FontFamily::Builder FontFamily::make(FontBook const& book) {
+FontFamily::Builder FontFamily::make(FontBook & book) {
     return {book};
 }
 
@@ -88,10 +88,10 @@ FontAttrs FontFamily::attrs() const {
     for (auto& member : _members) {
         if (familyName.len())
             familyName.append(" | "s);
-        familyName.append(member.face->attrs().family);
+        familyName.append(member.face->attrs().family.str());
     }
 
-    attrs.family = familyName.take();
+    attrs.family = Symbol::from(familyName.take());
 
     return attrs;
 }

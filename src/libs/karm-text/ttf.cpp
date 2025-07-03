@@ -43,7 +43,7 @@ FontAttrs TtfFontface::attrs() const {
 
     if (_parser._name.present()) {
         auto name = _parser._name;
-        attrs.family = name.string(name.lookupRecord(Ttf::Name::FAMILY));
+        attrs.family = Symbol::from(name.string(name.lookupRecord(Ttf::Name::FAMILY)));
     }
 
     if (_parser._post.present()) {

@@ -38,7 +38,7 @@ struct VgaFontface : Fontface {
 
     FontAttrs attrs() const override {
         return {
-            .family = "IBM VGA8"s,
+            .family = "IBM VGA8"_sym,
             .monospace = Monospace::YES,
         };
     }

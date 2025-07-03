@@ -10,7 +10,7 @@
 namespace Karm::Text {
 
 struct FontQuery {
-    Family family = GenericFamily::SYSTEM;
+    Symbol family = "system"_sym;
     FontWeight weight = FontWeight::REGULAR;
     FontStretch stretch = FontStretch::NORMAL;
     FontStyle style = FontStyle::NORMAL;
@@ -29,22 +29,22 @@ struct FontInfo {
     Rc<Fontface> face;
 };
 
-Str commonFamily(Str lhs, Str rhs);
+Symbol commonFamily(Symbol lhs, Symbol rhs);
 
 struct FontBook {
     Vec<FontInfo> _faces;
 
     // FIXME: these value depend on the correct loading of the bundle
-    Array<String, toUnderlyingType(GenericFamily::_LEN)> _genericFamily = {
-        /* SERIF */ "Noto Serif"s,
-        /* SANS_SERIF */ "Noto Sans"s,
-        /* MONOSPACE */ "Fira Code"s,
-        /* CURSIVE */ "Dancing Script"s,
-        /* FANTASY */ "Excalibur"s,
-        /* SYSTEM */ "Noto Serif"s,
-        /* EMOJI */ "Noto Emoji"s,
-        /* MATH */ "Noto Sans Math"s,
-        /* FANGSONG */ "Noto"s,
+    Map<Symbol, Symbol> _genericFamily = {
+        {"serif"_sym, "Noto Serif"_sym},
+        {"sans-serif"_sym, "Noto Sans"_sym},
+        {"monospace"_sym, "Fira Code"_sym},
+        {"cursive"_sym, "Dancing Script"_sym},
+        {"fantasy"_sym, "Excalibur"_sym},
+        {"system"_sym, "Noto Serif"_sym},
+        {"emoji"_sym, "Noto Emoji"_sym},
+        {"math"_sym, "Noto Sans Math"_sym},
+        {"fangsong"_sym, "Noto"_sym},
     };
 
     void add(FontInfo info) {
@@ -55,15 +55,15 @@ struct FontBook {
 
     Res<> loadAll();
 
-    Vec<String> families() const;
+    Vec<Symbol> families();
 
-    Str _resolveFamily(Family const& family) const;
+    Symbol _resolveFamily(Symbol family);
 
-    Opt<Rc<Fontface>> queryExact(FontQuery query) const;
+    Opt<Rc<Fontface>> queryExact(FontQuery query);
 
-    Opt<Rc<Fontface>> queryClosest(FontQuery query) const;
+    Opt<Rc<Fontface>> queryClosest(FontQuery query);
 
-    Vec<Rc<Fontface>> queryFamily(String family) const;
+    Vec<Rc<Fontface>> queryFamily(Symbol family);
 };
 
 } // namespace Karm::Text

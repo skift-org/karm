@@ -1,7 +1,7 @@
 module;
 
-#include <karm-base/func.h>
 #include <karm-base/flags.h>
+#include <karm-base/func.h>
 
 export module Karm.Ui:intent;
 
