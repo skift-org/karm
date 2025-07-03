@@ -93,7 +93,7 @@ Symbol commonFamily(Symbol lhs, Symbol rhs) {
     return Symbol::from(r.end());
 }
 
-Vec<Symbol> FontBook::families()  {
+Vec<Symbol> FontBook::families() const {
     Vec<Symbol> families;
     for (auto& info : _faces) {
         bool found = false;
@@ -209,11 +209,11 @@ FontStyle _pickFontStyle(FontStyle curr, FontStyle best, FontStyle desired) {
     return best;
 }
 
-Symbol FontBook::_resolveFamily(Symbol family) {
-    return _genericFamily.getOrDefault(family, family);
+Symbol FontBook::_resolveFamily(Symbol family) const {
+    return _genericFamily.tryGet(family).unwrapOr(family);
 }
 
-Opt<Rc<Fontface>> FontBook::queryExact(FontQuery query) {
+Opt<Rc<Fontface>> FontBook::queryExact(FontQuery query) const {
     auto family = _resolveFamily(query.family);
 
     for (auto& info : _faces) {
@@ -229,7 +229,7 @@ Opt<Rc<Fontface>> FontBook::queryExact(FontQuery query) {
     return NONE;
 }
 
-Opt<Rc<Fontface>> FontBook::queryClosest(FontQuery query) {
+Opt<Rc<Fontface>> FontBook::queryClosest(FontQuery query) const {
     auto desired = _resolveFamily(query.family);
 
     Opt<Rc<Fontface>> matchingFace;
@@ -287,7 +287,7 @@ Opt<Rc<Fontface>> FontBook::queryClosest(FontQuery query) {
     return matchingFace;
 }
 
-Vec<Rc<Fontface>> FontBook::queryFamily(Symbol family) {
+Vec<Rc<Fontface>> FontBook::queryFamily(Symbol family) const {
     Vec<Rc<Fontface>> res;
     for (auto& info : _faces)
         if (commonFamily(info.attrs.family, family) == family)

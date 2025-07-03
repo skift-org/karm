@@ -55,15 +55,15 @@ struct FontBook {
 
     Res<> loadAll();
 
-    Vec<Symbol> families();
+    Vec<Symbol> families() const;
 
-    Symbol _resolveFamily(Symbol family);
+    Symbol _resolveFamily(Symbol family) const;
 
-    Opt<Rc<Fontface>> queryExact(FontQuery query);
+    Opt<Rc<Fontface>> queryExact(FontQuery query) const;
 
-    Opt<Rc<Fontface>> queryClosest(FontQuery query);
+    Opt<Rc<Fontface>> queryClosest(FontQuery query) const;
 
-    Vec<Rc<Fontface>> queryFamily(Symbol family);
+    Vec<Rc<Fontface>> queryFamily(Symbol family) const;
 };
 
 } // namespace Karm::Text

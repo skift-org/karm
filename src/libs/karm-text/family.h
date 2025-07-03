@@ -47,7 +47,7 @@ struct FontFamily : Fontface {
         Rc<FontFamily> bake();
     };
 
-    static Builder make(FontBook & book);
+    static Builder make(FontBook& book);
 
     FontMetrics metrics() const override;
     BaselineSet baselineSet() override;

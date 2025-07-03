@@ -50,7 +50,7 @@ Rc<FontFamily> FontFamily::Builder::bake() {
     return makeRc<FontFamily>(std::move(members));
 }
 
-FontFamily::Builder FontFamily::make(FontBook & book) {
+FontFamily::Builder FontFamily::make(FontBook& book) {
     return {book};
 }
 

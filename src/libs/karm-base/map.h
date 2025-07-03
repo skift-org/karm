@@ -45,6 +45,16 @@ struct Map {
         panic("key not found");
     }
 
+    V const& get(K const& key) const {
+        for (auto& i : _els) {
+            if (i.v0 == key) {
+                return i.v1;
+            }
+        }
+
+        panic("key not found");
+    }
+
     V& getOrDefault(K const& key, V const& defaultValue = {}) {
         for (auto& i : _els) {
             if (i.v0 == key) {
