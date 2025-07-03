@@ -1,0 +1,57 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.target.v1",
+    "id": "mingw-w64",
+    "type": "target",
+    "props": {
+        "toolchain": "clang",
+        "arch": "x86_64",
+        "sys": "windows",
+        "abi": "gnu",
+        "bits": "64",
+        "freestanding": false,
+        "host": true,
+        "sys-encoding": "utf8",
+        "sys-line-ending": "crlf",
+        "sys-path-separator": "backslash",
+        "sys-terminal": "ansi"
+    },
+    "tools": {
+        "cc": {
+            "cmd": "{shell.latest('clang')}",
+            "args": [
+                "--target=x86_64-w64-windows-gnu"
+            ]
+        },
+        "cxx": {
+            "cmd": "{shell.latest('clang++')}",
+            "args": [
+                "--target=x86_64-w64-windows-gnu"
+            ]
+        },
+        "ld": {
+            "cmd": "{shell.latest('clang++')}",
+            "args": [
+                "--target=x86_64-w64-windows-gnu"
+            ]
+        },
+        "ld-shared": {
+            "cmd": "{shell.latest('clang++')}",
+            "args": [
+                "--target=x86_64-w64-windows-gnu"
+            ]
+        },
+        "ar": {
+            "cmd": "{shell.latest('llvm-ar')}",
+            "args": [
+                "rcs"
+            ]
+        },
+        "as": {
+            "cmd": "nasm",
+            "args": [
+                "-f",
+                "elf64"
+            ]
+        }
+    }
+}

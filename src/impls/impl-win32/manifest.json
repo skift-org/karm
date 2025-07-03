@@ -1,0 +1,17 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "impl-win32",
+    "type": "lib",
+    "description": "Karm UI platform embedding layer for Win32.",
+    "enableIf": {
+        "sys": [
+            "windows"
+        ]
+    },
+    "provides": [
+        "karm-sys-impl",
+        "karm-sys-sandbox-impl",
+        "karm-sys-async-impl",
+        "karm-pkg-impl"
+    ]
+}

@@ -3,6 +3,12 @@
     "id": "impl-sdl",
     "type": "lib",
     "description": "Karm UI platform embedding layer for SDL.",
+    "enableIf": {
+        "sys": [
+            "linux",
+            "darwin"
+        ]
+    },
     "requires": [
         "sdl2"
     ],

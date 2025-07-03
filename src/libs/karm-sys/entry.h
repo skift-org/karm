@@ -18,6 +18,8 @@
 #    include <impl-efi/entry.h>
 #elif defined(__ck_sys_wasm__)
 #    include <impl-wasm/entry.h>
+#elif defined(__ck_sys_windows__)
+#    include <impl-win32/entry.h>
 #else
 #    error "Unknown system"
 #endif
