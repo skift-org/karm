@@ -2,13 +2,13 @@ module;
 
 #include <SDL.h>
 #include <karm-gfx/canvas.h>
-#include <karm-image/loader.h>
 #include <karm-pkg/bundle.h>
 #include <karm-sys/context.h>
 #include <karm-sys/time.h>
 
 module Karm.Ui;
 
+import Karm.Image;
 import Karm.App;
 import :host;
 import :node;

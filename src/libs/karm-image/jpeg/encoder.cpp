@@ -1,11 +1,19 @@
-#include "encoder.h"
+module;
 
-#include "base.h"
-#include "tables.h"
+#include <karm-gfx/buffer.h>
+#include <karm-io/bscan.h>
+
+export module Karm.Image:jpeg.encoder;
+
+import :jpeg.base;
+import :jpeg.dct;
+import :jpeg.tables;
 
 namespace Jpeg {
 
-static Res<> _encodeMcu(
+namespace {
+
+Res<> _encodeMcu(
     BitWriter& bitWriter,
     Mcu& mcu,
     i16& previousDC,
@@ -79,7 +87,7 @@ static Res<> _encodeMcu(
     return Ok();
 }
 
-static Res<> _writePixelData(Gfx::Pixels pixels, BitWriter& w) {
+Res<> _writePixelData(Gfx::Pixels pixels, BitWriter& w) {
     Array<i16, 3> prev = {};
 
     for (usize y = 0; y < mcuHeight(pixels); y++) {
@@ -105,7 +113,7 @@ static Res<> _writePixelData(Gfx::Pixels pixels, BitWriter& w) {
     return Ok();
 }
 
-static void _writeQuantizationTable(Io::BEmit& e, u8 tableID, Quant const& qTable) {
+void _writeQuantizationTable(Io::BEmit& e, u8 tableID, Quant const& qTable) {
     e.writeU8be(0xFF);
     e.writeU8be(DQT);
     e.writeU16be(67);
@@ -115,7 +123,7 @@ static void _writeQuantizationTable(Io::BEmit& e, u8 tableID, Quant const& qTabl
     }
 }
 
-static void _writeStartOfFrame(Io::BEmit& e, Gfx::Pixels pixels) {
+void _writeStartOfFrame(Io::BEmit& e, Gfx::Pixels pixels) {
     e.writeU8be(0xFF);
     e.writeU8be(SOF0);
     e.writeU16be(17);
@@ -130,7 +138,7 @@ static void _writeStartOfFrame(Io::BEmit& e, Gfx::Pixels pixels) {
     }
 }
 
-static void _writeAPP0(Io::BEmit& e) {
+void _writeAPP0(Io::BEmit& e) {
     e.writeU8be(0xFF);
     e.writeU8be(APP0);
     e.writeU16be(16);
@@ -148,7 +156,7 @@ static void _writeAPP0(Io::BEmit& e) {
     e.writeU8be(0);
 }
 
-static void _writeHuffmanTable(Io::BEmit& e, u8 acdc, u8 tableID, Huff const& hTable) {
+void _writeHuffmanTable(Io::BEmit& e, u8 acdc, u8 tableID, Huff const& hTable) {
     e.writeU8be(0xFF);
     e.writeU8be(DHT);
     e.writeU16be(19 + hTable.offs[16]);
@@ -163,7 +171,7 @@ static void _writeHuffmanTable(Io::BEmit& e, u8 acdc, u8 tableID, Huff const& hT
     }
 }
 
-static void _writeStartOfScan(Io::BEmit& e) {
+void _writeStartOfScan(Io::BEmit& e) {
     e.writeU8be(0xFF);
     e.writeU8be(SOS);
     e.writeU16be(12);
@@ -177,7 +185,9 @@ static void _writeStartOfScan(Io::BEmit& e) {
     e.writeU8be(0);
 }
 
-Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
+} // namespace
+
+export Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
     // SOI
     e.writeU8be(0xFF);
     e.writeU8be(SOI);

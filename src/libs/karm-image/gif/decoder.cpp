@@ -1,11 +1,13 @@
-#pragma once
+module;
+
+#include <karm-gfx/buffer.h>
+#include <karm-io/bscan.h>
+
+export module Karm.Image:gif.decoder;
 
 // GIF Image decoder
 // References:
 //  - https://www.w3.org/Graphics/GIF/spec-gif89a.txt
-
-#include <karm-gfx/buffer.h>
-#include <karm-io/bscan.h>
 
 namespace Gif {
 

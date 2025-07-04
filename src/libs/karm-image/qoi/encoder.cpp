@@ -1,11 +1,16 @@
-#include <karm-gfx/colors.h>
+module;
 
-#include "base.h"
-#include "encoder.h"
+#include <karm-gfx/buffer.h>
+#include <karm-gfx/colors.h>
+#include <karm-io/bscan.h>
+
+export module Karm.Image:qoi.encoder;
+
+import :qoi.base;
 
 namespace Qoi {
 
-Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
+export Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
     e.writeBytes(MAGIC);
     e.writeU32be(pixels.width());
     e.writeU32be(pixels.height());

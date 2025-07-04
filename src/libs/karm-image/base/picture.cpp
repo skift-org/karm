@@ -1,11 +1,13 @@
-#pragma once
+module;
 
 #include <karm-gfx/buffer.h>
 #include <karm-meta/nocopy.h>
 
+export module Karm.Image:base.picture;
+
 namespace Karm::Image {
 
-struct Picture {
+export struct Picture {
     Rc<Gfx::Surface const> _surface;
 
     Picture(Rc<Gfx::Surface const> surface)

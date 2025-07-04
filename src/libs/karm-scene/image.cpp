@@ -1,11 +1,11 @@
 module;
 
 #include <karm-gfx/canvas.h>
-#include <karm-image/picture.h>
 #include <karm-io/emit.h>
 
 export module Karm.Scene:image;
 
+import Karm.Image;
 import :node;
 
 namespace Karm::Scene {

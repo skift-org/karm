@@ -1,8 +1,15 @@
-#include "encoder.h"
+module;
+
+#include <karm-gfx/buffer.h>
+#include <karm-io/bscan.h>
+
+export module Karm.Image:tga.encoder;
+
+import :tga.base;
 
 namespace Tga {
 
-Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
+export Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
     Tga::Header header = {};
     header.width = pixels.width();
     header.height = pixels.height();

@@ -1,8 +1,15 @@
-#include "encoder.h"
+module;
+
+#include <karm-gfx/buffer.h>
+#include <karm-io/bscan.h>
+
+export module Karm.Image:bmp.encoder;
 
 namespace Bmp {
 
-static void _writePixelData(Gfx::Pixels pixels, Io::BEmit& e) {
+namespace {
+
+void _writePixelData(Gfx::Pixels pixels, Io::BEmit& e) {
     for (isize y = pixels.height() - 1; y >= 0; --y) {
         for (isize x = 0; x < pixels.width(); ++x) {
             auto color = pixels.load({x, y});
@@ -14,7 +21,9 @@ static void _writePixelData(Gfx::Pixels pixels, Io::BEmit& e) {
     }
 }
 
-Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
+} // namespace
+
+export Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
     if (pixels.width() < 0 or pixels.height() < 0)
         return Error::invalidData("negative dimensions");
 

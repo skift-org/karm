@@ -1,10 +1,12 @@
-#pragma once
+module;
 
 #include <karm-base/endian.h>
 
+export module Karm.Image:tga.base;
+
 namespace Tga {
 
-enum : usize {
+export enum : usize {
     UNC_CM = 1, // uncompressed color-mapped
     UNC_TC = 2, // uncompressed true-color
     UNC_GS = 3, // uncompressed grayscale
@@ -20,7 +22,7 @@ enum : usize {
     PACKET_LEN = 0x7f,     // length mask
 };
 
-struct [[gnu::packed]] Header {
+export struct [[gnu::packed]] Header {
     u8le idLen;
     u8le clrmapType;
     u8le imageType;

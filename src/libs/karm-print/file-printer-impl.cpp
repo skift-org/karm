@@ -1,11 +1,11 @@
 module;
 
-#include <karm-image/saver.h>
 #include <karm-mime/uti.h>
 #include <karm-sys/file.h>
 
 module Karm.Print;
 
+import Karm.Image;
 import :file_printer;
 import :image_printer;
 import :pdf_printer;

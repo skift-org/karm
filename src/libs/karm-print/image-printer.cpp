@@ -1,10 +1,10 @@
 module;
 
 #include <karm-gfx/cpu/canvas.h>
-#include <karm-image/saver.h>
 
 export module Karm.Print:image_printer;
 
+import Karm.Image;
 import :file_printer;
 
 namespace Karm::Print {

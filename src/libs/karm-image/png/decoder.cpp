@@ -1,9 +1,11 @@
-#pragma once
+module;
 
 #include <karm-base/string.h>
 #include <karm-gfx/canvas.h>
 #include <karm-io/bscan.h>
 #include <karm-logger/logger.h>
+
+export module Karm.Image:png.decoder;
 
 namespace Png {
 
@@ -51,7 +53,7 @@ struct Iend : Io::BChunk {
     static constexpr Str SIG = "IEND";
 };
 
-struct Decoder {
+export struct Decoder {
     static constexpr Array<u8, 8> SIG = {
         0x89, 0x50, 0x4E, 0x47,
         0x0D, 0x0A, 0x1A, 0x0A
