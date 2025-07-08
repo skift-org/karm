@@ -1,7 +1,5 @@
 #pragma once
 
-// https://learn.microsoft.com/en-us/typography/opentype/spec/gpos
-
 #include <karm-logger/logger.h>
 #include <karm-math/vec.h>
 
@@ -21,6 +19,7 @@ enum struct GposLookupType : u16 {
     EXTENSION_POSITIONING = 9,
 };
 
+// https://learn.microsoft.com/en-us/typography/opentype/spec/gpos
 struct Gpos : Io::BChunk {
     static constexpr Str SIG = "GPOS";
 

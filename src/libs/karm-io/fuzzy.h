@@ -2,9 +2,9 @@
 
 #include <karm-base/string.h>
 
-namespace Karm::Text {
+namespace Karm::Io {
 
-static inline bool fuzzyMatch(Str text, Str pattern) {
+static inline bool matchFuzzy(Str text, Str pattern) {
     // FIXME: Make this smarter
     usize pi = 0, ti = 0;
     while (pi < pattern.len() &&
@@ -18,4 +18,4 @@ static inline bool fuzzyMatch(Str text, Str pattern) {
     return pi == pattern.len();
 }
 
-} // namespace Karm::Text
+} // namespace Karm::Io

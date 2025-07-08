@@ -301,7 +301,7 @@ struct Prose : Meta::Pinned {
 
     // MARK: Paint -------------------------------------------------------------
 
-    void paintCaret(Gfx::Canvas& g, usize runeIndex, Gfx::Color color) const {
+    void paintCaret(Gfx::Canvas& g, usize runeIndex, Gfx::Color color) {
         auto m = _style.font.metrics();
         auto baseline = queryPosition(runeIndex);
         auto cs = baseline.cast<f64>() - Math::Vec2f{0, m.ascend};
@@ -318,7 +318,7 @@ struct Prose : Meta::Pinned {
         g.stroke();
     }
 
-    void paintSelection(Gfx::Canvas& g, usize start, usize end, Gfx::Color color) const {
+    void paintSelection(Gfx::Canvas& g, usize start, usize end, Gfx::Color color) {
         if (start == end)
             return;
 

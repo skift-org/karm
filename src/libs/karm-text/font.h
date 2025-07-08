@@ -9,7 +9,7 @@ namespace Karm::Text {
 
 /**
    _____       _             _                          <- ascend
-  / ____|     | |           | |                         <- captop
+  / ____|     | |           | |                         <- captop/cap height
  | |  __ _   _| |_ ___ _ __ | |__   ___ _ __ __ _
  | | |_ | | | | __/ _ \ '_ \| '_ \ / _ \ '__/ _` |
  | |__| | |_| | ||  __/ | | | |_) |  __/ | | (_| |
@@ -26,14 +26,24 @@ struct FontMetrics {
     f64 descend;
     f64 linegap;
     f64 advance;
+    f64 xHeight;
 
     f64 lineheight() {
         return ascend + descend + linegap;
     }
 
-    f64 baseline() {
-        return linegap / 2 + ascend;
+    // MARK: Baselines ---------------------------------------------------------
+    // Theses are relative to the origin (0, 0) of the font metrics.
+
+    f64 xMiddleBaseline() {
+        return (ascend + descend) / 2;
     }
+
+    f64 alphabeticBaseline() {
+        return ascend;
+    }
+
+    // MARK: Transformations ---------------------------------------------------
 
     FontMetrics combine(FontMetrics other) {
         return {
@@ -42,6 +52,18 @@ struct FontMetrics {
             .descend = ::max(descend, other.descend),
             .linegap = ::max(linegap, other.linegap),
             .advance = ::max(advance, other.advance),
+            .xHeight = ::max(xHeight, other.xHeight),
+        };
+    }
+
+    FontMetrics scale(f64 factor) {
+        return {
+            .ascend = ascend * factor,
+            .captop = captop * factor,
+            .descend = descend * factor,
+            .linegap = linegap * factor,
+            .advance = advance * factor,
+            .xHeight = xHeight * factor,
         };
     }
 };
@@ -57,9 +79,7 @@ struct Fontface {
 
     virtual ~Fontface() = default;
 
-    virtual FontMetrics metrics() const = 0;
-
-    virtual BaselineSet baselineSet() = 0;
+    virtual FontMetrics metrics() = 0;
 
     virtual FontAttrs attrs() const = 0;
 
@@ -79,8 +99,7 @@ struct Font {
 
     static Font fallback();
 
-    FontMetrics metrics() const;
-    BaselineSet baselineSet();
+    FontMetrics metrics();
 
     Glyph glyph(Rune rune);
 

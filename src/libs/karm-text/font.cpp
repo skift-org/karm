@@ -16,7 +16,7 @@ Font Font::fallback() {
     };
 }
 
-FontMetrics Font::metrics() const {
+FontMetrics Font::metrics() {
     auto m = fontface->metrics();
 
     m.advance *= fontsize;
@@ -29,10 +29,6 @@ FontMetrics Font::metrics() const {
     m.linegap += (lineheight - 1) * (m.ascend + m.descend);
 
     return m;
-}
-
-BaselineSet Font::baselineSet() {
-    return fontface->baselineSet().scale(fontsize);
 }
 
 Glyph Font::glyph(Rune rune) {

@@ -16,24 +16,15 @@ struct VgaFontface : Fontface {
 #include "vga.inc"
     };
 
-    FontMetrics metrics() const override {
+    FontMetrics metrics() override {
         return {
             .ascend = 12 / UNIT_PER_EM,
             .captop = 10 / UNIT_PER_EM,
             .descend = 4 / UNIT_PER_EM,
             .linegap = 4 / UNIT_PER_EM,
             .advance = 8 / UNIT_PER_EM,
-        };
-    }
-
-    BaselineSet baselineSet() override {
-        return UnresolvedBaselineSet{
-            .alphabetic = 0 / UNIT_PER_EM,
             .xHeight = 6 / UNIT_PER_EM,
-            .capHeight = 10 / UNIT_PER_EM,
-            .xMiddle = 3 / UNIT_PER_EM,
-        }
-            .resolve();
+        };
     }
 
     FontAttrs attrs() const override {

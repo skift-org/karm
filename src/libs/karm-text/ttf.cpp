@@ -13,29 +13,17 @@ TtfFontface::TtfFontface(Sys::Mmap&& mmap, Ttf::Parser parser)
     _unitPerEm = _parser.unitPerEm();
 }
 
-FontMetrics TtfFontface::metrics() const {
+FontMetrics TtfFontface::metrics() {
     auto m = _parser.metrics();
+    auto xHeight = _parser.glyphMetrics(glyph('x')).y;
     return {
         .ascend = m.ascend / _unitPerEm,
         .captop = m.ascend / _unitPerEm,
         .descend = m.descend / _unitPerEm,
         .linegap = m.linegap / _unitPerEm,
-        .advance = 0
+        .advance = 0,
+        .xHeight = xHeight / _unitPerEm,
     };
-}
-
-BaselineSet TtfFontface::baselineSet() {
-    // FIXME: we assume that `alphabetic` is placed at the vertical origin. however, depending on the BASE table, it
-    // might be placed somewhere else
-    f64 alphabetic = 0;
-
-    auto xHeight = _parser.glyphMetrics(glyph('x')).y;
-    return UnresolvedBaselineSet{
-        .alphabetic = alphabetic,
-        .xHeight = alphabetic + xHeight,
-        .capHeight = alphabetic + _parser.glyphMetrics(glyph('H')).y,
-    }
-        .resolve();
 }
 
 FontAttrs TtfFontface::attrs() const {

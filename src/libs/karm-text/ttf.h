@@ -20,9 +20,7 @@ struct TtfFontface : Fontface {
 
     TtfFontface(Sys::Mmap&& mmap, Ttf::Parser parser);
 
-    FontMetrics metrics() const override;
-
-    BaselineSet baselineSet() override;
+    FontMetrics metrics() override;
 
     FontAttrs attrs() const override;
 
