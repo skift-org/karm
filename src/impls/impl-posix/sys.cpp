@@ -179,8 +179,8 @@ Res<Vec<DirEntry>> readDir(Mime::Url const& url) {
     while ((entry = ::readdir(dir))) {
         try$(Posix::consumeErrno());
 
-        if (strcmp(entry->d_name, ".") == 0 or
-            strcmp(entry->d_name, "..") == 0) {
+        if (std::strcmp(entry->d_name, ".") == 0 or
+            std::strcmp(entry->d_name, "..") == 0) {
             continue;
         }
 
@@ -225,8 +225,8 @@ Res<Vec<Sys::DirEntry>> readDirOrCreate(Mime::Url const& url) {
         while ((entry = ::readdir(dir))) {
             try$(Posix::consumeErrno());
 
-            if (strcmp(entry->d_name, ".") == 0 or
-                strcmp(entry->d_name, "..") == 0) {
+            if (std::strcmp(entry->d_name, ".") == 0 or
+                std::strcmp(entry->d_name, "..") == 0) {
                 continue;
             }
 

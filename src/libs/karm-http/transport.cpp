@@ -9,6 +9,7 @@ module;
 #include <karm-sys/file.h>
 #include <karm-sys/lookup.h>
 #include <karm-sys/socket.h>
+#include <karm-sys/dir.h>
 
 export module Karm.Http:transport;
 

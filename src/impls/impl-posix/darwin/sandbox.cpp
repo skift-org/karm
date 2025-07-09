@@ -1,4 +1,5 @@
 #include <karm-sys/_embed.h>
+#include <karm-sys/chan.h>
 
 namespace Karm::Sys::_Embed {
 

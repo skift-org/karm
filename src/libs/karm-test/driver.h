@@ -4,6 +4,7 @@
 #include <karm-base/vec.h>
 #include <karm-logger/logger.h>
 #include <karm-sys/chan.h>
+#include <karm-async/task.h>
 
 namespace Karm::Test {
 

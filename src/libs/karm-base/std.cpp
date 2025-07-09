@@ -49,6 +49,7 @@ using std::addressof;
 // <cstring>
 using std::memcpy;
 using std::strlen;
+using std::strcmp;
 
 // <initializer_list>
 using std::initializer_list;
@@ -68,3 +69,5 @@ using std::index_sequence;
 using std::make_index_sequence;
 
 } // namespace std
+
+export using ::operator new;

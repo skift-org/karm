@@ -1,5 +1,6 @@
 #include <karm-async/one.h>
 #include <karm-async/task.h>
+#include <karm-async/run.h>
 #include <karm-test/macros.h>
 
 namespace Karm::Async::Tests {
