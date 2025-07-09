@@ -9,10 +9,10 @@ namespace Karm {
 
 using usize = __SIZE_TYPE__;
 
-using u8 = uint8_t;
-using u16 = uint16_t;
-using u32 = uint32_t;
-using u64 = uint64_t;
+using u8 = std::uint8_t;
+using u16 = std::uint16_t;
+using u32 = std::uint32_t;
+using u64 = std::uint64_t;
 #ifdef __SIZEOF_INT128__
 using u128 = __uint128_t;
 
@@ -113,10 +113,10 @@ always_inline constexpr T rotr(T x, usize n) {
 
 using isize = __PTRDIFF_TYPE__;
 
-using i8 = int8_t;
-using i16 = int16_t;
-using i32 = int32_t;
-using i64 = int64_t;
+using i8 = std::int8_t;
+using i16 = std::int16_t;
+using i32 = std::int32_t;
+using i64 = std::int64_t;
 
 #ifdef __SIZEOF_INT128__
 using i128 = __int128_t;
@@ -173,7 +173,7 @@ bool operator==(None, T* ptr) {
 // MARK: Misc ------------------------------------------------------------------
 
 /// A linker symbol.
-using ExternSym = uint8_t[];
+using ExternSym = std::uint8_t[];
 
 // MARK: Utilities -------------------------------------------------------------
 

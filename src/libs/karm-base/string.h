@@ -137,7 +137,7 @@ struct _String {
 
         auto store = new Unit[len + 1];
         store[len] = 0;
-        memcpy(store, buf, len * sizeof(Unit));
+        std::memcpy(store, buf, len * sizeof(Unit));
         _buf = store;
     }
 

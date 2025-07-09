@@ -243,7 +243,7 @@ struct _Pixels {
 
             for (isize y = 0; y < height(); y++)
                 for (isize x = 0; x < width(); x++)
-                    memcpy(pixelUnsafe({x, y}), pixel.buf(), f.bpp());
+                    std::memcpy(pixelUnsafe({x, y}), pixel.buf(), f.bpp());
         });
     }
 
