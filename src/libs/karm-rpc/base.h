@@ -5,7 +5,6 @@
 #include <karm-base/map.h>
 #include <karm-base/tuple.h>
 #include <karm-io/pack.h>
-#include <karm-logger/logger.h>
 
 #include "hooks.h"
 

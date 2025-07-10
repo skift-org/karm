@@ -1,6 +1,5 @@
 #pragma once
 
-#include <karm-logger/logger.h>
 #include <karm-math/au.h>
 
 #include "font.h"

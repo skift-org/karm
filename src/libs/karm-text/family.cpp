@@ -1,3 +1,4 @@
+#include <karm-logger/logger.h>
 #include "family.h"
 
 namespace Karm::Text {

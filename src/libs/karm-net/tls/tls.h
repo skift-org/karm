@@ -3,7 +3,6 @@
 #include <karm-base/distinct.h>
 #include <karm-base/slice.h>
 #include <karm-io/bscan.h>
-#include <karm-logger/logger.h>
 #include <karm-sys/socket.h>
 
 // https://github.com/B-Con/crypto-algorithms/blob/master/aes.c

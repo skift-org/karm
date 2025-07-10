@@ -1,7 +1,6 @@
 #pragma once
 
 #include <karm-io/bscan.h>
-#include <karm-logger/logger.h>
 
 namespace Ttf {
 

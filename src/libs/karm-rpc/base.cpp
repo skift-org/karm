@@ -1,3 +1,5 @@
+#include <karm-logger/logger.h>
+
 #include "base.h"
 
 namespace Karm::Rpc {
