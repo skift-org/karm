@@ -6,6 +6,9 @@ module;
 
 export module Karm.Icu:bidi;
 
+import :base;
+import :ucd;
+
 static constexpr bool DEBUG_BIDI = false;
 
 namespace Karm::Icu {
@@ -13,47 +16,6 @@ namespace Karm::Icu {
 // Implementation of unicode bidi algorithm
 // https://unicode.org/reports/tr9/
 // https://www.unicode.org/Public/PROGRAMS/BidiReferenceJava/BidiReference.java
-
-// 3.2 MARK: Bidirectional Character Types -------------------------------------
-// https://unicode.org/reports/tr9/#Bidirectional_Character_Types
-export enum struct BidiType : u8 {
-    L = 0,    //< Left-to-right
-    LRE = 1,  //< Left-to-Right Embedding
-    LRO = 2,  //< Left-to-Right Override
-    R = 3,    //< Right-to-Left
-    AL = 4,   //< Right-to-Left Arabic
-    RLE = 5,  //< Right-to-Left Embedding
-    RLO = 6,  //< Right-to-Left Override
-    PDF = 7,  //< Pop Directional Format
-    EN = 8,   //< European Number
-    ES = 9,   //< European Number Separator
-    ET = 10,  //< European Number Terminator
-    AN = 11,  //< Arabic Number
-    CS = 12,  //< Common Number Separator
-    NSM = 13, //< Non-Spacing Mark
-    BN = 14,  //< Boundary Neutral
-    B = 15,   //< Paragraph Separator
-    S = 16,   //< Segment Separator
-    WS = 17,  //< Whitespace
-    ON = 18,  //< Other Neutrals
-    LRI = 19, //< Left-to-Right Isolate
-    RLI = 20, //< Right-to-Left Isolate
-    FSI = 21, //< First-Strong Isolate
-    PDI = 22, //< Pop Directional Isolate
-
-    _LEN
-};
-
-BidiType getBidiType(Rune r) {
-#define CODEPOINT(HEX, CLASS) \
-    if (r == HEX)             \
-        return BidiType::CLASS;
-#include "defs/unicode-data.inc"
-#undef CODEPOINT
-
-    // FIXME
-    panic("");
-}
 
 bool isIsolateInitiator(BidiType type) {
     return type == BidiType::LRI or type == BidiType::RLI or type == BidiType::FSI;
@@ -65,11 +27,13 @@ bool isNI(BidiType type) {
 }
 
 Rune getPairedBracket(Rune r) {
+    switch (r) {
 #define BRACKET(A, B, _) \
-    if (r == A)          \
+    case A:              \
         return B;
 #include "defs/unicode-brackets.inc"
 #undef BRACKET
+    }
 
     // FIXME
     panic("");
@@ -96,11 +60,13 @@ enum struct BidiPairedBracketType {
 };
 
 BidiPairedBracketType getBidiPairedBracketType(Rune r) {
+    switch (r) {
 #define BRACKET(A, _, C) \
-    if (r == A)          \
+    case A:              \
         return C == 'o' ? BidiPairedBracketType::OPEN : BidiPairedBracketType::CLOSE;
 #include "defs/unicode-brackets.inc"
 #undef BRACKET
+    }
     return BidiPairedBracketType::NONE;
 }
 
@@ -1131,7 +1097,7 @@ void resetSomeEmbeddingsLevelsForL1(MutSlice<T> levels, auto levelFromLineEl, Sl
     auto isBidiTypeToReset = [](BidiType type) {
         return isIsolateInitiator(type) or type == BidiType::PDI or type == BidiType::WS;
     };
-    
+
     //  On each line, reset the embedding level of the following characters to the paragraph embedding level:
     Opt<usize> startOfSequenceToReset = NONE;
     for (usize i = 0; i < line.len(); i++) {
@@ -1167,7 +1133,7 @@ void resetSomeEmbeddingsLevelsForL1(MutSlice<T> levels, auto levelFromLineEl, Sl
 
 // https://unicode.org/reports/tr9/#L2
 export template <typename T>
- void reorderLine(Slice<Rune> inputLine, usize paragraphLevel, MutSlice<T> line, auto levelFromLineEl) {
+void reorderLine(Slice<Rune> inputLine, usize paragraphLevel, MutSlice<T> line, auto levelFromLineEl) {
     resetSomeEmbeddingsLevelsForL1(line, levelFromLineEl, inputLine, paragraphLevel);
 
     usize lowestOddLevel = Limits<usize>::MAX;
