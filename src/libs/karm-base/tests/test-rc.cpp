@@ -13,6 +13,30 @@ test$("strong-rc") {
     return Ok();
 }
 
+test$("weak-self") {
+    struct Foo {
+        Opt<Karm::Weak<Foo>> _self;
+
+        Rc<Foo> self() {
+            return _self
+                .unwrap("self reference not binded")
+                .upgrade()
+                .unwrap();
+        }
+    };
+
+
+    auto foo = makeRc<Foo>();
+    foo->_self = foo;
+    auto foo2 = foo->self();
+
+    expectEq$(foo.strong(), 2uz);
+    expectEq$(foo2.strong(), 2uz);
+    expectEq$(foo2.weak(), 1uz);
+
+    return Ok();
+}
+
 test$("rc-niche") {
     Opt<Rc<int>> test;
 

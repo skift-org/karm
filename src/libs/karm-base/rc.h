@@ -23,10 +23,7 @@ struct _Cell {
 
     virtual Meta::Id id() = 0;
 
-    void collectAndRelease(bool collect) {
-        if (_strong == 0 and collect) {
-            clear();
-        }
+    void collectAndRelease() {
         _lock.release();
         if (_strong == 0 and _weak == 0)
             delete this;
@@ -45,11 +42,14 @@ struct _Cell {
     void derefStrong() {
         _lock.acquire();
 
+        if (_strong == 1)
+            clear();
+
         _strong--;
         if (_strong < 0) [[unlikely]]
             panic("derefStrong() underflow");
 
-        collectAndRelease(true);
+        collectAndRelease();
     }
 
     _Cell* refWeak() lifetimebound {
@@ -69,7 +69,7 @@ struct _Cell {
         if (_weak < 0) [[unlikely]]
             panic("derefWeak() underflow");
 
-        collectAndRelease(false);
+        collectAndRelease();
     }
 
     template <typename T>
