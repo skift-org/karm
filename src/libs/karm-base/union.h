@@ -1,6 +1,6 @@
 #pragma once
 
-#include <karm-meta/pack.h>
+import Karm.Meta;
 
 #include "clamp.h"
 #include "cursor.h"

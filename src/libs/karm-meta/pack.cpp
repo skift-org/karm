@@ -1,4 +1,4 @@
-#pragma once
+module;
 
 #include <karm-base/base.h>
 
@@ -6,9 +6,11 @@
 #include "id.h"
 #include "traits.h"
 
+export module Karm.Meta:pack;
+
 namespace Karm::Meta {
 
-template <typename T, typename... Ts>
+export template <typename T, typename... Ts>
 concept Contains = (Same<T, Ts> or ...);
 
 template <usize Start, typename T, typename... Ts>
@@ -20,7 +22,7 @@ consteval usize _indexOf() {
         return _indexOf<Start + 1, T, Ts...>();
 }
 
-template <typename T, typename... Ts>
+export template <typename T, typename... Ts>
     requires(Contains<T, Ts...>)
 consteval usize indexOf() {
     return _indexOf<0, T, Ts...>();
@@ -47,8 +49,8 @@ struct _IndexCast<Data, T, Ts...> {
     }
 };
 
-template <typename... Ts>
-always_inline static auto indexCast(usize index, auto* ptr, auto func) {
+export template <typename... Ts>
+always_inline auto indexCast(usize index, auto* ptr, auto func) {
     return _IndexCast<RemoveRef<decltype(*ptr)>, Ts...>::eval(index, ptr, func);
 }
 
@@ -70,8 +72,8 @@ struct _Any {
     }
 };
 
-template <typename... Ts>
-always_inline static auto any(auto func) {
+export template <typename... Ts>
+always_inline auto any(auto func) {
     if constexpr (sizeof...(Ts) == 0)
         return;
     else
@@ -88,7 +90,7 @@ struct _First<T, Ts...> {
     using Type = T;
 };
 
-template <typename... Ts>
+export template <typename... Ts>
 using First = typename _First<Ts...>::Type;
 
 } // namespace Karm::Meta
