@@ -80,6 +80,13 @@ struct BScan {
     }
 
     template <typename T>
+    always_inline constexpr T next() {
+        T r{};
+        readTo(&r);
+        return r;
+    }
+
+    template <typename T>
     always_inline constexpr T nextBe() {
         Be<T> r{};
         readTo(&r);
