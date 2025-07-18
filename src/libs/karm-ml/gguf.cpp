@@ -12,6 +12,7 @@ export module Karm.Ml:gguf;
 import :tensor;
 
 namespace Karm::Ml::Gguf {
+
 enum struct Type : u32 {
     F32 = 0,
     F16 = 1,
@@ -44,7 +45,7 @@ enum struct Type : u32 {
     F64 = 28,
     IQ1_M = 29,
 
-    COUNT,
+    _LEN,
 };
 
 enum struct ValueType : u32 {
@@ -61,6 +62,8 @@ enum struct ValueType : u32 {
     UINT64 = 10,
     INT64 = 11,
     FLOAT64 = 12,
+
+    _LEN,
 };
 
 struct [[gnu::packed]] Header {
@@ -70,6 +73,8 @@ struct [[gnu::packed]] Header {
     u64le tensorCount;
     u64le metadataCount;
 };
+
+// MARK: Metadata --------------------------------------------------------------
 
 Json::Value _loadMetadataValue(Io::BScan& s, ValueType type);
 
@@ -125,6 +130,9 @@ Json::Value _loadMetadataValue(Io::BScan& s, ValueType type) {
 
     case ValueType::ARRAY:
         return _loadMetaDataArray(s);
+
+    default:
+        panic("unknow value type");
     }
 }
 
@@ -141,6 +149,36 @@ Res<Json::Value> _loadMetadata(Io::BScan& s, usize len) {
         object.put(key, std::move(value));
     }
     return Ok(std::move(object));
+}
+
+// MARK: Tensors ---------------------------------------------------------------
+
+struct TensorInfos {
+    String name;
+    Vec<u64> dims;
+    Type type;
+    u64 offset;
+};
+
+TensorInfos _loadTensor(Io::BScan& s) {
+    TensorInfos infos;
+    infos.name = _loadMetadataString(s);
+    auto dimsLen = s.nextU32le();
+    Vec<u64> dims;
+    for (usize _ : range(dimsLen)) {
+        infos.dims.pushBack(s.nextU64le());
+    }
+    infos.type = static_cast<Type>(s.nextU32le());
+    infos.offset = s.nextU64le();
+
+    return infos;
+}
+
+Res<Vec<TensorInfos>> _loadTensors(Io::BScan& s, usize len) {
+    Vec<TensorInfos> res;
+    for (usize _ : range(len))
+        res.pushBack(_loadTensor(s));
+    return Ok(std::move(res));
 }
 
 export Res<> loadGguf(Mime::Url url) {
@@ -168,6 +206,9 @@ export Res<> loadGguf(Mime::Url url) {
     yap(" - general.type: {}", metadata.get("general.type"));
     yap(" - general.license: {}", metadata.get("general.license"));
     yap(" - general.file_type: {}", metadata.get("general.file_type"));
+
+    auto tensors = try$(_loadTensors(s, header.tensorCount));
+    yap("loaded {} tensors", tensors.len());
 
     return Ok();
 }
