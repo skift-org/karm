@@ -87,6 +87,25 @@ export constexpr PaperStock C10 = {"C10", 28.0 * UNIT, 40.0 * UNIT};
 export constexpr Array _C_SERIES = {C0, C1, C2, C3, C4, C5, C6, C7, C8, C9, C10};
 export constexpr PaperSeries C_SERIES = {"C Series", _C_SERIES};
 
+// MARK: JIS B-Series: Japanese Variation of ISO B Series  -----------------------------
+
+export constexpr PaperStock JIS_B0 = {"JIS-B0", 1030.0 * UNIT, 1456.0 * UNIT};
+export constexpr PaperStock JIS_B1 = {"JIS-B1", 728.0 * UNIT, 1030.0 * UNIT};
+export constexpr PaperStock JIS_B2 = {"JIS-B2", 515.0 * UNIT, 728.0 * UNIT};
+export constexpr PaperStock JIS_B3 = {"JIS-B3", 364.0 * UNIT, 515.0 * UNIT};
+export constexpr PaperStock JIS_B4 = {"JIS-B4", 257.0 * UNIT, 364.0 * UNIT};
+export constexpr PaperStock JIS_B5 = {"JIS-B5", 182.0 * UNIT, 257.0 * UNIT};
+export constexpr PaperStock JIS_B6 = {"JIS-B6", 128.0 * UNIT, 182.0 * UNIT};
+export constexpr PaperStock JIS_B7 = {"JIS-B7", 91.0 * UNIT, 128.0 * UNIT};
+export constexpr PaperStock JIS_B8 = {"JIS-B8", 64.0 * UNIT, 91.0 * UNIT};
+export constexpr PaperStock JIS_B9 = {"JIS-B9", 45.0 * UNIT, 64.0 * UNIT};
+export constexpr PaperStock JIS_B10 = {"JIS-B10", 32.0 * UNIT, 45.0 * UNIT};
+export constexpr PaperStock JIS_B11 = {"JIS-B11", 22.0 * UNIT, 32.0 * UNIT};
+export constexpr PaperStock JIS_B12 = {"JIS-B12", 16.0 * UNIT, 22.0 * UNIT};
+
+export constexpr Array _JIS_B_SERIES = {JIS_B0, JIS_B1, JIS_B2, JIS_B3, JIS_B4, JIS_B5, JIS_B6, JIS_B7, JIS_B8, JIS_B9, JIS_B10, JIS_B11, JIS_B12};
+export constexpr PaperSeries JIS_B_SERIES = {"JIS-B Series", _JIS_B_SERIES};
+
 // MARK: US Series -------------------------------------------------------------
 
 export constexpr PaperStock EXECUTIVE = {"Executive", 190.5 * UNIT, 254.0 * UNIT};
