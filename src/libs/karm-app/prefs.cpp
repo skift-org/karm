@@ -1,10 +1,11 @@
 module;
 
 #include <karm-async/task.h>
-#include <karm-json/values.h>
+#include <karm-base/string.h>
 
 export module Karm.App:prefs;
 
+import Karm.Core;
 import :_embed;
 
 namespace Karm::App {
@@ -12,22 +13,22 @@ namespace Karm::App {
 export struct Prefs {
     virtual ~Prefs() = default;
 
-    virtual Async::Task<Json::Value> loadAsync(String key, Json::Value defaultValue = NONE) = 0;
+    virtual Async::Task<Serde::Value> loadAsync(String key, Serde::Value defaultValue = NONE) = 0;
 
-    virtual Async::Task<> saveAsync(String key, Json::Value value) = 0;
+    virtual Async::Task<> saveAsync(String key, Serde::Value value) = 0;
 };
 
 export struct MockPrefs : Prefs {
-    Json::Object _store;
+    Serde::Object _store;
 
-    Async::Task<Json::Value> loadAsync(String key, Json::Value defaultValue = NONE) override {
+    Async::Task<Serde::Value> loadAsync(String key, Serde::Value defaultValue = NONE) override {
         auto item = _store.access(key);
         if (item)
             co_return *item;
         co_return defaultValue;
     }
 
-    Async::Task<> saveAsync(String key, Json::Value value) override {
+    Async::Task<> saveAsync(String key, Serde::Value value) override {
         _store.put(key, value);
         co_return Ok();
     }

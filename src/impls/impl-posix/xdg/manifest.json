@@ -13,7 +13,7 @@
     },
     "requires": [
         "karm-sys",
-        "karm-json"
+        "karm-core"
     ],
     "provides": [
         "karm-app-impl"

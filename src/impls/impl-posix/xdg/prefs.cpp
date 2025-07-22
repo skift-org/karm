@@ -3,14 +3,13 @@ module;
 #include <stdlib.h>
 
 //
-#include <karm-json/parse.h>
 #include <karm-mime/url.h>
 #include <karm-pkg/_embed.h>
 #include <karm-sys/dir.h>
 #include <karm-sys/file.h>
 
 module Karm.App;
-
+import Karm.Core;
 import :_embed;
 import :prefs;
 
@@ -22,26 +21,26 @@ struct XdgConfigPrefs : Prefs {
     XdgConfigPrefs(Mime::Url url)
         : _url{std::move(url)} {}
 
-    Json::Value _load() {
+    Serde::Value _load() {
         auto data = Sys::readAllUtf8(_url).unwrapOr("{}"s);
         Io::SScan s{data};
-        return Json::parse(s).unwrapOr(Json::Object{});
+        return Json::parse(s).unwrapOr(Serde::Object{});
     }
 
-    Res<> _save(Json::Value object) {
+    Res<> _save(Serde::Value object) {
         auto file = try$(Sys::File::create(_url));
         Io::TextEncoder<> enc{file};
         Io::Emit e{enc};
         return Json::unparse(e, object);
     }
 
-    Async::Task<Json::Value> loadAsync(String key, Json::Value defaultValue) {
+    Async::Task<Serde::Value> loadAsync(String key, Serde::Value defaultValue) {
         auto object = _load();
         auto value = object.get(key);
         co_return Ok(value == NONE ? defaultValue : value);
     }
 
-    Async::Task<> saveAsync(String key, Json::Value value) {
+    Async::Task<> saveAsync(String key, Serde::Value value) {
         auto object = _load();
         object.set(key, value);
         co_return _save(object);

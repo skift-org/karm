@@ -1,8 +1,9 @@
-#include <karm-json/parse.h>
 #include <karm-math/funcs.h>
 #include <karm-test/macros.h>
 
-namespace Karm::Json::Tests {
+import Karm.Core;
+
+namespace Karm::Serde::Tests {
 
 test$("json-value-null") {
     Value value = NONE;
@@ -129,4 +130,4 @@ test$("json-value-false") {
     return Ok();
 }
 
-} // namespace Karm::Json::Tests
+} // namespace Karm::Serde::Tests

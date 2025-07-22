@@ -6,6 +6,6 @@
         "karm-math",
         "karm-sys",
         "karm-logger",
-        "karm-json"
+        "karm-core"
     ]
 }

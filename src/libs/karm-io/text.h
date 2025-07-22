@@ -37,7 +37,6 @@ struct TextEncoderBase : TextWriter {
 
 template <StaticEncoding E = typename Sys::Encoding>
 struct TextEncoder : TextEncoderBase<E> {
-
     Io::Writer& _writer;
 
     TextEncoder(Io::Writer& writer)

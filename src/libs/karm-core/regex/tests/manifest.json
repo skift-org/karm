@@ -1,12 +1,15 @@
 {
     "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
-    "id": "karm-json",
+    "id": "karm-core.regex.test",
     "type": "lib",
-    "description": "Parse and serialize JSON documents.",
     "props": {
         "cpp-excluded": true
     },
     "requires": [
-        "karm-io"
+        "karm-core",
+        "karm-test"
+    ],
+    "injects": [
+        "__tests__"
     ]
 }

@@ -1,6 +1,5 @@
-#include <karm-json/parse.h>
-#include <karm-math/funcs.h>
 #include <karm-test/macros.h>
+import Karm.Core;
 
 namespace Karm::Json::Tests {
 

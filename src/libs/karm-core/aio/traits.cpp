@@ -2,7 +2,7 @@ module;
 
 #include <karm-async/task.h>
 
-export module Karm.Aio:traits;
+export module Karm.Core:aio.traits;
 
 namespace Karm::Aio {
 

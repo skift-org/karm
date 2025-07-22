@@ -344,10 +344,8 @@ constexpr auto repeat(T value, usize count) {
 template <typename T>
 constexpr auto range(T end) {
     return Iter{[value = static_cast<T>(0), end] mutable -> Opt<T> {
-        if (value >= end) {
+        if (value >= end)
             return NONE;
-        }
-
         return value++;
     }};
 }

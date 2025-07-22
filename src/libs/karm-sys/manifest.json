@@ -9,7 +9,7 @@
         "karm-sys-sandbox-impl",
         "karm-io",
         "karm-mime",
-        "karm-aio",
+        "karm-core",
         "karm-logger"
     ]
 }

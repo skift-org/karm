@@ -1,12 +1,17 @@
-#include "glob.h"
+module;
 
-#include "expr.h"
+#include <karm-io/expr.h>
+#include <karm-io/sscan.h>
 
-namespace Karm::Io {
+export module Karm.Core:glob.glob;
 
-bool _matchWildCard(SScan& glob, SScan& in);
+namespace Karm::Glob {
 
-bool _matchGroupe(SScan& glob, Rune curr) {
+export bool matchGlob(Io::SScan& glob, Io::SScan& in);
+
+bool _matchWildCard(Io::SScan& glob, Io::SScan& in);
+
+bool _matchGroupe(Io::SScan& glob, Rune curr) {
     bool neg = glob.skip('^');
 
     while (not glob.ended() and
@@ -35,9 +40,9 @@ bool _matchGroupe(SScan& glob, Rune curr) {
     return neg;
 }
 
-bool _matchWildCard(SScan& glob, SScan& in) {
+bool _matchWildCard(Io::SScan& glob, Io::SScan& in) {
     for (usize n = in.rem(); n > 0; n--) {
-        SScan g = glob, s = in;
+        Io::SScan g = glob, s = in;
         s.next(n);
         if (matchGlob(g, s)) {
             // We found a match, commit the changes
@@ -49,7 +54,16 @@ bool _matchWildCard(SScan& glob, SScan& in) {
     return matchGlob(glob, in);
 }
 
-bool matchGlob(SScan& glob, SScan& in) {
+// Match a glob pattern against a string.
+// The glob pattern can contain the following special characters:
+// - '?' matches any single character.
+// - '*' matches any sequence of characters.
+// - '[' matches any character in the group.
+// - '[^' matches any character not in the group.
+// - ']' closes the group.
+// - '-' specifies a range in the group.
+// - '^' negates the group.
+export bool matchGlob(Io::SScan& glob, Io::SScan& in) {
     if (glob.remStr() == "*") {
         glob.next();
         in.skip(Re::any());
@@ -99,10 +113,11 @@ bool matchGlob(SScan& glob, SScan& in) {
     return glob.ended() and in.ended();
 }
 
-bool matchGlob(Str glob, Str str) {
-    SScan globScan(glob);
-    SScan strScan(str);
+// Match a string against a glob pattern.
+export bool matchGlob(Str glob, Str str) {
+    Io::SScan globScan(glob);
+    Io::SScan strScan(str);
     return matchGlob(globScan, strScan);
 }
 
-} // namespace Karm::Io
+} // namespace Karm::Glob

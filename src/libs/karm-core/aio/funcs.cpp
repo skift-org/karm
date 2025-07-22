@@ -4,9 +4,9 @@ module;
 #include <karm-base/array.h>
 #include <karm-io/text.h>
 
-export module Karm.Aio:funcs;
+export module Karm.Core:aio.funcs;
 
-import :traits;
+import :aio.traits;
 
 namespace Karm::Aio {
 

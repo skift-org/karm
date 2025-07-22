@@ -1,10 +1,13 @@
-#pragma once
+module;
 
+#include <karm-base/ctype.h>
 #include <karm-base/string.h>
 
-namespace Karm::Io {
+export module Karm.Core:glob.fuzzy;
 
-static inline bool matchFuzzy(Str text, Str pattern) {
+namespace Karm::Glob {
+
+export bool matchFuzzy(Str text, Str pattern) {
     // FIXME: Make this smarter
     usize pi = 0, ti = 0;
     while (pi < pattern.len() &&
@@ -15,7 +18,8 @@ static inline bool matchFuzzy(Str text, Str pattern) {
 
         ti++;
     }
+
     return pi == pattern.len();
 }
 
-} // namespace Karm::Io
+} // namespace Karm::Glob

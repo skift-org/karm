@@ -350,7 +350,7 @@ struct EAscii {
 // clang-format off
 
 using Ibm437Mapper = decltype([](u8 c) {
-    Array<char32_t, 256> mappings = {
+    Array mappings = {
         U'\0', U'☺', U'☻', U'♥', U'♦', U'♣', U'♠', U'•',
         U'◘', U'○', U'◙', U'♂', U'♀', U'♪', U'♫', U'☼',
         U'►', U'◄', U'↕', U'‼', U'¶', U'§', U'▬', U'↨',
@@ -400,7 +400,7 @@ static_assert(StaticEncoding<Ibm437>);
 
 using Latin1Mapper = decltype([](u8 c) {
     // HACK: """"Unicode is a "superset" of Latin1""" (please note the quotes)
-    return (Rune)c;
+    return static_cast<Rune>(c);
 });
 
 using Latin1 = EAscii<Latin1Mapper>;

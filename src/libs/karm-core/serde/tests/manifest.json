@@ -1,11 +1,15 @@
 {
     "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
-    "id": "karm-net",
+    "id": "karm-core.serde.test",
     "type": "lib",
-    "description": "Networking library",
+    "props": {
+        "cpp-excluded": true
+    },
     "requires": [
         "karm-core",
-        "karm-net.dns",
-        "karm-net.tls"
+        "karm-test"
+    ],
+    "injects": [
+        "__tests__"
     ]
 }

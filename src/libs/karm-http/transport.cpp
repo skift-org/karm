@@ -13,7 +13,7 @@ module;
 
 export module Karm.Http:transport;
 
-import Karm.Aio;
+import Karm.Core;
 import :request;
 import :response;
 

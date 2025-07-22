@@ -1,11 +1,19 @@
+module;
+
 #include <karm-io/aton.h>
+#include <karm-io/emit.h>
+#include <karm-io/expr.h>
 #include <karm-io/funcs.h>
 
-#include "parse.h"
+export module Karm.Core:json;
+
+import :serde;
 
 namespace Karm::Json {
 
-Res<Value> parse(Io::SScan& s);
+// MARK: Parse -----------------------------------------------------------------
+
+export Res<Serde::Value> parse(Io::SScan& s);
 
 Res<String> parseStr(Io::SScan& s) {
     if (not s.skip('"'))
@@ -61,8 +69,8 @@ Res<String> parseStr(Io::SScan& s) {
     return Error::invalidData("expected '\"'");
 }
 
-Res<Object> parseObject(Io::SScan& s) {
-    Object m;
+Res<Serde::Object> parseObject(Io::SScan& s) {
+    Serde::Object m;
     if (not s.skip('{')) {
         return Error::invalidData("expected '{'");
     }
@@ -94,8 +102,8 @@ Res<Object> parseObject(Io::SScan& s) {
     }
 }
 
-Res<Array> parseArray(Io::SScan& s) {
-    Array v;
+Res<Serde::Array> parseArray(Io::SScan& s) {
+    Serde::Array v;
     if (not s.skip('['))
         return Error::invalidData("expected '['");
 
@@ -176,11 +184,11 @@ Res<isize> parseInteger(Io::SScan& s) {
     return Ok(sign ? -ipart : ipart);
 }
 
-Res<Value> parseNumber(Io::SScan& s) {
+Res<Serde::Value> parseNumber(Io::SScan& s) {
     isize ipart = try$(parseInteger(s));
 
     if (s.match(Re::single('.', 'e', 'E')) == Match::NO)
-        return Ok<Value>(ipart);
+        return Ok<Serde::Value>(ipart);
 
 // NOTE: Floating point numbers are not supported in freestanding environments.
 #ifdef __ck_freestanding__
@@ -203,30 +211,30 @@ Res<Value> parseNumber(Io::SScan& s) {
         if (expSign)
             exp = -exp;
 
-        return Ok<Value>(ipart + fpart * Math::pow<isize>(10, exp));
+        return Ok<Serde::Value>(ipart + fpart * Math::pow<isize>(10, exp));
     }
 
-    return Ok<Value>(ipart + fpart);
+    return Ok<Serde::Value>(ipart + fpart);
 #endif
 }
 
-Res<Value> parse(Io::SScan& s) {
+export Res<Serde::Value> parse(Io::SScan& s) {
     s.eat(Re::space());
 
     if (s.ended()) {
         return Error::invalidData("unexpected end of input");
     } else if (s.peek() == '{') {
-        return Ok(Value{try$(parseObject(s))});
+        return Ok(Serde::Value{try$(parseObject(s))});
     } else if (s.peek() == '[') {
-        return Ok(Value{try$(parseArray(s))});
+        return Ok(Serde::Value{try$(parseArray(s))});
     } else if (s.peek() == '"') {
-        return Ok(Value{try$(parseStr(s))});
+        return Ok(Serde::Value{try$(parseStr(s))});
     } else if (s.skip("null")) {
-        return Ok(Value{NONE});
+        return Ok(Serde::Value{NONE});
     } else if (s.skip("true")) {
-        return Ok(Value{true});
+        return Ok(Serde::Value{true});
     } else if (s.skip("false")) {
-        return Ok(Value{false});
+        return Ok(Serde::Value{false});
     } else if (s.match(RE_NUMBER_START) != Match::NO) {
         return parseNumber(s);
     }
@@ -234,9 +242,102 @@ Res<Value> parse(Io::SScan& s) {
     return Error::invalidData("unexpected character");
 }
 
-Res<Value> parse(Str s) {
+export Res<Serde::Value> parse(Str s) {
     Io::SScan scan{s};
     return parse(scan);
 }
 
+// MARK: Unparse ---------------------------------------------------------------
+
+export Res<> unparse(Io::Emit& emit, Serde::Value const& v) {
+    return v.visit(
+        Visitor{
+            [&](None) -> Res<> {
+                emit("null");
+                return Ok();
+            },
+            [&](Serde::Array const& v) -> Res<> {
+                emit('[');
+                for (usize i = 0; i < v.len(); ++i) {
+                    if (i > 0) {
+                        emit(',');
+                    }
+                    try$(unparse(emit, v[i]));
+                }
+                emit(']');
+
+                return Ok();
+            },
+            [&](Serde::Object const& m) -> Res<> {
+                emit('{');
+                bool first = true;
+                for (auto const& kv : m.iter()) {
+                    if (not first) {
+                        emit(',');
+                    }
+                    first = false;
+
+                    emit('"');
+                    emit(kv.v0);
+                    emit("\":");
+                    try$(unparse(emit, kv.v1));
+                }
+                emit('}');
+                return Ok();
+            },
+            [&](String const& s) -> Res<> {
+                emit('"');
+                for (auto c : iterRunes(s)) {
+                    if (c == '"') {
+                        emit("\\\"");
+                    } else if (c == '\\') {
+                        emit("\\\\");
+                    } else if (c == '\b') {
+                        emit("\\b");
+                    } else if (c == '\f') {
+                        emit("\\f");
+                    } else if (c == '\n') {
+                        emit("\\n");
+                    } else if (c == '\r') {
+                        emit("\\r");
+                    } else if (c == '\t') {
+                        emit("\\t");
+                    } else if (c < 0x20) {
+                        emit("\\u{x}", c);
+                    } else {
+                        emit(c);
+                    }
+                }
+                emit('"');
+                return Ok();
+            },
+            [&](Serde::Integer i) -> Res<> {
+                emit("{}", i);
+                return Ok();
+            },
+#ifndef __ck_freestanding__
+            [&](Serde::Number d) -> Res<> {
+                emit("{}", d);
+                return Ok();
+            },
+#endif
+            [&](bool b) -> Res<> {
+                emit(b ? "true" : "false");
+                return Ok();
+            },
+        }
+    );
+}
+
+export Res<String> unparse(Serde::Value const& v) {
+    Io::StringWriter sw;
+    Io::Emit emit{sw};
+    try$(unparse(emit, v));
+    return Ok(sw.take());
+}
+
 } // namespace Karm::Json
+
+export auto operator""_json(char const* str, usize len) {
+    return Karm::Json::parse({str, len}).unwrap();
+}

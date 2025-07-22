@@ -1,12 +1,11 @@
 #include <karm-base/witty.h>
-#include <karm-gfx/buffer.h>
-#include <karm-io/glob.h>
 #include <karm-sys/chan.h>
 #include <karm-sys/time.h>
 
 #include "driver.h"
 #include "test.h"
 
+import Karm.Core;
 import Karm.Cli;
 
 namespace Karm::Test {
@@ -34,7 +33,7 @@ Async::Task<> Driver::runAllAsync(RunOptions options) {
     Sys::errln("");
 
     for (auto* test : _tests) {
-        if (not Io::matchGlob(options.glob, test->_name))
+        if (not Glob::matchGlob(options.glob, test->_name))
             continue;
 
         Sys::err(

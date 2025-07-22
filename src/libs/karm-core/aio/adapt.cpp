@@ -3,9 +3,9 @@ module;
 #include <karm-async/task.h>
 #include <karm-io/traits.h>
 
-export module Karm.Aio:adapt;
+export module Karm.Core:aio.adapt;
 
-import :traits;
+import :aio.traits;
 
 namespace Karm::Aio {
 

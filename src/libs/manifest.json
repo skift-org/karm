@@ -7,7 +7,7 @@
         "cpp-excluded": true
     },
     "requires": [
-        "karm-aio",
+        "karm-core",
         "karm-cli",
         "karm-gc",
         "karm-http",

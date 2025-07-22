@@ -7,7 +7,7 @@ module;
 
 export module Karm.Http:body;
 
-import Karm.Aio;
+import Karm.Core;
 
 namespace Karm::Http {
 
