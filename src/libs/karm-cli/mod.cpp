@@ -137,11 +137,8 @@ struct ValueParser<Vec<T>> {
 
     static Res<Vec<T>> parse(Cursor<Token>& c) {
         Vec<T> values;
-
-        while (not c.ended() and c->kind == Token::OPERAND) {
+        while (not c.ended() and c->kind == Token::OPERAND)
             values.pushBack(try$(ValueParser<T>::parse(c)));
-        }
-
         return Ok(values);
     }
 };

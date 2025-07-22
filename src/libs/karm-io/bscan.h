@@ -3,9 +3,101 @@
 #include <karm-base/cursor.h>
 #include <karm-base/endian.h>
 #include <karm-base/string.h>
+#include <karm-base/vec.h>
 #include <karm-io/traits.h>
 
+#include "aton.h"
+
 namespace Karm::Io {
+
+// Inspired by https://github.com/citizenfx/fivem/blob/master/code/client/shared/Hooking.Patterns.h#L41
+struct BPattern {
+    Vec<u8> _pattern;
+    Vec<u8> _mask;
+
+    static void _fromSimple(Str pattern, Vec<u8>& out) {
+        u8 tmp = 0;
+        bool has = false;
+        for (auto c : pattern) {
+            if (c == ' ') {
+                // ignore
+            } else if (auto b = _parseDigit(c, {.base = 16})) {
+                tmp <<= 4;
+                tmp |= *b;
+                if (has) {
+                    out.pushBack(tmp);
+                    tmp = 0;
+                    has = false;
+                } else {
+                    has = true;
+                }
+            }
+        }
+    }
+
+    static BPattern from(Str pattern, Str mask) {
+        BPattern res;
+        _fromSimple(pattern, res._pattern);
+        _fromSimple(mask, res._mask);
+
+        return res;
+    }
+
+    static BPattern from(Str pattern) {
+        BPattern res;
+
+        u8 tmp = 0;
+        bool has = false;
+        for (auto c : pattern) {
+            if (c == ' ') {
+                // ignore
+            } else if (c == '?') {
+                res._pattern.pushBack(0x00);
+                res._mask.pushBack(0x00);
+            } else if (auto b = _parseDigit(c, {.base = 16})) {
+                tmp <<= 4;
+                tmp |= *b;
+                if (has) {
+                    res._pattern.pushBack(tmp);
+                    res._mask.pushBack(0xff);
+                    tmp = 0;
+                    has = false;
+                } else {
+                    has = true;
+                }
+            }
+        }
+
+        return res;
+    }
+
+    BPattern() = default;
+
+    BPattern(Bytes pattern, Bytes mask) {
+        if (pattern.len() != mask.len())
+            panic("pattern len should be equal to mask len");
+
+        _pattern = pattern;
+        _mask = mask;
+    }
+
+    Tuple<Match, usize> match(Bytes bytes) const {
+        usize i = 0;
+        for (; i < min(bytes.len(), len()); i++) {
+            if ((bytes[i] & _mask[i]) != _pattern[i])
+                return {Match::NO, 0};
+        }
+
+        if (i != len())
+            return {Match::PARTIAL, i};
+
+        return {Match::YES, i};
+    }
+
+    usize len() const {
+        return _pattern.len();
+    }
+};
 
 struct BScan {
     Cursor<u8> _start;

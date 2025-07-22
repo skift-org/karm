@@ -1,6 +1,7 @@
 #pragma once
 
 #include <karm-base/rc.h>
+#include <karm-mime/mime.h>
 
 #include "async.h"
 #include "fd.h"
@@ -55,6 +56,21 @@ struct FileReader :
     [[clang::coro_wrapper]]
     Async::Task<usize> readAsync(MutBytes bytes, Sched& sched = globalSched()) {
         return sched.readAsync(_fd, bytes);
+    }
+
+    Res<Mime::Mime> sniff(bool ignoreUrl = false) {
+        if (not ignoreUrl) {
+            if (auto mime = Mime::sniffSuffix(_url.path.suffix()))
+                return Ok(mime.take());
+        }
+
+        auto old = try$(Io::tell(*this));
+        Defer _ = [&] {
+            seek(Io::Seek::fromBegin(old)).unwrap();
+        };
+        try$(seek(Io::Seek::fromBegin(0)));
+        auto mime = try$(Mime::sniffReader(*this));
+        return Ok(mime);
     }
 };
 

@@ -50,6 +50,10 @@ struct Mime {
 /// Try to sniff the mime type from a file extension.
 Opt<Mime> sniffSuffix(Str suffix);
 
+Mime sniffBytes(Bytes bytes);
+
+Res<Mime> sniffReader(Io::Reader& reader);
+
 } // namespace Karm::Mime
 
 inline auto operator""_mime(char const* buf, usize len) {
