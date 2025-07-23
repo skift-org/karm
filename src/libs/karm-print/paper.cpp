@@ -133,6 +133,7 @@ export constexpr Array SERIES = {
     A_SERIES,
     B_SERIES,
     C_SERIES,
+    JIS_B_SERIES,
     US_SERIES,
     ENVELOPE_SERIES,
 };
