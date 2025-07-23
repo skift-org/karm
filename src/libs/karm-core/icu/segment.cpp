@@ -1,4 +1,4 @@
-export module Karm.Icu:segment;
+export module Karm.Core:icu.segment;
 
 namespace Karm::Icu {
 

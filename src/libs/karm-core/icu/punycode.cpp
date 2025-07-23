@@ -1,4 +1,4 @@
-export module Karm.Icu:punycode;
+export module Karm.Core:icu.punycode;
 
 namespace Karm::Icu {
 

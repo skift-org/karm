@@ -1,4 +1,4 @@
-export module Karm.Icu:emoji;
+export module Karm.Core:icu.emoji;
 
 namespace Karm::Icu {
 

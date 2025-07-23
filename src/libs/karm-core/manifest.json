@@ -6,6 +6,7 @@
     "subdirs": [
         "aio",
         "glob",
+        "icu",
         "json",
         "regex",
         "serde"

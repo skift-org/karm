@@ -1,4 +1,4 @@
-export module Karm.Icu:normal;
+export module Karm.Core:icu.normal;
 
 namespace Karm::Icu {
 

@@ -1,4 +1,4 @@
-export module Karm.Icu:base;
+export module Karm.Core:icu.base;
 
 namespace Karm::Icu {
 

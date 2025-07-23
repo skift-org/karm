@@ -1,4 +1,4 @@
-export module Karm.Icu:ucd;
+export module Karm.Core:icu.ucd;
 
 namespace Karm::Icu {
 

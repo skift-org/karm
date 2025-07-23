@@ -1,6 +1,6 @@
 #include <karm-test/macros.h>
 
-import Karm.Icu;
+import Karm.Core;
 
 namespace Karm::Icu {
 
