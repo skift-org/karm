@@ -1,10 +1,10 @@
 module;
 
-#include <karm-base/func.h>
 #include <karm-math/rect.h>
 
 export module Karm.Ui:funcs;
 
+import Karm.Core;
 import Karm.App;
 import :node;
 

@@ -1,6 +1,5 @@
 module;
 
-#include <karm-base/vec.h>
 #include <karm-gfx/buffer.h>
 #include <karm-gfx/colors.h>
 #include <karm-io/bscan.h>
@@ -9,6 +8,7 @@ module;
 
 export module Karm.Image:jpeg.decoder;
 
+import Karm.Core;
 import :jpeg.base;
 import :jpeg.dct;
 

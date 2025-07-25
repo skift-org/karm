@@ -1,10 +1,10 @@
 module;
 
-#include <karm-base/opt.h>
 #include <karm-gfx/icon.h>
 
 export module Karm.Kira:sideNav;
 
+import Karm.Core;
 import Karm.Ui;
 import Mdi;
 

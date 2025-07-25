@@ -1,4 +1,3 @@
-#include <karm-base/witty.h>
 #include <karm-sys/chan.h>
 #include <karm-sys/time.h>
 

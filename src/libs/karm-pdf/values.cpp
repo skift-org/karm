@@ -1,9 +1,10 @@
 module;
 
-#include <karm-base/map.h>
 #include <karm-io/emit.h>
 
 export module Karm.Pdf:values;
+
+import Karm.Core;
 
 namespace Karm::Pdf {
 

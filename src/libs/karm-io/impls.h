@@ -1,8 +1,6 @@
 #pragma once
 
-#include <karm-base/clamp.h>
-#include <karm-base/res.h>
-#include <karm-base/slice.h>
+import Karm.Core;
 
 #include "traits.h"
 #include "types.h"

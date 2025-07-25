@@ -1,10 +1,9 @@
 #pragma once
 
-#include <karm-base/rc.h>
+import Karm.Core;
+
 #include <karm-io/pack.h>
 #include <karm-io/types.h>
-#include <karm-meta/nocopy.h>
-#include <karm-meta/traits.h>
 #include <karm-mime/url.h>
 
 #include "addr.h"

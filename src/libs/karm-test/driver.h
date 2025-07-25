@@ -1,10 +1,9 @@
 #pragma once
 
-#include <karm-base/loc.h>
-#include <karm-base/vec.h>
+import Karm.Core;
+
 #include <karm-logger/logger.h>
 #include <karm-sys/chan.h>
-#include <karm-async/task.h>
 
 namespace Karm::Test {
 

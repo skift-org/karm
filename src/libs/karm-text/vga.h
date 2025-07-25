@@ -1,6 +1,7 @@
 #pragma once
 
-#include <karm-base/array.h>
+import Karm.Core;
+
 #include <karm-gfx/canvas.h>
 
 #include "font.h"

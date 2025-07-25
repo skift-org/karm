@@ -1,6 +1,5 @@
 module;
 
-#include <karm-async/task.h>
 #include <karm-io/traits.h>
 
 export module Karm.Core:aio.adapt;

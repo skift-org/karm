@@ -4,6 +4,6 @@
     "type": "lib",
     "description": "International Components for Unicode",
     "requires": [
-        "karm-base"
+        "karm-core"
     ]
 }

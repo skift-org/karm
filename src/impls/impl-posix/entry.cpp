@@ -1,8 +1,9 @@
+module Karm.Core;
+
 #include <stdio.h>
 #include <stdlib.h>
 
 //
-#include <karm-base/panic.h>
 #include <karm-sys/chan.h>
 #include <karm-sys/context.h>
 

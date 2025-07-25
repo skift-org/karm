@@ -1,7 +1,6 @@
 #pragma once
 
-#include <karm-base/rc.h>
-#include <karm-base/res.h>
+import Karm.Core;
 
 namespace Karm::Sys {
 

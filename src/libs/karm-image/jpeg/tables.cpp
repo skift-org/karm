@@ -1,9 +1,6 @@
-module;
-
-#include <karm-base/array.h>
-
 export module Karm.Image:jpeg.tables;
 
+import Karm.Core;
 import :jpeg.base;
 
 namespace Jpeg {

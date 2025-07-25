@@ -1,7 +1,6 @@
 #pragma once
 
-#include <karm-base/clamp.h>
-#include <karm-base/opt.h>
+import Karm.Core;
 
 #include "const.h"
 

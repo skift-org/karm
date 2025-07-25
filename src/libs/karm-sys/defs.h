@@ -1,6 +1,6 @@
 #pragma once
 
-#include <karm-base/rune.h>
+import Karm.Core;
 
 namespace Karm::Sys {
 

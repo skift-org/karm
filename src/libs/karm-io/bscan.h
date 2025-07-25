@@ -1,9 +1,7 @@
 #pragma once
 
-#include <karm-base/cursor.h>
-#include <karm-base/endian.h>
-#include <karm-base/string.h>
-#include <karm-base/vec.h>
+import Karm.Core;
+
 #include <karm-io/traits.h>
 
 #include "aton.h"

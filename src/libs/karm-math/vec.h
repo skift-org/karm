@@ -1,6 +1,7 @@
 #pragma once
 
-#include <karm-base/clamp.h>
+import Karm.Core;
+
 #include <karm-io/emit.h>
 #include <karm-io/pack.h>
 

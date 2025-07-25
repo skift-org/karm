@@ -1,9 +1,6 @@
-module;
-
-#include <karm-base/res.h>
-
 export module Karm.App:host;
 
+import :base.res;
 import :event;
 
 namespace Karm::App {

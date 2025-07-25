@@ -1,11 +1,11 @@
 module;
 
-#include <karm-base/vec.h>
 #include <karm-gfx/borders.h>
 #include <karm-gfx/outline.h>
 
 export module Karm.Scene:box;
 
+import Karm.Core;
 import :node;
 
 namespace Karm::Scene {

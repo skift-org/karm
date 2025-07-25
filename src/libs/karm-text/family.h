@@ -1,6 +1,6 @@
 #pragma once
 
-#include <karm-base/ranges.h>
+import Karm.Core;
 
 #include "book.h"
 #include "font.h"

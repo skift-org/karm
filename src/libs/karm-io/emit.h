@@ -1,6 +1,7 @@
 #pragma once
 
-#include <karm-base/string.h>
+import Karm.Core;
+
 #include <karm-io/fmt.h>
 #include <karm-io/funcs.h>
 #include <karm-io/traits.h>

@@ -1,10 +1,7 @@
 #pragma once
 
-#include <karm-base/enum.h>
-#include <karm-base/tuple.h>
-#include <karm-base/vec.h>
-#include <karm-meta/nocopy.h>
-#include <karm-meta/visit.h>
+import Karm.Core;
+
 #include <karm-sys/_handle.h>
 
 #include "bscan.h"

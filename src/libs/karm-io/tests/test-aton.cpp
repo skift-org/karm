@@ -7,6 +7,8 @@ namespace Karm::Io::Tests {
 test$("atoi") {
     expectEq$(Io::atoi("0"s), 0);
     expectEq$(Io::atoi("1"s), 1);
+    expectEq$(Io::atoi("2"s), 2);
+    expectEq$(Io::atoi("3      "s), 3);
     expectEq$(Io::atoi("10"s), 10);
     expectEq$(Io::atoi("100"s), 100);
     expectEq$(Io::atoi("+100"s), 100);

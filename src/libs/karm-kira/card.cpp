@@ -1,9 +1,6 @@
-module;
-
-#include <karm-meta/traits.h>
-
 export module Karm.Kira:card;
 
+import Karm.Core;
 import Karm.Ui;
 
 namespace Karm::Kira {

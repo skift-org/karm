@@ -1,12 +1,10 @@
 module;
 
-#include <karm-async/run.h>
-#include <karm-async/task.h>
-#include <karm-base/func.h>
 #include <karm-gfx/canvas.h>
 
 export module Karm.Ui:reducer;
 
+import Karm.Core;
 import Karm.App;
 import :funcs;
 

@@ -1,16 +1,6 @@
 #pragma once
 
-#include <karm-base/box.h>
-#include <karm-base/cow.h>
-#include <karm-base/endian.h>
-#include <karm-base/enum.h>
-#include <karm-base/map.h>
-#include <karm-base/rc.h>
-#include <karm-base/symbol.h>
-#include <karm-base/time.h>
-#include <karm-base/tuple.h>
-#include <karm-base/vec.h>
-#include <karm-meta/signess.h>
+import Karm.Core;
 
 #include "sscan.h"
 #include "text.h"

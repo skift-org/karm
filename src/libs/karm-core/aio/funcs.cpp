@@ -1,7 +1,5 @@
 module;
 
-#include <karm-async/task.h>
-#include <karm-base/array.h>
 #include <karm-io/text.h>
 
 export module Karm.Core:aio.funcs;

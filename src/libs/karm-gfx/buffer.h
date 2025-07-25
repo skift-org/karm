@@ -1,7 +1,7 @@
 #pragma once
 
-#include <karm-base/rc.h>
-#include <karm-base/union.h>
+import Karm.Core;
+
 #include <karm-math/rect.h>
 
 #include "color.h"

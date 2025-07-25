@@ -1,8 +1,7 @@
 #pragma once
 
-#include <karm-base/checked.h>
-#include <karm-base/distinct.h>
-#include <karm-base/string.h>
+import Karm.Core;
+
 #include <karm-io/emit.h>
 
 namespace Karm::Text {

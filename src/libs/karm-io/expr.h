@@ -1,8 +1,6 @@
 #pragma once
 
-#include <karm-base/checked.h>
-#include <karm-base/ctype.h>
-#include <karm-base/string.h>
+import Karm.Core;
 
 #include "sscan.h"
 

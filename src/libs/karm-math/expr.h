@@ -1,7 +1,7 @@
 #pragma once
 
-#include <karm-base/box.h>
-#include <karm-base/union.h>
+import Karm.Core;
+
 #include <karm-io/sscan.h>
 
 #include "bigint.h"

@@ -1,10 +1,10 @@
 module;
 
-#include <karm-base/array.h>
 #include <karm-math/funcs.h>
 
 export module Karm.Image:jpeg.dct;
 
+import Karm.Core;
 import :jpeg.base;
 
 namespace Jpeg {

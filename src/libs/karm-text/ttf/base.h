@@ -1,6 +1,6 @@
 #pragma once
 
-#include <karm-base/endian.h>
+import Karm.Core;
 
 namespace Ttf {
 

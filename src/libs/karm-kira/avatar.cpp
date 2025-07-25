@@ -1,10 +1,10 @@
 module;
 
-#include <karm-base/string.h>
 #include <karm-gfx/icon.h>
 
 export module Karm.Kira:avatar;
 
+import Karm.Core;
 import Karm.Ui;
 import Mdi;
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <karm-base/rune.h>
-#include <karm-base/string.h>
+import Karm.Core;
+
 #include <karm-sys/defs.h>
 
 #include "types.h"

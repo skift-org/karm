@@ -1,7 +1,7 @@
 #pragma once
 
-#include <karm-base/distinct.h>
-#include <karm-base/slice.h>
+import Karm.Core;
+
 #include <karm-io/bscan.h>
 #include <karm-sys/socket.h>
 

@@ -1,9 +1,6 @@
-module;
-
-#include <karm-base/rc.h>
-#include <karm-base/slice.h>
-
 export module Karm.Kv:blob;
+
+import Karm.Core;
 
 namespace Karm::Kv {
 

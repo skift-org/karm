@@ -1,12 +1,11 @@
 module;
 
-#include <karm-async/task.h>
-#include <karm-base/rc.h>
 #include <karm-logger/logger.h>
 #include <karm-mime/url.h>
 
 export module Karm.Http:client;
 
+import Karm.Core;
 import :transport;
 
 namespace Karm::Http {

@@ -1,9 +1,6 @@
 #pragma once
 
-#include <karm-base/clamp.h>
-#include <karm-base/endian.h>
-#include <karm-base/float.h>
-#include <karm-base/limits.h>
+import Karm.Core;
 
 #include "const.h"
 

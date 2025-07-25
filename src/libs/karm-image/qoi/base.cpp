@@ -1,9 +1,10 @@
 module;
 
-#include <karm-base/array.h>
 #include <karm-gfx/color.h>
 
 export module Karm.Image:qoi.base;
+
+import Karm.Core;
 
 namespace Qoi {
 

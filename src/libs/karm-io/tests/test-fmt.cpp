@@ -1,4 +1,5 @@
-#include <karm-base/enum.h>
+import Karm.Core;
+
 #include <karm-io/fmt.h>
 #include <karm-logger/logger.h>
 #include <karm-test/macros.h>

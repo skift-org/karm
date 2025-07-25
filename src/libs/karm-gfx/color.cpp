@@ -1,4 +1,4 @@
-#include <karm-base/clamp.h>
+import Karm.Core;
 
 #include "color.h"
 

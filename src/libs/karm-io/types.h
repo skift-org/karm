@@ -1,8 +1,6 @@
 #pragma once
 
-#include <karm-base/res.h>
-#include <karm-base/try.h>
-#include <karm-meta/traits.h>
+import Karm.Core;
 
 namespace Karm::Io {
 

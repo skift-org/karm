@@ -1,9 +1,6 @@
 #pragma once
 
-#include <karm-base/loc.h>
-#include <karm-base/res.h>
-#include <karm-base/string.h>
-#include <karm-meta/nocopy.h>
+import Karm.Core;
 
 #include "_prelude.h"
 #include "driver.h"

@@ -1,12 +1,11 @@
 module;
 
-#include <karm-base/distinct.h>
-#include <karm-base/res.h>
-#include <karm-base/string.h>
 #include <karm-math/insets.h>
 #include <karm-math/vec.h>
 
 export module Karm.Print:paper;
+
+import Karm.Core;
 
 namespace Karm::Print {
 

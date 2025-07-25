@@ -1,7 +1,7 @@
 #pragma once
 
-#include <karm-base/array.h>
-#include <karm-base/endian.h>
+import Karm.Core;
+
 #include <karm-io/aton.h>
 #include <karm-io/emit.h>
 

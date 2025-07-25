@@ -1,6 +1,7 @@
 #pragma once
 
-#include <karm-base/map.h>
+import Karm.Core;
+
 #include <karm-sys/mmap.h>
 
 #include "font.h"

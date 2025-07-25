@@ -1,9 +1,6 @@
-module;
-
-#include <karm-base/base.h>
-
 export module Karm.Kira:number;
 
+import Karm.Core;
 import Karm.Ui;
 import Mdi;
 

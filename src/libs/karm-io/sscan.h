@@ -1,11 +1,6 @@
 #pragma once
 
-#include <karm-base/ctype.h>
-#include <karm-base/cursor.h>
-#include <karm-base/defer.h>
-#include <karm-base/rune.h>
-#include <karm-base/string.h>
-#include <karm-meta/callable.h>
+import Karm.Core;
 
 namespace Karm {
 

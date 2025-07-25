@@ -1,10 +1,6 @@
-module;
-
-#include <karm-base/box.h>
-#include <karm-base/cursor.h>
-#include <karm-meta/id.h>
-
 export module Karm.App:event;
+
+import Karm.Core;
 
 namespace Karm::App {
 

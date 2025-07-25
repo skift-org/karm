@@ -1,7 +1,7 @@
 #pragma once
 
-#include <karm-base/res.h>
-#include <karm-base/vec.h>
+import Karm.Core;
+
 #include <karm-mime/url.h>
 
 #include "stat.h"

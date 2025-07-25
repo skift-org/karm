@@ -1,7 +1,5 @@
 module;
 
-#include <karm-base/base.h>
-#include <karm-base/size.h>
 #include <karm-logger/logger.h>
 #include <karm-sys/file.h>
 #include <karm-sys/mmap.h>

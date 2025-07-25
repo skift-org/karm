@@ -1,11 +1,11 @@
 module;
 
-#include <karm-base/opt.h>
 #include <karm-gfx/icon.h>
 #include <karm-math/align.h>
 
 export module Karm.Kira:navbar;
 
+import Karm.Core;
 import Karm.Ui;
 import :separator;
 

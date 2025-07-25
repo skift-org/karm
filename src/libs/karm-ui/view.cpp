@@ -1,12 +1,12 @@
 module;
 
-#include <karm-base/func.h>
 #include <karm-gfx/icon.h>
 #include <karm-text/loader.h>
 #include <karm-text/prose.h>
 
 export module Karm.Ui:view;
 
+import Karm.Core;
 import Karm.Scene;
 import Karm.Image;
 import :node;

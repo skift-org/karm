@@ -1,7 +1,7 @@
 #include <karm-mime/mime.h>
 #include <karm-sys/entry.h>
-#include <karm-sys/proc.h>
 #include <karm-sys/file.h>
+#include <karm-sys/proc.h>
 
 Res<Mime::Mime> sniffFile(Mime::Url url) {
     auto file = try$(Sys::File::open(url));

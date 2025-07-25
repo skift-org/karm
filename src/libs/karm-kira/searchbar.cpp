@@ -1,10 +1,10 @@
 module;
 
-#include <karm-base/string.h>
 #include <karm-math/align.h>
 
 export module Karm.Kira:searchbar;
 
+import Karm.Core;
 import Karm.App;
 import Karm.Ui;
 import Mdi;

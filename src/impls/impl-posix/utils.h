@@ -1,11 +1,11 @@
 #pragma once
 
+import Karm.Core;
+
 #include <netinet/in.h>
 #include <sys/stat.h>
 
 //
-#include <karm-base/error.h>
-#include <karm-base/res.h>
 #include <karm-sys/fd.h>
 
 namespace Posix {

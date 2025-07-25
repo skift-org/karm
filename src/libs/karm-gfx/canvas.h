@@ -1,8 +1,9 @@
 
 #pragma once
 
+import Karm.Core;
+
 #include <karm-math/path.h>
-#include <karm-meta/nocopy.h>
 #include <karm-text/base.h>
 
 #include "fill.h"

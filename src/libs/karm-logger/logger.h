@@ -1,11 +1,11 @@
 #pragma once
 
-#include <karm-base/loc.h>
+import Karm.Core;
+import Karm.Tty;
+
 #include <karm-io/fmt.h>
 
 #include "_embed.h"
-
-import Karm.Tty;
 
 namespace Karm {
 

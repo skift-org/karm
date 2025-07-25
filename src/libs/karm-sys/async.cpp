@@ -1,5 +1,6 @@
-#include "_embed.h"
 #include "async.h"
+
+#include "_embed.h"
 
 namespace Karm::Sys {
 

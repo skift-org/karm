@@ -2,8 +2,7 @@
 
 // https://github.com/Michaelangel007/crc32
 
-#include <karm-base/array.h>
-#include <karm-base/slice.h>
+import Karm.Core;
 
 namespace Karm::Crypto {
 

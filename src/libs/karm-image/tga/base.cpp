@@ -1,8 +1,6 @@
-module;
-
-#include <karm-base/endian.h>
-
 export module Karm.Image:tga.base;
+
+import Karm.Core;
 
 namespace Tga {
 

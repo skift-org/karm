@@ -1,10 +1,6 @@
 #pragma once
 
-#include <karm-base/clamp.h>
-#include <karm-base/ring.h>
-#include <karm-base/rune.h>
-#include <karm-base/string.h>
-#include <karm-base/tuple.h>
+import Karm.Core;
 
 #include "impls.h"
 #include "text.h"

@@ -1,4 +1,5 @@
-#include <karm-base/ring.h>
+import Karm.Core;
+
 #include <karm-math/funcs.h>
 
 #include "canvas.h"

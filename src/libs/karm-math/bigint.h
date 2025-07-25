@@ -1,8 +1,6 @@
 #pragma once
 
-#include <karm-base/checked.h>
-#include <karm-base/res.h>
-#include <karm-base/vec.h>
+import Karm.Core;
 
 #include "funcs.h"
 

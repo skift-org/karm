@@ -6,11 +6,11 @@
 //
 #include <impl-posix/fd.h>
 #include <impl-posix/utils.h>
-#include <karm-async/promise.h>
-#include <karm-base/map.h>
 #include <karm-sys/_embed.h>
 #include <karm-sys/async.h>
 #include <karm-sys/time.h>
+
+import Karm.Core;
 
 namespace Karm::Sys::_Embed {
 

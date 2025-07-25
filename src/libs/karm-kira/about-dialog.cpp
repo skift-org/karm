@@ -1,10 +1,10 @@
 module;
 
-#include <karm-base/string.h>
 #include <karm-math/align.h>
 
 export module Karm.Kira:aboutDialog;
 
+import Karm.Core;
 import Karm.Ui;
 import :badge;
 import :dialog;

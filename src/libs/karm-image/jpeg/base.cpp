@@ -1,11 +1,12 @@
 module;
 
-#include <karm-base/array.h>
 #include <karm-gfx/buffer.h>
 #include <karm-io/bscan.h>
 #include <karm-logger/logger.h>
 
 export module Karm.Image:jpeg.base;
+
+import Karm.Core;
 
 namespace Jpeg {
 

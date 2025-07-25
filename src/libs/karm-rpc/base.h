@@ -1,9 +1,7 @@
 #pragma once
 
-#include <karm-async/promise.h>
-#include <karm-async/queue.h>
-#include <karm-base/map.h>
-#include <karm-base/tuple.h>
+import Karm.Core;
+
 #include <karm-io/pack.h>
 
 #include "hooks.h"

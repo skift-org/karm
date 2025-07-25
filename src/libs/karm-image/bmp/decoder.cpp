@@ -1,11 +1,12 @@
 module;
 
-#include <karm-base/vec.h>
 #include <karm-gfx/buffer.h>
 #include <karm-io/bscan.h>
 #include <karm-logger/logger.h>
 
 export module Karm.Image:bmp.decoder;
+
+import Karm.Core;
 
 // BMP image decoder
 // References:

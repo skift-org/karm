@@ -1,8 +1,6 @@
-module;
-
-#include <karm-async/task.h>
-
 export module Karm.Core:aio.traits;
+
+import :async.task;
 
 namespace Karm::Aio {
 

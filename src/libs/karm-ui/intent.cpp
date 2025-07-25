@@ -1,10 +1,6 @@
-module;
-
-#include <karm-base/flags.h>
-#include <karm-base/func.h>
-
 export module Karm.Ui:intent;
 
+import Karm.Core;
 import Karm.App;
 import :node;
 import :funcs;

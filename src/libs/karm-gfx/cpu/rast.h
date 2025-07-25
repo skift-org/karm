@@ -1,6 +1,7 @@
 #pragma once
 
-#include <karm-base/range.h>
+import Karm.Core;
+
 #include <karm-math/poly.h>
 
 #include "../types.h"

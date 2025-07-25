@@ -1,12 +1,13 @@
 module;
 
-#include <karm-base/flags.h>
-#include <karm-base/rc.h>
 #include <karm-io/emit.h>
 #include <karm-io/expr.h>
 #include <karm-io/sscan.h>
 
 export module Karm.Core:regex;
+
+import :base.flags;
+import :base.rc;
 
 namespace Karm::Regex {
 

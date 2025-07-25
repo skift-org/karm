@@ -16,7 +16,6 @@
 #include <unistd.h>
 
 //
-#include <karm-base/defer.h>
 #include <karm-io/funcs.h>
 #include <karm-sys/_embed.h>
 #include <karm-sys/addr.h>
@@ -26,6 +25,8 @@
 
 #include "fd.h"
 #include "utils.h"
+
+import Karm.Core;
 
 namespace Karm::Sys::_Embed {
 

@@ -1,8 +1,7 @@
 #pragma once
 
-#include <karm-base/range.h>
-#include <karm-base/time.h>
-#include <karm-base/tuple.h>
+import Karm.Core;
+
 #include <karm-mime/uti.h>
 
 #include "addr.h"

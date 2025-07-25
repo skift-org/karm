@@ -1,11 +1,12 @@
 module;
 
-#include <karm-base/string.h>
 #include <karm-gfx/canvas.h>
 #include <karm-io/bscan.h>
 #include <karm-logger/logger.h>
 
 export module Karm.Image:png.decoder;
+
+import Karm.Core;
 
 namespace Png {
 
