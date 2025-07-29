@@ -118,19 +118,19 @@ struct BScan {
         return skip(n);
     }
 
-    always_inline constexpr usize tell() {
+    always_inline constexpr usize tell() const {
         return _cursor - _start;
     }
 
-    always_inline constexpr bool ended() {
+    always_inline constexpr bool ended() const {
         return _cursor.ended();
     }
 
-    always_inline constexpr usize rem() {
+    always_inline constexpr usize rem() const {
         return _cursor.rem();
     }
 
-    always_inline constexpr Bytes remBytes() {
+    always_inline constexpr Bytes remBytes() const {
         return {_cursor.buf(), rem()};
     }
 
@@ -358,7 +358,9 @@ struct BScan {
         while (n < rem() and _cursor.buf()[n] != '\0') {
             n++;
         }
-        return nextStr(n);
+        auto res = nextStr(n);
+        skip(1);
+        return res;
     }
 
     always_inline constexpr Bytes nextBytes(usize n) {
@@ -399,6 +401,10 @@ struct BChunk {
 
     always_inline constexpr BScan begin() const {
         return _slice;
+    }
+
+    always_inline constexpr BScan begin(usize offset) const {
+        return begin().skip(offset);
     }
 
     always_inline constexpr Bytes bytes() const {

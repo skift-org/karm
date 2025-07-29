@@ -129,9 +129,9 @@ struct Union {
     }
 
     template <Meta::Contains<Ts...> T>
-    always_inline T take() {
+    always_inline T take(char const* msg = "taking wrong type") {
         if (_index != Meta::indexOf<T, Ts...>())
-            panic("taking wrong type");
+            panic(msg);
         return std::move(*reinterpret_cast<T*>(_buf));
     }
 
