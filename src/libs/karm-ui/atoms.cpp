@@ -51,9 +51,9 @@ export constexpr isize SPACING96 = REM(24);
 
 // MARK: Colors ----------------------------------------------------------------
 
-export constexpr bool DARK_MODE = true;
+export constexpr bool darkMode = true;
 
-export constexpr Gfx::ColorRamp GRAYS = DARK_MODE ? Gfx::ZINC_RAMP : Gfx::ZINC_RAMP.reversed();
+export constexpr Gfx::ColorRamp GRAYS = darkMode ? Gfx::ZINC_RAMP : Gfx::ZINC_RAMP.reversed();
 export constexpr Gfx::Color GRAY = GRAYS[5];
 
 export constexpr Gfx::Color GRAY50 = GRAYS[0];
@@ -68,7 +68,7 @@ export constexpr Gfx::Color GRAY800 = GRAYS[8];
 export constexpr Gfx::Color GRAY900 = GRAYS[9];
 export constexpr Gfx::Color GRAY950 = GRAYS[10];
 
-export constexpr Gfx::ColorRamp ACCENTS = DARK_MODE ? Gfx::BLUE_RAMP : Gfx::BLUE_RAMP.reversed();
+export constexpr Gfx::ColorRamp ACCENTS = darkMode ? Gfx::PURPLE_RAMP : Gfx::PURPLE_RAMP.reversed();
 export constexpr Gfx::Color ACCENT = ACCENTS[5];
 
 export constexpr Gfx::Color ACCENT50 = ACCENTS[0];

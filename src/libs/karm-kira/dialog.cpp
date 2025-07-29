@@ -45,6 +45,11 @@ export Ui::Child dialogHeader(Ui::Children children) {
            Ui::insets({16, 16, 8, 16});
 }
 
+export Ui::Child dialogBody(Ui::Children children) {
+    return Ui::vflow(8, children) |
+           Ui::insets({8, 16, 8, 16});
+}
+
 export Ui::Child dialogTitle(String text) {
     return Ui::titleMedium(text);
 }

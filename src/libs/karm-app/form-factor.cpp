@@ -7,6 +7,6 @@ export enum struct FormFactor {
     MOBILE,
 };
 
-export constexpr FormFactor formFactor = FormFactor::DESKTOP;
+export FormFactor formFactor = FormFactor::DESKTOP;
 
 } // namespace Karm::App
