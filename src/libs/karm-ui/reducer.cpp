@@ -17,7 +17,10 @@ namespace Karm::Ui {
 export template <typename A>
 using Task = Opt<Async::_Task<Opt<A>>>;
 
-export template <typename S, typename A, Task<A> (*R)(S&, A)>
+export template <typename S, typename A, Task<A> (*R)(S&, A) = [](S& s, A a) {
+    return s.reduce(a);
+}>
+
 struct Model {
     using State = S;
     using Action = A;

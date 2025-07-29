@@ -11,7 +11,6 @@ import :node;
 import :atoms;
 
 namespace Karm::Ui {
-
 // MARK: Scroll ----------------------------------------------------------------
 
 struct Scroll : ProxyNode<Scroll> {
@@ -104,12 +103,18 @@ struct Scroll : ProxyNode<Scroll> {
                 _mouseIn = true;
 
                 me->pos = me->pos - _scroll.cast<isize>();
-                ProxyNode<Scroll>::event(e);
+                ProxyNode::event(e);
                 me->pos = me->pos + _scroll.cast<isize>();
 
                 if (not e.accepted()) {
                     if (me->type == App::MouseEvent::SCROLL) {
-                        scroll((_scroll + me->scroll * 128).cast<isize>());
+                        if (_orient == Math::Orien::BOTH) {
+                            scroll((_scroll + me->scroll * 128).cast<isize>());
+                        } else if (_orient == Math::Orien::HORIZONTAL) {
+                            scroll((_scroll + Math::Vec2f{(me->scroll.x + me->scroll.y) * 128, 0}).cast<isize>());
+                        } else if (_orient == Math::Orien::VERTICAL) {
+                            scroll((_scroll + Math::Vec2f{0, (me->scroll.x + me->scroll.y) * 128}).cast<isize>());
+                        }
                         shouldAnimate(*this);
                         _scrollOpacity.delay(0).animate(*this, 1, 0.3);
                     }

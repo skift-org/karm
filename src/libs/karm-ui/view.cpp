@@ -393,16 +393,19 @@ struct Image : View<Image> {
         g.pop();
     }
 
-    Math::Vec2i size(Math::Vec2i, Hint) override {
+    Math::Vec2i size(Math::Vec2i, Hint hint) override {
+        if (hint == Hint::MIN) {
+            return {};
+        }
         return _image.bound().size().cast<isize>();
     }
 };
 
-export Child image(Karm::Image::Picture image) {
-    return makeRc<Image>(image);
+export Child image(Mime::Url url, Opt<Math::Radiif> radii = NONE) {
+    return makeRc<Image>(Karm::Image::loadOrFallback(url).unwrap(), radii);
 }
 
-export Child image(Karm::Image::Picture image, Math::Radiif radii) {
+export Child image(Karm::Image::Picture image, Opt<Math::Radiif> radii = NONE) {
     return makeRc<Image>(image, radii);
 }
 
