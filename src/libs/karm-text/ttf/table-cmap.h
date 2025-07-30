@@ -25,13 +25,13 @@ struct Cmap : Io::BChunk {
             Map<u16, u16> codeMappings;
 
             auto s = begin().skip(12);
-            u32 nGroups = s.nextU32be();
+            u32 nGroups = s.next<u32be>();
 
             for (usize i = 0; i < nGroups; i++) {
-                u32 startCode = s.nextU32be();
-                u32 endCode = s.nextU32be();
+                u32 startCode = s.next<u32be>();
+                u32 endCode = s.next<u32be>();
 
-                u32 glyphOffset = s.nextU32be();
+                u32 glyphOffset = s.next<u32be>();
 
                 for (usize r = startCode; r <= endCode; ++r) {
                     codeMappings.put(r, (r - startCode) + glyphOffset);
@@ -41,32 +41,32 @@ struct Cmap : Io::BChunk {
         }
 
         Text::Glyph _glyphIdForType4(Rune r) const {
-            u16 segCountX2 = begin().skip(6).nextU16be();
+            u16 segCountX2 = begin().skip(6).next<u16be>();
             u16 segCount = segCountX2 / 2;
 
             for (usize i = 0; i < segCount; i++) {
                 auto s = begin().skip(14);
 
-                u16 endCode = s.skip(i * 2).peekU16be();
+                u16 endCode = s.skip(i * 2).peek<u16be>();
 
                 if (r > endCode)
                     continue;
 
                 // + 2 for reserved padding
-                u16 startCode = s.skip(segCountX2 + 2).peekU16be();
+                u16 startCode = s.skip(segCountX2 + 2).peek<u16be>();
 
                 if (r < startCode)
                     break;
 
-                u16 idDelta = s.skip(segCountX2).peekI16be();
-                u16 idRangeOffset = s.skip(segCountX2).peekU16be();
+                u16 idDelta = s.skip(segCountX2).peek<i16be>();
+                u16 idRangeOffset = s.skip(segCountX2).peek<u16be>();
 
                 if (idRangeOffset == 0) {
                     return Text::Glyph((r + idDelta) & 0xFFFF);
                 }
 
                 auto offset = idRangeOffset + (r - startCode) * 2;
-                return Text::Glyph(s.skip(offset).nextU16be());
+                return Text::Glyph(s.skip(offset).next<u16be>());
             }
 
             logWarn("ttf: glyph not found for rune {x}", r);
@@ -76,19 +76,19 @@ struct Cmap : Io::BChunk {
         Map<u16, u16> _extractMappingForType4() {
             Map<u16, u16> codeMappings;
 
-            u16 segCountX2 = begin().skip(6).nextU16be();
+            u16 segCountX2 = begin().skip(6).next<u16be>();
             u16 segCount = segCountX2 / 2;
 
             for (usize i = 0; i < segCount; i++) {
                 auto s = begin().skip(14);
 
-                u16 endCode = s.skip(i * 2).peekU16be();
+                u16 endCode = s.skip(i * 2).peek<u16be>();
 
                 // + 2 for reserved padding
-                u16 startCode = s.skip(segCountX2 + 2).peekU16be();
+                u16 startCode = s.skip(segCountX2 + 2).peek<u16be>();
 
-                u16 idDelta = s.skip(segCountX2).peekI16be();
-                u16 idRangeOffset = s.skip(segCountX2).peekU16be();
+                u16 idDelta = s.skip(segCountX2).peek<i16be>();
+                u16 idRangeOffset = s.skip(segCountX2).peek<u16be>();
 
                 if (idRangeOffset == 0) {
                     for (usize code = startCode; code <= endCode; code++) {
@@ -97,7 +97,7 @@ struct Cmap : Io::BChunk {
                 } else {
                     for (usize code = startCode; code <= endCode; code++) {
                         auto offset = idRangeOffset + (code - startCode) * 2;
-                        codeMappings.put(code, s.skip(offset).nextU16be());
+                        codeMappings.put(code, s.skip(offset).next<u16be>());
                     }
                 }
             }
@@ -107,12 +107,12 @@ struct Cmap : Io::BChunk {
 
         Text::Glyph _glyphForType12(Rune r) const {
             auto s = begin().skip(12);
-            u32 nGroups = s.nextU32be();
+            u32 nGroups = s.next<u32be>();
 
             for (usize i = 0; i < nGroups; i++) {
-                u32 startCode = s.nextU32be();
-                u32 endCode = s.nextU32be();
-                u32 glyphOffset = s.nextU32be();
+                u32 startCode = s.next<u32be>();
+                u32 endCode = s.next<u32be>();
+                u32 glyphOffset = s.next<u32be>();
 
                 if (r < startCode)
                     break;
@@ -152,7 +152,7 @@ struct Cmap : Io::BChunk {
     auto iterTables() {
         auto s = begin();
         s.skip(2);
-        usize numTables = s.nextU16be();
+        usize numTables = s.next<u16be>();
 
         return Iter{[this, s, i = 0uz, numTables] mutable -> Opt<Table> {
             if (i == numTables) {
@@ -161,11 +161,11 @@ struct Cmap : Io::BChunk {
             i++;
 
             Table t;
-            t.platformId = s.nextU16be();
-            t.encodingId = s.nextU16be();
-            u32 offset = s.nextU32be();
+            t.platformId = s.next<u16be>();
+            t.encodingId = s.next<u16be>();
+            u32 offset = s.next<u32be>();
             t.slice = sub(_slice, offset, _slice.len());
-            t.type = Io::BScan{t.slice}.nextU16be();
+            t.type = Io::BScan{t.slice}.next<u16be>();
 
             return t;
         }};

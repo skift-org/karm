@@ -41,14 +41,14 @@ export struct Decoder {
         bool expectSoi = true;
 
         while (not s.ended()) {
-            u8 first = s.nextU8be();
+            u8 first = s.next<u8be>();
 
             if (first != 0xFF) {
                 logError("jpeg: invalid marker");
                 return Error::invalidData("invalid marker");
             }
 
-            u8 marker = s.nextU8be();
+            u8 marker = s.next<u8be>();
 
             if (expectSoi) {
                 if (marker != SOI) {
@@ -80,7 +80,7 @@ export struct Decoder {
             } else if (marker == 0xff) {
                 logDebug("jpeg: skipping padding byte");
                 while (marker == 0xff) {
-                    marker = s.nextU8be();
+                    marker = s.next<u8be>();
                 }
             } else {
                 logWarn("jpeg: unknown marker: {:02x}", marker);
@@ -96,7 +96,7 @@ export struct Decoder {
     };
 
     void skipMarker(Io::BScan& s) {
-        u16 len = s.nextU16be();
+        u16 len = s.next<u16be>();
         s.skip(len - 2);
     }
 
@@ -108,11 +108,11 @@ export struct Decoder {
     Res<> defineQuantizationTable(Io::BScan& x) {
         // logDebug("jpeg: defining quantization table");
 
-        u16 len = x.nextU16be();
+        u16 len = x.next<u16be>();
         Io::BScan s = x.nextBytes(len - 2);
 
         while (not s.ended()) {
-            u8 infos = s.nextU8be();
+            u8 infos = s.next<u8be>();
             u8 id = infos & 0x0F;
 
             // logDebug("jpeg: quantization table id: {}", id);
@@ -127,7 +127,7 @@ export struct Decoder {
 
             for (usize i = 0; i < 64; ++i) {
                 // NOTE: Quantization tables are stored in zig-zag order.
-                quant[ZIGZAG[i]] = is16bit ? s.nextU16be() : s.nextU8be();
+                quant[ZIGZAG[i]] = is16bit ? s.next<u16be>() : s.next<u8be>();
             }
         }
 
@@ -159,26 +159,26 @@ export struct Decoder {
     Res<> startOfFrame(Io::BScan& x) {
         // logDebug("jpeg: start of frame");
 
-        u16 len = x.nextU16be();
+        u16 len = x.next<u16be>();
         Io::BScan s = x.nextBytes(len - 2);
 
-        u8 precision = s.nextU8be();
+        u8 precision = s.next<u8be>();
         if (precision != 8) {
             logError("jpeg: invalid precision: {}", precision);
             return Error::invalidData("invalid precision");
         }
 
-        _height = s.nextU16be();
-        _width = s.nextU16be();
+        _height = s.next<u16be>();
+        _width = s.next<u16be>();
 
-        u8 componentCount = s.nextU8be();
+        u8 componentCount = s.next<u8be>();
         if (componentCount != 1 and componentCount != 3) {
             logError("jpeg: invalid component count: {}", componentCount);
             return Error::invalidData("invalid component count");
         }
 
         for (u8 i = 0; i < componentCount; ++i) {
-            u8 id = s.nextU8be();
+            u8 id = s.next<u8be>();
 
             if (id == 0) {
                 logWarn("jpeg: zero-based component id");
@@ -199,8 +199,8 @@ export struct Decoder {
                 return Error::invalidData("duplicate component id");
             }
 
-            u8 factors = s.nextU8be();
-            u8 quantId = s.nextU8be();
+            u8 factors = s.next<u8be>();
+            u8 quantId = s.next<u8be>();
 
             _components[id].emplace(Component{
                 (u8)(factors >> 4),
@@ -221,10 +221,10 @@ export struct Decoder {
     Res<> defineRestartInterval(Io::BScan& x) {
         // logDebug("jpeg: defining restart interval");
 
-        u16 len = x.nextU16be();
+        u16 len = x.next<u16be>();
         Io::BScan s = x.nextBytes(len - 2);
 
-        _restartInterval = s.nextU16be();
+        _restartInterval = s.next<u16be>();
 
         if (not s.ended()) {
             logError("jpeg: unexpected data after DRI marker");
@@ -242,11 +242,11 @@ export struct Decoder {
     Res<> defineHuffmanTable(Io::BScan& x) {
         // logDebug("jpeg: defining huffman table");
 
-        u16 len = x.nextU16be();
+        u16 len = x.next<u16be>();
         Io::BScan s = x.nextBytes(len - 2);
 
         while (not s.ended()) {
-            u8 infos = s.nextU8be();
+            u8 infos = s.next<u8be>();
             u8 id = infos & 0x0F;
             bool isAc = (infos >> 4) == 1;
 
@@ -259,7 +259,7 @@ export struct Decoder {
 
             usize sum = 0;
             for (usize i = 1; i < 17; ++i) {
-                sum += s.nextU8be();
+                sum += s.next<u8be>();
                 table.offs[i] = sum;
             }
 
@@ -269,7 +269,7 @@ export struct Decoder {
             }
 
             for (usize i = 0; i < sum; ++i) {
-                table.syms[i] = s.nextU8be();
+                table.syms[i] = s.next<u8be>();
             }
         }
 
@@ -297,17 +297,17 @@ export struct Decoder {
             return Error::invalidData("start of scan before start of frame");
         }
 
-        u16 len = x.nextU16be();
+        u16 len = x.next<u16be>();
         Io::BScan s = x.nextBytes(len - 2);
 
-        u8 componentCount = s.nextU8be();
+        u8 componentCount = s.next<u8be>();
         if (componentCount != _componentCount) {
             logError("jpeg: invalid component count: {}", componentCount);
             return Error::invalidData("invalid component count");
         }
 
         for (u8 i = 0; i < componentCount; ++i) {
-            u8 id = s.nextU8be();
+            u8 id = s.next<u8be>();
 
             if (not _quirkZeroBased and id == 0) {
                 logError("jpeg: component id is zero-based while SOF0 is not");
@@ -328,7 +328,7 @@ export struct Decoder {
                 return Error::invalidData("undefined component id");
             }
 
-            u8 huffIds = s.nextU8be();
+            u8 huffIds = s.next<u8be>();
             u8 dcHuffId = huffIds >> 4;
             u8 acHuffId = huffIds & 0xF;
 
@@ -345,9 +345,9 @@ export struct Decoder {
             _scanComponents[id].emplace(ScanComponent{dcHuffId, acHuffId});
         }
 
-        _ss = s.nextU8be();
-        _se = s.nextU8be();
-        u8 ahAl = s.nextU8be();
+        _ss = s.next<u8be>();
+        _se = s.next<u8be>();
+        u8 ahAl = s.next<u8be>();
         _ah = ahAl >> 4;
         _al = ahAl & 0xF;
 

@@ -52,7 +52,7 @@ export struct Decoder {
         s.skip(2); // signature
         s.skip(4); // file size
         s.skip(4); // reserved
-        _dataOffset = s.nextI32le();
+        _dataOffset = s.next<i32le>();
 
         return Ok();
     }
@@ -79,23 +79,23 @@ export struct Decoder {
 
     Res<> _readInfoHeader(Io::BScan& s) {
         auto start = s.tell();
-        auto size = s.nextU32le(); // header size
+        auto size = s.next<u32le>(); // header size
         if (size < 40) {
             return Error::invalidData("invalid header size");
         }
 
-        _width = s.nextI32le();
-        _height = s.nextI32le();
+        _width = s.next<i32le>();
+        _height = s.next<i32le>();
 
-        auto planes = s.nextI16le();
+        auto planes = s.next<i16le>();
         logDebug("planes: {}", planes);
         if (planes != 1) {
             return Error::invalidData("invalid number of planes");
         }
 
-        _bpp = s.nextI16le();
+        _bpp = s.next<i16le>();
 
-        auto comporession = s.nextI32le();
+        auto comporession = s.next<i32le>();
         if (comporession != RGB and comporession != RLE8 and comporession != RLE4) {
             return Error::invalidData("invalid compression");
         }
@@ -103,7 +103,7 @@ export struct Decoder {
         s.skip(4); // image size
         s.skip(4); // x pixels per meter
         s.skip(4); // y pixels per meter
-        _numsColors = s.nextI32le();
+        _numsColors = s.next<i32le>();
         if (_numsColors == 0 and _bpp <= 8) {
             _numsColors = 1 << _bpp;
         }
@@ -120,9 +120,9 @@ export struct Decoder {
 
     Res<> _readPalette(Io::BScan& s) {
         for (usize i = 0; i < _numsColors; ++i) {
-            auto b = s.nextU8le();
-            auto g = s.nextU8le();
-            auto r = s.nextU8le();
+            auto b = s.next<u8le>();
+            auto g = s.next<u8le>();
+            auto r = s.next<u8le>();
             s.skip(1); // reserved
 
             logDebug("palette[{}]: r: {}, g: {}, b: {}", i, r, g, b);
@@ -161,27 +161,27 @@ export struct Decoder {
                         return Error::invalidData("invalid palette index");
                     color = _palette[index];
                 } else if (_bpp == 8) {
-                    auto index = s.nextU8le();
+                    auto index = s.next<u8le>();
                     if (index >= _palette.len()) {
                         return Error::invalidData("invalid palette index");
                     }
                     color = _palette[index];
                 } else if (_bpp == 16) {
-                    auto pixel = s.nextU16le();
+                    auto pixel = s.next<u16le>();
                     color.blue = (pixel & 0x1F) << 3;
                     color.green = ((pixel >> 5) & 0x1F) << 3;
                     color.red = ((pixel >> 10) & 0x1F) << 3;
                     color.alpha = 255;
                 } else if (_bpp == 24) {
-                    color.blue = s.nextU8le();
-                    color.green = s.nextU8le();
-                    color.red = s.nextU8le();
+                    color.blue = s.next<u8le>();
+                    color.green = s.next<u8le>();
+                    color.red = s.next<u8le>();
                     color.alpha = 255;
                 } else if (_bpp == 32) {
-                    color.blue = s.nextU8le();
-                    color.green = s.nextU8le();
-                    color.red = s.nextU8le();
-                    color.alpha = 255 - s.nextU8le();
+                    color.blue = s.next<u8le>();
+                    color.green = s.next<u8le>();
+                    color.red = s.next<u8le>();
+                    color.alpha = 255 - s.next<u8le>();
                 } else {
                     return Error::invalidData("invalid bpp");
                 }

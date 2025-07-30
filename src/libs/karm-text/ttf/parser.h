@@ -142,17 +142,17 @@ struct Parser {
     }
 
     u32 version() {
-        return begin().nextU32be();
+        return begin().next<u32be>();
     }
 
     auto iterTables() {
         auto scan = begin();
-        /* auto version = */ scan.nextU32be();
-        auto numTables = scan.nextU16be();
+        /* auto version = */ scan.next<u32be>();
+        auto numTables = scan.next<u16be>();
 
-        /* auto searchRange = */ scan.nextU16be();
-        /* auto entrySelector = */ scan.nextU16be();
-        /* auto rangeShift = */ scan.nextU16be();
+        /* auto searchRange = */ scan.next<u16be>();
+        /* auto entrySelector = */ scan.next<u16be>();
+        /* auto rangeShift = */ scan.next<u16be>();
 
         struct Table {
             Str tag;
@@ -168,9 +168,9 @@ struct Parser {
 
             Table table{};
             table.tag = scan.nextStr(4);
-            table.checkSum = scan.nextU32be();
-            table.offset = scan.nextU32be();
-            table.length = scan.nextU32be();
+            table.checkSum = scan.next<u32be>();
+            table.offset = scan.next<u32be>();
+            table.length = scan.next<u32be>();
 
             i++;
             return table;

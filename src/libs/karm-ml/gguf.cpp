@@ -79,14 +79,14 @@ struct [[gnu::packed]] Header {
 Serde::Value _loadMetadataValue(Io::BScan& s, ValueType type);
 
 Str _loadMetadataString(Io::BScan& s) {
-    auto len = s.nextU64le();
+    auto len = s.next<u64le>();
     return s.nextStr(len);
 }
 
 Serde::Value _loadMetaDataArray(Io::BScan& s) {
     Serde::Array res;
-    auto type = static_cast<ValueType>(s.nextU32le());
-    auto len = s.nextU64le();
+    auto type = static_cast<ValueType>(s.next<u32le>());
+    auto len = s.next<u64le>();
     for (usize _ : range(len)) {
         res.pushBack(_loadMetadataValue(s, type));
     }
@@ -96,28 +96,28 @@ Serde::Value _loadMetaDataArray(Io::BScan& s) {
 Serde::Value _loadMetadataValue(Io::BScan& s, ValueType type) {
     switch (type) {
     case ValueType::BOOL:
-        return static_cast<bool>(s.nextU8le());
+        return static_cast<bool>(s.next<u8le>());
 
     case ValueType::UINT8:
-        return static_cast<Serde::Integer>(s.nextU8le());
+        return static_cast<Serde::Integer>(s.next<u8le>());
     case ValueType::INT8:
-        return static_cast<Serde::Integer>(s.nextI8le());
+        return static_cast<Serde::Integer>(s.next<i8le>());
 
     case ValueType::UINT16:
-        return static_cast<Serde::Integer>(s.nextU16le());
+        return static_cast<Serde::Integer>(s.next<u16le>());
     case ValueType::INT16:
-        return static_cast<Serde::Integer>(s.nextI16le());
+        return static_cast<Serde::Integer>(s.next<i16le>());
 
     case ValueType::UINT32:
-        return static_cast<Serde::Integer>(s.nextU32le());
+        return static_cast<Serde::Integer>(s.next<u32le>());
     case ValueType::INT32:
-        return static_cast<Serde::Integer>(s.nextI32le());
+        return static_cast<Serde::Integer>(s.next<i32le>());
 
     case ValueType::UINT64:
-        return static_cast<Serde::Integer>(s.nextU64le());
+        return static_cast<Serde::Integer>(s.next<u64le>());
 
     case ValueType::INT64:
-        return static_cast<Serde::Integer>(s.nextI64le());
+        return static_cast<Serde::Integer>(s.next<i64le>());
 
     case ValueType::FLOAT32:
         return s.next<f32>();
@@ -138,7 +138,7 @@ Serde::Value _loadMetadataValue(Io::BScan& s, ValueType type) {
 
 Res<Tuple<Str, Serde::Value>> _loadMetadataRecord(Io::BScan& s) {
     auto key = _loadMetadataString(s);
-    auto type = static_cast<ValueType>(s.nextU32le());
+    auto type = static_cast<ValueType>(s.next<u32le>());
     return Ok(Tuple<Str, Serde::Value>{key, _loadMetadataValue(s, type)});
 }
 
@@ -186,13 +186,13 @@ struct TensorInfos {
 TensorInfos _loadTensor(Io::BScan& s) {
     TensorInfos infos;
     infos.name = _loadMetadataString(s);
-    auto dimsLen = s.nextU32le();
+    auto dimsLen = s.next<u32le>();
     Vec<u64> dims;
     for (usize _ : range(dimsLen)) {
-        infos.dims.pushBack(s.nextU64le());
+        infos.dims.pushBack(s.next<u64le>());
     }
-    infos.type = static_cast<Type>(s.nextU32le());
-    infos.offset = s.nextU64le();
+    infos.type = static_cast<Type>(s.next<u32le>());
+    infos.offset = s.next<u64le>();
 
     return infos;
 }

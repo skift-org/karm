@@ -10,13 +10,13 @@ struct Head : Io::BChunk {
     u16 unitPerEm() const {
         auto s = begin();
         s.skip(18);
-        return s.nextU16be();
+        return s.next<u16be>();
     }
 
     u16 locaFormat() const {
         auto s = begin();
         s.skip(50);
-        return s.nextU16be();
+        return s.next<u16be>();
     }
 };
 

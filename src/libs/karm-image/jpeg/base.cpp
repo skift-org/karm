@@ -157,21 +157,21 @@ export struct BitReader {
         if (_len)
             return Ok();
 
-        _buf = s.nextU8be();
+        _buf = s.next<u8be>();
         while (_buf == 0xFF) {
-            u8 marker = s.peekU8be();
+            u8 marker = s.peek<u8be>();
 
             while (marker == 0xFF) {
-                s.nextU8be();
-                marker = s.peekU8be();
+                s.next<u8be>();
+                marker = s.peek<u8be>();
             }
 
             if (marker == 0x00) {
-                s.nextU8be();
+                s.next<u8be>();
                 break;
             } else if (RST0 <= marker and marker <= RST7) {
-                s.nextU8be();
-                _buf = s.nextU8be();
+                s.next<u8be>();
+                _buf = s.next<u8be>();
             } else {
                 logError("jpeg: invalid marker");
                 return Error::invalidData("invalid marker");

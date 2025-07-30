@@ -56,8 +56,8 @@ struct Name : Io::BChunk {
 
     auto iterRecords() const {
         auto s = begin();
-        /* auto version = */ s.nextU16be();
-        u16 count = s.nextU16be();
+        /* auto version = */ s.next<u16be>();
+        u16 count = s.next<u16be>();
         s.skip(2); // stringOffset
 
         return Iter{[s, i = 0uz, count] mutable -> Opt<Record> {
@@ -66,14 +66,14 @@ struct Name : Io::BChunk {
             i++;
 
             Record r;
-            r.platformId = s.nextU16be();
-            r.encodingId = s.nextU16be();
-            r.languageId = s.nextU16be();
-            auto nameId = s.nextU16be();
+            r.platformId = s.next<u16be>();
+            r.encodingId = s.next<u16be>();
+            r.languageId = s.next<u16be>();
+            auto nameId = s.next<u16be>();
             r.nameId = static_cast<NameId>(nameId);
 
-            r.length = s.nextU16be();
-            r.offset = s.nextU16be();
+            r.length = s.next<u16be>();
+            r.offset = s.next<u16be>();
 
             return r;
         }};
@@ -95,7 +95,7 @@ struct Name : Io::BChunk {
         auto s = begin().skip(get<StorageOffset>() + r.offset);
         StringBuilder sb;
         for (usize i = 0; i < r.length / 2; i++) {
-            sb.append(s.nextU16be());
+            sb.append(s.next<u16be>());
         }
         return sb.take();
     }

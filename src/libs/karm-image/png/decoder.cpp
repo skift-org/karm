@@ -15,29 +15,29 @@ struct Ihdr : Io::BChunk {
     Math::Vec2i size() {
         auto s = begin();
         return {
-            (isize)s.nextU32be(),
-            (isize)s.nextU32be(),
+            (isize)s.next<u32be>(),
+            (isize)s.next<u32be>(),
         };
     }
 
     u8 bitDepth() {
-        return begin().skip(8).nextU8be();
+        return begin().skip(8).next<u8be>();
     }
 
     u8 colorType() {
-        return begin().skip(9).nextU8be();
+        return begin().skip(9).next<u8be>();
     }
 
     u8 compressionMethod() {
-        return begin().skip(10).nextU8be();
+        return begin().skip(10).next<u8be>();
     }
 
     u8 filterMethod() {
-        return begin().skip(11).nextU8be();
+        return begin().skip(11).next<u8be>();
     }
 
     u8 interlaceMethod() {
-        return begin().skip(12).nextU8be();
+        return begin().skip(12).next<u8be>();
     }
 };
 
@@ -107,10 +107,10 @@ export struct Decoder {
         return Iter{[s] mutable -> Opt<Chunk> {
             Chunk c;
 
-            c.len = s.nextI32be();
+            c.len = s.next<i32be>();
             c.sig = s.nextStr(4);
             c.data = s.nextBytes(c.len);
-            c.crc32 = s.nextI32be();
+            c.crc32 = s.next<i32be>();
 
             if (c.sig == Iend::SIG) {
                 return NONE;

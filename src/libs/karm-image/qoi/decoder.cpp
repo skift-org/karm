@@ -74,16 +74,16 @@ export struct Decoder : Io::BChunk {
                     continue;
                 }
 
-                auto b1 = s.nextU8be();
+                auto b1 = s.next<u8be>();
                 if (b1 == Chunk::RGB) {
-                    pixel.red = s.nextU8be();
-                    pixel.green = s.nextU8be();
-                    pixel.blue = s.nextU8be();
+                    pixel.red = s.next<u8be>();
+                    pixel.green = s.next<u8be>();
+                    pixel.blue = s.next<u8be>();
                 } else if (b1 == Chunk::RGBA) {
-                    pixel.red = s.nextU8be();
-                    pixel.green = s.nextU8be();
-                    pixel.blue = s.nextU8be();
-                    pixel.alpha = s.nextU8be();
+                    pixel.red = s.next<u8be>();
+                    pixel.green = s.next<u8be>();
+                    pixel.blue = s.next<u8be>();
+                    pixel.alpha = s.next<u8be>();
                 } else if ((b1 & Chunk::MASK) == Chunk::INDEX) {
                     pixel = index[b1];
                 } else if ((b1 & Chunk::MASK) == Chunk::DIFF) {
@@ -91,7 +91,7 @@ export struct Decoder : Io::BChunk {
                     pixel.green += ((b1 >> 2) & 0x03) - 2;
                     pixel.blue += (b1 & 0x03) - 2;
                 } else if ((b1 & Chunk::MASK) == Chunk::LUMA) {
-                    auto b2 = s.nextU8be();
+                    auto b2 = s.next<u8be>();
                     auto vg = (b1 & 0x3f) - 32;
                     pixel.red += vg - 8 + ((b2 >> 4) & 0x0f);
                     pixel.green += vg;

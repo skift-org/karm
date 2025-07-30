@@ -29,14 +29,14 @@ struct Glyf : Io::BChunk {
 
     always_inline Metrics metrics(Io::BScan& s, usize glyfOffset) const {
         s.skip(glyfOffset);
-        auto numContours = s.nextI16be();
+        auto numContours = s.next<i16be>();
         if (numContours == 0) {
             return {};
         }
-        auto xMin = s.nextI16be();
-        auto yMin = s.nextI16be();
-        auto xMax = s.nextI16be();
-        auto yMax = s.nextI16be();
+        auto xMin = s.next<i16be>();
+        auto yMin = s.next<i16be>();
+        auto xMax = s.next<i16be>();
+        auto yMax = s.next<i16be>();
         return {numContours, xMin, yMin, xMax, yMax};
     }
 
@@ -63,8 +63,8 @@ struct Glyf : Io::BChunk {
 
     void contourSimple(Gfx::Canvas& g, Metrics m, Io::BScan& s) const {
         auto endPtsOfContours = s;
-        auto nPoints = s.peek(2 * (m.numContours - 1)).nextU16be() + 1u;
-        u16 instructionLength = s.skip(m.numContours * 2).nextU16be();
+        auto nPoints = s.peek(2 * (m.numContours - 1)).next<u16be>() + 1u;
+        u16 instructionLength = s.skip(m.numContours * 2).next<u16be>();
 
         auto flagsScan = s.skip(instructionLength);
 
@@ -74,9 +74,9 @@ struct Glyf : Io::BChunk {
 
         for (usize i = 0; i < nPoints; i++) {
             if (not flagsRepeat) {
-                flags = s.nextU8be();
+                flags = s.next<u8be>();
                 if (flags & REPEAT) {
-                    flagsRepeat = s.nextU8be();
+                    flagsRepeat = s.next<u8be>();
                 }
             } else {
                 flagsRepeat--;
@@ -95,7 +95,7 @@ struct Glyf : Io::BChunk {
         flags = 0;
         flagsRepeat = 0;
         for (isize c = 0; c < m.numContours; c++) {
-            usize end = endPtsOfContours.nextU16be();
+            usize end = endPtsOfContours.next<u16be>();
 
             Math::Vec2f cp{};
             Math::Vec2f startP{};
@@ -103,21 +103,21 @@ struct Glyf : Io::BChunk {
 
             for (usize i = start; i <= end; i++) {
                 if (not flagsRepeat) {
-                    flags = flagsScan.nextU8be();
+                    flags = flagsScan.next<u8be>();
                     if (flags & REPEAT) {
-                        flagsRepeat = flagsScan.nextU8be();
+                        flagsRepeat = flagsScan.next<u8be>();
                     }
                 } else {
                     flagsRepeat--;
                 }
 
                 isize x = (flags & X_SHORT_VECTOR)
-                              ? ((flags & SAME_OR_POSITIVE_X) ? xCoordsScan.nextU8be() : -xCoordsScan.nextU8be())
-                              : ((flags & SAME_OR_POSITIVE_X) ? 0 : xCoordsScan.nextI16be());
+                              ? ((flags & SAME_OR_POSITIVE_X) ? xCoordsScan.next<u8be>() : -xCoordsScan.next<u8be>())
+                              : ((flags & SAME_OR_POSITIVE_X) ? 0 : xCoordsScan.next<i16be>());
 
                 isize y = (flags & Y_SHORT_VECTOR)
-                              ? ((flags & SAME_OR_POSITIVE_Y) ? yCoordsScan.nextU8be() : -yCoordsScan.nextU8be())
-                              : ((flags & SAME_OR_POSITIVE_Y) ? 0 : yCoordsScan.nextI16be());
+                              ? ((flags & SAME_OR_POSITIVE_Y) ? yCoordsScan.next<u8be>() : -yCoordsScan.next<u8be>())
+                              : ((flags & SAME_OR_POSITIVE_Y) ? 0 : yCoordsScan.next<i16be>());
 
                 curr = curr + Math::Vec2f{(f64)x, (f64)-y};
 

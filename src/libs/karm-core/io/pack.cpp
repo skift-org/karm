@@ -1,17 +1,14 @@
-#pragma once
+export module Karm.Core:io.
 
-#include <karm-base/enum.h>
-#include <karm-base/tuple.h>
-#include <karm-base/vec.h>
-#include <karm-meta/nocopy.h>
-#include <karm-meta/visit.h>
+import Karm.Core:io.pack;
+
 #include <karm-sys/_handle.h>
 
 #include "bscan.h"
 
 namespace Karm::Io {
 
-struct PackEmit : BEmit {
+export struct PackEmit : BEmit {
     Vec<Sys::Handle> _handles;
 
     using BEmit::BEmit;
@@ -29,7 +26,7 @@ struct PackEmit : BEmit {
     }
 };
 
-struct PackScan : BScan {
+export struct PackScan : BScan {
     Cursor<Sys::Handle> _handles;
 
     PackScan(Bytes bytes, Slice<Sys::Handle> handles)
@@ -42,22 +39,22 @@ struct PackScan : BScan {
     }
 };
 
-template <typename T>
+export template <typename T>
 struct Packer;
 
-template <typename T>
+export template <typename T>
 static Res<> pack(PackEmit& e, T const& val) {
     return Packer<T>::pack(e, val);
 }
 
-template <typename T>
+export template <typename T>
 static Res<T> unpack(PackScan& s) {
     return Packer<T>::unpack(s);
 }
 
 // MARK: Trivialy Copyable -----------------------------------------------------
 
-template <Meta::TrivialyCopyable T>
+export template <Meta::TrivialyCopyable T>
 struct Packer<T> {
     static Res<> pack(PackEmit& e, T const& val) {
         e.writeFrom(val);
@@ -65,13 +62,15 @@ struct Packer<T> {
     }
 
     static Res<T> unpack(PackScan& s) {
-        return s.next<T>();
+        T res;
+        s.readTo(&res);
+        return Ok(res);
     }
 };
 
 // MARK: Optionals -------------------------------------------------------------
 
-template <>
+export template <>
 struct Packer<None> {
     static Res<> pack(BEmit&, None const&) {
         return Ok();
@@ -82,7 +81,7 @@ struct Packer<None> {
     }
 };
 
-template <typename T>
+export template <typename T>
 struct Packer<Opt<T>> {
     static Res<> pack(PackEmit& e, Opt<T> const& val) {
         e.writeU8le(val.has());
@@ -92,14 +91,14 @@ struct Packer<Opt<T>> {
     }
 
     static Res<Opt<T>> unpack(PackScan& s) {
-        bool has = try$(s.next<u8le>());
+        bool has = s.next<u8le>();
         if (not has)
             return Ok<Opt<T>>(NONE);
         return Ok(unpack<T>());
     }
 };
 
-template <typename... Ts>
+export template <typename... Ts>
 struct Packer<Union<Ts...>> {
     static Res<> pack(PackEmit& e, Union<Ts...> const& val) {
         try$(Io::pack<u8>(e, val.index()));
@@ -118,7 +117,7 @@ struct Packer<Union<Ts...>> {
     }
 };
 
-template <>
+export template <>
 struct Packer<Error> {
     // TODO: Because the message in the error is a non owning string
     //       we can't send it over the wire because they will be no one
@@ -137,7 +136,7 @@ struct Packer<Error> {
     }
 };
 
-template <typename T, typename E>
+export template <typename T, typename E>
 struct Packer<Res<T, E>> {
     static Res<> pack(PackEmit& e, Res<T, E> const& val) {
         e.writeU8le(val.has());
@@ -147,7 +146,7 @@ struct Packer<Res<T, E>> {
     }
 
     static Res<Res<T, E>> unpack(PackScan& s) {
-        bool has = try$(s.next<u8le>());
+        bool has = s.next<u8le>();
         if (has) {
             auto res = Ok<T>(try$(Io::unpack<T>(s)));
             return Ok<Res<T, E>>(std::move(res));
@@ -157,7 +156,7 @@ struct Packer<Res<T, E>> {
     }
 };
 
-template <Meta::Agregate T>
+export template <Meta::Agregate T>
     requires(not Meta::TrivialyCopyable<T>)
 struct Packer<T> {
     static Res<> pack(PackEmit& e, T const& val) {
@@ -201,7 +200,7 @@ struct Packer<T> {
 
 // MARK: Sliceable ---------------------------------------------------------------
 
-template <typename T>
+export template <typename T>
 struct Packer<Vec<T>> {
     static Res<> pack(PackEmit& e, Vec<T> const& val) {
         e.writeU64le(val.len());
@@ -212,7 +211,7 @@ struct Packer<Vec<T>> {
     }
 
     static Res<Vec<T>> unpack(PackScan& s) {
-        auto len = try$(s.next<u64le>());
+        auto len = s.next<u64le>();
         Vec<T> res{len};
         for (usize i = 0; i < len; i++) {
             res.emplaceBack(try$(Io::unpack<T>(s)));
@@ -223,7 +222,7 @@ struct Packer<Vec<T>> {
 
 // MARK: Strings ---------------------------------------------------------------
 
-template <StaticEncoding E>
+export template <StaticEncoding E>
 struct Packer<_String<E>> {
     static Res<> pack(PackEmit& e, _String<E> const& val) {
         e.writeU64le(val.len());
@@ -232,14 +231,13 @@ struct Packer<_String<E>> {
     }
 
     static Res<String> unpack(PackScan& s) {
-        u64 n = try$(s.next<u64le>());
-        return Ok(try$(s.nextStr(n)));
+        return Ok(s.nextStr(s.next<u64le>()));
     }
 };
 
 // MARK: Tuple -----------------------------------------------------------------
 
-template <typename Car, typename Cdr>
+export template <typename Car, typename Cdr>
 struct Packer<Pair<Car, Cdr>> {
     static Res<> pack(PackEmit& e, Pair<Car, Cdr> const& val) {
         Io::pack(e, val.v0);
@@ -256,7 +254,7 @@ struct Packer<Pair<Car, Cdr>> {
     }
 };
 
-template <typename... Ts>
+export template <typename... Ts>
 struct Packer<Tuple<Ts...>> {
     static Res<> pack(PackEmit& e, Tuple<Ts...> const& val) {
         return val.visit([&](auto const& f) {

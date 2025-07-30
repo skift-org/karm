@@ -232,8 +232,8 @@ struct Packet {
 
             Question q{
                 name.take(),
-                (Type)s.nextU16be(),
-                (Class)s.nextU16be(),
+                (Type)s.next<u16be>(),
+                (Class)s.next<u16be>(),
             };
 
             qs.pushBack(std::move(q));
@@ -246,10 +246,10 @@ struct Packet {
 
             Answer a;
             a.name = name.take();
-            a.type = (Type)s.nextU16be();
-            a.class_ = (Class)s.nextU16be();
-            a.ttl = Duration::fromSecs(s.nextU32be());
-            auto len = s.nextU16be();
+            a.type = (Type)s.next<u16be>();
+            a.class_ = (Class)s.next<u16be>();
+            a.ttl = Duration::fromSecs(s.next<u32be>());
+            auto len = s.next<u16be>();
             a.data = s.nextBytes(len);
 
             ans.pushBack(std::move(a));

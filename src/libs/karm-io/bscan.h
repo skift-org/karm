@@ -113,6 +113,12 @@ struct BScan {
         _cursor = _start;
     }
 
+    always_inline constexpr Res<> ensure(usize n) {
+        if (rem() < n)
+            return Error::invalidInput("out of bound");
+        return Ok();
+    }
+
     always_inline constexpr BScan& seek(usize n) {
         rewind();
         return skip(n);
@@ -147,63 +153,37 @@ struct BScan {
     }
 
     template <typename T>
-    always_inline constexpr bool readTo(T* buf, usize n = 1) {
-        if (rem() < n) {
-            return false;
-        }
-
+    always_inline constexpr Res<> readTo(T* buf, usize n = 1) {
+        try$(ensure(n));
         u8* b = reinterpret_cast<u8*>(buf);
         for (usize i = 0; i < sizeof(T) * n; i++) {
             b[i] = _cursor.next();
         }
-        return true;
+        return Ok();
     }
 
     template <typename T>
-    always_inline constexpr bool peekTo(T* buf, usize n = 1) {
-        if (rem() < n)
-            return false;
-
+    always_inline constexpr Res<> peekTo(T* buf, usize n = 1) {
+        try$(ensure(n));
         u8* b = reinterpret_cast<u8*>(buf);
         for (usize i = 0; i < sizeof(T) * n; i++)
             b[i] = _cursor.buf()[i];
 
-        return true;
+        return Ok();
     }
 
     template <typename T>
-    always_inline constexpr T next() {
+    always_inline constexpr Res<T> next() {
         T r{};
-        readTo(&r);
-        return r;
+        try$(readTo(&r));
+        return Ok(std::move(r));
     }
 
     template <typename T>
-    always_inline constexpr T nextBe() {
-        Be<T> r{};
-        readTo(&r);
-        return r;
-    }
-
-    template <typename T>
-    always_inline constexpr T nextLe() {
-        Le<T> r;
-        readTo(&r);
-        return r;
-    }
-
-    template <typename T>
-    always_inline constexpr T peekBe() {
-        Be<T> r{};
-        peekTo(&r);
-        return r;
-    }
-
-    template <typename T>
-    always_inline constexpr T peekLe() {
-        Le<T> r;
-        peekTo(&r);
-        return r;
+    always_inline constexpr Res<T> peek() {
+        T r{};
+        try$(peekTo(&r));
+        return Ok(std::move(r));
     }
 
     always_inline constexpr void alignBits() {
@@ -211,149 +191,87 @@ struct BScan {
     }
 
     /// Read bits in most significant bit first order.
-    always_inline constexpr u8 nextBitbe() {
+    always_inline constexpr Res<u8> nextBitbe() {
         if (_bitsLen == 0) {
-            _bits = nextU8be();
+            _bits = try$(next<u8be>());
             _bitsLen = 8;
         }
         u8 r = _bits >> 7;
         _bits <<= 1;
         _bitsLen--;
-        return r;
+        return Ok(r);
     }
 
-    always_inline constexpr u8 peekBitbe() {
+    always_inline constexpr Res<u8> peekBitbe() {
         BScan c{*this};
         return c.nextBitbe();
     }
 
-    always_inline constexpr usize nextBitsbe(usize n) {
+    always_inline constexpr Res<usize> nextBitsBe(usize n) {
         usize r = 0;
         for (usize i = n - 1; i < n; i--) {
-            r |= nextBitbe() << i;
+            r |= try$(nextBitbe()) << i;
         }
-        return r;
+        return Ok(r);
     }
 
-    always_inline constexpr usize peekBitsbe(usize n) {
+    always_inline constexpr Res<usize> peekBitsBe(usize n) {
         BScan c{*this};
-        return c.nextBitsbe(n);
+        return c.nextBitsBe(n);
     }
 
-    always_inline constexpr void skipBitsbe(usize n) {
+    always_inline constexpr Res<> skipBitsbe(usize n) {
         for (usize i = 0; i < n; i++) {
-            nextBitbe();
+            try$(nextBitbe());
         }
+        return Ok();
     }
 
     /// Read bits in least significant bit first order.
-    always_inline constexpr u8 nextBitle() {
+    always_inline constexpr Res<u8> nextBitLe() {
         if (_bitsLen == 0) {
-            _bits = nextU8le();
+            _bits = try$(next<u8le>());
             _bitsLen = 8;
         }
         u8 r = _bits & 1;
         _bits >>= 1;
         _bitsLen--;
-        return r;
+        return Ok(r);
     }
 
-    always_inline constexpr u8 peekBitle() {
+    always_inline constexpr Res<u8> peekBitLe() {
         BScan c{*this};
-        return c.nextBitle();
+        return c.nextBitLe();
     }
 
-    always_inline constexpr usize nextBitsle(usize n) {
+    always_inline constexpr Res<usize> nextBitsLe(usize n) {
         usize r = 0;
         for (usize i = 0; i < n; i++) {
-            r |= nextBitle() << i;
+            r |= try$(nextBitLe()) << i;
         }
-        return r;
+        return Ok(r);
     }
 
-    always_inline constexpr usize peekBitsle(usize n) {
+    always_inline constexpr Res<usize> peekBitsLe(usize n) {
         BScan c{*this};
-        return c.nextBitsle(n);
+        return c.nextBitsLe(n);
     }
 
-    always_inline constexpr void skipBitsle(usize n) {
+    always_inline constexpr Res<> skipBitsLe(usize n) {
         for (usize i = 0; i < n; i++) {
-            nextBitle();
+            try$(nextBitLe());
         }
+        return Ok();
     }
 
-    always_inline constexpr u8 nextU8be() { return nextBe<u8>(); }
-
-    always_inline constexpr u16 nextU16be() { return nextBe<u16>(); }
-
-    always_inline constexpr u32 nextU32be() { return nextBe<u32>(); }
-
-    always_inline constexpr u64 nextU64be() { return nextBe<u64>(); }
-
-    always_inline constexpr u8 nextU8le() { return nextLe<u8>(); }
-
-    always_inline constexpr u16 nextU16le() { return nextLe<u16>(); }
-
-    always_inline constexpr u32 nextU32le() { return nextLe<u32>(); }
-
-    always_inline constexpr u64 nextU64le() { return nextLe<u64>(); }
-
-    always_inline constexpr i8 nextI8be() { return nextBe<i8>(); }
-
-    always_inline constexpr i16 nextI16be() { return nextBe<i16>(); }
-
-    always_inline constexpr i32 nextI32be() { return nextBe<i32>(); }
-
-    always_inline constexpr i64 nextI64be() { return nextBe<i64>(); }
-
-    always_inline constexpr i8 nextI8le() { return nextLe<i8>(); }
-
-    always_inline constexpr i16 nextI16le() { return nextLe<i16>(); }
-
-    always_inline constexpr i32 nextI32le() { return nextLe<i32>(); }
-
-    always_inline constexpr i64 nextI64le() { return nextLe<i64>(); }
-
-    always_inline constexpr u8 peekU8be() { return peekBe<u8>(); }
-
-    always_inline constexpr u16 peekU16be() { return peekBe<u16>(); }
-
-    always_inline constexpr u32 peekU32be() { return peekBe<u32>(); }
-
-    always_inline constexpr u64 peekU64be() { return peekBe<u64>(); }
-
-    always_inline constexpr u8 peekU8le() { return peekLe<u8>(); }
-
-    always_inline constexpr u16 peekU16le() { return peekLe<u16>(); }
-
-    always_inline constexpr u32 peekU32le() { return peekLe<u32>(); }
-
-    always_inline constexpr u64 peekU64le() { return peekLe<u64>(); }
-
-    always_inline constexpr i8 peekI8be() { return peekBe<i8>(); }
-
-    always_inline constexpr i16 peekI16be() { return peekBe<i16>(); }
-
-    always_inline constexpr i32 peekI32be() { return peekBe<i32>(); }
-
-    always_inline constexpr i64 peekI64be() { return peekBe<i64>(); }
-
-    always_inline constexpr i8 peekI8le() { return peekLe<i8>(); }
-
-    always_inline constexpr i16 peekI16le() { return peekLe<i16>(); }
-
-    always_inline constexpr i32 peekI32le() { return peekLe<i32>(); }
-
-    always_inline constexpr i64 peekI64le() { return peekLe<i64>(); }
-
-    always_inline constexpr Str nextStr(usize n) {
-        n = clamp(n, 0uz, rem());
+    always_inline constexpr Res<Str> nextStr(usize n) {
+        try$(ensure(n));
         Str s{(char const*)_cursor.buf(), n};
         _cursor.next(n);
-        return s;
+        return Ok(s);
     }
 
-    always_inline constexpr Str nextCStr() {
+    always_inline constexpr Res<Str> nextCStr() {
         usize n = 0;
         while (n < rem() and _cursor.buf()[n] != '\0') {
             n++;
@@ -361,22 +279,11 @@ struct BScan {
         return nextStr(n);
     }
 
-    always_inline constexpr Bytes nextBytes(usize n) {
-        n = clamp(n, 0uz, rem());
+    always_inline constexpr Res<Bytes> nextBytes(usize n) {
+        try$(ensure(n));
         Bytes b{_cursor.buf(), n};
         _cursor.next(n);
-        return b;
-    }
-
-    always_inline constexpr bool copyTo(MutBytes dst) {
-        if (dst.len() < rem()) {
-            return false;
-        }
-
-        for (usize i = 0; i < rem(); i++) {
-            dst[i] = _cursor.buf()[i];
-        }
-        return true;
+        return Ok(b);
     }
 };
 
@@ -401,24 +308,26 @@ struct BChunk {
         return _slice;
     }
 
+    always_inline constexpr BScan begin(usize n) const {
+        return begin().seek(n);
+    }
+
     always_inline constexpr Bytes bytes() const {
         return _slice;
     }
 
     template <typename T>
-    always_inline constexpr typename T::Type get() const {
-        typename T::Type r{};
-        begin()
+    always_inline constexpr Res<typename T::Type> get() const {
+        return begin()
             .skip(T::offset)
-            .readTo(&r);
-        return r;
+            .template next<typename T::Type>();
     }
 };
 
 struct BEmit {
-    Io::Writer& _writer;
+    Writer& _writer;
 
-    always_inline constexpr BEmit(Io::Writer& writer)
+    always_inline constexpr BEmit(Writer& writer)
         : _writer(writer) {}
 
     template <Meta::TrivialyCopyable T>

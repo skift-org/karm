@@ -67,11 +67,11 @@ export struct Decoder {
 
     static Gfx::Color readColor(Io::BScan& s, usize bpp) {
         if (bpp == 8) {
-            u8 d = s.nextU8le();
+            u8 d = s.next<u8le>();
             return {d, d, d, 255};
         } else if (bpp == 15 or bpp == 16) {
-            u8 l = s.nextU8le();
-            u8 h = s.nextU8le();
+            u8 l = s.next<u8le>();
+            u8 h = s.next<u8le>();
 
             return {
                 (u8)((h & 0x3e) << 2),
@@ -80,15 +80,15 @@ export struct Decoder {
                 255,
             };
         } else if (bpp == 24) {
-            u8 b = s.nextU8le();
-            u8 g = s.nextU8le();
-            u8 r = s.nextU8le();
+            u8 b = s.next<u8le>();
+            u8 g = s.next<u8le>();
+            u8 r = s.next<u8le>();
             return {r, g, b, 255};
         } else if (bpp == 32) {
-            u8 b = s.nextU8le();
-            u8 g = s.nextU8le();
-            u8 r = s.nextU8le();
-            u8 a = s.nextU8le();
+            u8 b = s.next<u8le>();
+            u8 g = s.next<u8le>();
+            u8 r = s.next<u8le>();
+            u8 a = s.next<u8le>();
             return {r, g, b, a};
         } else {
             return {255, 0, 255, 255};
@@ -113,7 +113,7 @@ export struct Decoder {
 
     Gfx::Color decodePixel(Io::BScan& s) {
         if (_hasColorMap) {
-            auto index = s.nextU8le();
+            auto index = s.next<u8le>();
             if (index >= _colorMap.len())
                 return {255, 0, 255, 255};
             return _colorMap[index];
@@ -149,7 +149,7 @@ export struct Decoder {
         usize end = _header.width * _header.height;
 
         while (index < end) {
-            u8 packet = s.nextU8le();
+            u8 packet = s.next<u8le>();
             usize len = (packet & PACKET_LEN) + 1;
 
             if (packet & PACKET_RLE) {

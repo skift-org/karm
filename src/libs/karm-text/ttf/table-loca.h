@@ -14,10 +14,10 @@ struct Loca : Io::BChunk {
         auto format = head.locaFormat();
         if (format == 0) {
             s.skip(glyphId * 2);
-            return s.nextU16be() * 2;
+            return s.next<u16be>() * 2;
         } else if (format == 1) {
             s.skip(glyphId * 4);
-            return s.nextU32be();
+            return s.next<u32be>();
         } else {
             logWarn("unsupported loca format {x}", format);
             return 0;

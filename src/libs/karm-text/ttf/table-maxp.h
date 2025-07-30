@@ -10,7 +10,7 @@ struct Maxp : Io::BChunk {
     u16 numGlyphs() const {
         auto s = begin();
         s.skip(4);
-        return s.nextU16be();
+        return s.next<u16be>();
     }
 };
 
