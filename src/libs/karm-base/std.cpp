@@ -48,6 +48,7 @@ using std::addressof;
 
 // <cstring>
 using std::memcpy;
+using std::memset;
 using std::strlen;
 using std::strcmp;
 
