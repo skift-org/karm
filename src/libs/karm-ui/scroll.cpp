@@ -11,6 +11,7 @@ import :node;
 import :atoms;
 
 namespace Karm::Ui {
+
 // MARK: Scroll ----------------------------------------------------------------
 
 struct Scroll : ProxyNode<Scroll> {
@@ -117,6 +118,7 @@ struct Scroll : ProxyNode<Scroll> {
                         }
                         shouldAnimate(*this);
                         _scrollOpacity.delay(0).animate(*this, 1, 0.3);
+                        e.accept();
                     }
                 }
             } else if (_mouseIn) {
