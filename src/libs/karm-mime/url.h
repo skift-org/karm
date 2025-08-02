@@ -1,9 +1,7 @@
 #pragma once
 
 // https://url.spec.whatwg.org/
-
-#include <karm-io/expr.h>
-#include <karm-io/fmt.h>
+import Karm.Core;
 
 #include "path.h"
 
@@ -67,21 +65,21 @@ Url parseUrlOrPath(Str str, Opt<Url> baseUrl = NONE);
 
 } // namespace Karm::Mime
 
-inline Mime::Url operator""_url(char const* str, usize len) {
+inline Karm::Mime::Url operator""_url(char const* str, Karm::usize len) {
     return Karm::Mime::Url::parse({str, len});
 }
 
-inline Mime::Url operator/(Karm::Mime::Url const& url, Str path) {
+inline Karm::Mime::Url operator/(Karm::Mime::Url const& url, Karm::Str path) {
     return url.join(path);
 }
 
-inline Mime::Url operator/(Karm::Mime::Url const& url, Karm::Mime::Path const& path) {
+inline Karm::Mime::Url operator/(Karm::Mime::Url const& url, Karm::Mime::Path const& path) {
     return url.join(path);
 }
 
 template <>
 struct Karm::Io::Formatter<Karm::Mime::Url> {
-    Res<> format(Io::TextWriter& writer, Karm::Mime::Url const& url) {
+    Karm::Res<> format(Karm::Io::TextWriter& writer, Karm::Mime::Url const& url) {
         return url.unparse(writer);
     }
 };

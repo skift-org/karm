@@ -1,5 +1,6 @@
-#include <karm-io/fmt.h>
+import Karm.Core;
 
+#include <karm-core/macros.h>
 #include "hex.h"
 
 namespace Karm::Crypto {

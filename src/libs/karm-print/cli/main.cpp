@@ -3,7 +3,10 @@
 #include <karm-text/loader.h>
 #include <karm-text/prose.h>
 
+import Karm.Core;
 import Karm.Print;
+
+using namespace Karm;
 
 Async::Task<> entryPointAsync(Sys::Context&) {
     auto printer = co_try$(Print::PdfPrinter::create(Mime::Uti::PUBLIC_PDF));

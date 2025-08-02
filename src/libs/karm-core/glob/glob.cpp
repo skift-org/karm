@@ -1,9 +1,7 @@
-module;
-
-#include <karm-io/expr.h>
-#include <karm-io/sscan.h>
-
 export module Karm.Core:glob.glob;
+
+import :io.expr;
+import :io.sscan;
 
 namespace Karm::Glob {
 

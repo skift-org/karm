@@ -2,7 +2,7 @@
 
 #include "otlayout.h"
 
-namespace Ttf {
+namespace Karm::Text::Ttf {
 
 struct Gsub : Io::BChunk {
     static constexpr Str SIG = "GSUB";
@@ -43,4 +43,4 @@ struct Gsub : Io::BChunk {
     //    and apply the lookups in the order given in the LookupList table.
 };
 
-} // namespace Ttf
+} // namespace Karm::Text::Ttf

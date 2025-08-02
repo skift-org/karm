@@ -1,9 +1,9 @@
 module;
 
-#include <karm-base/ctype.h>
-#include <karm-base/string.h>
-
 export module Karm.Core:glob.fuzzy;
+
+import :base.ctype;
+import :base.string;
 
 namespace Karm::Glob {
 

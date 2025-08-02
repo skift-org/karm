@@ -1,9 +1,6 @@
-module;
-
-#include <karm-base/base.h>
-#include <karm-io/emit.h>
-
 export module Karm.Gc:ref;
+
+import Karm.Core;
 
 namespace Karm::Gc {
 

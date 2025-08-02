@@ -1,4 +1,4 @@
-#include <karm-base/_embed.h>
+module Karm.Core;
 
 namespace Karm::_Embed {
 

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <karm-base/endian.h>
+import Karm.Core;
 
-namespace Ttf {
+namespace Karm::Text::Ttf {
 
 struct Fixed {
     u32be value;
@@ -17,4 +17,4 @@ struct Version {
     u16be minor;
 };
 
-} // namespace Ttf
+} // namespace Karm::Text::Ttf

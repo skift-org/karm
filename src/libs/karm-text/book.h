@@ -1,6 +1,7 @@
 #pragma once
 
-#include <karm-base/set.h>
+import Karm.Core;
+
 #include <karm-mime/url.h>
 #include <karm-sys/mmap.h>
 

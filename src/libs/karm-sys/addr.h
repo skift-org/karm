@@ -1,9 +1,8 @@
 #pragma once
 
-#include <karm-base/array.h>
-#include <karm-base/endian.h>
-#include <karm-io/aton.h>
-#include <karm-io/emit.h>
+import Karm.Core;
+
+#include <karm-core/macros.h>
 
 namespace Karm::Sys {
 

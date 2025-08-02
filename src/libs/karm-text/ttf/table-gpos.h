@@ -5,7 +5,7 @@
 
 #include "otlayout.h"
 
-namespace Ttf {
+namespace Karm::Text::Ttf {
 
 enum struct GposLookupType : u16 {
     SINGLE_ADJUSTMENT = 1,
@@ -105,4 +105,4 @@ struct Gpos : Io::BChunk {
     }
 };
 
-} // namespace Ttf
+} // namespace Karm::Text::Ttf

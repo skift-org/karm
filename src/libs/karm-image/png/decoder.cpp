@@ -1,13 +1,13 @@
 module;
 
-#include <karm-base/string.h>
 #include <karm-gfx/canvas.h>
-#include <karm-io/bscan.h>
 #include <karm-logger/logger.h>
 
 export module Karm.Image:png.decoder;
 
-namespace Png {
+import Karm.Core;
+
+namespace Karm::Image::Png {
 
 struct Ihdr : Io::BChunk {
     static constexpr Str SIG = "IHDR";
@@ -145,4 +145,4 @@ export struct Decoder {
     }
 };
 
-} // namespace Png
+} // namespace Karm::Image::Png

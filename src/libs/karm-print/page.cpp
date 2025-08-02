@@ -1,9 +1,6 @@
-module;
-
-#include <karm-io/emit.h>
-
 export module Karm.Print:page;
 
+import Karm.Core;
 import Karm.Scene;
 import :paper;
 import :printer;

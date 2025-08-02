@@ -3,8 +3,9 @@
 // Copyright (c) 2019 Mike Lankamp
 
 #include <karm-math/fixed.h>
-#include <karm-math/funcs.h>
 #include <karm-test/macros.h>
+
+import Karm.Core;
 
 namespace Karm::Math::Tests {
 

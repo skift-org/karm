@@ -1,12 +1,10 @@
 module;
 
-#include <karm-base/rc.h>
-#include <karm-base/vec.h>
 #include <karm-gfx/canvas.h>
-#include <karm-io/emit.h>
 
 export module Karm.Scene:stack;
 
+import Karm.Core;
 import :node;
 
 namespace Karm::Scene {

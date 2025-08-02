@@ -2,11 +2,7 @@
 
 // https://url.spec.whatwg.org/
 
-#include <karm-base/string.h>
-#include <karm-base/vec.h>
-#include <karm-io/expr.h>
-#include <karm-io/fmt.h>
-#include <karm-io/sscan.h>
+import Karm.Core;
 
 namespace Karm::Mime {
 
@@ -50,7 +46,7 @@ struct Path {
     String str() const;
 
     auto iter() const {
-        return ::iter(_parts);
+        return Karm::iter(_parts);
     }
 
     auto operator[](usize i) const {
@@ -75,7 +71,7 @@ struct Path {
 
 } // namespace Karm::Mime
 
-inline auto operator""_path(char const* str, usize len) {
+inline auto operator""_path(char const* str, Karm::usize len) {
     return Karm::Mime::Path::parse({str, len});
 }
 
@@ -83,7 +79,7 @@ inline auto operator/(Karm::Mime::Path const& path, Karm::Mime::Path const& othe
     return path.join(other);
 }
 
-inline auto operator/(Karm::Mime::Path const& path, Str other) {
+inline auto operator/(Karm::Mime::Path const& path, Karm::Str other) {
     return path.join(other);
 }
 

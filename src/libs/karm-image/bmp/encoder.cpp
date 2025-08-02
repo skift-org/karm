@@ -1,11 +1,12 @@
 module;
 
 #include <karm-gfx/buffer.h>
-#include <karm-io/bscan.h>
 
 export module Karm.Image:bmp.encoder;
 
-namespace Bmp {
+import Karm.Core;
+
+namespace Karm::Image::Bmp {
 
 namespace {
 
@@ -62,4 +63,4 @@ export Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
     return Ok();
 }
 
-} // namespace Bmp
+} // namespace Karm::Image::Bmp

@@ -1,7 +1,6 @@
 #pragma once
 
-#include <karm-base/array.h>
-#include <karm-base/iter.h>
+import Karm.Core;
 
 #include "insets.h"
 #include "vec.h"

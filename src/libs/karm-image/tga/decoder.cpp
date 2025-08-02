@@ -1,11 +1,11 @@
 module;
 
 #include <karm-gfx/buffer.h>
-#include <karm-io/bscan.h>
 #include <karm-logger/logger.h>
 
 export module Karm.Image:tga.decoder;
 
+import Karm.Core;
 import :tga.base;
 
 // TGA image decoder
@@ -13,7 +13,7 @@ import :tga.base;
 //  - http://www.paulbourke.net/dataformats/tga/
 //  - https://en.wikipedia.org/wiki/Truevision_TGA
 
-namespace Tga {
+namespace Karm::Image::Tga {
 
 export struct Decoder {
     Header _header;
@@ -198,4 +198,4 @@ export struct Decoder {
     }
 };
 
-} // namespace Tga
+} // namespace Karm::Image::Tga

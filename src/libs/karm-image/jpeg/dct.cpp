@@ -1,13 +1,9 @@
-module;
-
-#include <karm-base/array.h>
-#include <karm-math/funcs.h>
-
 export module Karm.Image:jpeg.dct;
 
+import Karm.Core;
 import :jpeg.base;
 
-namespace Jpeg {
+namespace Karm::Image::Jpeg {
 
 static f32 const m0 = 2.0 * Math::cos(1.0 / 16.0 * 2.0 * Math::PI);
 static f32 const m1 = 2.0 * Math::cos(2.0 / 16.0 * 2.0 * Math::PI);
@@ -317,4 +313,4 @@ void fdtc(Mcu& mcu) {
     }
 }
 
-} // namespace Jpeg
+} // namespace Karm::Image::Jpeg

@@ -1,11 +1,8 @@
-module;
-
-#include <karm-async/task.h>
-#include <karm-base/array.h>
-#include <karm-io/text.h>
+#include <karm-core/macros.h>
 
 export module Karm.Core:aio.funcs;
 
+import :io.text;
 import :aio.traits;
 
 namespace Karm::Aio {

@@ -3,6 +3,8 @@
 
 import Karm.Cli;
 
+using namespace Karm;
+
 Async::Task<> entryPointAsync(Sys::Context& ctx) {
     auto globArg = Cli::option<Str>(
         'g',

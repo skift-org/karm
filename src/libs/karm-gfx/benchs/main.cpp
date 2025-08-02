@@ -4,6 +4,8 @@
 
 import Karm.Cli;
 
+using namespace Karm;
+
 Async::Task<> entryPointAsync(Sys::Context&) {
     Vec<Duration> samples;
     auto surface = Gfx::Surface::alloc({1000, 1000});

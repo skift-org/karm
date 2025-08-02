@@ -1,7 +1,6 @@
 #pragma once
 
-#include <karm-base/distinct.h>
-#include <karm-base/flags.h>
+import Karm.Core;
 
 #include "_handle.h"
 

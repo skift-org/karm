@@ -1,9 +1,6 @@
 #pragma once
 
-#include <karm-base/checked.h>
-#include <karm-io/fmt.h>
-
-#include "funcs.h"
+import Karm.Core;
 
 namespace Karm::Math {
 
@@ -227,23 +224,23 @@ constexpr Fixed<T, _F> abs(Fixed<T, _F> const& val) {
 
 } // namespace Karm::Math
 
-template <Meta::SignedIntegral T, usize F>
-struct Karm::Limits<Math::Fixed<T, F>> {
+template <Karm::Meta::SignedIntegral T, Karm::usize F>
+struct Karm::Limits<Karm::Math::Fixed<T, F>> {
     static constexpr Math::Fixed<T, F> MIN = Math::Fixed<T, F>::fromRaw(Limits<T>::MIN);
     static constexpr Math::Fixed<T, F> MAX = Math::Fixed<T, F>::fromRaw(Limits<T>::MAX);
     static constexpr Math::Fixed<T, F> EPSILON = Math::Fixed<T, F>::fromRaw(1);
     static constexpr bool SIGNED = false;
 };
 
-template <Meta::SignedIntegral T, usize F>
-struct Karm::Io::Formatter<Math::Fixed<T, F>> {
+template <Karm::Meta::SignedIntegral T, Karm::usize F>
+struct Karm::Io::Formatter<Karm::Math::Fixed<T, F>> {
     Res<> format(Io::TextWriter& writer, Math::Fixed<T, F> const& val) {
         return Io::format(writer, "{}", val.template cast<f64>());
     }
 };
 
 template <typename T>
-struct Karm::Io::Formatter<Math::Frac<T>> {
+struct Karm::Io::Formatter<Karm::Math::Frac<T>> {
     Res<> format(Io::TextWriter& writer, Math::Frac<T> const& val) {
         return Io::format(writer, "{}/{}", val._num, val._deno);
     }

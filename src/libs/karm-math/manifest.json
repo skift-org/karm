@@ -9,8 +9,7 @@
         ]
     },
     "requires": [
-        "karm-base",
-        "karm-io",
+        "karm-core",
         "stdc-math"
     ]
 }

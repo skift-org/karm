@@ -1,13 +1,11 @@
 module;
 
-#include <karm-base/checked.h>
-#include <karm-base/func.h>
-#include <karm-base/hash.h>
 #include <karm-gfx/canvas.h>
 #include <karm-sys/async.h>
 
 export module Karm.Ui:node;
 
+import Karm.Core;
 import Karm.App;
 
 namespace Karm::Ui {

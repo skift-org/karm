@@ -1,7 +1,5 @@
 #include "bigint.h"
 
-#include "funcs.h"
-
 namespace Karm::Math {
 
 // MARK: Unsigned Big Integer --------------------------------------------------

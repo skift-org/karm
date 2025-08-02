@@ -1,14 +1,11 @@
 module;
 
-#include <karm-base/func.h>
-#include <karm-base/opt.h>
-#include <karm-base/rc.h>
-#include <karm-base/string.h>
-#include <karm-base/vec.h>
 #include <karm-sys/chan.h>
 #include <karm-sys/context.h>
 
 export module Karm.Cli;
+
+import Karm.Core;
 
 namespace Karm::Cli {
 

@@ -1,6 +1,7 @@
 #pragma once
 
-#include <karm-base/array.h>
+import Karm.Core;
+
 #include <karm-math/rand.h>
 
 #include "color.h"

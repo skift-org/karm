@@ -4,7 +4,7 @@
     "type": "lib",
     "description": "Application host",
     "requires": [
-        "karm-base",
+        "karm-core",
         "karm-math",
         "karm-app-impl"
     ]

@@ -1,12 +1,8 @@
-module;
-
-#include <karm-base/rc.h>
-#include <karm-io/aton.h>
-#include <karm-io/expr.h>
-#include <karm-io/funcs.h>
+#include <karm-core/macros.h>
 
 export module Karm.Http:response;
 
+import Karm.Core;
 import :body;
 import :code;
 import :header;

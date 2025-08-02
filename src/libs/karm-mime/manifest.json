@@ -4,6 +4,6 @@
     "type": "lib",
     "description": "URL & MIME type parser",
     "requires": [
-        "karm-io"
+        "karm-core"
     ]
 }

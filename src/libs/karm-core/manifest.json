@@ -5,13 +5,18 @@
     "description": "The core of the Karm Framework",
     "subdirs": [
         "aio",
+        "async",
+        "base",
         "glob",
         "icu",
+        "io",
         "json",
+        "math",
+        "meta",
         "regex",
         "serde"
     ],
     "requires": [
-        "karm-io"
+        "karm-base-impl"
     ]
 }

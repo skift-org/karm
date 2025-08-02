@@ -1,11 +1,12 @@
 module;
 
-#include <karm-base/array.h>
 #include <karm-gfx/color.h>
 
 export module Karm.Image:qoi.base;
 
-namespace Qoi {
+import Karm.Core;
+
+namespace Karm::Image::Qoi {
 
 // magic "qoif"
 export constexpr Array<u8, 4> MAGIC = {
@@ -31,4 +32,4 @@ export usize hashColor(Gfx::Color c) {
     return c.red * 3 + c.green * 5 + c.blue * 7 + c.alpha * 11;
 }
 
-} // namespace Qoi
+} // namespace Karm::Image::Qoi

@@ -1,9 +1,10 @@
 module;
 
 #include <karm-gfx/buffer.h>
-#include <karm-meta/nocopy.h>
 
 export module Karm.Image:base.picture;
+
+import Karm.Core;
 
 namespace Karm::Image {
 

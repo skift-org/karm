@@ -5,7 +5,7 @@
     "description": "A simple logger",
     "requires": [
         "karm-logger-impl",
-        "karm-io",
+        "karm-core",
         "karm-tty"
     ]
 }

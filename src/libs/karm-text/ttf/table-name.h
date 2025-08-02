@@ -1,8 +1,8 @@
 #pragma once
 
-#include <karm-io/bscan.h>
+import Karm.Core;
 
-namespace Ttf {
+namespace Karm::Text::Ttf {
 
 struct Name : Io::BChunk {
     static constexpr Str SIG = "name";
@@ -101,4 +101,4 @@ struct Name : Io::BChunk {
     }
 };
 
-} // namespace Ttf
+} // namespace Karm::Text::Ttf

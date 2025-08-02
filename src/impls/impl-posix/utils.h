@@ -1,14 +1,14 @@
 #pragma once
 
+import Karm.Core;
+
 #include <netinet/in.h>
 #include <sys/stat.h>
 
 //
-#include <karm-base/error.h>
-#include <karm-base/res.h>
 #include <karm-sys/fd.h>
 
-namespace Posix {
+namespace Karm::Posix {
 
 Error fromErrno(isize error);
 
@@ -37,4 +37,4 @@ Res<Tuple<Str, RepoType>> repoRoot();
 
 void overrideRepo(Tuple<Str, RepoType> repo);
 
-} // namespace Posix
+} // namespace Karm::Posix

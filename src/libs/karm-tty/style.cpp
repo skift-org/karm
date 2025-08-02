@@ -1,8 +1,8 @@
-module;
-
-#include <karm-io/emit.h>
+#include <karm-core/macros.h>
 
 export module Karm.Tty:style;
+
+import Karm.Core;
 
 namespace Karm::Tty {
 

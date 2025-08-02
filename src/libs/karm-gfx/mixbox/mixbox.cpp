@@ -1,11 +1,12 @@
-#include <karm-math/funcs.h>
+import Karm.Core;
 
 #include "mixbox.h"
 
-namespace Mixbox {
+namespace Karm::Mixbox {
 
 static u8 const _LUT[] = {
 #include "mixbox.inc"
+
 };
 
 static f64 srgb2linear(f64 srgb) {
@@ -167,4 +168,4 @@ Gfx::Color lerpColor(Gfx::Color a, Gfx::Color b, f64 t) {
     );
 }
 
-} // namespace Mixbox
+} // namespace Karm::Mixbox

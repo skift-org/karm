@@ -1,7 +1,6 @@
 #pragma once
 
-#include <karm-base/array.h>
-#include <karm-base/slice.h>
+import Karm.Core;
 
 namespace Karm::Crypto {
 

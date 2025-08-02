@@ -1,4 +1,6 @@
-#include <karm-base/ctype.h>
+#include <karm-core/macros.h>
+
+import Karm.Core;
 
 #include "url.h"
 

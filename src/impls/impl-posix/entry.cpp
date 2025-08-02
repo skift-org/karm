@@ -1,10 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-//
-#include <karm-base/panic.h>
 #include <karm-sys/chan.h>
 #include <karm-sys/context.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 void __panicHandler(Karm::PanicKind kind, char const* msg) {
     fprintf(stderr, "%s: %s\n", kind == Karm::PanicKind::PANIC ? "panic" : "debug", msg);

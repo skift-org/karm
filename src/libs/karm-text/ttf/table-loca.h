@@ -4,7 +4,7 @@
 
 #include "table-head.h"
 
-namespace Ttf {
+namespace Karm::Text::Ttf {
 
 struct Loca : Io::BChunk {
     static constexpr Str SIG = "loca";
@@ -25,4 +25,4 @@ struct Loca : Io::BChunk {
     }
 };
 
-} // namespace Ttf
+} // namespace Karm::Text::Ttf

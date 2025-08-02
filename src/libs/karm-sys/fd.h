@@ -1,13 +1,11 @@
 #pragma once
 
-#include <karm-base/rc.h>
-#include <karm-io/pack.h>
-#include <karm-io/types.h>
-#include <karm-meta/nocopy.h>
-#include <karm-meta/traits.h>
+import Karm.Core;
+
 #include <karm-mime/url.h>
 
 #include "addr.h"
+#include "message.h"
 #include "stat.h"
 #include "types.h"
 
@@ -42,9 +40,9 @@ struct Fd : Meta::NoCopy {
 
     virtual Res<_Received> recv(MutBytes, MutSlice<Handle>) = 0;
 
-    virtual Res<> pack(Io::PackEmit& e) = 0;
+    virtual Res<> pack(MessageWriter& e) = 0;
 
-    static Res<Rc<Fd>> unpack(Io::PackScan& s);
+    static Res<Rc<Fd>> unpack(MessageReader& s);
 };
 
 struct NullFd : Fd {
@@ -70,7 +68,7 @@ struct NullFd : Fd {
 
     Res<_Received> recv(MutBytes, MutSlice<Handle>) override;
 
-    Res<> pack(Io::PackEmit& e) override;
+    Res<> pack(MessageWriter& e) override;
 };
 
 template <typename T>

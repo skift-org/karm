@@ -1,11 +1,11 @@
 module;
 
-#include <karm-base/vec.h>
 #include <karm-gfx/buffer.h>
-#include <karm-io/bscan.h>
 #include <karm-logger/logger.h>
 
 export module Karm.Image:bmp.decoder;
+
+import Karm.Core;
 
 // BMP image decoder
 // References:
@@ -14,7 +14,7 @@ export module Karm.Image:bmp.decoder;
 //  - http://www.ece.ualberta.ca/~elliott/ee552/studentAppNotes/2003_w/misc/bmp_file_format/bmp_file_format.htm
 //  - http://www.martinreddy.net/gfx/2d/BMP.txt
 
-namespace Bmp {
+namespace Karm::Image::Bmp {
 
 export struct Decoder {
     // MARK: Loading -----------------------------------------------------------
@@ -239,4 +239,4 @@ export struct Decoder {
     }
 };
 
-} // namespace Bmp
+} // namespace Karm::Image::Bmp

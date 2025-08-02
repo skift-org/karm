@@ -1,9 +1,6 @@
-module;
-
-#include <karm-base/rc.h>
-
 export module Karm.Core:aio.pipe;
 
+import :base.rc;
 import :aio.traits;
 
 namespace Karm::Aio {

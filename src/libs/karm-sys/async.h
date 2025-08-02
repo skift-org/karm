@@ -1,7 +1,6 @@
 #pragma once
 
-#include <karm-async/run.h>
-#include <karm-async/task.h>
+import Karm.Core;
 
 #include "fd.h"
 

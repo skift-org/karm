@@ -23,7 +23,7 @@
 // https://docs.microsoft.com/en-us/typography/opentype/spec/otff
 // https://fontdrop.info/
 
-namespace Ttf {
+namespace Karm::Text::Ttf {
 
 static bool DEBUG_PARSER = false;
 
@@ -255,4 +255,4 @@ struct Parser {
     }
 };
 
-} // namespace Ttf
+} // namespace Karm::Text::Ttf

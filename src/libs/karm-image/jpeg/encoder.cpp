@@ -1,15 +1,15 @@
 module;
 
 #include <karm-gfx/buffer.h>
-#include <karm-io/bscan.h>
 
 export module Karm.Image:jpeg.encoder;
 
+import Karm.Core;
 import :jpeg.base;
 import :jpeg.dct;
 import :jpeg.tables;
 
-namespace Jpeg {
+namespace Karm::Image::Jpeg {
 
 namespace {
 
@@ -222,4 +222,4 @@ export Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
     return Ok();
 }
 
-} // namespace Jpeg
+} // namespace Karm::Image::Jpeg

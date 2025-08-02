@@ -7,6 +7,6 @@
         "cpp-excluded": true
     },
     "requires": [
-        "karm-io"
+        "karm-core"
     ]
 }

@@ -1,4 +1,5 @@
-#include <karm-base/opt.h>
+import Karm.Core;
+
 #include <karm-test/macros.h>
 
 namespace Karm::Math::Tests {

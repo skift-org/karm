@@ -3,7 +3,7 @@
 #include "fd.h"
 #include "utils.h"
 
-namespace Posix {
+namespace Karm::Posix {
 
 Fd::Fd(isize raw) : _raw(raw) {}
 
@@ -118,9 +118,9 @@ Res<Sys::_Received> Fd::recv(MutBytes bytes, MutSlice<Sys::Handle>) {
     );
 }
 
-Res<> Fd::pack(Io::PackEmit& e) {
+Res<> Fd::pack(Sys::MessageWriter& e) {
     e.give(handle());
     return Ok();
 }
 
-} // namespace Posix
+} // namespace Karm::Posix

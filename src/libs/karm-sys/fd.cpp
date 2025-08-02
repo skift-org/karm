@@ -4,7 +4,7 @@
 
 namespace Karm::Sys {
 
-Res<Rc<Fd>> Fd::unpack(Io::PackScan& s) {
+Res<Rc<Fd>> Fd::unpack(MessageReader& s) {
     return _Embed::unpackFd(s);
 }
 
@@ -47,8 +47,8 @@ Res<_Received> NullFd::recv(MutBytes, MutSlice<Handle>) {
     return Ok<_Received>(0uz, 0uz, Ip4::unspecified(0));
 }
 
-Res<> NullFd::pack(Io::PackEmit& e) {
-    return Io::pack(e, INVALID);
+Res<> NullFd::pack(MessageWriter& e) {
+    return Sys::pack(e, INVALID);
 }
 
 } // namespace Karm::Sys

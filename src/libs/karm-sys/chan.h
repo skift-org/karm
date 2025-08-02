@@ -1,8 +1,8 @@
 #pragma once
 
-#include <karm-io/fmt.h>
-#include <karm-io/text.h>
+import Karm.Core;
 
+#include "defs.h"
 #include "fd.h"
 
 namespace Karm::Sys {

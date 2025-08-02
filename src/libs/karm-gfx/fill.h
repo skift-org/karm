@@ -1,7 +1,7 @@
 #pragma once
 
-#include <karm-base/union.h>
-#include <karm-base/vec.h>
+import Karm.Core;
+
 #include <karm-math/trans.h>
 
 #include "buffer.h"

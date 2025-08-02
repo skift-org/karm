@@ -1,13 +1,13 @@
 module;
 
 #include <karm-gfx/buffer.h>
-#include <karm-io/bscan.h>
 
 export module Karm.Image:tga.encoder;
 
+import Karm.Core;
 import :tga.base;
 
-namespace Tga {
+namespace Karm::Image::Tga {
 
 export Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
     Tga::Header header = {};
@@ -31,4 +31,4 @@ export Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
     return Ok();
 }
 
-} // namespace Tga
+} // namespace Karm::Image::Tga

@@ -1,8 +1,7 @@
 #pragma once
 
-#include <karm-base/range.h>
-#include <karm-base/time.h>
-#include <karm-base/tuple.h>
+import Karm.Core;
+
 #include <karm-mime/uti.h>
 
 #include "addr.h"
@@ -22,7 +21,7 @@ namespace Karm::Sys::_Embed {
 
 // MARK: Fd --------------------------------------------------------------------
 
-Res<Rc<Sys::Fd>> unpackFd(Io::PackScan&);
+Res<Rc<Sys::Fd>> unpackFd(MessageReader&);
 
 // MARK: File I/O --------------------------------------------------------------
 

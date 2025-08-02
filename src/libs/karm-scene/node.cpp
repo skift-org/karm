@@ -1,9 +1,10 @@
 module;
 
 #include <karm-gfx/cpu/canvas.h>
-#include <karm-io/emit.h>
 
 export module Karm.Scene:node;
+
+import Karm.Core;
 
 namespace Karm::Scene {
 

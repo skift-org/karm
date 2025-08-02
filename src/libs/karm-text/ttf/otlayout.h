@@ -1,11 +1,10 @@
 #pragma once
 
-#include <karm-base/opt.h>
-#include <karm-base/tuple.h>
-#include <karm-io/bscan.h>
+import Karm.Core;
+
 #include <karm-logger/logger.h>
 
-namespace Ttf {
+namespace Karm::Text::Ttf {
 
 // https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#language-system-table
 struct LangSys : Io::BChunk {
@@ -51,7 +50,7 @@ struct ScriptTable : Io::BChunk {
     }
 
     auto iter() const {
-        return ::iter(*this);
+        return Karm::iter(*this);
     }
 };
 
@@ -71,7 +70,7 @@ struct ScriptList : Io::BChunk {
     }
 
     auto iter() const {
-        return ::iter(*this);
+        return Karm::iter(*this);
     }
 
     Res<ScriptTable> lookup(Str tag) {
@@ -120,7 +119,7 @@ struct FeatureList : Io::BChunk {
     }
 
     auto iter() const {
-        return ::iter(*this);
+        return Karm::iter(*this);
     }
 };
 
@@ -383,7 +382,7 @@ struct LookupTable : Io::BChunk {
     usize len() const { return get<SubTableCount>(); }
 
     auto iter() const {
-        return ::iter(*this);
+        return Karm::iter(*this);
     }
 };
 
@@ -400,8 +399,8 @@ struct LookupList : Io::BChunk {
     }
 
     auto iter() const {
-        return ::iter(*this);
+        return Karm::iter(*this);
     }
 };
 
-} // namespace Ttf
+} // namespace Karm::Text::Ttf

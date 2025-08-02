@@ -1,4 +1,4 @@
-#include <karm-io/aton.h>
+import Karm.Core;
 
 #include "path.h"
 #include "trans.h"

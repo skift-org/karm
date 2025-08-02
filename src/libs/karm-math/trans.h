@@ -1,6 +1,6 @@
 #pragma once
 
-#include <karm-io/fmt.h>
+import Karm.Core;
 
 #include "edge.h"
 #include "quad.h"

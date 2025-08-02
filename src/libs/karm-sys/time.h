@@ -1,6 +1,6 @@
 #pragma once
 
-#include <karm-base/time.h>
+import Karm.Core;
 
 #include "_embed.h"
 

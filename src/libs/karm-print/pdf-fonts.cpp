@@ -144,7 +144,7 @@ export struct TrueTypeFontAdapter {
               TtfGlyphInfoAdapter::build(font)
           },
           CIDFontName{
-              font->_parser._name.string(font->_parser._name.lookupRecord(Ttf::Name::POSTSCRIPT)).str()
+              font->_parser._name.string(font->_parser._name.lookupRecord(Text::Ttf::Name::POSTSCRIPT)).str()
           } {
     }
 

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <karm-io/bscan.h>
+import Karm.Core;
 
-namespace Ttf {
+namespace Karm::Text::Ttf {
 
 struct Maxp : Io::BChunk {
     static constexpr Str SIG = "maxp";
@@ -14,4 +14,4 @@ struct Maxp : Io::BChunk {
     }
 };
 
-} // namespace Ttf
+} // namespace Karm::Text::Ttf

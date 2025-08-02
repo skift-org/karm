@@ -1,10 +1,6 @@
 #pragma once
 
-#include <karm-base/flags.h>
-#include <karm-base/string.h>
-#include <karm-base/vec.h>
-#include <karm-io/expr.h>
-#include <karm-io/sscan.h>
+import Karm.Core;
 
 #include "arc.h"
 #include "curve.h"

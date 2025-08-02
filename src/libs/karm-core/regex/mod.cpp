@@ -1,12 +1,13 @@
-module;
-
-#include <karm-base/flags.h>
-#include <karm-base/rc.h>
-#include <karm-io/emit.h>
-#include <karm-io/expr.h>
-#include <karm-io/sscan.h>
+#include <karm-core/macros.h>
 
 export module Karm.Core:regex;
+
+import :base.flags;
+import :base.rc;
+import :base.res;
+import :io.emit;
+import :io.expr;
+import :io.sscan;
 
 namespace Karm::Regex {
 
@@ -21,7 +22,8 @@ enum struct Option {
 };
 
 enum struct Flavor {
-    ECMA_SCRIPT
+    ECMA_SCRIPT,
+    _LEN,
 };
 
 // MARK: Matcher ---------------------------------------------------------------
@@ -369,6 +371,6 @@ export struct Regex {
 
 } // namespace Karm::Regex
 
-export constexpr Karm::Regex::Regex operator""_regex(char const* str, usize len) {
-    return Karm::Regex::Regex::from(Str{str, len});
+export constexpr Karm::Regex::Regex operator""_regex(char const* str, Karm::usize len) {
+    return Karm::Regex::Regex::from(Karm::Str{str, len});
 }

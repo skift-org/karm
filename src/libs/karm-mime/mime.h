@@ -1,8 +1,6 @@
 #pragma once
 
-#include <karm-io/emit.h>
-#include <karm-io/expr.h>
-#include <karm-io/sscan.h>
+import Karm.Core;
 
 namespace Karm::Mime {
 
@@ -56,6 +54,6 @@ Res<Mime> sniffReader(Io::Reader& reader);
 
 } // namespace Karm::Mime
 
-inline auto operator""_mime(char const* buf, usize len) {
-    return Karm::Mime::Mime(Str(buf, len));
+inline auto operator""_mime(char const* buf, Karm::usize len) {
+    return Karm::Mime::Mime(Karm::Str{buf, len});
 }

@@ -16,8 +16,6 @@
 #include <unistd.h>
 
 //
-#include <karm-base/defer.h>
-#include <karm-io/funcs.h>
 #include <karm-sys/_embed.h>
 #include <karm-sys/addr.h>
 #include <karm-sys/chan.h>
@@ -26,6 +24,8 @@
 
 #include "fd.h"
 #include "utils.h"
+
+import Karm.Core;
 
 namespace Karm::Sys::_Embed {
 
@@ -94,7 +94,7 @@ Res<Mime::Path> resolve(Mime::Url const& url) {
 
 // MARK: Fd --------------------------------------------------------------------
 
-Res<Rc<Fd>> unpackFd(Io::PackScan& s) {
+Res<Rc<Fd>> unpackFd(MessageReader& s) {
     auto handle = s.take();
     if (handle == INVALID)
         return Error::invalidHandle();

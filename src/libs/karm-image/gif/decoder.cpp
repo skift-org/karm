@@ -1,15 +1,16 @@
 module;
 
 #include <karm-gfx/buffer.h>
-#include <karm-io/bscan.h>
 
 export module Karm.Image:gif.decoder;
+
+import Karm.Core;
 
 // GIF Image decoder
 // References:
 //  - https://www.w3.org/Graphics/GIF/spec-gif89a.txt
 
-namespace Gif {
+namespace Karm::Image::Gif {
 
 struct Decoder {
     struct Header {
@@ -73,4 +74,4 @@ struct Decoder {
     }
 };
 
-} // namespace Gif
+} // namespace Karm::Image::Gif

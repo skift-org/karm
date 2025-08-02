@@ -1,4 +1,4 @@
-#include <karm-base/clamp.h>
+import Karm.Core;
 
 #include "color.h"
 
@@ -15,8 +15,8 @@ static HueValueChroma _rgbToHueValueChroma(Color color) {
     f64 g = color.green / 255.0;
     f64 b = color.blue / 255.0;
 
-    f64 rgbMax = ::max(r, g, b);
-    f64 rgbMin = ::min(r, g, b);
+    f64 rgbMax = Karm::max(r, g, b);
+    f64 rgbMin = Karm::min(r, g, b);
 
     f64 delta = rgbMax - rgbMin;
 
@@ -88,7 +88,7 @@ Hsl rgbToHsl(Color color) {
     f64 saturation =
         lightness == 0.0f or lightness == 1.0f
             ? 0.0f
-            : (value - lightness) / ::min(lightness, 1.0f - lightness);
+            : (value - lightness) / Karm::min(lightness, 1.0f - lightness);
 
     return {hue, saturation, lightness};
 }

@@ -1,7 +1,6 @@
 #pragma once
 
-#include <karm-math/const.h>
-#include <karm-math/funcs.h>
+import Karm.Core;
 
 namespace Karm::Math {
 

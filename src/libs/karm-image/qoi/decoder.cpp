@@ -1,15 +1,14 @@
 module;
 
-#include <karm-base/res.h>
 #include <karm-gfx/buffer.h>
 #include <karm-gfx/colors.h>
-#include <karm-io/bscan.h>
 
 export module Karm.Image:qoi.decoder;
 
+import Karm.Core;
 import :qoi.base;
 
-namespace Qoi {
+namespace Karm::Image::Qoi {
 
 export struct Decoder : Io::BChunk {
     using Width = Io::BField<i32be, 4>;
@@ -115,4 +114,4 @@ export struct Decoder : Io::BChunk {
     }
 };
 
-} // namespace Qoi
+} // namespace Karm::Image::Qoi

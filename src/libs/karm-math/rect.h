@@ -1,7 +1,8 @@
 #pragma once
 
-#include <karm-base/clamp.h>
-#include <karm-base/tuple.h>
+import Karm.Core;
+
+#include <karm-core/macros.h>
 
 #include "insets.h"
 #include "vec.h"

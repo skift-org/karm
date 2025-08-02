@@ -1,4 +1,6 @@
-#include <karm-io/bscan.h>
+#include <karm-core/macros.h>
+
+import Karm.Core;
 
 #include "mime.h"
 

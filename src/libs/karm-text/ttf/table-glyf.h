@@ -1,10 +1,11 @@
 #pragma once
 
+import Karm.Core;
+
 #include <karm-gfx/canvas.h>
-#include <karm-io/bscan.h>
 #include <karm-logger/logger.h>
 
-namespace Ttf {
+namespace Karm::Text::Ttf {
 
 static constexpr bool DEBUG_GLYF = false;
 
@@ -171,4 +172,4 @@ struct Glyf : Io::BChunk {
     }
 };
 
-} // namespace Ttf
+} // namespace Karm::Text::Ttf

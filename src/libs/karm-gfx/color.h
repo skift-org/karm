@@ -1,6 +1,8 @@
 #pragma once
 
-#include <karm-io/emit.h>
+import Karm.Core;
+
+#include <karm-core/macros.h>
 #include <karm-math/vec.h>
 
 namespace Karm::Gfx {

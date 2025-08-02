@@ -1,8 +1,8 @@
-module;
-
-#include <karm-io/emit.h>
+#include <karm-core/macros.h>
 
 module Karm.Pdf;
+
+import Karm.Core;
 
 namespace Karm::Pdf {
 

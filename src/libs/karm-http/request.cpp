@@ -1,5 +1,6 @@
 module;
 
+#include <karm-core/macros.h>
 #include <karm-mime/url.h>
 
 export module Karm.Http:request;

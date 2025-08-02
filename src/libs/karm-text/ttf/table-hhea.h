@@ -1,8 +1,8 @@
 #pragma once
 
-#include <karm-io/bscan.h>
+import Karm.Core;
 
-namespace Ttf {
+namespace Karm::Text::Ttf {
 
 // https://learn.microsoft.com/en-us/typography/opentype/spec/hhea
 struct Hhea : Io::BChunk {
@@ -35,4 +35,4 @@ struct Hhea : Io::BChunk {
     }
 };
 
-} // namespace Ttf
+} // namespace Karm::Text::Ttf

@@ -2,7 +2,7 @@
 
 #include "table-hhea.h"
 
-namespace Ttf {
+namespace Karm::Text::Ttf {
 
 struct Hmtx : Io::BChunk {
     static constexpr Str SIG = "hmtx";
@@ -31,4 +31,4 @@ struct Hmtx : Io::BChunk {
     }
 };
 
-} // namespace Ttf
+} // namespace Karm::Text::Ttf

@@ -1,13 +1,13 @@
 module;
 
-#include <karm-base/array.h>
 #include <karm-gfx/buffer.h>
-#include <karm-io/bscan.h>
 #include <karm-logger/logger.h>
 
 export module Karm.Image:jpeg.base;
 
-namespace Jpeg {
+import Karm.Core;
+
+namespace Karm::Image::Jpeg {
 
 export constexpr Array<usize, 64> ZIGZAG = {
     0, 1, 8, 16, 9, 2, 3, 10,
@@ -300,4 +300,4 @@ export usize bitLength(int v) {
     return length;
 }
 
-} // namespace Jpeg
+} // namespace Karm::Image::Jpeg

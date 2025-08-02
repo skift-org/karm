@@ -1,13 +1,12 @@
-module;
-
-#include <karm-io/aton.h>
-#include <karm-io/emit.h>
-#include <karm-io/expr.h>
-#include <karm-io/funcs.h>
+#include <karm-core/macros.h>
 
 export module Karm.Core:json;
 
 import :serde;
+import :io.aton;
+import :io.emit;
+import :io.expr;
+import :io.funcs;
 
 namespace Karm::Json {
 
@@ -338,6 +337,6 @@ export Res<String> unparse(Serde::Value const& v) {
 
 } // namespace Karm::Json
 
-export auto operator""_json(char const* str, usize len) {
+export auto operator""_json(char const* str, Karm::usize len) {
     return Karm::Json::parse({str, len}).unwrap();
 }

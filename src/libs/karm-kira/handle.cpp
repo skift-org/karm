@@ -1,9 +1,6 @@
-module;
-
-#include <karm-base/opt.h>
-
 export module Karm.Kira:handle;
 
+import Karm.Core;
 import Karm.Ui;
 
 namespace Karm::Kira {

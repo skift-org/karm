@@ -1,8 +1,6 @@
 #pragma once
 
-#include <karm-base/rc.h>
-#include <karm-base/res.h>
-#include <karm-base/vec.h>
+import Karm.Core;
 
 #include "async.h"
 
@@ -82,4 +80,4 @@ using EntryPointAsync = Async::Task<>(Sys::Context&);
 
 } // namespace Karm::Sys
 
-[[gnu::used]] Async::Task<> entryPointAsync(Sys::Context&);
+[[gnu::used]] Karm::Async::Task<> entryPointAsync(Karm::Sys::Context&);

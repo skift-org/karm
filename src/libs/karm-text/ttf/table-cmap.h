@@ -1,11 +1,12 @@
 #pragma once
 
-#include <karm-io/bscan.h>
+import Karm.Core;
+
 #include <karm-logger/logger.h>
 
 #include "../base.h"
 
-namespace Ttf {
+namespace Karm::Text::Ttf {
 
 struct Cmap : Io::BChunk {
     static constexpr Str SIG = "cmap";
@@ -172,4 +173,4 @@ struct Cmap : Io::BChunk {
     }
 };
 
-} // namespace Ttf
+} // namespace Karm::Text::Ttf

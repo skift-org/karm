@@ -1,10 +1,8 @@
-module;
-
-#include <karm-base/base.h>
-#include <karm-meta/nocopy.h>
+#include <karm-core/macros.h>
 
 export module Karm.Gc:heap;
 
+import Karm.Core;
 import :ref;
 
 namespace Karm::Gc {

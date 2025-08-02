@@ -1,6 +1,6 @@
 #pragma once
 
-#include <karm-io/fmt.h>
+import Karm.Core;
 
 namespace Karm::Mime {
 
@@ -12,6 +12,7 @@ struct Uti {
     enum struct Common {
 #define UTI(NAME, ...) NAME,
 #include "defs/uti.inc"
+
 #undef UTI
     };
 
@@ -24,6 +25,7 @@ struct Uti {
         _buf = STR ""s;     \
         break;
 #include "defs/uti.inc"
+
 #undef UTI
         }
     }
@@ -44,6 +46,6 @@ struct Uti {
 
 } // namespace Karm::Mime
 
-inline auto operator""_uti(char const* str, usize len) {
+inline auto operator""_uti(char const* str, Karm::usize len) {
     return Karm::Mime::Uti::parse({str, len});
 }

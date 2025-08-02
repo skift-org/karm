@@ -1,6 +1,7 @@
 #pragma once
 
-#include <karm-base/rc.h>
+import Karm.Core;
+
 #include <karm-mime/mime.h>
 
 #include "async.h"

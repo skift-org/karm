@@ -1,9 +1,8 @@
-module;
-
-#include <karm-io/aton.h>
-#include <karm-io/fmt.h>
+#include <karm-core/macros.h>
 
 export module Karm.Http:code;
+
+import Karm.Core;
 
 namespace Karm::Http {
 

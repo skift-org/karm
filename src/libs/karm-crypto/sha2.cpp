@@ -1,6 +1,4 @@
-#include <karm-base/array.h>
-#include <karm-base/base.h>
-#include <karm-base/slice.h>
+import Karm.Core;
 
 #include "sha2.h"
 

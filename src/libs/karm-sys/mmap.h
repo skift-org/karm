@@ -1,6 +1,7 @@
 #pragma once
 
-#include <karm-io/traits.h>
+import Karm.Core;
+
 #include <karm-sys/_embed.h>
 
 #include "types.h"

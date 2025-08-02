@@ -1,5 +1,6 @@
-#include "bundle.h"
+#include <karm-core/macros.h>
 
+#include "bundle.h"
 #include "_embed.h"
 
 namespace Karm::Pkg {

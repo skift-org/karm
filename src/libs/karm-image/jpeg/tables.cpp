@@ -1,12 +1,9 @@
-module;
-
-#include <karm-base/array.h>
-
 export module Karm.Image:jpeg.tables;
 
+import Karm.Core;
 import :jpeg.base;
 
-namespace Jpeg {
+namespace Karm::Image::Jpeg {
 
 // MARK: Quantization ----------------------------------------------------------
 
@@ -146,4 +143,4 @@ Huff HUFF_AC_CbCr = {
 Array<Huff*, 3> const HUFF_DC = {&HUFF_DC_Y, &HUFF_DC_CbCr, &HUFF_DC_CbCr};
 Array<Huff*, 3> const HUFF_AC = {&HUFF_AC_Y, &HUFF_AC_CbCr, &HUFF_AC_CbCr};
 
-} // namespace Jpeg
+} // namespace Karm::Image::Jpeg

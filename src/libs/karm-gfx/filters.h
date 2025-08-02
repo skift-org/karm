@@ -1,8 +1,6 @@
 #pragma once
 
-#include <karm-base/box.h>
-#include <karm-base/range.h>
-#include <karm-base/vec.h>
+import Karm.Core;
 
 #include "buffer.h"
 #include "color.h"

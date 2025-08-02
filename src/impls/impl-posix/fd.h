@@ -2,7 +2,7 @@
 
 #include <karm-sys/fd.h>
 
-namespace Posix {
+namespace Karm::Posix {
 
 struct Fd : Sys::Fd {
     isize _raw;
@@ -32,7 +32,7 @@ struct Fd : Sys::Fd {
 
     Res<Sys::_Received> recv(MutBytes, MutSlice<Sys::Handle>) override;
 
-    Res<> pack(Io::PackEmit& e) override;
+    Res<> pack(Sys::MessageWriter& e) override;
 };
 
-} // namespace Posix
+} // namespace Karm::Posix

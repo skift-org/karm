@@ -1,14 +1,12 @@
 module;
 
-#include <karm-base/vec.h>
 #include <karm-gfx/buffer.h>
 #include <karm-gfx/colors.h>
-#include <karm-io/bscan.h>
-#include <karm-io/emit.h>
 #include <karm-logger/logger.h>
 
 export module Karm.Image:jpeg.decoder;
 
+import Karm.Core;
 import :jpeg.base;
 import :jpeg.dct;
 
@@ -19,7 +17,7 @@ import :jpeg.dct;
 //  - https://www.w3.org/Graphics/JPEG/itu-t81.pdf
 //  - https://github.com/dannye/jed/blob/master/src/decoder.cpp
 //  - https://www.youtube.com/watch?v=CPT4FSkFUgs
-namespace Jpeg {
+namespace Karm::Image::Jpeg {
 
 // MARK: Decoder ---------------------------------------------------------------
 
@@ -621,4 +619,4 @@ export struct Decoder {
     }
 };
 
-} // namespace Jpeg
+} // namespace Karm::Image::Jpeg

@@ -6,7 +6,9 @@
 #include <karm-text/loader.h>
 #include <karm-text/ttf.h>
 
-static void _dumpGpos(Ttf::Gpos const& gpos) {
+using namespace Karm;
+
+static void _dumpGpos(Text::Ttf::Gpos const& gpos) {
     Sys::println("GPOS table:");
     if (not gpos.present()) {
         Sys::println("  not present");
@@ -39,7 +41,7 @@ static void _dumpGpos(Ttf::Gpos const& gpos) {
     Sys::println("  LookupList (len:{})", gpos.lookupList().len());
 }
 
-static void _dumpName(Ttf::Name const& name) {
+static void _dumpName(Text::Ttf::Name const& name) {
     Sys::println("Name table:");
     if (not name.present()) {
         Sys::println("  not present");
@@ -69,7 +71,7 @@ Async::Task<> entryPointAsync(Sys::Context& ctx) {
         auto url = Mime::parseUrlOrPath(args[1], co_try$(Sys::pwd()));
         auto file = co_try$(Sys::File::open(url));
         auto map = co_try$(Sys::mmap().map(file));
-        auto ttf = co_try$(Ttf::Parser::init(map.bytes()));
+        auto ttf = co_try$(Text::Ttf::Parser::init(map.bytes()));
 
         Sys::println("ttf is valid");
         _dumpGpos(ttf._gpos);

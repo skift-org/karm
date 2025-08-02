@@ -1,12 +1,12 @@
 module;
 
 #include <karm-gfx/buffer.h>
-#include <karm-io/bscan.h>
 #include <karm-mime/uti.h>
 #include <karm-sys/file.h>
 
 export module Karm.Image:base.saver;
 
+import Karm.Core;
 import :bmp.encoder;
 import :jpeg.encoder;
 import :qoi.encoder;

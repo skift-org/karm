@@ -3,7 +3,7 @@
 
 #include "utils.h"
 
-namespace Posix {
+namespace Karm::Posix {
 
 Error fromErrno(isize error) {
     if (EOPNOTSUPP != ENOTSUP and error == EOPNOTSUPP) {
@@ -288,4 +288,4 @@ void overrideRepo(Tuple<Str, RepoType> repo) {
     _repoOverride = repo;
 }
 
-} // namespace Posix
+} // namespace Karm::Posix

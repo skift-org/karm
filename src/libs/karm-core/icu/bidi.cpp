@@ -1,8 +1,7 @@
-module;
-
-#include <karm-base/string.h>
-
 export module Karm.Core:icu.bidi;
+
+import :base.base;
+import :base.string;
 
 namespace Karm::Icu {
 

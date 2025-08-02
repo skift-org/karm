@@ -4,6 +4,6 @@
     "type": "lib",
     "description": "Garbage collector",
     "requires": [
-        "karm-base"
+        "karm-core"
     ]
 }

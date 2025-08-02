@@ -4,8 +4,7 @@
     "type": "lib",
     "description": "Load, generate and manipulate PDF files.",
     "requires": [
-        "karm-base",
-        "karm-io",
+        "karm-core",
         "karm-gfx"
     ]
 }

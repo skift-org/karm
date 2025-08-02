@@ -1,10 +1,6 @@
-module;
-
-#include <karm-base/opt.h>
-#include <karm-base/string.h>
-
 export module Karm.Kira:sidePanel;
 
+import Karm.Core;
 import Karm.Ui;
 import Mdi;
 

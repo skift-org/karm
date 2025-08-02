@@ -1,5 +1,6 @@
 #pragma once
 
+#include <karm-core/macros.h>
 #include <karm-mime/url.h>
 
 namespace Karm::Sys {

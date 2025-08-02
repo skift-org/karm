@@ -1,12 +1,12 @@
-module;
-
-#include <karm-base/map.h>
-#include <karm-base/string.h>
-#include <karm-base/union.h>
-#include <karm-base/vec.h>
-#include <karm-io/emit.h>
+#include <karm-core/macros.h>
 
 export module Karm.Core:serde;
+
+import :base.map;
+import :base.string;
+import :base.union_;
+import :base.vec;
+import :io.emit;
 
 namespace Karm::Serde {
 

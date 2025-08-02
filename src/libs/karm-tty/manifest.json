@@ -4,6 +4,6 @@
     "type": "lib",
     "description": "Terminal escape sequences and terminal I/O",
     "requires": [
-        "karm-io"
+        "karm-core"
     ]
 }

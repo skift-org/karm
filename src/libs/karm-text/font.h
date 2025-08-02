@@ -47,12 +47,12 @@ struct FontMetrics {
 
     FontMetrics combine(FontMetrics other) {
         return {
-            .ascend = ::max(ascend, other.ascend),
-            .captop = ::max(captop, other.captop),
-            .descend = ::max(descend, other.descend),
-            .linegap = ::max(linegap, other.linegap),
-            .advance = ::max(advance, other.advance),
-            .xHeight = ::max(xHeight, other.xHeight),
+            .ascend = Karm::max(ascend, other.ascend),
+            .captop = Karm::max(captop, other.captop),
+            .descend = Karm::max(descend, other.descend),
+            .linegap = Karm::max(linegap, other.linegap),
+            .advance = Karm::max(advance, other.advance),
+            .xHeight = Karm::max(xHeight, other.xHeight),
         };
     }
 

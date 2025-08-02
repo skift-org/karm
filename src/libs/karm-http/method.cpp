@@ -1,9 +1,6 @@
-module;
-
-#include <karm-io/aton.h>
-#include <karm-io/fmt.h>
-
 export module Karm.Http:method;
+
+import Karm.Core;
 
 namespace Karm::Http {
 

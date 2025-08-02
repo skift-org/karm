@@ -1,10 +1,6 @@
 #pragma once
 
-#include <karm-base/clamp.h>
-#include <karm-io/emit.h>
-#include <karm-io/pack.h>
-
-#include "funcs.h"
+import Karm.Core;
 
 namespace Karm::Math {
 
@@ -58,19 +54,19 @@ union Vec2 {
     }
 
     constexpr T min() const {
-        return ::min(x, y);
+        return Karm::min(x, y);
     }
 
     constexpr T max() const {
-        return ::max(x, y);
+        return Karm::max(x, y);
     }
 
     constexpr Vec2 min(Vec2 other) const {
-        return {::min(x, other.x), ::min(y, other.y)};
+        return {Karm::min(x, other.x), Karm::min(y, other.y)};
     }
 
     constexpr Vec2 max(Vec2 other) const {
-        return {::max(x, other.x), ::max(y, other.y)};
+        return {Karm::max(x, other.x), Karm::max(y, other.y)};
     }
 
     constexpr T dot(Vec2 other) const {
@@ -230,13 +226,13 @@ Vec2<T> operator/(T const& lhs, Vec2<T> const& rhs) {
 }
 
 template <typename T>
-constexpr Vec2<T> const Vec2<T>::ZERO = {};
+constexpr Vec2<T> Vec2<T>::ZERO = {};
 
 template <typename T>
-constexpr Vec2<T> const Vec2<T>::ONE = {1};
+constexpr Vec2<T> Vec2<T>::ONE = {1};
 
 template <typename T>
-constexpr Vec2<T> const Vec2<T>::MAX = {Limits<T>::MAX};
+constexpr Vec2<T> Vec2<T>::MAX = {Limits<T>::MAX};
 
 using Vec2i = Vec2<isize>;
 
@@ -309,26 +305,26 @@ union Vec3 {
     }
 
     constexpr T min() const {
-        return ::min(x, y, z);
+        return Karm::min(x, y, z);
     }
 
     constexpr T max() const {
-        return ::max(x, y, z);
+        return Karm::max(x, y, z);
     }
 
     constexpr Vec3 min(Vec3 const& other) {
         return {
-            ::min(x, other.x),
-            ::min(y, other.y),
-            ::min(z, other.z),
+            Karm::min(x, other.x),
+            Karm::min(y, other.y),
+            Karm::min(z, other.z),
         };
     }
 
     constexpr Vec3 max(Vec3<T> const& other) {
         return {
-            ::max(x, other.x),
-            ::max(y, other.y),
-            ::max(z, other.z),
+            Karm::max(x, other.x),
+            Karm::max(y, other.y),
+            Karm::max(z, other.z),
         };
     }
 
@@ -709,19 +705,3 @@ bool epsilonEq(Vec4<T> const& lhs, Vec4<T> const& rhs, T epsilon) {
 }
 
 } // namespace Karm::Math
-
-template <typename T>
-struct Karm::Io::Packer<Math::Vec2<T>> {
-    static Res<> pack(Karm::Io::PackEmit& e, Math::Vec2<T> const& val) {
-        try$(Io::pack(e, val.x));
-        try$(Io::pack(e, val.y));
-        return Ok();
-    }
-
-    static Res<Math::Vec2<T>> unpack(Karm::Io::PackScan& s) {
-        return Ok(Math::Vec2<T>{
-            try$(Io::unpack<T>(s)),
-            try$(Io::unpack<T>(s)),
-        });
-    }
-};

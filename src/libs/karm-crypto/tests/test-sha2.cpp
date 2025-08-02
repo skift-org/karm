@@ -1,4 +1,3 @@
-#include <karm-base/array.h>
 #include <karm-crypto/sha2.h>
 #include <karm-test/macros.h>
 

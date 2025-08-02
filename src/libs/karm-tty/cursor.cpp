@@ -1,8 +1,6 @@
-module;
-
-#include <karm-io/emit.h>
-
 export module Karm.Tty:cursor;
+
+import Karm.Core;
 
 namespace Karm::Tty {
 

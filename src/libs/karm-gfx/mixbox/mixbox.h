@@ -2,7 +2,7 @@
 
 #include <karm-gfx/color.h>
 
-namespace Mixbox {
+namespace Karm::Mixbox {
 
 static constexpr auto LATENT_SIZE = 7;
 
@@ -20,4 +20,4 @@ Math::Vec3f lerp(Math::Vec3f a, Math::Vec3f b, f64 t);
 
 Gfx::Color lerpColor(Gfx::Color a, Gfx::Color b, f64 t);
 
-} // namespace Mixbox
+} // namespace Karm::Mixbox

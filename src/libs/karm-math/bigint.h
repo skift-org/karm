@@ -1,10 +1,6 @@
 #pragma once
 
-#include <karm-base/checked.h>
-#include <karm-base/res.h>
-#include <karm-base/vec.h>
-
-#include "funcs.h"
+import Karm.Core;
 
 namespace Karm::Math {
 
@@ -690,18 +686,18 @@ struct BigFrac {
 
 } // namespace Karm::Math
 
-static inline Math::UBig operator""_ubig(unsigned long long value) {
-    return Math::UBig{static_cast<usize>(value)};
+static inline Karm::Math::UBig operator""_ubig(unsigned long long value) {
+    return Karm::Math::UBig{static_cast<Karm::usize>(value)};
 }
 
-static inline Math::IBig operator""_ibig(unsigned long long value) {
-    return Math::IBig{static_cast<usize>(value)};
+static inline Karm::Math::IBig operator""_ibig(unsigned long long value) {
+    return Karm::Math::IBig{static_cast<Karm::usize>(value)};
 }
 
-static inline Math::BigFrac operator""_bigfrac(unsigned long long value) {
-    return Math::BigFrac{static_cast<usize>(value)};
+static inline Karm::Math::BigFrac operator""_bigfrac(unsigned long long value) {
+    return Karm::Math::BigFrac{static_cast<Karm::usize>(value)};
 }
 
-static inline Math::BigFrac operator""_bigfrac(long double value) {
-    return Math::BigFrac{static_cast<f64>(value)};
+static inline Karm::Math::BigFrac operator""_bigfrac(long double value) {
+    return Karm::Math::BigFrac{static_cast<Karm::f64>(value)};
 }

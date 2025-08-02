@@ -1,10 +1,8 @@
-module;
-
-#include <karm-base/endian.h>
-
 export module Karm.Image:tga.base;
 
-namespace Tga {
+import Karm.Core;
+
+namespace Karm::Image::Tga {
 
 export enum : usize {
     UNC_CM = 1, // uncompressed color-mapped
@@ -39,4 +37,4 @@ export struct [[gnu::packed]] Header {
     u8le desc;
 };
 
-} // namespace Tga
+} // namespace Karm::Image::Tga

@@ -1,9 +1,10 @@
 module;
 
-#include <karm-base/flags.h>
 #include <karm-math/vec.h>
 
 export module Karm.App:inputs;
+
+import Karm.Core;
 
 import :event;
 

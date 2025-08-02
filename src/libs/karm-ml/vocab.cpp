@@ -1,9 +1,5 @@
 module;
 
-#include <karm-base/string.h>
-#include <karm-base/vec.h>
-#include <karm-io/emit.h>
-#include <karm-io/expr.h>
 #include <karm-logger/logger.h>
 
 export module Karm.Ml:vocab;

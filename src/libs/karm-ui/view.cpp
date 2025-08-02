@@ -1,12 +1,12 @@
 module;
 
-#include <karm-base/func.h>
 #include <karm-gfx/icon.h>
 #include <karm-text/loader.h>
 #include <karm-text/prose.h>
 
 export module Karm.Ui:view;
 
+import Karm.Core;
 import Karm.Scene;
 import Karm.Image;
 import :node;
@@ -255,7 +255,7 @@ struct Text : View<Text> {
     Text(Rc<Karm::Text::Prose> prose)
         : _prose(std::move(prose)) {}
 
-    Text(::Text::ProseStyle style, Str text)
+    Text(Karm::Text::ProseStyle style, Str text)
         : _prose(makeRc<Karm::Text::Prose>(style, text)) {}
 
     void reconcile(Text& o) override {

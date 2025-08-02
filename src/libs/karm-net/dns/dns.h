@@ -1,7 +1,7 @@
 #pragma once
 
-#include <karm-base/endian.h>
-#include <karm-io/bscan.h>
+import Karm.Core;
+
 #include <karm-logger/logger.h>
 #include <karm-sys/chan.h>
 #include <karm-sys/socket.h>

@@ -1,8 +1,7 @@
 #pragma once
 
-#include <karm-base/distinct.h>
-#include <karm-base/slice.h>
-#include <karm-io/bscan.h>
+import Karm.Core;
+
 #include <karm-sys/socket.h>
 
 // https://github.com/B-Con/crypto-algorithms/blob/master/aes.c
