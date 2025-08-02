@@ -12,7 +12,7 @@ struct _SScan;
 } // namespace Io
 
 namespace Re {
-template <typename T>
+export template <typename T>
 concept Expr = requires(T expr, Io::_SScan<Utf8>& scan) {
     { expr(scan) } -> Meta::Same<bool>;
 };
