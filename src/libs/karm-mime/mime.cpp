@@ -20,6 +20,7 @@ static constexpr Array SUFFIXES2MIME = {
     Suffix2Mime{"css", "text/css; charset=UTF-8"},
     Suffix2Mime{"js", "application/javascript; charset=UTF-8"},
     Suffix2Mime{"pdf", "application/pdf"},
+    Suffix2Mime{"md", "text/markdown"},
 
     Suffix2Mime{"bmp", "image/bmp"},
     Suffix2Mime{"png", "image/png"},
