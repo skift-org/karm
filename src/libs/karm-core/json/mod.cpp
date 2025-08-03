@@ -143,6 +143,7 @@ Res<usize> parseDigits(Io::SScan& s) {
     return Ok(digits);
 }
 
+#ifndef __ck_freestanding__
 Res<f64> parseDecimal(Io::SScan& s) {
     if (s.ended())
         return Error::invalidData("unexpected end of input");
@@ -159,6 +160,7 @@ Res<f64> parseDecimal(Io::SScan& s) {
 
     return Ok(fpart);
 }
+#endif
 
 Res<isize> parseInteger(Io::SScan& s) {
     bool sign = false;
