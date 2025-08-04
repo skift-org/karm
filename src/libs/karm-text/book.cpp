@@ -1,5 +1,5 @@
 #include <karm-logger/logger.h>
-#include <karm-pkg/bundle.h>
+#include <karm-sys/bundle.h>
 #include <karm-sys/time.h>
 
 #include "book.h"
@@ -26,7 +26,7 @@ Res<> FontBook::load(Mime::Url const& url, Opt<FontAttrs> attrs) {
 }
 
 Res<> FontBook::loadAll() {
-    auto bundles = try$(Pkg::installedBundles());
+    auto bundles = try$(Sys::Bundle::installed());
     for (auto& bundle : bundles) {
         auto maybeDir = Sys::Dir::open(bundle.url() / "fonts");
         if (not maybeDir)

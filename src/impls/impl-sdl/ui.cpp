@@ -2,7 +2,7 @@ module;
 
 #include <SDL.h>
 #include <karm-gfx/canvas.h>
-#include <karm-pkg/bundle.h>
+#include <karm-sys/bundle.h>
 #include <karm-sys/context.h>
 #include <karm-sys/time.h>
 
@@ -607,7 +607,7 @@ static SDL_HitTestResult _hitTestCallback(SDL_Window* window, SDL_Point const* a
 }
 
 static Res<> _setWindowIcon(SDL_Window* window) {
-    auto url = try$(Pkg::currentBundle()).url() / "images/icon.qoi"_path;
+    auto url = try$(Sys::Bundle::current()).url() / "images/icon.qoi"_path;
     auto defaultUrl = "bundle://karm-ui/images/icon.qoi"_url;
     auto image = Karm::Image::load(url).unwrapOrElse([&] {
         return Karm::Image::loadOrFallback(defaultUrl).take();

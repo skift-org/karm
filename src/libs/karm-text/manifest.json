@@ -7,7 +7,6 @@
         "karm-app",
         "karm-gfx",
         "karm-sys",
-        "karm-pkg",
         "karm-logger"
     ]
 }

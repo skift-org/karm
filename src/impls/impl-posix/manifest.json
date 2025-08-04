@@ -13,7 +13,6 @@
         "karm-sys-async-impl"
     ],
     "provides": [
-        "karm-sys-impl",
-        "karm-pkg-impl"
+        "karm-sys-impl"
     ]
 }

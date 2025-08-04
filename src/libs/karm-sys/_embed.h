@@ -115,4 +115,10 @@ Async::Task<Vec<Ip>> ipLookupAsync(Str host);
 
 Sched& globalSched();
 
+// MARK: Bundle ----------------------------------------------------------------
+
+Res<Vec<String>> installedBundles();
+
+Res<String> currentBundle();
+
 } // namespace Karm::Sys::_Embed

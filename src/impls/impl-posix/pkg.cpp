@@ -1,13 +1,12 @@
 #include <stdlib.h>
 
 //
-#include <karm-pkg/_embed.h>
 #include <karm-sys/_embed.h>
 #include <karm-sys/proc.h>
 
 #include "utils.h"
 
-namespace Karm::Pkg::_Embed {
+namespace Karm::Sys::_Embed {
 
 Res<Vec<String>> installedBundles() {
     auto [repo, format] = try$(Posix::repoRoot());

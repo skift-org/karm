@@ -2,10 +2,14 @@
 
 #include <karm-mime/url.h>
 
-namespace Karm::Pkg {
+namespace Karm::Sys {
 
-struct BundleInfo {
+struct Bundle {
     String id;
+
+    static Res<Bundle> current();
+    
+    static Res<Vec<Bundle>> installed();
 
     Mime::Url url() {
         Mime::Url url;
@@ -15,8 +19,5 @@ struct BundleInfo {
     }
 };
 
-Res<BundleInfo> currentBundle();
-
-Res<Vec<BundleInfo>> installedBundles();
 
 } // namespace Karm::Pkg

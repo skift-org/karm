@@ -3,15 +3,15 @@
 #include "bundle.h"
 #include "_embed.h"
 
-namespace Karm::Pkg {
+namespace Karm::Sys {
 
-Res<BundleInfo> currentBundle() {
+Res<Bundle> Bundle::current() {
     auto id = try$(_Embed::currentBundle());
-    return Ok(BundleInfo{id});
+    return Ok(Bundle{id});
 }
 
-Res<Vec<BundleInfo>> installedBundles() {
-    Vec<BundleInfo> bundles;
+Res<Vec<Bundle>> Bundle::installed() {
+    Vec<Bundle> bundles;
     auto ids = try$(_Embed::installedBundles());
     for (auto& id : ids) {
         bundles.pushBack({id});
@@ -19,4 +19,4 @@ Res<Vec<BundleInfo>> installedBundles() {
     return Ok(bundles);
 }
 
-} // namespace Karm::Pkg
+} // namespace Karm::Sys

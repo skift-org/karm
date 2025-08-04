@@ -4,7 +4,7 @@ module;
 
 //
 #include <karm-mime/url.h>
-#include <karm-pkg/_embed.h>
+#include <karm-sys/_embed.h>
 #include <karm-sys/dir.h>
 #include <karm-sys/file.h>
 
@@ -52,11 +52,11 @@ static Opt<XdgConfigPrefs> _globalPrefs;
 static Res<Mime::Url> _resolveConfigDir() {
     auto* xdgConfigHome = getenv("XDG_CONFIG_HOME");
     if (xdgConfigHome)
-        return Ok(Mime::Url::parse(xdgConfigHome) / try$(Pkg::_Embed::currentBundle()));
+        return Ok(Mime::Url::parse(xdgConfigHome) / try$(Sys::_Embed::currentBundle()));
 
     auto* home = getenv("HOME");
     if (home)
-        return Ok(Mime::Url::parse(home) / ".config" / try$(Pkg::_Embed::currentBundle()));
+        return Ok(Mime::Url::parse(home) / ".config" / try$(Sys::_Embed::currentBundle()));
 
     return Error::notFound("could not find XDG_CONFIG_HOME nor HOME");
 }
