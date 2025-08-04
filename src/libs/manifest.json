@@ -11,7 +11,6 @@
         "karm-cli",
         "karm-gc",
         "karm-http",
-        "karm-icu",
         "karm-kira",
         "karm-kv",
         "karm-pdf",
