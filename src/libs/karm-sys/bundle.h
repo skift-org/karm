@@ -8,7 +8,7 @@ struct Bundle {
     String id;
 
     static Res<Bundle> current();
-    
+
     static Res<Vec<Bundle>> installed();
 
     Mime::Url url() {
@@ -19,5 +19,4 @@ struct Bundle {
     }
 };
 
-
-} // namespace Karm::Pkg
+} // namespace Karm::Sys

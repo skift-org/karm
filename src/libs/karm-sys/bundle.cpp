@@ -1,7 +1,7 @@
 #include <karm-core/macros.h>
 
-#include "bundle.h"
 #include "_embed.h"
+#include "bundle.h"
 
 namespace Karm::Sys {
 

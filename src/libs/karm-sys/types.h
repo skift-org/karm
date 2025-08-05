@@ -2,9 +2,11 @@
 
 import Karm.Core;
 
-#include "_handle.h"
-
 namespace Karm::Sys {
+
+using Handle = Distinct<usize, struct _HandleTag>;
+
+static constexpr Handle INVALID = Handle(-1);
 
 enum struct MmapOption : u64 {
     READ = 1 << 0,

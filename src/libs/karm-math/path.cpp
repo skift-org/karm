@@ -1,6 +1,7 @@
 import Karm.Core;
 
 #include "path.h"
+
 #include "trans.h"
 
 namespace Karm::Math {

@@ -41,4 +41,4 @@ Res<String> currentBundle() {
     return Error::notFound("no bundle found");
 }
 
-} // namespace Karm::Pkg::_Embed
+} // namespace Karm::Sys::_Embed

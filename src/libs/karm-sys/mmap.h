@@ -50,7 +50,7 @@ struct Mmap :
         return Ok();
     }
 
-    usize vaddr() const { return (usize)_buf; }
+    usize vaddr() const { return reinterpret_cast<usize>(_buf); }
 
     usize paddr() const { return _paddr; }
 
@@ -172,8 +172,7 @@ struct MutMmap :
     }
 
     void leak() {
-        _buf = nullptr;
-        _size = 0;
+        _owned = false;
     }
 };
 
