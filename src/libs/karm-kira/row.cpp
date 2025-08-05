@@ -133,11 +133,9 @@ export Ui::Child sliderRow(f64 value, Ui::Send<f64> onChange, String title) {
         NONE,
         title,
         NONE,
-        slider(
+        Kira::slider(
             value,
-            std::move(onChange),
-            Mdi::DRAG_VERTICAL_VARIANT,
-            ""
+            onChange
         ) | Ui::minSize({128, Ui::UNCONSTRAINED})
     );
 }
