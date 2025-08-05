@@ -321,10 +321,13 @@ constexpr auto sqrt(T x) -> T {
 
 export template <Meta::Float T, Precision P = PRECISE>
 constexpr T asin(T x) {
-    if (x > 1 or x < -1)
+    if (x < 0)
+        return -asin<T, P>(-x);
+
+    if (x > 1)
         return NAN;
 
-    if (x > (T)0.5 or x < (T)-0.5)
+    if (x > static_cast<T>(0.5))
         return 2 * atan<T>(x / (1 + sqrt<T>(1 - x * x)));
 
     T squared = x * x;
