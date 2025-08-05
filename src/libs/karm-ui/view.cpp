@@ -393,10 +393,9 @@ struct Image : View<Image> {
         g.pop();
     }
 
-    Math::Vec2i size(Math::Vec2i, Hint hint) override {
-        if (hint == Hint::MIN) {
-            return {};
-        }
+    Math::Vec2i size(Math::Vec2i size, Hint hint) override {
+        if (hint == Hint::MIN)
+            return _image.bound().fit(Math::Recti{size}).size();
         return _image.bound().size().cast<isize>();
     }
 };
