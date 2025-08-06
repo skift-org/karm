@@ -148,20 +148,20 @@ export struct ButtonStyle {
         return {
             .idleStyle = {
                 .borderRadii = RADIUS,
-                .backgroundFill = ACCENT700,
+                .backgroundFill = ACCENT500,
                 .foregroundFill = Gfx::WHITE,
             },
             .hoverStyle = {
                 .borderRadii = RADIUS,
                 .borderWidth = 1,
-                .backgroundFill = ACCENT600,
+                .backgroundFill = ACCENT400,
                 .foregroundFill = Gfx::WHITE,
             },
             .pressStyle = {
                 .borderRadii = RADIUS,
                 .borderWidth = 1,
-                .borderFill = ACCENT600,
-                .backgroundFill = ACCENT700,
+                .borderFill = ACCENT400,
+                .backgroundFill = ACCENT500,
                 .foregroundFill = Gfx::WHITE,
             },
         };

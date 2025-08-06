@@ -56,7 +56,7 @@ struct Focusable : ProxyNode<Focusable> {
         ProxyNode<Focusable>::paint(g, r);
 
         if (_focused) {
-            g.strokeStyle(Gfx::stroke(ACCENT600).withWidth(2).withAlign(Gfx::INSIDE_ALIGN));
+            g.strokeStyle(Gfx::stroke(ACCENT500).withWidth(2).withAlign(Gfx::INSIDE_ALIGN));
             g.stroke(bound().cast<f64>(), 4);
         }
     }

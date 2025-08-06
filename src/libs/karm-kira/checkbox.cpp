@@ -29,14 +29,14 @@ struct Checkbox : Ui::View<Checkbox> {
         g.push();
 
         if (_value) {
-            g.fillStyle(_mouseListener.isHover() ? Ui::ACCENT600 : Ui::ACCENT700);
+            g.fillStyle(_mouseListener.isHover() ? Ui::ACCENT400 : Ui::ACCENT500);
             g.fill(bound(), 4);
 
             g.fillStyle(Gfx::GRAY50);
             Gfx::Icon{Mdi::CHECK_BOLD}.fill(g, bound().topStart().cast<f64>(), 18);
 
             if (_mouseListener.isPress()) {
-                g.strokeStyle(Gfx::stroke(Ui::ACCENT600).withWidth(1).withAlign(Gfx::INSIDE_ALIGN));
+                g.strokeStyle(Gfx::stroke(Ui::ACCENT400).withWidth(1).withAlign(Gfx::INSIDE_ALIGN));
                 g.stroke(bound().cast<f64>(), 4);
             }
         } else {

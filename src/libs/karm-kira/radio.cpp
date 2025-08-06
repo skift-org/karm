@@ -26,14 +26,14 @@ struct Radio : Ui::View<Radio> {
     void paint(Gfx::Canvas& g, Math::Recti) override {
         g.push();
         if (_value) {
-            g.fillStyle(_mouseListener.isHover() ? Ui::ACCENT600 : Ui::ACCENT700);
+            g.fillStyle(_mouseListener.isHover() ? Ui::ACCENT400 : Ui::ACCENT500);
             g.fill(bound(), 999);
 
             g.fillStyle(Gfx::GRAY50);
             g.fill(bound().shrink(4), 999);
 
             if (_mouseListener.isPress()) {
-                g.strokeStyle(Gfx::stroke(Ui::ACCENT600).withWidth(1).withAlign(Gfx::INSIDE_ALIGN));
+                g.strokeStyle(Gfx::stroke(Ui::ACCENT500).withWidth(1).withAlign(Gfx::INSIDE_ALIGN));
                 g.stroke(bound().cast<f64>(), 999);
             }
         } else {

@@ -38,7 +38,7 @@ export struct Slider : Ui::View<Slider> {
         g.lineTo(bound().endCenter().cast<double>() - Math::Vec2f{THUMP_RADIUS, 0});
         g.stroke();
 
-        g.strokeStyle(Gfx::stroke(_mouseListener.isHover() ? Ui::ACCENT600 : Ui::ACCENT700).withWidth(4).withAlign(Gfx::CENTER_ALIGN).withCap(Gfx::ROUND_CAP));
+        g.strokeStyle(Gfx::stroke(_mouseListener.isHover() ? Ui::ACCENT400 : Ui::ACCENT500).withWidth(4).withAlign(Gfx::CENTER_ALIGN).withCap(Gfx::ROUND_CAP));
         g.beginPath();
         g.moveTo(bound().startCenter().cast<double>() + Math::Vec2f{THUMP_RADIUS, 0});
         g.lineTo(bound().startCenter().cast<double>() + Math::Vec2f{THUMP_RADIUS + v, 0});
@@ -50,7 +50,7 @@ export struct Slider : Ui::View<Slider> {
         g.strokeStyle(Gfx::stroke(Ui::GRAY700).withWidth(1).withAlign(Gfx::INSIDE_ALIGN));
         g.stroke();
 
-        g.fillStyle(_mouseListener.isHover() ? Ui::ACCENT600 : Ui::ACCENT700);
+        g.fillStyle(_mouseListener.isHover() ? Ui::ACCENT400 : Ui::ACCENT500);
         g.fill(Math::Ellipsef{thumbCenter, 6});
 
         g.pop();

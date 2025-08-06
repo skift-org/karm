@@ -42,7 +42,7 @@ export struct Toggle : Ui::View<Toggle> {
         };
 
         auto inactiveBackground = (_mouseListener.isHover() ? Ui::GRAY600 : Ui::GRAY700);
-        auto activeBackground = (_mouseListener.isHover() ? Ui::ACCENT600 : Ui::ACCENT700);
+        auto activeBackground = (_mouseListener.isHover() ? Ui::ACCENT400 : Ui::ACCENT500);
 
         g.fillStyle(inactiveBackground.lerpWith(activeBackground, _anim.value()));
         g.fill(bound(), 999);
@@ -55,7 +55,7 @@ export struct Toggle : Ui::View<Toggle> {
 
         if (_mouseListener.isPress()) {
             auto inactivePressed = Ui::GRAY600;
-            auto activePressed = Ui::ACCENT600;
+            auto activePressed = Ui::ACCENT500;
 
             g.strokeStyle(
                 Gfx::stroke(_value ? activePressed : inactivePressed)

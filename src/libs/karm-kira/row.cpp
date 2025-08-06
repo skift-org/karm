@@ -19,7 +19,7 @@ namespace Karm::Kira {
 
 export Ui::Child rowContent(Ui::Child child) {
     return child |
-           Ui::vcenter() |
+           Ui::align(Math::Align::VCENTER | Math::Align::START | Math::Align::HSTRETCH) |
            Ui::insets(16) |
            Ui::minSize({Ui::UNCONSTRAINED, 64});
 }
