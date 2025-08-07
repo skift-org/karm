@@ -649,4 +649,23 @@ struct [[nodiscard]] Opt<T> {
     }
 };
 
+export template <typename T>
+always_inline constexpr Opt<T> operator or(Opt<T> const& lhs, Opt<T> const& rhs) {
+    return lhs.has() ? lhs : rhs;
+}
+
+export template <typename T>
+always_inline constexpr Opt<T> operator and(Opt<T> const& lhs, Opt<T> const& rhs) {
+    return not lhs.has() ? NONE : rhs;
+}
+
+export template <typename T>
+always_inline constexpr Opt<T> operator xor(Opt<T> const& lhs, Opt<T> const& rhs) {
+    if (lhs.has()) {
+        return rhs.has() ? NONE : lhs;
+    } else {
+        return rhs;
+    }
+}
+
 } // namespace Karm
