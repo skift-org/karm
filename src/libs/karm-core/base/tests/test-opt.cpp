@@ -71,6 +71,32 @@ test$("opt-equal") {
     return Ok();
 }
 
+test$("opt-boolean-operators") {
+    Opt<int> x = 1;
+    Opt<int> y = 2;
+    Opt<int> none = NONE;
+    Opt<int> otherNone = NONE;
+
+    // and
+    expectEq$(none and x, NONE);
+    expectEq$(x and none, NONE);
+    expectEq$(x and y, y);
+
+    // // or
+    expectEq$(none or otherNone, NONE);
+    expectEq$(none or y, y);
+    expectEq$(x or none, x);
+    expectEq$(x or y, x);
+
+    // // xor
+    expectEq$(none xor otherNone, NONE);
+    expectEq$(none xor y, y);
+    expectEq$(x xor none, x);
+    expectEq$(x xor y, NONE);
+
+    return Ok();
+}
+
 test$("bool-niche") {
     Opt<bool> test;
 
