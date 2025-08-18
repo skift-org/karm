@@ -72,7 +72,7 @@ void Value::write(Io::Emit& e) const {
 
 Res<> File::write(Io::Writer& w) const {
     Io::Count count{w};
-    Io::TextEncoder<> enc{w};
+    Io::TextEncoder<> enc{count};
     Io::Emit e{enc};
     e("%{}\n", header);
     e("%Powered By Karm PDF 🐢🏳️‍⚧️🦔\n", header);
