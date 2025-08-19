@@ -1,3 +1,5 @@
+module;
+
 #include <karm-core/macros.h>
 
 export module Karm.Core:base.union_;
@@ -187,9 +189,10 @@ struct Union {
         if (_index == other._index)
             return visit(
                 [&]<typename T>(T const& ptr)
-                    requires Meta::Comparable<T>
                 {
-                    return ptr <=> other.unwrap<T>();
+                    if constexpr (Meta::Comparable<T>)
+                        return ptr <=> other.unwrap<T>();
+                    return std::partial_ordering::unordered;
                 }
             );
         return std::partial_ordering::unordered;

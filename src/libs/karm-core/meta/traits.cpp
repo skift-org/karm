@@ -1,3 +1,7 @@
+module;
+
+#include <karm-core/macros.h>
+
 export module Karm.Core:meta.traits;
 
 import :meta.decl;
@@ -76,7 +80,7 @@ export template <typename T>
 concept TrivialyCopyable = __is_trivially_copyable(T);
 
 export template <typename T>
-concept Agregate = __is_aggregate(T);
+concept Aggregate = __is_aggregate(T);
 
 export template <typename T>
 concept Signed = __is_signed(T);

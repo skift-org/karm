@@ -8,7 +8,7 @@ Async::_Task<int> taskValue() {
     co_return 42;
 }
 
-test$("karm-async-task-value") {
+test$("task-value") {
     auto res = Async::run(taskValue());
     expectEq$(res, 42);
     return Ok();
@@ -18,13 +18,13 @@ Async::_Task<int> taskOuter() {
     co_return co_await taskValue();
 }
 
-test$("karm-async-task-outer") {
+test$("task-outer") {
     auto res = Async::run(taskOuter());
     expectEq$(res, 42);
     return Ok();
 }
 
-test$("karm-async-task-detach") {
+test$("task-detach") {
     int res = 0xdead;
     Async::detach(taskValue(), [&](int r) {
         res = r;

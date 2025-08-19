@@ -1,8 +1,11 @@
+module;
+
 #include <karm-core/macros.h>
 
 export module Karm.Core:base.atomic;
 
 import :base.base;
+import :base.enum_;
 
 namespace Karm {
 
@@ -38,8 +41,8 @@ struct Atomic {
     }
 
     always_inline bool cmpxchg(T expected, T desired, MemOrder order = MemOrder::SEQ_CST) {
-        if (order == ACQ_REL or order == RELAXED)
-            return __atomic_compare_exchange_n(&_val, &expected, desired, false, RELAXED, ACQUIRE);
+        if (order == MemOrder::ACQ_REL or order == MemOrder::RELAXED)
+            return __atomic_compare_exchange_n(&_val, &expected, desired, false, MemOrder::RELAXED, MemOrder::ACQUIRE);
 
         return __atomic_compare_exchange_n(&_val, &expected, desired, false, order, order);
     }

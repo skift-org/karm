@@ -22,7 +22,7 @@ struct In : Io::Reader {
     }
 };
 
-struct Out : Io::TextEncoderBase<> {
+struct Out : Io::TextEncoderBase<Sys::Encoding> {
     Rc<Fd> _fd;
 
     Out(Rc<Fd> fd)
@@ -41,7 +41,7 @@ struct Out : Io::TextEncoderBase<> {
     }
 };
 
-struct Err : Io::TextEncoderBase<> {
+struct Err : Io::TextEncoderBase<Sys::Encoding> {
     Rc<Fd> _fd;
 
     Err(Rc<Fd> fd)

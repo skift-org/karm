@@ -4,7 +4,7 @@ import Karm.Core;
 
 namespace Karm::Async::Tests {
 
-test$("karm-async-promise-one-future") {
+test$("promise-one-future") {
     Opt<Async::_Future<int>> future;
     {
         Async::_Promise<int> promise;
@@ -16,7 +16,7 @@ test$("karm-async-promise-one-future") {
     return Ok();
 }
 
-test$("karm-async-promise-multiple-futures") {
+test$("promise-multiple-futures") {
     Opt<Async::_Future<int>> f1, f2, f3;
     {
         Async::_Promise<int> promise;

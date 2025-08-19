@@ -9,7 +9,7 @@ namespace Karm {
 
 export template <Meta::Enum E, typename U = Meta::UnderlyingType<E>>
 constexpr U toUnderlyingType(E value) {
-    return (U)value;
+    return static_cast<U>(value);
 };
 
 // HACK: Sometime they can be multiple enums in the same scope

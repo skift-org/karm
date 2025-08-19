@@ -8,6 +8,12 @@ export template <Meta::Enum E, typename U = Meta::UnderlyingType<E>>
 struct Flags {
     U _value = 0;
 
+    static Flags fromUnderlying(U underlying) {
+        Flags f;
+        f._value = underlying;
+        return f;
+    }
+
     Flags() = default;
 
     Flags(None) {};
