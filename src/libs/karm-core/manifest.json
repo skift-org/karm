@@ -17,6 +17,8 @@
         "serde"
     ],
     "requires": [
-        "karm-base-impl"
+        "stdc-ansi",
+        "stdcpp",
+        "karm-core-impl"
     ]
 }
