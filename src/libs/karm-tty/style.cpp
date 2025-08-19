@@ -172,6 +172,11 @@ Styled<T> operator|(T inner, Style style) {
     return Styled<T>{inner, style};
 }
 
+export template <typename T>
+Styled<T> operator|(T inner, Color color) {
+    return Styled<T>{inner, color};
+}
+
 } // namespace Karm::Tty
 
 export template <typename T>
