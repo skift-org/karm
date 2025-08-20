@@ -274,7 +274,7 @@ export struct Command : Meta::Pinned {
     Option<bool> _help = flag('h', "help"s, "Show this help message and exit."s);
     Option<bool> _usage = flag('u', "usage"s, "Show usage message and exit."s);
     Option<bool> _version = flag('v', "version"s, "Show version information and exit."s);
-    Option<Vec<Str>> _debug = option<Vec<Str>>(NONE, "debug"s, "Enable or list debug flags"s);
+    Option<Vec<Str>> _debug = option<Vec<Str>>(NONE, "debug"s, "Enable or list debug flags"s, Vec<Str>{});
 
     bool _invoked = false;
 
