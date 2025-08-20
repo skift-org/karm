@@ -5,6 +5,7 @@
     "description": "Command line interface parsing library",
     "requires": [
         "karm-sys",
-        "karm-tty"
+        "karm-tty",
+        "karm-debug"
     ]
 }

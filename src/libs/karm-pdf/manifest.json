@@ -5,6 +5,7 @@
     "description": "Load, generate and manipulate PDF files.",
     "requires": [
         "karm-core",
-        "karm-gfx"
+        "karm-gfx",
+        "karm-debug"
     ]
 }

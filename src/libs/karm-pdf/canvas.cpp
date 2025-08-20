@@ -8,10 +8,11 @@ module;
 export module Karm.Pdf:canvas;
 
 import Karm.Core;
+import Karm.Debug;
 
 namespace Karm::Pdf {
 
-static constexpr bool DEBUG_CANVAS = false;
+static Debug::Flag debugCanvas = "pdf-canvas"s;
 
 export struct FontManager {
     // FIXME: using the address of the fontface since there is not comparison for the fontface obj
@@ -83,11 +84,11 @@ export struct Canvas : Gfx::Canvas {
     }
 
     void strokeStyle(Gfx::Stroke) override {
-        logDebugIf(DEBUG_CANVAS, "pdf: strokeStyle() operation not implemented");
+        logDebugIf(debugCanvas, "pdf: strokeStyle() operation not implemented");
     }
 
     void opacity(f64) override {
-        logDebugIf(DEBUG_CANVAS, "pdf: opacity() operation not implemented");
+        logDebugIf(debugCanvas, "pdf: opacity() operation not implemented");
     }
 
     void transform(Math::Trans2f trans) override {
@@ -137,7 +138,7 @@ export struct Canvas : Gfx::Canvas {
     }
 
     void arcTo(Math::Vec2f, f64, Math::Vec2f, Flags<Math::Path::Option>) override {
-        logDebugIf(DEBUG_CANVAS, "pdf: arcTo() operation not implemented");
+        logDebugIf(debugCanvas, "pdf: arcTo() operation not implemented");
     }
 
     void line(Math::Edgef line) override {
@@ -151,7 +152,7 @@ export struct Canvas : Gfx::Canvas {
     }
 
     void ellipse(Math::Ellipsef) override {
-        logDebugIf(DEBUG_CANVAS, "pdf: ellipse() operation not implemented");
+        logDebugIf(debugCanvas, "pdf: ellipse() operation not implemented");
     }
 
     void rect(Math::Rectf rect, Math::Radiif radii) override {
@@ -218,7 +219,7 @@ export struct Canvas : Gfx::Canvas {
     }
 
     void arc(Math::Arcf) override {
-        logDebugIf(DEBUG_CANVAS, "pdf: arc() operation not implemented");
+        logDebugIf(debugCanvas, "pdf: arc() operation not implemented");
     }
 
     void path(Math::Path const& path) override {
@@ -299,7 +300,7 @@ export struct Canvas : Gfx::Canvas {
     }
 
     void stroke() override {
-        logDebugIf(DEBUG_CANVAS, "pdf: stroke() operation not implemented");
+        logDebugIf(debugCanvas, "pdf: stroke() operation not implemented");
     }
 
     void stroke(Gfx::Stroke style) override {
@@ -333,37 +334,37 @@ export struct Canvas : Gfx::Canvas {
     }
 
     void apply(Gfx::Filter) override {
-        logDebugIf(DEBUG_CANVAS, "pdf: apply() operation not implemented");
+        logDebugIf(debugCanvas, "pdf: apply() operation not implemented");
     };
 
     // MARK: Clear Operations --------------------------------------------------
 
     void clear(Gfx::Color) override {
-        logDebugIf(DEBUG_CANVAS, "pdf: clear() operation not implemented");
+        logDebugIf(debugCanvas, "pdf: clear() operation not implemented");
     }
 
     void clear(Math::Recti, Gfx::Color) override {
-        logDebugIf(DEBUG_CANVAS, "pdf: clear() operation not implemented");
+        logDebugIf(debugCanvas, "pdf: clear() operation not implemented");
     }
 
     // MARK: Plot Operations ---------------------------------------------------
 
     void plot(Math::Vec2i, Gfx::Color) override {
-        logDebugIf(DEBUG_CANVAS, "pdf: plot() operation not implemented");
+        logDebugIf(debugCanvas, "pdf: plot() operation not implemented");
     }
 
     void plot(Math::Edgei, Gfx::Color) override {
-        logDebugIf(DEBUG_CANVAS, "pdf: plot() operation not implemented");
+        logDebugIf(debugCanvas, "pdf: plot() operation not implemented");
     }
 
     void plot(Math::Recti, Gfx::Color) override {
-        logDebugIf(DEBUG_CANVAS, "pdf: plot() operation not implemented");
+        logDebugIf(debugCanvas, "pdf: plot() operation not implemented");
     }
 
     // MARK: Blit Operations ---------------------------------------------------
 
     void blit(Math::Recti, Math::Recti, Gfx::Pixels) override {
-        logDebugIf(DEBUG_CANVAS, "pdf: blit() operation not implemented");
+        logDebugIf(debugCanvas, "pdf: blit() operation not implemented");
     }
 
     // MARK: Filter Operations -------------------------------------------------

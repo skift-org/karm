@@ -6,9 +6,9 @@ module;
 export module Karm.Cli;
 
 import Karm.Core;
+import Karm.Debug;
 
 namespace Karm::Cli {
-
 // MARK: Tokenizer -------------------------------------------------------------
 
 export struct Token {
@@ -263,9 +263,6 @@ export Option<Vec<Str>> extra(String description) {
 export struct Command : Meta::Pinned {
     using Callback = Func<Async::Task<>(Sys::Context&)>;
 
-    struct Props {
-    };
-
     String longName;
     String description = ""s;
     Vec<Rc<_OptionImpl>> options;
@@ -277,6 +274,7 @@ export struct Command : Meta::Pinned {
     Option<bool> _help = flag('h', "help"s, "Show this help message and exit."s);
     Option<bool> _usage = flag('u', "usage"s, "Show usage message and exit."s);
     Option<bool> _version = flag('v', "version"s, "Show version information and exit."s);
+    Option<Vec<Str>> _debug = option<Vec<Str>>(NONE, "debug"s, "Enable or list debug flags"s);
 
     bool _invoked = false;
 
@@ -293,6 +291,7 @@ export struct Command : Meta::Pinned {
         options.pushBack(_help);
         options.pushBack(_usage);
         options.pushBack(_version);
+        options.pushBack(_debug);
     }
 
     Command& subCommand(
@@ -496,6 +495,18 @@ export struct Command : Meta::Pinned {
         if (_version) {
             co_try$(format(Sys::out(), "{} {}\n", longName, stringify$(__ck_version_value) ""s));
             co_return Ok();
+        }
+
+        if (_debug.unwrap().len()) {
+            auto const& list = _debug.unwrap();
+            if (list.len() == 1 and list[0] == "list") {
+                co_try$(format(Sys::out(), "{}\n", Debug::flags()));
+                co_return Ok();
+            }
+
+            for (auto const& l : list) {
+                co_try$(Debug::enable(l));
+            }
         }
 
         _invoked = true;

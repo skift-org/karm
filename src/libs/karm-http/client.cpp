@@ -7,11 +7,12 @@ module;
 export module Karm.Http:client;
 
 import Karm.Core;
+import Karm.Debug;
 import :transport;
 
 namespace Karm::Http {
 
-static constexpr bool DEBUG_CLIENT = false;
+static Debug::Flag debugClient = "http-client"s;
 
 export struct Client : Transport {
     String userAgent = "Karm-Http/" stringify$(__ck_version_value) ""s;
@@ -24,12 +25,12 @@ export struct Client : Transport {
         request->header.add("User-Agent", userAgent);
         auto maybeResp = co_await _transport->doAsync(request);
         if (not maybeResp) {
-            logDebugIf(DEBUG_CLIENT, "\"{} {}\" {}", request->method, request->url, maybeResp.none());
+            logDebugIf(debugClient, "\"{} {}\" {}", request->method, request->url, maybeResp.none());
             co_return maybeResp.none();
         }
 
         auto resp = maybeResp.unwrap();
-        logDebugIf(DEBUG_CLIENT, "\"{} {}\" {} {}", request->method, request->url, toUnderlyingType(resp->code), resp->code);
+        logDebugIf(debugClient, "\"{} {}\" {} {}", request->method, request->url, toUnderlyingType(resp->code), resp->code);
         co_return Ok(resp);
     }
 
