@@ -138,7 +138,7 @@ struct Iter {
 
     constexpr auto skip(usize n) {
         for (usize i = 0; i < n; i++) {
-            next();
+            (void)next();
         }
         return *this;
     }

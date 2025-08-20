@@ -290,7 +290,7 @@ struct MessagePacker<Res<T, E>> {
     }
 };
 
-template <Meta::Agregate T>
+template <Meta::Aggregate T>
     requires(not Meta::TrivialyCopyable<T>)
 struct MessagePacker<T> {
     static Res<> pack(MessageWriter& e, T const& val) {

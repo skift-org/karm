@@ -423,7 +423,7 @@ struct _VisitExcept {
 };
 
 export template <class T, std::size_t Bases = 0u, class... Ts>
-    requires Meta::Agregate<T>
+    requires Meta::Aggregate<T>
 [[nodiscard]] constexpr auto size() -> std::size_t {
     if constexpr (requires { T{Ts{}...}; } and not requires { T{Ts{}..., _VisitAny{}}; }) {
         return sizeof...(Ts) - Bases;
@@ -435,7 +435,7 @@ export template <class T, std::size_t Bases = 0u, class... Ts>
 }
 
 export template <class Fn, class T>
-    requires Meta::Agregate<Meta::RemoveConstVolatileRef<T>>
+    requires Meta::Aggregate<Meta::RemoveConstVolatileRef<T>>
 [[nodiscard]] constexpr decltype(auto) visit(Fn&& fn, T&& t, auto...) {
     return _visit(__visitForward$(fn), __visitForward$(t), std::integral_constant<std::size_t, size<Meta::RemoveConstVolatileRef<T>>()>{});
 }
