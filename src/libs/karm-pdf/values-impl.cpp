@@ -95,7 +95,7 @@ Res<> File::write(Io::Writer& w) const {
     e("trailer\n");
     trailer.write(e);
 
-    e("startxref\n");
+    e("\nstartxref\n");
     e("{}\n", startxref);
     e("%%EOF");
 
