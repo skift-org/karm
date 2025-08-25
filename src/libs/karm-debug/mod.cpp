@@ -15,7 +15,7 @@ export struct Flag : Meta::Pinned {
 
     Flag(Str name) : name(name) {
         if (_first)
-            next = _first->next;
+            next = _first;
         _first = this;
     }
 
