@@ -8,6 +8,7 @@ namespace Karm::Sys {
 enum struct Type {
     FILE,
     DIR,
+    OTHER,
 };
 
 struct Stat {
