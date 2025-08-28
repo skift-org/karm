@@ -1,6 +1,4 @@
-#include <karm-text/font.h>
-#include <karm-text/prose.h>
-
+#include "prose.h"
 #include "canvas.h"
 
 namespace Karm::Gfx {
@@ -106,7 +104,7 @@ void Canvas::fill(Math::Path const& p, FillRule rule) {
     fill(rule);
 }
 
-void Canvas::fill(Text::Font& font, Text::Glyph glyph, Math::Vec2f baseline) {
+void Canvas::fill(Font& font, Glyph glyph, Math::Vec2f baseline) {
     push();
     beginPath();
     origin(baseline);
@@ -116,7 +114,7 @@ void Canvas::fill(Text::Font& font, Text::Glyph glyph, Math::Vec2f baseline) {
     pop();
 }
 
-void Canvas::fill(Text::Prose& prose) {
+void Canvas::fill(Prose& prose) {
     push();
 
     if (prose._style.color)

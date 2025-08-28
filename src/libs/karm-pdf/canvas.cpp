@@ -1,9 +1,9 @@
 module;
 
+#include <karm-gfx/prose.h>
+#include <karm-gfx/font.h>
 #include <karm-gfx/canvas.h>
 #include <karm-logger/logger.h>
-#include <karm-text/font.h>
-#include <karm-text/prose.h>
 
 export module Karm.Pdf:canvas;
 
@@ -16,9 +16,9 @@ static Debug::Flag debugCanvas = "pdf-canvas"s;
 
 export struct FontManager {
     // FIXME: using the address of the fontface since there is not comparison for the fontface obj
-    Map<_Cell<NoLock>*, Tuple<usize, Rc<Text::Fontface>>> mapping;
+    Map<_Cell<NoLock>*, Tuple<usize, Rc<Gfx::Fontface>>> mapping;
 
-    usize getFontId(Rc<Text::Fontface> font) {
+    usize getFontId(Rc<Gfx::Fontface> font) {
         auto* addr = font._cell;
         if (auto id = mapping.tryGet(addr))
             return id.unwrap().v0;
@@ -240,7 +240,7 @@ export struct Canvas : Gfx::Canvas {
             _e.ln("f*");
     }
 
-    void fill(Text::Prose& prose) override {
+    void fill(Gfx::Prose& prose) override {
         push();
         _e.ln("BT");
         _e.ln(

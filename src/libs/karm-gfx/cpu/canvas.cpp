@@ -298,7 +298,7 @@ void CpuCanvas::fill(Math::Path const& path, FillRule rule) {
     _fill(current().fill, rule);
 }
 
-void CpuCanvas::fill(Text::Font& font, Text::Glyph glyph, Math::Vec2f baseline) {
+void CpuCanvas::fill(Font& font, Glyph glyph, Math::Vec2f baseline) {
     _useSpaa = true;
     Canvas::fill(font, glyph, baseline);
     _useSpaa = false;

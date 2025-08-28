@@ -4,14 +4,16 @@
 import Karm.Core;
 
 #include <karm-math/path.h>
-#include <karm-text/base.h>
 
 #include "fill.h"
 #include "filters.h"
 #include "stroke.h"
 #include "types.h"
+#include "font.h"
 
 namespace Karm::Gfx {
+
+struct Prose;
 
 struct Canvas : Meta::NoCopy {
     // NOTE: Canvas is marked as NoCopy because it doesn't make sense to copy
@@ -168,10 +170,10 @@ struct Canvas : Meta::NoCopy {
     virtual void fill(Math::Path const& p, FillRule rule = FillRule::NONZERO);
 
     // Fill a single glyph of text
-    virtual void fill(Text::Font& font, Text::Glyph glyph, Math::Vec2f baseline);
+    virtual void fill(Font& font, Glyph glyph, Math::Vec2f baseline);
 
     // Fill a run of text
-    virtual void fill(Text::Prose& prose);
+    virtual void fill(Prose& prose);
 
     // MARK: Clear Operations --------------------------------------------------
 

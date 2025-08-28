@@ -1,8 +1,8 @@
 module;
 
-#include <karm-text/ttf.h>
+#include <karm-font/ttf/fontface.h>
 
-export module Karm.Print:pdf_fonts;
+export module Karm.Print:pdfFonts;
 
 import Karm.Pdf;
 
@@ -12,14 +12,14 @@ export struct TtfGlyphInfoAdapter {
 
     usize const CODESPACE = 1 << 16;
 
-    Rc<Text::TtfFontface> _font;
+    Rc<Font::Ttf::Fontface> _font;
 
     Map<u16, u16> codeMappings;
 
-    TtfGlyphInfoAdapter(Rc<Text::TtfFontface> font, Map<u16, u16> mappings)
+    TtfGlyphInfoAdapter(Rc<Font::Ttf::Fontface> font, Map<u16, u16> mappings)
         : _font{font}, codeMappings{mappings} {}
 
-    static TtfGlyphInfoAdapter build(Rc<Text::TtfFontface> font) {
+    static TtfGlyphInfoAdapter build(Rc<Font::Ttf::Fontface> font) {
         Map<u16, u16> codeMappings = font->_parser._cmapTable.extractMapping();
         return TtfGlyphInfoAdapter{font, codeMappings};
     }
@@ -32,7 +32,7 @@ export struct TtfGlyphInfoAdapter {
         f64 yMax = 0;
 
         for (auto [_, GID] : codeMappings.iter()) {
-            Text::Glyph glyph{.index = GID, .font = 0};
+            Gfx::Glyph glyph{.index = GID, .font = 0};
             auto metrics = _font->_parser.glyphMetrics(glyph);
 
             xMin = min(xMin, metrics.x - metrics.width);
@@ -71,7 +71,7 @@ export struct TtfGlyphInfoAdapter {
             if (currGroupW.len() == 0)
                 currGroupStart = cid;
 
-            Text::Glyph glyph{.index = gid, .font = 0};
+            Gfx::Glyph glyph{.index = gid, .font = 0};
             // We are using the Em unit to relate font design units and width pdf units
             // The unit in widths array is (Em/1000) (9.2.4 Glyph positioning and metrics)
             auto gliyphAdvInEm = _font->advance(glyph);
@@ -115,8 +115,7 @@ export struct TtfGlyphInfoAdapter {
 };
 
 export struct TrueTypeFontAdapter {
-
-    Rc<Text::TtfFontface> _font;
+    Rc<Font::Ttf::Fontface> _font;
 
     String registry = "Adobe"s;
     String ordering = "Identity"s;
@@ -132,7 +131,7 @@ export struct TrueTypeFontAdapter {
 
     Pdf::Name CIDFontName;
 
-    TrueTypeFontAdapter(Rc<Text::TtfFontface> font, Pdf::Ref& alloc)
+    TrueTypeFontAdapter(Rc<Font::Ttf::Fontface> font, Pdf::Ref& alloc)
         : _font(font),
           CIDFontRef(alloc.alloc()),
           CIDSystemInfoRef(alloc.alloc()),
@@ -144,7 +143,7 @@ export struct TrueTypeFontAdapter {
               TtfGlyphInfoAdapter::build(font)
           },
           CIDFontName{
-              font->_parser._name.string(font->_parser._name.lookupRecord(Text::Ttf::Name::POSTSCRIPT)).str()
+              font->_parser._name.string(font->_parser._name.lookupRecord(Font::Ttf::Name::POSTSCRIPT)).str()
           } {
     }
 
@@ -155,10 +154,10 @@ export struct TrueTypeFontAdapter {
         usize flag = 0;
 
         auto attrs = _font->attrs();
-        if (attrs.monospace == Text::Monospace::YES)
+        if (attrs.monospace == Gfx::Monospace::YES)
             flag ^= 1;
 
-        if (attrs.style == Text::FontStyle::ITALIC)
+        if (attrs.style == Gfx::FontStyle::ITALIC)
             flag ^= (1 << 6);
 
         return flag;

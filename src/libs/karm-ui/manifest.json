@@ -7,7 +7,7 @@
         "karm-cli",
         "karm-ui-impl",
         "karm-image",
-        "karm-text",
+        "karm-font",
         "karm-gfx",
         "karm-app",
         "karm-scene"

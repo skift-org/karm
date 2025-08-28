@@ -1,12 +1,12 @@
 module;
 
-#include <karm-text/ttf.h>
+#include <karm-font/ttf/fontface.h>
 
 export module Karm.Print:pdf_printer;
 
 import Karm.Pdf;
 import :file_printer;
-import :pdf_fonts;
+import :pdfFonts;
 
 namespace Karm::Print {
 
@@ -48,12 +48,12 @@ export struct PdfPrinter : FilePrinter {
         for (auto& [_, value] : fontManager.mapping._els) {
             auto& [id, fontFace] = value;
 
-            if (not fontFace.is<Text::TtfFontface>()) {
+            if (not fontFace.is<Font::Ttf::Fontface>()) {
                 panic("no support for printing fonts other than TrueType");
             }
 
             TrueTypeFontAdapter ttfAdapter{
-                fontFace.cast<Text::TtfFontface>().unwrap(),
+                fontFace.cast<Font::Ttf::Fontface>().unwrap(),
                 alloc
             };
 

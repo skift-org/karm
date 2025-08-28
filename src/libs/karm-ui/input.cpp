@@ -1,10 +1,9 @@
 module;
 
+#include <karm-gfx/prose.h>
 #include <karm-gfx/canvas.h>
 #include <karm-gfx/icon.h>
 #include <karm-math/align.h>
-#include <karm-text/edit.h>
-#include <karm-text/prose.h>
 
 export module Karm.Ui:input;
 
@@ -14,6 +13,7 @@ import :funcs;
 import :layout;
 import :atoms;
 import :view;
+import :text;
 
 namespace Karm::Ui {
 
@@ -374,15 +374,15 @@ export Child button(Opt<Send<>> onPress, Gfx::Icon i, Str t) {
 // MARK: Input -----------------------------------------------------------------
 
 struct Input : View<Input> {
-    Karm::Text::ProseStyle _style;
+    Gfx::ProseStyle _style;
 
     FocusListener _focus;
-    Rc<Karm::Text::Model> _model;
-    Send<Karm::Text::Action> _onChange;
+    Rc<TextModel> _model;
+    Send<TextAction> _onChange;
 
-    Opt<Rc<Karm::Text::Prose>> _text;
+    Opt<Rc<Gfx::Prose>> _text;
 
-    Input(Karm::Text::ProseStyle style, Rc<Karm::Text::Model> model, Send<Karm::Text::Action> onChange)
+    Input(Gfx::ProseStyle style, Rc<TextModel> model, Send<TextAction> onChange)
         : _style(style), _model(model), _onChange(std::move(onChange)) {}
 
     void reconcile(Input& o) override {
@@ -395,9 +395,9 @@ struct Input : View<Input> {
         _text = NONE;
     }
 
-    Karm::Text::Prose& _ensureText() {
+    Gfx::Prose& _ensureText() {
         if (not _text) {
-            _text = makeRc<Karm::Text::Prose>(_style);
+            _text = makeRc<Gfx::Prose>(_style);
             (*_text)->append(_model->runes());
         }
         return **_text;
@@ -423,7 +423,7 @@ struct Input : View<Input> {
     }
 
     void event(App::Event& e) override {
-        auto a = Karm::Text::Action::fromEvent(e);
+        auto a = TextAction::fromEvent(e);
         if (a) {
             e.accept();
             _onChange(*this, *a);
@@ -441,24 +441,24 @@ struct Input : View<Input> {
     }
 };
 
-export Child input(Karm::Text::ProseStyle style, Rc<Karm::Text::Model> text, Send<Karm::Text::Action> onChange) {
+export Child input(Gfx::ProseStyle style, Rc<TextModel> text, Send<TextAction> onChange) {
     return makeRc<Input>(style, text, std::move(onChange));
 }
 
-export Child input(Rc<Karm::Text::Model> text, Send<Karm::Text::Action> onChange) {
+export Child input(Rc<TextModel> text, Send<TextAction> onChange) {
     return makeRc<Input>(TextStyles::bodyMedium(), text, std::move(onChange));
 }
 
 struct SimpleInput : View<SimpleInput> {
-    Karm::Text::ProseStyle _style;
+    Gfx::ProseStyle _style;
     String _text;
     Send<String> _onChange;
 
     FocusListener _focus;
-    Opt<Karm::Text::Model> _model;
-    Opt<Rc<Karm::Text::Prose>> _prose;
+    Opt<TextModel> _model;
+    Opt<Rc<Gfx::Prose>> _prose;
 
-    SimpleInput(Karm::Text::ProseStyle style, String text, Send<String> onChange)
+    SimpleInput(Gfx::ProseStyle style, String text, Send<String> onChange)
         : _style(style),
           _text(text),
           _onChange(std::move(onChange)) {}
@@ -477,15 +477,15 @@ struct SimpleInput : View<SimpleInput> {
         _prose = NONE;
     }
 
-    Karm::Text::Model& _ensureModel() {
+    TextModel& _ensureModel() {
         if (not _model)
-            _model = Karm::Text::Model(_text);
+            _model = TextModel(_text);
         return *_model;
     }
 
-    Karm::Text::Prose& _ensureText() {
+    Gfx::Prose& _ensureText() {
         if (not _prose) {
-            _prose = makeRc<Karm::Text::Prose>(_style);
+            _prose = makeRc<Gfx::Prose>(_style);
             (*_prose)->append(_ensureModel().runes());
         }
         return **_prose;
@@ -512,7 +512,7 @@ struct SimpleInput : View<SimpleInput> {
 
     void event(App::Event& e) override {
         _focus.event(*this, e);
-        auto a = Karm::Text::Action::fromEvent(e);
+        auto a = TextAction::fromEvent(e);
         if (a) {
             e.accept();
             _ensureModel().reduce(*a);
@@ -533,7 +533,7 @@ struct SimpleInput : View<SimpleInput> {
     }
 };
 
-export Child input(Karm::Text::ProseStyle style, String text, Send<String> onChange) {
+export Child input(Gfx::ProseStyle style, String text, Send<String> onChange) {
     return makeRc<SimpleInput>(style, text, std::move(onChange));
 }
 

@@ -128,7 +128,7 @@ struct CpuCanvas : Canvas {
 
     void fill(Math::Path const& path, FillRule rule = FillRule::NONZERO) override;
 
-    void fill(Text::Font& font, Text::Glyph glyph, Math::Vec2f baseline) override;
+    void fill(Font& font, Glyph glyph, Math::Vec2f baseline) override;
 
     // MARK: Clear Operations --------------------------------------------------
 

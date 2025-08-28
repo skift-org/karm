@@ -1,7 +1,8 @@
+#include <karm-gfx/prose.h>
+#include <karm-gfx/canvas.h>
+#include <karm-font/loader.h>
 #include <karm-sys/entry.h>
 #include <karm-sys/file.h>
-#include <karm-text/loader.h>
-#include <karm-text/prose.h>
 
 import Karm.Core;
 import Karm.Print;
@@ -24,8 +25,8 @@ Async::Task<> entryPointAsync(Sys::Context&) {
     ctx.rect({0, 200, 100, 100});
     ctx.fill(Gfx::FillRule::NONZERO);
 
-    Text::Prose prose = Text::ProseStyle{
-        .font = {co_try$(Text::loadFontfaceOrFallback("bundle://fonts-inter/fonts/Inter-Regular.ttf"_url)), 12},
+    Gfx::Prose prose = Gfx::ProseStyle{
+        .font = {co_try$(Font::loadFontfaceOrFallback("bundle://fonts-inter/fonts/Inter-Regular.ttf"_url)), 12},
         .color = Gfx::BLACK,
     };
 

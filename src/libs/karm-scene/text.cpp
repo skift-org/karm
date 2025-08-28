@@ -1,6 +1,6 @@
 module;
 
-#include <karm-text/prose.h>
+#include <karm-gfx/prose.h>
 
 export module Karm.Scene:text;
 
@@ -10,9 +10,9 @@ namespace Karm::Scene {
 
 export struct Text : Node {
     Math::Vec2f _origin;
-    Rc<Karm::Text::Prose> _prose;
+    Rc<Gfx::Prose> _prose;
 
-    Text(Math::Vec2f origin, Rc<Karm::Text::Prose> prose)
+    Text(Math::Vec2f origin, Rc<Gfx::Prose> prose)
         : _origin(origin), _prose(prose) {}
 
     Math::Rectf bound() override {

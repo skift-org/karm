@@ -1,8 +1,8 @@
 module;
 
+#include <karm-gfx/prose.h>
+#include <karm-font/loader.h>
 #include <karm-gfx/icon.h>
-#include <karm-text/loader.h>
-#include <karm-text/prose.h>
 
 export module Karm.Ui:view;
 
@@ -30,47 +30,47 @@ struct View : LeafNode<Crtp> {
 
 // MARK: Text ------------------------------------------------------------------
 
-static Opt<Rc<Text::Fontface>> _regularFontface = NONE;
+static Opt<Rc<Gfx::Fontface>> _regularFontface = NONE;
 
-Rc<Text::Fontface> regularFontface() {
+Rc<Gfx::Fontface> regularFontface() {
     if (not _regularFontface) {
-        _regularFontface = Text::loadFontfaceOrFallback("bundle://fonts-inter/fonts/Inter-Regular.ttf"_url).unwrap();
+        _regularFontface = Font::loadFontfaceOrFallback("bundle://fonts-inter/fonts/Inter-Regular.ttf"_url).unwrap();
     }
     return *_regularFontface;
 }
 
-static Opt<Rc<Text::Fontface>> _mediumFontface = NONE;
+static Opt<Rc<Gfx::Fontface>> _mediumFontface = NONE;
 
-Rc<Text::Fontface> mediumFontface() {
+Rc<Gfx::Fontface> mediumFontface() {
     if (not _mediumFontface) {
-        _mediumFontface = Text::loadFontfaceOrFallback("bundle://fonts-inter/fonts/Inter-Medium.ttf"_url).unwrap();
+        _mediumFontface = Font::loadFontfaceOrFallback("bundle://fonts-inter/fonts/Inter-Medium.ttf"_url).unwrap();
     }
     return *_mediumFontface;
 }
 
-static Opt<Rc<Text::Fontface>> _boldFontface = NONE;
+static Opt<Rc<Gfx::Fontface>> _boldFontface = NONE;
 
-Rc<Text::Fontface> boldFontface() {
+Rc<Gfx::Fontface> boldFontface() {
     if (not _boldFontface) {
-        _boldFontface = Text::loadFontfaceOrFallback("bundle://fonts-inter/fonts/Inter-Bold.ttf"_url).unwrap();
+        _boldFontface = Font::loadFontfaceOrFallback("bundle://fonts-inter/fonts/Inter-Bold.ttf"_url).unwrap();
     }
     return *_boldFontface;
 }
 
-static Opt<Rc<Text::Fontface>> _italicFontface = NONE;
+static Opt<Rc<Gfx::Fontface>> _italicFontface = NONE;
 
-Rc<Text::Fontface> italicFontface() {
+Rc<Gfx::Fontface> italicFontface() {
     if (not _italicFontface) {
-        _italicFontface = Text::loadFontfaceOrFallback("bundle://fonts-inter/fonts/Inter-Italic.ttf"_url).unwrap();
+        _italicFontface = Font::loadFontfaceOrFallback("bundle://fonts-inter/fonts/Inter-Italic.ttf"_url).unwrap();
     }
     return *_italicFontface;
 }
 
-static Opt<Rc<Text::Fontface>> _codeFontface = NONE;
+static Opt<Rc<Gfx::Fontface>> _codeFontface = NONE;
 
-Rc<Text::Fontface> codeFontface() {
+Rc<Gfx::Fontface> codeFontface() {
     if (not _codeFontface) {
-        _codeFontface = Text::loadFontfaceOrFallback("bundle://fonts-fira-code/fonts/FiraCode-Regular.ttf"_url).unwrap();
+        _codeFontface = Font::loadFontfaceOrFallback("bundle://fonts-fira-code/fonts/FiraCode-Regular.ttf"_url).unwrap();
     }
     return *_codeFontface;
 }
@@ -80,117 +80,117 @@ private:
     TextStyles() = default;
 
 public:
-    static Text::ProseStyle displayLarge() {
+    static Gfx::ProseStyle displayLarge() {
         return {
-            .font = Text::Font{
+            .font = Gfx::Font{
                 regularFontface(),
                 57,
             },
         };
     }
 
-    static Text::ProseStyle displayMedium() {
+    static Gfx::ProseStyle displayMedium() {
         return {
-            .font = Text::Font{
+            .font = Gfx::Font{
                 regularFontface(),
                 45,
             },
         };
     }
 
-    static Text::ProseStyle displaySmall() {
+    static Gfx::ProseStyle displaySmall() {
         return {
-            .font = Text::Font{
+            .font = Gfx::Font{
                 regularFontface(),
                 36,
             },
         };
     }
 
-    static Text::ProseStyle headlineLarge() {
+    static Gfx::ProseStyle headlineLarge() {
         return {
-            .font = Text::Font{
+            .font = Gfx::Font{
                 regularFontface(),
                 32,
             },
         };
     }
 
-    static Text::ProseStyle headlineMedium() {
+    static Gfx::ProseStyle headlineMedium() {
         return {
-            .font = Text::Font{
+            .font = Gfx::Font{
                 regularFontface(),
                 28,
             },
         };
     }
 
-    static Text::ProseStyle headlineSmall() {
+    static Gfx::ProseStyle headlineSmall() {
         return {
-            .font = Text::Font{
+            .font = Gfx::Font{
                 regularFontface(),
                 24,
             },
         };
     }
 
-    static Text::ProseStyle titleLarge() {
+    static Gfx::ProseStyle titleLarge() {
         return {
-            .font = Text::Font{
+            .font = Gfx::Font{
                 regularFontface(),
                 22,
             },
         };
     }
 
-    static Text::ProseStyle titleMedium() {
+    static Gfx::ProseStyle titleMedium() {
         return {
-            .font = Text::Font{
+            .font = Gfx::Font{
                 mediumFontface(),
                 16,
             },
         };
     }
 
-    static Text::ProseStyle titleSmall() {
+    static Gfx::ProseStyle titleSmall() {
         return {
-            .font = Text::Font{
+            .font = Gfx::Font{
                 mediumFontface(),
                 14,
             },
         };
     }
 
-    static Text::ProseStyle labelLarge() {
+    static Gfx::ProseStyle labelLarge() {
         return {
-            .font = Text::Font{
+            .font = Gfx::Font{
                 mediumFontface(),
                 14,
             },
         };
     }
 
-    static Text::ProseStyle labelMedium() {
+    static Gfx::ProseStyle labelMedium() {
         return {
-            .font = Text::Font{
+            .font = Gfx::Font{
                 mediumFontface(),
                 12,
             },
         };
     }
 
-    static Text::ProseStyle labelSmall() {
+    static Gfx::ProseStyle labelSmall() {
         return {
-            .font = Text::Font{
+            .font = Gfx::Font{
                 mediumFontface(),
                 11,
             },
         };
     }
 
-    static Text::ProseStyle bodyLarge() {
+    static Gfx::ProseStyle bodyLarge() {
         return {
-            .font = Text::Font{
+            .font = Gfx::Font{
                 regularFontface(),
                 16,
             },
@@ -198,9 +198,9 @@ public:
         };
     }
 
-    static Text::ProseStyle bodyMedium() {
+    static Gfx::ProseStyle bodyMedium() {
         return {
-            .font = Text::Font{
+            .font = Gfx::Font{
                 regularFontface(),
                 14,
             },
@@ -208,9 +208,9 @@ public:
         };
     }
 
-    static Text::ProseStyle bodySmall() {
+    static Gfx::ProseStyle bodySmall() {
         return {
-            .font = Text::Font{
+            .font = Gfx::Font{
                 regularFontface(),
                 12,
             },
@@ -218,9 +218,9 @@ public:
         };
     }
 
-    static Text::ProseStyle codeLarge() {
+    static Gfx::ProseStyle codeLarge() {
         return {
-            .font = Text::Font{
+            .font = Gfx::Font{
                 codeFontface(),
                 16,
             },
@@ -228,9 +228,9 @@ public:
         };
     }
 
-    static Text::ProseStyle codeMedium() {
+    static Gfx::ProseStyle codeMedium() {
         return {
-            .font = Text::Font{
+            .font = Gfx::Font{
                 codeFontface(),
                 14,
             },
@@ -238,9 +238,9 @@ public:
         };
     }
 
-    static Text::ProseStyle codeSmall() {
+    static Gfx::ProseStyle codeSmall() {
         return {
-            .font = Text::Font{
+            .font = Gfx::Font{
                 codeFontface(),
                 12,
             },
@@ -250,13 +250,13 @@ public:
 };
 
 struct Text : View<Text> {
-    Rc<Karm::Text::Prose> _prose;
+    Rc<Karm::Gfx::Prose> _prose;
 
-    Text(Rc<Karm::Text::Prose> prose)
+    Text(Rc<Karm::Gfx::Prose> prose)
         : _prose(std::move(prose)) {}
 
-    Text(Karm::Text::ProseStyle style, Str text)
-        : _prose(makeRc<Karm::Text::Prose>(style, text)) {}
+    Text(Karm::Gfx::ProseStyle style, Str text)
+        : _prose(makeRc<Karm::Gfx::Prose>(style, text)) {}
 
     void reconcile(Text& o) override {
         _prose = std::move(o._prose);
@@ -280,7 +280,7 @@ struct Text : View<Text> {
     }
 };
 
-export Child text(Karm::Text::ProseStyle style, Str text) {
+export Child text(Karm::Gfx::ProseStyle style, Str text) {
     return makeRc<Text>(style, text);
 }
 
@@ -288,12 +288,12 @@ export Child text(Str text) {
     return makeRc<Text>(TextStyles::labelMedium(), text);
 }
 
-export Child text(Rc<Karm::Text::Prose> prose) {
+export Child text(Rc<Karm::Gfx::Prose> prose) {
     return makeRc<Text>(prose);
 }
 
 export template <typename... Args>
-Child text(Karm::Text::ProseStyle style, Str format, Args&&... args) {
+Child text(Karm::Gfx::ProseStyle style, Str format, Args&&... args) {
     return text(style, Io::format(format, std::forward<Args>(args)...));
 }
 
