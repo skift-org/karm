@@ -17,6 +17,11 @@ struct Glyph {
     bool operator==(Glyph const& other) const = default;
 
     auto operator<=>(Glyph const& other) const = default;
+
+    constexpr u64 hash() const {
+        // FIXME: use Karm::hash
+        return (u64(font) << 32) | u64(index);
+    }
 };
 
 constexpr Glyph Glyph::TOFU{0, 0};

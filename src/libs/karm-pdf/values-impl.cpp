@@ -79,7 +79,7 @@ Res<> File::write(Io::Writer& w) const {
 
     XRef xref;
 
-    for (auto const& [k, v] : body.iter()) {
+    for (auto const& [k, v] : body) {
         try$(e.flush());
         xref.add(try$(Io::tell(count)), k.gen);
         e("{} {} obj\n", k.num, k.gen);

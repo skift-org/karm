@@ -105,6 +105,11 @@ export struct Blob {
     auto operator<=>(Blob const& other) const {
         return bytes() <=> other.bytes();
     }
+
+    u64 hash() const {
+        // FIXME
+        return 0;
+    }
 };
 
 Blob MutBlob::slice(urange slice) const {

@@ -127,6 +127,11 @@ struct Tuple<_T0, _T1> {
         return U{v0, v1};
     }
 
+    constexpr u64 hash() const {
+        auto ret = Karm::hash(v0);
+        return Karm::hash(ret, v1);
+    }
+
     bool operator==(Tuple const&) const = default;
     auto operator<=>(Tuple const&) const = default;
 };
@@ -578,13 +583,13 @@ struct Tuple<_T0, _T1, _T2, _T3, _T4, _T5, _T6, _T7> {
 export template <typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7>
 Tuple(T0, T1, T2, T3, T4, T5, T6, T7) -> Tuple<T0, T1, T2, T3, T4, T5, T6, T7>;
 
-export template <typename... Ts>
-constexpr u64 hash(Tuple<Ts...> const& v) {
-    auto res = hash(sizeof...(Ts));
-    v.apply([&](auto const& v) {
-        res = hash(res, v);
-    });
-    return res;
-}
+// export template <typename... Ts>
+// constexpr u64 hash(Tuple<Ts...> const& v) {
+//     auto res = hash(sizeof...(Ts));
+//     v.apply([&](auto const& v) {
+//         res = hash(res, v);
+//     });
+//     return res;
+// }
 
 } // namespace Karm

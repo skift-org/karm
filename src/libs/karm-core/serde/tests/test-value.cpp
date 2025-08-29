@@ -42,11 +42,11 @@ test$("json-value-array") {
 }
 
 test$("json-value-object") {
-    Value value = Object{
+    Value value = Object::fromList({
         {"a"s, Integer{1}},
         {"b"s, Integer{2}},
         {"c"s, Integer{3}},
-    };
+    });
 
     expect$(not value.isNull());
     expect$(value.isObject());

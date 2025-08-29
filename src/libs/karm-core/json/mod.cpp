@@ -279,9 +279,9 @@ export Res<> unparse(Io::Emit& emit, Serde::Value const& v) {
                     first = false;
 
                     emit('"');
-                    emit(kv.v0);
+                    emit(kv.key);
                     emit("\":");
-                    try$(unparse(emit, kv.v1));
+                    try$(unparse(emit, kv.value));
                 }
                 emit('}');
                 return Ok();

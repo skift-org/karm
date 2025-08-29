@@ -43,7 +43,12 @@ struct Lru {
         while (_ll.len() > _cap) {
             auto* item = _ll.tail();
             _ll.detach(item);
-            _map.removeFirst(item);
+            for (auto const& [key, val] : _map.iter()) {
+                if (val == item) {
+                    _map.del(key);
+                    break;
+                }
+            }
             delete item;
         }
     }

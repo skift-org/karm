@@ -36,7 +36,7 @@ struct FontBook {
     Vec<FontInfo> _faces;
 
     // FIXME: these value depend on the correct loading of the bundle
-    Map<Symbol, Symbol> _genericFamily = {
+    Map<Symbol, Symbol> _genericFamily = Map<Symbol, Symbol>::fromList({
         {"serif"_sym, "Noto Serif"_sym},
         {"sans-serif"_sym, "Noto Sans"_sym},
         {"monospace"_sym, "Fira Code"_sym},
@@ -46,7 +46,7 @@ struct FontBook {
         {"emoji"_sym, "Noto Emoji"_sym},
         {"math"_sym, "Noto Sans Math"_sym},
         {"fangsong"_sym, "Noto"_sym},
-    };
+    });
 
     void add(FontInfo info) {
         _faces.pushBack(info);

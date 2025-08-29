@@ -14,6 +14,10 @@ export struct Ref {
         return {++num, gen};
     }
 
+    u64 hash() const {
+        return (u64(num) << 32) | u64(gen);
+    }
+
     bool operator==(Ref const& other) const = default;
     auto operator<=>(Ref const& other) const = default;
 };
@@ -32,6 +36,8 @@ export struct Array : Vec<Value> {
 
 export struct Dict : Map<Name, Value> {
     using Map<Name, Value>::Map;
+
+    Dict(std::initializer_list<Pair<Name, Value>>&& list) : Map<Name, Value>(fromList(std::move(list))) {}
 
     void write(Io::Emit& e) const;
 };
@@ -64,11 +70,16 @@ export struct Value : _Value {
 
 export struct File {
     String header;
-    Map<Ref, Value> body;
+    Vec<Pair<Ref, Value>> body;
+    Set<Ref> usedRefs;
     Dict trailer;
 
     Ref add(Ref ref, Value Value) {
-        body.put(ref, Value);
+        if(usedRefs.has(ref)) {
+            panic("PDF Ref reused");
+        }
+        usedRefs.put(ref);
+        body.pushBack({ref, Value});
         return ref;
     }
 

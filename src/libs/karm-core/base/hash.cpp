@@ -30,6 +30,10 @@ export constexpr u64 hash(Meta::Float auto const& v) {
     return fnv64(reinterpret_cast<u8 const*>(&v), sizeof(v));
 }
 
+export template <typename T> u64 hash(T* ptr) {
+    return hash((usize)ptr);
+}
+
 export template <typename T>
 constexpr u64 hash(T const& t)
     requires requires(T const t) {

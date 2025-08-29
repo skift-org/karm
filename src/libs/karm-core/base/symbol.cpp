@@ -96,6 +96,10 @@ export struct Symbol {
     explicit operator bool() const {
         return str().len() > 0;
     }
+
+    u64 hash() const {
+        return Karm::hash(_buf);
+    }
 };
 
 inline Symbol Symbol::EMPTY = Symbol::from("");
