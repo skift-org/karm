@@ -1,8 +1,7 @@
 module;
 
 #include <karm-core/macros.h>
-
-#include "karm-logger/logger.h"
+#include <karm-logger/logger.h>
 
 export module Karm.Archive:flate;
 
@@ -209,7 +208,6 @@ export Res<> inflate(Io::BitReader& r, Io::Writer& out) {
     auto [fixLens, fixDists] = Huff::buildFixed();
 
     while (not bfinal) {
-        debug("yo");
         bfinal = try$(r.readBit());
         u8 btype = try$(r.readBits<u8>(2));
         if (btype == 0)

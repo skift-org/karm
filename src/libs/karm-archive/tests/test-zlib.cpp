@@ -19,4 +19,80 @@ test$("zlib-decompress") {
     return Ok();
 }
 
+test$("zlib-empty-uncompressed") {
+    Array input = {
+        (u8)0x78, 0x9C, 0x01, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00,
+        0x01
+    };
+    expectEq$(try$(zlibDecompress(input)).len(), 0uz);
+    return Ok();
+}
+
+test$("zlib-empty-fixed") {
+    Array input = {
+        (u8)0x78, 0x9C, 0x03, 0x00, 0x00, 0x00, 0x00, 0x01
+    };
+    expectEq$(try$(zlibDecompress(input)).len(), 0uz);
+    return Ok();
+}
+
+test$("zlib-empty-dynamic") {
+    Array input = {
+        (u8)0x78, 0x9C, 0x05, 0xC1, 0x81, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x10, 0xFF, 0xD5, 0x08, 0x00, 0x00, 0x00, 0x01
+    };
+    expectEq$(try$(zlibDecompress(input)).len(), 0uz);
+    return Ok();
+}
+
+test$("zlib-one-byte-raw") {
+    Array input = {
+        (u8)0x78, 0x9C, 0x01, 0x01, 0x00, 0xFE, 0xFF, 0x00, 0x00, 0x01,
+        0x00, 0x01
+    };
+    auto out = try$(zlibDecompress(input));
+    expectEq$(out.len(), 1uz);
+    expectEq$(out[0], 0);
+
+    return Ok();
+}
+
+test$("zlib-one-byte-fixed") {
+    Array input = {
+        (u8)0x78, 0x9C, 0x63, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01
+    };
+    auto out = try$(zlibDecompress(input));
+    expectEq$(out.len(), 1uz);
+    expectEq$(out[0], 0);
+
+    return Ok();
+}
+
+test$("zlib-one-byte-dynamic") {
+    Array input = {
+        (u8)0x78, 0x9C, 0x05, 0xC1, 0x81, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x10, 0xFF, 0xD5, 0x10, 0x00, 0x01, 0x00, 0x01
+    };
+    auto out = try$(zlibDecompress(input));
+    expectEq$(out.len(), 1uz);
+    expectEq$(out[0], 0);
+
+    return Ok();
+}
+
+test$("zlib-zeroes") {
+    Array input = {
+        (u8)0x78, 0x9C, 0x63, 0x60, 0x18, 0xD9, 0x00, 0x00, 0x01, 0x00,
+        0x00, 0x01
+    };
+
+    auto out = try$(zlibDecompress(input));
+    expectEq$(out.len(), 256uz);
+    for (usize i : range(256)) {
+        expectEq$(out[i], 0);
+    }
+
+    return Ok();
+}
+
 } // namespace Karm::Archive::Tests
