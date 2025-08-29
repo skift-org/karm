@@ -65,7 +65,7 @@ export struct Emit : TextWriter {
         return Ok();
     }
 
-    virtual Res<usize> write(Bytes bytes) override {
+    Res<usize> write(Bytes bytes) override {
         auto written = try$(_writer.write(bytes));
         return Ok(written);
     }

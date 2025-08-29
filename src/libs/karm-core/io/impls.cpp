@@ -222,13 +222,32 @@ export struct BitReader {
         return Ok(bit);
     }
 
-    template <typename T>
-    Res<T> readBits(usize len) {
+    template <Meta::Unsigned T>
+    Res<T> readBits(usize n) {
         T bits = 0;
-        for (usize i = 0; i < len; i++) {
+        for (usize i = 0; i < n; i++) {
             bits |= try$(readBit()) << i;
         }
         return Ok(bits);
+    }
+
+    void align() {
+        _bits = 0;
+        _len = 0;
+    }
+
+    Res<u8> readByte() {
+        align();
+        return readBits<u8>(8);
+    }
+
+    template <Meta::Unsigned T>
+    Res<T> readBytes(usize n) {
+        align();
+        T bytes = {};
+        for (usize i = 0; i < n; i++)
+            bytes |= try$(readByte()) << (8 * i);
+        return Ok(bytes);
     }
 };
 

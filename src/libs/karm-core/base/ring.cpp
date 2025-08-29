@@ -25,7 +25,7 @@ struct Ring {
         _cap = other._cap;
         _buf = new Manual<T>[_cap];
         for (usize i = 0; i < other._len; i++)
-            pushBack(other.peek(i));
+            pushBack(other.peekFront(i));
     }
 
     Ring(Ring&& other)
@@ -94,18 +94,32 @@ struct Ring {
         _len = 0;
     }
 
-    T& peek(usize index) {
+    T& peekFront(usize index) {
         if (index >= _len) [[unlikely]]
             panic("peek out of bounds");
 
         return _buf[(_tail + index) % _cap].unwrap();
     }
 
-    T const& peek(usize index) const {
+    T const& peekFront(usize index) const {
         if (index >= _len) [[unlikely]]
             panic("peek out of bounds");
 
         return _buf[(_tail + index) % _cap].unwrap();
+    }
+
+    T& peekBack(usize index) {
+        if (index >= _len) [[unlikely]]
+            panic("peek out of bounds");
+
+        return _buf[(_head - index) % _cap].unwrap();
+    }
+
+    T const& peekBack(usize index) const {
+        if (index >= _len) [[unlikely]]
+            panic("peek out of bounds");
+
+        return _buf[(_head - index) % _cap].unwrap();
     }
 
     void trunc(usize newLen) {
@@ -143,7 +157,7 @@ struct Ring {
             return false;
 
         for (usize i = 0; i < len(); ++i)
-            if (peek(i) != other[i])
+            if (peekFront(i) != other[i])
                 return false;
 
         return true;

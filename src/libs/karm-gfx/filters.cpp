@@ -19,7 +19,7 @@ struct StackBlur {
     Math::Vec4u outgoingSum() const {
         Math::Vec4u sum = {};
         for (isize i = 0; i < _radius; i++) {
-            sum = sum + _queue.peek(i);
+            sum = sum + _queue.peekFront(i);
         }
         return sum;
     }
@@ -27,7 +27,7 @@ struct StackBlur {
     Math::Vec4u incomingSum() const {
         Math::Vec4u sum = {};
         for (isize i = 0; i < _radius; i++) {
-            sum = sum + _queue.peek(width() - i - 1);
+            sum = sum + _queue.peekFront(width() - i - 1);
         }
         return sum;
     }
