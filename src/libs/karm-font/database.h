@@ -7,7 +7,7 @@ import Karm.Core;
 
 namespace Karm::Font {
 
-struct FontQuery {
+struct Query {
     Gfx::FontWeight weight = Gfx::FontWeight::REGULAR;
     Gfx::FontStretch stretch = Gfx::FontStretch::NORMAL;
     Gfx::FontStyle style = Gfx::FontStyle::NORMAL;
@@ -56,9 +56,9 @@ struct Database {
 
     Symbol _resolveFamily(Symbol family) const;
 
-    Opt<Rc<Gfx::Fontface>> queryExact(Symbol family, FontQuery query = {}) const;
+    Opt<Rc<Gfx::Fontface>> queryExact(Symbol family, Query query = {}) const;
 
-    Opt<Rc<Gfx::Fontface>> queryClosest(Symbol family, FontQuery query = {}) const;
+    Opt<Rc<Gfx::Fontface>> queryClosest(Symbol family, Query query = {}) const;
 
     Vec<Rc<Gfx::Fontface>> queryFamily(Symbol family) const;
 };

@@ -25,4 +25,4 @@ test$("karm-ui-model-moves") {
     return Ok();
 }
 
-} // namespace Karm::Text::Tests
+} // namespace Karm::Ui::Tests

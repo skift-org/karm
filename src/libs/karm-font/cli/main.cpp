@@ -1,14 +1,14 @@
-#include <../ttf/ttf.h>
 #include <karm-font/database.h>
 #include <karm-font/loader.h>
 #include <karm-sys/entry.h>
 #include <karm-sys/file.h>
 #include <karm-sys/mmap.h>
 #include <karm-sys/proc.h>
+#include "../ttf/fontface.h"
 
 using namespace Karm;
 
-static void _dumpGpos(Text::Ttf::Gpos const& gpos) {
+static void _dumpGpos(Font::Ttf::Gpos const& gpos) {
     Sys::println("GPOS table:");
     if (not gpos.present()) {
         Sys::println("  not present");
@@ -41,7 +41,7 @@ static void _dumpGpos(Text::Ttf::Gpos const& gpos) {
     Sys::println("  LookupList (len:{})", gpos.lookupList().len());
 }
 
-static void _dumpName(Text::Ttf::Name const& name) {
+static void _dumpName(Font::Ttf::Name const& name) {
     Sys::println("Name table:");
     if (not name.present()) {
         Sys::println("  not present");
@@ -60,18 +60,18 @@ Async::Task<> entryPointAsync(Sys::Context& ctx) {
     auto& args = useArgs(ctx);
 
     if (args.len() < 1)
-        co_return Error::invalidInput("Usage: karm-text.cli <verb> <args...>");
+        co_return Error::invalidInput("Usage: karm-font.cli <verb> <args...>");
 
     auto verb = args[0];
 
     if (verb == "dump-ttf") {
         if (args.len() != 2)
-            co_return Error::invalidInput("Usage: karm-text.cli dump-ttf <url>");
+            co_return Error::invalidInput("Usage: karm-font.cli dump-ttf <url>");
 
         auto url = Mime::parseUrlOrPath(args[1], co_try$(Sys::pwd()));
         auto file = co_try$(Sys::File::open(url));
         auto map = co_try$(Sys::mmap().map(file));
-        auto ttf = co_try$(Text::Ttf::Parser::init(map.bytes()));
+        auto ttf = co_try$(Font::Ttf::Parser::init(map.bytes()));
 
         Sys::println("ttf is valid");
         _dumpGpos(ttf._gpos);
@@ -79,15 +79,15 @@ Async::Task<> entryPointAsync(Sys::Context& ctx) {
 
         co_return Ok();
     } else if (verb == "dump-db") {
-        Text::FontBook book;
-        co_try$(book.loadAll());
+        Font::Database db;
+        co_try$(db.loadAll());
         co_return Ok();
     } else if (verb == "dump-attr") {
         if (args.len() != 2)
-            co_return Error::invalidInput("Usage: karm-text.cli dump-attr <url>");
+            co_return Error::invalidInput("Usage: karm-font.cli dump-attr <url>");
 
         auto url = Mime::parseUrlOrPath(args[1], co_try$(Sys::pwd()));
-        auto font = co_try$(Text::loadFontface(url));
+        auto font = co_try$(Font::loadFontface(url));
 
         Sys::println("{}", font->attrs());
         co_return Ok();

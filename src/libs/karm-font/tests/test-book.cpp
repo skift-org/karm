@@ -3,7 +3,7 @@
 
 namespace Karm::Font::Tests {
 
-test$("karm-text-common-family") {
+test$("karm-font-common-family") {
     expectEq$(commonFamily("Noto"_sym, "Noto"_sym), "Noto"_sym);
     expectEq$(commonFamily("Not"_sym, "Noto"_sym), ""_sym);
     expectEq$(commonFamily("Noto"_sym, "Arial"_sym), ""_sym);
@@ -14,4 +14,4 @@ test$("karm-text-common-family") {
     return Ok();
 }
 
-} // namespace Karm::Text::Tests
+} // namespace Karm::Font::Tests

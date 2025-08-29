@@ -214,7 +214,7 @@ Symbol Database::_resolveFamily(Symbol family) const {
     return _genericFamily.tryGet(family).unwrapOr(family);
 }
 
-Opt<Rc<Gfx::Fontface>> Database::queryExact(Symbol family, FontQuery query) const {
+Opt<Rc<Gfx::Fontface>> Database::queryExact(Symbol family, Query query) const {
     auto resolvedFamily = _resolveFamily(family);
 
     for (auto& info : _records) {
@@ -230,7 +230,7 @@ Opt<Rc<Gfx::Fontface>> Database::queryExact(Symbol family, FontQuery query) cons
     return NONE;
 }
 
-Opt<Rc<Gfx::Fontface>> Database::queryClosest(Symbol family, FontQuery query) const {
+Opt<Rc<Gfx::Fontface>> Database::queryClosest(Symbol family, Query query) const {
     auto desired = _resolveFamily(family);
 
     Opt<Rc<Gfx::Fontface>> matchingFace;
