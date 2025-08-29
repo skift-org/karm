@@ -10,10 +10,32 @@ namespace Karm {
 export using BitsRange = Range<usize, struct BitsRangeTag>;
 
 export struct Bits {
+    u8 const* _buf{};
+    usize _len{};
+
+    Bits(Slice<u8> slice)
+        : _buf(slice.buf()),
+          _len(slice.len()) {}
+
+    bool get(usize index) const {
+        return _buf[index / 8] & (1 << (index % 8));
+    }
+
+    usize len() const {
+        return _len * 8;
+    }
+
+    Bytes bytes() const {
+        return Bytes(_buf, _len);
+    }
+};
+
+export struct MutBits {
+
     u8* _buf{};
     usize _len{};
 
-    Bits(MutSlice<u8> slice)
+    MutBits(MutSlice<u8> slice)
         : _buf(slice.buf()),
           _len(slice.len()) {}
 
