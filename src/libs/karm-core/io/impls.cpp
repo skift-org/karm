@@ -40,7 +40,7 @@ export struct Empty : Reader {
 };
 
 export struct Count : Writer, Seeker {
-    Io::Writer& _reader;
+    Writer& _reader;
     usize _pos;
 
     Count(Writer& reader)
@@ -211,7 +211,8 @@ export struct BitReader {
 
     Res<u8> readBit() {
         if (_len == 0) {
-            try$(_reader.read(MutBytes{&_bits, 1}));
+            if (try$(_reader.read(MutBytes{&_bits, 1})) == 0)
+                return Error::unexpectedEof();
             _len = 8;
         }
 

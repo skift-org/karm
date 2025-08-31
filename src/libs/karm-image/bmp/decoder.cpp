@@ -210,7 +210,7 @@ export struct Decoder {
 
     // MARK: Dumping -----------------------------------------------------------
 
-    void repr(Io::Emit& e) {
+    void repr(Io::Emit& e) const {
         e("BMP image");
         e.indentNewline();
 

@@ -137,10 +137,12 @@ struct Window {
         return Ok();
     }
 
-    u8 peek(usize off) {
+    Res<u8> peek(usize off) {
+        if (off >= _r.cap())
+            return Error::invalidInput("peek outside of window");
         if (off >= _r.len())
-            return 0;
-        return _r.peekBack(off);
+            return Ok(0);
+        return Ok(_r.peekBack(off));
     }
 };
 
@@ -188,10 +190,14 @@ Res<> inflate(Io::BitReader& r, Window& out, Huff& lens, Huff& dists) {
             sym -= 257;
             auto len = try$(r.readBits<u32>(LEXT[sym])) + LENS[sym];
             auto dist = try$(dists.decode(r));
+            if (dist >= 30)
+                return Error::invalidData("bad distance symbol");
             auto off = try$(r.readBits<u32>(DEXT[dist])) + DISTS[dist];
+            if (off == 0)
+                return Error::invalidData("zero distance");
 
             for (usize _ : range(len)) {
-                u8 b = out.peek(off);
+                u8 b = try$(out.peek(off));
                 try$(out.emit(b));
             }
         }
