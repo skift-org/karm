@@ -79,7 +79,6 @@ export struct Decoder {
         if (dec.sig() != SIG)
             return Error::invalidData("invalid signature");
 
-        // Preloading the header this way all the image
         try$(dec._loaderHeader());
 
         return Ok(dec);
@@ -127,6 +126,36 @@ export struct Decoder {
     CompressionMethod _compressionMethod;
     FilterMethod _filterMethod;
     InterlacingMethod _interlacingMethod;
+
+    usize numChannels() const {
+        switch (_colorType) {
+        case ColorType::GREYSCALE:
+            return 1;
+
+        case ColorType::TRUECOLOR:
+            return 3;
+
+        case ColorType::INDEXED:
+            return 1;
+
+        case ColorType::GREYSCALE_ALPHA:
+            return 2;
+
+        case ColorType::TRUECOLOR_ALPHA:
+            return 4;
+
+        default:
+            unreachable();
+        }
+    }
+
+    usize bitsPerPixel() const {
+        return _bitDepth * numChannels();
+    }
+
+    usize bytesPerPixel() const {
+        return bitsPerPixel() / 8;
+    }
 
     isize width() const {
         return _width;
@@ -198,16 +227,115 @@ export struct Decoder {
         return Ok();
     }
 
+    // MARK: Unfiltering -------------------------------------------------------
+
+    static u8 paeth(u16 a, u16 b, u16 c) {
+        u16 pa = Math::abs(b - c);
+        u16 pb = Math::abs(a - c);
+        u16 pc = Math::abs(a + b - c - c);
+
+        if (pb < pa) {
+            a = b;
+            pa = pb;
+        }
+
+        return (pc < pa) ? c : a;
+    }
+
+    // https://www.w3.org/TR/2003/REC-PNG-20031110/#9Filter-types
+    auto _unfilter(
+        Filter filter,
+        usize x,
+        usize bytesPerPixel,
+
+        Bytes filt,
+        MutBytes curr,
+        Bytes prev
+    ) {
+        u8 a = 0;
+        if (x >= bytesPerPixel)
+            a = curr[x - bytesPerPixel];
+
+        u8 b = 0;
+        if (prev)
+            b = prev[x];
+
+        u8 c = 0;
+        if (prev and x >= bytesPerPixel)
+            c = prev[x - bytesPerPixel];
+
+        if (filter == Filter::NONE) {
+            // Recon(x) = Filt(x)
+            curr[x] = filt[x];
+        } else if (filter == Filter::SUB) {
+            // Recon(x) = Filt(x) + Recon(a)
+            curr[x] = filt[x] + a;
+        } else if (filter == Filter::UP) {
+            // Recon(x) = Filt(x) + Recon(b)
+            curr[x] = filt[x] + b;
+        } else if (filter == Filter::AVERAGE) {
+            // Recon(x) = Filt(x) + floor((Recon(a) + Recon(b)) / 2)
+            curr[x] = filt[x] + (a + b) / 2;
+        } else if (filter == Filter::PAETH) {
+            // Recon(x) = Filt(x) + PaethPredictor(Recon(a), Recon(b), Recon(c))
+            curr[x] =
+                filt[x] +
+                paeth(
+                    (a < 0 ? 0 : a),
+                    (b < 0 ? 0 : b),
+                    (c < 0 ? 0 : c)
+                );
+        } else {
+            unreachable();
+        }
+    };
+
+    Res<Vec<u8>> _unfilter(Bytes data) {
+        usize bytePerPixel = bitsPerPixel() < 8 ? 1 : bitsPerPixel() / 8;
+        usize bytesPerScan = bytePerPixel * width();
+
+        Vec<u8> res;
+        res.resize(bytesPerScan * height());
+
+        Io::BScan s = data;
+        Bytes prev = {};
+        for (usize scanline : range(height())) {
+            Filter filter = static_cast<Filter>(s.nextU8be());
+            auto filt = s.nextBytes(bytesPerScan);
+            MutBytes curr = mutSub(res, bytesPerScan * scanline, bytesPerScan * scanline + bytesPerScan);
+
+            for (usize x : range(bytesPerScan))
+                _unfilter(
+                    filter,
+                    x,
+                    bytePerPixel,
+                    filt,
+                    curr,
+                    prev
+                );
+
+            prev = curr;
+        }
+
+        return Ok(std::move(res));
+    }
+
     // MARK: Decoding ----------------------------------------------------------
 
     Res<> _decodeScanline(Io::BScan& s, Gfx::MutPixels out, usize scanline) {
-        u8 filter = s.nextU8be();
-        (void)filter;
         for (usize i : range(_width)) {
             auto r = s.nextU8be();
             auto g = s.nextU8be();
             auto b = s.nextU8be();
             out.store(Math::Vec2u{i, scanline}.cast<isize>(), Gfx::Color{r, g, b});
+        }
+        return Ok();
+    }
+
+    Res<> _decodeImage(Gfx::MutPixels out, Bytes unfiltered) {
+        Io::BScan s = unfiltered;
+        for (usize const scanline : range(_height)) {
+            try$(_decodeScanline(s, out, scanline));
         }
         return Ok();
     }
@@ -230,7 +358,7 @@ export struct Decoder {
         if (not _ended)
             return Error::invalidData("missing image end");
 
-        logDebug("{}", *this);
+        logDebugIf(debugPng, "{}", *this);
 
         if (_bitDepth != 8)
             return Error::invalidData("unsupported bit depth");
@@ -245,11 +373,8 @@ export struct Decoder {
             return Error::invalidData("unsupported interlacing methode");
 
         auto imageData = try$(Archive::zlibDecompress(_compressedData.bytes()));
-
-        Io::BScan s = bytes(imageData);
-        for (usize const scanline : range(_height)) {
-            try$(_decodeScanline(s, out, scanline));
-        }
+        auto unfiltered = try$(_unfilter(imageData));
+        try$(_decodeImage(out, unfiltered));
 
         return Ok();
     }
