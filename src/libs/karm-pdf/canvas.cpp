@@ -1,8 +1,8 @@
 module;
 
-#include <karm-gfx/prose.h>
-#include <karm-gfx/font.h>
 #include <karm-gfx/canvas.h>
+#include <karm-gfx/font.h>
+#include <karm-gfx/prose.h>
 #include <karm-logger/logger.h>
 
 export module Karm.Pdf:canvas;
@@ -259,6 +259,9 @@ export struct Canvas : Gfx::Canvas {
 
         for (usize i = 0; i < prose._lines.len(); ++i) {
             auto const& line = prose._lines[i];
+
+            if (not line.blocks())
+                continue;
 
             auto alignedStart = first(line.blocks()).pos.cast<f64>();
             _e.ln("{} {} Td"s, alignedStart, i == 0 ? 0 : prose._lineHeight);
