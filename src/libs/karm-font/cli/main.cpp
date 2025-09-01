@@ -1,10 +1,10 @@
-#include <karm-font/database.h>
-#include <karm-font/loader.h>
 #include <karm-sys/entry.h>
 #include <karm-sys/file.h>
 #include <karm-sys/mmap.h>
 #include <karm-sys/proc.h>
 #include "../ttf/fontface.h"
+
+import Karm.Font;
 
 using namespace Karm;
 
@@ -80,7 +80,7 @@ Async::Task<> entryPointAsync(Sys::Context& ctx) {
         co_return Ok();
     } else if (verb == "dump-db") {
         Font::Database db;
-        co_try$(db.loadAll());
+        co_try$(db.loadSystemFonts());
         co_return Ok();
     } else if (verb == "dump-attr") {
         if (args.len() != 2)

@@ -1,76 +1,50 @@
-#include <karm-logger/logger.h>
-#include <karm-sys/bundle.h>
-#include <karm-sys/mmap.h>
-#include <karm-sys/time.h>
+module;
 
-#include "database.h"
-#include "loader.h"
+#include <karm-gfx/font.h>
+#include <karm-mime/url.h>
+#include <karm-sys/bundle.h>
+#include <karm-sys/dir.h>
+
+export module Karm.Font:database;
+
+import Karm.Core;
+import :loader;
 
 namespace Karm::Font {
 
-// MARK: Font loading ----------------------------------------------------------
+export struct Query {
+    Gfx::FontWeight weight = Gfx::FontWeight::REGULAR;
+    Gfx::FontStretch stretch = Gfx::FontStretch::NORMAL;
+    Gfx::FontStyle style = Gfx::FontStyle::NORMAL;
 
-Res<> Database::load(Mime::Url const& url, Opt<Gfx::FontAttrs> attrs) {
-    auto maybeFace = loadFontface(url);
-    if (not maybeFace)
-        return maybeFace.none();
-
-    auto face = maybeFace.take();
-
-    add({
-        .url = url,
-        .attrs = attrs.unwrapOr(face->attrs()),
-        .face = face,
-    });
-
-    return Ok();
-}
-
-Res<> Database::loadAll() {
-    auto bundles = try$(Sys::Bundle::installed());
-    for (auto& bundle : bundles) {
-        auto maybeDir = Sys::Dir::open(bundle.url() / "fonts");
-        if (not maybeDir)
-            continue;
-
-        auto dir = maybeDir.take();
-
-        for (auto& diren : dir.entries()) {
-            if (diren.type != Sys::Type::FILE)
-                continue;
-
-            auto fontUrl = dir.path() / diren.name;
-
-            auto res = load(fontUrl);
-            if (not res)
-                logWarn("could not load {}: {}", fontUrl, res);
-        }
+    void repr(Io::Emit& e) const {
+        e.ln("weight: {}", weight);
+        e.ln("stretch: {}", stretch);
+        e.ln("style: {}", style);
     }
+};
 
-    auto ibmVga = Gfx::Fontface::fallback();
+export struct Record {
+    Mime::Url url;
+    Gfx::FontAttrs attrs;
+    Rc<Gfx::Fontface> face;
+    Gfx::FontAdjust adjust = {};
+};
 
-    add({
-        .url = ""_url,
-        .attrs = ibmVga->attrs(),
-        .face = ibmVga,
-    });
+// MARK: Font Matching ---------------------------------------------------------
+// https://www.w3.org/TR/css-fonts-3/#font-matching-algorithm
 
-    return Ok();
-}
-
-// MARK: Family Gathering ------------------------------------------------------
-
-static Str _nextWord(Io::SScan& s) {
+Str _nextWord(Io::SScan& s) {
     s.eat(Re::space());
     s.eat(Re::word());
     return s.end();
 }
 
-static Str _peekWord(Io::SScan s) {
+Str _peekWord(Io::SScan s) {
     return _nextWord(s);
 }
 
-Symbol commonFamily(Symbol lhs, Symbol rhs) {
+Symbol _commonFamily(Symbol lhs, Symbol rhs) {
     Io::SScan l(lhs.str());
     Io::SScan r(rhs.str());
 
@@ -94,30 +68,6 @@ Symbol commonFamily(Symbol lhs, Symbol rhs) {
     return Symbol::from(r.end());
 }
 
-Vec<Symbol> Database::families() const {
-    Vec<Symbol> families;
-    for (auto& info : _records) {
-        bool found = false;
-        for (auto& f : families) {
-            auto prefix = commonFamily(f, info.attrs.family);
-            if (prefix) {
-                found = true;
-                f = prefix;
-                break;
-            }
-        }
-
-        if (not found)
-            families.pushBack(info.attrs.family);
-    }
-
-    sort(families);
-    return families;
-}
-
-// MARK: Font Matching ---------------------------------------------------------
-// https://www.w3.org/TR/css-fonts-3/#font-matching-algorithm
-
 Symbol _pickFamily(Symbol curr, Symbol best, Symbol desired) {
     if (curr == desired)
         return curr;
@@ -125,8 +75,8 @@ Symbol _pickFamily(Symbol curr, Symbol best, Symbol desired) {
     if (best == desired)
         return best;
 
-    auto currPrefix = commonFamily(curr, desired);
-    auto bestPrefix = commonFamily(best, desired);
+    auto currPrefix = _commonFamily(curr, desired);
+    auto bestPrefix = _commonFamily(best, desired);
 
     if (currPrefix.str().len() > bestPrefix.str().len())
         return curr;
@@ -210,105 +160,193 @@ Gfx::FontStyle _pickFontStyle(Gfx::FontStyle curr, Gfx::FontStyle best, Gfx::Fon
     return best;
 }
 
-Symbol Database::_resolveFamily(Symbol family) const {
-    return _genericFamily.tryGet(family).unwrapOr(family);
-}
+export struct Database {
+    Vec<Record> _records;
 
-Opt<Rc<Gfx::Fontface>> Database::queryExact(Symbol family, Query query) const {
-    auto resolvedFamily = _resolveFamily(family);
+    // FIXME: these value depend on the correct loading of the bundle
+    Map<Symbol, Symbol> _genericFamily = {
+        {"serif"_sym, "Noto Serif"_sym},
+        {"sans-serif"_sym, "Noto Sans"_sym},
+        {"monospace"_sym, "Fira Code"_sym},
+        {"cursive"_sym, "Dancing Script"_sym},
+        {"fantasy"_sym, "Excalibur"_sym},
+        {"system"_sym, "Noto Serif"_sym},
+        {"emoji"_sym, "Noto Emoji"_sym},
+        {"math"_sym, "Noto Sans Math"_sym},
+        {"fangsong"_sym, "Noto"_sym},
+    };
 
-    for (auto& info : _records) {
-        auto& attrs = info.attrs;
-
-        if (attrs.family == resolvedFamily and
-            attrs.weight == query.weight and
-            attrs.stretch == query.stretch and
-            attrs.style == query.style)
-            return info.face;
+    void add(Record record) {
+        _records.pushBack(record);
     }
 
-    return NONE;
-}
+    Res<> load(Mime::Url const& url, Opt<Gfx::FontAttrs> attrs = NONE) {
+        auto maybeFace = loadFontface(url);
+        if (not maybeFace)
+            return maybeFace.none();
 
-Opt<Rc<Gfx::Fontface>> Database::queryClosest(Symbol family, Query query) const {
-    auto desired = _resolveFamily(family);
+        auto face = maybeFace.take();
 
-    Opt<Rc<Gfx::Fontface>> matchingFace;
-    auto matchingFamily = ""_sym;
-    auto matchingStretch = Gfx::FontStretch::NO_MATCH;
-    auto matchingStyle = Gfx::FontStyle::NO_MATCH;
-    auto matchingWeight = Gfx::FontWeight::NO_MATCH;
+        add({
+            .url = url,
+            .attrs = attrs.unwrapOr(face->attrs()),
+            .face = face,
+        });
 
-    for (auto& info : _records) {
-        auto const& attrs = info.attrs;
-
-        auto currFamily = matchingFamily;
-        auto currStretch = matchingStretch;
-        auto currStyle = matchingStyle;
-        auto currWeight = matchingWeight;
-
-        currFamily = _pickFamily(attrs.family, matchingFamily, desired);
-
-        if (attrs.family != currFamily)
-            continue;
-
-        if (currFamily != matchingFamily) {
-            currStretch = Gfx::FontStretch::NO_MATCH;
-            currStyle = Gfx::FontStyle::NO_MATCH;
-            currWeight = Gfx::FontWeight::NO_MATCH;
-        }
-
-        currStretch = _pickFontStretch(attrs.stretch, currStretch, query.stretch);
-        if (attrs.stretch != currStretch)
-            continue;
-
-        if (currStretch != matchingStretch) {
-            currStyle = Gfx::FontStyle::NO_MATCH;
-            currWeight = Gfx::FontWeight::NO_MATCH;
-        }
-
-        currStyle = _pickFontStyle(attrs.style, currStyle, query.style);
-        if (attrs.style != currStyle)
-            continue;
-
-        if (currStyle != matchingStyle)
-            currWeight = Gfx::FontWeight::NO_MATCH;
-
-        currWeight = _pickFontWeight(attrs.weight, currWeight, query.weight);
-        if (attrs.weight != currWeight)
-            continue;
-
-        matchingFace = info.face;
-        matchingFamily = currFamily;
-        matchingStretch = currStretch;
-        matchingStyle = currStyle;
-        matchingWeight = currWeight;
+        return Ok();
     }
 
-    return matchingFace;
-}
+    Res<> loadSystemFonts() {
+        auto bundles = try$(Sys::Bundle::installed());
+        for (auto& bundle : bundles) {
+            auto maybeDir = Sys::Dir::open(bundle.url() / "fonts");
+            if (not maybeDir)
+                continue;
 
-Vec<Rc<Gfx::Fontface>> Database::queryFamily(Symbol family) const {
-    Vec<Rc<Gfx::Fontface>> res;
-    for (auto& info : _records)
-        if (commonFamily(info.attrs.family, family) == family)
-            res.pushBack(info.face);
+            auto dir = maybeDir.take();
 
-    sort(res, [](auto& lhs, auto& rhs) {
-        return lhs->attrs() <=> rhs->attrs();
-    });
-    return res;
-}
+            for (auto& diren : dir.entries()) {
+                if (diren.type != Sys::Type::FILE)
+                    continue;
 
-// MARK: Global Database -------------------------------------------------------
+                auto fontUrl = dir.path() / diren.name;
 
-Database& globalBook() {
-    static Database fontBook = [] {
+                auto res = load(fontUrl);
+                if (not res)
+                    logWarn("could not load {}: {}", fontUrl, res);
+            }
+        }
+
+        auto ibmVga = Gfx::Fontface::fallback();
+
+        add({
+            .url = ""_url,
+            .attrs = ibmVga->attrs(),
+            .face = ibmVga,
+        });
+
+        return Ok();
+    }
+
+    Vec<Symbol> families() const {
+        Vec<Symbol> families;
+        for (auto& info : _records) {
+            bool found = false;
+            for (auto& f : families) {
+                auto prefix = _commonFamily(f, info.attrs.family);
+                if (prefix) {
+                    found = true;
+                    f = prefix;
+                    break;
+                }
+            }
+
+            if (not found)
+                families.pushBack(info.attrs.family);
+        }
+
+        sort(families);
+        return families;
+    }
+
+    Symbol _resolveGenericFamily(Symbol family) const {
+        return _genericFamily.tryGet(family).unwrapOr(family);
+    }
+
+    Opt<Rc<Gfx::Fontface>> queryExact(Symbol family, Query query = {}) const {
+        auto resolvedFamily = _resolveGenericFamily(family);
+
+        for (auto& info : _records) {
+            auto& attrs = info.attrs;
+
+            if (attrs.family == resolvedFamily and
+                attrs.weight == query.weight and
+                attrs.stretch == query.stretch and
+                attrs.style == query.style)
+                return info.face;
+        }
+
+        return NONE;
+    }
+
+    Opt<Rc<Gfx::Fontface>> queryClosest(Symbol family, Query query = {}) const {
+        auto desired = _resolveGenericFamily(family);
+
+        Opt<Rc<Gfx::Fontface>> matchingFace;
+        auto matchingFamily = ""_sym;
+        auto matchingStretch = Gfx::FontStretch::NO_MATCH;
+        auto matchingStyle = Gfx::FontStyle::NO_MATCH;
+        auto matchingWeight = Gfx::FontWeight::NO_MATCH;
+
+        for (auto& info : _records) {
+            auto const& attrs = info.attrs;
+
+            auto currFamily = matchingFamily;
+            auto currStretch = matchingStretch;
+            auto currStyle = matchingStyle;
+            auto currWeight = matchingWeight;
+
+            currFamily = _pickFamily(attrs.family, matchingFamily, desired);
+
+            if (attrs.family != currFamily)
+                continue;
+
+            if (currFamily != matchingFamily) {
+                currStretch = Gfx::FontStretch::NO_MATCH;
+                currStyle = Gfx::FontStyle::NO_MATCH;
+                currWeight = Gfx::FontWeight::NO_MATCH;
+            }
+
+            currStretch = _pickFontStretch(attrs.stretch, currStretch, query.stretch);
+            if (attrs.stretch != currStretch)
+                continue;
+
+            if (currStretch != matchingStretch) {
+                currStyle = Gfx::FontStyle::NO_MATCH;
+                currWeight = Gfx::FontWeight::NO_MATCH;
+            }
+
+            currStyle = _pickFontStyle(attrs.style, currStyle, query.style);
+            if (attrs.style != currStyle)
+                continue;
+
+            if (currStyle != matchingStyle)
+                currWeight = Gfx::FontWeight::NO_MATCH;
+
+            currWeight = _pickFontWeight(attrs.weight, currWeight, query.weight);
+            if (attrs.weight != currWeight)
+                continue;
+
+            matchingFace = info.face;
+            matchingFamily = currFamily;
+            matchingStretch = currStretch;
+            matchingStyle = currStyle;
+            matchingWeight = currWeight;
+        }
+
+        return matchingFace;
+    }
+
+    Vec<Rc<Gfx::Fontface>> queryFamily(Symbol family) const {
+        Vec<Rc<Gfx::Fontface>> res;
+        for (auto& info : _records)
+            if (_commonFamily(info.attrs.family, family) == family)
+                res.pushBack(info.face);
+
+        sort(res, [](auto& lhs, auto& rhs) {
+            return lhs->attrs() <=> rhs->attrs();
+        });
+        return res;
+    }
+};
+
+export Database const& globalDatabase() {
+    static Database db = [] {
         Database res;
-        res.loadAll().unwrap("unable to load system fonts");
+        res.loadSystemFonts().unwrap("unable to load system fonts");
         return res;
     }();
-    return fontBook;
+    return db;
 }
 
 } // namespace Karm::Font

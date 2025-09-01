@@ -1,14 +1,15 @@
 module;
 
-#include <karm-gfx/prose.h>
-#include <karm-font/loader.h>
 #include <karm-gfx/icon.h>
+#include <karm-gfx/prose.h>
+#include <karm-mime/url.h>
 
 export module Karm.Ui:view;
 
 import Karm.Core;
 import Karm.Scene;
 import Karm.Image;
+import Karm.Font;
 import :node;
 
 namespace Karm::Ui {

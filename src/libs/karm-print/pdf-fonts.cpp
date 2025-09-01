@@ -9,7 +9,6 @@ import Karm.Pdf;
 namespace Karm::Print {
 
 export struct TtfGlyphInfoAdapter {
-
     usize const CODESPACE = 1 << 16;
 
     Rc<Font::Ttf::Fontface> _font;
