@@ -1,8 +1,10 @@
-#pragma once
+module;
 
 // https://github.com/Michaelangel007/crc32
 
 #include <karm-core/macros.h>
+
+export module Karm.Crypto:crc32;
 
 import Karm.Core;
 
@@ -15,7 +17,7 @@ static Array<u32, 16> const CRC32_TAB = {
     0xBDBDF21C
 };
 
-struct Crc32 {
+export struct Crc32 {
     using Digest = u32;
 
     u32 _crc = 0xFFFFFFFF;
@@ -42,7 +44,7 @@ struct Crc32 {
     }
 };
 
-static inline Crc32::Digest crc32(Bytes bytes, u32 crc = 0xFFFFFFFF) {
+export Crc32::Digest crc32(Bytes bytes, u32 crc = 0xFFFFFFFF) {
     Crc32 crc32{crc};
     crc32.update(bytes);
     return crc32.digest();

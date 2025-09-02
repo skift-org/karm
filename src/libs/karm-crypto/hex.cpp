@@ -1,19 +1,21 @@
-import Karm.Core;
+module;
 
 #include <karm-core/macros.h>
 
-#include "hex.h"
+export module Karm.Crypto:hex;
+
+import Karm.Core;
 
 namespace Karm::Crypto {
 
-Res<> hexEncode(Bytes bytes, Io::TextWriter& out) {
+export Res<> hexEncode(Bytes bytes, Io::TextWriter& out) {
     for (auto b : bytes) {
         try$(Io::format(out, "{02x}"s, b));
     }
     return Ok();
 }
 
-Res<String> hexEncode(Bytes bytes) {
+export Res<String> hexEncode(Bytes bytes) {
     Io::StringWriter out;
     try$(hexEncode(bytes, out));
     return Ok(out.str());

@@ -5,6 +5,7 @@
     "description": "A key-value store library",
     "requires": [
         "karm-sys",
-        "karm-logger"
+        "karm-logger",
+        "karm-crypto"
     ]
 }

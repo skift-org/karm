@@ -1,10 +1,11 @@
 module;
 
-#include <karm-crypto/crc32.h>
 #include <karm-logger/logger.h>
+#include <karm-core/macros.h>
 
 export module Karm.Kv:store;
 
+import Karm.Crypto;
 import Karm.Core;
 import :blob;
 import :wal;

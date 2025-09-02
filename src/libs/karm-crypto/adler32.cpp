@@ -1,11 +1,13 @@
-#include "adler32.h"
+export module Karm.Crypto:adler32;
+
+import Karm.Core;
 
 namespace Karm::Crypto {
 
 static constexpr usize ADLER32_BASE = 65521;
 static constexpr usize ADLER32_NMAX = 5552;
 
-u32 adler32(Bytes bytes) {
+export u32 adler32(Bytes bytes) {
     auto [buf, len] = bytes;
 
     u32 s1 = 1;

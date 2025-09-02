@@ -1,8 +1,13 @@
+export module Karm.Crypto:sha2;
+
 import Karm.Core;
 
-#include "sha2.h"
-
 namespace Karm::Crypto {
+
+export constexpr usize SHA224_BYTES = 28;
+export constexpr usize SHA256_BYTES = 32;
+export constexpr usize SHA384_BYTES = 48;
+export constexpr usize SHA512_BYTES = 64;
 
 static constexpr Array<u32, 8> SHA224_INITIAL = {
     0xc1059ed8, 0x367cd507, 0x3070dd17, 0xf70e5939,
@@ -69,7 +74,7 @@ static constexpr Array<u64, 80> SHA512_K = {
     0x5fcb6fab3ad6faec, 0x6c44198c4a475817
 };
 
-static inline void _sha256ComputeBlock(Array<u32, 8>& state, u8 const* buf) {
+void _sha256ComputeBlock(Array<u32, 8>& state, u8 const* buf) {
     Array<u32, 64> w;
 
     for (usize idx = 0; idx < 16; idx++) {
@@ -118,7 +123,7 @@ static inline void _sha256ComputeBlock(Array<u32, 8>& state, u8 const* buf) {
     state[7] += h;
 }
 
-static inline Array<u32, 8> _sha256Internal(Array<u32, 8> const& init, Bytes bytes) {
+Array<u32, 8> _sha256Internal(Array<u32, 8> const& init, Bytes bytes) {
     Array<u32, 8> state = init;
     auto [buf, len] = bytes;
     u64 padlen = len << 3;
@@ -159,17 +164,17 @@ static inline Array<u32, 8> _sha256Internal(Array<u32, 8> const& init, Bytes byt
     return state;
 }
 
-Array<u8, SHA256_BYTES> sha256(Bytes bytes) {
+export Array<u8, SHA256_BYTES> sha256(Bytes bytes) {
     return Array<u8, SHA256_BYTES>::from(_sha256Internal(SHA256_INITIAL, bytes).bytes());
 }
 
-Array<u8, SHA224_BYTES> sha224(Bytes bytes) {
+export Array<u8, SHA224_BYTES> sha224(Bytes bytes) {
     auto state = _sha256Internal(SHA224_INITIAL, bytes);
 
     return Array<u8, SHA224_BYTES>::from(state.bytes());
 }
 
-static inline void _sha512ComputeBlock(Array<u64, 8>& state, u8 const* buf) {
+void _sha512ComputeBlock(Array<u64, 8>& state, u8 const* buf) {
     Array<u64, 80> w{};
 
     for (usize idx = 0; idx < 16; idx++) {
@@ -218,7 +223,7 @@ static inline void _sha512ComputeBlock(Array<u64, 8>& state, u8 const* buf) {
     state[7] += h;
 }
 
-static inline Array<u64, 8> _sha512Internal(Array<u64, 8> const& init, Bytes bytes) {
+Array<u64, 8> _sha512Internal(Array<u64, 8> const& init, Bytes bytes) {
     Array<u64, 8> state = init;
     auto [buf, len] = bytes;
     u64 padlen = len << 3;
@@ -258,11 +263,11 @@ static inline Array<u64, 8> _sha512Internal(Array<u64, 8> const& init, Bytes byt
     return state;
 }
 
-Array<u8, SHA512_BYTES> sha512(Bytes bytes) {
+export Array<u8, SHA512_BYTES> sha512(Bytes bytes) {
     return Array<u8, SHA512_BYTES>::from(_sha512Internal(SHA512_INITIAL, bytes).bytes());
 }
 
-Array<u8, SHA384_BYTES> sha384(Bytes bytes) {
+export Array<u8, SHA384_BYTES> sha384(Bytes bytes) {
     auto state = _sha512Internal(SHA384_INITIAL, bytes);
 
     return Array<u8, SHA384_BYTES>::from(state.bytes());

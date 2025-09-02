@@ -1,5 +1,6 @@
-#include <karm-crypto/adler32.h>
 #include <karm-test/macros.h>
+
+import Karm.Crypto;
 
 namespace Karm::Crypto::Tests {
 
