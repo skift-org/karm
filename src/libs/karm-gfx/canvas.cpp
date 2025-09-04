@@ -1,5 +1,6 @@
-#include "prose.h"
 #include "canvas.h"
+
+#include "prose.h"
 
 namespace Karm::Gfx {
 

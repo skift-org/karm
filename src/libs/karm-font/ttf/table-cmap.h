@@ -2,8 +2,8 @@
 
 import Karm.Core;
 
-#include <karm-logger/logger.h>
 #include <karm-gfx/font.h>
+#include <karm-logger/logger.h>
 
 namespace Karm::Font::Ttf {
 

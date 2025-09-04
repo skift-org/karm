@@ -7,9 +7,9 @@ import Karm.Core;
 
 #include "fill.h"
 #include "filters.h"
+#include "font.h"
 #include "stroke.h"
 #include "types.h"
-#include "font.h"
 
 namespace Karm::Gfx {
 

@@ -188,8 +188,7 @@ struct Union {
     std::partial_ordering operator<=>(Union const& other) const {
         if (_index == other._index)
             return visit(
-                [&]<typename T>(T const& ptr)
-                {
+                [&]<typename T>(T const& ptr) {
                     if constexpr (Meta::Comparable<T>)
                         return ptr <=> other.unwrap<T>();
                     return std::partial_ordering::unordered;

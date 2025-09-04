@@ -1,8 +1,8 @@
 module;
 
-#include <karm-gfx/prose.h>
 #include <karm-gfx/canvas.h>
 #include <karm-gfx/icon.h>
+#include <karm-gfx/prose.h>
 #include <karm-math/align.h>
 
 export module Karm.Ui:input;

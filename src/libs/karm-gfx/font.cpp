@@ -74,7 +74,7 @@ Font Font::fallback() {
 
 // MARK: Font Family -----------------------------------------------------------
 
-void FontFamily::contour(Canvas& g, Glyph glyph) const  {
+void FontFamily::contour(Canvas& g, Glyph glyph) const {
     auto& member = _members[glyph.font];
     g.scale(_adjust.sizeAdjust * member.adjust.sizeAdjust);
     member.face->contour(g, glyph);

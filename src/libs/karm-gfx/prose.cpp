@@ -1,4 +1,5 @@
 #include "prose.h"
+
 #include "canvas.h"
 
 namespace Karm::Gfx {
@@ -286,4 +287,4 @@ void Prose::paintSelection(Gfx::Canvas& g, usize start, usize end, Gfx::Color co
     }
 }
 
-} // namespace Karm::Text
+} // namespace Karm::Gfx

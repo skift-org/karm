@@ -2,8 +2,8 @@
 
 #include <karm-math/au.h>
 
-#include "font.h"
 #include "color.h"
+#include "font.h"
 
 namespace Karm::Gfx {
 
@@ -301,9 +301,9 @@ struct Prose : Meta::Pinned {
 
     // MARK: Paint -------------------------------------------------------------
 
-    void paintCaret(Canvas& g, usize runeIndex, Color color) ;
+    void paintCaret(Canvas& g, usize runeIndex, Color color);
 
-    void paintSelection(Canvas& g, usize start, usize end, Color color) ;
+    void paintSelection(Canvas& g, usize start, usize end, Color color);
 
     struct Lbc {
         usize li, bi, ci;
