@@ -13,9 +13,10 @@ namespace Karm::Scene {
 export struct Image : Node {
     Math::Rectf _bound;
     Karm::Image::Picture _picture;
+    Math::Radiif _radii;
 
-    Image(Math::Rectf bound, Karm::Image::Picture picture)
-        : _bound(bound), _picture(std::move(picture)) {
+    Image(Math::Rectf bound, Karm::Image::Picture picture, Math::Radiif radii = {})
+        : _bound(bound), _picture(std::move(picture)), _radii(radii) {
     }
 
     Math::Rectf bound() override {
@@ -26,7 +27,12 @@ export struct Image : Node {
         if (not r.colide(bound()))
             return;
 
-        ctx.blit(_bound.cast<isize>(), _picture.pixels());
+        if (not _radii.zero()) {
+            ctx.fillStyle(_picture.pixels());
+            ctx.fill(bound(), _radii);
+        } else {
+            ctx.blit(_bound.cast<isize>(), _picture.pixels());
+        }
     }
 
     void repr(Io::Emit& e) const override {
