@@ -1,11 +1,12 @@
 module;
 
-#include <karm-mime/path.h>
 #include <karm-sys/dir.h>
 #include <karm-sys/file.h>
 #include <karm-sys/time.h>
 
 export module Karm.Fs:node;
+
+import Karm.Ref;
 
 namespace Karm::Fs {
 
@@ -31,7 +32,7 @@ export struct Node {
         co_return Error::notFound();
     }
 
-    Async::Task<Rc<Node>> lookupAsync(Mime::Path const& path) {
+    Async::Task<Rc<Node>> lookupAsync(Ref::Path const& path) {
         auto res = co_try$(_self.unwrap("node not self bound").upgrade());
         for (auto const& i : path.iter()) {
             res = co_trya$(lookupAsync(i));

@@ -1,8 +1,7 @@
 #pragma once
 
 import Karm.Core;
-
-#include <karm-mime/url.h>
+import Karm.Ref;
 
 #include "addr.h"
 #include "message.h"

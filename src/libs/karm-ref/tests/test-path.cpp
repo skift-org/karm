@@ -1,9 +1,10 @@
-#include <karm-mime/path.h>
 #include <karm-test/macros.h>
 
-namespace Karm::Mime::Tests {
+import Karm.Ref;
 
-test$("karm-mime-path-up-down") {
+namespace Karm::Ref::Tests {
+
+test$("karm-ref-path-up-down") {
     auto path = "/a/b/c/d/e/f"_path;
 
     auto up1 = path.parent(1);
@@ -27,7 +28,7 @@ test$("karm-mime-path-up-down") {
     return Ok();
 }
 
-test$("karm-mime-path-parent-of") {
+test$("karm-ref-path-parent-of") {
     expect$(""_path.isParentOf(""_path));
     expect$("/a"_path.isParentOf("/a"_path));
     expect$("/a"_path.isParentOf("/a/b"_path));
@@ -39,7 +40,7 @@ test$("karm-mime-path-parent-of") {
     return Ok();
 }
 
-test$("karm-mime-path-str") {
+test$("karm-ref-path-str") {
     expectEq$(""_path.str(), ".");
     expectEq$("/a/b/c"_path.str(), "/a/b/c");
     expectEq$("a/b/c"_path.str(), "a/b/c");
@@ -51,4 +52,4 @@ test$("karm-mime-path-str") {
     return Ok();
 }
 
-} // namespace Karm::Mime::Tests
+} // namespace Karm::Ref::Tests

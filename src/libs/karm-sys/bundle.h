@@ -1,6 +1,6 @@
 #pragma once
 
-#include <karm-mime/url.h>
+import Karm.Ref;
 
 namespace Karm::Sys {
 
@@ -11,8 +11,8 @@ struct Bundle {
 
     static Res<Vec<Bundle>> installed();
 
-    Mime::Url url() {
-        Mime::Url url;
+    Ref::Url url() {
+        Ref::Url url;
         url.scheme = "bundle"s;
         url.host = id;
         return url;

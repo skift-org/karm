@@ -1,25 +1,25 @@
 #pragma once
 
-#include <karm-mime/uti.h>
+import Karm.Ref;
 
 #include "async.h"
 
 namespace Karm::Sys {
 
 struct Object {
-    Mime::Url url;
-    Opt<Mime::Uti> type = NONE;
+    Ref::Url url;
+    Opt<Ref::Uti> type = NONE;
 
-    Object(Mime::Url url) : url(url) {}
+    Object(Ref::Url url) : url(url) {}
 
-    Object(Mime::Url url, Mime::Uti type) : url(url), type(type) {}
+    Object(Ref::Url url, Ref::Uti type) : url(url), type(type) {}
 };
 
 struct Intent {
-    Mime::Uti action;
+    Ref::Uti action;
     Vec<Object> objects;
-    Opt<Mime::Url> handler = NONE;
-    Opt<Mime::Url> callback = NONE;
+    Opt<Ref::Url> handler = NONE;
+    Opt<Ref::Url> callback = NONE;
 };
 
 Res<> launch(Intent intent);

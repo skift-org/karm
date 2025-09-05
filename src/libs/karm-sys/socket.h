@@ -155,14 +155,14 @@ struct TcpListener :
 
 struct IpcConnection {
     Rc<Sys::Fd> _fd;
-    Opt<Mime::Url> _url;
+    Opt<Ref::Url> _url;
 
     static constexpr usize MAX_BUF_SIZE = 4096;
     static constexpr usize MAX_HND_SIZE = 16;
 
-    static Res<IpcConnection> connect(Mime::Url url);
+    static Res<IpcConnection> connect(Ref::Url url);
 
-    IpcConnection(Rc<Sys::Fd> fd, Opt<Mime::Url> url)
+    IpcConnection(Rc<Sys::Fd> fd, Opt<Ref::Url> url)
         : _fd(std::move(fd)), _url(std::move(url)) {}
 
     Res<> send(Bytes buf, Slice<Handle> hnds) {
@@ -188,11 +188,11 @@ struct IpcConnection {
 
 struct IpcListener {
     Rc<Fd> _fd;
-    Opt<Mime::Url> _url;
+    Opt<Ref::Url> _url;
 
-    static Res<IpcListener> listen(Mime::Url url);
+    static Res<IpcListener> listen(Ref::Url url);
 
-    IpcListener(Rc<Sys::Fd> fd, Mime::Url url)
+    IpcListener(Rc<Sys::Fd> fd, Ref::Url url)
         : _fd(fd), _url(url) {}
 
     Res<IpcConnection> accept() {

@@ -1,8 +1,6 @@
 module;
 
 #include <karm-logger/logger.h>
-#include <karm-mime/mime.h>
-#include <karm-mime/url.h>
 #include <karm-sys/chan.h>
 #include <karm-sys/dir.h>
 #include <karm-sys/file.h>
@@ -12,6 +10,8 @@ module;
 export module Karm.Http:transport;
 
 import Karm.Core;
+import Karm.Ref;
+
 import :request;
 import :response;
 
@@ -202,10 +202,10 @@ struct LocalTransport : Transport {
     LocalTransport(Vec<String> allowed)
         : _policy(LocalTransportPolicy::FILTER), _allowed(allowed) {}
 
-    Res<Pair<Rc<Body>, Mime::Mime>> _load(Mime::Url url) {
+    Res<Pair<Rc<Body>, Ref::Mime>> _load(Ref::Url url) {
         if (try$(Sys::isFile(url))) {
             auto body = Body::from(try$(Sys::File::open(url)));
-            auto mime = Mime::sniffSuffix(url.path.suffix()).unwrapOr("application/octet-stream"_mime);
+            auto mime = Ref::sniffSuffix(url.path.suffix()).unwrapOr("application/octet-stream"_mime);
             return Ok(Pair{body, mime});
         }
 
@@ -222,7 +222,7 @@ struct LocalTransport : Transport {
         return Ok(Pair{Body::from(sw.take()), "text/html"_mime});
     }
 
-    Async::Task<> _saveAsync(Mime::Url url, Rc<Body> body) {
+    Async::Task<> _saveAsync(Ref::Url url, Rc<Body> body) {
         auto file = co_try$(Sys::File::create(url));
         co_trya$(Aio::copyAsync(*body, file));
         co_return Ok();

@@ -1,7 +1,9 @@
 #pragma once
 
 #include <karm-core/macros.h>
-#include <karm-mime/url.h>
+
+import Karm.Core;
+import Karm.Ref;
 
 namespace Karm::Sys {
 
@@ -23,13 +25,13 @@ struct Stat {
     }
 };
 
-Res<Stat> stat(Mime::Url const& url);
+Res<Stat> stat(Ref::Url const& url);
 
-static inline Res<bool> isFile(Mime::Url const& url) {
+static inline Res<bool> isFile(Ref::Url const& url) {
     return Ok(try$(stat(url)).type == Type::FILE);
 }
 
-static inline Res<bool> isDir(Mime::Url const& url) {
+static inline Res<bool> isDir(Ref::Url const& url) {
     return Ok(try$(stat(url)).type == Type::DIR);
 }
 

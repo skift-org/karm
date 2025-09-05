@@ -1,10 +1,7 @@
-module;
+export module Karm.Print:filePrinter;
 
-#include <karm-mime/url.h>
-#include <karm-mime/uti.h>
-
-export module Karm.Print:file_printer;
-
+import Karm.Ref;
+import Karm.Core;
 import :printer;
 
 namespace Karm::Print {
@@ -15,11 +12,11 @@ export struct FilePrinterProps {
 };
 
 export struct FilePrinter : Printer {
-    static Res<Rc<FilePrinter>> create(Mime::Uti uti, FilePrinterProps props = {});
+    static Res<Rc<FilePrinter>> create(Ref::Uti uti, FilePrinterProps props = {});
 
     virtual Res<> write(Io::Writer& w) = 0;
 
-    Res<> save(Mime::Url url);
+    Res<> save(Ref::Url url);
 };
 
 } // namespace Karm::Print

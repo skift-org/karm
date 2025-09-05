@@ -2,10 +2,10 @@ module;
 
 #include <karm-font/ttf/fontface.h>
 
-export module Karm.Print:pdf_printer;
+export module Karm.Print:pdfPrinter;
 
 import Karm.Pdf;
-import :file_printer;
+import :filePrinter;
 import :pdfFonts;
 
 namespace Karm::Print {

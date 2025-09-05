@@ -1,8 +1,7 @@
 #pragma once
 
 import Karm.Core;
-
-#include <karm-mime/uti.h>
+import Karm.Ref;
 
 #include "addr.h"
 #include "async.h"
@@ -25,11 +24,11 @@ Res<Rc<Sys::Fd>> unpackFd(MessageReader&);
 
 // MARK: File I/O --------------------------------------------------------------
 
-Res<Rc<Sys::Fd>> openFile(Mime::Url const& url);
+Res<Rc<Sys::Fd>> openFile(Ref::Url const& url);
 
-Res<Rc<Sys::Fd>> createFile(Mime::Url const& url);
+Res<Rc<Sys::Fd>> createFile(Ref::Url const& url);
 
-Res<Rc<Sys::Fd>> openOrCreateFile(Mime::Url const& url);
+Res<Rc<Sys::Fd>> openOrCreateFile(Ref::Url const& url);
 
 Res<Pair<Rc<Sys::Fd>, Rc<Sys::Fd>>> createPipe();
 
@@ -39,13 +38,13 @@ Res<Rc<Sys::Fd>> createOut();
 
 Res<Rc<Sys::Fd>> createErr();
 
-Res<Vec<Sys::DirEntry>> readDir(Mime::Url const& url);
+Res<Vec<Sys::DirEntry>> readDir(Ref::Url const& url);
 
-Res<> createDir(Mime::Url const& url);
+Res<> createDir(Ref::Url const& url);
 
-Res<Vec<Sys::DirEntry>> readDirOrCreate(Mime::Url const& url);
+Res<Vec<Sys::DirEntry>> readDirOrCreate(Ref::Url const& url);
 
-Res<Stat> stat(Mime::Url const& url);
+Res<Stat> stat(Ref::Url const& url);
 
 // MARK: User interactions -----------------------------------------------------
 
@@ -61,7 +60,7 @@ Res<Rc<Sys::Fd>> connectTcp(SocketAddr addr);
 
 Res<Rc<Sys::Fd>> listenTcp(SocketAddr addr);
 
-Res<Rc<Sys::Fd>> listenIpc(Mime::Url url);
+Res<Rc<Sys::Fd>> listenIpc(Ref::Url url);
 
 // MARK: Time ------------------------------------------------------------------
 
@@ -101,7 +100,7 @@ Res<> sleepUntil(Instant);
 
 Res<> exit(i32);
 
-Res<Mime::Url> pwd();
+Res<Ref::Url> pwd();
 
 // MARK: Sandboxing ------------------------------------------------------------
 

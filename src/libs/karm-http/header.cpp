@@ -1,11 +1,11 @@
 module;
 
 #include <karm-core/macros.h>
-#include <karm-mime/mime.h>
 
 export module Karm.Http:header;
 
 import Karm.Core;
+import Karm.Ref;
 
 namespace Karm::Http {
 
@@ -88,9 +88,9 @@ export struct Header : Map<String, String> {
         return NONE;
     }
 
-    Opt<Mime::Mime> contentType() {
+    Opt<Ref::Mime> contentType() {
         if (auto value = tryGet("Content-Type"s))
-            return Mime::Mime{value->str()};
+            return Ref::Mime{value->str()};
         return NONE;
     }
 };

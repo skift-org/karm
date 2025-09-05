@@ -2,12 +2,13 @@ module;
 
 #include <karm-core/macros.h>
 #include <karm-logger/logger.h>
-#include <karm-mime/url.h>
 
 export module Karm.Http:client;
 
 import Karm.Core;
 import Karm.Debug;
+import Karm.Ref;
+
 import :transport;
 
 namespace Karm::Http {
@@ -35,7 +36,7 @@ export struct Client : Transport {
     }
 
     [[clang::coro_wrapper]]
-    Async::Task<Rc<Response>> getAsync(Mime::Url url) {
+    Async::Task<Rc<Response>> getAsync(Ref::Url url) {
         auto req = makeRc<Request>();
         req->method = Method::GET;
         req->url = url;
@@ -45,7 +46,7 @@ export struct Client : Transport {
     }
 
     [[clang::coro_wrapper]]
-    Async::Task<Rc<Response>> headAsync(Mime::Url url) {
+    Async::Task<Rc<Response>> headAsync(Ref::Url url) {
         auto req = makeRc<Request>();
         req->method = Method::HEAD;
         req->url = url;
@@ -55,7 +56,7 @@ export struct Client : Transport {
     }
 
     [[clang::coro_wrapper]]
-    Async::Task<Rc<Response>> postAsync(Mime::Url url, Rc<Body> body) {
+    Async::Task<Rc<Response>> postAsync(Ref::Url url, Rc<Body> body) {
         auto req = makeRc<Request>();
         req->method = Method::POST;
         req->url = url;
@@ -77,17 +78,17 @@ export Rc<Client> defaultClient() {
     );
 }
 
-export Async::Task<Rc<Response>> getAsync(Mime::Url url) {
+export Async::Task<Rc<Response>> getAsync(Ref::Url url) {
     auto client = defaultClient();
     co_return co_await client->getAsync(url);
 }
 
-export Async::Task<Rc<Response>> headAsync(Mime::Url url) {
+export Async::Task<Rc<Response>> headAsync(Ref::Url url) {
     auto client = defaultClient();
     co_return co_await client->headAsync(url);
 }
 
-export Async::Task<Rc<Response>> postAsync(Mime::Url url, Rc<Body> body) {
+export Async::Task<Rc<Response>> postAsync(Ref::Url url, Rc<Body> body) {
     auto client = defaultClient();
     co_return co_await client->postAsync(url, body);
 }

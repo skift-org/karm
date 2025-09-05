@@ -1,8 +1,7 @@
 #pragma once
 
 import Karm.Core;
-
-#include <karm-mime/url.h>
+import Karm.Ref;
 
 #include "stat.h"
 
@@ -19,13 +18,13 @@ struct DirEntry {
 
 struct Dir {
     Vec<DirEntry> _entries;
-    Mime::Url _url;
+    Ref::Url _url;
 
-    static Res<Dir> open(Mime::Url url);
+    static Res<Dir> open(Ref::Url url);
 
-    static Res<> create(Mime::Url url);
+    static Res<> create(Ref::Url url);
 
-    static Res<Dir> openOrCreate(Mime::Url url);
+    static Res<Dir> openOrCreate(Ref::Url url);
 
     auto const& entries() const { return _entries; }
 

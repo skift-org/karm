@@ -29,7 +29,7 @@ Res<TcpListener> TcpListener::listen(SocketAddr addr) {
 
 // MARK: Ipc Socket ------------------------------------------------------------
 
-Res<IpcListener> IpcListener::listen(Mime::Url url) {
+Res<IpcListener> IpcListener::listen(Ref::Url url) {
     try$(ensureUnrestricted());
     auto fd = try$(_Embed::listenIpc(url));
     return Ok(IpcListener(std::move(fd), url));

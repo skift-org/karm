@@ -5,7 +5,7 @@
 
 namespace Karm::Sys {
 
-Res<Dir> Dir::open(Mime::Url url) {
+Res<Dir> Dir::open(Ref::Url url) {
     if (url.scheme != "bundle")
         try$(ensureUnrestricted());
 
@@ -16,12 +16,12 @@ Res<Dir> Dir::open(Mime::Url url) {
     return Ok(Dir{entries, url});
 }
 
-Res<> Dir::create(Mime::Url url) {
+Res<> Dir::create(Ref::Url url) {
     try$(ensureUnrestricted());
     return _Embed::createDir(url);
 }
 
-Res<Dir> Dir::openOrCreate(Mime::Url url) {
+Res<Dir> Dir::openOrCreate(Ref::Url url) {
     try$(ensureUnrestricted());
     auto entries = try$(_Embed::readDirOrCreate(url));
     sort(entries, [](auto const& lhs, auto const& rhs) {

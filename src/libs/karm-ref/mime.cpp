@@ -1,10 +1,10 @@
-#pragma once
+export module Karm.Ref:mime;
 
 import Karm.Core;
 
-namespace Karm::Mime {
+namespace Karm::Ref {
 
-struct Mime {
+export struct Mime {
     String _buf;
 
     Mime(Str buf)
@@ -45,15 +45,8 @@ struct Mime {
     bool operator==(Mime const&) const = default;
 };
 
-/// Try to sniff the mime type from a file extension.
-Opt<Mime> sniffSuffix(Str suffix);
+} // namespace Karm::Ref
 
-Mime sniffBytes(Bytes bytes);
-
-Res<Mime> sniffReader(Io::Reader& reader);
-
-} // namespace Karm::Mime
-
-inline auto operator""_mime(char const* buf, Karm::usize len) {
-    return Karm::Mime::Mime(Karm::Str{buf, len});
+export auto operator""_mime(char const* buf, Karm::usize len) {
+    return Karm::Ref::Mime(Karm::Str{buf, len});
 }

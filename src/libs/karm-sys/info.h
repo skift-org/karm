@@ -1,8 +1,7 @@
 #pragma once
 
 import Karm.Core;
-
-#include <karm-mime/url.h>
+import Karm.Ref;
 
 namespace Karm::Sys {
 
@@ -44,8 +43,8 @@ Res<Vec<CpuInfo>> cpusinfo();
 
 struct UserInfo {
     String name;
-    Mime::Url home;
-    Mime::Url shell;
+    Ref::Url home;
+    Ref::Url shell;
 };
 
 Res<UserInfo> userinfo();

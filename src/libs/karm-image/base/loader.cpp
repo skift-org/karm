@@ -80,13 +80,13 @@ export Res<Picture> load(Sys::Mmap&& map) {
     }
 }
 
-export Res<Picture> load(Mime::Url url) {
+export Res<Picture> load(Ref::Url url) {
     auto file = try$(Sys::File::open(url));
     auto map = try$(Sys::mmap().map(file));
     return load(std::move(map));
 }
 
-export Res<Picture> loadOrFallback(Mime::Url url) {
+export Res<Picture> loadOrFallback(Ref::Url url) {
     if (auto result = load(url); result)
         return result;
     return Ok(Gfx::Surface::fallback());

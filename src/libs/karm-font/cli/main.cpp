@@ -69,7 +69,7 @@ Async::Task<> entryPointAsync(Sys::Context& ctx) {
         if (args.len() != 2)
             co_return Error::invalidInput("Usage: karm-font.cli dump-ttf <url>");
 
-        auto url = Mime::parseUrlOrPath(args[1], co_try$(Sys::pwd()));
+        auto url = Ref::parseUrlOrPath(args[1], co_try$(Sys::pwd()));
         auto file = co_try$(Sys::File::open(url));
         auto map = co_try$(Sys::mmap().map(file));
         auto ttf = co_try$(Font::Ttf::Parser::init(map.bytes()));
@@ -87,7 +87,7 @@ Async::Task<> entryPointAsync(Sys::Context& ctx) {
         if (args.len() != 2)
             co_return Error::invalidInput("Usage: karm-font.cli dump-attr <url>");
 
-        auto url = Mime::parseUrlOrPath(args[1], co_try$(Sys::pwd()));
+        auto url = Ref::parseUrlOrPath(args[1], co_try$(Sys::pwd()));
         auto font = co_try$(Font::loadFontface(url));
 
         Sys::println("{}", font->attrs());

@@ -1,10 +1,12 @@
+module;
+
 #include <karm-core/macros.h>
 
-import Karm.Core;
+export module Karm.Ref:sniff;
 
-#include "mime.h"
+import :mime;
 
-namespace Karm::Mime {
+namespace Karm::Ref {
 
 // MARK: Sniff Suffix ----------------------------------------------------------
 
@@ -13,7 +15,7 @@ struct Suffix2Mime {
     Str mime;
 };
 
-static constexpr Array SUFFIXES2MIME = {
+constexpr Array SUFFIXES2MIME = {
     Suffix2Mime{"html", "text/html; charset=UTF-8"},
     Suffix2Mime{"xhtml", "application/xhtml+xml; charset=UTF-8"},
     Suffix2Mime{"xht", "application/xhtml+xml; charset=UTF-8"},
@@ -51,7 +53,7 @@ static constexpr Array SUFFIXES2MIME = {
     Suffix2Mime{"webp", "image/webp"},
 };
 
-Opt<Mime> sniffSuffix(Str suffix) {
+export Opt<Mime> sniffSuffix(Str suffix) {
     for (auto const& s : SUFFIXES2MIME) {
         if (s.suffix == suffix)
             return s.mime;
@@ -102,7 +104,7 @@ bool _isBinaryData(Bytes const bytes) {
 }
 
 // https://mimesniff.spec.whatwg.org/#identifying-a-resource-with-an-unknown-mime-type
-Mime sniffBytes(Bytes bytes) {
+export Mime sniffBytes(Bytes bytes) {
     static Vec<MimePattern> patterns = {
         {Io::BPattern::from("3C 21 44 4F 43 54 59 50 45 20 48 54 4D 4C", "FF FF DF DF DF DF DF DF DF FF DF DF DF DF"), {' ', '\t', '\n', '\r'}, {' ', '>'}, "text/html"_mime},
         {Io::BPattern::from("3C 48 54 4D 4C", "FF DF DF DF DF"), {' ', '\t', '\n', '\r'}, {' ', '>'}, "text/html"_mime},
@@ -175,10 +177,10 @@ Mime sniffBytes(Bytes bytes) {
     return "application/octet-stream"_mime;
 }
 
-Res<Mime> sniffReader(Io::Reader& reader) {
+export Res<Mime> sniffReader(Io::Reader& reader) {
     Array<u8, 1445> header;
     auto len = try$(reader.read(header));
     return Ok(sniffBytes(sub(header, 0, len)));
 }
 
-} // namespace Karm::Mime
+} // namespace Karm::Ref

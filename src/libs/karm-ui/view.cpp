@@ -2,7 +2,6 @@ module;
 
 #include <karm-gfx/icon.h>
 #include <karm-gfx/prose.h>
-#include <karm-mime/url.h>
 
 export module Karm.Ui:view;
 
@@ -10,6 +9,8 @@ import Karm.Core;
 import Karm.Scene;
 import Karm.Image;
 import Karm.Font;
+import Karm.Ref;
+
 import :node;
 
 namespace Karm::Ui {
@@ -401,7 +402,7 @@ struct Image : View<Image> {
     }
 };
 
-export Child image(Mime::Url url, Opt<Math::Radiif> radii = NONE) {
+export Child image(Ref::Url url, Opt<Math::Radiif> radii = NONE) {
     return makeRc<Image>(Karm::Image::loadOrFallback(url).unwrap(), radii);
 }
 

@@ -1,9 +1,10 @@
 module;
 
 #include <karm-core/macros.h>
-#include <karm-mime/url.h>
 
 export module Karm.Http:request;
+
+import Karm.Ref;
 
 import :body;
 import :header;
@@ -13,12 +14,12 @@ namespace Karm::Http {
 
 export struct Request {
     Method method;
-    Mime::Url url;
+    Ref::Url url;
     Version version;
     Header header;
     Opt<Rc<Body>> body;
 
-    static Rc<Request> from(Http::Method method, Mime::Url url, Opt<Rc<Body>> body = NONE) {
+    static Rc<Request> from(Http::Method method, Ref::Url url, Opt<Rc<Body>> body = NONE) {
         auto req = makeRc<Request>();
 
         req->method = method;
@@ -37,7 +38,7 @@ export struct Request {
         if (not s.skip(' '))
             return Error::invalidData("Expected space");
 
-        auto path = Mime::Path::parse(s, true, true);
+        auto path = Ref::Path::parse(s, true, true);
         path.rooted = true;
         path.normalize();
         path.rooted = false;

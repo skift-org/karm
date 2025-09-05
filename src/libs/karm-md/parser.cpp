@@ -5,6 +5,7 @@ import Karm.Core;
 import :base;
 
 namespace Karm::Md {
+
 void _eatWhitespace(Io::SScan& s) {
     s.eat(Re::space());
 }

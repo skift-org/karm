@@ -1,12 +1,12 @@
-#pragma once
+export module Karm.Ref:uti;
 
 import Karm.Core;
 
-namespace Karm::Mime {
+import :mime;
 
-struct Mime;
+namespace Karm::Ref {
 
-struct Uti {
+export struct Uti {
     String _buf;
 
     enum struct Common {
@@ -33,7 +33,15 @@ struct Uti {
     Uti(String str)
         : _buf{str} {}
 
-    static Res<Uti> fromMime(Mime const&);
+    static Res<Uti> fromMime(Mime const& mime) {
+    #define UTI(NAME, STR, MIME, ...) \
+        if (mime.is(Mime{MIME}))      \
+            return Ok(Uti::NAME);
+    #include "defs/uti.inc"
+    #undef UTI
+
+        return Error::invalidData("enknown mime type");
+    }
 
     static Uti parse(Str str) {
         return Uti{str}; // lol
@@ -44,8 +52,8 @@ struct Uti {
     }
 };
 
-} // namespace Karm::Mime
+} // namespace Karm::Ref
 
-inline auto operator""_uti(char const* str, Karm::usize len) {
-    return Karm::Mime::Uti::parse({str, len});
+export auto operator""_uti(char const* str, Karm::usize len) {
+    return Karm::Ref::Uti::parse({str, len});
 }

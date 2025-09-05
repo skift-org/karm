@@ -1,9 +1,10 @@
-#include <karm-mime/mime.h>
 #include <karm-test/macros.h>
 
-namespace Karm::Mime::Tests {
+import Karm.Ref;
 
-test$("karm-mime-mime-parse") {
+namespace Karm::Ref::Tests {
+
+test$("karm-ref-mime-parse") {
     auto mime = "text/plain"_mime;
     expectEq$(mime.type(), "text"s);
     expectEq$(mime.subtype(), "plain"s);
@@ -11,4 +12,4 @@ test$("karm-mime-mime-parse") {
     return Ok();
 }
 
-} // namespace Karm::Mime::Tests
+} // namespace Karm::Ref::Tests

@@ -1,10 +1,11 @@
 #include <karm-logger/logger.h>
-#include <karm-mime/url.h>
 #include <karm-test/macros.h>
 
-namespace Karm::Mime::Tests {
+import Karm.Ref;
 
-test$("karm-mime-url-parse") {
+namespace Karm::Ref::Tests {
+
+test$("karm-ref-url-parse") {
     auto url = "http://example.com:1234/home"_url;
 
     expectEq$(url.scheme, "http"s);
@@ -48,7 +49,7 @@ test$("karm-mime-url-parse") {
     return Ok();
 }
 
-test$("karm-mime-url-parent-of") {
+test$("karm-ref-url-parent-of") {
     expect$("http://example.com/"_url.isParentOf("http://example.com/"_url));
     expect$("http://example.com"_url.isParentOf("http://example.com/a"_url));
     expect$("http://example.com"_url.isParentOf("http://example.com/a/b"_url));
@@ -59,7 +60,7 @@ test$("karm-mime-url-parent-of") {
     return Ok();
 }
 
-test$("karm-mime-url-resolution-reference") {
+test$("karm-ref-url-resolution-reference") {
     auto base = "http://a/b/c/d;p?q"_url;
 
     // https://datatracker.ietf.org/doc/html/rfc3986#section-5.4.1
@@ -111,4 +112,4 @@ test$("karm-mime-url-resolution-reference") {
     return Ok();
 }
 
-} // namespace Karm::Mime::Tests
+} // namespace Karm::Ref::Tests

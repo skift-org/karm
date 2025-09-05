@@ -1,13 +1,13 @@
 module;
 
 #include <karm-gfx/font.h>
-#include <karm-mime/url.h>
 #include <karm-sys/bundle.h>
 #include <karm-sys/dir.h>
 
 export module Karm.Font:database;
 
 import Karm.Core;
+import Karm.Ref;
 import :loader;
 
 namespace Karm::Font {
@@ -25,7 +25,7 @@ export struct Query {
 };
 
 export struct Record {
-    Mime::Url url;
+    Ref::Url url;
     Gfx::FontAttrs attrs;
     Rc<Gfx::Fontface> face;
     Gfx::FontAdjust adjust = {};
@@ -180,7 +180,7 @@ export struct Database {
         _records.pushBack(record);
     }
 
-    Res<> load(Mime::Url const& url, Opt<Gfx::FontAttrs> attrs = NONE) {
+    Res<> load(Ref::Url const& url, Opt<Gfx::FontAttrs> attrs = NONE) {
         auto maybeFace = loadFontface(url);
         if (not maybeFace)
             return maybeFace.none();
@@ -210,9 +210,10 @@ export struct Database {
                     continue;
 
                 auto fontUrl = dir.path() / diren.name;
+                if (fontUrl.path.suffix() != "ttf")
+                    continue;
 
-                auto res = load(fontUrl);
-                if (not res)
+                if (auto res = load(fontUrl); not res)
                     logWarn("could not load {}: {}", fontUrl, res);
             }
         }
@@ -233,8 +234,7 @@ export struct Database {
         for (auto& info : _records) {
             bool found = false;
             for (auto& f : families) {
-                auto prefix = _commonFamily(f, info.attrs.family);
-                if (prefix) {
+                if (auto prefix = _commonFamily(f, info.attrs.family)) {
                     found = true;
                     f = prefix;
                     break;
@@ -257,12 +257,11 @@ export struct Database {
         auto resolvedFamily = _resolveGenericFamily(family);
 
         for (auto& info : _records) {
-            auto& attrs = info.attrs;
 
-            if (attrs.family == resolvedFamily and
-                attrs.weight == query.weight and
-                attrs.stretch == query.stretch and
-                attrs.style == query.style)
+            if (auto& attrs = info.attrs; attrs.family == resolvedFamily and
+                                          attrs.weight == query.weight and
+                                          attrs.stretch == query.stretch and
+                                          attrs.style == query.style)
                 return info.face;
         }
 

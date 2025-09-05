@@ -202,7 +202,7 @@ Res<Vec<TensorInfos>> _loadTensors(Io::BScan& s, usize len) {
     return Ok(std::move(res));
 }
 
-export Res<> loadGguf(Mime::Url url) {
+export Res<> loadGguf(Ref::Url url) {
     yap("loading gguf file from {}", url);
     auto file = try$(Sys::File::open(url));
     auto mmap = try$(Sys::mmap().map(file));

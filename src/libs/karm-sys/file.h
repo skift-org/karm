@@ -1,8 +1,7 @@
 #pragma once
 
 import Karm.Core;
-
-#include <karm-mime/mime.h>
+import Karm.Ref;
 
 #include "async.h"
 #include "fd.h"
@@ -18,9 +17,9 @@ struct _File :
     Meta::NoCopy {
 
     Rc<Fd> _fd;
-    Mime::Url _url;
+    Ref::Url _url;
 
-    _File(Rc<Fd> fd, Mime::Url url)
+    _File(Rc<Fd> fd, Ref::Url url)
         : _fd(fd), _url(url) {}
 
     Res<usize> seek(Io::Seek seek) override {
@@ -59,9 +58,9 @@ struct FileReader :
         return sched.readAsync(_fd, bytes);
     }
 
-    Res<Mime::Mime> sniff(bool ignoreUrl = false) {
+    Res<Ref::Mime> sniff(bool ignoreUrl = false) {
         if (not ignoreUrl) {
-            if (auto mime = Mime::sniffSuffix(_url.path.suffix()))
+            if (auto mime = Ref::sniffSuffix(_url.path.suffix()))
                 return Ok(mime.take());
         }
 
@@ -70,7 +69,7 @@ struct FileReader :
             seek(Io::Seek::fromBegin(old)).unwrap();
         };
         try$(seek(Io::Seek::fromBegin(0)));
-        auto mime = try$(Mime::sniffReader(*this));
+        auto mime = try$(Ref::sniffReader(*this));
         return Ok(mime);
     }
 };
@@ -98,15 +97,15 @@ struct File :
     using FileReader::FileReader;
     using FileWriter::FileWriter;
 
-    static Res<FileWriter> create(Mime::Url url);
+    static Res<FileWriter> create(Ref::Url url);
 
-    static Res<FileReader> open(Mime::Url url);
+    static Res<FileReader> open(Ref::Url url);
 
-    static Res<File> openOrCreate(Mime::Url url);
+    static Res<File> openOrCreate(Ref::Url url);
 };
 
 /// Read the entire file as a UTF-8 string.
-static inline Res<String> readAllUtf8(Mime::Url const& url) {
+static inline Res<String> readAllUtf8(Ref::Url const& url) {
     auto file = try$(Sys::File::open(url));
     return Io::readAllUtf8(file);
 }

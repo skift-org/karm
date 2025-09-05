@@ -13,7 +13,7 @@ static inline Res<> sleepUntil(Instant until) {
     return _Embed::sleepUntil(until);
 }
 
-static inline Res<Mime::Url> pwd() {
+static inline Res<Ref::Url> pwd() {
     return _Embed::pwd();
 }
 

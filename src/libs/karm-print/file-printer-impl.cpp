@@ -1,30 +1,31 @@
 module;
 
-#include <karm-mime/uti.h>
 #include <karm-sys/file.h>
 
 module Karm.Print;
 
 import Karm.Image;
-import :file_printer;
-import :image_printer;
-import :pdf_printer;
+import Karm.Ref;
+
+import :filePrinter;
+import :imagePrinter;
+import :pdfPrinter;
 
 namespace Karm::Print {
 
-Res<Rc<FilePrinter>> FilePrinter::create(Mime::Uti uti, FilePrinterProps props) {
-    if (uti == Mime::Uti::PUBLIC_PDF) {
+Res<Rc<FilePrinter>> FilePrinter::create(Ref::Uti uti, FilePrinterProps props) {
+    if (uti == Ref::Uti::PUBLIC_PDF) {
         return Ok(makeRc<PdfPrinter>());
-    } else if (uti == Mime::Uti::PUBLIC_BMP or
-               uti == Mime::Uti::PUBLIC_TGA or
-               uti == Mime::Uti::PUBLIC_QOI) {
+    } else if (uti == Ref::Uti::PUBLIC_BMP or
+               uti == Ref::Uti::PUBLIC_TGA or
+               uti == Ref::Uti::PUBLIC_QOI) {
         return Ok(makeRc<ImagePrinter>(props.density, Image::Saver{uti}));
     }
 
     return Error::invalidData("cannot create printer");
 }
 
-Res<> FilePrinter::save(Mime::Url url) {
+Res<> FilePrinter::save(Ref::Url url) {
     auto outFile = try$(Sys::File::create(url));
     Io::TextEncoder<> outEncoder{outFile};
     try$(write(outEncoder));

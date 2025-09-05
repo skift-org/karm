@@ -13,7 +13,7 @@ export struct Image : Node {
 
     Image(Sys::File file) : _file(std::move(file)) {}
 
-    static Async::Task<Rc<Node>> openOrCreateAsync(Mime::Url const& url) {
+    static Async::Task<Rc<Node>> openOrCreateAsync(Ref::Url const& url) {
         auto file = co_try$(Sys::File::openOrCreate(url));
         co_return co_trya$(Fs::createAsync<Image>(std::move(file)));
     }

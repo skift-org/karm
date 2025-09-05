@@ -10,11 +10,11 @@ namespace Karm::Sys::_Embed {
 
 Res<Vec<String>> installedBundles() {
     auto [repo, format] = try$(Posix::repoRoot());
-    Mime::Url repoRoot;
+    Ref::Url repoRoot;
     if (format == Posix::RepoType::CUTEKIT) {
-        repoRoot = Mime::parseUrlOrPath(repo, try$(Sys::pwd()));
+        repoRoot = Ref::parseUrlOrPath(repo, try$(Sys::pwd()));
     } else if (format == Posix::RepoType::PREFIX) {
-        repoRoot = Mime::parseUrlOrPath(repo, try$(Sys::pwd()))
+        repoRoot = Ref::parseUrlOrPath(repo, try$(Sys::pwd()))
                        .join("share");
     } else {
         return Error::notFound("unknown repo type");

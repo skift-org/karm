@@ -29,8 +29,8 @@ import Karm.Core;
 
 namespace Karm::Sys::_Embed {
 
-Res<Mime::Path> resolve(Mime::Url const& url) {
-    Mime::Path resolved;
+Res<Ref::Path> resolve(Ref::Url const& url) {
+    Ref::Path resolved;
     if (url.scheme == "file") {
         resolved = url.path;
     } else if (url.scheme == "fd") {
@@ -53,7 +53,7 @@ Res<Mime::Path> resolve(Mime::Url const& url) {
         auto path = url.path;
         path.rooted = false;
 
-        resolved = Mime::Path::parse(runtimeDir).join(path);
+        resolved = Ref::Path::parse(runtimeDir).join(path);
     } else if (url.scheme == "bundle") {
         auto [repo, format] = try$(Posix::repoRoot());
 
@@ -61,12 +61,12 @@ Res<Mime::Path> resolve(Mime::Url const& url) {
         path.rooted = false;
 
         if (format == Posix::RepoType::CUTEKIT) {
-            resolved = Mime::Path::parse(repo)
+            resolved = Ref::Path::parse(repo)
                            .join(url.host)
                            .join("__res__")
                            .join(path);
         } else if (format == Posix::RepoType::PREFIX) {
-            resolved = Mime::Path::parse(repo)
+            resolved = Ref::Path::parse(repo)
                            .join("share")
                            .join(url.host)
                            .join(path);
@@ -82,9 +82,9 @@ Res<Mime::Path> resolve(Mime::Url const& url) {
         path.rooted = false;
 
         if (url.host == "home")
-            resolved = Mime::Path::parse(maybeHome).join(path);
+            resolved = Ref::Path::parse(maybeHome).join(path);
         else
-            resolved = Mime::Path::parse(maybeHome).join(Io::toPascalCase(url.host).unwrap()).join(path);
+            resolved = Ref::Path::parse(maybeHome).join(Io::toPascalCase(url.host).unwrap()).join(path);
     } else {
         return Error::notFound("unknown url scheme");
     }
@@ -103,7 +103,7 @@ Res<Rc<Fd>> unpackFd(MessageReader& s) {
 
 // MARK: File I/O --------------------------------------------------------------
 
-Res<Rc<Fd>> openFile(Mime::Url const& url) {
+Res<Rc<Fd>> openFile(Ref::Url const& url) {
     String str = try$(resolve(url)).str();
 
     isize raw = ::open(str.buf(), O_RDONLY);
@@ -115,7 +115,7 @@ Res<Rc<Fd>> openFile(Mime::Url const& url) {
     return Ok(fd);
 }
 
-Res<Rc<Fd>> createFile(Mime::Url const& url) {
+Res<Rc<Fd>> createFile(Ref::Url const& url) {
     String str = try$(resolve(url)).str();
 
     auto raw = ::open(str.buf(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
@@ -124,7 +124,7 @@ Res<Rc<Fd>> createFile(Mime::Url const& url) {
     return Ok(makeRc<Posix::Fd>(raw));
 }
 
-Res<Rc<Fd>> openOrCreateFile(Mime::Url const& url) {
+Res<Rc<Fd>> openOrCreateFile(Ref::Url const& url) {
     String str = try$(resolve(url)).str();
 
     auto raw = ::open(str.buf(), O_RDWR | O_CREAT, 0644);
@@ -166,7 +166,7 @@ Res<Rc<Fd>> createErr() {
     return Ok(fd);
 }
 
-Res<Vec<DirEntry>> readDir(Mime::Url const& url) {
+Res<Vec<DirEntry>> readDir(Ref::Url const& url) {
     String str = try$(resolve(url)).str();
 
     DIR* dir = ::opendir(str.buf());
@@ -196,7 +196,7 @@ Res<Vec<DirEntry>> readDir(Mime::Url const& url) {
     return Ok(entries);
 }
 
-Res<> createDir(Mime::Url const& url) {
+Res<> createDir(Ref::Url const& url) {
     String str = try$(resolve(url)).str();
 
     if (::mkdir(str.buf(), 0755) < 0) {
@@ -209,7 +209,7 @@ Res<> createDir(Mime::Url const& url) {
     return Ok();
 }
 
-Res<Vec<Sys::DirEntry>> readDirOrCreate(Mime::Url const& url) {
+Res<Vec<Sys::DirEntry>> readDirOrCreate(Ref::Url const& url) {
     String str = try$(resolve(url)).str();
 
     DIR* dir = ::opendir(str.buf());
@@ -245,7 +245,7 @@ Res<Vec<Sys::DirEntry>> readDirOrCreate(Mime::Url const& url) {
     }
 }
 
-Res<Stat> stat(Mime::Url const& url) {
+Res<Stat> stat(Ref::Url const& url) {
     String str = try$(resolve(url)).str();
     struct stat buf;
     if (::stat(str.buf(), &buf) < 0)
@@ -269,7 +269,7 @@ Res<> launch(Intent intent) {
 
     if (pid == 0) {
 #ifdef __ck_sys_darwin__
-        if (intent.action == Mime::Uti::PUBLIC_MODIFY) {
+        if (intent.action == Ref::Uti::PUBLIC_MODIFY) {
             execlp("open", "open", "-t", str.buf(), nullptr);
         } else {
             execlp("open", "open", str.buf(), nullptr);
@@ -341,7 +341,7 @@ Res<Rc<Fd>> listenTcp(SocketAddr addr) {
     return Ok(makeRc<Posix::Fd>(fd));
 }
 
-Res<Rc<Fd>> listenIpc(Mime::Url url) {
+Res<Rc<Fd>> listenIpc(Ref::Url url) {
     int fd = ::socket(AF_UNIX, SOCK_STREAM, 0);
     if (fd < 0)
         return Posix::fromLastErrno();
@@ -473,10 +473,10 @@ Res<> populate(Vec<CpuInfo>&) {
 Res<> populate(UserInfo& infos) {
     infos.name = Str::fromNullterminated(getenv("USER"));
     infos.home.scheme = "file"s;
-    infos.home.path = Mime::Path::parse(getenv("HOME"));
+    infos.home.path = Ref::Path::parse(getenv("HOME"));
 
     infos.shell.scheme = "file"s;
-    infos.shell.path = Mime::Path::parse(getenv("SHELL"));
+    infos.shell.path = Ref::Path::parse(getenv("SHELL"));
 
     return Ok();
 }
@@ -504,7 +504,7 @@ Res<> exit(i32 res) {
     return Error::other("reached the afterlife");
 }
 
-Res<Mime::Url> pwd() {
+Res<Ref::Url> pwd() {
     auto buf = Buf<char>::init(256);
     while (true) {
         if (::getcwd(buf.buf(), buf.len()) != NULL)
@@ -516,7 +516,7 @@ Res<Mime::Url> pwd() {
         buf.resize(buf.len() * 2);
     }
 
-    return Ok(Mime::parseUrlOrPath(Str::fromNullterminated(buf.buf()), "file:"_url));
+    return Ok(Ref::parseUrlOrPath(Str::fromNullterminated(buf.buf()), "file:"_url));
 }
 
 // MARK: Addr ------------------------------------------------------------------

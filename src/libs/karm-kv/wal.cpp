@@ -76,7 +76,7 @@ export struct Wal {
     RawHeader _header;
     using enum Record::Type;
 
-    static Res<Rc<Wal>> open(Mime::Url const& url) {
+    static Res<Rc<Wal>> open(Ref::Url const& url) {
         if (Sys::isFile(url)) {
             auto file = try$(Sys::File::openOrCreate(url));
             RawHeader header;
