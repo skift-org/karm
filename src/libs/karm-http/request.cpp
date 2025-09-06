@@ -19,12 +19,12 @@ export struct Request {
     Header header;
     Opt<Rc<Body>> body;
 
-    static Rc<Request> from(Http::Method method, Ref::Url url, Opt<Rc<Body>> body = NONE) {
+    static Rc<Request> from(Method method, Ref::Url url, Opt<Rc<Body>> body = NONE) {
         auto req = makeRc<Request>();
 
         req->method = method;
         req->url = url;
-        req->header.add("Host", url.host);
+        req->header.add("Host", url.host.str());
         req->body = body;
 
         return req;

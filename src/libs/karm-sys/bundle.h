@@ -11,10 +11,10 @@ struct Bundle {
 
     static Res<Vec<Bundle>> installed();
 
-    Ref::Url url() {
+    Ref::Url url() const {
         Ref::Url url;
-        url.scheme = "bundle"s;
-        url.host = id;
+        url.scheme = "bundle"_sym;
+        url.host = Symbol::from(id);
         return url;
     }
 };

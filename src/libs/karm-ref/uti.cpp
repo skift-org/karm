@@ -7,7 +7,7 @@ import :mime;
 namespace Karm::Ref {
 
 export struct Uti {
-    String _buf;
+    Symbol _buf = ""_sym;
 
     enum struct Common {
 #define UTI(NAME, ...) NAME,
@@ -20,9 +20,9 @@ export struct Uti {
 
     Uti(Common c) {
         switch (c) {
-#define UTI(NAME, STR, ...) \
-    case Common::NAME:      \
-        _buf = STR ""s;     \
+#define UTI(NAME, STR, ...)           \
+    case Common::NAME:                \
+        _buf = Symbol::from(STR ""s); \
         break;
 #include "defs/uti.inc"
 
@@ -30,17 +30,18 @@ export struct Uti {
         }
     }
 
-    Uti(String str)
-        : _buf{str} {}
+    Uti(Str str)
+        : _buf{Symbol::from(str)} {}
 
     static Res<Uti> fromMime(Mime const& mime) {
-    #define UTI(NAME, STR, MIME, ...) \
-        if (mime.is(Mime{MIME}))      \
-            return Ok(Uti::NAME);
-    #include "defs/uti.inc"
-    #undef UTI
+#define UTI(NAME, STR, MIME, ...) \
+    if (mime.is(Mime{MIME}))      \
+        return Ok(Uti::NAME);
+#include "defs/uti.inc"
 
-        return Error::invalidData("enknown mime type");
+#undef UTI
+
+        return Error::invalidData("unknown mime type");
     }
 
     static Uti parse(Str str) {

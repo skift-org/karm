@@ -327,7 +327,10 @@ export struct Decoder {
             auto r = s.nextU8be();
             auto g = s.nextU8be();
             auto b = s.nextU8be();
-            out.store(Math::Vec2u{i, scanline}.cast<isize>(), Gfx::Color{r, g, b});
+            u8 a = 255;
+            if (_colorType == ColorType::TRUECOLOR_ALPHA)
+                a = s.nextU8be();
+            out.store(Math::Vec2u{i, scanline}.cast<isize>(), Gfx::Color{r, g, b, a});
         }
         return Ok();
     }

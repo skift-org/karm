@@ -44,6 +44,66 @@ struct Fd : Meta::NoCopy {
     static Res<Rc<Fd>> unpack(MessageReader& s);
 };
 
+struct BlobFd : Fd {
+    Rc<Ref::Blob> _blob;
+    usize _offset;
+
+    BlobFd(Rc<Ref::Blob> const& blob)
+        : _blob(blob) {}
+
+    Handle handle() const override {
+        return INVALID;
+    }
+
+    Res<usize> read(MutBytes bytes) override {
+        auto src = sub(_blob->data, _offset, _offset + bytes.len());
+        return Ok(copy(src, bytes));
+    }
+
+    Res<usize> write(Bytes) override {
+        return Error::readOnlyFilesystem();
+    }
+
+    Res<usize> seek(Io::Seek seek) override {
+        _offset = seek.apply(_offset, _blob->len());
+        return Ok(_offset);
+    }
+
+    Res<> flush() override {
+        return Ok();
+    }
+
+    Res<Rc<Fd>> dup() override {
+        return Ok(makeRc<BlobFd>(_blob));
+    }
+
+    Res<_Accepted> accept() override {
+        return Error::notImplemented();
+    }
+
+    Res<Stat> stat() override {
+        return Ok(Stat{
+            .type = Type::FILE,
+            .size = _blob->data.len(),
+            .accessTime = SystemTime::END_OF_TIME,
+            .modifyTime = SystemTime::END_OF_TIME,
+            .changeTime = SystemTime::END_OF_TIME,
+        });
+    }
+
+    Res<_Sent> send(Bytes, Slice<Handle>, SocketAddr) override {
+        return Error::notImplemented();
+    }
+
+    Res<_Received> recv(MutBytes, MutSlice<Handle>) override {
+        return Error::notImplemented();
+    }
+
+    Res<> pack(MessageWriter&) override {
+        return Error::notImplemented();
+    }
+};
+
 struct NullFd : Fd {
     Handle handle() const override {
         return INVALID;

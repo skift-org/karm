@@ -101,7 +101,7 @@ struct HttpTransport : Transport {
         if (url.scheme != "http")
             co_return Error::unsupported("unsupported scheme");
 
-        auto ips = co_trya$(Sys::lookupAsync(url.host));
+        auto ips = co_trya$(Sys::lookupAsync(url.host.str()));
         auto port = url.port.unwrapOr(80);
         Sys::SocketAddr addr{first(ips), (u16)port};
         auto conn = co_try$(Sys::TcpConnection::connect(addr));
@@ -189,12 +189,12 @@ export Rc<Transport> pipeTransport() {
 
 export enum struct LocalTransportPolicy {
     FILTER,
-    ALLOW_ALL, // Allow all local ressources access, this include file:, bundle:, and fd:.
+    ALLOW_ALL, // Allow all local resources access, this includes file:, bundle:, and fd:.
 };
 
 struct LocalTransport : Transport {
     LocalTransportPolicy _policy;
-    Vec<String> _allowed;
+    Vec<String> _allowed = {};
 
     LocalTransport(LocalTransportPolicy policy)
         : _policy(policy) {}
@@ -203,6 +203,12 @@ struct LocalTransport : Transport {
         : _policy(LocalTransportPolicy::FILTER), _allowed(allowed) {}
 
     Res<Pair<Rc<Body>, Ref::Mime>> _load(Ref::Url url) {
+        if (url.scheme == "data") {
+            auto blob = try$(url.blob);
+            auto body = Body::from(blob);
+            return Ok(Pair{body, blob->type});
+        }
+
         if (try$(Sys::isFile(url))) {
             auto body = Body::from(try$(Sys::File::open(url)));
             auto mime = Ref::sniffSuffix(url.path.suffix()).unwrapOr("application/octet-stream"_mime);

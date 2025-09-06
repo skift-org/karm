@@ -5,13 +5,13 @@ import Karm.Core;
 namespace Karm::Ref {
 
 export struct Mime {
-    String _buf;
+    Symbol _buf;
 
     Mime(Str buf)
-        : _buf(buf) {}
+        : _buf(Symbol::from(buf)) {}
 
     Str type() const {
-        Io::SScan s(_buf);
+        Io::SScan s(_buf.str());
 
         s.begin();
         s.skip(Re::until('/'_re));
@@ -19,7 +19,7 @@ export struct Mime {
     }
 
     Str subtype() const {
-        Io::SScan s(_buf);
+        Io::SScan s(_buf.str());
 
         s.skip(type());
         s.skip('/');
@@ -35,7 +35,7 @@ export struct Mime {
     }
 
     Str str() const {
-        return _buf;
+        return _buf.str();
     }
 
     void repr(Io::Emit& e) const {

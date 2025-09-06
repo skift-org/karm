@@ -13,7 +13,7 @@ export struct Flag : Meta::Pinned {
     bool enabled = false;
     Flag* next = nullptr;
 
-    Flag(Str name) : name(name) {
+    Flag(Str name, bool enabled = false) : name(name), enabled(enabled) {
         if (_first)
             next = _first;
         _first = this;

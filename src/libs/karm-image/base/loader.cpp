@@ -62,28 +62,32 @@ Res<Picture> loadGif(Bytes bytes) {
 
 } // namespace
 
-export Res<Picture> load(Sys::Mmap&& map) {
-    if (Bmp::Decoder::sniff(map.bytes())) {
-        return loadBmp(map.bytes());
-    } else if (Qoi::Decoder::sniff(map.bytes())) {
-        return loadQoi(map.bytes());
-    } else if (Png::Decoder::sniff(map.bytes())) {
-        return loadPng(map.bytes());
-    } else if (Jpeg::Decoder::sniff(map.bytes())) {
-        return loadJpeg(map.bytes());
-    } else if (Tga::Decoder::sniff(map.bytes())) {
-        return loadTga(map.bytes());
-    } else if (Gif::Decoder::sniff(map.bytes())) {
-        return loadGif(map.bytes());
+export Res<Picture> load(Bytes bytes) {
+    if (Bmp::Decoder::sniff(bytes)) {
+        return loadBmp(bytes);
+    } else if (Qoi::Decoder::sniff(bytes)) {
+        return loadQoi(bytes);
+    } else if (Png::Decoder::sniff(bytes)) {
+        return loadPng(bytes);
+    } else if (Jpeg::Decoder::sniff(bytes)) {
+        return loadJpeg(bytes);
+    } else if (Tga::Decoder::sniff(bytes)) {
+        return loadTga(bytes);
+    } else if (Gif::Decoder::sniff(bytes)) {
+        return loadGif(bytes);
     } else {
         return Error::invalidData("unknown image format");
     }
 }
 
 export Res<Picture> load(Ref::Url url) {
+    if (url.scheme == "data") {
+        auto blob = try$(url.blob);
+        return load(blob->data);
+    }
     auto file = try$(Sys::File::open(url));
     auto map = try$(Sys::mmap().map(file));
-    return load(std::move(map));
+    return load(map.bytes());
 }
 
 export Res<Picture> loadOrFallback(Ref::Url url) {

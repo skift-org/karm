@@ -41,6 +41,22 @@ export struct Body : Aio::Reader {
         return makeRc<BufBody>(std::move(buf));
     }
 
+    static Rc<Body> from(Rc<Ref::Blob> blob) {
+        struct BlobBody : Body {
+            Rc<Ref::Blob> _blob;
+            Io::BufReader _reader{_blob->data};
+
+            BlobBody(Rc<Ref::Blob> blob)
+                : _blob(std::move(blob)) {}
+
+            Async::Task<usize> readAsync(MutBytes buf) override {
+                co_return _reader.read(buf);
+            }
+        };
+
+        return makeRc<BlobBody>(blob);
+    }
+
     static Rc<Body> from(Str str) {
         return from(bytes(str));
     }

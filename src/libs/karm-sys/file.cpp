@@ -12,8 +12,14 @@ Res<FileWriter> File::create(Ref::Url url) {
 }
 
 Res<FileReader> File::open(Ref::Url url) {
+    if (url.scheme == "data") {
+        auto fd = makeRc<BlobFd>(try$(url.blob));
+        return Ok(FileReader{fd, url});
+    }
+
     if (url.scheme != "bundle")
         try$(ensureUnrestricted());
+
     auto fd = try$(_Embed::openFile(url));
     return Ok(FileReader{fd, url});
 }

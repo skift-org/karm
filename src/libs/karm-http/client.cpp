@@ -40,7 +40,7 @@ export struct Client : Transport {
         auto req = makeRc<Request>();
         req->method = Method::GET;
         req->url = url;
-        req->header.add("Host", url.host);
+        req->header.add("Host", url.host.str());
 
         return doAsync(req);
     }
@@ -50,7 +50,7 @@ export struct Client : Transport {
         auto req = makeRc<Request>();
         req->method = Method::HEAD;
         req->url = url;
-        req->header.add("Host", url.host);
+        req->header.add("Host", url.host.str());
 
         return doAsync(req);
     }
@@ -61,7 +61,7 @@ export struct Client : Transport {
         req->method = Method::POST;
         req->url = url;
         req->body = body;
-        req->header.add("Host", url.host);
+        req->header.add("Host", url.host.str());
 
         return doAsync(req);
     }

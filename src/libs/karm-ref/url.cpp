@@ -6,6 +6,7 @@ export module Karm.Ref:url;
 
 // https://url.spec.whatwg.org/
 import Karm.Core;
+import Karm.Crypto;
 
 import :mime;
 import :path;
@@ -20,21 +21,59 @@ auto const RE_COMPONENT =
 
 auto const RE_SCHEME = RE_COMPONENT & ':'_re;
 
+export struct Blob {
+    Mime type = "application/octet-stream"_mime;
+    Vec<u8> data{};
+
+    usize len() { return data.len(); }
+
+    bool operator==(Blob const&) const = default;
+};
+
 export struct Url {
-    String scheme;
+    Symbol scheme = ""_sym;
     String userInfo;
-    String host;
+    Symbol host = ""_sym;
     Opt<usize> port;
     Path path;
     String query;
     String fragment;
+    Res<Rc<Blob>> blob = NONE;
+
+    static Res<Rc<Blob>> _parseData(Io::SScan& s) {
+        s.begin();
+        while (not s.ahead(";base64,") and
+               not s.ahead(",") and
+               not s.ended()) {
+            s.next();
+        }
+
+        Mime mime = s.end();
+        bool base64 = s.skip(";base64");
+        if (not s.skip(','))
+            return Ok(makeRc<Blob>());
+
+        Io::BufferWriter buf;
+        if (base64) {
+            try$(Crypto::base64Decode(s, buf));
+        } else {
+            Io::TextEncoder enc{buf};
+            try$(enc.writeStr(s.remStr()));
+        }
+        return Ok(makeRc<Blob>(mime, buf.take()));
+    }
 
     static Url parse(Io::SScan& s, Opt<Url> baseUrl = NONE) {
         Url url;
 
         if (s.ahead(RE_SCHEME)) {
-            url.scheme = s.token(RE_COMPONENT);
+            url.scheme = Symbol::from(s.token(RE_COMPONENT));
             s.skip(':');
+        }
+
+        if (url.scheme == "data") {
+            url.blob = _parseData(s);
+            return url;
         }
 
         if (s.skip("//")) {
@@ -45,7 +84,7 @@ export struct Url {
                 maybeHost = s.token(RE_COMPONENT);
             }
 
-            url.host = maybeHost;
+            url.host = Symbol::from(maybeHost);
 
             if (s.skip(':')) {
                 url.port = atou(s);
@@ -67,19 +106,17 @@ export struct Url {
         return resolvedRef.unwrapOr(url);
     }
 
-
     static Url parse(Str str, Opt<Url> baseUrl = NONE) {
         Io::SScan s{str};
         return parse(s, baseUrl);
     }
 
-    static bool isUrl(Str str)  {
+    static bool isUrl(Str str) {
         Io::SScan s{str};
 
         return s.skip(RE_COMPONENT) and
-            s.skip(':');
+               s.skip(':');
     }
-
 
     bool rooted() const {
         return path.rooted;
@@ -95,7 +132,7 @@ export struct Url {
         return join(Path::parse(other));
     }
 
-    Str basename() const  {
+    Str basename() const {
         return path.basename();
     }
 
@@ -117,18 +154,17 @@ export struct Url {
         return same and path.isParentOf(other.path);
     }
 
-
-    Res<> unparse(Io::TextWriter& writer) const  {
-        if (scheme.len() > 0)
+    Res<> unparse(Io::TextWriter& writer) const {
+        if (scheme)
             try$(Io::format(writer, "{}:", scheme));
 
-        if (userInfo.len() > 0 or host.len() > 0)
+        if (userInfo or host)
             try$(writer.writeStr("//"s));
 
-        if (userInfo.len() > 0)
+        if (userInfo)
             try$(Io::format(writer, "{}@", userInfo));
 
-        if (host.len() > 0)
+        if (host)
             try$(writer.writeStr(host.str()));
 
         if (port)
@@ -136,10 +172,10 @@ export struct Url {
 
         try$(path.unparse(writer));
 
-        if (query.len() > 0)
+        if (query)
             try$(Io::format(writer, "?{}", query));
 
-        if (fragment.len() > 0)
+        if (fragment)
             try$(Io::format(writer, "#{}", fragment));
 
         return Ok();
@@ -159,7 +195,7 @@ export struct Url {
         return path.len();
     }
 
-    auto operator<=>(Url const&) const = default;
+    bool operator==(Url const&) const = default;
 
     bool isRelative() const {
         return not scheme;
@@ -213,7 +249,7 @@ export struct Url {
     }
 };
 
-export Url parseUrlOrPath(Str str, Opt<Url> baseUrl = NONE)  {
+export Url parseUrlOrPath(Str str, Opt<Url> baseUrl = NONE) {
     if (Url::isUrl(str)) {
         return Url::parse(str, baseUrl);
     }

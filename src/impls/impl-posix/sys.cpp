@@ -62,13 +62,13 @@ Res<Ref::Path> resolve(Ref::Url const& url) {
 
         if (format == Posix::RepoType::CUTEKIT) {
             resolved = Ref::Path::parse(repo)
-                           .join(url.host)
+                           .join(url.host.str())
                            .join("__res__")
                            .join(path);
         } else if (format == Posix::RepoType::PREFIX) {
             resolved = Ref::Path::parse(repo)
                            .join("share")
-                           .join(url.host)
+                           .join(url.host.str())
                            .join(path);
         } else {
             return Error::notFound("unknown repo type");
@@ -84,7 +84,7 @@ Res<Ref::Path> resolve(Ref::Url const& url) {
         if (url.host == "home")
             resolved = Ref::Path::parse(maybeHome).join(path);
         else
-            resolved = Ref::Path::parse(maybeHome).join(Io::toPascalCase(url.host).unwrap()).join(path);
+            resolved = Ref::Path::parse(maybeHome).join(Io::toPascalCase(url.host.str()).unwrap()).join(path);
     } else {
         return Error::notFound("unknown url scheme");
     }
@@ -472,10 +472,10 @@ Res<> populate(Vec<CpuInfo>&) {
 
 Res<> populate(UserInfo& infos) {
     infos.name = Str::fromNullterminated(getenv("USER"));
-    infos.home.scheme = "file"s;
+    infos.home.scheme = "file"_sym;
     infos.home.path = Ref::Path::parse(getenv("HOME"));
 
-    infos.shell.scheme = "file"s;
+    infos.shell.scheme = "file"_sym;
     infos.shell.path = Ref::Path::parse(getenv("SHELL"));
 
     return Ok();

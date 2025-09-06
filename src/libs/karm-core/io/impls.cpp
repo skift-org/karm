@@ -24,7 +24,7 @@ export struct Zero : Reader {
 };
 
 export struct Repeat : Reader {
-    u8 _byte;
+    u8 _byte{};
 
     Repeat(u8 byte) : _byte(byte) {}
 
@@ -41,10 +41,10 @@ export struct Empty : Reader {
 
 export struct Count : Writer, Seeker {
     Writer& _reader;
-    usize _pos;
+    usize _pos{};
 
     Count(Writer& reader)
-        : _reader(reader), _pos(0) {}
+        : _reader(reader) {}
 
     Res<usize> write(Bytes bytes) override {
         usize written = try$(_reader.write(bytes));
@@ -61,9 +61,9 @@ export struct Count : Writer, Seeker {
 
 export template <Readable Readable>
 struct Limit : Reader {
-    Readable _reader;
-    usize _limit;
-    usize _read;
+    Readable _reader{};
+    usize _limit{};
+    usize _read{};
 
     Limit(Readable&& reader, usize limit)
         : _reader(std::forward<Readable>(reader)),
@@ -79,9 +79,9 @@ struct Limit : Reader {
 
 export template <SeekableWritable Writable>
 struct WriterSlice : Writer, Seeker {
-    Writable _writer;
-    usize _start;
-    usize _end;
+    Writable _writer{};
+    usize _start{};
+    usize _end{};
 
     WriterSlice(Writable writer, usize start, usize end)
         : _writer(writer), _start(start), _end(end) {}
@@ -122,8 +122,8 @@ export struct BufReader :
     Reader,
     Seeker {
 
-    Bytes _buf;
-    usize _pos;
+    Bytes _buf{};
+    usize _pos{};
 
     BufReader(Bytes buf) : _buf(buf), _pos(0) {}
 
@@ -173,7 +173,7 @@ export struct BufWriter :
 };
 
 export struct BufferWriter : Writer, Flusher {
-    Buf<u8> _buf;
+    Buf<u8> _buf{};
 
     BufferWriter(usize cap = 16) : _buf(cap) {}
 

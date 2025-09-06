@@ -27,6 +27,10 @@ struct Ok {
         requires Meta::Comparable<T>
     = default;
 
+    always_inline bool operator==(Ok const&) const
+        requires Meta::Equatable<T>
+    = default;
+
     T take() {
         return std::move(inner);
     }
@@ -162,6 +166,8 @@ struct [[nodiscard]] Res {
     always_inline bool operator==(bool b) const {
         return has() == b;
     }
+
+    always_inline bool operator==(Res const&) const = default;
 };
 
 static_assert(Tryable<Res<isize, Error>>);
