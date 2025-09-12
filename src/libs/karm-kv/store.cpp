@@ -27,7 +27,7 @@ export struct Store {
             }
         }
         return db;
-    };
+    }
 
     Res<> put(Bytes key, Bytes value) {
         try$(_wal->record(Wal::PUT, key, value));

@@ -1,6 +1,7 @@
 module;
 
 #include <karm-font/ttf/fontface.h>
+#include <karm-gfx/font.h>
 
 export module Karm.Print:pdfFonts;
 
@@ -32,7 +33,7 @@ export struct TtfGlyphInfoAdapter {
 
         for (auto [_, GID] : iter(codeMappings)) {
             Gfx::Glyph glyph{.index = GID, .font = 0};
-            auto metrics = _font->_parser.glyphMetrics(glyph);
+            auto metrics = _font->glyphMetrics(glyph);
 
             xMin = min(xMin, metrics.x - metrics.width);
             xMax = max(xMax, metrics.x);
@@ -146,7 +147,7 @@ export struct TrueTypeFontAdapter {
               TtfGlyphInfoAdapter::build(font)
           },
           CIDFontName{
-              font->_parser._name.string(font->_parser._name.lookupRecord(Font::Ttf::Name::POSTSCRIPT)).str()
+              font->_name.string(font->_name.lookupRecord(Font::Ttf::Name::POSTSCRIPT)).str()
           } {
     }
 
@@ -168,12 +169,18 @@ export struct TrueTypeFontAdapter {
 
     Pdf::Stream fontFile() {
         // 9.9 Embedded font programs
+        Io::BufferWriter writer;
+        Gfx::FontSubset subset;
+        subset.addAll();
+        _font->subset(subset, writer).unwrap("failed to subset font");
+
+        auto buf = writer.take();
         return Pdf::Stream{
             .dict = Pdf::Dict{
-                {"Length"s, _font->_mmap.bytes().len()},
-                {"Length1"s, _font->_mmap.bytes().len()},
+                {"Length"s, buf.len()},
+                {"Length1"s, buf.len()},
             },
-            .data = _font->_mmap.bytes(),
+            .data = std::move(buf),
         };
     }
 
@@ -209,10 +216,10 @@ export struct TrueTypeFontAdapter {
             {"Flags"s, fontDescriptorFlags()},
             {"FontBBox"s, ttfGlyphInfoAdapter.fontBBox()},
             {"FontFile2"s, fontFileRef},
-            {"ItalicAngle"s, _font->_parser._post.italicAngle()},
+            {"ItalicAngle"s, _font->_post.italicAngle()},
             {"Ascent"s, metrics.ascend * 1000},
             {"Descent"s, metrics.descend * -1000},
-            {"CapHeight"s, metrics.ascend * 1000}, // FIXME
+            {"CapHeight"s, metrics.ascend * 1000},
             {"StemV"s, usize{0}},
         };
     }
@@ -246,7 +253,6 @@ export struct TrueTypeFontAdapter {
         file.add(fontFileRef, fontFile());
         file.add(CIDFontRef, CIDFont());
         file.add(fontDescriptorRef, fontDescriptors());
-
         file.add(fontRef, font());
         return fontRef;
     }

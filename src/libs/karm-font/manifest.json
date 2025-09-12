@@ -4,7 +4,9 @@
     "type": "lib",
     "description": "Font loading and matching",
     "subdirs": [
-        "ttf"
+        "ttf",
+        "woff",
+        "sfnt"
     ],
     "requires": [
         "karm-app",
