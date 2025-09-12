@@ -179,6 +179,12 @@ export struct MutMmap :
         _owned = false;
     }
 
+    operator Mmap() {
+        Mmap mmap{_paddr, _buf, _size, _owned};
+        leak();
+        return mmap;
+    }
+
     Mmap seal() {
         Mmap mmap{_paddr, _buf, _size, _owned};
         leak();

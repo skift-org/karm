@@ -169,6 +169,45 @@ struct Cmap : Io::BChunk {
             return t;
         }};
     }
+
+    Res<Table> chooseTable() {
+        Opt<Cmap::Table> bestCmap = NONE;
+        isize bestScore = 0;
+
+        struct KnowCmap {
+            isize platformId;
+            isize encodingId;
+            isize type;
+            isize score;
+        };
+
+        Array<KnowCmap, 4> knowCmaps = {
+            KnowCmap{0, 3, 4, 150},
+            KnowCmap{3, 1, 4, 100},
+            KnowCmap{0, 4, 12, 1050},
+            KnowCmap{3, 10, 12, 1000},
+        };
+
+        for (auto table : iterTables()) {
+            for (auto& knowCmap : knowCmaps) {
+                if (knowCmap.platformId == table.platformId and
+                    knowCmap.encodingId == table.encodingId and
+                    knowCmap.type == table.type and
+                    knowCmap.score > bestScore) {
+
+                    bestCmap = table;
+                    bestScore = knowCmap.score;
+                }
+            }
+        }
+
+        if (not bestCmap) {
+            logError("ttf: no suitable cmap table found");
+            return Error::other("no suitable cmap table found");
+        }
+
+        return Ok(*bestCmap);
+    }
 };
 
 } // namespace Karm::Font::Ttf

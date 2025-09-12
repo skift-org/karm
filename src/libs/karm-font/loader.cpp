@@ -8,11 +8,26 @@ import Karm.Core;
 import Karm.Sys;
 import Karm.Ref;
 import Karm.Gfx;
+import :sfnt;
+import :woff;
 
 namespace Karm::Font {
 
+export Res<Rc<Ttf::Container>> _loadContainer(Sys::Mmap&& map) {
+    if (Sfnt::sniff(map.bytes())) {
+        return Sfnt::Container::load(std::move(map));
+    } else if (Woff1::sniff(map.bytes())) {
+        return Woff1::Container::load(std::move(map));
+    } else if (Woff2::sniff(map.bytes())) {
+        return Woff2::Container::load(std::move(map));
+    } else {
+        return Error::invalidData("unknown truetype container");
+    }
+}
+
 export Res<Rc<Gfx::Fontface>> loadFontface(Sys::Mmap&& map) {
-    return Ok(try$(Ttf::Fontface::load(std::move(map))));
+    auto container = try$(_loadContainer(std::move(map)));
+    return Ok(try$(Ttf::Fontface::load(container)));
 }
 
 export Res<Rc<Gfx::Fontface>> loadFontface(Ref::Url url) {

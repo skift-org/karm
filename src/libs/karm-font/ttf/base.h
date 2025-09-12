@@ -8,7 +8,7 @@ struct Fixed {
     u32be value;
 
     f64 asF64() const {
-        return f64(value) / 65536.0;
+        return static_cast<f64>(value) / 65536.0;
     }
 };
 
