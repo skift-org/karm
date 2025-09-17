@@ -253,12 +253,6 @@ struct MessagePacker<Union<Ts...>> {
 
 template <>
 struct MessagePacker<Error> {
-    // TODO: Because the message in the error is a non owning string
-    //       we can't send it over the wire because they will be no one
-    //       to own it at the other end.
-    //
-    //       This should be fine from a technical standpoint since the code
-    //       don't care about the message, but the user does though.
 
     static Res<> pack(MessageWriter& e, Error const& val) {
         return Sys::pack(e, static_cast<u32>(val.code()));
@@ -295,6 +289,7 @@ template <Meta::Aggregate T>
 struct MessagePacker<T> {
     static Res<> pack(MessageWriter& e, T const& val) {
         return Meta::visit(
+            val,
             [&](auto&&... fields) {
                 Res<> res = Ok();
                 ([&] {
@@ -302,8 +297,7 @@ struct MessagePacker<T> {
                 }(),
                  ...);
                 return res;
-            },
-            val
+            }
         );
     }
 
@@ -311,6 +305,7 @@ struct MessagePacker<T> {
         T object;
         Opt<Error> err = NONE;
         Meta::visit(
+            object,
             [&](auto&&... fields) {
                 ([&] {
                     auto res = Sys::unpack<Meta::RemoveConstVolatileRef<decltype(fields)>>(s);
@@ -321,8 +316,7 @@ struct MessagePacker<T> {
                     fields = res.take();
                 }(),
                  ...);
-            },
-            object
+            }
         );
 
         if (err)
