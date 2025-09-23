@@ -34,8 +34,8 @@ export struct Frame {
     }
 
     void volume(f32 v) {
-        f32 volMin = 1 / 1000;
-        f32 volMax = Math::log(1000.);
+        f32 volMin = 1 / 100.;
+        f32 volMax = Math::log(100.);
         f32 factor = volMin * Math::exp(volMax * v);
         for (auto& d : samples)
             d *= factor;
@@ -246,32 +246,51 @@ export struct Player : Stream {
 
     using enum Status;
 
-    Opt<Rc<Audio>> _audio;
+    mutable Opt<Rc<Audio>> _audio;
     bool _pause = true;
+    bool _mute = false;
+    f64 _volume = 1;
     Atomic<usize> _currentFrame;
 
-    void seek(Duration);
+    void seek(Duration offset) {
+        if (_audio.has()) {
+            auto fmt = _audio.unwrap()->format;
+            f64 secs = offset.toUSecs() / static_cast<f64>(Duration::fromSecs(1).toUSecs());
+            usize frame = static_cast<usize>(secs * static_cast<f64>(fmt.rate));
+            _currentFrame.store(clamp(frame, 0uz, _audio.unwrap()->frames().len()));
+        }
+    }
 
-    Duration tell() {
+    Duration tell() const {
         auto curr = _currentFrame.load();
         auto fmt = _audio.unwrap()->format;
         f64 secs = curr / static_cast<f64>(fmt.rate);
         return Duration::fromUSecs(secs * Duration::fromSecs(1).toUSecs());
     }
 
-    void play(Rc<Audio> audio) {
-        _audio = audio;
+    Duration duration() const {
+        if (_audio.has())
+            return _audio.unwrap()->duration();
+        return Duration::fromSecs(0);
     }
 
-    void pause(bool on) {
-        _pause = on;
-    }
+    void play(Rc<Audio> audio) { _audio = audio; }
 
-    void stop() {
-        _audio = NONE;
-    }
+    void stop() { _audio = NONE; }
 
-    Status status() {
+    void pause(bool on) { _pause = on; }
+
+    bool pause() const { return _pause; }
+
+    void mute(bool on) { _mute = on; }
+
+    bool mute() const { return _mute; }
+
+    void volume(f64 vol) { _volume = vol; }
+
+    f64 volume() const { return _volume; }
+
+    Status status() const {
         if (not _audio)
             return Status::STOPPED;
         if (_currentFrame.load() >= _audio.unwrap()->frames().len())
@@ -282,10 +301,17 @@ export struct Player : Stream {
     }
 
     void process(Frames, Frames output) override {
-        if (_pause or not _audio)
-            return;
-        auto curr = _currentFrame.load();
-        _currentFrame.store(curr + _audio.unwrap()->fill(curr, output));
+        if (_pause or not _audio) {
+            for (auto f : output.iter())
+                f.mono(0);
+        } else {
+            auto curr = _currentFrame.load();
+            _currentFrame.store(curr + _audio.unwrap()->fill(curr, output));
+            if (_mute or _volume != 1) {
+                for (auto f : output.iter())
+                    f.volume(_mute ? 0. : _volume);
+            }
+        }
     }
 };
 

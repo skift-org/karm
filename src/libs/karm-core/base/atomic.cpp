@@ -71,7 +71,7 @@ struct Atomic {
         return __atomic_fetch_sub(&_val, 1, order);
     }
 
-    always_inline T load(MemOrder order = MemOrder::SEQ_CST) {
+    always_inline T load(MemOrder order = MemOrder::SEQ_CST) const {
         return __atomic_load_n(&_val, order);
     }
 
@@ -79,7 +79,7 @@ struct Atomic {
         __atomic_store_n(&_val, desired, order);
     }
 
-    always_inline bool lockFree() {
+    always_inline bool lockFree() const{
         return __atomic_is_lock_free(&_val);
     }
 };
