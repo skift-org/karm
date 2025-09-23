@@ -30,11 +30,11 @@ static void _callback(void* userdata, Uint8* data, int len) {
         return;
     auto stream = device->_stream.unwrap();
 
-    Samples input;
+    Frames input;
     input.format = device->_options.input;
-    Samples output;
+    Frames output;
     output.format = device->_options.output;
-    output.data = {reinterpret_cast<f32*>(data), len / sizeof(f32)};
+    output.samples = {reinterpret_cast<f32*>(data), len / sizeof(f32)};
 
     stream->process(input, output);
 }

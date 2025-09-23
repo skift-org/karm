@@ -8,55 +8,84 @@ export struct Format {
     usize rate = 44100; // hz
     usize channels = 1;
     usize frames = 2048;
+
+    bool operator==(Format const&) const = default;
 };
 
-export struct Sample {
+export struct Frame {
     usize index;
-    MutSlice<f32> data;
+    MutSlice<f32> samples;
 
-    void all(f32 v) {
-        for (auto& d : data)
+    void mono(f32 v) {
+        for (auto& d : samples)
             d = v;
     }
 
+    f32 mono() {
+        f32 v = 0;
+        for (auto& d : samples)
+            v += d;
+        return v / samples.len();
+    }
+
     void clip() {
-        for (auto& d : data)
+        for (auto& d : samples)
             d = clamp(d, -1., 1.);
     }
 
     void volume(f32 v) {
-        for (auto& d : data)
-            d *= v;
+        f32 volMin = 1 / 1000;
+        f32 volMax = Math::log(1000.);
+        f32 factor = volMin * Math::exp(volMax * v);
+        for (auto& d : samples)
+            d *= factor;
     }
 };
 
-struct SamplesIter;
+struct FramesIter;
 
-export struct Samples {
+export struct Frames {
     Format format;
-    MutSlice<f32> data;
+    MutSlice<f32> samples;
 
-    Sample operator[](usize index) {
+    Frame operator[](usize index) {
         auto sampleData = mutSub(
-            data,
+            samples,
             index * format.channels,
             index * format.channels + format.channels
         );
-        return Sample{index, sampleData};
+        return Frame{index, sampleData};
     }
 
-    SamplesIter iter();
+    FramesIter iter();
 
     usize len() {
-        return data.len() / format.channels;
+        return samples.len() / format.channels;
+    }
+
+    Frames sub(usize start) {
+        auto sampleData = mutNext(
+            samples,
+            start * format.channels
+        );
+        return Frames{format, sampleData};
+    }
+
+    Frames sub(usize start, usize end) {
+        auto sampleData = mutSub(
+            samples,
+            start * format.channels,
+            end * format.channels
+        );
+        return Frames{format, sampleData};
     }
 };
 
-struct SamplesIter {
-    Samples& _self;
+struct FramesIter {
+    Frames& _self;
     usize index = 0;
 
-    Opt<Sample> next() {
+    Opt<Frame> next() {
         if (index >= _self.len())
             return NONE;
         return _self[index++];
@@ -66,13 +95,13 @@ struct SamplesIter {
 export using Karm::begin;
 export using Karm::end;
 
-SamplesIter Samples::iter() {
-    return SamplesIter{*this};
+FramesIter Frames::iter() {
+    return FramesIter{*this};
 }
 
 export struct Stream {
     virtual ~Stream() = default;
-    virtual void process(Samples input, Samples output) = 0;
+    virtual void process(Frames input, Frames output) = 0;
 };
 
 struct Options {
@@ -101,9 +130,163 @@ struct Device {
 
     virtual ~Device() = default;
 
-    void play(Rc<Stream> stream) { _stream = stream; }
+    void play(Rc<Stream> stream) {
+        _stream = stream;
+    }
 
     virtual void pause(bool on) = 0;
+};
+
+export usize resamples(Frames from, Frames to) {
+    auto ff = from.format;
+    auto tf = to.format;
+
+    if (from.len() == 0 || to.len() == 0)
+        return 0;
+
+    auto inCh = ff.channels;
+    auto outCh = tf.channels;
+
+    // Fast path: same rate
+    if (ff.rate == tf.rate) {
+        auto n = min(from.len(), to.len());
+        if (inCh == outCh) {
+            // 1:1 copy per channel
+            for (auto i : range(n)) {
+                auto fi = from[i].samples;
+                auto ti = to[i].samples;
+                for (usize c = 0; c < outCh; ++c)
+                    ti[c] = fi[c];
+            }
+        } else {
+            // Mix to mono then fan out
+            for (auto i : range(n)) {
+                f32 m = from[i].mono();
+                to[i].mono(m);
+            }
+        }
+        return n; // consumed n input frames
+    }
+
+    // Resampling path: linear interpolation on a mono mix, then fan out
+    f64 step = static_cast<f64>(ff.rate) / static_cast<f64>(tf.rate);
+    f64 pos = 0.0;
+
+    usize consumed = 0;
+    usize maxIn = from.len();
+
+    for (usize o = 0; o < to.len(); ++o) {
+        usize i0 = static_cast<usize>(Math::floor(pos));
+        if (i0 >= maxIn)
+            break;
+
+        usize i1 = i0 + 1;
+        if (i1 >= maxIn)
+            i1 = maxIn - 1; // clamp on tail
+
+        f32 w1 = static_cast<f32>(pos - static_cast<f64>(i0));
+        f32 w0 = 1.0f - w1;
+
+        // Mono mix at i0 and i1
+        f32 x0 = from[i0].mono();
+        f32 x1 = from[i1].mono();
+
+        f32 v = w0 * x0 + w1 * x1;
+
+        // Fan out to target channels
+        to[o].mono(v);
+
+        pos += step;
+
+        // Track how many input frames we effectively consumed
+        // We consider frames up to i1 as "touched".
+        usize used = i1 + 1;
+        if (used > consumed)
+            consumed = used;
+
+        // If we've reached the end of input and the next step would overflow,
+        // stop here to avoid reading past the end.
+        if (i1 == maxIn - 1 and pos >= static_cast<f64>(maxIn - 1))
+            break;
+    }
+
+    return min(consumed, maxIn);
+}
+
+struct Audio {
+    Format format;
+    Vec<f32> samples;
+
+    Audio(Format format, usize frames)
+        : format(format) {
+        samples.resize(frames * format.channels);
+    }
+
+    Frames frames() {
+        return {format, samples};
+    }
+
+    Duration duration() const {
+        f64 secs = samples.len() / static_cast<f64>(format.rate * format.channels);
+        return Duration::fromUSecs(secs * Duration::fromSecs(1).toUSecs());
+    }
+
+    usize fill(usize frame, Frames output) {
+        return resamples(frames().sub(frame), output);
+    }
+};
+
+export struct Player : Stream {
+    enum struct Status {
+        STOPPED,
+        PAUSED,
+        PLAYING,
+        ENDED,
+    };
+
+    using enum Status;
+
+    Opt<Rc<Audio>> _audio;
+    bool _pause = true;
+    Atomic<usize> _currentFrame;
+
+    void seek(Duration);
+
+    Duration tell() {
+        auto curr = _currentFrame.load();
+        auto fmt = _audio.unwrap()->format;
+        f64 secs = curr / static_cast<f64>(fmt.rate);
+        return Duration::fromUSecs(secs * Duration::fromSecs(1).toUSecs());
+    }
+
+    void play(Rc<Audio> audio) {
+        _audio = audio;
+    }
+
+    void pause(bool on) {
+        _pause = on;
+    }
+
+    void stop() {
+        _audio = NONE;
+    }
+
+    Status status() {
+        if (not _audio)
+            return Status::STOPPED;
+        if (_currentFrame.load() >= _audio.unwrap()->frames().len())
+            return Status::ENDED;
+        if (_pause)
+            return Status::PAUSED;
+        return Status::PLAYING;
+    }
+
+    void process(Frames, Frames output) override {
+        if (_pause or not _audio)
+            return;
+        auto curr = _currentFrame.load();
+        _currentFrame.store(curr + _audio.unwrap()->fill(curr, output));
+    }
 };
 
 } // namespace Karm::Av

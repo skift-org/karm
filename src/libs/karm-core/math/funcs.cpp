@@ -180,6 +180,11 @@ T exp(T x) {
     return (result);
 }
 
+export template <Meta::Float T>
+T log(T x) {
+    return __builtin_log(x);
+}
+
 // MARK: Power -----------------------------------------------------------------
 
 export template <Meta::Integral T>
@@ -301,8 +306,8 @@ constexpr T pow(T base, T exponent) {
         return 0;
     if (exponent == 1)
         return base;
-    int y_as_int = (int)exponent;
-    if (exponent == (T)y_as_int) {
+    int exp1 = static_cast<int>(exponent);
+    if (exponent == static_cast<T>(exp1)) {
         T result = base;
         for (int i = 0; i < abs(exponent) - 1; ++i)
             result *= base;

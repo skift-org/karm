@@ -3,6 +3,10 @@
     "id": "karm-av",
     "type": "lib",
     "description": "Audio/Video playback",
+    "subdirs": [
+        "riff",
+        "wav"
+    ],
     "requires": [
         "karm-av-impl",
         "karm-sys",

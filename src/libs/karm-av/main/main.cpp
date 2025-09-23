@@ -12,24 +12,33 @@ struct Sin : Av::Stream {
     f64 freq = 440.0f; // A4
     f64 phase = 0.0f;
 
-    void process(Av::Samples, Av::Samples output) override {
+    void process(Av::Frames, Av::Frames output) override {
         f64 step = 2.0f * Math::PI * freq / output.format.rate;
-        for (Av::Sample sample : output.iter()) {
+        for (Av::Frame frame : output.iter()) {
             f64 s = Math::sin(phase);
             phase += step;
             if (phase >= 2.0f * Math::PI)
                 phase -= 2.0f * Math::PI;
-            sample.all(s);
-            sample.clip();
+            frame.mono(s);
+            frame.clip();
         }
     }
 };
 
 Async::Task<> entryPointAsync(Sys::Context&) {
-    auto stream = co_try$(Av::Device::create());
-    stream->play(makeRc<Sin>());
-    stream->pause(false);
-    co_try$(Sys::sleep(Duration::fromSecs(10)));
+    auto url = "bundle://karm-av/audio/free-software.wav"_url;
+    auto device = co_try$(Av::Device::create());
+    auto player = makeRc<Av::Player>();
+    auto audio = co_try$(Av::load(url));
+    player->play(audio);
+    device->play(player);
+    device->pause(false);
+    player->pause(false);
+
+    while (player->status() == Av::Player::PLAYING) {
+        Sys::println("Playing {}... ({}/{})", url, player->tell(), audio->duration());
+        co_try$(Sys::sleep(Duration::fromSecs(1)));
+    }
 
     co_return Ok();
 }
