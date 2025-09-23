@@ -286,7 +286,7 @@ export struct Player : Stream {
 
     bool mute() const { return _mute; }
 
-    void volume(f64 vol) { _volume = vol; }
+    void volume(f64 vol) { _volume = clamp01(vol); }
 
     f64 volume() const { return _volume; }
 
