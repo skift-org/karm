@@ -324,13 +324,22 @@ export struct Decoder {
 
     Res<> _decodeScanline(Io::BScan& s, Gfx::MutPixels out, usize scanline) {
         for (usize i : range(_width)) {
-            auto r = s.nextU8be();
-            auto g = s.nextU8be();
-            auto b = s.nextU8be();
-            u8 a = 255;
-            if (_colorType == ColorType::TRUECOLOR_ALPHA)
-                a = s.nextU8be();
-            out.store(Math::Vec2u{i, scanline}.cast<isize>(), Gfx::Color{r, g, b, a});
+            if (_colorType == ColorType::GREYSCALE or
+                _colorType == ColorType::GREYSCALE_ALPHA) {
+                auto g = s.nextU8be();
+                u8 a = 255;
+                if (_colorType == ColorType::GREYSCALE_ALPHA)
+                    a = s.nextU8be();
+                out.store(Math::Vec2u{i, scanline}.cast<isize>(), Gfx::Color{g, g, g, a});
+            } else {
+                auto r = s.nextU8be();
+                auto g = s.nextU8be();
+                auto b = s.nextU8be();
+                u8 a = 255;
+                if (_colorType == ColorType::TRUECOLOR_ALPHA)
+                    a = s.nextU8be();
+                out.store(Math::Vec2u{i, scanline}.cast<isize>(), Gfx::Color{r, g, b, a});
+            }
         }
         return Ok();
     }
