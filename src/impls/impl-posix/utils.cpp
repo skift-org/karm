@@ -199,7 +199,7 @@ Res<> consumeErrno() {
 
 struct sockaddr_in toSockAddr(Sys::SocketAddr addr) {
     struct sockaddr_in sockaddr;
-    auto addr4 = addr.addr.unwrap<Sys::Ip4>();
+    auto addr4 = addr.addr.unwrap<Sys::Ip4>("only ipv4 supported");
     sockaddr.sin_family = AF_INET;
     sockaddr.sin_port = htons(addr.port);
     sockaddr.sin_addr.s_addr = addr4._raw._value;
@@ -208,7 +208,7 @@ struct sockaddr_in toSockAddr(Sys::SocketAddr addr) {
 
 Sys::SocketAddr fromSockAddr(struct sockaddr_in sockaddr) {
     Sys::SocketAddr addr{Sys::Ip4::unspecified(), 0};
-    addr.addr.unwrap<Sys::Ip4>()._raw._value = sockaddr.sin_addr.s_addr;
+    addr.addr.unwrap<Sys::Ip4>("only ipv4 supported")._raw._value = sockaddr.sin_addr.s_addr;
     addr.port = ntohs(sockaddr.sin_port);
     return addr;
 }

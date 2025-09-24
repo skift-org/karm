@@ -12,51 +12,48 @@ struct StackBlur {
     Math::Vec4u _sum;
 
     StackBlur(isize radius)
-        : _radius(radius), _queue(width()) {
-        clear();
-    }
+        : _radius(radius), _queue(width()) { clear(); }
 
-    Math::Vec4u outgoingSum() const {
+
+
+    Math::Vec4u outgoingSumCurrent() const {
         Math::Vec4u sum = {};
-        for (isize i = 0; i < _radius; i++) {
+        for (isize i = 0; i <= _radius; i++) 
             sum = sum + _queue.peekFront(i);
-        }
         return sum;
     }
 
-    Math::Vec4u incomingSum() const {
-        Math::Vec4u sum = {};
-        for (isize i = 0; i < _radius; i++) {
-            sum = sum + _queue.peekFront(width() - i - 1);
-        }
+    Math::Vec4u incomingSumWith(Math::Vec4u in) const {
+        Math::Vec4u sum = in;
+        for (isize i = 0; i < _radius; i++) 
+            sum = sum + _queue.peekFront(width() - 1 - i);
         return sum;
     }
 
-    isize width() const {
+    isize width() const { 
         return _radius * 2 + 1;
     }
 
-    isize denominator() const {
-        return _radius * (_radius + 2) - 1;
+    isize denominator() const { 
+        return (_radius + 1) * (_radius + 1); 
     }
 
     void enqueue(Math::Vec4u color) {
+        _sum = _sum + incomingSumWith(color) - outgoingSumCurrent();
+        _queue.popFront();
         _queue.pushBack(color);
-        _sum = _sum + incomingSum() - outgoingSum();
     }
 
-    Math::Vec4u dequeue() {
-        auto res = _sum / denominator();
-        _queue.popFront();
-        return res;
+    Math::Vec4u dequeue() const {
+        auto d = denominator();
+        return (_sum + Math::Vec4u(d / 2)) / d;
     }
 
     void clear() {
         _sum = {};
         _queue.clear();
-        for (isize i = 0; i < width(); i++) {
+        for (isize i = 0; i < width(); i++) 
             _queue.pushBack({});
-        }
     }
 };
 
