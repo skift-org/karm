@@ -107,8 +107,7 @@ using _Filters = Union<
     NoiseFilter,
     SepiaFilter,
     TintFilter,
-    OverlayFilter,
-    FilterChain>;
+    OverlayFilter>;
 
 struct Filter : _Filters {
     using _Filters::_Filters;

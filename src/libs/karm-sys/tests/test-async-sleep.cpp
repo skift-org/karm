@@ -1,7 +1,7 @@
 #include <karm-logger/logger.h>
-#include <karm-sys/async.h>
-#include <karm-sys/proc.h>
 #include <karm-test/macros.h>
+
+import Karm.Sys;
 
 namespace Karm::Sys::Tests {
 

@@ -1,15 +1,17 @@
-#pragma once
-
-import Karm.Core;
+module;
 
 #include <karm-core/macros.h>
-#include <karm-sys/types.h>
+
+export module Karm.Sys:message;
+
+import Karm.Core;
+import :types;
 
 namespace Karm::Sys {
 
 // MARK: Message Writer/Reader -------------------------------------------------
 
-struct MessageWriter : Io::BEmit {
+export struct MessageWriter : Io::BEmit {
     Vec<Handle> _handles;
 
     using BEmit::BEmit;
@@ -27,7 +29,7 @@ struct MessageWriter : Io::BEmit {
     }
 };
 
-struct MessageReader : Io::BScan {
+export struct MessageReader : Io::BScan {
     Cursor<Handle> _handles;
 
     MessageReader(Bytes bytes, Slice<Handle> handles)
@@ -40,22 +42,22 @@ struct MessageReader : Io::BScan {
     }
 };
 
-template <typename T>
+export template <typename T>
 struct MessagePacker;
 
-template <typename T>
-static Res<> pack(MessageWriter& e, T const& val) {
+export template <typename T>
+Res<> pack(MessageWriter& e, T const& val) {
     return MessagePacker<T>::pack(e, val);
 }
 
-template <typename T>
-static Res<T> unpack(MessageReader& s) {
+export template <typename T>
+Res<T> unpack(MessageReader& s) {
     return MessagePacker<T>::unpack(s);
 }
 
 // MARK: Primitive Types -------------------------------------------------------
 
-struct Port : Distinct<u64, struct _PortTag> {
+export struct Port : Distinct<u64, struct _PortTag> {
     static Port const INVALID;
     static Port const BUS;
     static Port const BROADCAST;
@@ -74,11 +76,11 @@ struct Port : Distinct<u64, struct _PortTag> {
     }
 };
 
-constexpr Port Port::INVALID{0};
-constexpr Port Port::BUS{Limits<u64>::MAX};
-constexpr Port Port::BROADCAST{Limits<u64>::MAX - 1};
+Port const Port::INVALID{0};
+Port const Port::BUS{Limits<u64>::MAX};
+Port const Port::BROADCAST{Limits<u64>::MAX - 1};
 
-struct Header {
+export struct Header {
     u64 seq;
     Port from;
     Port to;
@@ -91,7 +93,7 @@ struct Header {
 
 static_assert(Meta::TrivialyCopyable<Header>);
 
-struct Message {
+export struct Message {
     static constexpr usize CAP = 4096;
 
     union {
@@ -188,7 +190,7 @@ struct Message {
 
 // MARK: Trivialy Copyable -----------------------------------------------------
 
-template <Meta::TrivialyCopyable T>
+export template <Meta::TrivialyCopyable T>
 struct MessagePacker<T> {
     static Res<> pack(MessageWriter& e, T const& val) {
         e.writeFrom(val);
@@ -204,7 +206,7 @@ struct MessagePacker<T> {
 
 // MARK: Optionals -------------------------------------------------------------
 
-template <>
+export template <>
 struct MessagePacker<None> {
     static Res<> pack(Io::BEmit&, None const&) {
         return Ok();
@@ -215,7 +217,7 @@ struct MessagePacker<None> {
     }
 };
 
-template <typename T>
+export template <typename T>
 struct MessagePacker<Opt<T>> {
     static Res<> pack(MessageWriter& e, Opt<T> const& val) {
         e.writeU8le(val.has());
@@ -232,7 +234,7 @@ struct MessagePacker<Opt<T>> {
     }
 };
 
-template <typename... Ts>
+export template <typename... Ts>
 struct MessagePacker<Union<Ts...>> {
     static Res<> pack(MessageWriter& e, Union<Ts...> const& val) {
         try$(Sys::pack<u8>(e, val.index()));
@@ -251,9 +253,8 @@ struct MessagePacker<Union<Ts...>> {
     }
 };
 
-template <>
+export template <>
 struct MessagePacker<Error> {
-
     static Res<> pack(MessageWriter& e, Error const& val) {
         return Sys::pack(e, static_cast<u32>(val.code()));
     }
@@ -264,7 +265,7 @@ struct MessagePacker<Error> {
     }
 };
 
-template <typename T, typename E>
+export template <typename T, typename E>
 struct MessagePacker<Res<T, E>> {
     static Res<> pack(MessageWriter& e, Res<T, E> const& val) {
         e.writeU8le(val.has());
@@ -284,7 +285,7 @@ struct MessagePacker<Res<T, E>> {
     }
 };
 
-template <Meta::Aggregate T>
+export template <Meta::Aggregate T>
     requires(not Meta::TrivialyCopyable<T>)
 struct MessagePacker<T> {
     static Res<> pack(MessageWriter& e, T const& val) {
@@ -328,7 +329,7 @@ struct MessagePacker<T> {
 
 // MARK: Sliceable ---------------------------------------------------------------
 
-template <typename T>
+export template <typename T>
 struct MessagePacker<Vec<T>> {
     static Res<> pack(MessageWriter& e, Vec<T> const& val) {
         e.writeU64le(val.len());
@@ -350,7 +351,7 @@ struct MessagePacker<Vec<T>> {
 
 // MARK: Strings ---------------------------------------------------------------
 
-template <StaticEncoding E>
+export template <StaticEncoding E>
 struct MessagePacker<_String<E>> {
     static Res<> pack(MessageWriter& e, _String<E> const& val) {
         e.writeU64le(val.len());
@@ -365,7 +366,7 @@ struct MessagePacker<_String<E>> {
 
 // MARK: Tuple -----------------------------------------------------------------
 
-template <typename Car, typename Cdr>
+export template <typename Car, typename Cdr>
 struct MessagePacker<Pair<Car, Cdr>> {
     static Res<> pack(MessageWriter& e, Pair<Car, Cdr> const& val) {
         Sys::pack(e, val.v0);
@@ -382,7 +383,7 @@ struct MessagePacker<Pair<Car, Cdr>> {
     }
 };
 
-template <typename... Ts>
+export template <typename... Ts>
 struct MessagePacker<Tuple<Ts...>> {
     static Res<> pack(MessageWriter& e, Tuple<Ts...> const& val) {
         return val.visit([&](auto const& f) {

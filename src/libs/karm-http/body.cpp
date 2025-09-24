@@ -1,11 +1,8 @@
-module;
-
-#include <karm-sys/dir.h>
-#include <karm-sys/file.h>
-
 export module Karm.Http:body;
 
 import Karm.Core;
+import Karm.Sys;
+import Karm.Ref;
 
 namespace Karm::Http {
 

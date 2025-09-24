@@ -1,16 +1,13 @@
 module;
 
+#include <karm-core/macros.h>
 #include <karm-logger/logger.h>
-#include <karm-sys/chan.h>
-#include <karm-sys/dir.h>
-#include <karm-sys/file.h>
-#include <karm-sys/lookup.h>
-#include <karm-sys/socket.h>
 
 export module Karm.Http:transport;
 
 import Karm.Core;
 import Karm.Ref;
+import Karm.Sys;
 
 import :request;
 import :response;

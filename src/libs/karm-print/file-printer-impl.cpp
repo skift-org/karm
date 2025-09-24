@@ -1,11 +1,13 @@
 module;
 
-#include <karm-sys/file.h>
+#include <karm-core/macros.h>
 
 module Karm.Print;
 
+import Karm.Core;
 import Karm.Image;
 import Karm.Ref;
+import Karm.Sys;
 
 import :filePrinter;
 import :imagePrinter;

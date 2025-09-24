@@ -1,9 +1,10 @@
+module;
+
 #include <seccomp.h>
 
-//
-#include <karm-sys/_embed.h>
-
 #include "../utils.h"
+
+module Karm.Sys;
 
 namespace Karm::Sys::_Embed {
 

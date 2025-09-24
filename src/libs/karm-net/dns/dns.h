@@ -1,10 +1,9 @@
 #pragma once
 
 import Karm.Core;
+import Karm.Sys;
 
 #include <karm-logger/logger.h>
-#include <karm-sys/chan.h>
-#include <karm-sys/socket.h>
 
 namespace Karm::Net::Dns {
 

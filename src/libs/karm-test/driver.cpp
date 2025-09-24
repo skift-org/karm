@@ -1,11 +1,9 @@
-#include <karm-sys/chan.h>
-#include <karm-sys/time.h>
-
 #include "driver.h"
 #include "test.h"
 
 import Karm.Core;
 import Karm.Cli;
+import Karm.Sys;
 
 namespace Karm::Test {
 

@@ -1,11 +1,11 @@
+module;
 
 #include <liburing.h>
 //
 #include <impl-posix/fd.h>
 #include <impl-posix/utils.h>
-#include <karm-sys/_embed.h>
-#include <karm-sys/async.h>
-#include <karm-sys/time.h>
+
+module Karm.Sys;
 
 import Karm.Core;
 

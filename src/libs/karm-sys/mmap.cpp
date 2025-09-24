@@ -1,14 +1,18 @@
-#pragma once
+module;
+
+#include <karm-core/macros.h>
+
+export module Karm.Sys:mmap;
 
 import Karm.Core;
 
-#include <karm-sys/_embed.h>
-
-#include "types.h"
+import :_embed;
+import :types;
+import :fd;
 
 namespace Karm::Sys {
 
-struct Mmap :
+export struct Mmap :
     Meta::NoCopy {
     using enum MmapOption;
 
@@ -77,7 +81,7 @@ struct Mmap :
     }
 };
 
-struct MutMmap :
+export struct MutMmap :
     Io::Flusher,
     Meta::NoCopy {
     using enum MmapOption;
@@ -176,7 +180,7 @@ struct MutMmap :
     }
 };
 
-struct _Mmap {
+export struct _Mmap {
     using enum MmapOption;
 
     MmapProps _props{};
@@ -255,7 +259,7 @@ struct _Mmap {
     }
 };
 
-inline _Mmap mmap() {
+export _Mmap mmap() {
     return {};
 }
 

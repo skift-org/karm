@@ -1,14 +1,14 @@
-#pragma once
+export module Karm.Sys:types;
 
 import Karm.Core;
 
 namespace Karm::Sys {
 
-using Handle = Distinct<usize, struct _HandleTag>;
+export using Handle = Distinct<usize, struct _HandleTag>;
 
-static constexpr Handle INVALID = Handle(-1);
+export Handle INVALID = Handle(-1);
 
-enum struct MmapOption : u64 {
+export enum struct MmapOption : u64 {
     READ = 1 << 0,
     WRITE = 1 << 1,
     EXEC = 1 << 2,
@@ -19,7 +19,7 @@ enum struct MmapOption : u64 {
     PREFETCH = 1 << 7,
 };
 
-struct MmapProps {
+export struct MmapProps {
     Flags<MmapOption> options = {};
     usize vaddr = 0;
     usize paddr = 0;
@@ -27,7 +27,7 @@ struct MmapProps {
     usize size = 0;
 };
 
-struct MmapResult {
+export struct MmapResult {
     usize paddr;
     usize vaddr;
     usize size;

@@ -1,10 +1,10 @@
 #pragma once
 
 import Karm.Core;
+import Karm.Sys;
 
 #include <karm-gfx/canvas.h>
 #include <karm-gfx/font.h>
-#include <karm-sys/mmap.h>
 
 #include "parser.h"
 

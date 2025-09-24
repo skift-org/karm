@@ -1,14 +1,15 @@
 module;
 
-#include <karm-sys/chan.h>
-#include <karm-sys/context.h>
+#include <karm-core/macros.h>
 
 export module Karm.Cli;
 
 import Karm.Core;
 import Karm.Debug;
+import Karm.Sys;
 
 namespace Karm::Cli {
+
 // MARK: Tokenizer -------------------------------------------------------------
 
 export struct Token {

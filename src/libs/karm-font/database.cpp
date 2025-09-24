@@ -1,11 +1,10 @@
 module;
 
 #include <karm-gfx/font.h>
-#include <karm-sys/bundle.h>
-#include <karm-sys/dir.h>
 
 export module Karm.Font:database;
 
+import Karm.Sys;
 import Karm.Core;
 import Karm.Ref;
 import :loader;

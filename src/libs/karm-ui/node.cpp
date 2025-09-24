@@ -1,12 +1,12 @@
 module;
 
 #include <karm-gfx/canvas.h>
-#include <karm-sys/async.h>
 
 export module Karm.Ui:node;
 
 import Karm.Core;
 import Karm.App;
+import Karm.Sys;
 
 namespace Karm::Ui {
 

@@ -1,10 +1,13 @@
+module;
+
+#include <karm-core/macros.h>
 #include <stdlib.h>
-
 //
-#include <karm-sys/_embed.h>
-#include <karm-sys/proc.h>
-
 #include "utils.h"
+
+module Karm.Sys;
+
+import Karm.Ref;
 
 namespace Karm::Sys::_Embed {
 

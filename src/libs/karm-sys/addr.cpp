@@ -1,16 +1,18 @@
-#pragma once
-
-import Karm.Core;
+module;
 
 #include <karm-core/macros.h>
 
+export module Karm.Sys:addr;
+
+import Karm.Core;
+
 namespace Karm::Sys {
 
-struct SocketAddr;
+export struct SocketAddr;
 
 // MARK: IP v4 -----------------------------------------------------------------
 
-union Ip4 {
+export union Ip4 {
     struct {
         u8 a, b, c, d;
     };
@@ -60,7 +62,7 @@ union Ip4 {
 
 // MARK: IP v6 -----------------------------------------------------------------
 
-union Ip6 {
+export union Ip6 {
     struct {
         u16 a, b, c, d, e, f, g, h;
     };
@@ -115,7 +117,7 @@ union Ip6 {
 
 // MARK: IP --------------------------------------------------------------------
 
-struct Ip : Union<Ip4, Ip6> {
+export struct Ip : Union<Ip4, Ip6> {
     using Union<Ip4, Ip6>::Union;
 
     static Res<Ip> parse(Io::SScan& s) {
@@ -142,7 +144,7 @@ struct Ip : Union<Ip4, Ip6> {
 
 // MARK: Socket Address --------------------------------------------------------
 
-struct SocketAddr {
+export struct SocketAddr {
     Ip addr;
     u16 port;
 
@@ -170,15 +172,15 @@ struct SocketAddr {
     bool operator==(SocketAddr const&) const = default;
 };
 
-inline SocketAddr Ip4::unspecified(u16 port) {
+SocketAddr Ip4::unspecified(u16 port) {
     return SocketAddr{Ip4::unspecified(), port};
 }
 
-inline SocketAddr Ip4::localhost(u16 port) {
+SocketAddr Ip4::localhost(u16 port) {
     return SocketAddr{Ip4::localhost(), port};
 }
 
-inline Res<Ip4> Ip4::parse(Io::SScan& s) {
+Res<Ip4> Ip4::parse(Io::SScan& s) {
     auto addr = unspecified();
 
     for (auto i = 0; i < 4; ++i) {
@@ -200,20 +202,20 @@ inline Res<Ip4> Ip4::parse(Io::SScan& s) {
     return Ok(addr);
 }
 
-inline Res<Ip4> Ip4::parse(Str str) {
+Res<Ip4> Ip4::parse(Str str) {
     auto s = Io::SScan(str);
     return parse(s);
 }
 
-inline SocketAddr Ip6::unspecified(u16 port) {
+SocketAddr Ip6::unspecified(u16 port) {
     return SocketAddr{Ip6::unspecified(), port};
 }
 
-inline SocketAddr Ip6::localhost(u16 port) {
+SocketAddr Ip6::localhost(u16 port) {
     return SocketAddr{Ip6::localhost(), port};
 }
 
-inline Res<Ip6> Ip6::parse(Io::SScan& s) {
+Res<Ip6> Ip6::parse(Io::SScan& s) {
     auto addr = unspecified();
 
     for (auto i = 0; i < 8; i++) {
@@ -228,7 +230,7 @@ inline Res<Ip6> Ip6::parse(Io::SScan& s) {
     return Ok(addr);
 }
 
-inline Res<Ip6> Ip6::parse(Str str) {
+Res<Ip6> Ip6::parse(Str str) {
     auto s = Io::SScan(str);
     return parse(s);
 }
@@ -237,14 +239,14 @@ inline Res<Ip6> Ip6::parse(Str str) {
 
 } // namespace Karm::Sys
 
-template <>
+export template <>
 struct Karm::Io::Formatter<Karm::Sys::Ip4> {
     Res<> format(Io::TextWriter& writer, Karm::Sys::Ip4 addr) {
         return Io::format(writer, "{}.{}.{}.{}", addr.a, addr.b, addr.c, addr.d);
     }
 };
 
-template <>
+export template <>
 struct Karm::Io::Formatter<Karm::Sys::Ip6> {
     Res<> format(Io::TextWriter& writer, Karm::Sys::Ip6 addr) {
         return Io::format(
@@ -255,7 +257,7 @@ struct Karm::Io::Formatter<Karm::Sys::Ip6> {
     }
 };
 
-template <>
+export template <>
 struct Karm::Io::Formatter<Karm::Sys::Ip> {
     Res<> format(Io::TextWriter& writer, Karm::Sys::Ip addr) {
         return addr.visit([&](auto addr) {
@@ -264,7 +266,7 @@ struct Karm::Io::Formatter<Karm::Sys::Ip> {
     }
 };
 
-template <>
+export template <>
 struct Karm::Io::Formatter<Karm::Sys::SocketAddr> {
     Res<> format(Io::TextWriter& writer, Karm::Sys::SocketAddr addr) {
         return Io::format(writer, "{}:{}", addr.addr, addr.port);

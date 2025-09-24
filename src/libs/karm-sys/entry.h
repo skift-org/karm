@@ -6,8 +6,13 @@
 
 #define __KARM_SYS_ENTRY_INCLUDED
 
-#include "chan.h"
-#include "context.h"
+import Karm.Core;
+import Karm.Ref;
+import Karm.Sys;
+
+#include <karm-core/macros.h>
+
+[[gnu::used]] Karm::Async::Task<> entryPointAsync(Karm::Sys::Context&);
 
 #if defined(__ck_sys_linux__) || defined(__ck_sys_darwin__)
 #    define EMBED_POSIX_MAIN_IMPL

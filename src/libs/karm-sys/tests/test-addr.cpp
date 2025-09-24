@@ -1,5 +1,6 @@
-#include <karm-sys/addr.h>
 #include <karm-test/macros.h>
+
+import Karm.Sys;
 
 namespace Karm::Sys::Tests {
 

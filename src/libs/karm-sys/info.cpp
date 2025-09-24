@@ -1,37 +1,80 @@
-#include "info.h"
+module;
 
-#include "_embed.h"
-#include "proc.h"
+#include <karm-core/macros.h>
+
+export module Karm.Sys:info;
+
+import Karm.Core;
+import Karm.Ref;
+
+import :proc;
+import :_embed;
 
 namespace Karm::Sys {
 
-Res<SysInfo> sysinfo() {
+export struct SysInfo {
+    String sysName;
+    String sysVersion;
+
+    String kernelName;
+    String kernelVersion;
+
+    String hostname;
+};
+
+export Res<SysInfo> sysinfo() {
     try$(ensureUnrestricted());
     SysInfo infos;
     try$(_Embed::populate(infos));
     return Ok(infos);
 }
 
-Res<MemInfo> meminfo() {
+export struct MemInfo {
+    usize physicalTotal;
+    usize physicalUsed;
+
+    usize virtualTotal;
+    usize virtualUsed;
+
+    usize swapTotal;
+    usize swapUsed;
+};
+
+export Res<MemInfo> meminfo() {
     MemInfo infos;
     try$(_Embed::populate(infos));
     return Ok(infos);
 }
 
-Res<Vec<CpuInfo>> cpusinfo() {
+export struct CpuInfo {
+    String name;
+    String brand;
+    String vendor;
+
+    usize usage;
+    usize freq;
+};
+
+export Res<Vec<CpuInfo>> cpusinfo() {
     Vec<CpuInfo> infos;
     try$(_Embed::populate(infos));
     return Ok(infos);
 }
 
-Res<UserInfo> userinfo() {
+export struct UserInfo {
+    String name;
+    Ref::Url home;
+    Ref::Url shell;
+};
+
+export Res<UserInfo> userinfo() {
     try$(ensureUnrestricted());
     UserInfo infos;
     try$(_Embed::populate(infos));
     return Ok(infos);
 }
 
-Res<Vec<UserInfo>> usersinfo() {
+export Res<Vec<UserInfo>> usersinfo() {
     try$(ensureUnrestricted());
     Vec<UserInfo> infos;
     try$(_Embed::populate(infos));

@@ -1,5 +1,8 @@
 #include <karm-sys/entry.h>
+
 import Karm.Fs;
+import Karm.Ref;
+
 using namespace Karm;
 
 Async::Task<> entryPointAsync(Sys::Context&) {

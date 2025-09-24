@@ -1,8 +1,5 @@
 #include <impl-posix/fd.h>
 #include <impl-posix/utils.h>
-#include <karm-sys/_embed.h>
-#include <karm-sys/async.h>
-#include <karm-sys/time.h>
 #include <sys/epoll.h>
 #include <sys/timerfd.h>
 #include <unistd.h>
@@ -10,6 +7,7 @@
 #include "../utils.h"
 
 import Karm.Core;
+import Karm.Sys;
 
 namespace Karm::Sys::_Embed {
 

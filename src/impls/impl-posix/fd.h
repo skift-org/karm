@@ -1,6 +1,7 @@
 #pragma once
 
-#include <karm-sys/fd.h>
+import Karm.Sys;
+import Karm.Core;
 
 namespace Karm::Posix {
 

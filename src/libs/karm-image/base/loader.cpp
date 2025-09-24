@@ -1,11 +1,11 @@
 module;
 
 #include <karm-gfx/buffer.h>
-#include <karm-sys/file.h>
-#include <karm-sys/mmap.h>
 
 export module Karm.Image:base.loader;
 
+import Karm.Sys;
+import Karm.Ref;
 import :base.picture;
 import :bmp.decoder;
 import :gif.decoder;

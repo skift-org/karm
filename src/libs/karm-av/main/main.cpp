@@ -1,10 +1,10 @@
 #include <karm-math/rand.h>
 #include <karm-sys/entry.h>
-#include <karm-sys/proc.h>
-#include <karm-sys/time.h>
 
 import Karm.Core;
 import Karm.Av;
+import Karm.Sys;
+import Karm.Ref;
 
 using namespace Karm;
 

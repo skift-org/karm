@@ -1,11 +1,9 @@
 #include <karm-sys/entry.h>
-#include <karm-sys/file.h>
-#include <karm-sys/mmap.h>
-#include <karm-sys/proc.h>
 
 #include "../ttf/fontface.h"
 
 import Karm.Font;
+import Karm.Sys;
 
 using namespace Karm;
 

@@ -1,11 +1,11 @@
 module;
 
-#include <karm-sys/dir.h>
-#include <karm-sys/file.h>
-#include <karm-sys/time.h>
+#include <karm-core/macros.h>
 
 export module Karm.Fs:node;
 
+import Karm.Core;
+import Karm.Sys;
 import Karm.Ref;
 
 namespace Karm::Fs {

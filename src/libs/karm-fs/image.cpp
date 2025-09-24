@@ -1,9 +1,10 @@
 module;
 
-#include <karm-sys/file.h>
+#include <karm-core/macros.h>
 
 export module Karm.Fs:image;
 
+import Karm.Sys;
 import :node;
 
 namespace Karm::Fs {

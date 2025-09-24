@@ -1,8 +1,8 @@
 #include <karm-gfx/cpu/canvas.h>
 #include <karm-sys/entry.h>
-#include <karm-sys/time.h>
 
 import Karm.Cli;
+import Karm.Sys;
 
 using namespace Karm;
 

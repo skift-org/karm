@@ -1,8 +1,7 @@
 #pragma once
 
 import Karm.Core;
-
-#include <karm-sys/socket.h>
+impoot Karm.Sys;
 
 // https://github.com/B-Con/crypto-algorithms/blob/master/aes.c
 // https://github.com/alexbers/manual-tls/blob/master/tls_client.py

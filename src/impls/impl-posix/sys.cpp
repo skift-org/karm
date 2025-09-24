@@ -1,3 +1,5 @@
+module;
+
 #include <arpa/inet.h>
 #include <dirent.h>
 #include <errno.h>
@@ -16,16 +18,15 @@
 #include <unistd.h>
 
 //
-#include <karm-sys/_embed.h>
-#include <karm-sys/addr.h>
-#include <karm-sys/chan.h>
-#include <karm-sys/launch.h>
-#include <karm-sys/proc.h>
+#include <karm-core/macros.h>
 
 #include "fd.h"
 #include "utils.h"
 
+module Karm.Sys;
+
 import Karm.Core;
+import Karm.Ref;
 
 namespace Karm::Sys::_Embed {
 
@@ -404,7 +405,7 @@ isize MmapPropsToProt(MmapProps const& options) {
 }
 
 Res<MmapResult> memMap(MmapProps const& options) {
-    void* addr = mmap((void*)options.vaddr, options.size, MmapPropsToProt(options), MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+    void* addr = ::mmap(reinterpret_cast<void*>(options.vaddr), options.size, MmapPropsToProt(options), MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
 
     if (addr == MAP_FAILED)
         return Posix::fromLastErrno();
@@ -424,7 +425,7 @@ Res<MmapResult> memMap(MmapProps const& options, Rc<Fd> maybeFd) {
     if (size == 0)
         size = try$(Io::size(*fd));
 
-    void* addr = mmap((void*)options.vaddr, size, MmapPropsToProt(options), MAP_SHARED, fd->_raw, options.offset);
+    void* addr = ::mmap(reinterpret_cast<void*>(options.vaddr), size, MmapPropsToProt(options), MAP_SHARED, fd->_raw, options.offset);
 
     if (addr == MAP_FAILED)
         return Posix::fromLastErrno();
@@ -497,6 +498,10 @@ Res<> sleep(Duration span) {
     if (nanosleep(&ts, nullptr) < 0)
         return Posix::fromLastErrno();
     return Ok();
+}
+
+Res<> sleepUntil(Instant) {
+    return Error::notImplemented();
 }
 
 Res<> exit(i32 res) {

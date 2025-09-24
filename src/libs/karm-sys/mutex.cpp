@@ -1,10 +1,10 @@
-#pragma once
+export module Karm.Sys:mutex;
 
 import Karm.Core;
 
 namespace Karm::Sys {
 
-struct Mutex {
+export struct Mutex {
     Res<Rc<Mutex>> create();
 
     virtual ~Mutex() = default;
@@ -16,7 +16,7 @@ struct Mutex {
     virtual void unlock() = 0;
 };
 
-struct Sema {
+export struct Sema {
     Res<Rc<Sema>> create();
 
     virtual ~Sema() = default;
@@ -30,7 +30,7 @@ struct Sema {
     virtual void count() = 0;
 };
 
-struct CondVar {
+export struct CondVar {
     Res<Rc<CondVar>> create();
 
     virtual ~CondVar() = default;

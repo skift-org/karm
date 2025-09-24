@@ -1,12 +1,11 @@
-#include "lookup.h"
+export module Karm.Sys:lookup;
 
-#include "_embed.h"
-#include "addr.h"
+import :_embed;
+import :addr;
 
 namespace Karm::Sys {
 
-[[clang::coro_wrapper]]
-Async::Task<Vec<Ip>> lookupAsync(Str host) {
+export [[clang::coro_wrapper]] Async::Task<Vec<Ip>> lookupAsync(Str host) {
     return _Embed::ipLookupAsync(host);
 }
 

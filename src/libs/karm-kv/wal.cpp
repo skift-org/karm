@@ -1,11 +1,13 @@
 module;
 
+#include <karm-core/macros.h>
 #include <karm-logger/logger.h>
-#include <karm-sys/file.h>
 
 export module Karm.Kv:wal;
 
+import Karm.Sys;
 import Karm.Crypto;
+import Karm.Ref;
 import :blob;
 
 namespace Karm::Kv {

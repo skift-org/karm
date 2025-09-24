@@ -1,12 +1,10 @@
 #pragma once
 
 import Karm.Core;
+import Karm.Sys;
 
 #include <netinet/in.h>
 #include <sys/stat.h>
-
-//
-#include <karm-sys/fd.h>
 
 namespace Karm::Posix {
 

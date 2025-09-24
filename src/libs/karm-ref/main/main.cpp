@@ -1,6 +1,7 @@
 #include <karm-sys/entry.h>
-#include <karm-sys/file.h>
-#include <karm-sys/proc.h>
+
+import Karm.Sys;
+import Karm.Ref;
 
 using namespace Karm;
 

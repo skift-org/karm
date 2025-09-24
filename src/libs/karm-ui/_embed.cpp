@@ -1,9 +1,6 @@
-module;
-
-#include <karm-sys/context.h>
-
 export module Karm.Ui:_embed;
 
+import Karm.Sys;
 import :node;
 
 namespace Karm::Ui::_Embed {

@@ -1,32 +1,32 @@
-#pragma once
+export module Karm.Sys:time;
 
 import Karm.Core;
 
-#include "_embed.h"
+import :_embed;
 
 namespace Karm::Sys {
 
-inline SystemTime now() {
+export SystemTime now() {
     return _Embed::now();
 }
 
-inline Instant instant() {
+export Instant instant() {
     return _Embed::instant();
 }
 
-inline Duration uptime() {
+export Duration uptime() {
     return _Embed::uptime();
 }
 
-inline DateTime dateTime() {
+export DateTime dateTime() {
     return DateTime::fromInstant(now());
 }
 
-inline Date date() {
+export Date date() {
     return dateTime().date;
 }
 
-inline Time time() {
+export Time time() {
     return dateTime().time;
 }
 

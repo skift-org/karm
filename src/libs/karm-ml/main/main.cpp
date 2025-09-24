@@ -1,6 +1,7 @@
 #include <karm-sys/entry.h>
 
 import Karm.Ml;
+import Karm.Ref;
 
 using namespace Karm;
 

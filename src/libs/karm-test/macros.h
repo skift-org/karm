@@ -1,5 +1,7 @@
 #pragma once
 
+#include <karm-core/macros.h>
+
 #include "driver.h"
 #include "test.h"
 
