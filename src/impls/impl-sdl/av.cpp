@@ -1,6 +1,6 @@
 module;
 
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 #include <karm-core/macros.h>
 
 module Karm.Av;
@@ -10,21 +10,30 @@ import Karm.Core;
 namespace Karm::Av::_Embed {
 
 struct SdlDevice : Device {
-    SDL_AudioDeviceID _dev = 0;
+    SDL_AudioStream* _sdlStream = nullptr;
+    Vec<f32> _outputBuf;
 
-    SdlDevice(Options const& options) : Device(options) {}
+    SdlDevice(Options const& options) : Device(options) {
+        _outputBuf.resize(options.output.channels * options.output.frames);
+    }
 
     ~SdlDevice() override {
-        SDL_CloseAudioDevice(_dev);
+        if (_sdlStream)
+            SDL_DestroyAudioStream(_sdlStream);
     }
 
     void pause(bool on) override {
-        if (_dev)
-            SDL_PauseAudioDevice(_dev, on);
+        if (on)
+            SDL_PauseAudioStreamDevice(_sdlStream);
+        else
+            SDL_ResumeAudioStreamDevice(_sdlStream);
     }
 };
 
-static void _callback(void* userdata, Uint8* data, int len) {
+static void _callback(void* userdata, SDL_AudioStream* sdlStream, int additionalAmount, int totalAmount) {
+    if (additionalAmount == 0 || totalAmount == 0)
+        return;
+    
     SdlDevice* device = static_cast<SdlDevice*>(userdata);
     if (not device->_stream)
         return;
@@ -34,9 +43,10 @@ static void _callback(void* userdata, Uint8* data, int len) {
     input.format = device->_options.input;
     Frames output;
     output.format = device->_options.output;
-    output.samples = {reinterpret_cast<f32*>(data), len / sizeof(f32)};
+    output.samples = device->_outputBuf;
 
     stream->process(input, output);
+    SDL_PutAudioStreamData(sdlStream, device->_outputBuf.buf(), sizeOf(device->_outputBuf));
 }
 
 Res<Rc<Device>> create(Options const& options) {
@@ -44,17 +54,12 @@ Res<Rc<Device>> create(Options const& options) {
     auto stream = makeRc<SdlDevice>(options);
 
     SDL_AudioSpec want = {};
-    SDL_AudioSpec have = {};
-
     want.freq = options.output.rate;
-    want.format = AUDIO_F32SYS;
+    want.format = SDL_AUDIO_F32LE;
     want.channels = static_cast<u8>(options.output.channels);
-    want.samples = static_cast<u16>(options.output.frames);
-    want.callback = _callback;
-    want.userdata = &stream.unwrap();
 
-    stream->_dev = SDL_OpenAudioDevice(nullptr, 0, &want, &have, 0);
-    if (not stream->_dev)
+    stream->_sdlStream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &want, _callback, &stream.unwrap());
+    if (not stream->_sdlStream)
         return Error::other(SDL_GetError());
 
     return Ok(stream);

@@ -4,7 +4,7 @@
     "type": "lib",
     "description": "Karm UI platform embedding layer for SDL.",
     "requires": [
-        "sdl2"
+        "sdl3"
     ],
     "provides": [
         "karm-ui-impl",

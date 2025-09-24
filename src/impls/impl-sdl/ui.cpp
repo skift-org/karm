@@ -1,6 +1,6 @@
 module;
 
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include <karm-gfx/canvas.h>
 
 module Karm.Ui;
@@ -29,8 +29,6 @@ struct SdlHost : Host {
 
     ~SdlHost() {
         SDL_DestroyWindow(_window);
-        SDL_QuitSubSystem(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
-        SDL_Quit();
     }
 
     Math::Recti bound() override {
@@ -69,32 +67,32 @@ struct SdlHost : Host {
     static App::Key _fromSdlKeycode(SDL_Keycode sdl) {
         // clang-format off
         switch (sdl) {
-            case SDLK_a: return App::Key::A;
-            case SDLK_b: return App::Key::B;
-            case SDLK_c: return App::Key::C;
-            case SDLK_d: return App::Key::D;
-            case SDLK_e: return App::Key::E;
-            case SDLK_f: return App::Key::F;
-            case SDLK_g: return App::Key::G;
-            case SDLK_h: return App::Key::H;
-            case SDLK_i: return App::Key::I;
-            case SDLK_j: return App::Key::J;
-            case SDLK_k: return App::Key::K;
-            case SDLK_l: return App::Key::L;
-            case SDLK_m: return App::Key::M;
-            case SDLK_n: return App::Key::N;
-            case SDLK_o: return App::Key::O;
-            case SDLK_p: return App::Key::P;
-            case SDLK_q: return App::Key::Q;
-            case SDLK_r: return App::Key::R;
-            case SDLK_s: return App::Key::S;
-            case SDLK_t: return App::Key::T;
-            case SDLK_u: return App::Key::U;
-            case SDLK_v: return App::Key::V;
-            case SDLK_w: return App::Key::W;
-            case SDLK_x: return App::Key::X;
-            case SDLK_y: return App::Key::Y;
-            case SDLK_z: return App::Key::Z;
+            case SDLK_A: return App::Key::A;
+            case SDLK_B: return App::Key::B;
+            case SDLK_C: return App::Key::C;
+            case SDLK_D: return App::Key::D;
+            case SDLK_E: return App::Key::E;
+            case SDLK_F: return App::Key::F;
+            case SDLK_G: return App::Key::G;
+            case SDLK_H: return App::Key::H;
+            case SDLK_I: return App::Key::I;
+            case SDLK_J: return App::Key::J;
+            case SDLK_K: return App::Key::K;
+            case SDLK_L: return App::Key::L;
+            case SDLK_M: return App::Key::M;
+            case SDLK_N: return App::Key::N;
+            case SDLK_O: return App::Key::O;
+            case SDLK_P: return App::Key::P;
+            case SDLK_Q: return App::Key::Q;
+            case SDLK_R: return App::Key::R;
+            case SDLK_S: return App::Key::S;
+            case SDLK_T: return App::Key::T;
+            case SDLK_U: return App::Key::U;
+            case SDLK_V: return App::Key::V;
+            case SDLK_W: return App::Key::W;
+            case SDLK_X: return App::Key::X;
+            case SDLK_Y: return App::Key::Y;
+            case SDLK_Z: return App::Key::Z;
 
             case SDLK_1: return App::Key::NUM1;
             case SDLK_2: return App::Key::NUM2;
@@ -272,40 +270,40 @@ struct SdlHost : Host {
         Flags<App::KeyMod> mods;
         ;
 
-        if (sdl & KMOD_LSHIFT)
+        if (sdl & SDL_KMOD_LSHIFT)
             mods |= App::KeyMod::LSHIFT;
 
-        if (sdl & KMOD_RSHIFT)
+        if (sdl & SDL_KMOD_RSHIFT)
             mods |= App::KeyMod::RSHIFT;
 
-        if (sdl & KMOD_LCTRL)
+        if (sdl & SDL_KMOD_LCTRL)
             mods |= App::KeyMod::LCTRL;
 
-        if (sdl & KMOD_RCTRL)
+        if (sdl & SDL_KMOD_RCTRL)
             mods |= App::KeyMod::RCTRL;
 
-        if (sdl & KMOD_LALT)
+        if (sdl & SDL_KMOD_LALT)
             mods |= App::KeyMod::LALT;
 
-        if (sdl & KMOD_RALT)
+        if (sdl & SDL_KMOD_RALT)
             mods |= App::KeyMod::RALT;
 
-        if (sdl & KMOD_LGUI)
+        if (sdl & SDL_KMOD_LGUI)
             mods |= App::KeyMod::LSUPER;
 
-        if (sdl & KMOD_RGUI)
+        if (sdl & SDL_KMOD_RGUI)
             mods |= App::KeyMod::RSUPER;
 
-        if (sdl & KMOD_NUM)
+        if (sdl & SDL_KMOD_NUM)
             mods |= App::KeyMod::NUM;
 
-        if (sdl & KMOD_CAPS)
+        if (sdl & SDL_KMOD_CAPS)
             mods |= App::KeyMod::CAPS;
 
-        if (sdl & KMOD_MODE)
+        if (sdl & SDL_KMOD_MODE)
             mods |= App::KeyMod::MODE;
 
-        if (sdl & KMOD_SCROLL)
+        if (sdl & SDL_KMOD_SCROLL)
             mods |= App::KeyMod::SCROLL;
 
         return mods;
@@ -313,9 +311,9 @@ struct SdlHost : Host {
 
     static App::KeyboardEvent _fromSdlKeyboardEvent(SDL_KeyboardEvent const& sdl) {
         App::KeyboardEvent ev{};
-        ev.key = _fromSdlKeycode(sdl.keysym.sym);
-        ev.code = _fromSdlScancode(sdl.keysym.scancode);
-        ev.mods = _fromSdlMod(sdl.keysym.mod);
+        ev.key = _fromSdlKeycode(sdl.key);
+        ev.code = _fromSdlScancode(sdl.scancode);
+        ev.mods = _fromSdlMod(sdl.mod);
         return ev;
     }
 
@@ -324,33 +322,28 @@ struct SdlHost : Host {
 
     void translate(SDL_Event const& sdlEvent) {
         switch (sdlEvent.type) {
-        case SDL_WINDOWEVENT:
-            switch (sdlEvent.window.event) {
-            case SDL_WINDOWEVENT_RESIZED:
-                _shouldLayout = true;
-                break;
-
-            case SDL_WINDOWEVENT_EXPOSED:
-                _dirty.pushBack(pixels().bound());
-                break;
-            }
+        case SDL_EVENT_WINDOW_RESIZED:
+            _shouldLayout = true;
+            break;
+        case SDL_EVENT_WINDOW_EXPOSED:
+            _dirty.pushBack(pixels().bound());
             break;
 
-        case SDL_KEYDOWN: {
+        case SDL_EVENT_KEY_DOWN: {
             auto ev = _fromSdlKeyboardEvent(sdlEvent.key);
             ev.type = sdlEvent.key.repeat ? App::KeyboardEvent::REPEATE : App::KeyboardEvent::PRESS;
             event<App::KeyboardEvent>(*this, ev);
             break;
         }
 
-        case SDL_KEYUP: {
+        case SDL_EVENT_KEY_UP: {
             auto ev = _fromSdlKeyboardEvent(sdlEvent.key);
             ev.type = App::KeyboardEvent::RELEASE;
             event<App::KeyboardEvent>(*this, ev);
             break;
         }
 
-        case SDL_TEXTINPUT: {
+        case SDL_EVENT_TEXT_INPUT: {
             Str text = sdlEvent.text.text;
             for (Rune r : iterRunes(text)) {
                 event<App::TypeEvent>(*this, r);
@@ -358,11 +351,11 @@ struct SdlHost : Host {
             break;
         }
 
-        case SDL_MOUSEMOTION: {
+        case SDL_EVENT_MOUSE_MOTION: {
             if (sdlEvent.motion.which == SDL_TOUCH_MOUSEID)
                 return;
 
-            Math::Vec2<i32> screenPos = {};
+            Math::Vec2<f32> screenPos = {};
             SDL_GetGlobalMouseState(&screenPos.x, &screenPos.y);
 
             Flags<App::MouseButton> buttons;
@@ -372,26 +365,26 @@ struct SdlHost : Host {
 
             // do the hit test and update the cursor
 
-            SDL_Point p = {sdlEvent.motion.x, sdlEvent.motion.y};
+            SDL_Point p = {static_cast<int>(sdlEvent.motion.x), static_cast<int>(sdlEvent.motion.y)};
             SDL_HitTestResult result = _hitTestCallback(_window, &p, this);
-            SDL_SystemCursor systemCursor = SDL_SYSTEM_CURSOR_ARROW;
+            SDL_SystemCursor systemCursor = SDL_SYSTEM_CURSOR_DEFAULT;
 
             switch (result) {
             case SDL_HITTEST_RESIZE_TOPLEFT:
             case SDL_HITTEST_RESIZE_BOTTOMRIGHT:
-                systemCursor = SDL_SYSTEM_CURSOR_SIZENWSE;
+                systemCursor = SDL_SYSTEM_CURSOR_NWSE_RESIZE;
                 break;
             case SDL_HITTEST_RESIZE_TOPRIGHT:
             case SDL_HITTEST_RESIZE_BOTTOMLEFT:
-                systemCursor = SDL_SYSTEM_CURSOR_SIZENESW;
+                systemCursor = SDL_SYSTEM_CURSOR_NESW_RESIZE;
                 break;
             case SDL_HITTEST_RESIZE_TOP:
             case SDL_HITTEST_RESIZE_BOTTOM:
-                systemCursor = SDL_SYSTEM_CURSOR_SIZENS;
+                systemCursor = SDL_SYSTEM_CURSOR_NS_RESIZE;
                 break;
             case SDL_HITTEST_RESIZE_LEFT:
             case SDL_HITTEST_RESIZE_RIGHT:
-                systemCursor = SDL_SYSTEM_CURSOR_SIZEWE;
+                systemCursor = SDL_SYSTEM_CURSOR_EW_RESIZE;
                 break;
             default:
                 break;
@@ -399,7 +392,7 @@ struct SdlHost : Host {
 
             if (_systemCursor != systemCursor) {
                 if (_cursor) {
-                    SDL_FreeCursor(_cursor);
+                    SDL_DestroyCursor(_cursor);
                 }
 
                 _cursor = SDL_CreateSystemCursor(systemCursor);
@@ -408,8 +401,8 @@ struct SdlHost : Host {
             }
 
             _lastMousePos = {
-                sdlEvent.motion.x,
-                sdlEvent.motion.y,
+                static_cast<isize>(sdlEvent.motion.x),
+                static_cast<isize>(sdlEvent.motion.y),
             };
 
             event<App::MouseEvent>(
@@ -417,7 +410,7 @@ struct SdlHost : Host {
                 App::MouseEvent{
                     .type = App::MouseEvent::MOVE,
                     .pos = _lastMousePos,
-                    .delta = screenPos - _lastScreenMousePos,
+                    .delta = screenPos.cast<isize>() - _lastScreenMousePos,
                     .buttons = buttons,
                 }
             );
@@ -426,7 +419,7 @@ struct SdlHost : Host {
             break;
         }
 
-        case SDL_MOUSEBUTTONUP: {
+        case SDL_EVENT_MOUSE_BUTTON_UP: {
             if (sdlEvent.motion.which == SDL_TOUCH_MOUSEID) {
                 return;
             }
@@ -457,7 +450,7 @@ struct SdlHost : Host {
             break;
         }
 
-        case SDL_MOUSEBUTTONDOWN: {
+        case SDL_EVENT_MOUSE_BUTTON_DOWN: {
             if (sdlEvent.motion.which == SDL_TOUCH_MOUSEID) {
                 return;
             }
@@ -488,7 +481,7 @@ struct SdlHost : Host {
             break;
         }
 
-        case SDL_MOUSEWHEEL: {
+        case SDL_EVENT_MOUSE_WHEEL: {
             if (sdlEvent.wheel.which == SDL_TOUCH_MOUSEID)
                 return;
 
@@ -498,13 +491,8 @@ struct SdlHost : Host {
                     .type = App::MouseEvent::SCROLL,
                     .pos = _lastMousePos,
                     .scroll = {
-#if SDL_VERSION_ATLEAST(2, 0, 18)
-                        -sdlEvent.wheel.preciseX,
-                        sdlEvent.wheel.preciseY,
-#else
-                        -(f64)sdlEvent.wheel.x,
-                        (f64)sdlEvent.wheel.y,
-#endif
+                        -sdlEvent.wheel.x,
+                        sdlEvent.wheel.y,
                     },
                 }
             );
@@ -512,7 +500,7 @@ struct SdlHost : Host {
             break;
         }
 
-        case SDL_QUIT: {
+        case SDL_EVENT_QUIT: {
             bubble<App::RequestExitEvent>(*this);
             break;
         }
@@ -551,9 +539,9 @@ struct SdlHost : Host {
     void bubble(App::Event& event) override {
         if (auto e = event.is<DragEvent>()) {
             if (e->type == DragEvent::START) {
-                SDL_CaptureMouse(SDL_TRUE);
+                SDL_CaptureMouse(true);
             } else if (e->type == DragEvent::END) {
-                SDL_CaptureMouse(SDL_FALSE);
+                SDL_CaptureMouse(false);
             } else if (e->type == DragEvent::DRAG) {
                 Math::Vec2<i32> pos{};
                 SDL_GetWindowPosition(_window, &pos.x, &pos.y);
@@ -612,11 +600,11 @@ static Res<> _setWindowIcon(SDL_Window* window) {
         return Karm::Image::loadOrFallback(defaultUrl).take();
     });
 
-    auto* surface = SDL_CreateRGBSurface(0, image.width(), image.height(), 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+    auto* surface = SDL_CreateSurface(image.width(), image.height(), SDL_PIXELFORMAT_ARGB32);
     if (not surface)
         return Error::other(SDL_GetError());
     Defer _{[&] {
-        SDL_FreeSurface(surface);
+        SDL_DestroySurface(surface);
     }};
 
     Gfx::MutPixels pixels{
@@ -639,11 +627,9 @@ static Res<Rc<Host>> makeHost(Child root) {
 
     SDL_Window* window = SDL_CreateWindow(
         "Application",
-        SDL_WINDOWPOS_UNDEFINED,
-        SDL_WINDOWPOS_UNDEFINED,
         size.width,
         size.height,
-        SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE | SDL_WINDOW_BORDERLESS
+        SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WINDOW_RESIZABLE | SDL_WINDOW_BORDERLESS
     );
 
     if (not window)

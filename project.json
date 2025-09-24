@@ -29,10 +29,10 @@
             "git": "https://github.com/cute-engineering/ce-targets.git",
             "tag": "v0.3.0"
         },
-        "sdl2": {
+        "sdl3": {
             "description": "A cross-platform development library designed to provide low level access to hardware",
             "names": [
-                "sdl2"
+                "sdl3"
             ]
         },
         "uring": {
