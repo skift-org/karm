@@ -2,12 +2,14 @@ module;
 
 #include <SDL3/SDL.h>
 #include <karm-core/macros.h>
+#include <karm-gfx/buffer.h>
 
 module Karm.Av;
-
 import Karm.Core;
 
 namespace Karm::Av::_Embed {
+
+// MARK: Audio Playback --------------------------------------------------------
 
 struct SdlDevice : Device {
     SDL_AudioStream* _sdlStream = nullptr;
@@ -31,9 +33,9 @@ struct SdlDevice : Device {
 };
 
 static void _callback(void* userdata, SDL_AudioStream* sdlStream, int additionalAmount, int totalAmount) {
-    if (additionalAmount == 0 || totalAmount == 0)
+    if (additionalAmount == 0 or totalAmount == 0)
         return;
-    
+
     SdlDevice* device = static_cast<SdlDevice*>(userdata);
     if (not device->_stream)
         return;
@@ -63,6 +65,69 @@ Res<Rc<Device>> create(Options const& options) {
         return Error::other(SDL_GetError());
 
     return Ok(stream);
+}
+
+// MARK: Video Capture ---------------------------------------------------------
+
+struct SdlCameraStream : Av::VideoStream {
+    SDL_Camera* _sdlCamera;
+    Opt<VideoFrame> _curr;
+
+    SdlCameraStream(SDL_Camera* sdlCamera)
+        : _sdlCamera(sdlCamera) {}
+
+    ~SdlCameraStream() {
+        SDL_CloseCamera(_sdlCamera);
+    }
+
+    Opt<VideoFrame> next() override {
+        u64 timestampNs = 0;
+        SDL_Surface* sdlSurface = SDL_AcquireCameraFrame(_sdlCamera, &timestampNs);
+        if (not sdlSurface)
+            return _curr;
+        SDL_Surface* sdlConverted = SDL_ConvertSurface(sdlSurface, SDL_PIXELFORMAT_BGRA32);
+
+        Gfx::Pixels sdlPixels = {
+            sdlConverted->pixels,
+            {sdlConverted->w, sdlConverted->h},
+            (usize)sdlConverted->pitch,
+            Gfx::BGRA8888,
+        };
+
+        auto surface = Gfx::Surface::alloc({sdlSurface->w, sdlSurface->h});
+        Gfx::blitUnsafe(surface->mutPixels(), sdlPixels);
+
+        SDL_DestroySurface(sdlConverted);
+        SDL_ReleaseCameraFrame(_sdlCamera, sdlSurface);
+
+        _curr = VideoFrame{
+            surface,
+            Duration::fromSecs(0),
+        };
+        return _curr;
+    }
+};
+
+struct SdlCamera : Av::Camera {
+    SDL_CameraID _id;
+
+    SdlCamera(SDL_CameraID id) : _id(id) {}
+
+    Res<Rc<VideoStream>> startCapture() override {
+        return Ok(makeRc<SdlCameraStream>(SDL_OpenCamera(_id, nullptr)));
+    }
+};
+
+Res<Rc<Camera>> openDefaultCamera() {
+    SDL_Init(SDL_INIT_CAMERA);
+    int devcount = 0;
+    SDL_CameraID* devices = SDL_GetCameras(&devcount);
+    if (not devices)
+        return Error::other("no camera devices");
+    Defer _ = [&] {
+        SDL_free(devices);
+    };
+    return Ok(makeRc<SdlCamera>(devices[0]));
 }
 
 } // namespace Karm::Av::_Embed

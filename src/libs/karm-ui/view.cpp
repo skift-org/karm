@@ -382,6 +382,11 @@ struct Image : View<Image> {
     Image(Karm::Image::Picture image, Opt<Math::Radiif> radii = NONE)
         : _image(image), _radii(radii) {}
 
+    void reconcile(Image& other) override {
+        _image = other._image;
+        _radii = other._radii;
+    }
+
     void paint(Gfx::Canvas& g, Math::Recti) override {
         g.push();
 

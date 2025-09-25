@@ -93,10 +93,10 @@ struct MimePattern {
 
 bool _isBinaryData(Bytes const bytes) {
     for (u8 byte : bytes) {
-        if ((byte <= 0x08) ||
-            (byte == 0x0B) ||
-            (byte >= 0x0E && byte <= 0x1A) ||
-            (byte >= 0x1C && byte <= 0x1F)) {
+        if ((byte <= 0x08) or
+            (byte == 0x0B) or
+            (byte >= 0x0E and byte <= 0x1A) or
+            (byte >= 0x1C and byte <= 0x1F)) {
             return true;
         }
     }

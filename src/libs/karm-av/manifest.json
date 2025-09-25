@@ -10,6 +10,7 @@
     "requires": [
         "karm-av-impl",
         "karm-sys",
-        "karm-debug"
+        "karm-debug",
+        "karm-gfx"
     ]
 }

@@ -18,7 +18,7 @@ export struct Slider : Ui::View<Slider> {
     Ui::MouseListener _mouseListener;
 
     Slider(double value, Opt<Ui::Send<double>> onChange)
-        : _value(value), _onChange(std::move(onChange)) {
+        : _value(Math::isNan(value) ? 0 : value), _onChange(std::move(onChange)) {
     }
 
     void reconcile(Slider& o) override {

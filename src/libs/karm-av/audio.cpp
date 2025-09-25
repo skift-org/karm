@@ -141,7 +141,7 @@ export usize resamples(Frames from, Frames to) {
     auto ff = from.format;
     auto tf = to.format;
 
-    if (from.len() == 0 || to.len() == 0)
+    if (from.len() == 0 or to.len() == 0)
         return 0;
 
     auto inCh = ff.channels;
@@ -213,7 +213,7 @@ export usize resamples(Frames from, Frames to) {
     return min(consumed, maxIn);
 }
 
-struct Audio {
+export struct Audio {
     Format format;
     Vec<f32> samples;
 
@@ -262,6 +262,9 @@ export struct Player : Stream {
     }
 
     Duration tell() const {
+        if (not _audio)
+            return Duration::fromSecs(0);
+
         auto curr = _currentFrame.load();
         auto fmt = _audio.unwrap()->format;
         f64 secs = curr / static_cast<f64>(fmt.rate);
