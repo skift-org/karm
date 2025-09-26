@@ -134,7 +134,7 @@ export struct BitWriter {
         }
     }
 
-    always_inline void writeBits(u8 bits, usize len) {
+    always_inline void writeBits(u64 bits, usize len) {
         for (usize i = 1; i <= len; ++i)
             writeBit(bits >> (len - i));
     }
@@ -209,19 +209,6 @@ export usize mcuWidth(Gfx::Pixels pixels) {
 
 export usize mcuHeight(Gfx::Pixels pixels) {
     return alignUp(pixels.size().y, 8) / 8;
-}
-
-export Mcu mcuFetch(Gfx::Pixels pixels, usize mx, usize my, usize component) {
-    Mcu mcu;
-    for (usize y = 0; y < 8; ++y) {
-        for (usize x = 0; x < 8; ++x) {
-            Math::Vec2u pos = {mx * 8 + x, my * 8 + y};
-            auto color = pixels.load(pos.cast<isize>());
-            auto ycbcr = Gfx::rgbToYCbCr(color);
-            mcu[y * 8 + x] = clamp<i16>(ycbcr[component], -128, 127);
-        }
-    }
-    return mcu;
 }
 
 // MARK: Quantization Tables ---------------------------------------------------

@@ -87,13 +87,26 @@ Res<> _encodeMcu(
     return Ok();
 }
 
+Mcu _mcuFetch(Gfx::Pixels pixels, usize mx, usize my, usize component) {
+    Mcu mcu;
+    for (usize y = 0; y < 8; ++y) {
+        for (usize x = 0; x < 8; ++x) {
+            Math::Vec2u pos = {mx * 8 + x, my * 8 + y};
+            auto color = pixels.load(pos.cast<isize>());
+            auto ycbcr = Gfx::rgbToYCbCr(color);
+            mcu[y * 8 + x] = ycbcr[component] - 128;
+        }
+    }
+    return mcu;
+}
+
 Res<> _writePixelData(Gfx::Pixels pixels, BitWriter& w) {
     Array<i16, 3> prev = {};
 
     for (usize y = 0; y < mcuHeight(pixels); y++) {
         for (usize x = 0; x < mcuWidth(pixels); ++x) {
             for (usize i = 0; i < 3; ++i) {
-                auto mcu = mcuFetch(pixels, x, y, i);
+                auto mcu = _mcuFetch(pixels, x, y, i);
 
                 fdtc(mcu);
 
