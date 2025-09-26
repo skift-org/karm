@@ -42,6 +42,12 @@ export Res<> save(Gfx::Pixels pixels, Io::Writer& w, Saver const& props = {}) {
     return save(pixels, e, props);
 }
 
+export Res<Vec<u8>> save(Gfx::Pixels pixels, Saver const& props = {}) {
+    Io::BufferWriter bw;
+    try$(save(pixels, bw, props));
+    return Ok(bw.take());
+}
+
 export Res<> save(Gfx::Pixels pixels, Ref::Url const& url, Saver const& props = {}) {
     auto file = try$(Sys::File::create(url));
     Io::BEmit e{file};
