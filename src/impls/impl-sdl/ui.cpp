@@ -635,6 +635,8 @@ static Res<Rc<Host>> makeHost(Child root) {
     if (not window)
         return Error::other(SDL_GetError());
 
+    SDL_StartTextInput(window);
+
     try$(_setWindowIcon(window));
     auto host = makeRc<SdlHost>(root, window);
 
