@@ -117,26 +117,53 @@ export enum Marker : u8 {
 export struct BitWriter {
     Io::BEmit& e;
 
-    u8 _buf = 0;
-    u8 _len = 0;
+    u8 _bit = 0;
+    u8 _bitLen = 0;
+
+    static constexpr usize OUT_CAP = 32;
+    Array<u8, OUT_CAP> _out;
+    usize _outLen = 0;
 
     always_inline BitWriter(Io::BEmit& e) : e(e) {}
 
-    always_inline void writeBit(u8 bit) {
-        _buf |= (bit & 1) << (7 - _len);
-        _len = (_len + 1) % 8;
+    always_inline void putByte(u8 b) {
+        _out[_outLen++] = b;
+        if (_outLen == OUT_CAP)
+            flushBytes();
+    }
 
-        if (_len == 0) {
-            e.writeU8be(_buf);
-            if (_buf == 0xFF)
-                e.writeU8be(0);
-            _buf = 0;
+    always_inline void flushBytes() {
+        if (_outLen) {
+            e.writeBytes(sub(_out, 0, _outLen));
+            _outLen = 0;
+        }
+    }
+
+    always_inline void writeBit(u8 bit) {
+        _bit |= (bit & 1) << (7 - _bitLen);
+        _bitLen = (_bitLen + 1) & 7;
+
+        if (_bitLen == 0) {
+            putByte(_bit);
+            if (_bit == 0xFF)
+                putByte(0);
+            _bit = 0;
         }
     }
 
     always_inline void writeBits(u64 bits, usize len) {
         for (usize i = 1; i <= len; ++i)
             writeBit(bits >> (len - i));
+    }
+
+    always_inline void flushBitByte() {
+        if (_bitLen) {
+            putByte(_bit);
+            if (_bit == 0xFF)
+                putByte(0);
+            _bit = 0;
+            _bitLen = 0;
+        }
     }
 };
 
