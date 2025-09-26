@@ -116,6 +116,30 @@ struct SdlCamera : Av::Camera {
     Res<Rc<VideoStream>> startCapture() override {
         return Ok(makeRc<SdlCameraStream>(SDL_OpenCamera(_id, nullptr)));
     }
+
+    CameraInfo info() const override {
+        return {
+            .name = Str{SDL_GetCameraName(_id)},
+            .driver = Str{SDL_GetCameraDriver(_id)}
+        };
+    }
+
+    Vec<CameraFormat> formats() const override {
+        int len;
+        auto* formats = SDL_GetCameraSupportedFormats(_id, &len);
+        Defer _ = [&] {
+            SDL_free(formats);
+        };
+        Vec<Av::CameraFormat> fmts;
+        for (int i = 0; i < len; i++) {
+            auto& f = *formats[i];
+            fmts.pushBack({
+                .resolution = {f.width, f.width},
+                .framerate = f.framerate_numerator / static_cast<f64>(f.framerate_denominator),
+            });
+        }
+        return fmts;
+    }
 };
 
 Res<Rc<Camera>> openDefaultCamera() {
