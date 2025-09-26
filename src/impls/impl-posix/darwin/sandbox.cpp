@@ -1,4 +1,6 @@
-import Karm.Sys;
+module Karm.Sys;
+
+import Karm.Core;
 
 namespace Karm::Sys::_Embed {
 
