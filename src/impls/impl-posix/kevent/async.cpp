@@ -6,9 +6,11 @@
 //
 #include <impl-posix/fd.h>
 #include <impl-posix/utils.h>
+#include <karm-core/macros.h>
+
+module Karm.Sys;
 
 import Karm.Core;
-import Karm.Sys;
 
 namespace Karm::Sys::_Embed {
 
