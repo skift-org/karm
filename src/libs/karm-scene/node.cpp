@@ -5,6 +5,7 @@ module;
 export module Karm.Scene:node;
 
 import Karm.Core;
+import Karm.Gfx;
 
 namespace Karm::Scene {
 
@@ -42,6 +43,13 @@ export struct Node {
         g.end();
 
         return surface;
+    }
+
+    String toSvg(Math::Vec2f size, f64 density = 1) {
+        Gfx::SvgCanvas g;
+        g.scale(density);
+        paint(g, Math::Rectf{size});
+        return g.finalize();
     }
 };
 

@@ -1,6 +1,8 @@
 #include <errno.h>
 #include <stdlib.h>
 
+//
+#include <karm-core/macros.h>
 #include "utils.h"
 
 namespace Karm::Posix {

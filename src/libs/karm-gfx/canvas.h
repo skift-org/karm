@@ -97,7 +97,7 @@ struct Canvas : Meta::NoCopy {
     virtual void curve(Math::Curvef curve) = 0;
 
     // Add a rectangle to the current path.
-    virtual void rect(Math::Rectf rect, Math::Radiif radii = 0) = 0;
+    virtual void rect(Math::Rectf rect, Math::Radiif radii = 0);
 
     // Add an ellipse to the current path.
     virtual void ellipse(Math::Ellipsef ellipse) = 0;

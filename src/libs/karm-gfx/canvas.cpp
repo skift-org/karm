@@ -38,6 +38,69 @@ void Canvas::skew(Math::Vec2f pos) {
 
 // MARK: Path Operations ---------------------------------------------------
 
+void Canvas::rect(Math::Rectf rect, Math::Radiif radii){
+    if (Math::epsilonEq(min(rect.width, rect.height), 0.0, 0.001))
+        return;
+
+    if (radii.zero()) {
+        moveTo(rect.topStart(), {});
+        lineTo(rect.topEnd(), {});
+        lineTo(rect.bottomEnd(), {});
+        lineTo(rect.bottomStart(), {});
+        closePath();
+    } else {
+        radii = radii.reduceOverlap(rect.size());
+
+        // NOTE: 0.5522847498 is the cubic bezier approximation of the circle
+        //       Since we take the value relative to the end of the edge,
+        //       we need to subtract it from the radii to get the control point
+        f64 cpa = radii.a * (1 - 0.5522847498);
+        f64 cpb = radii.b * (1 - 0.5522847498);
+        f64 cpc = radii.c * (1 - 0.5522847498);
+        f64 cpd = radii.d * (1 - 0.5522847498);
+        f64 cpe = radii.e * (1 - 0.5522847498);
+        f64 cpf = radii.f * (1 - 0.5522847498);
+        f64 cpg = radii.g * (1 - 0.5522847498);
+        f64 cph = radii.h * (1 - 0.5522847498);
+
+        moveTo({rect.x + radii.b, rect.y}, {});
+
+        // Top end edge
+        lineTo({rect.x + rect.width - radii.c, rect.y}, {});
+        cubicTo(
+            {rect.x + rect.width - cpc, rect.y},
+            {rect.x + rect.width, rect.y + cpd},
+            {rect.x + rect.width, rect.y + radii.d}, {}
+        );
+
+        // Bottom end edge
+        lineTo({rect.x + rect.width, rect.y + rect.height - radii.e}, {});
+        cubicTo(
+            {rect.x + rect.width, rect.y + rect.height - cpe},
+            {rect.x + rect.width - cpf, rect.y + rect.height},
+            {rect.x + rect.width - radii.f, rect.y + rect.height}, {}
+        );
+
+        // Bottom start edge
+        lineTo({rect.x + radii.g, rect.y + rect.height}, {});
+        cubicTo(
+            {rect.x + cpg, rect.y + rect.height},
+            {rect.x, rect.y + rect.height - cph},
+            {rect.x, rect.y + rect.height - radii.h}, {}
+        );
+
+        // Top start edge
+        lineTo({rect.x, rect.y + radii.a}, {});
+        cubicTo(
+            {rect.x, rect.y + cpa},
+            {rect.x + cpb, rect.y},
+            {rect.x + radii.b, rect.y}, {}
+        );
+
+        closePath();
+    }
+}
+
 void Canvas::fill(Fill style, FillRule rule) {
     fillStyle(style);
     fill(rule);
@@ -73,6 +136,7 @@ void Canvas::fill(Math::Rectf r, Math::Radiif radii) {
 }
 
 void Canvas::fill(Math::Recti r, Math::Radiif radii) {
+    beginPath();
     rect(r.cast<f64>(), radii);
     fill();
 }
