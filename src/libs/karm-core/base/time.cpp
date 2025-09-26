@@ -241,7 +241,7 @@ export using SystemTime = _Instant<SystemClock>;
 // MARK: Time ------------------------------------------------------------------
 
 export struct Time {
-    u8 second;
+    Duration second;
     u8 minute;
     u8 hour;
 
@@ -251,12 +251,12 @@ export struct Time {
         span -= Duration::fromHours(result.hour);
         result.minute = span.toMinutes();
         span -= Duration::fromMinutes(result.minute);
-        result.second = span.toSecs();
+        result.second = span;
         return result;
     }
 
     Duration toDuration() const {
-        return Duration::fromSecs(second) +
+        return second +
                Duration::fromMinutes(minute) +
                Duration::fromHours(hour);
     }
@@ -270,6 +270,10 @@ export struct Day {
         : _raw(raw) {}
 
     constexpr operator usize() const {
+        return _raw;
+    }
+
+    usize val() const {
         return _raw;
     }
 
