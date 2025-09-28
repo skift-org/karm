@@ -72,9 +72,6 @@ struct _SymbolBuf {
 export struct Symbol {
     Rc<_SymbolBuf> _buf;
 
-    /// Symbol representing an empty string.
-    static Symbol EMPTY;
-
     static Symbol from(Str str);
 
     Str str() const {
@@ -97,8 +94,6 @@ export struct Symbol {
         return str().len() > 0;
     }
 };
-
-inline Symbol Symbol::EMPTY = from("");
 
 static Set<Rc<_SymbolBuf>>& _symboleRegistry() {
     static Set<Rc<_SymbolBuf>> _registry;
