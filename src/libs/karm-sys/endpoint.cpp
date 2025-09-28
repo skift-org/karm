@@ -34,7 +34,7 @@ Res<> rpcSend(IpcConnection& con, Port to, u64 seq, Args&&... args) {
     return Ok();
 }
 
-static inline Async::Task<Message> rpcRecvAsync(IpcConnection& con) {
+export Async::Task<Message> rpcRecvAsync(IpcConnection& con) {
     Message msg;
     auto [bufLen, hndsLen] = co_trya$(con.recvAsync(msg._buf, msg._hnds));
     if (bufLen < sizeof(Header))
