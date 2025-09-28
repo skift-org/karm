@@ -52,16 +52,17 @@ inline void _log(Level level, Format fmt, Io::_Args& args) {
         return;
 
     Logger::_Embed::loggerLock();
+    auto& out = Logger::_Embed::loggerOut();
 
     if (level.value != -2) {
-        _catch(Io::format(Logger::_Embed::loggerOut(), "{} ", level.name | level.style));
-        _catch(Io::format(Logger::_Embed::loggerOut(), "{}{}:{}: ", Tty::reset().fg(Tty::GRAY_DARK), fmt.loc.file, fmt.loc.line));
+        _catch(Io::format(out, "{} ", level.name | level.style));
+        _catch(Io::format(out, "{}{}:{}: ", Tty::reset().fg(Tty::GRAY_DARK), fmt.loc.file, fmt.loc.line));
     }
 
-    _catch(Io::format(Logger::_Embed::loggerOut(), "{}", Tty::reset()));
-    _catch(Io::_format(Logger::_Embed::loggerOut(), fmt.str, args));
-    _catch(Io::format(Logger::_Embed::loggerOut(), "{}\n", Tty::reset()));
-    _catch(Logger::_Embed::loggerOut().flush());
+    _catch(Io::format(out, "{}", Tty::reset()));
+    _catch(Io::_format(out, fmt.str, args));
+    _catch(Io::format(out, "{}\n", Tty::reset()));
+    _catch(out.flush());
 
     Logger::_Embed::loggerUnlock();
 }
