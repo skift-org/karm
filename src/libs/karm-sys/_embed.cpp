@@ -11,7 +11,6 @@ namespace Karm::Sys {
 export struct Intent;
 export struct Fd;
 export struct Sched;
-export struct MessageReader;
 export struct DirEntry;
 export struct Stat;
 export struct SysInfo;
@@ -25,7 +24,7 @@ namespace Karm::Sys::_Embed {
 
 // MARK: Fd --------------------------------------------------------------------
 
-export Res<Rc<Sys::Fd>> unpackFd(MessageReader&);
+export Res<Rc<Sys::Fd>> deserializeFd(Serde::Deserializer&);
 
 // MARK: File I/O --------------------------------------------------------------
 

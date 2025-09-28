@@ -9,12 +9,13 @@ import :types;
 
 namespace Karm::Sys {
 
-// MARK: Message Writer/Reader -------------------------------------------------
+// MARK: Message Serializer/Deserializer ---------------------------------------
 
-export struct MessageWriter : Io::BEmit {
-    Vec<Handle> _handles;
+export struct MessageSerializer : Serde::PackSerializer {
+    Vec<Handle> _handles = {};
 
-    using BEmit::BEmit;
+    MessageSerializer(Io::BEmit& emit)
+        : PackSerializer(emit) {}
 
     void give(Handle hnd) {
         _handles.emplaceBack(hnd);
@@ -29,11 +30,11 @@ export struct MessageWriter : Io::BEmit {
     }
 };
 
-export struct MessageReader : Io::BScan {
+export struct MessageDeserializer : Serde::PackDeserializer {
     Cursor<Handle> _handles;
 
-    MessageReader(Bytes bytes, Slice<Handle> handles)
-        : BScan(bytes), _handles(handles) {}
+    MessageDeserializer(Io::BScan& scan, Slice<Handle> handles)
+        : PackDeserializer(scan), _handles(handles) {}
 
     Handle take() {
         if (_handles.ended())
@@ -41,19 +42,6 @@ export struct MessageReader : Io::BScan {
         return _handles.next();
     }
 };
-
-export template <typename T>
-struct MessagePacker;
-
-export template <typename T>
-Res<> pack(MessageWriter& e, T const& val) {
-    return MessagePacker<T>::pack(e, val);
-}
-
-export template <typename T>
-Res<T> unpack(MessageReader& s) {
-    return MessagePacker<T>::unpack(s);
-}
 
 // MARK: Primitive Types -------------------------------------------------------
 
@@ -73,6 +61,14 @@ export struct Port : Distinct<u64, struct _PortTag> {
             e("broadcast");
         else
             e("{}", value());
+    }
+
+    Res<> serialize(Serde::Serializer& ser) const {
+        return ser.serialize(value());
+    }
+
+    static Res<Port> deserialize(Serde::Deserializer& de) {
+        return Ok(Port{try$(de.deserialize<u64>())});
     }
 };
 
@@ -147,9 +143,9 @@ export struct Message {
             Meta::idOf<T>(),
         };
         Io::BufWriter reqBuf{msg._payload};
-        MessageWriter reqPack{reqBuf};
-
-        try$(Sys::pack(reqPack, payload));
+        Io::BEmit emit{reqBuf};
+        MessageSerializer messageSerializer{emit};
+        try$(Serde::serialize(messageSerializer, payload));
 
         msg._len = try$(Io::tell(reqBuf)) + sizeof(Header);
 
@@ -169,9 +165,9 @@ export struct Message {
         };
 
         Io::BufWriter respBuf{resp._payload};
-        MessageWriter respPack{respBuf};
-
-        try$(Sys::pack(respPack, payload));
+        Io::BEmit emit{respBuf};
+        MessageSerializer messageSerializer{emit};
+        try$(Serde::serialize(messageSerializer, payload));
 
         resp._len = try$(Io::tell(respBuf)) + sizeof(Header);
 
@@ -180,224 +176,12 @@ export struct Message {
 
     template <typename T>
     Res<T> unpack() {
-        MessageReader s{bytes(), handles()};
+        Io::BScan scan{bytes()};
+        MessageDeserializer s{scan, handles()};
         if (not is<T>())
             return Error::invalidData("unexpected message");
-        try$(Sys::unpack<Header>(s));
-        return Sys::unpack<T>(s);
-    }
-};
-
-// MARK: Trivialy Copyable -----------------------------------------------------
-
-export template <Meta::TrivialyCopyable T>
-struct MessagePacker<T> {
-    static Res<> pack(MessageWriter& e, T const& val) {
-        e.writeFrom(val);
-        return Ok();
-    }
-
-    static Res<T> unpack(MessageReader& s) {
-        T res;
-        s.readTo(&res);
-        return Ok(res);
-    }
-};
-
-// MARK: Optionals -------------------------------------------------------------
-
-export template <>
-struct MessagePacker<None> {
-    static Res<> pack(Io::BEmit&, None const&) {
-        return Ok();
-    }
-
-    static Res<None> unpack(MessageReader&) {
-        return NONE;
-    }
-};
-
-export template <typename T>
-struct MessagePacker<Opt<T>> {
-    static Res<> pack(MessageWriter& e, Opt<T> const& val) {
-        e.writeU8le(val.has());
-        if (val.has())
-            try$(pack(e, val.unwrap()));
-        return Ok();
-    }
-
-    static Res<Opt<T>> unpack(MessageReader& s) {
-        bool has = s.nextU8le();
-        if (not has)
-            return Ok<Opt<T>>(NONE);
-        return Ok(unpack<T>());
-    }
-};
-
-export template <typename... Ts>
-struct MessagePacker<Union<Ts...>> {
-    static Res<> pack(MessageWriter& e, Union<Ts...> const& val) {
-        try$(Sys::pack<u8>(e, val.index()));
-        return val.visit([&]<typename T>(T const& v) {
-            try$(Sys::pack<T>(e, v));
-        });
-    }
-
-    static Res<Union<Ts...>> unpack(MessageReader& s) {
-        auto index = try$(Sys::unpack<u8>(s));
-        if (index >= sizeof...(Ts))
-            return Error::invalidData("invalid union index");
-        return Meta::indexCast<Ts...>(index, nullptr, [&]<typename T>(T*) -> Res<Union<Ts...>> {
-            return Sys::unpack<T>(s);
-        });
-    }
-};
-
-export template <>
-struct MessagePacker<Error> {
-    static Res<> pack(MessageWriter& e, Error const& val) {
-        return Sys::pack(e, static_cast<u32>(val.code()));
-    }
-
-    static Res<Error> unpack(MessageReader& s) {
-        auto code = (Error::Code)try$(Sys::unpack<u32>(s));
-        return Ok(Error{code, nullptr});
-    }
-};
-
-export template <typename T, typename E>
-struct MessagePacker<Res<T, E>> {
-    static Res<> pack(MessageWriter& e, Res<T, E> const& val) {
-        e.writeU8le(val.has());
-        if (val.has())
-            return Sys::pack(e, val.unwrap());
-        return Sys::pack(e, val.none());
-    }
-
-    static Res<Res<T, E>> unpack(MessageReader& s) {
-        bool has = s.nextU8le();
-        if (has) {
-            auto res = Ok<T>(try$(Sys::unpack<T>(s)));
-            return Ok<Res<T, E>>(std::move(res));
-        }
-        auto err = try$(Sys::unpack<E>(s));
-        return Ok<Res<T, E>>(err);
-    }
-};
-
-export template <Meta::Aggregate T>
-    requires(not Meta::TrivialyCopyable<T>)
-struct MessagePacker<T> {
-    static Res<> pack(MessageWriter& e, T const& val) {
-        return Meta::visit(
-            val,
-            [&](auto&&... fields) {
-                Res<> res = Ok();
-                ([&] {
-                    res ? res = Sys::pack(e, fields) : res;
-                }(),
-                 ...);
-                return res;
-            }
-        );
-    }
-
-    static Res<T> unpack(MessageReader& s) {
-        T object;
-        Opt<Error> err = NONE;
-        Meta::visit(
-            object,
-            [&](auto&&... fields) {
-                ([&] {
-                    auto res = Sys::unpack<Meta::RemoveConstVolatileRef<decltype(fields)>>(s);
-                    if (not res) {
-                        err = res.none();
-                        return;
-                    }
-                    fields = res.take();
-                }(),
-                 ...);
-            }
-        );
-
-        if (err)
-            return err.take();
-
-        return Ok(object);
-    }
-};
-
-// MARK: Sliceable ---------------------------------------------------------------
-
-export template <typename T>
-struct MessagePacker<Vec<T>> {
-    static Res<> pack(MessageWriter& e, Vec<T> const& val) {
-        e.writeU64le(val.len());
-        for (auto& i : val) {
-            try$(Sys::pack(e, i));
-        }
-        return Ok();
-    }
-
-    static Res<Vec<T>> unpack(MessageReader& s) {
-        auto len = s.nextU64le();
-        Vec<T> res{len};
-        for (usize i = 0; i < len; i++) {
-            res.emplaceBack(try$(Sys::unpack<T>(s)));
-        }
-        return Ok(std::move(res));
-    }
-};
-
-// MARK: Strings ---------------------------------------------------------------
-
-export template <StaticEncoding E>
-struct MessagePacker<_String<E>> {
-    static Res<> pack(MessageWriter& e, _String<E> const& val) {
-        e.writeU64le(val.len());
-        e.writeStr(val);
-        return Ok();
-    }
-
-    static Res<String> unpack(MessageReader& s) {
-        return Ok(s.nextStr(s.nextU64le()));
-    }
-};
-
-// MARK: Tuple -----------------------------------------------------------------
-
-export template <typename Car, typename Cdr>
-struct MessagePacker<Pair<Car, Cdr>> {
-    static Res<> pack(MessageWriter& e, Pair<Car, Cdr> const& val) {
-        Sys::pack(e, val.v0);
-        Sys::pack(e, val.v1);
-        return Ok();
-    }
-
-    static Res<Pair<Car, Cdr>> unpack(MessageReader& s) {
-        Pair res = {
-            try$(Sys::unpack<Car>(s)),
-            try$(Sys::unpack<Cdr>(s)),
-        };
-        return Ok(res);
-    }
-};
-
-export template <typename... Ts>
-struct MessagePacker<Tuple<Ts...>> {
-    static Res<> pack(MessageWriter& e, Tuple<Ts...> const& val) {
-        return val.visit([&](auto const& f) {
-            return Sys::pack(e, f);
-        });
-    }
-
-    static Res<Tuple<Ts...>> unpack(MessageReader& s) {
-        Tuple<Ts...> res;
-        try$(res.visit([&]<typename T>(T& f) -> Res<> {
-            f = try$(Sys::unpack<T>(s));
-            return Ok();
-        }));
-        return Ok(res);
+        try$(Serde::deserialize<Header>(s));
+        return Serde::deserialize<T>(s);
     }
 };
 

@@ -2,6 +2,8 @@ module;
 
 #include <karm-math/vec.h>
 
+#include "karm-core/macros.h"
+
 export module Karm.App:inputs;
 
 import Karm.Core;
@@ -92,6 +94,7 @@ export struct Key {
 #include "defs/keys.inc"
 
 #undef KEY
+        _LEN,
     };
 
     using enum Code;
@@ -108,6 +111,8 @@ export struct Key {
         return #name;
 #include "defs/keys.inc"
 
+        default:
+            unreachable();
 #undef KEY
         }
         return "INVALID";
@@ -129,6 +134,8 @@ export struct KeyboardEvent {
         PRESS,
         RELEASE,
         REPEATE,
+
+        _LEN,
     } type;
 
     /// The code of the key that was pressed or released
@@ -165,6 +172,8 @@ export struct MouseEvent {
         RELEASE,
         SCROLL,
         MOVE,
+
+        _LEN,
     } type;
 
     Math::Vec2i pos{};
@@ -175,7 +184,7 @@ export struct MouseEvent {
     MouseButton button{};
 
     bool pressed(Flags<MouseButton> button) const {
-        return (bool)(buttons & button);
+        return buttons & button;
     }
 
     bool released(MouseButton button) const {
@@ -190,3 +199,39 @@ export struct MouseEnterEvent {
 };
 
 } // namespace Karm::App
+
+template <>
+struct Karm::Serde::Serde<Karm::App::Key> {
+    static Res<> serialize(Serializer& ser, App::Key const& v) {
+        return ser.serialize(v._code);
+    }
+
+    static Res<App::Key> deserialize(Deserializer& de) {
+        App::Key key{try$(de.deserialize<App::Key::Code>())};
+        return Ok(key);
+    }
+};
+
+template <>
+struct Karm::Serde::Serde<Karm::App::KeyMod> {
+    static Res<> serialize(Serializer& ser, App::KeyMod const& v) {
+        return ser.serialize(toUnderlyingType(v));
+    }
+
+    static Res<App::KeyMod> deserialize(Deserializer& de) {
+        auto v = try$(de.deserialize<Meta::UnderlyingType<App::KeyMod>>());
+        return Ok(static_cast<App::KeyMod>(v));
+    }
+};
+
+template <>
+struct Karm::Serde::Serde<Karm::App::MouseButton> {
+    static Res<> serialize(Serializer& ser, App::MouseButton const& v) {
+        return ser.serialize(toUnderlyingType(v));
+    }
+
+    static Res<App::MouseButton> deserialize(Deserializer& de) {
+        auto v = try$(de.deserialize<Meta::UnderlyingType<App::MouseButton>>());
+        return Ok(static_cast<App::MouseButton>(v));
+    }
+};

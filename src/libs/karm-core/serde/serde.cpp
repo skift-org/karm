@@ -11,6 +11,8 @@ import :base.vec;
 import :base.symbol;
 import :base.map;
 import :meta.visit;
+import :base.distinct;
+import :base.flags;
 
 namespace Karm::Serde {
 
@@ -400,7 +402,7 @@ struct Serde<T> {
                     .tag = Symbol::from(i.name),
                 })) {
                 try$(scope.end());
-                return res;
+                return Ok(static_cast<T>(res.unwrap().v1));
             }
         }
 
@@ -441,6 +443,36 @@ struct Serde<T> {
     static Res<T> deserialize(Deserializer& de) {
         auto res = try$(de.deserializeFloat(sizeHintFor<T>()));
         return Ok(static_cast<T>(res));
+    }
+};
+
+// TODO: Comeback to this and use typed unit
+export template <typename T, typename Tag>
+struct Serde<Distinct<T, Tag>> {
+    using D = Distinct<T, Tag>;
+
+    static Res<> serialize(Serializer& ser, D const& v) {
+        return ::Karm::Serde::serialize(ser, v.value());
+    }
+
+    static Res<D> deserialize(Deserializer& de) {
+        auto value = try$(::Karm::Serde::deserialize<T>(de));
+        return Ok(D{value});
+    }
+};
+
+// TODO: Comeback to this and use typed unit
+export template <Meta::Enum E, typename U>
+struct Serde<Flags<E, U>> {
+    using F = Flags<E, U>;
+
+    static Res<> serialize(Serializer& ser, F const& v) {
+        return ::Karm::Serde::serialize(ser, v.raw());
+    }
+
+    static Res<F> deserialize(Deserializer& de) {
+        auto value = try$(::Karm::Serde::deserialize<U>(de));
+        return Ok(F::fromUnderlying(value));
     }
 };
 

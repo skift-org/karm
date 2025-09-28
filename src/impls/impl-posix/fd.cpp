@@ -12,10 +12,6 @@ Fd::~Fd() {
         ::close(_raw);
 }
 
-Sys::Handle Fd::handle() const {
-    return Sys::Handle{static_cast<usize>(_raw)};
-}
-
 Res<usize> Fd::read(MutBytes bytes) {
     isize result = ::read(_raw, bytes.buf(), sizeOf(bytes));
 
@@ -116,11 +112,6 @@ Res<Sys::_Received> Fd::recv(MutBytes bytes, MutSlice<Sys::Handle>) {
         0,
         Posix::fromSockAddr(addr_)
     );
-}
-
-Res<> Fd::pack(Sys::MessageWriter& e) {
-    e.give(handle());
-    return Ok();
 }
 
 } // namespace Karm::Posix

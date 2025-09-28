@@ -13,8 +13,6 @@ struct Fd : Sys::Fd {
 
     ~Fd() override;
 
-    Sys::Handle handle() const override;
-
     Res<usize> read(MutBytes bytes) override;
 
     Res<usize> write(Bytes bytes) override;

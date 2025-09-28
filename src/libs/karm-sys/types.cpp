@@ -34,3 +34,14 @@ export struct MmapResult {
 };
 
 } // namespace Karm::Sys
+
+export template <>
+struct Karm::Serde::Serde<Karm::Sys::Handle> {
+    static Res<> serialize(Serializer&, Sys::Handle) {
+        return Error::notImplemented();
+    }
+
+    static Res<Sys::Handle> deserialize(Deserializer&) {
+        return Error::notImplemented();
+    }
+};

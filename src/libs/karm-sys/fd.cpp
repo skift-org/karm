@@ -19,8 +19,6 @@ export using _Received = Tuple<usize, usize, SocketAddr>;
 export struct Fd : Meta::NoCopy {
     virtual ~Fd() = default;
 
-    virtual Handle handle() const = 0;
-
     virtual Res<usize> read(MutBytes) = 0;
 
     virtual Res<usize> write(Bytes) = 0;
@@ -39,11 +37,9 @@ export struct Fd : Meta::NoCopy {
 
     virtual Res<_Received> recv(MutBytes, MutSlice<Handle>) = 0;
 
-    virtual Res<> pack(MessageWriter& e) = 0;
-
-    static Res<Rc<Fd>> unpack(MessageReader& s)  {
-        return _Embed::unpackFd(s);
-    }
+    virtual Res<> serialize(Serde::Serializer&) const {
+        return Error::notImplemented();
+    };
 };
 
 export struct BlobFd : Fd {
@@ -52,10 +48,6 @@ export struct BlobFd : Fd {
 
     BlobFd(Rc<Ref::Blob> const& blob)
         : _blob(blob) {}
-
-    Handle handle() const override {
-        return INVALID;
-    }
 
     Res<usize> read(MutBytes bytes) override {
         auto src = sub(_blob->data, _offset, _offset + bytes.len());
@@ -100,18 +92,10 @@ export struct BlobFd : Fd {
     Res<_Received> recv(MutBytes, MutSlice<Handle>) override {
         return Error::notImplemented();
     }
-
-    Res<> pack(MessageWriter&) override {
-        return Error::notImplemented();
-    }
 };
 
 export struct NullFd : Fd {
-    Handle handle() const override {
-        return INVALID;
-    }
-
-    Res<usize> read(MutBytes) override  {
+    Res<usize> read(MutBytes) override {
         return Ok(0uz);
     }
 
@@ -138,7 +122,7 @@ export struct NullFd : Fd {
         );
     }
 
-    Res<Stat> stat() override  {
+    Res<Stat> stat() override {
         return Ok(Stat{});
     }
 
@@ -146,12 +130,8 @@ export struct NullFd : Fd {
         return Ok<_Sent>(0uz, 0uz);
     }
 
-    Res<_Received> recv(MutBytes, MutSlice<Handle>) override  {
+    Res<_Received> recv(MutBytes, MutSlice<Handle>) override {
         return Ok<_Received>(0uz, 0uz, Ip4::unspecified(0));
-    }
-
-    Res<> pack(MessageWriter& e) override  {
-        return Sys::pack(e, INVALID);
     }
 };
 
@@ -161,3 +141,14 @@ concept AsFd = requires(T t) {
 };
 
 } // namespace Karm::Sys
+
+export template <>
+struct Karm::Serde::Serde<Karm::Rc<Karm::Sys::Fd>> {
+    static Res<> serialize(Serializer& ser, Rc<Sys::Fd> v) {
+        return v->serialize(ser);
+    }
+
+    static Res<Rc<Sys::Fd>> deserialize(Deserializer& de) {
+        return Sys::_Embed::deserializeFd(de);
+    }
+};

@@ -203,6 +203,16 @@ union Vec2 {
         using U = decltype(f(x));
         return Vec2<U>{f(x), f(y)};
     }
+
+    Res<> serialize(Serde::Serializer& ser) const {
+        return Serde::serialize(ser, _els);
+    }
+
+    static Res<Vec2> deserialize(Serde::Deserializer& de) {
+        Vec2 res;
+        res._els = try$(Serde::deserialize<decltype(_els)>(de));
+        return Ok(std::move(res));
+    }
 };
 
 template <typename T>
@@ -443,6 +453,16 @@ union Vec3 {
         using U = decltype(f(x));
         return Vec3<U>{f(x), f(y), f(z)};
     }
+
+    Res<> serialize(Serde::Serializer& ser) const {
+        return Serde::serialize(ser, _els);
+    }
+
+    static Res<Vec3> deserialize(Serde::Deserializer& de) {
+        Vec3 res;
+        res._els = try$(Serde::deserialize<decltype(_els)>(de));
+        return Ok(std::move(res));
+    }
 };
 
 template <typename T>
@@ -667,6 +687,16 @@ union Vec4 {
     constexpr auto map(auto f) const {
         using U = decltype(f(x));
         return Vec4<U>{f(x), f(y), f(z), f(w)};
+    }
+
+    Res<> serialize(Serde::Serializer& ser) const {
+        return Serde::serialize(ser, _els);
+    }
+
+    static Res<Vec4> deserialize(Serde::Deserializer& de) {
+        Vec4 res;
+        res._els = try$(Serde::deserialize<decltype(_els)>(de));
+        return Ok(std::move(res));
     }
 };
 
