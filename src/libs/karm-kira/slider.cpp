@@ -11,39 +11,57 @@ import Karm.App;
 namespace Karm::Kira {
 
 export struct Slider : Ui::View<Slider> {
+    enum struct Origin {
+        ZERO,
+        HALF,
+    };
+
+    using enum Origin;
+
     static constexpr auto THUMP_RADIUS = 10;
 
-    double _value = 0.0f;
+    double _value = 0.0;
+    Origin _origin = Origin::ZERO;
     Opt<Ui::Send<double>> _onChange;
     Ui::MouseListener _mouseListener;
 
-    Slider(double value, Opt<Ui::Send<double>> onChange)
-        : _value(Math::isNan(value) ? 0 : value), _onChange(std::move(onChange)) {
-    }
+    Slider(double value, Opt<Ui::Send<double>> onChange, Origin origin = Origin::ZERO)
+        : _value(Math::isNan(value) ? 0 : value),
+          _origin(origin),
+          _onChange(std::move(onChange)) {}
 
     void reconcile(Slider& o) override {
         _value = o._value;
+        _origin = o._origin;
         _onChange = std::move(o._onChange);
     }
 
     void paint(Gfx::Canvas& g, Math::Recti) override {
         g.push();
 
-        double v = (bound().width - THUMP_RADIUS * 2) * _value;
-        auto thumbCenter = bound().startCenter().cast<double>() + Math::Vec2f{v + THUMP_RADIUS, 0};
+        double full = bound().width - THUMP_RADIUS * 2;
+        double v = (_origin == Origin::ZERO)
+                       ? full * _value
+                       : full * (_value - 0.5);
 
+        auto base = bound().startCenter().cast<double>() + Math::Vec2f{THUMP_RADIUS, 0};
+        auto thumbCenter = base + Math::Vec2f{(_origin == Origin::ZERO ? v : v + full / 2), 0};
+
+        // full track
         g.strokeStyle(Gfx::stroke(Ui::GRAY600).withWidth(4).withAlign(Gfx::CENTER_ALIGN).withCap(Gfx::ROUND_CAP));
         g.beginPath();
-        g.moveTo(bound().startCenter().cast<double>() + Math::Vec2f{THUMP_RADIUS, 0});
-        g.lineTo(bound().endCenter().cast<double>() - Math::Vec2f{THUMP_RADIUS, 0});
+        g.moveTo(base);
+        g.lineTo(base + Math::Vec2f{full, 0});
         g.stroke();
 
+        // active track
         g.strokeStyle(Gfx::stroke(_mouseListener.isHover() ? Ui::ACCENT400 : Ui::ACCENT500).withWidth(4).withAlign(Gfx::CENTER_ALIGN).withCap(Gfx::ROUND_CAP));
         g.beginPath();
-        g.moveTo(bound().startCenter().cast<double>() + Math::Vec2f{THUMP_RADIUS, 0});
-        g.lineTo(bound().startCenter().cast<double>() + Math::Vec2f{THUMP_RADIUS + v, 0});
+        g.moveTo(base + Math::Vec2f{_origin == Origin::ZERO ? 0 : full / 2, 0});
+        g.lineTo(thumbCenter);
         g.stroke();
 
+        // thumb
         g.fillStyle(Ui::GRAY900);
         g.fill(Math::Ellipsef{thumbCenter, THUMP_RADIUS});
 
@@ -61,7 +79,14 @@ export struct Slider : Ui::View<Slider> {
 
         if (_mouseListener.isPress() and e.is<App::MouseEvent>()) {
             auto p = _mouseListener.pos();
-            _value = (p.x - THUMP_RADIUS) / (static_cast<double>(bound().width) - THUMP_RADIUS * 2);
+            double full = static_cast<double>(bound().width) - THUMP_RADIUS * 2;
+
+            if (_origin == Origin::ZERO) {
+                _value = (p.x - THUMP_RADIUS) / full;
+            } else {
+                _value = 0.5 + ((p.x - THUMP_RADIUS) - full / 2) / full;
+            }
+
             _value = clamp01(_value);
             if (_onChange) {
                 _onChange(*this, _value);
@@ -75,8 +100,8 @@ export struct Slider : Ui::View<Slider> {
     }
 };
 
-export Ui::Child slider(double value, Opt<Ui::Send<double>> onChange) {
-    return makeRc<Slider>(value, std::move(onChange));
+export Ui::Child slider(double value, Opt<Ui::Send<double>> onChange, Slider::Origin origin = Slider::Origin::ZERO) {
+    return makeRc<Slider>(value, std::move(onChange), origin);
 }
 
 export Ui::Child slider(f64 value, Ui::Send<f64> onChange, Gfx::Icon icon, Str text) {

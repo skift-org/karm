@@ -78,37 +78,27 @@ static Ui::Child _resizeHandle(Math::Vec2i dir) {
 
 export Ui::Child resizable(Ui::Child child, ResizeHandle handlePosition, Math::Vec2i size, Opt<Ui::Send<Math::Vec2i>> onChange) {
     if (handlePosition == ResizeHandle::TOP) {
-        return Ui::stack(
-                   child,
-                   Ui::vflow(
-                       _resizeHandle({0, -1})
-                   )
+        return Ui::vflow(
+                   _resizeHandle({0, -1}),
+                   child | Ui::grow()
                ) |
                resizable(size, std::move(onChange));
     } else if (handlePosition == ResizeHandle::START) {
-        return Ui::stack(
-                   child,
-                   Ui::hflow(
-                       _resizeHandle({-1, 0})
-                   )
+        return Ui::hflow(
+                   _resizeHandle({-1, 0}),
+                   child | Ui::grow()
                ) |
                resizable(size, std::move(onChange));
     } else if (handlePosition == ResizeHandle::BOTTOM) {
-        return Ui::stack(
-                   child,
-                   Ui::vflow(
-                       Ui::grow(NONE),
-                       _resizeHandle({0, 1})
-                   )
+        return Ui::vflow(
+                   child | Ui::grow(),
+                   _resizeHandle({0, 1})
                ) |
                resizable(size, std::move(onChange));
     } else if (handlePosition == ResizeHandle::END) {
-        return Ui::stack(
-                   child,
-                   Ui::hflow(
-                       Ui::grow(NONE),
-                       _resizeHandle({1, 0})
-                   )
+        return Ui::hflow(
+                   child | Ui::grow(),
+                   _resizeHandle({1, 0})
                ) |
                resizable(size, std::move(onChange));
     } else {
