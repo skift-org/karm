@@ -376,14 +376,14 @@ export Child icon(Gfx::Icon i, isize size, Opt<Gfx::Color> color = NONE) {
 // MARK: Image -----------------------------------------------------------------
 
 struct Image : View<Image> {
-    Karm::Image::Picture _image;
+    Rc<Gfx::Surface> _surface;
     Opt<Math::Radiif> _radii;
 
-    Image(Karm::Image::Picture image, Opt<Math::Radiif> radii = NONE)
-        : _image(image), _radii(radii) {}
+    Image(Rc<Gfx::Surface> surface, Opt<Math::Radiif> radii = NONE)
+        : _surface(surface), _radii(radii) {}
 
     void reconcile(Image& other) override {
-        _image = other._image;
+        _surface = other._surface;
         _radii = other._radii;
     }
 
@@ -391,10 +391,10 @@ struct Image : View<Image> {
         g.push();
 
         if (_radii) {
-            g.fillStyle(_image.pixels());
+            g.fillStyle(_surface->pixels());
             g.fill(bound(), *_radii);
         } else {
-            g.blit(bound(), _image);
+            g.blit(bound(), *_surface);
         }
 
         g.pop();
@@ -402,8 +402,8 @@ struct Image : View<Image> {
 
     Math::Vec2i size(Math::Vec2i size, Hint hint) override {
         if (hint == Hint::MIN)
-            return _image.bound().fit(Math::Recti{size}).size();
-        return _image.bound().size().cast<isize>();
+            return _surface->bound().fit(Math::Recti{size}).size();
+        return _surface->bound().size().cast<isize>();
     }
 };
 
@@ -411,8 +411,8 @@ export Child image(Ref::Url url, Opt<Math::Radiif> radii = NONE) {
     return makeRc<Image>(Karm::Image::loadOrFallback(url).unwrap(), radii);
 }
 
-export Child image(Karm::Image::Picture image, Opt<Math::Radiif> radii = NONE) {
-    return makeRc<Image>(image, radii);
+export Child image(Rc<Gfx::Surface> surface, Opt<Math::Radiif> radii = NONE) {
+    return makeRc<Image>(surface, radii);
 }
 
 // MARK: Canvas ----------------------------------------------------------------

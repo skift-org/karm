@@ -1,6 +1,7 @@
 module;
 
 #include <karm-gfx/cpu/canvas.h>
+#include <karm-math/vec.h>
 
 export module Karm.Scene:node;
 
@@ -30,25 +31,26 @@ export struct Node {
         e("(node z:{})", zIndex);
     }
 
-    Rc<Gfx::Surface> snapshot(Math::Vec2f size, f64 density = 1) {
+    Rc<Gfx::Surface> snapshot(Math::Vec2i size, f64 density = 1) {
+        auto rect = bound();
         auto surface = Gfx::Surface::alloc(
-            size.ceil().cast<isize>() * density,
+            size * density,
             Gfx::RGBA8888
         );
 
         Gfx::CpuCanvas g;
         g.begin(*surface);
         g.scale(density);
-        paint(g, Math::Rectf{size});
+        paint(g, Math::Rectf{size.cast<f64>()});
         g.end();
 
         return surface;
     }
 
-    String toSvg(Math::Vec2f size, f64 density = 1) {
+    String svg(Math::Vec2i size) {
         Gfx::SvgCanvas g;
-        g.scale(density);
-        paint(g, Math::Rectf{size});
+        g.begin(size.cast<f64>());
+        paint(g, Math::Rectf{size.cast<f64>()});
         return g.finalize();
     }
 };

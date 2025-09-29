@@ -7,6 +7,7 @@ export module Karm.Image:base.saver;
 import Karm.Core;
 import Karm.Ref;
 import Karm.Sys;
+import Karm.Scene;
 
 import :bmp.encoder;
 import :jpeg.encoder;
@@ -16,11 +17,16 @@ import :tga.encoder;
 namespace Karm::Image {
 
 export struct Saver {
+    /// Image format to save as
     Ref::Uti format = Ref::Uti::PUBLIC_BMP;
+
+    /// Quality for lossy formats (JPEG)
+    f64 quality = DEFAULT_QUALITY;
     static constexpr f64 MIN_QUALITY = 0.0;
     static constexpr f64 DEFAULT_QUALITY = 0.75;
     static constexpr f64 MAX_QUALITY = 1.0;
-    f64 quality = DEFAULT_QUALITY;
+
+    f64 density = 1; /// For saving scenes as raster images
 };
 
 export Res<> save(Gfx::Pixels pixels, Io::BEmit& e, Saver const& props = {}) {
@@ -52,6 +58,15 @@ export Res<> save(Gfx::Pixels pixels, Ref::Url const& url, Saver const& props = 
     auto file = try$(Sys::File::create(url));
     Io::BEmit e{file};
     return save(pixels, e, props);
+}
+
+export Res<Vec<u8>> save(Rc<Scene::Node> scene, Math::Vec2i size, Saver const& props = {}) {
+    if (props.format == Ref::Uti::PUBLIC_SVG) {
+        return Ok(bytes(scene->svg(size)));
+    } else {
+        auto surface = scene->snapshot(size, props.density);
+        return Image::save(*surface, props);
+    }
 }
 
 } // namespace Karm::Image

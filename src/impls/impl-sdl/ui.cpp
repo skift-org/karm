@@ -600,7 +600,7 @@ static Res<> _setWindowIcon(SDL_Window* window) {
         return Karm::Image::loadOrFallback(defaultUrl).take();
     });
 
-    auto* surface = SDL_CreateSurface(image.width(), image.height(), SDL_PIXELFORMAT_BGRA32);
+    auto* surface = SDL_CreateSurface(image->width(), image->height(), SDL_PIXELFORMAT_BGRA32);
     if (not surface)
         return Error::other(SDL_GetError());
     Defer _{[&] {
@@ -613,7 +613,7 @@ static Res<> _setWindowIcon(SDL_Window* window) {
         (usize)surface->pitch,
         Gfx::BGRA8888,
     };
-    blitUnsafe(pixels, image.pixels());
+    blitUnsafe(pixels, image->pixels());
 
     SDL_SetWindowIcon(window, surface);
 

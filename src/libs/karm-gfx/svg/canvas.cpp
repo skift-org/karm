@@ -31,10 +31,8 @@ export struct SvgCanvas : Canvas {
         return Io::format("{}", v);
     }
 
-    void openSvgIfNeeded() {
-        if (isEmpty(_sb.str())) {
-            _sb.append("<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.2\" shape-rendering=\"geometricPrecision\">\n"s);
-        }
+    void begin(Math::Vec2f size) {
+        _sb.append(Io::format("<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.2\" width=\"{}\" height=\"{}\" shape-rendering=\"geometricPrecision\">\n"s, size.width, size.height));
     }
 
     void closeSvgIfOpen() {
@@ -90,7 +88,6 @@ export struct SvgCanvas : Canvas {
     void emitPath(Str extraAttrs = {}) {
         if (isEmpty(_path.str()))
             return;
-        openSvgIfNeeded();
         _sb.append("  <path d=\""s);
         _sb.append(_path.str());
         _sb.append("\""s);
@@ -114,7 +111,6 @@ export struct SvgCanvas : Canvas {
     }
 
     void emitGroupOpen() {
-        openSvgIfNeeded();
         _sb.append("  <g"s);
         if (any(_state.transform.str())) {
             _sb.append(" transform=\""s);
@@ -320,7 +316,6 @@ export struct SvgCanvas : Canvas {
         // To keep it simple and stateless, inline clipPath per use.
         static usize id = 0;
         auto cid = Io::format("c{}", id++);
-        openSvgIfNeeded();
         _sb.append("  <clipPath id=\""s);
         _sb.append(cid);
         _sb.append("\">\n"s);
@@ -366,7 +361,6 @@ export struct SvgCanvas : Canvas {
 
     void fill(Prose& prose) override {
         emitPath();
-        openSvgIfNeeded();
         _sb.append("  <g"s);
         if (any(_state.transform.str())) {
             _sb.append(" transform=\""s);
@@ -411,24 +405,20 @@ export struct SvgCanvas : Canvas {
     // ------------------------------------------------------------
     // pixel ops -> approximations or no-ops in SVG
     void clear(Color color) override {
-        openSvgIfNeeded();
         _sb.append("  <rect x=\"0\" y=\"0\" width=\"100%\" height=\"100%\" fill=\""s);
         _sb.append(colorToSvg(color, 1.0));
         _sb.append("\"/>\n"s);
     }
 
     void clear(Math::Recti r, Color color) override {
-        openSvgIfNeeded();
         _sb.append(Io::format("  <rect x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\" fill=\"{}\"/>\n", r.x, r.y, r.width, r.height, colorToSvg(color, 1.0)));
     }
 
     void plot(Math::Vec2i p, Color c) override {
-        openSvgIfNeeded();
         _sb.append(Io::format("  <rect x=\"{}\" y=\"{}\" width=\"1\" height=\"1\" fill=\"{}\"/>\n", p.x, p.y, colorToSvg(c, 1.0)));
     }
 
     void plot(Math::Edgei e, Color c) override {
-        openSvgIfNeeded();
         _sb.append(Io::format("  <line x1=\"{}\" y1=\"{}\" x2=\"{}\" y2=\"{}\" stroke=\"{}\" stroke-width=\"1\"/>\n", e.start.x, e.start.y, e.end.x, e.end.y, colorToSvg(c, 1.0)));
     }
 
