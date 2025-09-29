@@ -25,6 +25,9 @@ export struct PackSerializer : Serializer {
             _emit.writeFrom<u8>(1);
             break;
 
+        case Type::UNIT:
+            break;
+
         case Type::UNION:
             break;
 
@@ -116,6 +119,9 @@ export struct PackDeserializer : Deserializer {
             if (_scan.peek<u8>() != 1)
                 return Error::invalidData("expected some");
             _scan.next<u8>();
+            break;
+
+        case Type::UNIT:
             break;
 
         case Type::UNION:

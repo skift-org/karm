@@ -13,6 +13,7 @@ import :base.map;
 import :meta.visit;
 import :base.distinct;
 import :base.flags;
+import :base.box;
 
 namespace Karm::Serde {
 
@@ -44,6 +45,7 @@ export struct Type {
     enum struct Kind {
         NIL,
         SOME,
+        UNIT,
 
         UNION,
         UNION_ITEM,
@@ -609,6 +611,28 @@ struct Serde<T> {
         }));
         try$(scope.end());
         return Ok(std::move(res));
+    }
+};
+
+export template <typename T>
+struct Serde<Rc<T>> {
+    static Res<> serialize(Serializer& ser, Rc<T> const& v) {
+        return ser.serialize(*v);
+    }
+
+    static Res<Rc<T>> deserialize(Deserializer& de) {
+        return Ok(makeRc<T>(try$(de.deserialize<T>())));
+    }
+};
+
+export template <typename T>
+struct Serde<Box<T>> {
+    static Res<> serialize(Serializer& ser, Box<T> const& v) {
+        return ser.serialize(*v);
+    }
+
+    static Res<Box<T>> deserialize(Deserializer& de) {
+        return Ok(makeBox<T>(try$(de.deserialize<T>())));
     }
 };
 

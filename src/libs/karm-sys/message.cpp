@@ -13,6 +13,7 @@ namespace Karm::Sys {
 
 export struct MessageSerializer : Serde::PackSerializer {
     Vec<Handle> _handles = {};
+    bool _inHandle = false;
 
     MessageSerializer(Io::BEmit& emit)
         : PackSerializer(emit) {}
@@ -28,10 +29,30 @@ export struct MessageSerializer : Serde::PackSerializer {
     void clear() {
         _handles.clear();
     }
+
+    Res<> beginUnit(Serde::Type t) override {
+        if (t.kind == Serde::Type::UNIT and t.tag == "__handle__")
+            _inHandle = true;
+        return PackSerializer::beginUnit(t);
+    }
+
+    Res<> endUnit() override {
+        _inHandle = false;
+        return PackSerializer::endUnit();
+    }
+
+    Res<> serializeUnsigned(u64 v, Serde::SizeHint hint) override {
+        if (_inHandle) {
+            give(Sys::Handle{v});
+            return Ok();
+        }
+        return PackSerializer::serializeUnsigned(v, hint);
+    }
 };
 
 export struct MessageDeserializer : Serde::PackDeserializer {
     Cursor<Handle> _handles;
+    bool _inHandle = false;
 
     MessageDeserializer(Io::BScan& scan, Slice<Handle> handles)
         : PackDeserializer(scan), _handles(handles) {}
@@ -40,6 +61,23 @@ export struct MessageDeserializer : Serde::PackDeserializer {
         if (_handles.ended())
             return INVALID;
         return _handles.next();
+    }
+
+    Res<Serde::Type> beginUnit(Serde::Type t) override {
+        if (t.kind == Serde::Type::UNIT and t.tag == "__handle__")
+            _inHandle = true;
+        return PackDeserializer::beginUnit(t);
+    }
+
+    Res<> endUnit() override {
+        _inHandle = false;
+        return PackDeserializer::endUnit();
+    }
+
+    Res<u64> deserializeUnsigned(Serde::SizeHint hint) override {
+        if (_inHandle)
+            return Ok(take().value());
+        return PackDeserializer::deserializeUnsigned(hint);
     }
 };
 
@@ -122,7 +160,7 @@ export struct Message {
         return sub(_buf, 0, len());
     }
 
-    Slice<Handle> handles() {
+    Slice<Handle> handles() const {
         return sub(_hnds, 0, _hndsLen);
     }
 
@@ -145,7 +183,11 @@ export struct Message {
         Io::BufWriter reqBuf{msg._payload};
         Io::BEmit emit{reqBuf};
         MessageSerializer messageSerializer{emit};
+
         try$(Serde::serialize(messageSerializer, payload));
+        for (auto h : messageSerializer.handles()) {
+            msg._hnds[msg._hndsLen++] = h;
+        }
 
         msg._len = try$(Io::tell(reqBuf)) + sizeof(Header);
 

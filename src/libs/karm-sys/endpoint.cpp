@@ -29,7 +29,6 @@ export ChannelHook& useChannel(Context& ctx) {
 export template <typename T, typename... Args>
 Res<> rpcSend(IpcConnection& con, Port to, u64 seq, Args&&... args) {
     Message msg = Message::packReq<T>(to, seq, std::forward<Args>(args)...).take();
-
     try$(con.send(msg.bytes(), msg.handles()));
     return Ok();
 }
