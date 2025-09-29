@@ -4,6 +4,7 @@ module;
 //
 #include <impl-posix/fd.h>
 #include <impl-posix/utils.h>
+#include <karm-core/macros.h>
 
 module Karm.Sys;
 
@@ -71,17 +72,17 @@ struct UringSched : Sys::Sched {
     [[clang::coro_wrapper]]
     Async::Task<usize> readAsync(Rc<Fd> fd, MutBytes buf) override {
         struct Job : _Job {
-            Rc<Fd> _fd;
+            Rc<Posix::Fd> _fd;
             MutBytes _buf;
             Async::Promise<usize> _promise;
 
-            Job(Rc<Fd> fd, MutBytes buf)
+            Job(Rc<Posix::Fd> fd, MutBytes buf)
                 : _fd(fd), _buf(buf) {}
 
             void submit(io_uring_sqe* sqe) override {
                 io_uring_prep_read(
                     sqe,
-                    _fd->handle().value(),
+                    _fd->_raw,
                     _buf.buf(),
                     _buf.len(),
                     -1
@@ -101,25 +102,25 @@ struct UringSched : Sys::Sched {
             }
         };
 
-        auto job = makeRc<Job>(fd, buf);
+        auto job = makeRc<Job>(co_try$(Posix::toPosixFd(fd)), buf);
         submit(job);
-        return Async::makeTask(job->future());
+        co_return co_await job->future();
     }
 
     [[clang::coro_wrapper]]
     Async::Task<usize> writeAsync(Rc<Fd> fd, Bytes buf) override {
         struct Job : _Job {
-            Rc<Fd> _fd;
+            Rc<Posix::Fd> _fd;
             Bytes _buf;
             Async::Promise<usize> _promise;
 
-            Job(Rc<Fd> fd, Bytes buf)
+            Job(Rc<Posix::Fd> fd, Bytes buf)
                 : _fd(fd), _buf(buf) {}
 
             void submit(io_uring_sqe* sqe) override {
                 io_uring_prep_write(
                     sqe,
-                    _fd->handle().value(),
+                    _fd->_raw,
                     _buf.buf(),
                     _buf.len(),
                     // NOTE: On files that support seeking, if the offset is set
@@ -143,22 +144,22 @@ struct UringSched : Sys::Sched {
             }
         };
 
-        auto job = makeRc<Job>(fd, buf);
+        auto job = makeRc<Job>(co_try$(Posix::toPosixFd(fd)), buf);
         submit(job);
-        return Async::makeTask(job->future());
+        co_return co_await job->future();
     }
 
     [[clang::coro_wrapper]]
     Async::Task<> flushAsync(Rc<Fd> fd) override {
         struct Job : _Job {
-            Rc<Fd> _fd;
+            Rc<Posix::Fd> _fd;
             Async::Promise<> _promise;
 
-            Job(Rc<Fd> fd)
+            Job(Rc<Posix::Fd> fd)
                 : _fd(fd) {}
 
             void submit(io_uring_sqe* sqe) override {
-                io_uring_prep_fsync(sqe, _fd->handle().value(), 0);
+                io_uring_prep_fsync(sqe, _fd->_raw, 0);
             }
 
             void complete(io_uring_cqe* cqe) override {
@@ -174,24 +175,24 @@ struct UringSched : Sys::Sched {
             }
         };
 
-        auto job = makeRc<Job>(fd);
+        auto job = makeRc<Job>(co_try$(Posix::toPosixFd(fd)));
         submit(job);
-        return Async::makeTask(job->future());
+        co_return co_await job->future();
     }
 
     [[clang::coro_wrapper]]
     Async::Task<_Accepted> acceptAsync(Rc<Fd> fd) override {
         struct Job : _Job {
-            Rc<Fd> _fd;
+            Rc<Posix::Fd> _fd;
             sockaddr_in _addr{};
             unsigned _addrLen = sizeof(sockaddr_in);
             Async::Promise<_Accepted> _promise;
 
-            Job(Rc<Fd> fd)
+            Job(Rc<Posix::Fd> fd)
                 : _fd(fd) {}
 
             void submit(io_uring_sqe* sqe) override {
-                io_uring_prep_accept(sqe, _fd->handle().value(), (struct sockaddr*)&_addr, &_addrLen, 0);
+                io_uring_prep_accept(sqe, _fd->_raw, (struct sockaddr*)&_addr, &_addrLen, 0);
             }
 
             void complete(io_uring_cqe* cqe) override {
@@ -209,9 +210,9 @@ struct UringSched : Sys::Sched {
             }
         };
 
-        auto job = makeRc<Job>(fd);
+        auto job = makeRc<Job>(co_try$(Posix::toPosixFd(fd)));
         submit(job);
-        return Async::makeTask(job->future());
+        co_return co_await job->future();
     }
 
     [[clang::coro_wrapper]]
@@ -220,14 +221,14 @@ struct UringSched : Sys::Sched {
             notImplemented(); // TODO: Implement handle passing on POSIX
 
         struct Job : _Job {
-            Rc<Fd> _fd;
+            Rc<Posix::Fd> _fd;
             Bytes _buf;
             iovec _iov;
             msghdr _msg;
             sockaddr_in _addr;
             Async::Promise<_Sent> _promise;
 
-            Job(Rc<Fd> fd, Bytes buf, SocketAddr addr)
+            Job(Rc<Posix::Fd> fd, Bytes buf, SocketAddr addr)
                 : _fd(fd), _buf(buf), _addr(Posix::toSockAddr(addr)) {}
 
             void submit(io_uring_sqe* sqe) override {
@@ -239,7 +240,12 @@ struct UringSched : Sys::Sched {
                 _msg.msg_iov = &_iov;
                 _msg.msg_iovlen = 1;
 
-                io_uring_prep_sendmsg(sqe, _fd->handle().value(), &_msg, 0);
+                io_uring_prep_sendmsg(
+                    sqe,
+                    _fd->_raw,
+                    &_msg,
+                    0
+                );
             }
 
             void complete(io_uring_cqe* cqe) override {
@@ -254,22 +260,22 @@ struct UringSched : Sys::Sched {
             }
         };
 
-        auto job = makeRc<Job>(fd, buf, addr);
+        auto job = makeRc<Job>(co_try$(Posix::toPosixFd(fd)), buf, addr);
         submit(job);
-        return Async::makeTask(job->future());
+        co_return co_await job->future();
     }
 
     [[clang::coro_wrapper]]
     Async::Task<_Received> recvAsync(Rc<Fd> fd, MutBytes buf, MutSlice<Handle>) override {
         struct Job : _Job {
-            Rc<Fd> _fd;
+            Rc<Posix::Fd> _fd;
             MutBytes _buf;
             iovec _iov;
             msghdr _msg;
             sockaddr_in _addr;
             Async::Promise<_Received> _promise;
 
-            Job(Rc<Fd> fd, MutBytes buf)
+            Job(Rc<Posix::Fd> fd, MutBytes buf)
                 : _fd(fd), _buf(buf) {}
 
             void submit(io_uring_sqe* sqe) override {
@@ -281,7 +287,7 @@ struct UringSched : Sys::Sched {
                 _msg.msg_iov = &_iov;
                 _msg.msg_iovlen = 1;
 
-                io_uring_prep_recvmsg(sqe, _fd->handle().value(), &_msg, 0);
+                io_uring_prep_recvmsg(sqe, _fd->_raw, &_msg, 0);
             }
 
             void complete(io_uring_cqe* cqe) override {
@@ -298,9 +304,9 @@ struct UringSched : Sys::Sched {
             }
         };
 
-        auto job = makeRc<Job>(fd, buf);
+        auto job = makeRc<Job>(co_try$(Posix::toPosixFd(fd)), buf);
         submit(job);
-        return Async::makeTask(job->future());
+        co_return co_await job->future();
     }
 
     [[clang::coro_wrapper]]

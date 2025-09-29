@@ -30,8 +30,13 @@ struct Fd : Sys::Fd {
     Res<Sys::_Sent> send(Bytes, Slice<Sys::Handle>, Sys::SocketAddr) override;
 
     Res<Sys::_Received> recv(MutBytes, MutSlice<Sys::Handle>) override;
-
-    Res<> pack(Sys::MessageWriter& e) override;
 };
+
+static inline Res<Rc<Posix::Fd>> toPosixFd(Rc<Sys::Fd> fd) {
+    auto posixFd = fd.cast<Posix::Fd>();
+    if (not posixFd)
+        return Error::invalidInput("expected posix fd");
+    return Ok(posixFd.take());
+}
 
 } // namespace Karm::Posix

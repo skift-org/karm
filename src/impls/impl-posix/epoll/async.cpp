@@ -1,13 +1,17 @@
+module;
+
 #include <impl-posix/fd.h>
 #include <impl-posix/utils.h>
+#include <karm-core/macros.h>
 #include <sys/epoll.h>
 #include <sys/timerfd.h>
 #include <unistd.h>
 
 #include "../utils.h"
 
+module Karm.Sys;
+
 import Karm.Core;
-import Karm.Sys;
 
 namespace Karm::Sys::_Embed {
 
@@ -38,32 +42,38 @@ struct EpollSched : Sys::Sched {
     }
 
     Async::Task<usize> readAsync(Rc<Fd> fd, MutBytes buf) override {
-        co_trya$(waitFor({.events = EPOLLIN | EPOLLET, .data = {}}, fd->handle().value()));
+        int rawFd = co_try$(Posix::toPosixFd(fd))->_raw;
+        co_trya$(waitFor({.events = EPOLLIN | EPOLLET, .data = {}}, rawFd));
         co_return Ok(co_try$(fd->read(buf)));
     }
 
     Async::Task<usize> writeAsync(Rc<Fd> fd, Bytes buf) override {
-        co_trya$(waitFor({.events = EPOLLOUT | EPOLLET, .data = {}}, fd->handle().value()));
+        int rawFd = co_try$(Posix::toPosixFd(fd))->_raw;
+        co_trya$(waitFor({.events = EPOLLOUT | EPOLLET, .data = {}}, rawFd));
         co_return Ok(co_try$(fd->write(buf)));
     }
 
     Async::Task<> flushAsync(Rc<Fd> fd) override {
-        co_trya$(waitFor({.events = EPOLLOUT | EPOLLET, .data = {}}, fd->handle().value()));
+        int rawFd = co_try$(Posix::toPosixFd(fd))->_raw;
+        co_trya$(waitFor({.events = EPOLLOUT | EPOLLET, .data = {}}, rawFd));
         co_return Ok(co_try$(fd->flush()));
     }
 
     Async::Task<_Accepted> acceptAsync(Rc<Fd> fd) override {
-        co_trya$(waitFor({.events = EPOLLIN | EPOLLET, .data = {}}, fd->handle().value()));
+        int rawFd = co_try$(Posix::toPosixFd(fd))->_raw;
+        co_trya$(waitFor({.events = EPOLLIN | EPOLLET, .data = {}}, rawFd));
         co_return Ok(co_try$(fd->accept()));
     }
 
     Async::Task<_Sent> sendAsync(Rc<Fd> fd, Bytes buf, Slice<Handle> handles, SocketAddr addr) override {
-        co_trya$(waitFor({.events = EPOLLOUT | EPOLLET, .data = {}}, fd->handle().value()));
+        int rawFd = co_try$(Posix::toPosixFd(fd))->_raw;
+        co_trya$(waitFor({.events = EPOLLOUT | EPOLLET, .data = {}}, rawFd));
         co_return Ok(co_try$(fd->send(buf, handles, addr)));
     }
 
     Async::Task<_Received> recvAsync(Rc<Fd> fd, MutBytes buf, MutSlice<Handle> hnds) override {
-        co_trya$(waitFor({.events = EPOLLIN | EPOLLET, .data = {}}, fd->handle().value()));
+        int rawFd = co_try$(Posix::toPosixFd(fd))->_raw;
+        co_trya$(waitFor({.events = EPOLLIN | EPOLLET, .data = {}}, rawFd));
         co_return Ok(co_try$(fd->recv(buf, hnds)));
     }
 

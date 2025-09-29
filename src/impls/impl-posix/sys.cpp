@@ -95,11 +95,8 @@ Res<Ref::Path> resolve(Ref::Url const& url) {
 
 // MARK: Fd --------------------------------------------------------------------
 
-Res<Rc<Fd>> unpackFd(MessageReader& s) {
-    auto handle = s.take();
-    if (handle == INVALID)
-        return Error::invalidHandle();
-    return Ok(makeRc<Posix::Fd>(handle.value()));
+Res<Rc<Sys::Fd>> deserializeFd(Serde::Deserializer&) {
+    return Error::notImplemented();
 }
 
 // MARK: File I/O --------------------------------------------------------------
