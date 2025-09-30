@@ -366,7 +366,6 @@ struct Serde<Union<Ts...>> {
                 .kind = Type::UNION_ITEM,
                 .index = index++,
             }));
-            debug("wat");
             return Ok(std::move(value));
         }));
 
