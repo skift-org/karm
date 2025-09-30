@@ -1,7 +1,7 @@
 module;
 
 #include <SDL3/SDL.h>
-#include <karm-gfx/canvas.h>
+#include <karm-math/rect.h>
 
 module Karm.Ui;
 
@@ -9,6 +9,8 @@ import Karm.Image;
 import Karm.App;
 import Karm.Sys;
 import Karm.Ref;
+import Karm.Gfx;
+
 import :host;
 import :node;
 import :drag;

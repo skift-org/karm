@@ -1,11 +1,12 @@
 module;
 
-#include <karm-gfx/canvas.h>
 #include <karm-math/flow.h>
 
 export module Karm.Ui:scroll;
 
 import Karm.App;
+import Karm.Gfx;
+
 import :anim;
 import :node;
 import :atoms;

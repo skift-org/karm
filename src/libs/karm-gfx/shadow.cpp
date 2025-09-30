@@ -1,10 +1,14 @@
-#pragma once
+module;
 
-#include "canvas.h"
+#include <karm-math/rect.h>
+
+export module Karm.Gfx:shadow;
+
+import :canvas;
 
 namespace Karm::Gfx {
 
-struct BoxShadow {
+export struct BoxShadow {
     Gfx::Color fill;
     f64 blur;
     f64 spread;

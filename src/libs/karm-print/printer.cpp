@@ -1,10 +1,8 @@
-module;
-
-#include <karm-gfx/canvas.h>
-
 export module Karm.Print:printer;
 
 import Karm.Pdf;
+import Karm.Gfx;
+
 import :paper;
 
 namespace Karm::Print {

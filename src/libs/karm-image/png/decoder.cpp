@@ -1,13 +1,15 @@
 module;
 
-#include <karm-gfx/canvas.h>
+#include <karm-core/macros.h>
 #include <karm-logger/logger.h>
+#include <karm-math/vec.h>
 
 export module Karm.Image:png.decoder;
 
 import Karm.Core;
 import Karm.Archive;
 import Karm.Debug;
+import Karm.Gfx;
 
 namespace Karm::Image::Png {
 

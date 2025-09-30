@@ -1,11 +1,11 @@
 module;
 
-#include <karm-gfx/icon.h>
 #include <karm-math/align.h>
 
 export module Karm.Kira:input;
 
 import Karm.Ui;
+import Karm.Gfx;
 
 namespace Karm::Kira {
 

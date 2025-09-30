@@ -1,11 +1,13 @@
 module;
 
-#include <karm-gfx/canvas.h>
+#include <karm-math/rect.h>
 
 export module Karm.Ui:reducer;
 
 import Karm.Core;
 import Karm.App;
+import Karm.Gfx;
+
 import :funcs;
 
 namespace Karm::Ui {

@@ -2,10 +2,11 @@ module;
 
 #include <SDL3/SDL.h>
 #include <karm-core/macros.h>
-#include <karm-gfx/buffer.h>
 
 module Karm.Av;
+
 import Karm.Core;
+import Karm.Gfx;
 
 namespace Karm::Av::_Embed {
 

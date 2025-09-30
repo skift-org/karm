@@ -1,12 +1,14 @@
 module;
 
-#include <karm-gfx/icon.h>
+#include <karm-math/rect.h>
 
 export module Karm.Kira:scaffold;
 
 import Mdi;
 import Karm.App;
 import Karm.Ui;
+import Karm.Gfx;
+
 import :titlebar;
 import :toolbar;
 import :separator;

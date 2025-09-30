@@ -1,7 +1,5 @@
 module;
 
-#include <karm-gfx/font.h>
-
 #include "ttf/fontface.h"
 
 export module Karm.Font:loader;
@@ -9,6 +7,7 @@ export module Karm.Font:loader;
 import Karm.Core;
 import Karm.Sys;
 import Karm.Ref;
+import Karm.Gfx;
 
 namespace Karm::Font {
 

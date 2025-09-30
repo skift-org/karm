@@ -1,11 +1,13 @@
 module;
 
-#include <karm-gfx/canvas.h>
+#include <karm-math/rect.h>
 
 export module Karm.Kira:progress;
 
 import Karm.App;
+import Karm.Core;
 import Karm.Ui;
+import Karm.Gfx;
 
 namespace Karm::Kira {
 

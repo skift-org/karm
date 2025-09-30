@@ -1,14 +1,14 @@
 module;
 
-#include <karm-gfx/canvas.h>
-#include <karm-gfx/font.h>
-#include <karm-gfx/prose.h>
 #include <karm-logger/logger.h>
+#include <karm-math/path.h>
+#include <karm-math/trans.h>
 
 export module Karm.Pdf:canvas;
 
 import Karm.Core;
 import Karm.Debug;
+import Karm.Gfx;
 
 namespace Karm::Pdf {
 

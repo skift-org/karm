@@ -1,10 +1,13 @@
 module;
 
-#include <karm-gfx/canvas.h>
+#include <karm-math/rect.h>
+#include <karm-math/path.h>
 
 export module Karm.Scene:clip;
 
 import Karm.Core;
+import Karm.Gfx;
+
 import :proxy;
 
 namespace Karm::Scene {

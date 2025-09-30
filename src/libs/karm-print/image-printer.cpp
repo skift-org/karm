@@ -1,10 +1,12 @@
 module;
 
-#include <karm-gfx/cpu/canvas.h>
+#include <karm-math/vec.h>
 
 export module Karm.Print:imagePrinter;
 
 import Karm.Image;
+import Karm.Gfx;
+
 import :filePrinter;
 
 namespace Karm::Print {

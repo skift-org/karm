@@ -1,11 +1,11 @@
 module;
 
-#include <karm-gfx/canvas.h>
 #include <karm-math/align.h>
 
 export module Karm.Kira:separator;
 
 import Karm.Ui;
+import Karm.Gfx;
 
 namespace Karm::Kira {
 

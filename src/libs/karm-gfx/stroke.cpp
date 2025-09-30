@@ -1,8 +1,75 @@
-#include "stroke.h"
+module;
+
+#include <karm-math/path.h>
+#include <karm-math/poly.h>
+
+export module Karm.Gfx:stroke;
+
+import :fill;
 
 namespace Karm::Gfx {
 
-// MARK: Common ----------------------------------------------------------------
+export enum StrokeAlign {
+    CENTER_ALIGN,
+    INSIDE_ALIGN,
+    OUTSIDE_ALIGN,
+};
+
+export enum StrokeCap {
+    BUTT_CAP,
+    SQUARE_CAP,
+    ROUND_CAP,
+};
+
+export enum StrokeJoin {
+    BEVEL_JOIN,
+    MITER_JOIN,
+    ROUND_JOIN,
+};
+
+export using enum StrokeAlign;
+export using enum StrokeCap;
+export using enum StrokeJoin;
+
+export struct Stroke {
+    Fill fill = BLACK;
+    f64 width{1};
+    StrokeAlign align = CENTER_ALIGN;
+    StrokeCap cap = BUTT_CAP;
+    StrokeJoin join = BEVEL_JOIN;
+
+    auto& withFill(Fill p) {
+        fill = p;
+        return *this;
+    }
+
+    auto& withWidth(f64 w) {
+        width = w;
+        return *this;
+    }
+
+    auto& withAlign(StrokeAlign a) {
+        align = a;
+        return *this;
+    }
+
+    auto& withCap(StrokeCap c) {
+        cap = c;
+        return *this;
+    }
+
+    auto& withJoin(StrokeJoin j) {
+        join = j;
+        return *this;
+    }
+};
+
+export Stroke stroke(auto... args) {
+    return {args...};
+}
+
+// MARK: Stroke Generation -----------------------------------------------------
+
 
 static void _createArc(Math::Polyf& poly, Math::Vec2f center, Math::Vec2f start, Math::Vec2f end, f64 startAngle, f64 delta, f64 radius) {
     isize divs = 32; // FIXME: determine this procedurally
@@ -140,7 +207,7 @@ static void _createCap(Math::Polyf& poly, Stroke stroke, Cap cap) {
 
 // MARK: Public Api ------------------------------------------------------------
 
-void createStroke(Math::Polyf& poly, Math::Path const& path, Stroke stroke) {
+export void createStroke(Math::Polyf& poly, Math::Path const& path, Stroke stroke) {
     f64 outerDist = 0;
 
     if (stroke.align == CENTER_ALIGN) {
@@ -201,7 +268,7 @@ void createStroke(Math::Polyf& poly, Math::Path const& path, Stroke stroke) {
     }
 }
 
-void createSolid(Math::Polyf& poly, Math::Path const& path) {
+export void createSolid(Math::Polyf& poly, Math::Path const& path) {
     for (auto contour : path.iterContours()) {
         for (usize i = 0; i < contour.len(); i++) {
             Math::Edgef e = {contour[i], contour[(i + 1) % contour.len()]};

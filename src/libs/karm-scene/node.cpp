@@ -1,7 +1,6 @@
 module;
 
-#include <karm-gfx/cpu/canvas.h>
-#include <karm-math/vec.h>
+#include <karm-math/rect.h>
 
 export module Karm.Scene:node;
 

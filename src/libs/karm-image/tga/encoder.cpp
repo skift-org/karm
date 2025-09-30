@@ -1,10 +1,7 @@
-module;
-
-#include <karm-gfx/buffer.h>
-
 export module Karm.Image:tga.encoder;
 
 import Karm.Core;
+import Karm.Gfx;
 import :tga.base;
 
 namespace Karm::Image::Tga {

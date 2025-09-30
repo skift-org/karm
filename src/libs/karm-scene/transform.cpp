@@ -1,10 +1,12 @@
 module;
 
-#include <karm-gfx/canvas.h>
+#include <karm-math/trans.h>
 
 export module Karm.Scene:transform;
 
 import Karm.Core;
+import Karm.Gfx;
+
 import :proxy;
 
 namespace Karm::Scene {

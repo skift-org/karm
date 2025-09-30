@@ -1,12 +1,12 @@
 module;
 
-#include <karm-gfx/shadow.h>
 #include <karm-math/align.h>
 
 export module Karm.Kira:dialog;
 
 import Karm.Ui;
 import Karm.App;
+import Karm.Gfx;
 import Mdi;
 import :separator;
 

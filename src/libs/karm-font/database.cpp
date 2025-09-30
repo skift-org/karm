@@ -1,12 +1,15 @@
 module;
 
-#include <karm-gfx/font.h>
+#include <karm-core/macros.h>
+#include <karm-logger/logger.h>
 
 export module Karm.Font:database;
 
 import Karm.Sys;
 import Karm.Core;
 import Karm.Ref;
+import Karm.Gfx;
+
 import :loader;
 
 namespace Karm::Font {

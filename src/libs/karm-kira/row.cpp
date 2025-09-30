@@ -1,12 +1,13 @@
 module;
 
-#include <karm-gfx/icon.h>
 #include <karm-math/align.h>
 
 export module Karm.Kira:row;
 
 import Karm.Ui;
+import Karm.Gfx;
 import Mdi;
+
 import :checkbox;
 import :colorInput;
 import :number;

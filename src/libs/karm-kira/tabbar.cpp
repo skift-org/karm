@@ -1,10 +1,8 @@
-module;
-
-#include <karm-gfx/icon.h>
-
 export module Karm.Kira:tabbar;
 
 import Karm.Ui;
+import Karm.Gfx;
+
 import :separator;
 
 namespace Karm::Kira {

@@ -1,9 +1,11 @@
 #pragma once
 
 import Karm.Core;
+import Karm.Gfx;
 
-#include <karm-gfx/canvas.h>
 #include <karm-logger/logger.h>
+#include <karm-core/macros.h>
+#include <karm-math/vec.h>
 
 namespace Karm::Font::Ttf {
 

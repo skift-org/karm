@@ -1,12 +1,13 @@
 module;
 
-#include <karm-gfx/icon.h>
 #include <karm-math/align.h>
+#include <karm-math/ellipse.h>
 
 export module Karm.Kira:slider;
 
 import Karm.Ui;
 import Karm.App;
+import Karm.Gfx;
 
 namespace Karm::Kira {
 

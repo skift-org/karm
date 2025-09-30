@@ -2,9 +2,7 @@
 
 import Karm.Core;
 import Karm.Sys;
-
-#include <karm-gfx/canvas.h>
-#include <karm-gfx/font.h>
+import Karm.Gfx;
 
 #include "parser.h"
 

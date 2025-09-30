@@ -1,10 +1,7 @@
-module;
-
-#include <karm-gfx/color.h>
-
 export module Karm.Image:qoi.base;
 
 import Karm.Core;
+import Karm.Gfx;
 
 namespace Karm::Image::Qoi {
 

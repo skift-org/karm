@@ -1,8 +1,7 @@
-module;
-
-#include <karm-gfx/buffer.h>
-
 export module Karm.Av:video;
+
+import Karm.Core;
+import Karm.Gfx;
 
 namespace Karm::Av {
 

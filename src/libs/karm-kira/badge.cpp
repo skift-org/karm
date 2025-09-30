@@ -1,10 +1,12 @@
 module;
 
-#include <karm-gfx/colors.h>
+#include <karm-core/macros.h>
 
 export module Karm.Kira:badge;
 
+import Karm.Core;
 import Karm.Ui;
+import Karm.Gfx;
 
 namespace Karm::Kira {
 

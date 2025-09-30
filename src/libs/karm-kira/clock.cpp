@@ -1,11 +1,13 @@
 module;
 
-#include <karm-gfx/canvas.h>
+#include <karm-math/rect.h>
+#include <karm-math/ellipse.h>
 
 export module Karm.Kira:clock;
 
 import Karm.Core;
 import Karm.Ui;
+import Karm.Gfx;
 
 namespace Karm::Kira {
 

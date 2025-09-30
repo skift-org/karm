@@ -1,11 +1,12 @@
 module;
 
-#include <karm-gfx/canvas.h>
-#include <karm-gfx/icon.h>
-#include <karm-gfx/prose.h>
 #include <karm-math/align.h>
+#include <karm-math/radii.h>
+#include <karm-math/au.h>
 
 export module Karm.Ui:input;
+
+import Karm.Gfx;
 
 import :drag;
 import :focus;
@@ -373,6 +374,45 @@ export Child button(Opt<Send<>> onPress, Gfx::Icon i, Str t) {
 
 // MARK: Input -----------------------------------------------------------------
 
+static void _paintCaret(Gfx::Canvas& g, Gfx::Prose& p, usize runeIndex, Gfx::Color color) {
+    auto m = p._style.font.metrics();
+    auto baseline = p.queryPosition(runeIndex);
+    auto cs = baseline.cast<f64>() - Math::Vec2f{0, m.ascend};
+    auto ce = baseline.cast<f64>() + Math::Vec2f{0, m.descend};
+
+    g.beginPath();
+    g.moveTo(cs);
+    g.lineTo(ce);
+    g.strokeStyle({
+        .fill = color,
+        .width = 2.0,
+        .align = Gfx::CENTER_ALIGN,
+    });
+    g.stroke();
+}
+
+static void _paintSelection(Gfx::Canvas& g, Gfx::Prose& p, usize start, usize end, Gfx::Color color) {
+    if (start == end)
+        return;
+
+    if (not p._style.multiline) {
+        auto ps = p.queryPosition(start);
+        auto pe = p.queryPosition(end);
+        auto m = p._style.font.metrics();
+
+        auto rect =
+            RectAu::fromTwoPoint(
+                ps + Vec2Au{0_au, Au{m.descend}},
+                pe - Vec2Au{0_au, Au{m.ascend}}
+            )
+                .cast<f64>();
+
+        g.fillStyle(color);
+        g.fill(rect);
+        return;
+    }
+}
+
 struct Input : View<Input> {
     Gfx::ProseStyle _style;
 
@@ -412,8 +452,8 @@ struct Input : View<Input> {
 
         if (_focus) {
             g.push();
-            text.paintSelection(g, _model->_cur.head, _model->_cur.tail, Ui::ACCENT500.withOpacity(0.5));
-            text.paintCaret(g, _model->_cur.head, _style.color.unwrapOr(Ui::GRAY100));
+            _paintSelection(g, text, _model->_cur.head, _model->_cur.tail, Ui::ACCENT500.withOpacity(0.5));
+            _paintCaret(g, text, _model->_cur.head, _style.color.unwrapOr(Ui::GRAY100));
             g.pop();
         }
 
@@ -500,8 +540,8 @@ struct SimpleInput : View<SimpleInput> {
 
         if (_focus) {
             g.push();
-            text.paintSelection(g, _model->_cur.head, _model->_cur.tail, Ui::ACCENT500.withOpacity(0.5));
-            text.paintCaret(g, _ensureModel()._cur.head, _style.color.unwrapOr(Ui::GRAY100));
+            _paintSelection(g, text, _model->_cur.head, _model->_cur.tail, Ui::ACCENT500.withOpacity(0.5));
+            _paintCaret(g, text, _ensureModel()._cur.head, _style.color.unwrapOr(Ui::GRAY100));
             g.pop();
         }
 

@@ -1,7 +1,7 @@
 module;
 
-#include <karm-gfx/cpu/canvas.h>
 #include <karm-logger/logger.h>
+#include <karm-math/rect.h>
 
 export module Karm.Ui:host;
 
@@ -9,6 +9,7 @@ import Karm.Core;
 import Karm.App;
 import Karm.Font;
 import Karm.Sys;
+import Karm.Gfx;
 import :node;
 import :atoms;
 

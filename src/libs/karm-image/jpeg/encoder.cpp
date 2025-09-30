@@ -1,10 +1,13 @@
 module;
 
-#include <karm-gfx/buffer.h>
+#include <karm-math/vec.h>
+#include <karm-core/macros.h>
 
 export module Karm.Image:jpeg.encoder;
 
 import Karm.Core;
+import Karm.Gfx;
+
 import :jpeg.base;
 import :jpeg.dct;
 import :jpeg.tables;

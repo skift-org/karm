@@ -1,11 +1,8 @@
-module;
-
-#include <karm-gfx/buffer.h>
-#include <karm-gfx/colors.h>
-
 export module Karm.Image:qoi.encoder;
 
 import Karm.Core;
+import Karm.Gfx;
+
 import :qoi.base;
 
 namespace Karm::Image::Qoi {

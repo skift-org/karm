@@ -1,11 +1,8 @@
-module;
-
-#include <karm-gfx/icon.h>
-
 export module Karm.Kira:sideNav;
 
 import Karm.Core;
 import Karm.Ui;
+import Karm.Gfx;
 import Mdi;
 
 namespace Karm::Kira {

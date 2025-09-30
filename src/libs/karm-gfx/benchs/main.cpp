@@ -1,8 +1,9 @@
-#include <karm-gfx/cpu/canvas.h>
 #include <karm-sys/entry.h>
+#include <karm-math/rand.h>
 
 import Karm.Cli;
 import Karm.Sys;
+import Karm.Gfx;
 
 using namespace Karm;
 

@@ -1,8 +1,7 @@
-module;
-
-#include <karm-gfx/colors.h>
-
 export module Karm.Ui:atoms;
+
+import Karm.Core;
+import Karm.Gfx;
 
 namespace Karm::Ui {
 

@@ -1,12 +1,13 @@
 module;
 
-#include <karm-gfx/canvas.h>
 #include <karm-math/align.h>
 #include <karm-math/insets.h>
 
 export module Karm.Ui:layout;
 
 import Karm.App;
+import Karm.Gfx;
+
 import :node;
 import :view;
 import :atoms;

@@ -1,10 +1,12 @@
 module;
 
-#include <karm-gfx/canvas.h>
+#include <karm-math/rect.h>
+#include <karm-math/path.h>
 
 export module Karm.Scene:shape;
 
 import Karm.Core;
+import Karm.Gfx;
 import :node;
 
 namespace Karm::Scene {

@@ -1,10 +1,12 @@
 module;
 
-#include <karm-gfx/canvas.h>
+#include <karm-math/rect.h>
 
 export module Karm.Scene:opacity;
 
 import Karm.Core;
+import Karm.Gfx;
+
 import :proxy;
 
 namespace Karm::Scene {

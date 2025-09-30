@@ -1,11 +1,13 @@
 module;
 
-#include <karm-gfx/canvas.h>
 #include <karm-math/easing.h>
+#include <karm-math/rect.h>
 
 export module Karm.Ui:dialog;
 
 import Karm.App;
+import Karm.Gfx;
+
 import :anim;
 import :funcs;
 import :atoms;

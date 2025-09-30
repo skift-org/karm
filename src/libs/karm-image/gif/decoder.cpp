@@ -1,10 +1,11 @@
 module;
 
-#include <karm-gfx/buffer.h>
+#include <karm-math/vec.h>
 
 export module Karm.Image:gif.decoder;
 
 import Karm.Core;
+import Karm.Gfx;
 
 // GIF Image decoder
 // References:

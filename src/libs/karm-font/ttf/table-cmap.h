@@ -1,8 +1,8 @@
 #pragma once
 
 import Karm.Core;
+import Karm.Gfx;
 
-#include <karm-gfx/font.h>
 #include <karm-logger/logger.h>
 
 namespace Karm::Font::Ttf {

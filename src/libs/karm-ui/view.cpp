@@ -1,7 +1,7 @@
 module;
 
-#include <karm-gfx/icon.h>
-#include <karm-gfx/prose.h>
+#include <karm-math/trans.h>
+#include <karm-math/au.h>
 
 export module Karm.Ui:view;
 
@@ -10,6 +10,7 @@ import Karm.Scene;
 import Karm.Image;
 import Karm.Font;
 import Karm.Ref;
+import Karm.Gfx;
 
 import :node;
 

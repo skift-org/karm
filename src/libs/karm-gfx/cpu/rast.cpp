@@ -1,14 +1,15 @@
-#pragma once
-
-import Karm.Core;
+module;
 
 #include <karm-math/poly.h>
 
-#include "../types.h"
+export module Karm.Gfx:cpu.rast;
+
+import Karm.Core;
+import :fill;
 
 namespace Karm::Gfx {
 
-struct CpuRast {
+export struct CpuRast {
     static constexpr auto AA = 3;
     static constexpr auto UNIT = 1.0f / AA;
     static constexpr auto HALF_UNIT = 1.0f / AA / 2.0;

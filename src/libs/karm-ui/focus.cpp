@@ -1,10 +1,11 @@
 module;
 
-#include <karm-gfx/canvas.h>
+#include <karm-math/rect.h>
 
 export module Karm.Ui:focus;
 
 import Karm.App;
+import Karm.Gfx;
 import :funcs;
 import :atoms;
 import :intent;

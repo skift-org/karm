@@ -1,6 +1,6 @@
-#include <karm-gfx/color.h>
-#include <karm-gfx/colors.h>
 #include <karm-test/macros.h>
+
+import Karm.Gfx;
 
 namespace Karm::Gfx::Tests {
 

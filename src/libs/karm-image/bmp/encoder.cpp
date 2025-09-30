@@ -1,10 +1,7 @@
-module;
-
-#include <karm-gfx/buffer.h>
-
 export module Karm.Image:bmp.encoder;
 
 import Karm.Core;
+import Karm.Gfx;
 
 namespace Karm::Image::Bmp {
 

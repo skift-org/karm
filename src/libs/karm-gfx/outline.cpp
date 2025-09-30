@@ -1,22 +1,36 @@
-#include "outline.h"
+module;
+
+#include <karm-math/rect.h>
+#include <karm-math/radii.h>
+
+export module Karm.Gfx:outline;
+
+import :borders;
 
 namespace Karm::Gfx {
 
-void Outline::paint(Gfx::Canvas& c, Math::Rectf rect, Math::Radiif radii) {
-    Gfx::Borders borders;
-    for (auto& s : borders.styles) {
-        s = style;
-    }
-    for (auto& f : borders.fills) {
-        f = fill;
-    }
-    borders.widths = Math::Insetsf(width);
+export struct Outline {
+    f64 width;
+    f64 offset;
+    Fill fill;
+    BorderStyle style;
 
-    Math::Insetsf offsets(offset + width);
-    if (not radii.zero())
-        borders.radii = radii.grow(offsets);
+    void paint(Gfx::Canvas& c, Math::Rectf rect, Math::Radiif radii) {
+        Gfx::Borders borders;
+        for (auto& s : borders.styles) {
+            s = style;
+        }
+        for (auto& f : borders.fills) {
+            f = fill;
+        }
+        borders.widths = Math::Insetsf(width);
 
-    borders.paint(c, rect.grow(offsets));
-}
+        Math::Insetsf offsets(offset + width);
+        if (not radii.zero())
+            borders.radii = radii.grow(offsets);
+
+        borders.paint(c, rect.grow(offsets));
+    }
+};
 
 } // namespace Karm::Gfx

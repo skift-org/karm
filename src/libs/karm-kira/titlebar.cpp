@@ -1,12 +1,10 @@
-module;
-
-#include <karm-gfx/icon.h>
-
 export module Karm.Kira:titlebar;
 
 import Karm.App;
 import Karm.Ui;
+import Karm.Gfx;
 import Mdi;
+
 import :aboutDialog;
 
 namespace Karm::Kira {

@@ -1,9 +1,10 @@
 module;
 
-#include <karm-gfx/prose.h>
+#include <karm-math/rect.h>
 
 export module Karm.Scene:text;
 
+import Karm.Gfx;
 import :node;
 
 namespace Karm::Scene {

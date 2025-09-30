@@ -1,11 +1,12 @@
 module;
 
-#include <karm-gfx/canvas.h>
 #include <karm-math/rect.h>
 
 export module Karm.Ui:popover;
 
 import Karm.App;
+import Karm.Gfx;
+
 import :dialog;
 import :funcs;
 
