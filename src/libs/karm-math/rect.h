@@ -198,7 +198,7 @@ union Rect {
 
     always_inline constexpr Rect center(Rect<T> r) const {
         Rect result{0, 0, width, height};
-        result.xy = center() - r.center();
+        result.xy = r.center() - center();
         return result;
     }
 
@@ -337,6 +337,16 @@ union Rect {
     constexpr auto map(auto f) const {
         using U = decltype(f(x));
         return Rect<U>{f(x), f(y), f(width), f(height)};
+    }
+
+    Res<> serialize(Serde::Serializer& ser) const {
+        return Serde::serialize(ser, _els);
+    }
+
+    static Res<Rect> deserialize(Serde::Deserializer& de) {
+        Rect res;
+        res._els = try$(Serde::deserialize<decltype(_els)>(de));
+        return Ok(std::move(res));
     }
 };
 
