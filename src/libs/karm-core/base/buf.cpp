@@ -707,7 +707,7 @@ struct Niche<Buf<T>> {
 
 export template <typename T>
 struct Niche<ViewBuf<T>> {
-    struct Content : public Niche<Buf<T>>::Content {};
+    struct Content : Niche<Buf<T>>::Content {};
 };
 
 } // namespace Karm

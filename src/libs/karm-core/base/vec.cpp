@@ -76,7 +76,10 @@ struct _Vec {
     void removeRange(usize index, usize count) { _buf.removeRange(index, count); }
 
     void removeUnordered(usize index) {
-        if (len() <= 1) [[unlikely]] {
+        if (index >= len()) [[unlikely]]
+            panic("removeUnordered: index out of bounds");
+
+        if (len() <= 1) {
             clear();
             return;
         }
@@ -101,7 +104,10 @@ struct _Vec {
         return _buf.emplace(0, std::forward<Args>(args)...);
     }
 
-    T popFront() { return _buf.removeAt(0); }
+    T popFront() {
+        if (len() == 0) panic("popFront on empty");
+        return _buf.removeAt(0);
+    }
 
     // MARK: Back Access
 
@@ -120,6 +126,7 @@ struct _Vec {
     }
 
     T popBack() {
+        if (len() == 0) panic("popBack on empty");
         return removeAt(len() - 1);
     }
 
@@ -156,7 +163,7 @@ using InlineVec = _Vec<InlineBuf<T, N>>;
 
 export template <Nicheable T>
 struct Niche<_Vec<T>> {
-    struct Content : public Niche<T>::Content {};
+    struct Content : Niche<T>::Content {};
 };
 
 } // namespace Karm

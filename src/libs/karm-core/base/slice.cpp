@@ -204,7 +204,7 @@ struct Niche<Slice<T>> {
 
 export template <typename T>
 struct Niche<MutSlice<T>> {
-    struct Content : public Niche<Slice<T>>::Content {};
+    struct Content : Niche<Slice<T>>::Content {};
 };
 
 export using Bytes = Slice<u8>;

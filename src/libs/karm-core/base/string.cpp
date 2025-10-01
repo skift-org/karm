@@ -50,7 +50,7 @@ struct _Str : Slice<U> {
 
 export template <StaticEncoding E, typename U>
 struct Niche<_Str<E, U>> {
-    struct Content : public Niche<Slice<U>>::Content {};
+    struct Content : Niche<Slice<U>>::Content {};
 };
 
 export template <StaticEncoding E, usize N>
@@ -110,7 +110,7 @@ struct _InlineString {
 export template <StaticEncoding E, usize N>
     requires Nicheable<Array<typename E::Unit, N>>
 struct Niche<_InlineString<E, N>> {
-    struct Content : public Niche<Array<typename E::Unit, N>>::Content {};
+    struct Content : Niche<Array<typename E::Unit, N>>::Content {};
 };
 
 export template <usize N>
@@ -183,7 +183,7 @@ struct _String {
 
     always_inline Unit const& operator[](usize i) const lifetimebound {
         if (i >= _len) [[unlikely]]
-            panic("index out of bounds");
+            panic("index out of bounds  5tgff");
         return buf()[i];
     }
 
