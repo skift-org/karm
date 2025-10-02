@@ -276,6 +276,8 @@ export struct Command : Meta::Pinned {
     Option<bool> _usage = flag('u', "usage"s, "Show usage message and exit."s);
     Option<bool> _version = flag('v', "version"s, "Show version information and exit."s);
     Option<Vec<Str>> _debug = option<Vec<Str>>(NONE, "debug"s, "Enable or list debug flags"s, Vec<Str>{});
+    Option<Vec<Str>> _enableFeature = option<Vec<Str>>(NONE, "enable-feature"s, "Enable or list features"s, Vec<Str>{});
+    Option<Vec<Str>> _disableFeature = option<Vec<Str>>(NONE, "disable-feature"s, "Disable or list a features"s, Vec<Str>{});
 
     bool _invoked = false;
 
@@ -500,13 +502,37 @@ export struct Command : Meta::Pinned {
 
         if (_debug.unwrap().len()) {
             auto const& list = _debug.unwrap();
-            if (list.len() == 1 and list[0] == "list") {
+            if (list and list[0] == "list") {
                 co_try$(format(Sys::out(), "{}\n", Debug::flags()));
                 co_return Ok();
             }
 
             for (auto const& l : list) {
                 co_try$(Debug::enable(l));
+            }
+        }
+
+        if (_enableFeature.unwrap().len()) {
+            auto const& list = _enableFeature.unwrap();
+            if (list and list[0] == "list") {
+                co_try$(format(Sys::out(), "{}\n", Debug::features()));
+                co_return Ok();
+            }
+
+            for (auto const& l : list) {
+                co_try$(Debug::enableFeature(l, true));
+            }
+        }
+
+        if (_disableFeature.unwrap().len()) {
+            auto const& list = _disableFeature.unwrap();
+            if (list and list[0] == "list") {
+                co_try$(format(Sys::out(), "{}\n", Debug::features()));
+                co_return Ok();
+            }
+
+            for (auto const& l : list) {
+                co_try$(Debug::enableFeature(l, false));
             }
         }
 
