@@ -21,6 +21,12 @@ export Res<Ref::Url> pwd() {
     return _Embed::pwd();
 }
 
+export [[noreturn]] void exit(Res<> res) {
+    _Embed::exit(res ? 0 : -toUnderlyingType(res.none().code()))
+        .unwrap();
+    unreachable();
+}
+
 // MARK: Sandboxing ------------------------------------------------------------
 
 static bool _sandboxed = false;
