@@ -72,6 +72,7 @@ struct Ranges {
         while (i > 0 and _r[i].contigous(_r[i - 1])) {
             _r[i] = _r[i].merge(_r[i - 1]);
             _r.removeAt(i - 1);
+            i--;
         }
     }
 

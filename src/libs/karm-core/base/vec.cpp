@@ -105,7 +105,8 @@ struct _Vec {
     }
 
     T popFront() {
-        if (len() == 0) panic("popFront on empty");
+        if (len() == 0) 
+            panic("pop on empty");
         return _buf.removeAt(0);
     }
 
@@ -126,7 +127,8 @@ struct _Vec {
     }
 
     T popBack() {
-        if (len() == 0) panic("popBack on empty");
+        if (len() == 0)
+            panic("pop on empty");
         return removeAt(len() - 1);
     }
 
