@@ -162,6 +162,7 @@ var hierarchy =
     [ "Karm::DateTime", "structKarm_1_1DateTime.html", null ],
     [ "Karm::Day", "structKarm_1_1Day.html", null ],
     [ "Karm::DayOfWeek", "structKarm_1_1DayOfWeek.html", null ],
+    [ "Karm::Cli::DebugFlagDescriptor", "structKarm_1_1Cli_1_1DebugFlagDescriptor.html", null ],
     [ "Karm::Av::Wav::Decoder", "structKarm_1_1Av_1_1Wav_1_1Decoder.html", null ],
     [ "Karm::Image::Bmp::Decoder", "structKarm_1_1Image_1_1Bmp_1_1Decoder.html", null ],
     [ "Karm::Image::Gif::Decoder", "structKarm_1_1Image_1_1Gif_1_1Decoder.html", null ],
@@ -839,6 +840,7 @@ var hierarchy =
     [ "Karm::Image::Jpeg::Decoder::ScanComponent", "structKarm_1_1Image_1_1Jpeg_1_1Decoder_1_1ScanComponent.html", null ],
     [ "Karm::Gfx::CpuCanvas::Scope", "structKarm_1_1Gfx_1_1CpuCanvas_1_1Scope.html", null ],
     [ "Karm::Serde::Deserializer::Scope", "structKarm_1_1Serde_1_1Deserializer_1_1Scope.html", null ],
+    [ "Karm::Cli::Section", "structKarm_1_1Cli_1_1Section.html", null ],
     [ "Karm::Io::Seek", "structKarm_1_1Io_1_1Seek.html", null ],
     [ "Karm::Io::Seeker", "structKarm_1_1Io_1_1Seeker.html", [
       [ "Karm::Io::BufReader", "structKarm_1_1Io_1_1BufReader.html", null ],
@@ -979,6 +981,7 @@ var hierarchy =
     [ "Karm::Serde::Value", "structKarm_1_1Serde_1_1Value.html", null ],
     [ "Karm::Cli::ValueParser< T >", "structKarm_1_1Cli_1_1ValueParser.html", null ],
     [ "Karm::Cli::ValueParser< bool >", "structKarm_1_1Cli_1_1ValueParser_3_01bool_01_4.html", null ],
+    [ "Karm::Cli::ValueParser< DebugFlagDescriptor >", "structKarm_1_1Cli_1_1ValueParser_3_01DebugFlagDescriptor_01_4.html", null ],
     [ "Karm::Cli::ValueParser< isize >", "structKarm_1_1Cli_1_1ValueParser_3_01isize_01_4.html", null ],
     [ "Karm::Cli::ValueParser< Opt< T > >", "structKarm_1_1Cli_1_1ValueParser_3_01Opt_3_01T_01_4_01_4.html", null ],
     [ "Karm::Cli::ValueParser< Str >", "structKarm_1_1Cli_1_1ValueParser_3_01Str_01_4.html", null ],

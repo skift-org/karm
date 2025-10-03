@@ -8,8 +8,12 @@ var karm_cli_2mod_8cpp =
     [ "Karm::Cli::ValueParser< Opt< T > >", "structKarm_1_1Cli_1_1ValueParser_3_01Opt_3_01T_01_4_01_4.html", null ],
     [ "Karm::Cli::OptionImpl< T >", "structKarm_1_1Cli_1_1OptionImpl.html", "structKarm_1_1Cli_1_1OptionImpl" ],
     [ "Karm::Cli::Option< T >", "structKarm_1_1Cli_1_1Option.html", "structKarm_1_1Cli_1_1Option" ],
+    [ "Karm::Cli::DebugFlagDescriptor", "structKarm_1_1Cli_1_1DebugFlagDescriptor.html", "structKarm_1_1Cli_1_1DebugFlagDescriptor" ],
+    [ "Karm::Cli::ValueParser< DebugFlagDescriptor >", "structKarm_1_1Cli_1_1ValueParser_3_01DebugFlagDescriptor_01_4.html", null ],
+    [ "Karm::Cli::Section", "structKarm_1_1Cli_1_1Section.html", "structKarm_1_1Cli_1_1Section" ],
     [ "Karm::Cli::Command", "structKarm_1_1Cli_1_1Command.html", "structKarm_1_1Cli_1_1Command" ],
     [ "Flag", "karm-cli_2mod_8cpp.html#a62dfccd12407e397cab6854be10e96f5", null ],
+    [ "OptionCallback", "karm-cli_2mod_8cpp.html#a88f2a1435bc8185eb1640494554aa130", null ],
     [ "OptionKind", "karm-cli_2mod_8cpp.html#adad269924e06d6f9a5c912b24b17bf93", [
       [ "OPTION", "karm-cli_2mod_8cpp.html#adad269924e06d6f9a5c912b24b17bf93ae1c4a02aed2e485ae96bc5a5b1d01ee5", null ],
       [ "OPERAND", "karm-cli_2mod_8cpp.html#adad269924e06d6f9a5c912b24b17bf93a11f3de9b2b548c31805cf34d512ee177", null ],

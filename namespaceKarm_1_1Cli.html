@@ -115,15 +115,21 @@ Namespaces</h2></td></tr>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Cli_1_1Command.html">Command</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Cli_1_1DebugFlagDescriptor.html">DebugFlagDescriptor</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Cli_1_1Option.html">Option</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Cli_1_1OptionImpl.html">OptionImpl</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Cli_1_1Section.html">Section</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Cli_1_1Token.html">Token</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Cli_1_1ValueParser.html">ValueParser</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Cli_1_1ValueParser_3_01bool_01_4.html">ValueParser&lt; bool &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Cli_1_1ValueParser_3_01DebugFlagDescriptor_01_4.html">ValueParser&lt; DebugFlagDescriptor &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Cli_1_1ValueParser_3_01isize_01_4.html">ValueParser&lt; isize &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -136,6 +142,9 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
+<tr class="memitem:a88f2a1435bc8185eb1640494554aa130"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a88f2a1435bc8185eb1640494554aa130"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Cli.html#a88f2a1435bc8185eb1640494554aa130">OptionCallback</a> = <a class="el" href="structKarm_1_1Func.html">Func</a>&lt; <a class="el" href="structKarm_1_1Res.html">Res</a>&lt;&gt;(T const  &amp;)&gt;</td></tr>
+<tr class="separator:a88f2a1435bc8185eb1640494554aa130"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a62dfccd12407e397cab6854be10e96f5"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Cli.html#a62dfccd12407e397cab6854be10e96f5">Flag</a> = <a class="el" href="structKarm_1_1Cli_1_1Option.html">Option</a>&lt; bool &gt;</td></tr>
 <tr class="separator:a62dfccd12407e397cab6854be10e96f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -175,6 +184,22 @@ Functions</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">using <a class="el" href="namespaceKarm_1_1Cli.html#a62dfccd12407e397cab6854be10e96f5">Karm::Cli::Flag</a> = typedef <a class="el" href="structKarm_1_1Cli_1_1Option.html">Option</a>&lt;bool&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a88f2a1435bc8185eb1640494554aa130" name="a88f2a1435bc8185eb1640494554aa130"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a88f2a1435bc8185eb1640494554aa130">&#9670;&#160;</a></span>OptionCallback</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespaceKarm_1_1Cli.html#a88f2a1435bc8185eb1640494554aa130">Karm::Cli::OptionCallback</a> = typedef <a class="el" href="structKarm_1_1Func.html">Func</a>&lt;<a class="el" href="structKarm_1_1Res.html">Res</a>&lt;&gt;(T const&amp;)&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">

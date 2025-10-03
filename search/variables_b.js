@@ -28,6 +28,5 @@ var searchData=
   ['lineheight_25',['lineheight',['../structKarm_1_1Gfx_1_1Font.html#a4a7fb4a755a992d59fb21b46be038e29',1,'Karm::Gfx::Font']]],
   ['loc_26',['loc',['../structKarm_1_1Format.html#aeb3b648f730ecb160053f3f012df4c34',1,'Karm::Format']]],
   ['long_5frecord_5fsize_27',['LONG_RECORD_SIZE',['../structKarm_1_1Font_1_1Ttf_1_1Hmtx.html#a7f13a8dea38c854a3354e7f0e4a8d2ff',1,'Karm::Font::Ttf::Hmtx']]],
-  ['longname_28',['longName',['../structKarm_1_1Cli_1_1Command.html#abe7b274e0da965271ed2b9eb109b7d9d',1,'Karm::Cli::Command']]],
-  ['lsb_29',['lsb',['../structKarm_1_1Font_1_1Ttf_1_1GlyphMetrics.html#af61fcd3e27b91013656a76f8165d0fc5',1,'Karm::Font::Ttf::GlyphMetrics::lsb()'],['../structKarm_1_1Font_1_1Ttf_1_1Hmtx_1_1Metrics.html#a8a3e0015e9fa7d6cb43ed137dfa44374',1,'Karm::Font::Ttf::Hmtx::Metrics::lsb()']]]
+  ['lsb_28',['lsb',['../structKarm_1_1Font_1_1Ttf_1_1GlyphMetrics.html#af61fcd3e27b91013656a76f8165d0fc5',1,'Karm::Font::Ttf::GlyphMetrics::lsb()'],['../structKarm_1_1Font_1_1Ttf_1_1Hmtx_1_1Metrics.html#a8a3e0015e9fa7d6cb43ed137dfa44374',1,'Karm::Font::Ttf::Hmtx::Metrics::lsb()']]]
 ];
