@@ -21,7 +21,15 @@ Async::Task<> entryPointAsync(Sys::Context& ctx) {
     Cli::Command cmd{
         "karm-test"s,
         "Run the Karm test suite"s,
-        {globArg, fastArg},
+        {
+            {
+                "Test Options"s,
+                {
+                    globArg, 
+                    fastArg,
+                },
+            }
+        },
         [=](Sys::Context&) -> Async::Task<> {
             co_return co_await Test::driver().runAllAsync({
                 .glob = globArg.value(),
