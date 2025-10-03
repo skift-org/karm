@@ -10,7 +10,7 @@ import Karm.Debug;
 
 namespace Karm::Archive {
 
-static Debug::Flag debugFlate{"flate"};
+static auto debugFlate = Debug::Flag::debug("flate", "Log inflate decoding error.");
 
 struct Huff {
     Array<u16, 16> lens = {};

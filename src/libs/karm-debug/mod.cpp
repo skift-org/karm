@@ -10,12 +10,32 @@ export struct Flag;
 
 static Flag* _firstFlag = nullptr;
 
+export enum struct FlagType {
+    DEBUG,
+    FEATURE,
+    ALL,
+};
+
+export using enum FlagType;
+
 export struct Flag : Meta::Pinned {
     Str name;
+    Str description;
     bool enabled = false;
+    FlagType type = FlagType::DEBUG;
+
     Flag* next = nullptr;
 
-    Flag(Str name, bool enabled = false) : name(name), enabled(enabled) {
+    static Flag debug(Str name, Str description, bool enabled = false) {
+        return {name, description, enabled, FlagType::DEBUG};
+    }
+
+    static Flag feature(Str name, Str description, bool enabled = false) {
+        return {name, description, enabled, FlagType::FEATURE};
+    }
+
+    Flag(Str name, Str description, bool enabled = false, FlagType type = FlagType::DEBUG)
+        : name(name), description(description), enabled(enabled), type(type) {
         if (_firstFlag)
             next = _firstFlag;
         _firstFlag = this;
@@ -26,11 +46,11 @@ export struct Flag : Meta::Pinned {
     };
 };
 
-export Res<> enable(Str flag) {
+export Res<> toggleFlag(FlagType type, Str flag, bool enabled) {
     bool ok = false;
     for (auto* f = _firstFlag; f; f = f->next) {
-        if (Glob::matchGlob(flag, f->name)) {
-            f->enabled = true;
+        if (f->type == type and Glob::matchGlob(flag, f->name)) {
+            f->enabled = enabled;
             ok = true;
         }
     }
@@ -39,62 +59,8 @@ export Res<> enable(Str flag) {
     return Ok();
 }
 
-export Vec<Str> flags() {
-    Vec<Str> res;
-    for (auto* f = _firstFlag; f; f = f->next) {
-        res.pushBack(f->name);
-    }
-    return res;
-}
-
-// MARK: Feature ---------------------------------------------------------------
-
-export struct Feature;
-
-static Feature* _firstFeature = nullptr;
-
-export struct Feature : Meta::Pinned {
-    Str name;
-    bool enabled = false;
-    Feature* next = nullptr;
-
-    Feature(Str name, bool enabled = false) : name(name), enabled(enabled) {
-        if (_firstFeature)
-            next = _firstFeature;
-        _firstFeature = this;
-    }
-
-    operator bool() const {
-        return enabled;
-    };
-};
-
-export Res<> enableFeature(Str feature, bool enabled) {
-    bool ok = false;
-    for (auto* f = _firstFeature; f; f = f->next) {
-        if (Glob::matchGlob(feature, f->name)) {
-            f->enabled = enabled;
-            ok = true;
-        }
-    }
-    if (not ok)
-        return Error::invalidInput("no such feature");
-    return Ok();
-}
-
-export Res<> enableAllFeatures() {
-    for (auto* f = _firstFeature; f; f = f->next) {
-        f->enabled = true;
-    }
-    return Ok();
-}
-
-export Vec<Str> features() {
-    Vec<Str> res;
-    for (auto* f = _firstFeature; f; f = f->next) {
-        res.pushBack(f->name);
-    }
-    return res;
+export Flag const* flags() {
+    return _firstFlag;
 }
 
 } // namespace Karm::Debug

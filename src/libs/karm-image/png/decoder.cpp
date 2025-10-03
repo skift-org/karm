@@ -13,7 +13,7 @@ import Karm.Gfx;
 
 namespace Karm::Image::Png {
 
-static Debug::Flag debugPng{"png"};
+static auto debugPng = Debug::Flag::debug("png", "Log PNG decoding"s);
 
 enum struct ColorType : u8 {
     GREYSCALE = 0,

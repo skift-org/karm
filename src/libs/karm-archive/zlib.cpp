@@ -11,7 +11,7 @@ import :flate;
 
 namespace Karm::Archive {
 
-static Debug::Flag debugZlib{"zlib"};
+static auto debugZlib = Debug::Flag::debug("zlib", "Log zlib decompression"s);
 
 export Res<> zlibDecompress(Io::BitReader& r, Io::Writer& out) {
     u8 cmf = try$(r.readByte());

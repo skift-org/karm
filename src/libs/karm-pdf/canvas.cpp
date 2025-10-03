@@ -12,7 +12,7 @@ import Karm.Gfx;
 
 namespace Karm::Pdf {
 
-static Debug::Flag debugCanvas = "pdf-canvas"s;
+static auto debugCanvas = Debug::Flag::debug("pdf-canvas", "Log PDF canvas failures");
 
 export struct FontManager {
     // FIXME: using the address of the fontface since there is not comparison for the fontface obj

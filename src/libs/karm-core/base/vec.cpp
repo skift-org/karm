@@ -90,9 +90,9 @@ struct _Vec {
 
     // MARK: Front Access
 
-    void pushFront(T const& value) { _buf.insert(0, T(value)); }
+    void pushFront(T const& value) { insert(0, T(value)); }
 
-    void pushFront(T&& value) { _buf.insert(0, std::move(value)); }
+    void pushFront(T&& value) { insert(0, std::move(value)); }
 
     void pushFront(Sliceable<T> auto& other) {
         for (auto& v : iterRev(other))

@@ -13,7 +13,7 @@ import :transport;
 
 namespace Karm::Http {
 
-static Debug::Flag debugClient = "http-client"s;
+static auto debugClient = Debug::Flag::debug("http-client"s, "Log HTTP client requests"s);
 
 export struct Client : Transport {
     String userAgent = "Karm-Http/" stringify$(__ck_version_value) ""s;

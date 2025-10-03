@@ -181,7 +181,7 @@ export struct _OptionImpl {
 
     virtual ~_OptionImpl() = default;
 
-    virtual Res<> eval(Cursor<Token>& c) = 0;
+    virtual Res<> parse(Cursor<Token>& c) = 0;
 
     virtual Res<> usage(Io::TextWriter& w) {
         if (kind == OptionKind::OPTION) {
@@ -201,6 +201,9 @@ export struct _OptionImpl {
 };
 
 export template <typename T>
+using OptionCallback = Func<Res<>(T const&)>;
+
+export template <typename T>
 struct OptionImpl : _OptionImpl {
     Opt<T> value;
 
@@ -211,9 +214,9 @@ struct OptionImpl : _OptionImpl {
         String description,
         Opt<T> defaultValue
     ) : _OptionImpl(kind, shortName, std::move(longName), std::move(description)),
-        value(defaultValue) {}
+        value(std::move(defaultValue)) {}
 
-    Res<> eval(Cursor<Token>& c) override {
+    Res<> parse(Cursor<Token>& c) override {
         value = try$(ValueParser<T>::parse(c));
         return Ok();
     }
@@ -226,12 +229,8 @@ struct Option {
     Option(Rc<OptionImpl<T>> impl)
         : _impl(std::move(impl)) {}
 
-    T const& unwrap() const {
+    T const& value() const {
         return _impl->value.unwrap();
-    }
-
-    operator T() const {
-        return _impl->value.unwrapOr(T{});
     }
 
     operator Rc<_OptionImpl>() {
@@ -259,15 +258,74 @@ export Option<Vec<Str>> extra(String description) {
     return makeRc<OptionImpl<Vec<Str>>>(OptionKind::EXTRA, NONE, ""s, description, Vec<Str>{});
 }
 
+// MARK: Debug & Feature Flags -------------------------------------------------
+
+struct DebugFlagDescriptor {
+    Str name;
+    bool enabled;
+};
+
+export template <>
+struct ValueParser<DebugFlagDescriptor> {
+    static Res<> usage(Io::TextWriter& w) {
+        return w.writeStr("<name>[=on|off]"s);
+    }
+
+    static Res<DebugFlagDescriptor> parse(Cursor<Token>& c) {
+        if (c.ended() or c->kind != Token::OPERAND)
+            return Error::other("missing value");
+
+        Io::SScan scan = c.next().value;
+
+        DebugFlagDescriptor res;
+        res.name = scan.token(Re::oneOrMore(Re::alnum() | '-'_re | '_'_re | '*'_re));
+        res.enabled = true;
+
+        if (scan.skip('=')) {
+            if (scan.skip("on"))
+                res.enabled = true;
+            else if (scan.skip("off"))
+                res.enabled = false;
+            else
+                return Error::invalidInput("expected on or off");
+        }
+
+        if (not scan.ended())
+            return Error::invalidInput("expected flag descriptor");
+
+        return Ok(res);
+    }
+};
+
+static Res<> handleDescriptors(Debug::FlagType type, Slice<DebugFlagDescriptor> flags) {
+    for (auto& f : flags) {
+        if (f.name == "list") {
+            Sys::println(type == Debug::DEBUG ? "Debug:" : "Features:");
+            for (auto flag = Debug::flags(); flag; flag = flag->next)
+                if (flag->type == type)
+                    Sys::println(" ({}) {}: {}", flag->enabled ? "✓" : " ", flag->name, flag->description);
+            return Ok();
+        } else {
+            try$(Debug::toggleFlag(type, f.name, f.enabled));
+        }
+    }
+    return Ok();
+}
+
 // MARK: Command ---------------------------------------------------------------
+
+export struct Section {
+    String name;
+    Vec<Rc<_OptionImpl>> options;
+};
 
 export struct Command : Meta::Pinned {
     using Callback = Func<Async::Task<>(Sys::Context&)>;
 
-    String longName;
-    String description = ""s;
-    Vec<Rc<_OptionImpl>> options;
-    Opt<Callback> callbackAsync;
+    String _longName;
+    String _description = ""s;
+    Vec<Section> _sections;
+    Opt<Callback> _callbackAsync;
 
     Vec<Rc<Command>> _commands;
     Command* _parent = nullptr;
@@ -275,38 +333,61 @@ export struct Command : Meta::Pinned {
     Option<bool> _help = flag('h', "help"s, "Show this help message and exit."s);
     Option<bool> _usage = flag('u', "usage"s, "Show usage message and exit."s);
     Option<bool> _version = flag('v', "version"s, "Show version information and exit."s);
-    Option<Vec<Str>> _debug = option<Vec<Str>>(NONE, "debug"s, "Enable or list debug flags"s, Vec<Str>{});
-    Option<Vec<Str>> _enableFeature = option<Vec<Str>>(NONE, "enable-feature"s, "Enable or list features"s, Vec<Str>{});
-    Option<Vec<Str>> _disableFeature = option<Vec<Str>>(NONE, "disable-feature"s, "Disable or list a features"s, Vec<Str>{});
+    Option<Vec<DebugFlagDescriptor>> _debug = option<Vec<DebugFlagDescriptor>>(
+        NONE,
+        "debug"s,
+        "Toggle or list debug flags by name or wildcard (e.g. karm-*=on or list)"s,
+        Vec<DebugFlagDescriptor>{}
+    );
+
+    Option<Vec<DebugFlagDescriptor>> _features = option<Vec<DebugFlagDescriptor>>(
+        NONE,
+        "feature"s,
+        "Toggle or list features by name or wildcard (e.g. karm-*=on or list)"s,
+        Vec<DebugFlagDescriptor>{}
+    );
 
     bool _invoked = false;
 
     Command(
         String longName,
         String description = ""s,
-        Vec<Rc<_OptionImpl>> options = {},
+        Vec<Section> sections = {},
         Opt<Callback> callbackAsync = NONE
     )
-        : longName(std::move(longName)),
-          description(std::move(description)),
-          options(std::move(options)),
-          callbackAsync(std::move(callbackAsync)) {
-        options.pushBack(_help);
-        options.pushBack(_usage);
-        options.pushBack(_version);
-        options.pushBack(_debug);
+        : _longName(std::move(longName)),
+          _description(std::move(description)),
+          _sections(std::move(sections)),
+          _callbackAsync(std::move(callbackAsync)) {
+
+        _sections.pushFront({
+            .name = "Common Options"s,
+            .options = {
+                _help,
+                _usage,
+                _version,
+            },
+        });
+
+        _sections.pushBack({
+            .name = "Developer Options"s,
+            .options = {
+                _debug,
+                _features,
+            },
+        });
     }
 
     Command& subCommand(
         String longName,
         String description = ""s,
-        Vec<Rc<_OptionImpl>> options = {},
+        Vec<Section> sections = {},
         Opt<Callback> callbackAsync = NONE
     ) {
         auto cmd = makeRc<Command>(
             longName,
             description,
-            options,
+            sections,
             std::move(callbackAsync)
         );
         cmd->_parent = this;
@@ -314,70 +395,38 @@ export struct Command : Meta::Pinned {
         return *last(_commands);
     }
 
-    template <typename T>
-    void option(Option<T> field) {
-        options.pushBack(field._impl);
-    }
-
-    template <typename T>
-    Option<T> option(
-        Opt<Rune> shortName,
-        String longName,
-        String description,
-        Opt<T> defaultValue = NONE
-    ) {
-        auto store = makeRc<OptionImpl<T>>(
-            OptionKind::OPTION,
-            shortName,
-            longName,
-            description,
-            defaultValue
-        );
-        options.pushBack(store);
-        return {store};
-    }
-
-    Flag flag(Opt<Rune> shortName, String longName, String description) {
-        auto store = makeRc<OptionImpl<bool>>(
-            OptionKind::OPTION,
-            shortName,
-            longName,
-            description,
-            false
-        );
-        options.pushBack(store);
-        return {store};
-    }
-
     Res<> usage(Io::TextWriter& w) {
         auto printLongName = [](this auto& self, Command& cmd, Io::TextWriter& w) -> Res<> {
             if (cmd._parent)
                 try$(self(*cmd._parent, w));
-            try$(format(w, "{} ", cmd.longName));
+            try$(format(w, "{} ", cmd._longName));
             return Ok();
         };
 
         try$(printLongName(*this, w));
 
-        for (auto& opt : options) {
-            if (opt->kind != OptionKind::OPTION)
-                continue;
-            try$(opt->usage(w));
-            try$(w.writeRune(' '));
-        }
+        for (auto& sec : _sections)
+            for (auto& opt : sec.options) {
+                if (opt->kind != OptionKind::OPTION)
+                    continue;
+                try$(opt->usage(w));
+                try$(w.writeRune(' '));
+            }
 
-        for (auto& opt : options) {
-            if (opt->kind != OptionKind::OPERAND)
-                continue;
-            try$(opt->usage(w));
-            try$(w.writeRune(' '));
-        }
+        for (auto& sec : _sections)
+            for (auto& opt : sec.options) {
+                if (opt->kind != OptionKind::OPERAND)
+                    continue;
+                try$(opt->usage(w));
+                try$(w.writeRune(' '));
+            }
 
-        for (auto& opt : options) {
-            if (opt->kind != OptionKind::EXTRA)
-                continue;
-            try$(opt->usage(w));
-        }
+        for (auto& sec : _sections)
+            for (auto& opt : sec.options) {
+                if (opt->kind != OptionKind::EXTRA)
+                    continue;
+                try$(opt->usage(w));
+            }
 
         if (Karm::any(_commands)) {
             try$(format(w, "<command> [args...]"));
@@ -399,27 +448,31 @@ export struct Command : Meta::Pinned {
         try$(usage(w));
         try$(w.writeStr("\n\n"s));
 
-        try$(format(w, "Description:\n  {}\n\n", description));
+        try$(format(w, "Description:\n  {}\n\n", _description));
 
-        if (Karm::any(options)) {
-            try$(w.writeStr("Options:\n"s));
-            for (auto& opt : options) {
-                if (opt->kind != OptionKind::OPTION)
-                    continue;
+        for (auto& sec : _sections) {
+            if (Karm::any(sec.options)) {
+                if (sec.name)
+                    try$(Io::format(w, "{}:\n"s, sec.name));
 
-                try$(w.writeStr("  "s));
-                if (opt->shortName)
-                    try$(format(w, "-{c}, ", opt->shortName.unwrap()));
+                for (auto& opt : sec.options) {
+                    if (opt->kind != OptionKind::OPTION)
+                        continue;
 
-                try$(format(w, "--{} - {}\n", opt->longName, opt->description));
+                    try$(w.writeStr("  "s));
+                    if (opt->shortName)
+                        try$(format(w, "-{c}, ", opt->shortName.unwrap()));
+
+                    try$(format(w, "--{} - {}\n", opt->longName, opt->description));
+                }
+                try$(w.writeRune('\n'));
             }
-            try$(w.writeRune('\n'));
         }
 
         if (Karm::any(_commands)) {
             try$(w.writeStr("Subcommands:\n"s));
             for (auto& cmd : _commands) {
-                try$(format(w, "  {} - {}\n", cmd->longName, cmd->description));
+                try$(format(w, "  {} - {}\n", cmd->_longName, cmd->_description));
             }
             try$(w.writeRune('\n'));
         }
@@ -427,42 +480,46 @@ export struct Command : Meta::Pinned {
         return Ok();
     }
 
-    Res<bool> _evalOption(Cursor<Token>& c) {
+    Res<bool> _parseOption(Cursor<Token>& c) {
         bool found = false;
 
-        for (auto& opt : options) {
-            if (c.ended())
-                break;
+        for (auto& sec : _sections) {
+            for (auto& opt : sec.options) {
+                if (c.ended())
+                    break;
 
-            if (opt->kind != OptionKind::OPTION)
-                continue;
+                if (opt->kind != OptionKind::OPTION)
+                    continue;
 
-            bool shortNameMatch = opt->shortName and c->flag == opt->shortName.unwrap();
-            bool longNameMatch = c->value == opt->longName;
+                bool shortNameMatch = opt->shortName and c->flag == opt->shortName.unwrap();
+                bool longNameMatch = c->value == opt->longName;
 
-            if (not(shortNameMatch or longNameMatch))
-                continue;
+                if (not(shortNameMatch or longNameMatch))
+                    continue;
 
-            c.next();
-            try$(opt->eval(c));
-            found = true;
+                c.next();
+                try$(opt->parse(c));
+                found = true;
+            }
         }
 
         return Ok(found);
     }
 
-    Res<> _evalParams(Cursor<Token>& c) {
-        for (auto& opt : options) {
-            while (try$(_evalOption(c)))
-                ;
+    Res<> _parseParams(Cursor<Token>& c) {
+        for (auto& sec : _sections) {
+            for (auto& opt : sec.options) {
+                while (try$(_parseOption(c)))
+                    ;
 
-            if (c.ended())
-                break;
+                if (c.ended())
+                    break;
 
-            if (opt->kind != OptionKind::OPERAND)
-                continue;
+                if (opt->kind != OptionKind::OPERAND)
+                    continue;
 
-            try$(opt->eval(c));
+                try$(opt->parse(c));
+            }
         }
 
         return Ok();
@@ -483,62 +540,34 @@ export struct Command : Meta::Pinned {
     }
 
     Async::Task<> execAsync(Sys::Context& ctx, Cursor<Token> c) {
-        co_try$(_evalParams(c));
+        co_try$(_parseParams(c));
 
-        if (_help) {
+        if (_help.value()) {
             co_try$(_showHelp(Sys::out()));
             co_return Ok();
         }
 
-        if (_usage) {
+        if (_usage.value()) {
             co_try$(_showUsage(Sys::out()));
             co_return Ok();
         }
 
-        if (_version) {
-            co_try$(format(Sys::out(), "{} {}\n", longName, stringify$(__ck_version_value) ""s));
+        if (_version.value()) {
+            co_try$(format(Sys::out(), "{} {}\n", _longName, stringify$(__ck_version_value) ""s));
             co_return Ok();
         }
 
-        if (_debug.unwrap().len()) {
-            auto const& list = _debug.unwrap();
-            if (list and list[0] == "list") {
-                co_try$(format(Sys::out(), "{}\n", Debug::flags()));
-                co_return Ok();
-            }
-
-            for (auto const& l : list) {
-                co_try$(Debug::enable(l));
-            }
+        if (_debug.value().len()) {
+            co_return handleDescriptors(Debug::DEBUG, _debug.value());
         }
 
-        if (_enableFeature.unwrap().len()) {
-            auto const& list = _enableFeature.unwrap();
-            if (list and list[0] == "list") {
-                co_try$(format(Sys::out(), "{}\n", Debug::features()));
-                co_return Ok();
-            }
-
-            for (auto const& l : list) {
-                co_try$(Debug::enableFeature(l, true));
-            }
-        }
-
-        if (_disableFeature.unwrap().len()) {
-            auto const& list = _disableFeature.unwrap();
-            if (list and list[0] == "list") {
-                co_try$(format(Sys::out(), "{}\n", Debug::features()));
-                co_return Ok();
-            }
-
-            for (auto const& l : list) {
-                co_try$(Debug::enableFeature(l, false));
-            }
+        if (_features.value().len()) {
+            co_return handleDescriptors(Debug::FEATURE, _features.value());
         }
 
         _invoked = true;
-        if (callbackAsync)
-            co_trya$(callbackAsync.unwrap()(ctx));
+        if (_callbackAsync)
+            co_trya$(_callbackAsync.unwrap()(ctx));
 
         if (Karm::any(_commands) and c.ended()) {
             co_try$(_showUsage(Sys::out()));
@@ -556,7 +585,7 @@ export struct Command : Meta::Pinned {
             c.next();
 
             for (auto& cmd : _commands) {
-                if (value != cmd->longName)
+                if (value != cmd->_longName)
                     continue;
                 co_return co_await cmd->execAsync(ctx, c);
             }

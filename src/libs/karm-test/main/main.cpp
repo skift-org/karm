@@ -24,8 +24,8 @@ Async::Task<> entryPointAsync(Sys::Context& ctx) {
         {globArg, fastArg},
         [=](Sys::Context&) -> Async::Task<> {
             co_return co_await Test::driver().runAllAsync({
-                .glob = globArg.unwrap(),
-                .fast = fastArg.unwrap(),
+                .glob = globArg.value(),
+                .fast = fastArg.value(),
             });
         },
     };
