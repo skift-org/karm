@@ -10,10 +10,12 @@
         "karm-image.qoi",
         "karm-image.tga",
         "karm-image.gif",
+
         "karm-gfx",
         "karm-scene",
         "karm-sys",
-        "karm-logger"
+        "karm-logger",
+        "karm-debug"
     ],
     "subdirs": [
         "base"
