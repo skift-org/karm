@@ -2,8 +2,6 @@ module;
 
 #include <karm-math/rect.h>
 
-#include "cstring"
-
 export module Karm.Gfx:buffer;
 
 import Karm.Core;
@@ -325,10 +323,10 @@ export [[gnu::flatten]] void blitUnsafe(MutPixels dst, Pixels src) {
         panic("blitUnsafe() called with buffers of different sizes");
 
     // HACK: fast path if the stride and fmt are the same
-    if (dst.stride() == src.stride() && (dst.fmt().index() == src.fmt().index()))
+    if (dst.stride() == src.stride() and dst.fmt().index() == src.fmt().index())
     {
-            memcpy(dst._buf, src._buf,  src._stride * src.height() * sizeof(u8));
-            return;
+        std::memcpy(dst._buf, src._buf, src._stride * src.height() * sizeof(u8));
+        return;
     }
 
     dst._fmt.visit([&](auto fd) {
