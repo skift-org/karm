@@ -65,7 +65,7 @@ struct DarwinSched :
 
     Async::Task<usize> readAsync(Rc<Fd> fd, MutBytes buf) override {
         co_trya$(waitFor({
-            .ident = fd->handle().value(),
+            .ident = (u64)co_try$(Posix::toPosixFd(fd))->_raw,
             .filter = EVFILT_READ,
             .flags = EV_ADD | EV_ONESHOT,
             .fflags = 0,
@@ -78,7 +78,7 @@ struct DarwinSched :
 
     Async::Task<usize> writeAsync(Rc<Fd> fd, Bytes buf) override {
         co_trya$(waitFor({
-            .ident = fd->handle().value(),
+            .ident = (u64)co_try$(Posix::toPosixFd(fd))->_raw,
             .filter = EVFILT_WRITE,
             .flags = EV_ADD | EV_ONESHOT,
             .fflags = 0,
@@ -91,7 +91,7 @@ struct DarwinSched :
 
     Async::Task<> flushAsync(Rc<Fd> fd) override {
         co_trya$(waitFor({
-            .ident = fd->handle().value(),
+            .ident = (u64)co_try$(Posix::toPosixFd(fd))->_raw,
             .filter = EVFILT_WRITE,
             .flags = EV_ADD | EV_ONESHOT,
             .fflags = 0,
@@ -104,7 +104,7 @@ struct DarwinSched :
 
     Async::Task<_Accepted> acceptAsync(Rc<Fd> fd) override {
         co_trya$(waitFor({
-            .ident = fd->handle().value(),
+            .ident = (u64)co_try$(Posix::toPosixFd(fd))->_raw,
             .filter = EVFILT_READ,
             .flags = EV_ADD | EV_ONESHOT,
             .fflags = 0,
@@ -117,7 +117,7 @@ struct DarwinSched :
 
     Async::Task<_Sent> sendAsync(Rc<Fd> fd, Bytes buf, Slice<Handle> handles, SocketAddr addr) override {
         co_trya$(waitFor({
-            .ident = fd->handle().value(),
+            .ident = (u64)co_try$(Posix::toPosixFd(fd))->_raw,
             .filter = EVFILT_WRITE,
             .flags = EV_ADD | EV_ONESHOT,
             .fflags = 0,
@@ -130,7 +130,7 @@ struct DarwinSched :
 
     Async::Task<_Received> recvAsync(Rc<Fd> fd, MutBytes buf, MutSlice<Handle> hnds) override {
         co_trya$(waitFor({
-            .ident = fd->handle().value(),
+            .ident = (u64)co_try$(Posix::toPosixFd(fd))->_raw,
             .filter = EVFILT_READ,
             .flags = EV_ADD | EV_ONESHOT,
             .fflags = 0,
