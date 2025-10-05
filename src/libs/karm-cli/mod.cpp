@@ -201,9 +201,6 @@ export struct _OptionImpl {
 };
 
 export template <typename T>
-using OptionCallback = Func<Res<>(T const&)>;
-
-export template <typename T>
 struct OptionImpl : _OptionImpl {
     Opt<T> value;
 
@@ -275,7 +272,7 @@ struct ValueParser<DebugFlagDescriptor> {
         if (c.ended() or c->kind != Token::OPERAND)
             return Error::other("missing value");
 
-        Io::SScan scan = c.next().value;
+        Io::SScan scan = c->value;
 
         DebugFlagDescriptor res;
         res.name = scan.token(Re::oneOrMore(Re::alnum() | '-'_re | '_'_re | '*'_re));
@@ -290,9 +287,7 @@ struct ValueParser<DebugFlagDescriptor> {
                 return Error::invalidInput("expected on or off");
         }
 
-        if (not scan.ended())
-            return Error::invalidInput("expected flag descriptor");
-
+        c.next();
         return Ok(res);
     }
 };
@@ -558,11 +553,11 @@ export struct Command : Meta::Pinned {
         }
 
         if (_debug.value().len()) {
-            co_return handleDescriptors(Debug::DEBUG, _debug.value());
+            co_try$(handleDescriptors(Debug::DEBUG, _debug.value()));
         }
 
         if (_features.value().len()) {
-            co_return handleDescriptors(Debug::FEATURE, _features.value());
+            co_try$(handleDescriptors(Debug::FEATURE, _features.value()));
         }
 
         _invoked = true;
