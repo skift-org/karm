@@ -322,6 +322,13 @@ export [[gnu::flatten]] void blitUnsafe(MutPixels dst, Pixels src) {
     if (dst.width() != src.width() or dst.height() != src.height()) [[unlikely]]
         panic("blitUnsafe() called with buffers of different sizes");
 
+    // HACK: fast path if the stride and fmt are the same
+    if (dst.stride() == src.stride() and dst.fmt().index() == src.fmt().index())
+    {
+        std::memcpy(dst._buf, src._buf, src._stride * src.height() * sizeof(u8));
+        return;
+    }
+
     dst._fmt.visit([&](auto fd) {
         src._fmt.visit([&](auto fs) {
             for (isize y = 0; y < dst.height(); y++) {
