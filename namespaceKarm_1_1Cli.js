@@ -19,7 +19,6 @@ var namespaceKarm_1_1Cli =
     [ "ValueParser< Str >", "structKarm_1_1Cli_1_1ValueParser_3_01Str_01_4.html", null ],
     [ "ValueParser< Vec< T > >", "structKarm_1_1Cli_1_1ValueParser_3_01Vec_3_01T_01_4_01_4.html", null ],
     [ "Flag", "namespaceKarm_1_1Cli.html#a62dfccd12407e397cab6854be10e96f5", null ],
-    [ "OptionCallback", "namespaceKarm_1_1Cli.html#a88f2a1435bc8185eb1640494554aa130", null ],
     [ "OptionKind", "namespaceKarm_1_1Cli.html#adad269924e06d6f9a5c912b24b17bf93", [
       [ "OPTION", "namespaceKarm_1_1Cli.html#adad269924e06d6f9a5c912b24b17bf93ae1c4a02aed2e485ae96bc5a5b1d01ee5", null ],
       [ "OPERAND", "namespaceKarm_1_1Cli.html#adad269924e06d6f9a5c912b24b17bf93a11f3de9b2b548c31805cf34d512ee177", null ],

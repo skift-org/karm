@@ -1,7 +1,5 @@
 var NAVTREEINDEX17 =
 {
-"namespaceKarm_1_1Ui.html#a348964602553ae5953935dd84a6aae9d":[0,0,0,39,149],
-"namespaceKarm_1_1Ui.html#a350138dd0151201cabdeb556cf9c48a6":[0,0,0,39,89],
 "namespaceKarm_1_1Ui.html#a36d9bda5714e4024d8cecbb79879e6ce":[0,0,0,39,203],
 "namespaceKarm_1_1Ui.html#a3846954faf3068407988720e12b8e635":[0,0,0,39,141],
 "namespaceKarm_1_1Ui.html#a39ca68b51a3f5e9aa2c7357941c8eb5b":[0,0,0,39,66],
@@ -225,8 +223,8 @@ var NAVTREEINDEX17 =
 "namespacemembers_enum.html":[0,1,4],
 "namespacemembers_eval.html":[0,1,5],
 "namespacemembers_f.html":[0,1,0,5],
-"namespacemembers_func.html":[0,1,1],
 "namespacemembers_func.html":[0,1,1,0],
+"namespacemembers_func.html":[0,1,1],
 "namespacemembers_func_b.html":[0,1,1,1],
 "namespacemembers_func_c.html":[0,1,1,2],
 "namespacemembers_func_d.html":[0,1,1,3],
@@ -249,5 +247,7 @@ var NAVTREEINDEX17 =
 "namespacemembers_func_v.html":[0,1,1,20],
 "namespacemembers_func_w.html":[0,1,1,21],
 "namespacemembers_func_x.html":[0,1,1,22],
-"namespacemembers_func_y.html":[0,1,1,23]
+"namespacemembers_func_y.html":[0,1,1,23],
+"namespacemembers_func_z.html":[0,1,1,24],
+"namespacemembers_g.html":[0,1,0,6]
 };
