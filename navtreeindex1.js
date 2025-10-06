@@ -244,10 +244,10 @@ var NAVTREEINDEX1 =
 "colors_8cpp.html#af83841fb03aad2d756d79eeb2ac6e98f":[3,0,0,1,10,9,9],
 "colors_8cpp.html#af9b1be7089f1dc4e5ad2b69d9413116c":[3,0,0,1,10,9,11],
 "colors_8cpp.html#af9ff97c171ce3d9b762ddbac1b2af855":[3,0,0,1,10,9,3],
-"conceptKarm_1_1Aio_1_1AsyncReadable.html":[0,0,0,0,5],
 "conceptKarm_1_1Aio_1_1AsyncReadable.html":[1,0,0,1],
+"conceptKarm_1_1Aio_1_1AsyncReadable.html":[0,0,0,0,5],
 "conceptKarm_1_1Aio_1_1AsyncWritable.html":[0,0,0,0,4],
 "conceptKarm_1_1Aio_1_1AsyncWritable.html":[1,0,0,0],
-"conceptKarm_1_1Async_1_1Operation.html":[1,0,1,0],
-"conceptKarm_1_1Async_1_1Operation.html":[0,0,0,3,12]
+"conceptKarm_1_1Async_1_1Operation.html":[0,0,0,3,12],
+"conceptKarm_1_1Async_1_1Operation.html":[1,0,1,0]
 };

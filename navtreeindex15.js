@@ -1,5 +1,7 @@
 var NAVTREEINDEX15 =
 {
+"namespaceKarm_1_1Math.html#a1e1f9f0b0d5f90169131a141811ddd44":[0,0,0,22,81],
+"namespaceKarm_1_1Math.html#a1f1d4d7b6346406f96ebdcbb151ffcd0":[0,0,0,22,68],
 "namespaceKarm_1_1Math.html#a20a13fca9cce1cc66dd97aa273dd139f":[0,0,0,22,71],
 "namespaceKarm_1_1Math.html#a22e2bee150b58772ebd29fa846258609":[0,0,0,22,49],
 "namespaceKarm_1_1Math.html#a22f4c777167c6baae98a7081a4ce2f76":[0,0,0,22,77],
@@ -247,7 +249,5 @@ var NAVTREEINDEX15 =
 "namespaceKarm_1_1Net_1_1Dns.html#afdc41d84596321984a29bae536776a54ad24e82c02ddf0b15e22fe683d5a4beb9":[0,0,0,26,0,9,8],
 "namespaceKarm_1_1Net_1_1Dns.html#afdc41d84596321984a29bae536776a54ae218e058bcee1533b39bcca7d4b008c0":[0,0,0,26,0,9,6],
 "namespaceKarm_1_1Pdf.html":[0,0,0,27],
-"namespaceKarm_1_1Posix.html":[0,0,0,28],
-"namespaceKarm_1_1Posix.html#a03e5f325172c380b18142edb1927ec01":[0,0,0,28,1],
-"namespaceKarm_1_1Posix.html#a03e5f325172c380b18142edb1927ec01a4e076080d87888ac96f19b271a6ee406":[0,0,0,28,1,1]
+"namespaceKarm_1_1Posix.html":[0,0,0,28]
 };

@@ -1,5 +1,7 @@
 var NAVTREEINDEX20 =
 {
+"ring_8cpp.html":[3,0,0,1,4,2,40],
+"ring_8cpp.html#af60e35d72364ff777a965d456af4dea3":[3,0,0,1,4,2,40,1],
 "root_8cpp.html":[3,0,0,1,9,5],
 "root_8cpp.html#a9a327da3244d594b7f4066836088b9af":[3,0,0,1,9,5,1],
 "root_8cpp.html#a9bf6a87a8b091e376d789530e43ba1e5":[3,0,0,1,9,5,0],
@@ -247,7 +249,5 @@ var NAVTREEINDEX20 =
 "slice_8cpp.html":[3,0,0,1,4,2,46],
 "slice_8cpp.html#a045a96c0806239f323e9d96e06f2f003":[3,0,0,1,4,2,46,47],
 "slice_8cpp.html#a0b9d196e1592ee29ac9104f857b9e456":[3,0,0,1,4,2,46,39],
-"slice_8cpp.html#a0c3e3cc31db08c038a45f4116a384508":[3,0,0,1,4,2,46,43],
-"slice_8cpp.html#a0d8a325124bd11e56a6872ad003712ad":[3,0,0,1,4,2,46,40],
-"slice_8cpp.html#a0eb46bf43b2e576c133003378bf050bf":[3,0,0,1,4,2,46,16]
+"slice_8cpp.html#a0c3e3cc31db08c038a45f4116a384508":[3,0,0,1,4,2,46,43]
 };

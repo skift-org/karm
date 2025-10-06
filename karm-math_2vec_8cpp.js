@@ -28,5 +28,6 @@ var karm_math_2vec_8cpp =
     [ "operator/", "karm-math_2vec_8cpp.html#a23e34120cf934e1a4a1a926cbd336630", null ],
     [ "operator/", "karm-math_2vec_8cpp.html#af9fbf90de17c6c9f88327f5f1829dd1b", null ],
     [ "Core", "karm-math_2vec_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5", null ],
-    [ "Math", "karm-math_2vec_8cpp.html#a6295722025a54f66ec02bb47db28253b", null ]
+    [ "Math", "karm-math_2vec_8cpp.html#a6295722025a54f66ec02bb47db28253b", null ],
+    [ "module", "karm-math_2vec_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6", null ]
 ];

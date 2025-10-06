@@ -19,6 +19,7 @@ var libs_2karm_logger_2logger_8cpp =
     [ "DEBUG", "libs_2karm-logger_2logger_8cpp.html#ae9460b02e03f08a920aa42a9b516e885", null ],
     [ "ERROR", "libs_2karm-logger_2logger_8cpp.html#aff03ebfc0dec1274d428725ec66ebf7a", null ],
     [ "FATAL", "libs_2karm-logger_2logger_8cpp.html#a3da1487291d5aaf2644bf24ff9ba71cf", null ],
+    [ "import", "libs_2karm-logger_2logger_8cpp.html#aff55674fa41a3a4ef62434c039b6c32d", null ],
     [ "INFO", "libs_2karm-logger_2logger_8cpp.html#aae742963fe81eac8fcdefd4ddc1858c5", null ],
     [ "Logger", "libs_2karm-logger_2logger_8cpp.html#a51e66148781d6575c608e46ef2c064b0", null ],
     [ "PRINT", "libs_2karm-logger_2logger_8cpp.html#aa72aa897b1893cde8d6db7f99749a4f1", null ],
