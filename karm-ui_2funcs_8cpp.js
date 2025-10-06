@@ -14,6 +14,6 @@ var karm_ui_2funcs_8cpp =
     [ "shouldRepaint", "karm-ui_2funcs_8cpp.html#ade79086a36e2d87cd6bbcd5cafe1b30f", null ],
     [ "App", "karm-ui_2funcs_8cpp.html#ab217fce9727b55e386bc7eab0ed28441", null ],
     [ "Core", "karm-ui_2funcs_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5", null ],
-    [ "module", "karm-ui_2funcs_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6", null ],
+    [ "Math", "karm-ui_2funcs_8cpp.html#a062e19c831932519c33a396b9b0f4a04", null ],
     [ "Ui", "karm-ui_2funcs_8cpp.html#a6b10d166640a82762e7ff7e7eea7c78c", null ]
 ];

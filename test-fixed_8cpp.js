@@ -7,5 +7,6 @@ var test_fixed_8cpp =
     [ "test$", "test-fixed_8cpp.html#affffc332c15a08617027ce25857d4e6a", null ],
     [ "test$", "test-fixed_8cpp.html#a2fdb192658fd2056d7bcdd427e7bffcd", null ],
     [ "test$", "test-fixed_8cpp.html#af05bb89936a1b16b3061bdbaa03da774", null ],
-    [ "Core", "test-fixed_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5", null ]
+    [ "Core", "test-fixed_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5", null ],
+    [ "Math", "test-fixed_8cpp.html#a062e19c831932519c33a396b9b0f4a04", null ]
 ];

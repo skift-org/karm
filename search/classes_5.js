@@ -95,12 +95,11 @@ var searchData=
   ['formatter_3c_20v_20_3e_92',['Formatter&lt; V &gt;',['../structKarm_1_1Io_1_1Formatter.html',1,'Karm::Io']]],
   ['formatter_3c_20weak_3c_20t_20_3e_20_3e_93',['Formatter&lt; Weak&lt; T &gt; &gt;',['../structKarm_1_1Io_1_1Formatter_3_01Weak_3_01T_01_4_01_4.html',1,'Karm::Io']]],
   ['frac_94',['Frac',['../structKarm_1_1Math_1_1Frac.html',1,'Karm::Math']]],
-  ['frac_3c_20karm_3a_3amath_3a_3afixed_20_3e_95',['Frac&lt; Karm::Math::Fixed &gt;',['../structKarm_1_1Math_1_1Frac.html',1,'Karm::Math']]],
-  ['frag_96',['Frag',['../structKarm_1_1Gfx_1_1CpuRast_1_1Frag.html',1,'Karm::Gfx::CpuRast']]],
-  ['frame_97',['Frame',['../structKarm_1_1Av_1_1Frame.html',1,'Karm::Av']]],
-  ['frames_98',['Frames',['../structKarm_1_1Av_1_1Frames.html',1,'Karm::Av']]],
-  ['framesiter_99',['FramesIter',['../structKarm_1_1Av_1_1FramesIter.html',1,'Karm::Av']]],
-  ['func_100',['Func',['../structKarm_1_1Func.html',1,'Karm']]],
-  ['func_3c_20child_28_29_3e_101',['Func&lt; Child()&gt;',['../structKarm_1_1Func.html',1,'Karm']]],
-  ['func_3c_20out_28in_2e_2e_2e_29_3e_102',['Func&lt; Out(In...)&gt;',['../structKarm_1_1Func_3_01Out_07In_8_8_8_08_4.html',1,'Karm']]]
+  ['frag_95',['Frag',['../structKarm_1_1Gfx_1_1CpuRast_1_1Frag.html',1,'Karm::Gfx::CpuRast']]],
+  ['frame_96',['Frame',['../structKarm_1_1Av_1_1Frame.html',1,'Karm::Av']]],
+  ['frames_97',['Frames',['../structKarm_1_1Av_1_1Frames.html',1,'Karm::Av']]],
+  ['framesiter_98',['FramesIter',['../structKarm_1_1Av_1_1FramesIter.html',1,'Karm::Av']]],
+  ['func_99',['Func',['../structKarm_1_1Func.html',1,'Karm']]],
+  ['func_3c_20child_28_29_3e_100',['Func&lt; Child()&gt;',['../structKarm_1_1Func.html',1,'Karm']]],
+  ['func_3c_20out_28in_2e_2e_2e_29_3e_101',['Func&lt; Out(In...)&gt;',['../structKarm_1_1Func_3_01Out_07In_8_8_8_08_4.html',1,'Karm']]]
 ];

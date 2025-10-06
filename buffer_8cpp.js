@@ -12,6 +12,7 @@ var buffer_8cpp =
     [ "Core", "buffer_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5", null ],
     [ "Gfx", "buffer_8cpp.html#af83841fb03aad2d756d79eeb2ac6e98f", null ],
     [ "GREYSCALE8", "buffer_8cpp.html#a61082ca7776dbe907c4928d597f6d6f7", null ],
+    [ "Math", "buffer_8cpp.html#a062e19c831932519c33a396b9b0f4a04", null ],
     [ "module", "buffer_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6", null ],
     [ "RGBA8888", "buffer_8cpp.html#a9280035b42411d9ab60e7462f53222aa", null ]
 ];

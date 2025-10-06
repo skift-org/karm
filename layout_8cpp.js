@@ -87,7 +87,7 @@ var layout_8cpp =
     [ "vflow", "layout_8cpp.html#a52c3ac2886beed6f62f5fc249d863395", null ],
     [ "App", "layout_8cpp.html#ab217fce9727b55e386bc7eab0ed28441", null ],
     [ "Gfx", "layout_8cpp.html#a7c0089b00689a79148a84c5b7fe95679", null ],
-    [ "module", "layout_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6", null ],
+    [ "Math", "layout_8cpp.html#a062e19c831932519c33a396b9b0f4a04", null ],
     [ "Ui", "layout_8cpp.html#a6b10d166640a82762e7ff7e7eea7c78c", null ],
     [ "UNCONSTRAINED", "layout_8cpp.html#a32e33d42aaf047d5ff8c52e00fd40e7d", null ]
 ];

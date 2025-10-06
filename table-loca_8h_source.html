@@ -101,7 +101,7 @@ $(document).ready(function(){initNavTree('table-loca_8h_source.html',''); initRe
 <div class="contents">
 <a href="table-loca_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;<a class="code" href="logger_8h.html">karm-logger/logger.h</a>&gt;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno"><a class="line" href="table-loca_8h.html#ade9c999f65d06abc86ce3cce78a704fc">    3</a></span><span class="keyword">import</span> <a class="code hl_namespace" href="namespaceKarm.html">Karm</a>.<a class="code hl_namespace" href="namespaceKarm_1_1Logger.html">Logger</a>;</div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="table-head_8h.html">table-head.h</a>&quot;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
@@ -120,17 +120,18 @@ $(document).ready(function(){initNavTree('table-loca_8h_source.html',''); initRe
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>            s.skip(glyphId * 4);</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>            <span class="keywordflow">return</span> s.nextU32be();</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>            <a class="code hl_function" href="namespaceKarm.html#ac398dbbe1d5db70ded4d348c555ec8e8">logWarn</a>(<span class="stringliteral">&quot;unsupported loca format {x}&quot;</span>, format);</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>            <a class="code hl_function" href="namespaceKarm.html#abd566c392341733ea46df4064b9861f5">logWarn</a>(<span class="stringliteral">&quot;unsupported loca format {x}&quot;</span>, format);</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>            <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>        }</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    }</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>};</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>} <span class="comment">// namespace Karm::Font::Ttf</span></div>
-<div class="ttc" id="alogger_8h_html"><div class="ttname"><a href="logger_8h.html">logger.h</a></div></div>
 <div class="ttc" id="anamespaceKarm_1_1Font_1_1Ttf_html"><div class="ttname"><a href="namespaceKarm_1_1Font_1_1Ttf.html">Karm::Font::Ttf</a></div><div class="ttdef"><b>Definition:</b> base.h:5</div></div>
+<div class="ttc" id="anamespaceKarm_1_1Logger_html"><div class="ttname"><a href="namespaceKarm_1_1Logger.html">Karm::Logger</a></div><div class="ttdef"><b>Definition:</b> logger.cpp:7</div></div>
+<div class="ttc" id="anamespaceKarm_html"><div class="ttname"><a href="namespaceKarm.html">Karm</a></div><div class="ttdef"><b>Definition:</b> lock.cpp:3</div></div>
 <div class="ttc" id="anamespaceKarm_html_a7826e564b525f4f5a2a0e63f961c2dbd"><div class="ttname"><a href="namespaceKarm.html#a7826e564b525f4f5a2a0e63f961c2dbd">Karm::usize</a></div><div class="ttdeci">__SIZE_TYPE__ usize</div><div class="ttdef"><b>Definition:</b> base.cpp:13</div></div>
-<div class="ttc" id="anamespaceKarm_html_ac398dbbe1d5db70ded4d348c555ec8e8"><div class="ttname"><a href="namespaceKarm.html#ac398dbbe1d5db70ded4d348c555ec8e8">Karm::logWarn</a></div><div class="ttdeci">void logWarn(Format fmt, Args &amp;&amp;... va)</div><div class="ttdef"><b>Definition:</b> logger.h:113</div></div>
+<div class="ttc" id="anamespaceKarm_html_abd566c392341733ea46df4064b9861f5"><div class="ttname"><a href="namespaceKarm.html#abd566c392341733ea46df4064b9861f5">Karm::logWarn</a></div><div class="ttdeci">export void logWarn(Format fmt, Args &amp;&amp;... va)</div><div class="ttdef"><b>Definition:</b> logger.cpp:113</div></div>
 <div class="ttc" id="anamespaceKarm_html_ad13bfdef3971d180d820f6489f550505"><div class="ttname"><a href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Karm::Str</a></div><div class="ttdeci">_Str&lt; Utf8 &gt; Str</div><div class="ttdef"><b>Definition:</b> string.cpp:281</div></div>
 <div class="ttc" id="anamespaceKarm_html_ad82b8e5abde741498d909649c69a5ba1"><div class="ttname"><a href="namespaceKarm.html#ad82b8e5abde741498d909649c69a5ba1">Karm::isize</a></div><div class="ttdeci">__PTRDIFF_TYPE__ isize</div><div class="ttdef"><b>Definition:</b> base.cpp:117</div></div>
 <div class="ttc" id="astructKarm_1_1Font_1_1Ttf_1_1Head_html"><div class="ttname"><a href="structKarm_1_1Font_1_1Ttf_1_1Head.html">Karm::Font::Ttf::Head</a></div><div class="ttdef"><b>Definition:</b> table-head.h:7</div></div>

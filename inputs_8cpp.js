@@ -44,5 +44,6 @@ var inputs_8cpp =
     [ "match", "inputs_8cpp.html#ac5f954173dc6686031920b4a6694803e", null ],
     [ "App", "inputs_8cpp.html#a13f54950fa9f83c0b98769ddc06c2c47", null ],
     [ "Core", "inputs_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5", null ],
+    [ "Math", "inputs_8cpp.html#a062e19c831932519c33a396b9b0f4a04", null ],
     [ "module", "inputs_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6", null ]
 ];

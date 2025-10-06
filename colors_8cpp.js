@@ -10,7 +10,7 @@ var colors_8cpp =
     [ "COLORS", "colors_8cpp.html#a1860a3da3b9ba4fde47ce3fbf282d551", null ],
     [ "Core", "colors_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5", null ],
     [ "Gfx", "colors_8cpp.html#af83841fb03aad2d756d79eeb2ac6e98f", null ],
-    [ "module", "colors_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6", null ],
+    [ "Math", "colors_8cpp.html#a062e19c831932519c33a396b9b0f4a04", null ],
     [ "RAMPS", "colors_8cpp.html#af9b1be7089f1dc4e5ad2b69d9413116c", null ],
     [ "WHITE", "colors_8cpp.html#a066054dc73f6c0b6bc267e5e868237c7", null ]
 ];

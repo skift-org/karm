@@ -12,7 +12,8 @@ var resizable_8cpp =
     [ "resizable", "resizable_8cpp.html#ac236209acf568b8231cd409a1cf3eab7", null ],
     [ "resizable", "resizable_8cpp.html#adacf9514cd5369092795269e7ff9f744", null ],
     [ "App", "resizable_8cpp.html#ab217fce9727b55e386bc7eab0ed28441", null ],
+    [ "Core", "resizable_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5", null ],
     [ "Kira", "resizable_8cpp.html#ae3a77a54ec8becc4a6fdc9a94a28333c", null ],
-    [ "module", "resizable_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6", null ],
+    [ "Math", "resizable_8cpp.html#a062e19c831932519c33a396b9b0f4a04", null ],
     [ "Ui", "resizable_8cpp.html#a917118c8afda280449cdf1aebad1a7f8", null ]
 ];

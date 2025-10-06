@@ -715,7 +715,6 @@ var annotated_dup =
       [ "Opt< T >", "structKarm_1_1Opt_3_01T_01_4.html", "structKarm_1_1Opt_3_01T_01_4" ],
       [ "Range", "structKarm_1_1Range.html", "structKarm_1_1Range" ],
       [ "Ranges", "structKarm_1_1Ranges.html", "structKarm_1_1Ranges" ],
-      [ "RAu", "structKarm_1_1RAu.html", "structKarm_1_1RAu" ],
       [ "ReadLockScope", "structKarm_1_1ReadLockScope.html", "structKarm_1_1ReadLockScope" ],
       [ "Res", "structKarm_1_1Res.html", "structKarm_1_1Res" ],
       [ "Ring", "structKarm_1_1Ring.html", "structKarm_1_1Ring" ],

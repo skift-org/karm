@@ -70,7 +70,7 @@ var paper_8cpp =
     [ "LEDGER", "paper_8cpp.html#a2eacd1538d20beea2c5e7ca07c80fc73", null ],
     [ "LEGAL", "paper_8cpp.html#a4ce4da0278b08b745b964472f2410973", null ],
     [ "LETTER", "paper_8cpp.html#a13b76d1c86631426de6e446f6ae0bc8d", null ],
-    [ "module", "paper_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6", null ],
+    [ "Math", "paper_8cpp.html#a062e19c831932519c33a396b9b0f4a04", null ],
     [ "Print", "paper_8cpp.html#ae58bcd5e109f1ddc9417003c1e65b1a6", null ],
     [ "SERIES", "paper_8cpp.html#a7ef2d1828b44e3cecf5977703feeb3b1", null ],
     [ "TABLOID", "paper_8cpp.html#a8631c7f0ffbfd50ae3967ba8934b8353", null ],

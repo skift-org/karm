@@ -21,5 +21,5 @@ var stroke_8cpp =
     [ "createStroke", "stroke_8cpp.html#ab5a402345518625ddfd901f8d976dfa3", null ],
     [ "stroke", "stroke_8cpp.html#a4c9201ee75bd996fd17fbda0ccaa8abf", null ],
     [ "Gfx", "stroke_8cpp.html#af83841fb03aad2d756d79eeb2ac6e98f", null ],
-    [ "module", "stroke_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6", null ]
+    [ "Math", "stroke_8cpp.html#a062e19c831932519c33a396b9b0f4a04", null ]
 ];

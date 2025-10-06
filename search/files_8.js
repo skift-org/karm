@@ -8,7 +8,7 @@ var searchData=
   ['info_2ecpp_5',['info.cpp',['../info_8cpp.html',1,'']]],
   ['input_2ecpp_6',['input.cpp',['../karm-kira_2input_8cpp.html',1,'(Global Namespace)'],['../karm-ui_2input_8cpp.html',1,'(Global Namespace)']]],
   ['inputs_2ecpp_7',['inputs.cpp',['../inputs_8cpp.html',1,'']]],
-  ['insets_2eh_8',['insets.h',['../insets_8h.html',1,'']]],
+  ['insets_2ecpp_8',['insets.cpp',['../insets_8cpp.html',1,'']]],
   ['intent_2ecpp_9',['intent.cpp',['../intent_8cpp.html',1,'']]],
   ['iter_2ecpp_10',['iter.cpp',['../iter_8cpp.html',1,'']]]
 ];

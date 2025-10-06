@@ -11,5 +11,7 @@ var table_gpos_8h =
       [ "CONTEXT_POSITIONING", "table-gpos_8h.html#a8aff7083e7ad767f8dd513de43aa9ae4a98454015a21ee532f6ed49718c7e6442", null ],
       [ "CHAIN_CONTEXT_POSITIONING", "table-gpos_8h.html#a8aff7083e7ad767f8dd513de43aa9ae4ae7d330012e67009075cb31cfa2690de4", null ],
       [ "EXTENSION_POSITIONING", "table-gpos_8h.html#a8aff7083e7ad767f8dd513de43aa9ae4ae3c96247f51e7f1af29d5c1d2c73ec54", null ]
-    ] ]
+    ] ],
+    [ "Logger", "table-gpos_8h.html#ade9c999f65d06abc86ce3cce78a704fc", null ],
+    [ "Math", "table-gpos_8h.html#a062e19c831932519c33a396b9b0f4a04", null ]
 ];

@@ -80,6 +80,7 @@ var karm_image_2jpeg_2base_8cpp =
     [ "Core", "karm-image_2jpeg_2base_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5", null ],
     [ "Gfx", "karm-image_2jpeg_2base_8cpp.html#a7c0089b00689a79148a84c5b7fe95679", null ],
     [ "Image", "karm-image_2jpeg_2base_8cpp.html#a37503819ab26c63c3b3cb63014b131fb", null ],
+    [ "Logger", "karm-image_2jpeg_2base_8cpp.html#ade9c999f65d06abc86ce3cce78a704fc", null ],
     [ "module", "karm-image_2jpeg_2base_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6", null ],
     [ "ZIGZAG", "karm-image_2jpeg_2base_8cpp.html#a2a10acbacf70c756d04d48308c9cc9a2", null ]
 ];

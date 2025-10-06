@@ -14,5 +14,5 @@ var prose_8cpp =
       [ "RIGHT", "prose_8cpp.html#ab80f5a5f98d03961e7203873c8610382a21507b40c80068eda19865706fdc2403", null ]
     ] ],
     [ "Gfx", "prose_8cpp.html#af83841fb03aad2d756d79eeb2ac6e98f", null ],
-    [ "module", "prose_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6", null ]
+    [ "Math", "prose_8cpp.html#a062e19c831932519c33a396b9b0f4a04", null ]
 ];

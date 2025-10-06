@@ -53,6 +53,7 @@ var gguf_8cpp =
     ] ],
     [ "loadGguf", "gguf_8cpp.html#a4ee6a150e654fc84bac194f59d990e09", null ],
     [ "Core", "gguf_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5", null ],
+    [ "Logger", "gguf_8cpp.html#ade9c999f65d06abc86ce3cce78a704fc", null ],
     [ "Ml", "gguf_8cpp.html#adb0848e691bae384ab4801f6c290106f", null ],
     [ "module", "gguf_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6", null ],
     [ "Ref", "gguf_8cpp.html#add789519f7f2dc7d37718eab411af552", null ],

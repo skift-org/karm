@@ -22,5 +22,6 @@ var namespacemembers_vars =
     [ "u", "namespacemembers_vars_u.html", null ],
     [ "v", "namespacemembers_vars_v.html", null ],
     [ "w", "namespacemembers_vars_w.html", null ],
+    [ "y", "namespacemembers_vars_y.html", null ],
     [ "z", "namespacemembers_vars_z.html", null ]
 ];

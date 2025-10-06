@@ -35,5 +35,7 @@ var png_2decoder_8cpp =
     [ "Debug", "png_2decoder_8cpp.html#ae9c22628d1cefdb9b7dc5262029cb360", null ],
     [ "Gfx", "png_2decoder_8cpp.html#a7c0089b00689a79148a84c5b7fe95679", null ],
     [ "Image", "png_2decoder_8cpp.html#a37503819ab26c63c3b3cb63014b131fb", null ],
+    [ "Logger", "png_2decoder_8cpp.html#ade9c999f65d06abc86ce3cce78a704fc", null ],
+    [ "Math", "png_2decoder_8cpp.html#a062e19c831932519c33a396b9b0f4a04", null ],
     [ "module", "png_2decoder_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6", null ]
 ];

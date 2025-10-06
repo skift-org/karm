@@ -12,5 +12,6 @@ var flate_8cpp =
     [ "DISTS", "flate_8cpp.html#a34e24c6ffeb6e0aa55bb80fe241ba12c", null ],
     [ "LENS", "flate_8cpp.html#a53cc00fb7422a0d7afeed470a31fc66b", null ],
     [ "LEXT", "flate_8cpp.html#ae50f413dd30bc3fb6ab6a022ead2988d", null ],
+    [ "Logger", "flate_8cpp.html#ade9c999f65d06abc86ce3cce78a704fc", null ],
     [ "module", "flate_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6", null ]
 ];

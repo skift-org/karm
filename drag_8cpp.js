@@ -17,6 +17,6 @@ var drag_8cpp =
     [ "dragRegion", "drag_8cpp.html#a3c8d588712e2f17036373c180a29fa44", null ],
     [ "App", "drag_8cpp.html#ab217fce9727b55e386bc7eab0ed28441", null ],
     [ "Gfx", "drag_8cpp.html#a7c0089b00689a79148a84c5b7fe95679", null ],
-    [ "module", "drag_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6", null ],
+    [ "Math", "drag_8cpp.html#a062e19c831932519c33a396b9b0f4a04", null ],
     [ "Ui", "drag_8cpp.html#a6b10d166640a82762e7ff7e7eea7c78c", null ]
 ];

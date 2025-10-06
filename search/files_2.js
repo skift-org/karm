@@ -27,6 +27,6 @@ var searchData=
   ['cstr_2ecpp_24',['cstr.cpp',['../cstr_8cpp.html',1,'']]],
   ['ctype_2ecpp_25',['ctype.cpp',['../ctype_8cpp.html',1,'']]],
   ['cursor_2ecpp_26',['cursor.cpp',['../karm-core_2base_2cursor_8cpp.html',1,'(Global Namespace)'],['../karm-tty_2cursor_8cpp.html',1,'(Global Namespace)']]],
-  ['curve_2eh_27',['curve.h',['../curve_8h.html',1,'']]],
+  ['curve_2ecpp_27',['curve.cpp',['../curve_8cpp.html',1,'']]],
   ['cvrp_2ecpp_28',['cvrp.cpp',['../cvrp_8cpp.html',1,'']]]
 ];

@@ -5,7 +5,6 @@ var searchData=
   ['paragraph_2',['Paragraph',['../namespaceKarm_1_1Md.html#adca066906480ef6682824004ece4e476',1,'Karm::Md']]],
   ['pixels_3',['Pixels',['../namespaceKarm_1_1Gfx.html#a3746a89e6f5c74cf11a399b75569b27b',1,'Karm::Gfx']]],
   ['polyf_4',['Polyf',['../namespaceKarm_1_1Math.html#a426444acde4f3001dcce67b098806958',1,'Karm::Math']]],
-  ['polyi_5',['Polyi',['../namespaceKarm_1_1Math.html#aae69aded3f18e41ccdade9d35a32f24a',1,'Karm::Math']]],
-  ['polyu_6',['Polyu',['../namespaceKarm_1_1Math.html#a9ead17a5e8cdc2d433fc817bc94ab468',1,'Karm::Math']]],
-  ['promise_7',['Promise',['../namespaceKarm_1_1Async.html#ae1cd9687a512559d20397a39ddd6ef50',1,'Karm::Async']]]
+  ['polyi_5',['Polyi',['../namespaceKarm_1_1Math.html#afe2ed6366126c1d29dd58c6f46195de8',1,'Karm::Math']]],
+  ['promise_6',['Promise',['../namespaceKarm_1_1Async.html#ae1cd9687a512559d20397a39ddd6ef50',1,'Karm::Async']]]
 ];

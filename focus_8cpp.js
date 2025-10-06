@@ -7,6 +7,6 @@ var focus_8cpp =
     [ "focusable", "focus_8cpp.html#a41a0844621f8ff0f8e09c6f36e4acec8", null ],
     [ "App", "focus_8cpp.html#ab217fce9727b55e386bc7eab0ed28441", null ],
     [ "Gfx", "focus_8cpp.html#a7c0089b00689a79148a84c5b7fe95679", null ],
-    [ "module", "focus_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6", null ],
+    [ "Math", "focus_8cpp.html#a062e19c831932519c33a396b9b0f4a04", null ],
     [ "Ui", "focus_8cpp.html#a6b10d166640a82762e7ff7e7eea7c78c", null ]
 ];

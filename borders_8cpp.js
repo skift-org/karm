@@ -15,5 +15,5 @@ var borders_8cpp =
       [ "_LEN", "borders_8cpp.html#a65f2c46530a861de605f2103cb12a3a5ae29d1d2ceca88985d2cf3bd5ba380301", null ]
     ] ],
     [ "Gfx", "borders_8cpp.html#af83841fb03aad2d756d79eeb2ac6e98f", null ],
-    [ "module", "borders_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6", null ]
+    [ "Math", "borders_8cpp.html#a062e19c831932519c33a396b9b0f4a04", null ]
 ];

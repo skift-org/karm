@@ -22,6 +22,6 @@ var karm_ui_2input_8cpp =
     [ "slider", "karm-ui_2input_8cpp.html#a8269a9e521de2bb1b5b01de8051481f5", null ],
     [ "slider", "karm-ui_2input_8cpp.html#a6a7e1502de4888fcc17470e2505d3ffa", null ],
     [ "Gfx", "karm-ui_2input_8cpp.html#a7c0089b00689a79148a84c5b7fe95679", null ],
-    [ "module", "karm-ui_2input_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6", null ],
+    [ "Math", "karm-ui_2input_8cpp.html#a062e19c831932519c33a396b9b0f4a04", null ],
     [ "Ui", "karm-ui_2input_8cpp.html#a6b10d166640a82762e7ff7e7eea7c78c", null ]
 ];

@@ -14,5 +14,6 @@ var otlayout_8h =
     [ "Karm::Font::Ttf::LookupTable", "structKarm_1_1Font_1_1Ttf_1_1LookupTable.html", "structKarm_1_1Font_1_1Ttf_1_1LookupTable" ],
     [ "Karm::Font::Ttf::LookupList", "structKarm_1_1Font_1_1Ttf_1_1LookupList.html", "structKarm_1_1Font_1_1Ttf_1_1LookupList" ],
     [ "LookupSubtable", "otlayout_8h.html#ad0b413f2d8fe4d8d79cbd0b46a04e568", null ],
-    [ "Core", "otlayout_8h.html#abedc7e19652ef6fd2984ea9cb3d62db5", null ]
+    [ "Core", "otlayout_8h.html#abedc7e19652ef6fd2984ea9cb3d62db5", null ],
+    [ "Logger", "otlayout_8h.html#ade9c999f65d06abc86ce3cce78a704fc", null ]
 ];

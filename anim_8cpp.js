@@ -22,6 +22,6 @@ var anim_8cpp =
     [ "slideIn", "anim_8cpp.html#a05b640b27f207fa4ca89d56de1618611", null ],
     [ "App", "anim_8cpp.html#ab217fce9727b55e386bc7eab0ed28441", null ],
     [ "Gfx", "anim_8cpp.html#a7c0089b00689a79148a84c5b7fe95679", null ],
-    [ "module", "anim_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6", null ],
+    [ "Math", "anim_8cpp.html#a062e19c831932519c33a396b9b0f4a04", null ],
     [ "Ui", "anim_8cpp.html#a6b10d166640a82762e7ff7e7eea7c78c", null ]
 ];

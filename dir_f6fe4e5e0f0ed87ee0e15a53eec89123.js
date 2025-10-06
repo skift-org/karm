@@ -2,7 +2,7 @@ var dir_f6fe4e5e0f0ed87ee0e15a53eec89123 =
 [
     [ "defs", "dir_7c1fcb50974a96386ef35ecd8dd2580d.html", "dir_7c1fcb50974a96386ef35ecd8dd2580d" ],
     [ "tests", "dir_8460e2642ebe868280d666020f4516b5.html", "dir_8460e2642ebe868280d666020f4516b5" ],
-    [ "align.cpp", "align_8cpp.html", "align_8cpp" ],
+    [ "align.cpp", "karm-core_2base_2align_8cpp.html", "karm-core_2base_2align_8cpp" ],
     [ "array.cpp", "array_8cpp.html", "array_8cpp" ],
     [ "atomic.cpp", "atomic_8cpp.html", "atomic_8cpp" ],
     [ "base.cpp", "karm-core_2base_2base_8cpp.html", "karm-core_2base_2base_8cpp" ],
@@ -54,6 +54,6 @@ var dir_f6fe4e5e0f0ed87ee0e15a53eec89123 =
     [ "try.cpp", "try_8cpp.html", "try_8cpp" ],
     [ "tuple.cpp", "tuple_8cpp.html", "tuple_8cpp" ],
     [ "union.cpp", "union_8cpp.html", "union_8cpp" ],
-    [ "vec.cpp", "vec_8cpp.html", "vec_8cpp" ],
+    [ "vec.cpp", "karm-core_2base_2vec_8cpp.html", "karm-core_2base_2vec_8cpp" ],
     [ "witty.cpp", "witty_8cpp.html", "witty_8cpp" ]
 ];

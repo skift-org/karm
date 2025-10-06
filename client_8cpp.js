@@ -9,6 +9,7 @@ var client_8cpp =
     [ "Core", "client_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5", null ],
     [ "Debug", "client_8cpp.html#ae9c22628d1cefdb9b7dc5262029cb360", null ],
     [ "Http", "client_8cpp.html#ae4e6389ba964884ff5221427019b2efc", null ],
+    [ "Logger", "client_8cpp.html#ade9c999f65d06abc86ce3cce78a704fc", null ],
     [ "module", "client_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6", null ],
     [ "Ref", "client_8cpp.html#add789519f7f2dc7d37718eab411af552", null ]
 ];
