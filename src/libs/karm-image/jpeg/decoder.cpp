@@ -1,12 +1,12 @@
 module;
 
 #include <karm-core/macros.h>
-#include <karm-logger/logger.h>
 
 export module Karm.Image:jpeg.decoder;
 
 import Karm.Core;
 import Karm.Gfx;
+import Karm.Logger;
 
 import :jpeg.base;
 import :jpeg.dct;

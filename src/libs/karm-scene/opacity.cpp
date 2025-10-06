@@ -1,11 +1,8 @@
-module;
-
-#include <karm-math/rect.h>
-
 export module Karm.Scene:opacity;
 
 import Karm.Core;
 import Karm.Gfx;
+import Karm.Math;
 
 import :proxy;
 

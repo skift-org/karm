@@ -1,12 +1,12 @@
-#pragma once
+export module Karm.Math:poly;
 
-#include "edge.h"
-#include "trans.h"
-#include "vec.h"
+import :edge;
+import :trans;
+import :vec;
 
 namespace Karm::Math {
 
-template <typename T>
+export template <typename T>
 struct Poly {
     Vec<Edge<T>> _edges{};
     Opt<Rect<T>> _bound;
@@ -79,8 +79,7 @@ struct Poly {
     }
 };
 
-using Polyf = Poly<f64>;
-using Polyi = Poly<isize>;
-using Polyu = Poly<usize>;
+export using Polyi = Poly<i64>;
+export using Polyf = Poly<f64>;
 
 } // namespace Karm::Math

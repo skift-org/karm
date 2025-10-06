@@ -1,8 +1,6 @@
-module;
-
-#include <karm-math/au.h>
-
 export module Karm.Gfx:prose;
+
+import Karm.Math;
 
 import :color;
 import :font;

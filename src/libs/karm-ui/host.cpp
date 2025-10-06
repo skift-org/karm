@@ -1,7 +1,6 @@
 module;
 
-#include <karm-logger/logger.h>
-#include <karm-math/rect.h>
+#include <karm-core/macros.h>
 
 export module Karm.Ui:host;
 
@@ -10,6 +9,9 @@ import Karm.App;
 import Karm.Font;
 import Karm.Sys;
 import Karm.Gfx;
+import Karm.Math;
+import Karm.Logger;
+
 import :node;
 import :atoms;
 

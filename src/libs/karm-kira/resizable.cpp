@@ -1,11 +1,9 @@
-module;
-
-#include <karm-math/rect.h>
-
 export module Karm.Kira:resizable;
 
 import Karm.App;
 import Karm.Ui;
+import Karm.Math;
+import Karm.Core;
 
 namespace Karm::Kira {
 

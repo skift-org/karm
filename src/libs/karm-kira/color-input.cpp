@@ -1,13 +1,10 @@
-module;
-
-#include <karm-math/align.h>
-#include <karm-math/ellipse.h>
-
 export module Karm.Kira:colorInput;
 
 import Karm.App;
 import Karm.Ui;
 import Karm.Gfx;
+import Karm.Math;
+
 import :dialog;
 
 namespace Karm::Kira {

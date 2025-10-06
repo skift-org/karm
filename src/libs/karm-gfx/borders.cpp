@@ -1,10 +1,6 @@
-module;
-
-#include <karm-math/radii.h>
-#include <karm-math/curve.h>
-
 export module Karm.Gfx:borders;
 
+import Karm.Math;
 import :canvas;
 
 namespace Karm::Gfx {
@@ -244,7 +240,7 @@ export struct Borders {
             );
     }
 
-    void _paintSimpleEdges(Gfx::Canvas& c, Math::Rectf rect)  {
+    void _paintSimpleEdges(Gfx::Canvas& c, Math::Rectf rect) {
         Math::Rectf outerRect = rect;
         Math::Radiif outerRadii = radii;
         outerRadii.reduceOverlap(outerRect.size());
@@ -293,7 +289,6 @@ export struct Borders {
 
         _paintCurveEdges(c, rect);
     }
-
 
     Borders& withFill(Fill const& fill) {
         fills = {fill, fill, fill, fill};

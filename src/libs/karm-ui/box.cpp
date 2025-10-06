@@ -1,12 +1,7 @@
-module;
-
-#include <karm-math/insets.h>
-#include <karm-math/radii.h>
-#include <karm-math/rect.h>
-
 export module Karm.Ui:box;
 
 import Karm.Gfx;
+import Karm.Math;
 
 import :node;
 import :atoms;

@@ -1,11 +1,9 @@
-module;
-
-#include <karm-math/rect.h>
-
 export module Karm.Scene:proxy;
 
 import Karm.Core;
 import Karm.Gfx;
+import Karm.Math;
+
 import :node;
 
 namespace Karm::Scene {

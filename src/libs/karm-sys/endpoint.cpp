@@ -1,9 +1,10 @@
 module;
 
 #include <karm-core/macros.h>
-#include <karm-logger/logger.h>
 
 export module Karm.Sys:endpoint;
+
+import Karm.Logger;
 
 import :context;
 import :message;

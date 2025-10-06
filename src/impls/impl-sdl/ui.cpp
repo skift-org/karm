@@ -1,7 +1,7 @@
 module;
 
 #include <SDL3/SDL.h>
-#include <karm-math/rect.h>
+#include <karm-core/macros.h>
 
 module Karm.Ui;
 
@@ -10,6 +10,8 @@ import Karm.App;
 import Karm.Sys;
 import Karm.Ref;
 import Karm.Gfx;
+import Karm.Math;
+import Karm.Core;
 
 import :host;
 import :node;

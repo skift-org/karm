@@ -1,12 +1,8 @@
-module;
-
-#include <karm-math/align.h>
-#include <karm-math/insets.h>
-
 export module Karm.Ui:layout;
 
 import Karm.App;
 import Karm.Gfx;
+import Karm.Math;
 
 import :node;
 import :view;

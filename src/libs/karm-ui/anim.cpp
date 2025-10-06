@@ -1,12 +1,8 @@
-module;
-
-#include <karm-math/easing.h>
-#include <karm-math/flow.h>
-
 export module Karm.Ui:anim;
 
 import Karm.App;
 import Karm.Gfx;
+import Karm.Math;
 
 import :funcs;
 import :node;

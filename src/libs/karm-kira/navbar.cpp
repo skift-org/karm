@@ -1,12 +1,9 @@
-module;
-
-#include <karm-math/align.h>
-
 export module Karm.Kira:navbar;
 
 import Karm.Core;
 import Karm.Ui;
 import Karm.Gfx;
+import Karm.Math;
 
 import :separator;
 

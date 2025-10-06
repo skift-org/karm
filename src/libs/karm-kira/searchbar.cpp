@@ -1,12 +1,10 @@
-module;
-
-#include <karm-math/align.h>
-
 export module Karm.Kira:searchbar;
 
 import Karm.Core;
 import Karm.App;
 import Karm.Ui;
+import Karm.Math;
+
 import Mdi;
 
 namespace Karm::Kira {

@@ -1,11 +1,11 @@
 module;
 
 #include <karm-core/macros.h>
-#include <karm-math/vec.h>
 
 export module Karm.Gfx:color;
 
 import Karm.Core;
+import Karm.Math;
 
 namespace Karm::Gfx {
 

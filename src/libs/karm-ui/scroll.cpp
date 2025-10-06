@@ -1,11 +1,8 @@
-module;
-
-#include <karm-math/flow.h>
-
 export module Karm.Ui:scroll;
 
 import Karm.App;
 import Karm.Gfx;
+import Karm.Math;
 
 import :anim;
 import :node;

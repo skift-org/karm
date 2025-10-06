@@ -1,11 +1,11 @@
-#pragma once
+export module Karm.Math:ellipse;
 
-#include "rect.h"
-#include "vec.h"
+import :rect;
+import :vec;
 
 namespace Karm::Math {
 
-template <typename T>
+export template <typename T>
 union Ellipse {
     using Scalar = T;
 
@@ -73,8 +73,8 @@ union Ellipse {
     }
 };
 
-using Ellipsei = Ellipse<isize>;
+export using Ellipsei = Ellipse<isize>;
 
-using Ellipsef = Ellipse<f64>;
+export using Ellipsef = Ellipse<f64>;
 
 } // namespace Karm::Math

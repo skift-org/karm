@@ -1,9 +1,10 @@
 module;
 
 #include <karm-core/macros.h>
-#include <karm-logger/logger.h>
 
 export module Karm.Av:wav;
+
+import Karm.Logger;
 
 import :audio;
 import :riff;

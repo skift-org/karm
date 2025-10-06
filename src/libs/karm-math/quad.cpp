@@ -1,11 +1,15 @@
-#pragma once
+module;
 
-#include "rect.h"
-#include "vec.h"
+#include <karm-core/macros.h>
+
+export module Karm.Math:quad;
+
+import :rect;
+import :vec;
 
 namespace Karm::Math {
 
-template <typename T>
+export template <typename T>
 union Quad {
     using Scalar = T;
 
@@ -94,10 +98,10 @@ union Quad {
     }
 };
 
-using Quadi = Quad<isize>;
+export using Quadi = Quad<isize>;
 
-using Quadu = Quad<usize>;
+export using Quadu = Quad<usize>;
 
-using Quadf = Quad<f64>;
+export using Quadf = Quad<f64>;
 
 } // namespace Karm::Math

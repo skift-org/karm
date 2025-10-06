@@ -1,13 +1,13 @@
 module;
 
 #include <karm-core/macros.h>
-#include <karm-logger/logger.h>
-#include <karm-math/vec.h>
 
 export module Karm.Image:bmp.decoder;
 
 import Karm.Core;
 import Karm.Gfx;
+import Karm.Math;
+import Karm.Logger;
 
 // BMP image decoder
 // References:

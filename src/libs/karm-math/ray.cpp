@@ -1,10 +1,10 @@
-#pragma once
+export module Karm.Math:ray;
 
-#include "vec.h"
+import :vec;
 
 namespace Karm::Math {
 
-template <typename V, typename T = typename V::Scalar>
+export template <typename V, typename T = typename V::Scalar>
 struct Ray {
     using Scalar = T;
 
@@ -27,7 +27,7 @@ struct Ray {
     }
 };
 
-using Rayi = Ray<isize, isize>;
+using Rayi = Ray<i64, i64>;
 
 using Rayf = Ray<f64, f64>;
 

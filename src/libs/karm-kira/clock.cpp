@@ -1,13 +1,9 @@
-module;
-
-#include <karm-math/rect.h>
-#include <karm-math/ellipse.h>
-
 export module Karm.Kira:clock;
 
 import Karm.Core;
 import Karm.Ui;
 import Karm.Gfx;
+import Karm.Math;
 
 namespace Karm::Kira {
 

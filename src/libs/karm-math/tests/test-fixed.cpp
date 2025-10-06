@@ -2,10 +2,10 @@
 // License: MIT
 // Copyright (c) 2019 Mike Lankamp
 
-#include <karm-math/fixed.h>
 #include <karm-test/macros.h>
 
 import Karm.Core;
+import Karm.Math;
 
 namespace Karm::Math::Tests {
 

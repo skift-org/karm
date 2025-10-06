@@ -1,12 +1,11 @@
 module;
 
-#include <karm-math/vec.h>
-
-#include "karm-core/macros.h"
+#include <karm-core/macros.h>
 
 export module Karm.App:inputs;
 
 import Karm.Core;
+import Karm.Math;
 
 import :event;
 

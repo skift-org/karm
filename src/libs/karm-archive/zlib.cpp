@@ -1,12 +1,13 @@
 module;
 
 #include <karm-core/macros.h>
-#include <karm-logger/logger.h>
 
 export module Karm.Archive:zlib;
 
 import Karm.Core;
 import Karm.Debug;
+import Karm.Logger;
+
 import :flate;
 
 namespace Karm::Archive {

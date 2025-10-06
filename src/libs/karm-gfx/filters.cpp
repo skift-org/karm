@@ -1,11 +1,7 @@
-module;
-
-#include <karm-math/vec.h>
-#include <karm-math/rand.h>
-
 export module Karm.Gfx:filters;
 
 import Karm.Core;
+import Karm.Math;
 
 import :buffer;
 import :color;

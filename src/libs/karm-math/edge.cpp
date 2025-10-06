@@ -1,11 +1,11 @@
-#pragma once
+export module Karm.Math:edge;
 
-#include "rect.h"
-#include "vec.h"
+import :rect;
+import :vec;
 
 namespace Karm::Math {
 
-template <typename T>
+export template <typename T>
 union Edge {
     using Scalar = T;
 
@@ -127,14 +127,14 @@ union Edge {
     }
 };
 
-using Edgei = Edge<isize>;
+export using Edgei = Edge<isize>;
 
-using Edgef = Edge<f64>;
+export using Edgef = Edge<f64>;
 
-template <typename T>
+export template <typename T>
 Edge(Vec2<T>, Vec2<T>) -> Edge<T>;
 
-template <typename T>
+export template <typename T>
 Edge(T, T, T, T) -> Edge<T>;
 
 } // namespace Karm::Math

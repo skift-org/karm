@@ -1,10 +1,10 @@
 module;
 
 #include <karm-core/macros.h>
-#include <karm-math/vec.h>
 
 export module Karm.Image:base.saver;
 
+import Karm.Math;
 import Karm.Core;
 import Karm.Ref;
 import Karm.Sys;

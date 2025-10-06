@@ -1,9 +1,6 @@
-module;
-
-#include <karm-logger/logger.h>
-
 export module Karm.Ml:vocab;
 
+import Karm.Logger;
 import Karm.Core;
 
 namespace Karm::Ml {

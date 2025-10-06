@@ -1,9 +1,10 @@
 module;
 
-#include <karm-math/rect.h>
+#include <karm-core/macros.h>
 
 export module Karm.Gfx:buffer;
 
+import Karm.Math;
 import Karm.Core;
 
 import :color;

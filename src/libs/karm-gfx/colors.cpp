@@ -1,10 +1,7 @@
-module;
-
-#include <karm-math/rand.h>
-
 export module Karm.Gfx:colors;
 
 import Karm.Core;
+import Karm.Math;
 
 import :color;
 

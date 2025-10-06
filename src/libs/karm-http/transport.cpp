@@ -1,13 +1,13 @@
 module;
 
 #include <karm-core/macros.h>
-#include <karm-logger/logger.h>
 
 export module Karm.Http:transport;
 
 import Karm.Core;
 import Karm.Ref;
 import Karm.Sys;
+import Karm.Logger;
 
 import :request;
 import :response;

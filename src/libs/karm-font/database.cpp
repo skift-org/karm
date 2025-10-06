@@ -1,10 +1,10 @@
 module;
 
 #include <karm-core/macros.h>
-#include <karm-logger/logger.h>
 
 export module Karm.Font:database;
 
+import Karm.Logger;
 import Karm.Sys;
 import Karm.Core;
 import Karm.Ref;

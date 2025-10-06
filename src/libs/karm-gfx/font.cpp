@@ -1,11 +1,8 @@
-module;
-
-#include <karm-logger/logger.h>
-#include <karm-math/rect.h>
-
 export module Karm.Gfx:font;
 
 import Karm.Core;
+import Karm.Math;
+import Karm.Logger;
 
 namespace Karm::Gfx {
 

@@ -1,12 +1,8 @@
-module;
-
-#include <karm-math/rect.h>
-#include <karm-math/radii.h>
-
 export module Karm.Scene:image;
 
 import Karm.Core;
 import Karm.Gfx;
+import Karm.Math;
 
 import :node;
 

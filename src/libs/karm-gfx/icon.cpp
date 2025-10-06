@@ -1,10 +1,6 @@
-module;
-
-#include <karm-math/rect.h>
-#include <karm-math/path.h>
-
 export module Karm.Gfx:icon;
 
+import Karm.Math;
 import :canvas;
 
 namespace Karm::Gfx {

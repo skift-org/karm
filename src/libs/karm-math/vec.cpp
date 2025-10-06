@@ -1,10 +1,10 @@
-#pragma once
+export module Karm.Math:vec;
 
 import Karm.Core;
 
 namespace Karm::Math {
 
-template <typename T>
+export template <typename T>
 union Vec2 {
     using Scalar = T;
 
@@ -244,19 +244,19 @@ constexpr Vec2<T> Vec2<T>::ONE = {1};
 template <typename T>
 constexpr Vec2<T> Vec2<T>::MAX = {Limits<T>::MAX};
 
-using Vec2i = Vec2<isize>;
+export using Vec2i = Vec2<isize>;
 
-using Vec2u = Vec2<usize>;
+export using Vec2u = Vec2<usize>;
 
-using Vec2f = Vec2<f64>;
+export using Vec2f = Vec2<f64>;
 
-template <typename T>
+export template <typename T>
 bool epsilonEq(Vec2<T> const& lhs, Vec2<T> const& rhs, T epsilon = Limits<T>::EPSILON) {
     return epsilonEq(lhs.x, rhs.x, epsilon) and
            epsilonEq(lhs.y, rhs.y, epsilon);
 }
 
-template <typename T>
+export template <typename T>
 union Vec3 {
     using Scalar = T;
 
@@ -485,20 +485,20 @@ constexpr Vec3<T> operator/(T const& lhs, Vec3<T> const& rhs) {
     return {lhs / rhs.x, lhs / rhs.y, lhs / rhs.z};
 }
 
-using Vec3i = Vec3<isize>;
+export using Vec3i = Vec3<isize>;
 
-using Vec3u = Vec3<usize>;
+export using Vec3u = Vec3<usize>;
 
-using Vec3f = Vec3<f64>;
+export using Vec3f = Vec3<f64>;
 
-template <typename T>
+export template <typename T>
 bool epsilonEq(Vec3<T> const& lhs, Vec3<T> const& rhs, T epsilon) {
     return epsilonEq(lhs.x, rhs.x, epsilon) and
            epsilonEq(lhs.y, rhs.y, epsilon) and
            epsilonEq(lhs.z, rhs.z, epsilon);
 }
 
-template <typename T>
+export template <typename T>
 union Vec4 {
     using Scalar = T;
 
@@ -720,13 +720,13 @@ constexpr Vec4<T> operator/(T const& lhs, Vec4<T> const& rhs) {
     return {lhs / rhs.x, lhs / rhs.y, lhs / rhs.z, lhs / rhs.w};
 }
 
-using Vec4i = Vec4<isize>;
+export using Vec4i = Vec4<isize>;
 
-using Vec4u = Vec4<usize>;
+export using Vec4u = Vec4<usize>;
 
-using Vec4f = Vec4<f64>;
+export using Vec4f = Vec4<f64>;
 
-template <typename T>
+export template <typename T>
 bool epsilonEq(Vec4<T> const& lhs, Vec4<T> const& rhs, T epsilon) {
     return epsilonEq(lhs.x, rhs.x, epsilon) and
            epsilonEq(lhs.y, rhs.y, epsilon) and

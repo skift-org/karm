@@ -1,10 +1,8 @@
-module;
-
-#include <karm-math/poly.h>
-
 export module Karm.Gfx:cpu.rast;
 
 import Karm.Core;
+import Karm.Math;
+
 import :fill;
 
 namespace Karm::Gfx {

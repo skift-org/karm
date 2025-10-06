@@ -1,14 +1,10 @@
-module;
-
-#include <karm-logger/logger.h>
-#include <karm-math/path.h>
-#include <karm-math/trans.h>
-
 export module Karm.Pdf:canvas;
 
 import Karm.Core;
 import Karm.Debug;
 import Karm.Gfx;
+import Karm.Math;
+import Karm.Logger;
 
 namespace Karm::Pdf {
 

@@ -1,10 +1,6 @@
-module;
-
-#include <karm-math/trans.h>
-#include <karm-math/path.h>
-
 export module Karm.Gfx:svg.canvas;
 
+import Karm.Math;
 import Karm.Core;
 
 import :canvas;

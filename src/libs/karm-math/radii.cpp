@@ -1,13 +1,13 @@
-#pragma once
+export module Karm.Math:radii;
 
 import Karm.Core;
 
-#include "insets.h"
-#include "vec.h"
+import :insets;
+import :vec;
 
 namespace Karm::Math {
 
-template <typename T>
+export template <typename T>
 struct Radii {
     /*
         The radii are disposed in the following order
@@ -189,8 +189,7 @@ struct Radii {
     }
 };
 
-using Radiii = Radii<isize>;
-
-using Radiif = Radii<f64>;
+export using Radiii = Radii<i64>;
+export using Radiif = Radii<f64>;
 
 } // namespace Karm::Math

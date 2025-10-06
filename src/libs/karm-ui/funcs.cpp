@@ -1,11 +1,9 @@
-module;
-
-#include <karm-math/rect.h>
-
 export module Karm.Ui:funcs;
 
 import Karm.Core;
 import Karm.App;
+import Karm.Math;
+
 import :node;
 
 namespace Karm::Ui {

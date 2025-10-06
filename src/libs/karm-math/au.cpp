@@ -1,0 +1,35 @@
+export module Karm.Math:au;
+
+import :fixed;
+import :insets;
+import :radii;
+import :rect;
+
+// NOTE: Not in the Karm::Math namespace because it's pretty commonly used
+//       and typing Math::Au is a bit too much.
+namespace Karm {
+
+// Au (aka Application Unit, Atomic Unit, Absurd Unit, Almighty Unit, Annoying Unit, Autistic Unit, Awesome Unit, Anarcho-Unit, Avocado Unit, Adorable Unit, etc...) is the fundamental
+// unit of measurement in Karm.
+// It's inspired by Mozilla's AppUnits, see:
+//  - https://docs.rs/app_units/latest/app_units/
+//  - https://bugzilla.mozilla.org/show_bug.cgi?id=177805
+export using Au = Math::i24f8;
+
+export using RectAu = Math::Rect<Au>;
+
+export using Vec2Au = Math::Vec2<Au>;
+
+export using InsetsAu = Math::Insets<Au>;
+
+export using RadiiAu = Math::Radii<Au>;
+
+} // namespace Karm
+
+export constexpr Karm::Au operator""_au(unsigned long long val) {
+    return Karm::Au{val};
+}
+
+export constexpr Karm::Au operator""_au(long double val) {
+    return Karm::Au{val};
+}

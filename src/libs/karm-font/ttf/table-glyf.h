@@ -2,10 +2,10 @@
 
 import Karm.Core;
 import Karm.Gfx;
+import Karm.Math;
+import Karm.Logger;
 
-#include <karm-logger/logger.h>
 #include <karm-core/macros.h>
-#include <karm-math/vec.h>
 
 namespace Karm::Font::Ttf {
 

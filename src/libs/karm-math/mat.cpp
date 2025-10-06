@@ -1,12 +1,12 @@
-#pragma once
+export module Karm.Math:mat;
 
-#include "vec.h"
+import :vec;
 
 namespace Karm::Math {
 
 // Matrices types, column major, post multiply
 
-template <typename T>
+export template <typename T>
 union Mat2 {
     using Scalar = T;
 
@@ -47,10 +47,10 @@ union Mat2 {
     }
 };
 
-using Mat2i = Mat2<i64>;
-using Mat2f = Mat2<f64>;
+export using Mat2i = Mat2<i64>;
+export using Mat2f = Mat2<f64>;
 
-template <typename T>
+export template <typename T>
 union Mat3 {
     using Scalar = T;
 
@@ -86,10 +86,10 @@ union Mat3 {
     }
 };
 
-using Mat3i = Mat3<i64>;
-using Mat3f = Mat3<f64>;
+export using Mat3i = Mat3<i64>;
+export using Mat3f = Mat3<f64>;
 
-template <typename T>
+export template <typename T>
 union Mat4 {
     using Scalar = T;
 
@@ -127,7 +127,7 @@ union Mat4 {
     }
 };
 
-using Mat4i = Mat4<i64>;
-using Mat4f = Mat4<f64>;
+export using Mat4i = Mat4<i64>;
+export using Mat4f = Mat4<f64>;
 
 } // namespace Karm::Math

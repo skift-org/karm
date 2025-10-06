@@ -1,11 +1,9 @@
-module;
-
-#include <karm-math/rect.h>
-
 export module Karm.Ui:focus;
 
 import Karm.App;
 import Karm.Gfx;
+import Karm.Math;
+
 import :funcs;
 import :atoms;
 import :intent;

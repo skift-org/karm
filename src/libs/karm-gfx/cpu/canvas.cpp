@@ -1,11 +1,6 @@
-module;
-
-#include <karm-math/trans.h>
-#include <karm-math/path.h>
-#include <karm-math/poly.h>
-
 export module Karm.Gfx:cpu.canvas;
 
+import Karm.Math;
 import :buffer;
 import :canvas;
 import :fill;

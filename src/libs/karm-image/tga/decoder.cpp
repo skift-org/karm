@@ -1,12 +1,14 @@
 module;
 
-#include <karm-logger/logger.h>
-#include <karm-math/rect.h>
+#include <karm-core/macros.h>
 
 export module Karm.Image:tga.decoder;
 
 import Karm.Core;
 import Karm.Gfx;
+import Karm.Math;
+import Karm.Logger;
+
 import :tga.base;
 
 // TGA image decoder

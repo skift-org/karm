@@ -1,7 +1,7 @@
-#pragma once
+export module Karm.Math:tri;
 
-#include "edge.h"
-#include "vec.h"
+import :edge;
+import :vec;
 
 namespace Karm::Math {
 

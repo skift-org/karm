@@ -1,9 +1,9 @@
 #include <karm-sys/entry.h>
-#include <karm-math/rand.h>
 
 import Karm.Cli;
 import Karm.Sys;
 import Karm.Gfx;
+import Karm.Math;
 
 using namespace Karm;
 

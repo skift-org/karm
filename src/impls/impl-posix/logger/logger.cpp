@@ -1,5 +1,8 @@
-#include <karm-logger/_embed.h>
+module;
+
 #include <stdio.h>
+
+module Karm.Logger;
 
 namespace Karm::Logger::_Embed {
 

@@ -1,10 +1,11 @@
 module;
 
-#include <karm-math/trans.h>
+#include <karm-core/macros.h>
 
 export module Karm.Gfx:fill;
 
 import Karm.Core;
+import Karm.Math;
 
 import :buffer;
 import :color;

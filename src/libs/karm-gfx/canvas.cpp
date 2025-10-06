@@ -1,12 +1,7 @@
-module;
-
-#include <karm-math/path.h>
-#include <karm-math/trans.h>
-#include <karm-math/au.h>
-
 export module Karm.Gfx:canvas;
 
 import Karm.Core;
+import Karm.Math;
 
 import :fill;
 import :filters;

@@ -1,10 +1,10 @@
-#pragma once
+export module Karm.Math:easing;
 
 import Karm.Core;
 
 namespace Karm::Math {
 
-struct Easing {
+export struct Easing {
     f64 (*_inner)(f64);
 
     Easing()

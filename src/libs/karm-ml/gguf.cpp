@@ -1,13 +1,14 @@
 module;
 
 #include <karm-core/macros.h>
-#include <karm-logger/logger.h>
 
 export module Karm.Ml:gguf;
 
 import Karm.Sys;
 import Karm.Core;
 import Karm.Ref;
+import Karm.Logger;
+
 import :vocab;
 
 namespace Karm::Ml::Gguf {

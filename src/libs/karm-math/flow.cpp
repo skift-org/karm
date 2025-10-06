@@ -1,18 +1,18 @@
-#pragma once
+export module Karm.Math:flow;
 
-#include <karm-math/rect.h>
-#include <karm-math/vec.h>
+import :rect;
+import :vec;
 
 namespace Karm::Math {
 
-enum struct Orien {
+export enum struct Orien {
     NONE,
     HORIZONTAL,
     VERTICAL,
     BOTH
 };
 
-struct Flow {
+export struct Flow {
     enum struct _Flow {
         LEFT_TO_RIGHT,
         RIGHT_TO_LEFT,

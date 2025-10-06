@@ -1,11 +1,7 @@
-module;
-
-#include <karm-math/insets.h>
-#include <karm-math/vec.h>
-
 export module Karm.Print:paper;
 
 import Karm.Core;
+import Karm.Math;
 
 namespace Karm::Print {
 

@@ -1,9 +1,6 @@
-module;
-
-#include <karm-math/rect.h>
-
 export module Karm.Gfx:shadow;
 
+import Karm.Math;
 import :canvas;
 
 namespace Karm::Gfx {

@@ -1,11 +1,11 @@
-#pragma once
+export module Karm.Math:rand;
 
-#include "rect.h"
-#include "vec.h"
+import :rect;
+import :vec;
 
 namespace Karm::Math {
 
-struct Rand {
+export struct Rand {
     u64 _state{};
     u64 _inc{};
 

@@ -1,10 +1,10 @@
-#pragma once
+export module Karm.Math:insets;
 
-#include "vec.h"
+import :vec;
 
 namespace Karm::Math {
 
-template <typename T>
+export template <typename T>
 struct Insets {
     T start;
     T top;
@@ -83,7 +83,7 @@ struct Insets {
     }
 };
 
-using Insetsi = Insets<isize>;
-using Insetsf = Insets<f64>;
+export using Insetsi = Insets<isize>;
+export using Insetsf = Insets<f64>;
 
 } // namespace Karm::Math

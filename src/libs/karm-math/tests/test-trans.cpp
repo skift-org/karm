@@ -1,5 +1,6 @@
-#include <karm-math/trans.h>
 #include <karm-test/macros.h>
+
+import Karm.Math;
 
 namespace Karm::Math::Tests {
 

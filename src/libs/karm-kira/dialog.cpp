@@ -1,13 +1,11 @@
-module;
-
-#include <karm-math/align.h>
-
 export module Karm.Kira:dialog;
 
 import Karm.Ui;
 import Karm.App;
 import Karm.Gfx;
+import Karm.Math;
 import Mdi;
+
 import :separator;
 
 namespace Karm::Kira {

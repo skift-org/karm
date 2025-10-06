@@ -1,10 +1,6 @@
-module;
-
-#include <karm-math/path.h>
-#include <karm-math/poly.h>
-
 export module Karm.Gfx:stroke;
 
+import Karm.Math;
 import :fill;
 
 namespace Karm::Gfx {

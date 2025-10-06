@@ -1,11 +1,11 @@
-#pragma once
+export module Karm.Math:arc;
 
-#include "rect.h"
-#include "vec.h"
+import :rect;
+import :vec;
 
 namespace Karm::Math {
 
-template <typename T>
+export template <typename T>
 union Arc {
     using Scalar = T;
 
@@ -108,8 +108,8 @@ union Arc {
     }
 };
 
-using Arci = Arc<isize>;
+export using Arci = Arc<isize>;
 
-using Arcf = Arc<f64>;
+export using Arcf = Arc<f64>;
 
 } // namespace Karm::Math

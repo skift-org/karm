@@ -1,14 +1,14 @@
-#pragma once
+export module Karm.Math:trans;
 
 import Karm.Core;
 
-#include "edge.h"
-#include "quad.h"
-#include "vec.h"
+import :edge;
+import :quad;
+import :vec;
 
 namespace Karm::Math {
 
-template <typename T>
+export template <typename T>
 union Trans2 {
     using Scalar = T;
 
@@ -218,8 +218,6 @@ union Trans2 {
     }
 };
 
-using Trans2i = Trans2<i64>;
-
-using Trans2f = Trans2<f64>;
+export using Trans2f = Trans2<f64>;
 
 } // namespace Karm::Math

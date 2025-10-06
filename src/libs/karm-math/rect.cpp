@@ -1,15 +1,16 @@
-#pragma once
-
-import Karm.Core;
+module;
 
 #include <karm-core/macros.h>
 
-#include "insets.h"
-#include "vec.h"
+export module Karm.Math:rect;
+
+import Karm.Core;
+import :insets;
+import :vec;
 
 namespace Karm::Math {
 
-template <typename T>
+export template <typename T>
 union Rect {
     using Scalar = T;
 
@@ -359,10 +360,8 @@ Rect<T> const Rect<T>::ONE = {1, 1};
 template <typename T>
 Rect<T> const Rect<T>::MAX = {Limits<T>::MAX, Limits<T>::MAX};
 
-using Recti = Rect<isize>;
+export using Recti = Rect<i64>;
 
-using Rectu = Rect<usize>;
-
-using Rectf = Rect<f64>;
+export using Rectf = Rect<f64>;
 
 } // namespace Karm::Math

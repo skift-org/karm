@@ -1,6 +1,6 @@
 #pragma once
 
-#include <karm-logger/logger.h>
+import Karm.Logger;
 
 #include "table-cmap.h"
 #include "table-glyf.h"

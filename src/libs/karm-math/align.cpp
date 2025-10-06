@@ -1,11 +1,11 @@
-#pragma once
+export module Karm.Math:align;
 
-#include "flow.h"
-#include "rect.h"
+import :flow;
+import :rect;
 
 namespace Karm::Math {
 
-struct Align {
+export struct Align {
     static constexpr u16 NONE = (0);
 
     static constexpr u16 START = (1 << 0);

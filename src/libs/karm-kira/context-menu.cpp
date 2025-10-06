@@ -1,12 +1,10 @@
-module;
-
-#include <karm-math/align.h>
-
 export module Karm.Kira:contextMenu;
 
 import Karm.App;
 import Karm.Ui;
 import Karm.Gfx;
+import Karm.Math;
+
 import :checkbox;
 
 namespace Karm::Kira {

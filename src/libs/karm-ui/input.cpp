@@ -1,12 +1,7 @@
-module;
-
-#include <karm-math/align.h>
-#include <karm-math/radii.h>
-#include <karm-math/au.h>
-
 export module Karm.Ui:input;
 
 import Karm.Gfx;
+import Karm.Math;
 
 import :drag;
 import :focus;

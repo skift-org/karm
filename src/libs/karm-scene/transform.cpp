@@ -1,11 +1,8 @@
-module;
-
-#include <karm-math/trans.h>
-
 export module Karm.Scene:transform;
 
 import Karm.Core;
 import Karm.Gfx;
+import Karm.Math;
 
 import :proxy;
 

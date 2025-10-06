@@ -2,8 +2,7 @@
 
 import Karm.Core;
 import Karm.Sys;
-
-#include <karm-logger/logger.h>
+import Karm.Logger;
 
 namespace Karm::Net::Dns {
 

@@ -1,12 +1,9 @@
-module;
-
-#include <karm-math/easing.h>
-#include <karm-math/rect.h>
-
 export module Karm.Ui:drag;
 
 import Karm.App;
 import Karm.Gfx;
+import Karm.Math;
+
 import :anim;
 import :layout;
 import :view;

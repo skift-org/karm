@@ -1,10 +1,6 @@
-module;
-
-#include <karm-math/rect.h>
-#include <karm-math/radii.h>
-
 export module Karm.Gfx:outline;
 
+import Karm.Math;
 import :borders;
 
 namespace Karm::Gfx {

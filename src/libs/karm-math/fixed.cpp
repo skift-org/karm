@@ -1,13 +1,13 @@
-#pragma once
+export module Karm.Math:fixed;
 
 import Karm.Core;
 
 namespace Karm::Math {
 
-template <typename T>
+export template <typename T>
 struct Frac;
 
-template <Meta::SignedIntegral T, usize _F>
+export template <Meta::SignedIntegral T, usize _F>
 struct Fixed {
     static constexpr bool _FIXED = true;
 
@@ -184,7 +184,7 @@ struct Fixed {
     constexpr std::strong_ordering operator<=>(Fixed const& rhs) const = default;
 };
 
-template <typename T>
+export template <typename T>
 struct Frac {
     T _num;
     T _deno;
@@ -211,20 +211,20 @@ constexpr Frac<Fixed<T, F>> Fixed<T, F>::operator/(Frac<Fixed<T, F>> const& rhs)
     return Frac<Fixed<T, F>>{fromRaw(_val) * rhs._deno, rhs._num};
 }
 
-using i24f8 = Fixed<i32, 8>;
-using i16f16 = Fixed<i32, 16>;
-using i8f24 = Fixed<i32, 24>;
+export using i24f8 = Fixed<i32, 8>;
+export using i16f16 = Fixed<i32, 16>;
+export using i8f24 = Fixed<i32, 24>;
 
 // MARK: Functions -------------------------------------------------------------
 
-template <Meta::SignedIntegral T, usize _F>
+export template <Meta::SignedIntegral T, usize _F>
 constexpr Fixed<T, _F> abs(Fixed<T, _F> const& val) {
     return val < Fixed<T, _F>{0} ? -val : val;
 }
 
 } // namespace Karm::Math
 
-template <Karm::Meta::SignedIntegral T, Karm::usize F>
+export template <Karm::Meta::SignedIntegral T, Karm::usize F>
 struct Karm::Limits<Karm::Math::Fixed<T, F>> {
     static constexpr Math::Fixed<T, F> MIN = Math::Fixed<T, F>::fromRaw(Limits<T>::MIN);
     static constexpr Math::Fixed<T, F> MAX = Math::Fixed<T, F>::fromRaw(Limits<T>::MAX);
@@ -232,14 +232,14 @@ struct Karm::Limits<Karm::Math::Fixed<T, F>> {
     static constexpr bool SIGNED = false;
 };
 
-template <Karm::Meta::SignedIntegral T, Karm::usize F>
+export template <Karm::Meta::SignedIntegral T, Karm::usize F>
 struct Karm::Io::Formatter<Karm::Math::Fixed<T, F>> {
     Res<> format(Io::TextWriter& writer, Math::Fixed<T, F> const& val) {
         return Io::format(writer, "{}", val.template cast<f64>());
     }
 };
 
-template <typename T>
+export template <typename T>
 struct Karm::Io::Formatter<Karm::Math::Frac<T>> {
     Res<> format(Io::TextWriter& writer, Math::Frac<T> const& val) {
         return Io::format(writer, "{}/{}", val._num, val._deno);

@@ -1,12 +1,8 @@
-module;
-
-#include <karm-math/rect.h>
-#include <karm-math/path.h>
-
 export module Karm.Scene:clip;
 
 import Karm.Core;
 import Karm.Gfx;
+import Karm.Math;
 
 import :proxy;
 

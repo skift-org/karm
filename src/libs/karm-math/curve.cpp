@@ -1,4 +1,4 @@
-#pragma once
+export module Karm.Math:curve;
 
 // Yang, S.-N., & Huang, M.-L. (1993). A New Shape Control and Classification
 // for Cubic Bézier Curves. Communicating with Virtual Worlds, 204–215.
@@ -8,13 +8,13 @@
 // https://pomax.github.io/bezierinfo/#offsetting
 // https://gasiulis.name/cubic-curve-offsetting/
 
-#include "tri.h"
-#include "vec.h"
+import :tri;
+import :vec;
 
 namespace Karm::Math {
 
 // Cubic Bezier curve
-template <typename T>
+export template <typename T>
 union Curve {
     using Scalar = T;
 
@@ -214,10 +214,10 @@ union Curve {
     }
 };
 
-using Curvei = Curve<isize>;
+export using Curvei = Curve<isize>;
 
-using Curveu = Curve<usize>;
+export using Curveu = Curve<usize>;
 
-using Curvef = Curve<f64>;
+export using Curvef = Curve<f64>;
 
 } // namespace Karm::Math

@@ -1,7 +1,7 @@
-#include <karm-logger/logger.h>
 #include <karm-test/macros.h>
 
 import Karm.Sys;
+import Karm.Logger;
 
 namespace Karm::Sys::Tests {
 

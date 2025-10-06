@@ -1,8 +1,3 @@
-module;
-
-#include <karm-math/trans.h>
-#include <karm-math/au.h>
-
 export module Karm.Ui:view;
 
 import Karm.Core;
@@ -11,6 +6,7 @@ import Karm.Image;
 import Karm.Font;
 import Karm.Ref;
 import Karm.Gfx;
+import Karm.Math;
 
 import :node;
 

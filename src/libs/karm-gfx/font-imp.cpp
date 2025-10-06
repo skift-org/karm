@@ -1,9 +1,6 @@
-module;
-
-#include <karm-math/rect.h>
-
 module Karm.Gfx;
 
+import Karm.Math;
 import Karm.Core;
 import :font;
 import :canvas;

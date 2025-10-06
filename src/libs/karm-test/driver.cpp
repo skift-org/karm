@@ -4,6 +4,7 @@
 import Karm.Core;
 import Karm.Cli;
 import Karm.Sys;
+import Karm.Tty;
 
 namespace Karm::Test {
 

@@ -1,11 +1,8 @@
-module;
-
-#include <karm-math/vec.h>
-
 export module Karm.Print:imagePrinter;
 
 import Karm.Image;
 import Karm.Gfx;
+import Karm.Math;
 
 import :filePrinter;
 

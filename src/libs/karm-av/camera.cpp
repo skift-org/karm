@@ -1,9 +1,6 @@
-module;
-
-#include <karm-math/vec.h>
-
 export module Karm.Av:camera;
 
+import Karm.Math;
 import Karm.Core;
 import :video;
 

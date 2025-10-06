@@ -1,12 +1,11 @@
-module;
-
-#include <karm-math/rect.h>
-
 export module Karm.Kira:checkbox;
 
 import Karm.App;
 import Karm.Ui;
 import Karm.Gfx;
+import Karm.Math;
+import Karm.Core;
+
 import Mdi;
 
 namespace Karm::Kira {

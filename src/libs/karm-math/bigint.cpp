@@ -1,385 +1,703 @@
-#include "bigint.h"
+export module Karm.Math:bigint;
+
+import Karm.Core;
 
 namespace Karm::Math {
 
 // MARK: Unsigned Big Integer --------------------------------------------------
+// aka natural number
 
-void _add(UBig& lhs, usize rhs) {
-    auto lhsLen = lhs._len();
+export struct UBig;
 
-    usize carry = 0;
-    usize curr = 0;
-    if (willAddOverflow(rhs, lhs._value[0]))
-        curr = 1;
+void _add(UBig& lhs, usize rhs);
 
-    usize res = rhs + lhs._value[0];
-    if (willAddOverflow(res, carry))
-        curr = 1;
+void _add(UBig& lhs, UBig const& rhs);
 
-    res += carry;
-    carry = curr;
-    lhs._value[0] = res;
+export enum struct [[nodiscard]] SubResult {
+    OK,
+    UNDERFLOW,
+};
 
-    for (usize i = 1; carry and lhsLen > i; i++) {
-        usize curr = 0;
-        if (willAddOverflow(lhs._value[i], carry))
-            curr = 1;
-        lhs._value[i] += carry;
-        carry = curr;
+SubResult _sub(UBig& lhs, usize rhs);
+
+SubResult _sub(UBig& lhs, UBig const& rhs);
+
+void _shl(UBig& lhs, usize bits);
+
+void _shr(UBig& lhs, usize bits);
+
+void _binNot(UBig& lhs);
+
+void _binOr(UBig& lhs, UBig const& rhs);
+
+void _binAnd(UBig& lhs, UBig const& rhs);
+
+void _binXor(UBig& lhs, UBig const& rhs);
+
+void _mul(UBig& lhs, UBig const& rhs);
+
+void _div(UBig const& numerator, UBig const& denominator, UBig& quotient, UBig& remainder);
+
+void _gcd(UBig const& lhs, UBig const& rhs, UBig& gcd);
+
+void _pow(UBig const& base, UBig const& exp, UBig& res);
+
+export struct UBig {
+    Vec<usize> _value;
+
+    UBig() = default;
+
+    explicit UBig(usize value) {
+        if (value != 0)
+            _value.pushBack(value);
     }
 
-    if (carry)
-        lhs._value.pushBack(carry);
-}
-
-void _add(UBig& lhs, UBig const& rhs) {
-    auto lhsLen = lhs._len();
-    auto rhsLen = rhs._len();
-
-    usize carry = 0;
-    for (usize i = 0; i < rhsLen; ++i) {
-        usize curr = 0;
-        if (willAddOverflow(rhs._value[i], lhs._value[i]))
-            curr = 1;
-
-        usize res = rhs._value[i] + lhs._value[i];
-        if (willAddOverflow(res, carry))
-            curr = 1;
-
-        res += carry;
-        carry = curr;
-        lhs._value[i] = res;
+    UBig& operator=(usize value) {
+        _value.clear();
+        if (value != 0)
+            _value.pushBack(value);
+        return *this;
     }
 
-    while (carry and lhsLen > rhsLen) {
-        usize curr = 0;
-        if (willAddOverflow(lhs._value[rhsLen], carry))
-            curr = 1;
-
-        lhs._value[rhsLen] += carry;
-        carry = curr;
-        rhsLen++;
+    usize _len() const {
+        return _value.len();
     }
 
-    if (carry) {
-        lhs._value.pushBack(carry);
+    void _trim() {
+        while (_value.len() >= 1 and last(_value) == 0)
+            _value.popBack();
     }
-}
 
-SubResult _sub(UBig& lhs, usize rhs) {
-    u8 borrow = 0;
-    for (usize i = 0; i < lhs._len(); i++) {
-        usize rhsV = i < 1 ? rhs : 0;
+    void clear() {
+        _value.clear();
+    }
 
-        usize lhsV = lhs._value[i];
+    void _setBit(usize bit) {
+        if (bit >= _value.len() * Limits<usize>::BITS)
+            _value.resize(bit / Limits<usize>::BITS + 1);
+        _value[bit / Limits<usize>::BITS] |= 1 << (bit % Limits<usize>::BITS);
+    }
 
-        // apply the borrow
-        if (borrow) {
-            if (lhsV == 0) {
-                lhsV = Limits<usize>::MAX;
-                borrow = 1;
-            } else {
-                lhsV--;
-                borrow = 0;
-            }
+    bool _getBit(usize bit) const {
+        return bit < _value.len() * Limits<usize>::BITS and
+               (_value[bit / Limits<usize>::BITS] & (1 << (bit % Limits<usize>::BITS))) != 0;
+    }
+
+    UBig operator~() {
+        UBig res = *this;
+        _binNot(res);
+        return res;
+    }
+
+    UBig operator|(UBig const& rhs) const {
+        UBig res = *this;
+        _binOr(res, rhs);
+        return res;
+    }
+
+    UBig operator&(UBig const& rhs) const {
+        UBig res = *this;
+        _binAnd(res, rhs);
+        return res;
+    }
+
+    UBig operator^(UBig const& rhs) const {
+        UBig res = *this;
+        _binXor(res, rhs);
+        return res;
+    }
+
+    UBig operator<<(usize bits) const {
+        UBig res = *this;
+        _shl(res, bits);
+        return res;
+    }
+
+    UBig operator>>(usize bits) const {
+        UBig res = *this;
+        _shr(res, bits);
+        return res;
+    }
+
+    UBig operator+(UBig const& rhs) const {
+        UBig res = *this;
+        _add(res, rhs);
+        res._trim();
+        return res;
+    }
+
+    UBig operator-(UBig const& rhs) const {
+        UBig res = *this;
+        // FIXME: we ignore underflow here
+        (void)_sub(res, rhs);
+        res._trim();
+        return res;
+    }
+
+    UBig operator*(UBig const& rhs) const {
+        UBig res = *this;
+        _mul(res, rhs);
+        res._trim();
+        return res;
+    }
+
+    UBig operator/(UBig const& rhs) const {
+        UBig res, remainder;
+        _div(*this, rhs, res, remainder);
+        res._trim();
+        return res;
+    }
+
+    UBig operator%(UBig const& rhs) const {
+        UBig quotient, res;
+        _div(*this, rhs, quotient, res);
+        res._trim();
+        return res;
+    }
+
+    UBig& operator|=(UBig const& rhs) {
+        _binOr(*this, rhs);
+        return *this;
+    }
+
+    UBig& operator&=(UBig const& rhs) {
+        _binAnd(*this, rhs);
+        return *this;
+    }
+
+    UBig& operator^=(UBig const& rhs) {
+        _binXor(*this, rhs);
+        return *this;
+    }
+
+    UBig& operator<<=(usize bits) {
+        _shl(*this, bits);
+        return *this;
+    }
+
+    UBig& operator>>=(usize bits) {
+        _shr(*this, bits);
+        return *this;
+    }
+
+    UBig& operator++() {
+        _add(*this, 1);
+        _trim();
+        return *this;
+    }
+
+    UBig& operator--() {
+        // FIXME: we ignore underflow here
+        (void)_sub(*this, 1);
+        _trim();
+        return *this;
+    }
+
+    UBig operator++(int) {
+        UBig res = *this;
+        _add(*this, 1);
+        _trim();
+        return res;
+    }
+
+    UBig operator--(int) {
+        UBig res = *this;
+        // FIXME: we ignore underflow here
+        (void)_sub(*this, 1);
+        _trim();
+        return res;
+    }
+
+    UBig& operator+=(UBig const& rhs) {
+        _add(*this, rhs);
+        _trim();
+        return *this;
+    }
+
+    UBig& operator-=(UBig const& rhs) {
+        // FIXME: we ignore underflow here
+        (void)_sub(*this, rhs);
+        _trim();
+        return *this;
+    }
+
+    UBig& operator*=(UBig const& rhs) {
+        _mul(*this, rhs);
+        _trim();
+        return *this;
+    }
+
+    UBig& operator/=(UBig const& rhs) {
+        UBig quotient, remainder;
+        _div(*this, rhs, quotient, remainder);
+        *this = quotient;
+        _trim();
+        return *this;
+    }
+
+    UBig& operator%=(UBig const& rhs) {
+        UBig quotient, remainder;
+        _div(*this, rhs, quotient, remainder);
+        *this = remainder;
+        _trim();
+        return *this;
+    }
+
+    explicit operator f64() const {
+        f64 res = 0;
+        for (usize i = _len(); i-- > 0;) {
+            res *= Math::pow<f64>(2.0, Limits<usize>::BITS);
+            res += _value[i];
         }
+        return res;
+    }
 
-        // do we need to borrow?
-        if (lhsV < rhsV) {
-            rhsV -= lhsV;
-            lhsV = (Limits<usize>::MAX - rhsV) + 1;
-            borrow = 1;
+    std::strong_ordering operator<=>(UBig const& rhs) const {
+        if (_len() != rhs._len())
+            return _len() <=> rhs._len();
+        for (usize i = _len(); i-- > 0;) {
+            if (_value[i] != rhs._value[i])
+                return _value[i] <=> rhs._value[i];
         }
-
-        lhsV -= rhsV;
-        lhs._value[i] = lhsV;
+        return std::strong_ordering::equal;
     }
 
-    if (borrow)
-        return SubResult::UNDERFLOW;
+    std::strong_ordering operator<=>(usize rhs) const {
+        if (_len() == 0)
+            return 0 <=> rhs;
 
-    return SubResult::OK;
-}
+        if (_len() != 1)
+            return std::strong_ordering::greater;
 
-SubResult _sub(UBig& lhs, UBig const& rhs) {
-    u8 borrow = 0;
-    for (usize i = 0; i < lhs._len(); i++) {
-        usize rhsV = i < rhs._len()
-                         ? rhs._value[i]
-                         : 0;
-
-        usize lhsV = lhs._value[i];
-
-        // apply the borrow
-        if (borrow) {
-            if (lhsV == 0) {
-                lhsV = Limits<usize>::MAX;
-                borrow = 1;
-            } else {
-                lhsV--;
-                borrow = 0;
-            }
-        }
-
-        // do we need to borrow?
-        if (lhsV < rhsV) {
-            rhsV -= lhsV;
-            lhsV = (Limits<usize>::MAX - rhsV) + 1;
-            borrow = 1;
-        }
-
-        lhsV -= rhsV;
-        lhs._value[i] = lhsV;
+        return _value[0] <=> rhs;
     }
 
-    if (borrow)
-        return SubResult::UNDERFLOW;
-
-    return SubResult::OK;
-}
-
-void _shl(UBig& lhs, usize bits) {
-    if (lhs == 0 or bits == 0)
-        return;
-
-    usize carry = 0;
-
-    for (usize i = 0; i < lhs._len(); ++i) {
-        usize value = lhs._value[i];
-        lhs._value[i] = (value << bits) | carry;
-        carry = value >> (Limits<usize>::BITS - bits);
+    bool operator==(UBig const& rhs) const {
+        return _len() == rhs._len() and _value == rhs._value;
     }
 
-    if (carry)
-        lhs._value.pushBack(carry);
-}
-
-void _shr(UBig& lhs, usize bits) {
-    if (lhs == 0 or bits == 0)
-        return;
-
-    usize carry = 0;
-
-    for (usize i = lhs._len(); i-- > 0;) {
-        usize value = lhs._value[i];
-        lhs._value[i] = (value >> bits) | carry;
-        carry = value << (Limits<usize>::BITS - bits);
+    bool operator==(usize rhs) const {
+        return _len() == 1 and _value[0] == rhs;
     }
-}
-
-void _binNot(UBig& lhs) {
-    for (usize i = 0; i < lhs._len(); ++i)
-        lhs._value[i] = ~lhs._value[i];
-}
-
-void _binOr(UBig& lhs, UBig const& rhs) {
-    lhs._value.resize(max(lhs._len(), rhs._len()));
-
-    for (usize i = 0; i < rhs._len(); ++i)
-        lhs._value[i] |= rhs._value[i];
-}
-
-void _binAnd(UBig& lhs, UBig const& rhs) {
-    lhs._value.resize(max(lhs._len(), rhs._len()));
-
-    for (usize i = 0; i < rhs._len(); ++i)
-        lhs._value[i] &= rhs._value[i];
-}
-
-void _binXor(UBig& lhs, UBig const& rhs) {
-    lhs._value.resize(max(lhs._len(), rhs._len()));
-
-    for (usize i = 0; i < rhs._len(); ++i)
-        lhs._value[i] ^= rhs._value[i];
-}
-
-void _mul(UBig& lhs, UBig const& rhs) {
-    UBig shifted = lhs;
-    for (usize wi = 0; wi < rhs._len(); wi++) {
-        for (usize bi = 0; bi < Limits<usize>::BITS; bi++) {
-            auto bit = (rhs._value[wi] >> bi) & 1;
-            _shl(shifted, 1);
-            if (not bit)
-                continue;
-            _add(lhs, shifted);
-        }
-    }
-}
-
-void _div(UBig const& numerator, UBig const& denominator, UBig& quotient, UBig& remainder) {
-    quotient = 0_ubig;
-    remainder = numerator;
-
-    for (int wi = numerator._len() - 1; wi >= 0; wi--) {
-        for (int bi = Limits<usize>::BITS - 1; bi >= 0; bi--) {
-            usize shift = wi * Limits<usize>::BITS + bi;
-            UBig shifted = denominator;
-            _shl(shifted, shift);
-            auto tmp = remainder;
-            if (_sub(tmp, shifted) == SubResult::UNDERFLOW)
-                continue;
-            remainder = tmp;
-            quotient._setBit(shift);
-        }
-    }
-}
-
-void _gcd(UBig const& lhs, UBig const& rhs, UBig& gcd) {
-    if (lhs == 0 or rhs == 0) [[unlikely]]
-        panic("gcd of zero");
-
-    gcd = lhs;
-    UBig b = rhs;
-
-    while (b != 0_ubig) {
-        UBig tmp = b;
-        b = gcd % b;
-        gcd = tmp;
-    }
-}
-
-void _pow(UBig const& base, UBig const& exp, UBig& res) {
-    UBig b{base}, e{exp};
-    res = 1_ubig;
-
-    while (not(e < 1_ubig)) {
-        if (e._value[0] % 2 == 1)
-            _mul(res, b);
-        _shr(e, 1);
-        _mul(b, b);
-    }
-}
+};
 
 // MARK: Signed Big Integer ----------------------------------------------------
+// aka integer number
 
-void _add(IBig& lhs, IBig const& rhs) {
-    if (lhs._sign == rhs._sign) {
-        _add(lhs._value, rhs._value);
-    } else if (lhs < rhs) {
-        IBig res = rhs;
-        _sub(res, lhs);
-        lhs = std::move(res);
-    } else {
-        _sub(lhs, rhs);
-    }
+export struct IBig;
+
+void _add(IBig& lhs, usize rhs);
+
+void _add(IBig& lhs, IBig const& rhs);
+
+void _sub(IBig& lhs, usize rhs);
+
+void _sub(IBig& lhs, IBig const& rhs);
+
+void _mul(IBig& lhs, IBig const& rhs);
+
+void _div(IBig const& numerator, IBig const& denominator, IBig& quotient, IBig& remainder);
+
+void _pow(IBig const& base, UBig const& exp, IBig& res);
+
+export enum struct Sign {
+    POSITIVE,
+    NEGATIVE
+};
+
+export constexpr Sign signOf(usize) {
+    return Sign::POSITIVE;
 }
 
-void _sub(IBig& lhs, IBig const& rhs) {
-    if (lhs._sign != rhs._sign) {
-        _add(lhs._value, rhs._value);
-    } else if (lhs.positive()) {
-        if (lhs._value < rhs._value) {
-            IBig res = rhs;
-            if (_sub(res._value, lhs._value) == SubResult::UNDERFLOW) [[unlikely]]
-                panic("unexpected underflow");
-
-            lhs = std::move(res);
-            lhs._sign = Sign::NEGATIVE;
-        } else {
-            if (_sub(lhs._value, rhs._value) == SubResult::UNDERFLOW) [[unlikely]]
-                panic("unexpected underflow");
-
-            lhs._sign = Sign::POSITIVE;
-        }
-    } else {
-        if (lhs._value > rhs._value) {
-            if (_sub(lhs._value, rhs._value) == SubResult::UNDERFLOW) [[unlikely]]
-                panic("unexpected underflow");
-
-            lhs._sign = Sign::NEGATIVE;
-        } else {
-            IBig res = rhs;
-            if (_sub(res._value, lhs._value) == SubResult::UNDERFLOW) [[unlikely]]
-                panic("unexpected underflow");
-
-            lhs = res;
-            lhs._sign = Sign::POSITIVE;
-        }
-    }
+export constexpr Sign signOf(isize value) {
+    return value < 0 ? Sign::NEGATIVE : Sign::POSITIVE;
 }
 
-void _mul(IBig& lhs, IBig const& rhs) {
-    _mul(lhs._value, rhs._value);
-    lhs._sign = lhs._sign == rhs._sign ? Sign::POSITIVE : Sign::NEGATIVE;
-}
+export struct IBig {
+    UBig _value;
+    Sign _sign;
 
-void _div(IBig const& numerator, IBig const& denominator, IBig& quotient, IBig& remainder) {
-    _div(numerator._value, denominator._value, quotient._value, remainder._value);
-    quotient._sign = numerator._sign == denominator._sign ? Sign::POSITIVE : Sign::NEGATIVE;
-    remainder._sign = numerator._sign;
-}
+    IBig() = default;
 
-void _pow(IBig const& base, UBig const& exp, IBig& res) {
-    IBig b{base}, e{exp};
-    res = 1_ibig;
+    explicit IBig(usize value, Sign sign = Sign::POSITIVE)
+        : _value(value), _sign(value == 0 ? Sign::POSITIVE : sign) {}
 
-    while (not(e < 1_ibig)) {
-        if (e._value._value[0] % 2 == 1)
-            _mul(res, b);
-        _shr(e._value, 1);
-        _mul(b, b);
-    }
-}
-
-// MARK: Big Fractional Numbers ------------------------------------------------
-
-void _fromF64(BigFrac& frac, f64 value) {
-    IBig const TEN = 10_ibig;
-
-    frac.clear();
-
-    bool neg = false;
-    if (value < 0) {
-        neg = true;
-        value = -value;
+    IBig& operator=(usize value) {
+        _value = value;
+        _sign = Sign::POSITIVE;
+        return *this;
     }
 
-    isize currPow = 0;
-    while (Math::pow<f64>(10.0, currPow) <= value) {
-        currPow += 1;
-    }
-    currPow -= 1;
+    explicit IBig(isize value)
+        : _value(static_cast<usize>(value < 0 ? -value : value)),
+          _sign(value < 0 ? Sign::NEGATIVE : Sign::POSITIVE) {}
 
-    UBig dec = 0_ubig;
-    while (value >= __DBL_EPSILON__ or currPow >= 0) {
-        frac._num *= TEN;
-        usize digit = (u64)(value * Math::pow(0.1, (f64)currPow)) % 10;
-        frac._num += IBig{digit};
-        value -= digit * Math::pow(10.0, (f64)currPow);
-        if (currPow < 0) {
-            ++dec;
-            _pow(TEN.value(), dec, frac._den);
-        }
-        currPow -= 1;
+    IBig& operator=(isize value) {
+        _value = static_cast<usize>(value < 0 ? -value : value);
+        _sign = value < 0 ? Sign::NEGATIVE : Sign::POSITIVE;
+        return *this;
     }
 
-    frac._num = neg ? -frac._num : frac._num;
-}
+    explicit IBig(UBig const& big, Sign sign = Sign::POSITIVE)
+        : _value(big), _sign(big == 0 ? Sign::POSITIVE : sign) {}
 
-void _add(BigFrac& lhs, BigFrac const& rhs) {
-    if (rhs._num == 0uz)
-        return;
+    bool negative() const {
+        return _sign == Sign::NEGATIVE;
+    }
 
-    IBig tmp = rhs._num;
-    _mul(tmp.value(), lhs._den);
-    _mul(lhs._num.value(), rhs._den);
-    _add(lhs._num, tmp);
+    bool positive() const {
+        return _sign == Sign::POSITIVE;
+    }
 
-    _mul(lhs._den, rhs._den);
-}
+    Sign sign() const {
+        return _sign;
+    }
 
-void _sub(BigFrac& lhs, BigFrac const& rhs) {
-    _add(lhs, -rhs);
-}
+    UBig& value() {
+        return _value;
+    }
 
-void _mul(BigFrac& lhs, BigFrac const& rhs) {
-    _mul(lhs._num, rhs._num);
-    _mul(lhs._den, rhs._den);
-}
+    UBig const& value() const {
+        return _value;
+    }
 
-void _div(BigFrac& lhs, BigFrac const& rhs) {
-    _mul(lhs._num.value(), rhs._den);
-    _mul(lhs._den, rhs._num.value());
-}
+    usize _len() const {
+        return _value._len();
+    }
+
+    void _trim() {
+        _value._trim();
+        if (_value == 0)
+            _sign = Sign::POSITIVE;
+    }
+
+    void clear() {
+        _value.clear();
+        _sign = Sign::POSITIVE;
+    }
+
+    IBig operator-() const {
+        return IBig{
+            _value,
+            _sign == Sign::POSITIVE
+                ? Sign::NEGATIVE
+                : Sign::POSITIVE,
+        };
+    }
+
+    IBig operator+(IBig const& rhs) const {
+        IBig res = *this;
+        _add(res, rhs);
+        res._trim();
+        return res;
+    }
+
+    IBig operator-(IBig const& rhs) const {
+        IBig res = *this;
+        _sub(res, rhs);
+        res._trim();
+        return res;
+    }
+
+    IBig operator*(IBig const& rhs) const {
+        IBig res = *this;
+        _mul(res, rhs);
+        res._trim();
+        return res;
+    }
+
+    IBig operator/(IBig const& rhs) const {
+        IBig res, remainder;
+        _div(*this, rhs, res, remainder);
+        res._trim();
+        return res;
+    }
+
+    IBig operator%(IBig const& rhs) const {
+        IBig quotient, res;
+        _div(*this, rhs, quotient, res);
+        res._trim();
+        return res;
+    }
+
+    IBig& operator++() {
+        _add(*this, 1);
+        _trim();
+        return *this;
+    }
+
+    IBig& operator--() {
+        _sub(*this, 1);
+        _trim();
+        return *this;
+    }
+
+    IBig operator++(int) {
+        IBig res = *this;
+        _add(*this, 1);
+        _trim();
+        return res;
+    }
+
+    IBig operator--(int) {
+        IBig res = *this;
+        _sub(*this, 1);
+        _trim();
+        return res;
+    }
+
+    IBig& operator+=(IBig const& rhs) {
+        _add(*this, rhs);
+        _trim();
+        return *this;
+    }
+
+    IBig& operator-=(IBig const& rhs) {
+        _sub(*this, rhs);
+        _trim();
+        return *this;
+    }
+
+    IBig& operator*=(IBig const& rhs) {
+        _mul(*this, rhs);
+        _trim();
+        return *this;
+    }
+
+    IBig& operator/=(IBig const& rhs) {
+        IBig res, remainder;
+        _div(*this, rhs, res, remainder);
+        *this = res;
+
+        _trim();
+        return *this;
+    }
+
+    IBig& operator%=(IBig const& rhs) {
+        IBig quotient, res;
+        _div(*this, rhs, quotient, res);
+        *this = res;
+
+        _trim();
+        return *this;
+    }
+
+    std::strong_ordering operator<=>(IBig const& rhs) const {
+        if (_sign != rhs._sign)
+            return _sign == Sign::NEGATIVE
+                       ? std::strong_ordering::less
+                       : std::strong_ordering::greater;
+        if (_sign == Sign::NEGATIVE)
+            return _value <=> rhs._value;
+        return rhs._value <=> _value;
+    }
+
+    std::strong_ordering operator<=>(usize rhs) const {
+        if (_sign == Sign::NEGATIVE)
+            return std::strong_ordering::less;
+        if (_value._len() != 1)
+            return std::strong_ordering::greater;
+        return _value._value[0] <=> rhs;
+    }
+
+    std::strong_ordering operator<=>(isize rhs) const {
+        if (_sign != signOf(rhs))
+            return _sign == Sign::NEGATIVE
+                       ? std::strong_ordering::less
+                       : std::strong_ordering::greater;
+        if (_sign == Sign::NEGATIVE)
+            return _value <=> static_cast<usize>(rhs < 0 ? -rhs : rhs);
+
+        return static_cast<usize>(rhs < 0 ? -rhs : rhs) <=> _value._value[0];
+    }
+
+    bool operator==(IBig const& rhs) const {
+        return _sign == rhs._sign and _value == rhs._value;
+    }
+
+    bool operator==(usize rhs) const {
+        return _sign == Sign::POSITIVE and _value == rhs;
+    }
+
+    bool operator==(isize rhs) const {
+        return _sign == signOf(rhs) and
+               _value == static_cast<usize>(rhs < 0 ? -rhs : rhs);
+    }
+};
+
+// MARK: Big Fractional Number -------------------------------------------------
+// aka rational number
+
+export struct BigFrac;
+
+void _fromF64(BigFrac& frac, f64 value);
+
+void _add(BigFrac& lhs, BigFrac const& rhs);
+
+void _sub(BigFrac& lhs, BigFrac const& rhs);
+
+void _mul(BigFrac& lhs, BigFrac const& rhs);
+
+void _div(BigFrac& lhs, BigFrac const& rhs);
+
+void _mod(BigFrac& lhs, BigFrac const& rhs);
+
+export struct BigFrac {
+    IBig _num;
+    UBig _den;
+
+    BigFrac() = default;
+
+    void _reduce() {
+        UBig gcd;
+        _gcd(_num.value(), _den, gcd);
+        if (gcd == 1uz)
+            return;
+
+        _num.value() /= gcd;
+        _den /= gcd;
+    }
+
+    void clear() {
+        _num.clear();
+        _den = 1uz;
+    }
+
+    explicit BigFrac(usize value)
+        : _num(value), _den(1uz) {}
+
+    BigFrac& operator=(usize value) {
+        _num = value;
+        _den = 1uz;
+        return *this;
+    }
+
+    explicit BigFrac(isize value)
+        : _num(value), _den(1uz) {}
+
+    BigFrac& operator=(isize value) {
+        _num = value;
+        _den = 1uz;
+        return *this;
+    }
+
+    explicit BigFrac(isize num, usize den)
+        : _num(num), _den(den) {}
+
+    explicit BigFrac(IBig const& num, UBig const& den)
+        : _num(num), _den(den) {}
+
+    explicit BigFrac(f64 value) {
+        _fromF64(*this, value);
+    }
+
+    BigFrac& operator=(f64 value) {
+        _fromF64(*this, value);
+        return *this;
+    }
+
+    IBig& num() {
+        return _num;
+    }
+
+    IBig const& num() const {
+        return _num;
+    }
+
+    UBig& den() {
+        return _den;
+    }
+
+    UBig const& den() const {
+        return _den;
+    }
+
+    BigFrac operator-() const {
+        return BigFrac{-_num, _den};
+    }
+
+    BigFrac operator+(BigFrac const& rhs) const {
+        BigFrac res = *this;
+        _add(res, rhs);
+        res._reduce();
+        return res;
+    }
+
+    BigFrac operator-(BigFrac const& rhs) const {
+        BigFrac res = *this;
+        _sub(res, rhs);
+        res._reduce();
+        return res;
+    }
+
+    BigFrac operator*(BigFrac const& rhs) const {
+        BigFrac res = *this;
+        _mul(res, rhs);
+        res._reduce();
+        return res;
+    }
+
+    BigFrac operator/(BigFrac const& rhs) const {
+        BigFrac res = *this;
+        _div(res, rhs);
+        res._reduce();
+        return res;
+    }
+
+    BigFrac& operator+=(BigFrac const& rhs) {
+        _add(*this, rhs);
+        _reduce();
+        return *this;
+    }
+
+    BigFrac& operator-=(BigFrac const& rhs) {
+        _sub(*this, rhs);
+        _reduce();
+        return *this;
+    }
+
+    BigFrac& operator*=(BigFrac const& rhs) {
+        _mul(*this, rhs);
+        _reduce();
+        return *this;
+    }
+
+    BigFrac& operator/=(BigFrac const& rhs) {
+        _div(*this, rhs);
+        _reduce();
+        return *this;
+    }
+
+    std::strong_ordering operator<=>(BigFrac const& rhs) const {
+        auto cmp = *this - rhs;
+        if (cmp._num == 0uz)
+            return std::strong_ordering::equal;
+
+        if (cmp._num.negative())
+            return std::strong_ordering::less;
+
+        return std::strong_ordering::greater;
+    }
+
+    bool operator==(BigFrac const& rhs) const {
+        return _num == rhs._num and _den == rhs._den;
+    }
+};
 
 } // namespace Karm::Math
+
+export Karm::Math::UBig operator""_ubig(unsigned long long value) {
+    return Karm::Math::UBig{static_cast<Karm::usize>(value)};
+}
+
+export Karm::Math::IBig operator""_ibig(unsigned long long value) {
+    return Karm::Math::IBig{static_cast<Karm::usize>(value)};
+}
+
+export Karm::Math::BigFrac operator""_bigfrac(unsigned long long value) {
+    return Karm::Math::BigFrac{static_cast<Karm::usize>(value)};
+}
+
+export Karm::Math::BigFrac operator""_bigfrac(long double value) {
+    return Karm::Math::BigFrac{static_cast<Karm::f64>(value)};
+}

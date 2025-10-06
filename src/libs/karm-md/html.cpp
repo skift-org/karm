@@ -1,8 +1,6 @@
-module;
-
-#include <karm-logger/logger.h>
-
 export module Karm.Md:html;
+
+import Karm.Logger;
 
 import :base;
 

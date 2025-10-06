@@ -1,12 +1,10 @@
-module;
-
-#include <karm-math/rect.h>
-
 export module Karm.Kira:radio;
 
 import Karm.App;
 import Karm.Ui;
 import Karm.Gfx;
+import Karm.Math;
+import Karm.Core;
 
 namespace Karm::Kira {
 

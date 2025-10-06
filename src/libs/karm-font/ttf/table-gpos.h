@@ -1,7 +1,7 @@
 #pragma once
 
-#include <karm-logger/logger.h>
-#include <karm-math/vec.h>
+import Karm.Math;
+import Karm.Logger;
 
 #include "otlayout.h"
 

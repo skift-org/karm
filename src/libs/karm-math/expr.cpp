@@ -1,14 +1,14 @@
-#pragma once
+export module Karm.Math:expr;
 
 import Karm.Core;
 
-#include "bigint.h"
+import :bigint;
 
 namespace Karm::Math {
 
-struct Expr;
+export struct Expr;
 
-using Rational = BigFrac;
+export using Rational = BigFrac;
 
 #define FOREACH_UNARY(OP) \
     OP(ABS)               \
@@ -119,7 +119,7 @@ struct UnaryExpr {
     OP(RE_ZETA)             \
     OP(SUB)
 
-struct BinaryExpr {
+export struct BinaryExpr {
     enum struct _Op {
 #define ITER(OP) OP,
         FOREACH_BINARY(ITER)
@@ -140,7 +140,7 @@ struct BinaryExpr {
     OP(LE)                     \
     OP(LT)
 
-struct RelationalExpr {
+export struct RelationalExpr {
     enum struct _Op {
 #define ITER(OP) OP,
         FOREACH_RELATIONAL(ITER)
@@ -160,7 +160,7 @@ using _Expr = Union<
     BinaryExpr,
     RelationalExpr>;
 
-struct Expr : _Expr {
+export struct Expr : _Expr {
     using _Expr::_Expr;
 };
 
