@@ -3,7 +3,7 @@ export module Karm.Logger;
 import Karm.Core;
 import Karm.Tty;
 
-import :_embed;
+export import :_embed;
 
 namespace Karm {
 
