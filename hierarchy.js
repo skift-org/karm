@@ -597,7 +597,6 @@ var hierarchy =
     [ "Karm::Map< String, String >", "structKarm_1_1Map.html", [
       [ "Karm::Http::Header", "structKarm_1_1Http_1_1Header.html", null ]
     ] ],
-    [ "Karm::Map< u16, u16 >", "structKarm_1_1Map.html", null ],
     [ "Karm::Print::Margins", "structKarm_1_1Print_1_1Margins.html", null ],
     [ "Karm::Math::Mat2< T >", "unionKarm_1_1Math_1_1Mat2.html", null ],
     [ "Karm::Math::Mat3< T >", "unionKarm_1_1Math_1_1Mat3.html", null ],
