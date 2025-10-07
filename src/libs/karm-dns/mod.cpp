@@ -1,4 +1,8 @@
-#pragma once
+module;
+
+#include <karm-core/macros.h>
+
+export module Karm.Dns;
 
 import Karm.Core;
 import Karm.Sys;

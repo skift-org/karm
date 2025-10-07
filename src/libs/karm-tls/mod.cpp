@@ -1,12 +1,12 @@
-#pragma once
+export module Karm.Tls;
 
 import Karm.Core;
-impoot Karm.Sys;
+import Karm.Sys;
 
 // https://github.com/B-Con/crypto-algorithms/blob/master/aes.c
 // https://github.com/alexbers/manual-tls/blob/master/tls_client.py
 
-namespace Tls {
+namespace Karm::Tls {
 
 struct CipherSuite : Distinct<u16be, struct _CipherSuiteTag> {
     using Distinct::Distinct;
@@ -65,14 +65,17 @@ struct TlsConnection : Sys::_Connection {
         return _conn.flush();
     }
 
+    [[clang::coro_wrapper]]
     Async::Task<usize> readAsync(MutBytes buf) override {
         return _conn.readAsync(buf);
     }
 
+    [[clang::coro_wrapper]]
     Async::Task<usize> writeAsync(Bytes buf) override {
         return _conn.writeAsync(buf);
     }
 
+    [[clang::coro_wrapper]]
     Async::Task<> flushAsync() override {
         return _conn.flushAsync();
     }
