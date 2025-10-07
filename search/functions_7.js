@@ -38,6 +38,6 @@ var searchData=
   ['hsvsquare_35',['HsvSquare',['../structKarm_1_1Kira_1_1HsvSquare.html#a9bcc77cc6784b8c4c3611ee69c493167',1,'Karm::Kira::HsvSquare']]],
   ['hsvtorgb_36',['hsvToRgb',['../namespaceKarm_1_1Gfx.html#a89bb4c8e5471dc9eae515f392da4f565',1,'Karm::Gfx']]],
   ['hsvvalueslider_37',['hsvValueSlider',['../namespaceKarm_1_1Kira.html#a51578c705cf643ed11c6a2090cb50201',1,'Karm::Kira']]],
-  ['htrack_38',['hTrack',['../structKarm_1_1Ui_1_1Scroll.html#a120365aec8ee7fb559133d67a3ff9393',1,'Karm::Ui::Scroll']]],
+  ['htrack_38',['hTrack',['../structKarm_1_1Ui_1_1ScrollListener.html#a266c9911dae2505cf2c91cd03cc88828',1,'Karm::Ui::ScrollListener']]],
   ['httptransport_39',['httpTransport',['../namespaceKarm_1_1Http.html#ace2e3939874efaf4374b19d0876c02ec',1,'Karm::Http']]]
 ];

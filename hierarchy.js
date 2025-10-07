@@ -835,6 +835,7 @@ var hierarchy =
     [ "Karm::Image::Jpeg::Decoder::ScanComponent", "structKarm_1_1Image_1_1Jpeg_1_1Decoder_1_1ScanComponent.html", null ],
     [ "Karm::Gfx::CpuCanvas::Scope", "structKarm_1_1Gfx_1_1CpuCanvas_1_1Scope.html", null ],
     [ "Karm::Serde::Deserializer::Scope", "structKarm_1_1Serde_1_1Deserializer_1_1Scope.html", null ],
+    [ "Karm::Ui::ScrollListener", "structKarm_1_1Ui_1_1ScrollListener.html", null ],
     [ "Karm::Cli::Section", "structKarm_1_1Cli_1_1Section.html", null ],
     [ "Karm::Io::Seek", "structKarm_1_1Io_1_1Seek.html", null ],
     [ "Karm::Io::Seeker", "structKarm_1_1Io_1_1Seeker.html", [

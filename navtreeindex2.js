@@ -144,7 +144,7 @@ var NAVTREEINDEX2 =
 "conceptKarm_1_1Takeable.html":[0,0,0,163],
 "conceptKarm_1_1Tryable.html":[1,0,22],
 "conceptKarm_1_1Tryable.html":[0,0,0,165],
-"conceptKarm_1_1Ui_1_1Decorator.html":[0,0,0,40,63],
+"conceptKarm_1_1Ui_1_1Decorator.html":[0,0,0,40,64],
 "conceptKarm_1_1Ui_1_1Decorator.html":[1,0,7,0],
 "conceptKarm_1_1Unwrapable.html":[1,0,21],
 "conceptKarm_1_1Unwrapable.html":[0,0,0,164],

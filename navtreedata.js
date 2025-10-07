@@ -119,15 +119,15 @@ var NAVTREEINDEX =
 "structKarm_1_1Tty_1_1Style.html",
 "structKarm_1_1Ui_1_1Eased.html",
 "structKarm_1_1Ui_1_1Input.html#ab234e9eb7a5147176edf644421e71700",
-"structKarm_1_1Ui_1_1Sizing.html",
-"structKarm_1_1Utf16.html#a4b3bab70d84149ac42d914a99cb67b28",
-"test-async-sleep_8cpp.html#ade9c999f65d06abc86ce3cce78a704fc",
-"test-sscan_8cpp.html#a5f640bb7f31fcdb6d048c2caa6676c07",
-"unionKarm_1_1Math_1_1Curve.html",
-"unionKarm_1_1Math_1_1Mat4.html#a0355a1844ba59d636b71216b5193720e",
-"unionKarm_1_1Math_1_1Trans2.html#a1b9f81a81f9815bd469822553c785b61",
-"unionKarm_1_1Math_1_1Vec3.html#a54a27a74bc5d2933cf1a6614bbbd7d88",
-"utils_8h.html"
+"structKarm_1_1Ui_1_1ShowPopoverEvent.html",
+"structKarm_1_1Union.html#a9cca80939723a753c62dad2a0128791e",
+"test-align_8cpp.html",
+"test-slice_8cpp.html#a26627364182d12fb4b6be4263e2d1bee",
+"unionKarm_1_1Math_1_1Arc.html#a8d1c9814ccd2b8e42548aa19aea61fd8",
+"unionKarm_1_1Math_1_1Mat3.html#a7315e54bda1b6311c3c6ebc139ac4263",
+"unionKarm_1_1Math_1_1Rect.html#aea56efe6626612b8ef3b01f970c7d5fc",
+"unionKarm_1_1Math_1_1Vec3.html#a1e2bf4d8c246b930c2759c6ef69b8cf1",
+"url_8cpp.html#ae1e3c8dce8ad23fa6a575de60ced6ad5"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
