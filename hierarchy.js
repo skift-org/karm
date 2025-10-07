@@ -6,9 +6,6 @@ var hierarchy =
     [ "Karm::_Cell< L >", null, [
       [ "Karm::Cell< L, T >", "structKarm_1_1Cell.html", null ]
     ] ],
-    [ "Sys::_Connection", null, [
-      [ "Tls::TlsConnection", "structTls_1_1TlsConnection.html", null ]
-    ] ],
     [ "Karm::Cli::_OptionImpl", null, [
       [ "Karm::Cli::OptionImpl< T >", "structKarm_1_1Cli_1_1OptionImpl.html", null ]
     ] ],
@@ -371,15 +368,15 @@ var hierarchy =
         ] ]
       ] ]
     ] ],
-    [ "Distinct", null, [
-      [ "Tls::CipherSuite", "structTls_1_1CipherSuite.html", null ]
-    ] ],
     [ "Karm::Distinct< T, Tag >", "structKarm_1_1Distinct.html", null ],
     [ "Karm::Distinct< u16, struct _FontStretchTag >", "structKarm_1_1Distinct.html", [
       [ "Karm::Gfx::FontStretch", "structKarm_1_1Gfx_1_1FontStretch.html", null ]
     ] ],
     [ "Karm::Distinct< u16, struct _FontWeightTag >", "structKarm_1_1Distinct.html", [
       [ "Karm::Gfx::FontWeight", "structKarm_1_1Gfx_1_1FontWeight.html", null ]
+    ] ],
+    [ "Karm::Distinct< u16be, struct _CipherSuiteTag >", "structKarm_1_1Distinct.html", [
+      [ "Karm::Tls::CipherSuite", "structKarm_1_1Tls_1_1CipherSuite.html", null ]
     ] ],
     [ "Karm::Distinct< u64, struct _PortTag >", "structKarm_1_1Distinct.html", [
       [ "Karm::Sys::Port", "structKarm_1_1Sys_1_1Port.html", null ]
@@ -431,7 +428,8 @@ var hierarchy =
       [ "Karm::Sys::_Connection", null, [
         [ "Karm::Sys::Connection", "structKarm_1_1Sys_1_1Connection.html", [
           [ "Karm::Sys::TcpConnection", "structKarm_1_1Sys_1_1TcpConnection.html", null ]
-        ] ]
+        ] ],
+        [ "Karm::Tls::TlsConnection", "structKarm_1_1Tls_1_1TlsConnection.html", null ]
       ] ],
       [ "Karm::Sys::_File", null, [
         [ "Karm::Sys::FileReader", "structKarm_1_1Sys_1_1FileReader.html", [

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.6"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Karm: src/libs/karm-net/dns/dns.h File Reference</title>
+<title>Karm: src/libs/karm-dns/mod.cpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript">var page_layout=1;</script>
 <script type="text/javascript" src="jquery.js"></script>
@@ -70,7 +70,7 @@ var searchBox = new SearchBox("searchBox", "search/",'.html');
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-$(document).ready(function(){initNavTree('dns_8h.html',''); initResizable(); });
+$(document).ready(function(){initNavTree('karm-dns_2mod_8cpp.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -103,12 +103,11 @@ $(document).ready(function(){initNavTree('dns_8h.html',''); initResizable(); });
 <a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
-  <div class="headertitle"><div class="title">dns.h File Reference</div></div>
+  <div class="headertitle"><div class="title">mod.cpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-
-<p><a href="dns_8h_source.html">Go to the source code of this file.</a></p>
-<table class="memberdecls">
+<div class="textblock"><code>#include &lt;<a class="el" href="karm-core_2macros_8h_source.html">karm-core/macros.h</a>&gt;</code><br />
+</div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Net_1_1Dns_1_1Header.html">Karm::Net::Dns::Header</a></td></tr>
@@ -133,11 +132,11 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:a183ea1afcb179c9b06d8ef6444f50ebf"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dns_8h.html#a183ea1afcb179c9b06d8ef6444f50ebf">FOREACH_RCODE</a>(RCODE)</td></tr>
+<tr class="memitem:a183ea1afcb179c9b06d8ef6444f50ebf"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="karm-dns_2mod_8cpp.html#a183ea1afcb179c9b06d8ef6444f50ebf">FOREACH_RCODE</a>(RCODE)</td></tr>
 <tr class="separator:a183ea1afcb179c9b06d8ef6444f50ebf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89c72982c738ba1a291151caba32573e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dns_8h.html#a89c72982c738ba1a291151caba32573e">ITER</a>(NAME,  VAL)&#160;&#160;&#160;NAME = VAL &lt;&lt; 12,</td></tr>
+<tr class="memitem:a89c72982c738ba1a291151caba32573e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="karm-dns_2mod_8cpp.html#a89c72982c738ba1a291151caba32573e">ITER</a>(NAME,  VAL)&#160;&#160;&#160;NAME = VAL &lt;&lt; 12,</td></tr>
 <tr class="separator:a89c72982c738ba1a291151caba32573e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89c72982c738ba1a291151caba32573e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dns_8h.html#a89c72982c738ba1a291151caba32573e">ITER</a>(NAME,  VAL)</td></tr>
+<tr class="memitem:a89c72982c738ba1a291151caba32573e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="karm-dns_2mod_8cpp.html#a89c72982c738ba1a291151caba32573e">ITER</a>(NAME,  VAL)</td></tr>
 <tr class="separator:a89c72982c738ba1a291151caba32573e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
@@ -199,11 +198,15 @@ Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:abedc7e19652ef6fd2984ea9cb3d62db5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="karm-app_2mod_8cpp.html#aff55674fa41a3a4ef62434c039b6c32d">import</a> Karm&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dns_8h.html#abedc7e19652ef6fd2984ea9cb3d62db5">Core</a></td></tr>
+<tr class="memitem:a96e5f0eca87c2426370e0897ac7b8ca6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="karm-dns_2mod_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6">module</a></td></tr>
+<tr class="separator:a96e5f0eca87c2426370e0897ac7b8ca6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aefdf8d8a595978403e2005d9de08ed1b"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="impls_2impl-posix_2epoll_2async_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6">module</a> Karm&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="karm-dns_2mod_8cpp.html#aefdf8d8a595978403e2005d9de08ed1b">Dns</a></td></tr>
+<tr class="separator:aefdf8d8a595978403e2005d9de08ed1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abedc7e19652ef6fd2984ea9cb3d62db5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="karm-app_2mod_8cpp.html#aff55674fa41a3a4ef62434c039b6c32d">import</a> Karm&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="karm-dns_2mod_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5">Core</a></td></tr>
 <tr class="separator:abedc7e19652ef6fd2984ea9cb3d62db5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3974c0216d383a8ee20f65600aacb6c5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="karm-app_2mod_8cpp.html#aff55674fa41a3a4ef62434c039b6c32d">import</a> Karm&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dns_8h.html#a3974c0216d383a8ee20f65600aacb6c5">Sys</a></td></tr>
+<tr class="memitem:a3974c0216d383a8ee20f65600aacb6c5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="karm-app_2mod_8cpp.html#aff55674fa41a3a4ef62434c039b6c32d">import</a> Karm&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="karm-dns_2mod_8cpp.html#a3974c0216d383a8ee20f65600aacb6c5">Sys</a></td></tr>
 <tr class="separator:a3974c0216d383a8ee20f65600aacb6c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ade9c999f65d06abc86ce3cce78a704fc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="karm-app_2mod_8cpp.html#aff55674fa41a3a4ef62434c039b6c32d">import</a> Karm&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="dns_8h.html#ade9c999f65d06abc86ce3cce78a704fc">Logger</a></td></tr>
+<tr class="memitem:ade9c999f65d06abc86ce3cce78a704fc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="karm-app_2mod_8cpp.html#aff55674fa41a3a4ef62434c039b6c32d">import</a> Karm&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="karm-dns_2mod_8cpp.html#ade9c999f65d06abc86ce3cce78a704fc">Logger</a></td></tr>
 <tr class="separator:ade9c999f65d06abc86ce3cce78a704fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
@@ -308,6 +311,20 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="aefdf8d8a595978403e2005d9de08ed1b" name="aefdf8d8a595978403e2005d9de08ed1b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aefdf8d8a595978403e2005d9de08ed1b">&#9670;&#160;</a></span>Dns</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">export <a class="el" href="impls_2impl-posix_2epoll_2async_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6">module</a> Karm Dns</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ade9c999f65d06abc86ce3cce78a704fc" name="ade9c999f65d06abc86ce3cce78a704fc"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ade9c999f65d06abc86ce3cce78a704fc">&#9670;&#160;</a></span>Logger</h2>
 
@@ -316,6 +333,20 @@ Variables</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="karm-app_2mod_8cpp.html#aff55674fa41a3a4ef62434c039b6c32d">import</a> Karm Logger</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a96e5f0eca87c2426370e0897ac7b8ca6" name="a96e5f0eca87c2426370e0897ac7b8ca6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a96e5f0eca87c2426370e0897ac7b8ca6">&#9670;&#160;</a></span>module</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">module</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -341,7 +372,7 @@ Variables</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_87a455bccb09a92130c26a11a880c98a.html">libs</a></li><li class="navelem"><a class="el" href="dir_a05c10671bfc9cf338e5b6b64c71b9f3.html">karm-net</a></li><li class="navelem"><a class="el" href="dir_061bd89793b35c5bdcc895de3cc4685e.html">dns</a></li><li class="navelem"><a class="el" href="dns_8h.html">dns.h</a></li>
+    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_87a455bccb09a92130c26a11a880c98a.html">libs</a></li><li class="navelem"><a class="el" href="dir_dababbc9828d085d48f0a56824e22802.html">karm-dns</a></li><li class="navelem"><a class="el" href="karm-dns_2mod_8cpp.html">mod.cpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6 </li>
   </ul>
 </div>

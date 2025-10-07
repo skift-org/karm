@@ -1,7 +1,7 @@
 var searchData=
 [
   ['half_0',['HALF',['../structKarm_1_1Kira_1_1Slider.html#ab11d5986e2d997ffeaba2179e34c6108a87e955627b59c274ec4cbdd3a130f9bb',1,'Karm::Kira::Slider']]],
-  ['handshake_1',['HANDSHAKE',['../namespaceTls.html#af4f9673df47c05b9d214c7b1849d92c8a84fcef12cce95eb15cffe4338ecf5d29',1,'Tls']]],
+  ['handshake_1',['HANDSHAKE',['../namespaceKarm_1_1Tls.html#aaf515fece8a277ad4b013f6f11ba2d63a84fcef12cce95eb15cffe4338ecf5d29',1,'Karm::Tls']]],
   ['header_2',['HEADER',['../namespaceKarm_1_1Io.html#ab3289aef9c6dbeb8105ef83dc36c9672a7ad4905b4543ab4a1637dd23c50e36ce',1,'Karm::Io']]],
   ['hidden_3',['HIDDEN',['../namespaceKarm_1_1Gfx.html#a65f2c46530a861de605f2103cb12a3a5a347e628a8f72626a0611ef842fe9d304',1,'Karm::Gfx']]],
   ['hide_4',['HIDE',['../structKarm_1_1Tty_1_1Cmd.html#abbb98825a0ae9609f03910a43aead3e5a4aed58f3e204ad3a6eb90cd7e074431d',1,'Karm::Tty::Cmd']]],

@@ -560,6 +560,10 @@ var annotated_dup =
         [ "RunOptions", "structKarm_1_1Test_1_1RunOptions.html", "structKarm_1_1Test_1_1RunOptions" ],
         [ "Test", "structKarm_1_1Test_1_1Test.html", "structKarm_1_1Test_1_1Test" ]
       ] ],
+      [ "Tls", "namespaceKarm_1_1Tls.html", [
+        [ "CipherSuite", "structKarm_1_1Tls_1_1CipherSuite.html", "structKarm_1_1Tls_1_1CipherSuite" ],
+        [ "TlsConnection", "structKarm_1_1Tls_1_1TlsConnection.html", "structKarm_1_1Tls_1_1TlsConnection" ]
+      ] ],
       [ "Tty", "namespaceKarm_1_1Tty.html", [
         [ "Cmd", "structKarm_1_1Tty_1_1Cmd.html", "structKarm_1_1Tty_1_1Cmd" ],
         [ "Style", "structKarm_1_1Tty_1_1Style.html", "structKarm_1_1Tty_1_1Style" ],
@@ -739,10 +743,6 @@ var annotated_dup =
       [ "Wrap", "structKarm_1_1Wrap.html", null ],
       [ "WriteLockScope", "structKarm_1_1WriteLockScope.html", "structKarm_1_1WriteLockScope" ],
       [ "Year", "structKarm_1_1Year.html", "structKarm_1_1Year" ]
-    ] ],
-    [ "Tls", "namespaceTls.html", [
-      [ "CipherSuite", "structTls_1_1CipherSuite.html", null ],
-      [ "TlsConnection", "structTls_1_1TlsConnection.html", "structTls_1_1TlsConnection" ]
     ] ],
     [ "Sin", "structSin.html", "structSin" ]
 ];

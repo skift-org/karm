@@ -7,7 +7,7 @@ var searchData=
   ['center_5falign_4',['CENTER_ALIGN',['../namespaceKarm_1_1Gfx.html#ab7417258048b0992fff9c65f5867c991adcf988bd5f1739e169778dc130ffb8d8',1,'Karm::Gfx']]],
   ['ch_5',['CH',['../namespaceKarm_1_1Net_1_1Dns.html#a5c4cf3fa24a1f70eefcf55916c547fb3a2a910ba133f2ca4396f764ec3c3e626d',1,'Karm::Net::Dns']]],
   ['chain_5fcontext_5fpositioning_6',['CHAIN_CONTEXT_POSITIONING',['../namespaceKarm_1_1Font_1_1Ttf.html#a8aff7083e7ad767f8dd513de43aa9ae4ae7d330012e67009075cb31cfa2690de4',1,'Karm::Font::Ttf']]],
-  ['change_5fcipher_5fspec_7',['CHANGE_CIPHER_SPEC',['../namespaceTls.html#af4f9673df47c05b9d214c7b1849d92c8a5072f00cf2e09874dbaaced8bcf35252',1,'Tls']]],
+  ['change_5fcipher_5fspec_7',['CHANGE_CIPHER_SPEC',['../namespaceKarm_1_1Tls.html#aaf515fece8a277ad4b013f6f11ba2d63a5072f00cf2e09874dbaaced8bcf35252',1,'Karm::Tls']]],
   ['clear_8',['CLEAR',['../structKarm_1_1Math_1_1Path.html#a1a219937914ccedcf08cb1852aa8eca7a813461e0c58e7ad59a2fd83ca2237fec',1,'Karm::Math::Path']]],
   ['clear_5fdisplay_9',['CLEAR_DISPLAY',['../structKarm_1_1Tty_1_1Cmd.html#abbb98825a0ae9609f03910a43aead3e5a9ee4972c4a7197ddcef6acf6f57d7864',1,'Karm::Tty::Cmd']]],
   ['clear_5fdisplay_5fafter_10',['CLEAR_DISPLAY_AFTER',['../structKarm_1_1Tty_1_1Cmd.html#abbb98825a0ae9609f03910a43aead3e5a782515be59b4c63f97eb96bc59b14131',1,'Karm::Tty::Cmd']]],

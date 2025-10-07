@@ -15,7 +15,7 @@ var searchData=
   ['chunk_12',['Chunk',['../structKarm_1_1Av_1_1Riff_1_1Chunk.html',1,'Karm::Av::Riff']]],
   ['chunkedbody_13',['ChunkedBody',['../structKarm_1_1Http_1_1ChunkedBody.html',1,'Karm::Http']]],
   ['chunkheader_14',['ChunkHeader',['../structKarm_1_1Av_1_1Riff_1_1ChunkHeader.html',1,'Karm::Av::Riff']]],
-  ['ciphersuite_15',['CipherSuite',['../structTls_1_1CipherSuite.html',1,'Tls']]],
+  ['ciphersuite_15',['CipherSuite',['../structKarm_1_1Tls_1_1CipherSuite.html',1,'Karm::Tls']]],
   ['classdef_16',['ClassDef',['../structKarm_1_1Font_1_1Ttf_1_1ClassDef.html',1,'Karm::Font::Ttf']]],
   ['classpairadjustment_17',['ClassPairAdjustment',['../structKarm_1_1Font_1_1Ttf_1_1ClassPairAdjustment.html',1,'Karm::Font::Ttf']]],
   ['clear_18',['Clear',['../structKarm_1_1Scene_1_1Clear.html',1,'Karm::Scene']]],

@@ -17,7 +17,7 @@ var searchData=
   ['time_14',['Time',['../structKarm_1_1Time.html',1,'Karm']]],
   ['tintfilter_15',['TintFilter',['../structKarm_1_1Gfx_1_1TintFilter.html',1,'Karm::Gfx']]],
   ['titlebarcontent_16',['TitlebarContent',['../structKarm_1_1Kira_1_1TitlebarContent.html',1,'Karm::Kira']]],
-  ['tlsconnection_17',['TlsConnection',['../structTls_1_1TlsConnection.html',1,'Tls']]],
+  ['tlsconnection_17',['TlsConnection',['../structKarm_1_1Tls_1_1TlsConnection.html',1,'Karm::Tls']]],
   ['toggle_18',['Toggle',['../structKarm_1_1Kira_1_1Toggle.html',1,'Karm::Kira']]],
   ['togglesidebar_19',['ToggleSidebar',['../structKarm_1_1Kira_1_1Scaffold_1_1ToggleSidebar.html',1,'Karm::Kira::Scaffold']]],
   ['token_20',['Token',['../structKarm_1_1Async_1_1Cancellation_1_1Token.html',1,'Karm::Async::Cancellation::Token'],['../structKarm_1_1Cli_1_1Token.html',1,'Karm::Cli::Token']]],

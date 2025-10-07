@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.6"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Karm: src/libs/karm-net/tls/tls.h File Reference</title>
+<title>Karm: src/libs/karm-tls/mod.cpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript">var page_layout=1;</script>
 <script type="text/javascript" src="jquery.js"></script>
@@ -70,7 +70,7 @@ var searchBox = new SearchBox("searchBox", "search/",'.html');
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-$(document).ready(function(){initNavTree('tls_8h.html',''); initResizable(); });
+$(document).ready(function(){initNavTree('karm-tls_2mod_8cpp.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -101,39 +101,41 @@ $(document).ready(function(){initNavTree('tls_8h.html',''); initResizable(); });
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
 <a href="#var-members">Variables</a>  </div>
-  <div class="headertitle"><div class="title">tls.h File Reference</div></div>
+  <div class="headertitle"><div class="title">mod.cpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-
-<p><a href="tls_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structTls_1_1CipherSuite.html">Tls::CipherSuite</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Tls_1_1CipherSuite.html">Karm::Tls::CipherSuite</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structTls_1_1TlsConnection.html">Tls::TlsConnection</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Tls_1_1TlsConnection.html">Karm::Tls::TlsConnection</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
-<tr class="memitem:namespaceTls"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceTls.html">Tls</a></td></tr>
+<tr class="memitem:namespaceKarm"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm.html">Karm</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespaceKarm_1_1Tls"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Tls.html">Karm::Tls</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:af4f9673df47c05b9d214c7b1849d92c8"><td class="memItemLeft" align="right" valign="top">enum struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceTls.html#af4f9673df47c05b9d214c7b1849d92c8">Tls::ContentType</a> : u8 { <a class="el" href="namespaceTls.html#af4f9673df47c05b9d214c7b1849d92c8a5072f00cf2e09874dbaaced8bcf35252">Tls::CHANGE_CIPHER_SPEC</a> = 0x14
-, <a class="el" href="namespaceTls.html#af4f9673df47c05b9d214c7b1849d92c8a320f86f60f25459ba5550e000b2c3929">Tls::ALERT</a> = 0x15
-, <a class="el" href="namespaceTls.html#af4f9673df47c05b9d214c7b1849d92c8a84fcef12cce95eb15cffe4338ecf5d29">Tls::HANDSHAKE</a> = 0x16
-, <a class="el" href="namespaceTls.html#af4f9673df47c05b9d214c7b1849d92c8a704d52e4b4b32ea4145af26445eef741">Tls::APPLICATION_DATA</a> = 0x17
+<tr class="memitem:aaf515fece8a277ad4b013f6f11ba2d63"><td class="memItemLeft" align="right" valign="top">enum struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Tls.html#aaf515fece8a277ad4b013f6f11ba2d63">Karm::Tls::ContentType</a> : u8 { <a class="el" href="namespaceKarm_1_1Tls.html#aaf515fece8a277ad4b013f6f11ba2d63a5072f00cf2e09874dbaaced8bcf35252">Karm::Tls::CHANGE_CIPHER_SPEC</a> = 0x14
+, <a class="el" href="namespaceKarm_1_1Tls.html#aaf515fece8a277ad4b013f6f11ba2d63a320f86f60f25459ba5550e000b2c3929">Karm::Tls::ALERT</a> = 0x15
+, <a class="el" href="namespaceKarm_1_1Tls.html#aaf515fece8a277ad4b013f6f11ba2d63a84fcef12cce95eb15cffe4338ecf5d29">Karm::Tls::HANDSHAKE</a> = 0x16
+, <a class="el" href="namespaceKarm_1_1Tls.html#aaf515fece8a277ad4b013f6f11ba2d63a704d52e4b4b32ea4145af26445eef741">Karm::Tls::APPLICATION_DATA</a> = 0x17
  }</td></tr>
-<tr class="separator:af4f9673df47c05b9d214c7b1849d92c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:aaf515fece8a277ad4b013f6f11ba2d63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:abedc7e19652ef6fd2984ea9cb3d62db5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="karm-app_2mod_8cpp.html#aff55674fa41a3a4ef62434c039b6c32d">import</a> Karm&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tls_8h.html#abedc7e19652ef6fd2984ea9cb3d62db5">Core</a></td></tr>
+<tr class="memitem:afa6c57f2cfec5f3420372630efa74255"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="impls_2impl-posix_2epoll_2async_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6">module</a> Karm&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="karm-tls_2mod_8cpp.html#afa6c57f2cfec5f3420372630efa74255">Tls</a></td></tr>
+<tr class="separator:afa6c57f2cfec5f3420372630efa74255"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abedc7e19652ef6fd2984ea9cb3d62db5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="karm-app_2mod_8cpp.html#aff55674fa41a3a4ef62434c039b6c32d">import</a> Karm&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="karm-tls_2mod_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5">Core</a></td></tr>
 <tr class="separator:abedc7e19652ef6fd2984ea9cb3d62db5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a61c46eccbbffd42c6834297a60fa3f48"><td class="memItemLeft" align="right" valign="top">impoot Karm&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tls_8h.html#a61c46eccbbffd42c6834297a60fa3f48">Sys</a></td></tr>
-<tr class="separator:a61c46eccbbffd42c6834297a60fa3f48"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3974c0216d383a8ee20f65600aacb6c5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="karm-app_2mod_8cpp.html#aff55674fa41a3a4ef62434c039b6c32d">import</a> Karm&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="karm-tls_2mod_8cpp.html#a3974c0216d383a8ee20f65600aacb6c5">Sys</a></td></tr>
+<tr class="separator:a3974c0216d383a8ee20f65600aacb6c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Variable Documentation</h2>
 <a id="abedc7e19652ef6fd2984ea9cb3d62db5" name="abedc7e19652ef6fd2984ea9cb3d62db5"></a>
@@ -150,14 +152,28 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a61c46eccbbffd42c6834297a60fa3f48" name="a61c46eccbbffd42c6834297a60fa3f48"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a61c46eccbbffd42c6834297a60fa3f48">&#9670;&#160;</a></span>Sys</h2>
+<a id="a3974c0216d383a8ee20f65600aacb6c5" name="a3974c0216d383a8ee20f65600aacb6c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3974c0216d383a8ee20f65600aacb6c5">&#9670;&#160;</a></span>Sys</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">impoot Karm Sys</td>
+          <td class="memname"><a class="el" href="karm-app_2mod_8cpp.html#aff55674fa41a3a4ef62434c039b6c32d">import</a> Karm Sys</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="afa6c57f2cfec5f3420372630efa74255" name="afa6c57f2cfec5f3420372630efa74255"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa6c57f2cfec5f3420372630efa74255">&#9670;&#160;</a></span>Tls</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">export <a class="el" href="impls_2impl-posix_2epoll_2async_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6">module</a> Karm Tls</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -169,7 +185,7 @@ Variables</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_87a455bccb09a92130c26a11a880c98a.html">libs</a></li><li class="navelem"><a class="el" href="dir_a05c10671bfc9cf338e5b6b64c71b9f3.html">karm-net</a></li><li class="navelem"><a class="el" href="dir_49b27aee1231132951140a1706e847fd.html">tls</a></li><li class="navelem"><a class="el" href="tls_8h.html">tls.h</a></li>
+    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_87a455bccb09a92130c26a11a880c98a.html">libs</a></li><li class="navelem"><a class="el" href="dir_02110ab1cbddbbffe152044734133b99.html">karm-tls</a></li><li class="navelem"><a class="el" href="karm-tls_2mod_8cpp.html">mod.cpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6 </li>
   </ul>
 </div>
