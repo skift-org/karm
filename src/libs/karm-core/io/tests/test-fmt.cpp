@@ -1,5 +1,7 @@
 #include <karm-test/macros.h>
+
 import Karm.Core;
+import Karm.Logger;
 
 namespace Karm::Io::Tests {
 

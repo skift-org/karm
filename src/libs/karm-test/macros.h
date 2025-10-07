@@ -2,8 +2,8 @@
 
 #include <karm-core/macros.h>
 
-#include "driver.h"
-#include "test.h"
+import Karm.Test;
+import Karm.Core;
 
 namespace Karm::Test {
 

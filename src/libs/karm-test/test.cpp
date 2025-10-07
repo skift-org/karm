@@ -1,13 +1,16 @@
-#pragma once
+export module Karm.Test:test;
 
 import Karm.Core;
 
-#include "_prelude.h"
-#include "driver.h"
-
 namespace Karm::Test {
 
-struct Test : Meta::Pinned {
+export struct Test;
+export struct Driver;
+
+static Test* _first = nullptr;
+static Test* _last = nullptr;
+
+export struct Test : Meta::Pinned {
     enum struct Kind {
         SYNC,
         ASYNC,
@@ -26,15 +29,42 @@ struct Test : Meta::Pinned {
     };
 
     Loc _loc;
+    Test* next = nullptr;
+
+    static Test* first() {
+        return _first;
+    }
+
+    static usize len() {
+        usize n = 0;
+        Test* test = _first;
+        while (test) {
+            n++;
+            test = test->next;
+        }
+        return n;
+    }
 
     Test(Str name, Func func, Loc loc = Loc::current())
         : _name(name), _kind(SYNC), _func(func), _loc(loc) {
-        driver().add(this);
+        if (not _first) {
+            _first = this;
+            _last = this;
+        } else {
+            _last->next = this;
+            _last = this;
+        }
     }
 
     Test(Str name, FuncAsync func, Loc loc = Loc::current())
         : _name(name), _kind(ASYNC), _funcAsync(func), _loc(loc) {
-        driver().add(this);
+        if (not _first) {
+            _first = this;
+            _last = this;
+        } else {
+            _last->next = this;
+            _last = this;
+        }
     }
 
     Async::Task<> runAsync(Driver& driver) {
