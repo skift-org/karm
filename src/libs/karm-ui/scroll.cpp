@@ -12,24 +12,52 @@ namespace Karm::Ui {
 
 // MARK: Scroll ----------------------------------------------------------------
 
-struct Scroll : ProxyNode<Scroll> {
+export struct ScrollListener {
     static constexpr isize SCROLL_BAR_WIDTH = 4;
 
     bool _mouseIn = false;
     bool _animated = false;
     Math::Orien _orient{};
-    Math::Recti _bound{};
     Math::Vec2f _scroll{};
     Math::Vec2f _targetScroll{};
     Easedf _scrollOpacity;
 
-    Scroll(Child child, Math::Orien orient)
-        : ProxyNode(child), _orient(orient) {}
+    Math::Recti _contentBound;
+    Math::Recti _containerBound;
+
+    ScrollListener(Math::Orien orient = Math::Orien::BOTH)
+        : _orient(orient) {}
+
+    Math::Orien orient() const {
+        return _orient;
+    }
+
+    void updateContentBound(Math::Recti rect) {
+        _contentBound = rect;
+        scroll(_targetScroll.cast<isize>());
+    }
+
+    Math::Recti contentBound() const {
+        return _contentBound;
+    }
+
+    void updateContainerBound(Math::Recti rect) {
+        _containerBound = rect;
+        scroll(_targetScroll.cast<isize>());
+    }
+
+    Math::Recti containerBound() const {
+        return _containerBound;
+    }
+
+    Math::Vec2f scroll() {
+        return _scroll;
+    }
 
     void scroll(Math::Vec2i s) {
-        auto childBound = child().bound();
-        _targetScroll.x = clamp(s.x, -(childBound.width - min(childBound.width, bound().width)), 0);
-        _targetScroll.y = clamp(s.y, -(childBound.height - min(childBound.height, bound().height)), 0);
+        _targetScroll.x = clamp(s.x, -(_contentBound.width - min(_contentBound.width, _containerBound.width)), 0);
+        _targetScroll.y = clamp(s.y, -(_contentBound.height - min(_contentBound.height, _containerBound.height)), 0);
+
         if (_scroll.dist(_targetScroll) < 0.5) {
             _scroll = _targetScroll;
             _animated = false;
@@ -39,92 +67,78 @@ struct Scroll : ProxyNode<Scroll> {
     }
 
     bool canHScroll() {
-        return (_orient == Math::Orien::HORIZONTAL or _orient == Math::Orien::BOTH) and child().bound().width > bound().width;
+        return (_orient == Math::Orien::HORIZONTAL or _orient == Math::Orien::BOTH) and _contentBound.width > _containerBound.width;
     }
 
     Math::Recti hTrack() {
-        return Math::Recti{bound().start(), bound().bottom() - SCROLL_BAR_WIDTH, bound().width, SCROLL_BAR_WIDTH};
+        return Math::Recti{_containerBound.start(), _containerBound.bottom() - SCROLL_BAR_WIDTH, _containerBound.width, SCROLL_BAR_WIDTH};
     }
 
     bool canVScroll() {
-        return (_orient == Math::Orien::VERTICAL or _orient == Math::Orien::BOTH) and child().bound().height > bound().height;
+        return (_orient == Math::Orien::VERTICAL or _orient == Math::Orien::BOTH) and _contentBound.height > _containerBound.height;
     }
 
     Math::Recti vTrack() {
-        return Math::Recti{bound().end() - SCROLL_BAR_WIDTH, bound().top(), SCROLL_BAR_WIDTH, bound().height};
+        return Math::Recti{_containerBound.end() - SCROLL_BAR_WIDTH, _containerBound.top(), SCROLL_BAR_WIDTH, _containerBound.height};
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti r) override {
+    void paint(Gfx::Canvas& g) {
         g.push();
-        g.clip(_bound);
-        g.origin(_scroll);
-        r.xy = r.xy - _scroll.cast<isize>();
-        child().paint(g, r);
-
-        g.pop();
-
-        // draw scroll bar
-        g.push();
-        g.clip(_bound);
-
-        auto childBound = child().bound();
+        g.clip(_containerBound);
 
         if (canHScroll()) {
-            auto scrollBarWidth = (bound().width) * bound().width / childBound.width;
-            auto scrollBarX = bound().start() + (-_scroll.x * bound().width / childBound.width);
+            auto scrollBarWidth = (_containerBound.width) * _containerBound.width / _contentBound.width;
+            auto scrollBarX = _containerBound.start() + (-_scroll.x * _containerBound.width / _contentBound.width);
 
             g.fillStyle(Gfx::GRAY500.withOpacity(0.5 * clamp01(_scrollOpacity.value())));
-            g.fill(Math::Recti{(isize)scrollBarX, bound().bottom() - SCROLL_BAR_WIDTH, scrollBarWidth, SCROLL_BAR_WIDTH});
+            g.fill(Math::Recti{(isize)scrollBarX, _containerBound.bottom() - SCROLL_BAR_WIDTH, scrollBarWidth, SCROLL_BAR_WIDTH});
         }
 
         if (canVScroll()) {
-            auto scrollBarHeight = (bound().height) * bound().height / childBound.height;
-            auto scrollBarY = bound().top() + (-_scroll.y * bound().height / childBound.height);
+            auto scrollBarHeight = (_containerBound.height) * _containerBound.height / _contentBound.height;
+            auto scrollBarY = _containerBound.top() + (-_scroll.y * _containerBound.height / _contentBound.height);
 
             g.fillStyle(Ui::GRAY500.withOpacity(0.5 * clamp01(_scrollOpacity.value())));
-            g.fill(Math::Recti{bound().end() - SCROLL_BAR_WIDTH, (isize)scrollBarY, SCROLL_BAR_WIDTH, scrollBarHeight});
+            g.fill(Math::Recti{_containerBound.end() - SCROLL_BAR_WIDTH, (isize)scrollBarY, SCROLL_BAR_WIDTH, scrollBarHeight});
         }
 
         g.pop();
     }
 
-    void event(App::Event& e) override {
-        if (_scrollOpacity.needRepaint(*this, e)) {
+    void listen(Node& n, App::Event& e) {
+        if (e.accepted())
+            return;
+
+        if (_scrollOpacity.needRepaint(n, e)) {
             if (canHScroll())
-                shouldRepaint(*parent(), hTrack());
+                shouldRepaint(*n.parent(), hTrack());
 
             if (canVScroll())
-                shouldRepaint(*parent(), vTrack());
+                shouldRepaint(*n.parent(), vTrack());
         }
 
         if (auto me = e.is<App::MouseEvent>()) {
-            if (bound().contains(me->pos)) {
+            if (_containerBound.contains(me->pos)) {
                 _mouseIn = true;
 
-                me->pos = me->pos - _scroll.cast<isize>();
-                ProxyNode::event(e);
-                me->pos = me->pos + _scroll.cast<isize>();
-
-                if (not e.accepted()) {
-                    if (me->type == App::MouseEvent::SCROLL) {
-                        if (_orient == Math::Orien::BOTH) {
-                            scroll((_scroll + me->scroll * 128).cast<isize>());
-                        } else if (_orient == Math::Orien::HORIZONTAL) {
-                            scroll((_scroll + Math::Vec2f{(me->scroll.x + me->scroll.y) * 128, 0}).cast<isize>());
-                        } else if (_orient == Math::Orien::VERTICAL) {
-                            scroll((_scroll + Math::Vec2f{0, (me->scroll.x + me->scroll.y) * 128}).cast<isize>());
-                        }
-                        shouldAnimate(*this);
-                        _scrollOpacity.delay(0).animate(*this, 1, 0.3);
-                        e.accept();
+                if (me->type == App::MouseEvent::SCROLL) {
+                    if (_orient == Math::Orien::BOTH) {
+                        scroll((_scroll + me->scroll * 128).cast<isize>());
+                    } else if (_orient == Math::Orien::HORIZONTAL) {
+                        scroll((_scroll + Math::Vec2f{(me->scroll.x + me->scroll.y) * 128, 0}).cast<isize>());
+                    } else if (_orient == Math::Orien::VERTICAL) {
+                        scroll((_scroll + Math::Vec2f{0, (me->scroll.x + me->scroll.y) * 128}).cast<isize>());
                     }
+                    shouldAnimate(n);
+                    _scrollOpacity.delay(0).animate(n, 1, 0.3);
+                    e.accept();
                 }
             } else if (_mouseIn) {
                 _mouseIn = false;
-                mouseLeave(*_child);
+                mouseLeave(n);
             }
         } else if (e.is<Node::AnimateEvent>() and _animated) {
-            shouldRepaint(*parent(), bound());
+            shouldRepaint(*n.parent(), _containerBound);
 
             auto delta = _targetScroll - _scroll;
 
@@ -133,61 +147,87 @@ struct Scroll : ProxyNode<Scroll> {
             if (_scroll.dist(_targetScroll) < 0.5) {
                 _scroll = _targetScroll;
                 _animated = false;
-                _scrollOpacity.delay(1.0).animate(*this, 0, 0.3);
+                _scrollOpacity.delay(1.0).animate(n, 0, 0.3);
             } else {
-                shouldAnimate(*this);
+                shouldAnimate(n);
             }
-            ProxyNode<Scroll>::event(e);
-        } else {
-            ProxyNode<Scroll>::event(e);
         }
+    }
+};
+
+struct Scroll : ProxyNode<Scroll> {
+    static constexpr isize SCROLL_BAR_WIDTH = 4;
+    ScrollListener _listener;
+
+    Scroll(Child child, Math::Orien orient)
+        : ProxyNode(child), _listener(orient) {}
+
+    void paint(Gfx::Canvas& g, Math::Recti r) override {
+        g.push();
+        g.clip(_listener.containerBound());
+        g.origin(_listener.scroll());
+        r.xy = r.xy - _listener.scroll().cast<isize>();
+        child().paint(g, r);
+        g.pop();
+
+        // draw scroll bar
+        _listener.paint(g);
+    }
+
+    void event(App::Event& e) override {
+        if (auto me = e.is<App::MouseEvent>();
+            me and _listener.containerBound().contains(me->pos)) {
+            me->pos = me->pos - _listener.scroll().cast<isize>();
+            ProxyNode::event(e);
+            me->pos = me->pos + _listener.scroll().cast<isize>();
+        }
+
+        _listener.listen(*this, e);
+
+        if (not e.accepted())
+            ProxyNode<Scroll>::event(e);
     }
 
     void bubble(App::Event& e) override {
         if (auto pe = e.is<Node::PaintEvent>()) {
-            pe->bound.xy = pe->bound.xy + _scroll.cast<isize>();
+            pe->bound.xy = pe->bound.xy + _listener.scroll().cast<isize>();
             pe->bound = pe->bound.clipTo(bound());
         }
-
         ProxyNode::bubble(e);
     }
 
     void layout(Math::Recti r) override {
-        _bound = r;
-        auto childSize = child().size(_bound.size(), Hint::MAX);
-        if (_orient == Math::Orien::HORIZONTAL) {
+        _listener.updateContainerBound(r);
+        auto childSize = child().size(r.size(), Hint::MAX);
+        if (_listener.orient() == Math::Orien::HORIZONTAL) {
             childSize.height = r.height;
-        } else if (_orient == Math::Orien::VERTICAL) {
+        } else if (_listener.orient() == Math::Orien::VERTICAL) {
             childSize.width = r.width;
         }
 
         // Make sure the child is at least as big as the parent
         childSize.width = max(childSize.width, r.width);
         childSize.height = max(childSize.height, r.height);
-
-        r.wh = childSize;
-        child().layout(r);
-        scroll(_scroll.cast<isize>());
+        child().layout({r.xy, childSize});
+        _listener.updateContentBound(childSize);
     }
 
     Math::Vec2i size(Math::Vec2i s, Hint hint) override {
         auto childSize = child().size(s, hint);
-
         if (hint == Hint::MIN) {
-            if (_orient == Math::Orien::HORIZONTAL) {
+            if (_listener.orient() == Math::Orien::HORIZONTAL) {
                 childSize.x = min(childSize.x, s.x);
-            } else if (_orient == Math::Orien::VERTICAL) {
+            } else if (_listener.orient() == Math::Orien::VERTICAL) {
                 childSize.y = min(childSize.y, s.y);
             } else {
                 childSize = childSize.min(s);
             }
         }
-
         return childSize;
     }
 
     Math::Recti bound() override {
-        return _bound;
+        return _listener.containerBound();
     }
 };
 
