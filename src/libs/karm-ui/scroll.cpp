@@ -175,17 +175,18 @@ struct Scroll : ProxyNode<Scroll> {
     }
 
     void event(App::Event& e) override {
-        if (auto me = e.is<App::MouseEvent>();
-            me and _listener.containerBound().contains(me->pos)) {
-            me->pos = me->pos - _listener.scroll().cast<isize>();
-            ProxyNode::event(e);
-            me->pos = me->pos + _listener.scroll().cast<isize>();
-        }
-
         _listener.listen(*this, e);
 
-        if (not e.accepted())
-            ProxyNode<Scroll>::event(e);
+        if (not e.accepted()) {
+            if (auto me = e.is<App::MouseEvent>();
+                me and _listener.containerBound().contains(me->pos)) {
+                me->pos = me->pos - _listener.scroll().cast<isize>();
+                ProxyNode::event(e);
+                me->pos = me->pos + _listener.scroll().cast<isize>();
+            } else {
+                ProxyNode<Scroll>::event(e);
+            }
+        }
     }
 
     void bubble(App::Event& e) override {
