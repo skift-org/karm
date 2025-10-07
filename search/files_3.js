@@ -11,6 +11,5 @@ var searchData=
   ['distinct_2ecpp_8',['distinct.cpp',['../distinct_8cpp.html',1,'']]],
   ['dns_2eh_9',['dns.h',['../dns_8h.html',1,'']]],
   ['drag_2ecpp_10',['drag.cpp',['../drag_8cpp.html',1,'']]],
-  ['driver_2ecpp_11',['driver.cpp',['../driver_8cpp.html',1,'']]],
-  ['driver_2eh_12',['driver.h',['../driver_8h.html',1,'']]]
+  ['driver_2ecpp_11',['driver.cpp',['../driver_8cpp.html',1,'']]]
 ];

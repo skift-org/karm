@@ -98,13 +98,12 @@ $(document).ready(function(){initNavTree('karm-test_2macros_8h.html',''); initRe
 <div class="header">
   <div class="summary">
 <a href="#namespaces">Namespaces</a> &#124;
-<a href="#define-members">Macros</a>  </div>
+<a href="#define-members">Macros</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">macros.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;<a class="el" href="karm-core_2macros_8h_source.html">karm-core/macros.h</a>&gt;</code><br />
-<code>#include &quot;<a class="el" href="driver_8h_source.html">driver.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="test_8h_source.html">test.h</a>&quot;</code><br />
 </div>
 <p><a href="karm-test_2macros_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -153,6 +152,13 @@ Macros</h2></td></tr>
 <tr class="separator:a8d779619dcdc18f5ba22b7d292cc2b48"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e78a7a3f3fa4e769bd2e569990d44a4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="karm-test_2macros_8h.html#a4e78a7a3f3fa4e769bd2e569990d44a4">co_expectGteq</a>&#160;&#160;&#160;$(LHS, RHS) __co_expect$(LHS, RHS, &gt;=, &quot;≥&quot;)</td></tr>
 <tr class="separator:a4e78a7a3f3fa4e769bd2e569990d44a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:aff3d34e1f9a3e85efb0b1152796bfb18"><td class="memItemLeft" align="right" valign="top"><a class="el" href="karm-app_2mod_8cpp.html#aff55674fa41a3a4ef62434c039b6c32d">import</a> Karm&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="karm-test_2macros_8h.html#aff3d34e1f9a3e85efb0b1152796bfb18">Test</a></td></tr>
+<tr class="separator:aff3d34e1f9a3e85efb0b1152796bfb18"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abedc7e19652ef6fd2984ea9cb3d62db5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="karm-app_2mod_8cpp.html#aff55674fa41a3a4ef62434c039b6c32d">import</a> Karm&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="karm-test_2macros_8h.html#abedc7e19652ef6fd2984ea9cb3d62db5">Core</a></td></tr>
+<tr class="separator:abedc7e19652ef6fd2984ea9cb3d62db5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="a3059f5624b672de0662cbfc473807a75" name="a3059f5624b672de0662cbfc473807a75"></a>
@@ -395,7 +401,7 @@ Macros</h2></td></tr>
 <div class="line">    static ::Karm::Test::Test var$(<a class="code hl_define" href="karm-test_2macros_8h.html#af04af1bc6d042a68a2b24d6e1312d253">test</a>){ID, var$(func)};                             \</div>
 <div class="line">    static ::Karm::Res&lt;&gt; var$(func)([[maybe_unused]] <a class="code hl_struct" href="structKarm_1_1Test_1_1Driver.html">::Karm::Test::Driver</a> &amp; _driver)</div>
 <div class="ttc" id="akarm-test_2macros_8h_html_af04af1bc6d042a68a2b24d6e1312d253"><div class="ttname"><a href="karm-test_2macros_8h.html#af04af1bc6d042a68a2b24d6e1312d253">test</a></div><div class="ttdeci">#define test</div><div class="ttdef"><b>Definition:</b> macros.h:10</div></div>
-<div class="ttc" id="astructKarm_1_1Test_1_1Driver_html"><div class="ttname"><a href="structKarm_1_1Test_1_1Driver.html">Karm::Test::Driver</a></div><div class="ttdef"><b>Definition:</b> driver.h:16</div></div>
+<div class="ttc" id="astructKarm_1_1Test_1_1Driver_html"><div class="ttname"><a href="structKarm_1_1Test_1_1Driver.html">Karm::Test::Driver</a></div><div class="ttdef"><b>Definition:</b> driver.cpp:26</div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -415,6 +421,35 @@ Macros</h2></td></tr>
 <div class="line">    static ::Karm::Test::Test var$(<a class="code hl_define" href="karm-test_2macros_8h.html#af04af1bc6d042a68a2b24d6e1312d253">test</a>){ID, var$(funcAsync)};                                     \</div>
 <div class="line">    static ::Karm::Async::Task&lt;&gt; var$(funcAsync)([[maybe_unused]] <a class="code hl_struct" href="structKarm_1_1Test_1_1Driver.html">::Karm::Test::Driver</a> &amp; _driver)</div>
 </div><!-- fragment -->
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="abedc7e19652ef6fd2984ea9cb3d62db5" name="abedc7e19652ef6fd2984ea9cb3d62db5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abedc7e19652ef6fd2984ea9cb3d62db5">&#9670;&#160;</a></span>Core</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="karm-app_2mod_8cpp.html#aff55674fa41a3a4ef62434c039b6c32d">import</a> Karm Core</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aff3d34e1f9a3e85efb0b1152796bfb18" name="aff3d34e1f9a3e85efb0b1152796bfb18"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff3d34e1f9a3e85efb0b1152796bfb18">&#9670;&#160;</a></span>Test</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="karm-app_2mod_8cpp.html#aff55674fa41a3a4ef62434c039b6c32d">import</a> Karm Test</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
 </div>
 </div>
 </div><!-- contents -->

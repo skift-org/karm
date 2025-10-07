@@ -17,5 +17,7 @@ var karm_test_2macros_8h =
     [ "expectNe", "karm-test_2macros_8h.html#a647dbb6f62642d782def6fffaf670e3e", null ],
     [ "expectNot", "karm-test_2macros_8h.html#ad656da54a1d8c5e5a806923b39dc5e19", null ],
     [ "test", "karm-test_2macros_8h.html#af04af1bc6d042a68a2b24d6e1312d253", null ],
-    [ "testAsync", "karm-test_2macros_8h.html#a255f1248c721bd1044c6e1b4b3a9734f", null ]
+    [ "testAsync", "karm-test_2macros_8h.html#a255f1248c721bd1044c6e1b4b3a9734f", null ],
+    [ "Core", "karm-test_2macros_8h.html#abedc7e19652ef6fd2984ea9cb3d62db5", null ],
+    [ "Test", "karm-test_2macros_8h.html#aff3d34e1f9a3e85efb0b1152796bfb18", null ]
 ];

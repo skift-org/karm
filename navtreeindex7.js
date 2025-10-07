@@ -1,11 +1,5 @@
 var NAVTREEINDEX7 =
 {
-"karm-core_2io_2types_8cpp.html#a22d6cdaab0f64553050fcefa7a55a172ab1a326c06d88bf042f73d70f50197905":[3,0,0,1,4,5,13,1,2],
-"karm-core_2io_2types_8cpp.html#af60e35d72364ff777a965d456af4dea3":[3,0,0,1,4,5,13,2],
-"karm-core_2json_2mod_8cpp.html":[3,0,0,1,4,6,1],
-"karm-core_2json_2mod_8cpp.html#a01f359f05e193be9b75b5c02a5c18ab3":[3,0,0,1,4,6,1,0],
-"karm-core_2json_2mod_8cpp.html#a06d6670226b16306f30aa67d92a85600":[3,0,0,1,4,6,1,8],
-"karm-core_2json_2mod_8cpp.html#a07e990481db77e24e1d4b1732039a161":[3,0,0,1,4,6,1,1],
 "karm-core_2json_2mod_8cpp.html#a0b1be6eea2ad4f159913ee6a440722a6":[3,0,0,1,4,6,1,2],
 "karm-core_2json_2mod_8cpp.html#a21bdb24c13f63b457f57acd5a79e58a3":[3,0,0,1,4,6,1,3],
 "karm-core_2json_2mod_8cpp.html#a3c0bb9b6e3c92a54d3e64bd19d2a321c":[3,0,0,1,4,6,1,7],
@@ -249,5 +243,11 @@ var NAVTREEINDEX7 =
 "karm-image_2jpeg_2base_8cpp.html#af7022f5c263dd1247b0212ffec582808ac6109655c6aa7d13ba47fa21c3f34bad":[3,0,0,1,12,3,0,5,25],
 "karm-image_2jpeg_2base_8cpp.html#af7022f5c263dd1247b0212ffec582808ac8e4664da858826d81bb416122551da8":[3,0,0,1,12,3,0,5,39],
 "karm-image_2jpeg_2base_8cpp.html#af7022f5c263dd1247b0212ffec582808ac99959a15d0f9429f3d3db7fd39d0271":[3,0,0,1,12,3,0,5,12],
-"karm-image_2jpeg_2base_8cpp.html#af7022f5c263dd1247b0212ffec582808ad1b72066bef0f47fc912b6e331981929":[3,0,0,1,12,3,0,5,16]
+"karm-image_2jpeg_2base_8cpp.html#af7022f5c263dd1247b0212ffec582808ad1b72066bef0f47fc912b6e331981929":[3,0,0,1,12,3,0,5,16],
+"karm-image_2jpeg_2base_8cpp.html#af7022f5c263dd1247b0212ffec582808ad38e2f0a06201f081720da4f020e6180":[3,0,0,1,12,3,0,5,10],
+"karm-image_2jpeg_2base_8cpp.html#af7022f5c263dd1247b0212ffec582808ad6583228659d7f7c190f9feb3c0bb776":[3,0,0,1,12,3,0,5,27],
+"karm-image_2jpeg_2base_8cpp.html#af7022f5c263dd1247b0212ffec582808ad94ca94652e04cb680b7f5c2536851f1":[3,0,0,1,12,3,0,5,19],
+"karm-image_2jpeg_2base_8cpp.html#af7022f5c263dd1247b0212ffec582808addd196bdbfc52e1e7b9bea4132a08999":[3,0,0,1,12,3,0,5,45],
+"karm-image_2jpeg_2base_8cpp.html#af7022f5c263dd1247b0212ffec582808ade5df1213abf42759e5a5836088c01a1":[3,0,0,1,12,3,0,5,61],
+"karm-image_2jpeg_2base_8cpp.html#af7022f5c263dd1247b0212ffec582808ae0182e1c673b86ee34187b229693f608":[3,0,0,1,12,3,0,5,38]
 };

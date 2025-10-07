@@ -5,6 +5,5 @@ var namespaceKarm_1_1Test =
     ] ],
     [ "Driver", "structKarm_1_1Test_1_1Driver.html", "structKarm_1_1Test_1_1Driver" ],
     [ "RunOptions", "structKarm_1_1Test_1_1RunOptions.html", "structKarm_1_1Test_1_1RunOptions" ],
-    [ "Test", "structKarm_1_1Test_1_1Test.html", "structKarm_1_1Test_1_1Test" ],
-    [ "driver", "namespaceKarm_1_1Test.html#af989ffb367f87121248c5992e537b1b5", null ]
+    [ "Test", "structKarm_1_1Test_1_1Test.html", "structKarm_1_1Test_1_1Test" ]
 ];

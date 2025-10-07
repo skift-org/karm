@@ -26,5 +26,6 @@ var test_fmt_8cpp =
     [ "test$", "test-fmt_8cpp.html#aacb3b3dff82a2cdfdcbc1764cc8d462e", null ],
     [ "test$", "test-fmt_8cpp.html#ade715e6f3d38335f2da586a839593588", null ],
     [ "testCase", "test-fmt_8cpp.html#a14e0bbeac77f05dac4519c8a53a83939", null ],
-    [ "Core", "test-fmt_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5", null ]
+    [ "Core", "test-fmt_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5", null ],
+    [ "Logger", "test-fmt_8cpp.html#ade9c999f65d06abc86ce3cce78a704fc", null ]
 ];

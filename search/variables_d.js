@@ -7,7 +7,7 @@ var searchData=
   ['nameid_4',['nameId',['../structKarm_1_1Font_1_1Ttf_1_1Name_1_1Record.html#a0f420d4b8aa8dd2d5703195c2544bdf9',1,'Karm::Font::Ttf::Name::Record']]],
   ['nan_5',['NAN',['../namespaceKarm_1_1Math.html#a2cd345ca09371c0e021aabb1496d8096',1,'Karm::Math']]],
   ['neg_5finf_6',['NEG_INF',['../namespaceKarm_1_1Math.html#a3a4ddc6fcbcf8b3f998347fd35aadc3b',1,'Karm::Math']]],
-  ['next_7',['next',['../structKarm_1_1Iter.html#a7c698dcd955e0375734b93fa00355d23',1,'Karm::Iter::next()'],['../structKarm_1_1Debug_1_1Flag.html#a235d5d7a155e55d859d1e1a729a0a263',1,'Karm::Debug::Flag::next()'],['../structKarm_1_1LlItem.html#a37775e71ef0c072d6f1cbf06fbd3c65b',1,'Karm::LlItem::next()']]],
+  ['next_7',['next',['../structKarm_1_1Iter.html#a7c698dcd955e0375734b93fa00355d23',1,'Karm::Iter::next()'],['../structKarm_1_1Test_1_1Test.html#a906987e115ef87bfdb49fb90269d2966',1,'Karm::Test::Test::next()'],['../structKarm_1_1Debug_1_1Flag.html#a235d5d7a155e55d859d1e1a729a0a263',1,'Karm::Debug::Flag::next()'],['../structKarm_1_1LlItem.html#a37775e71ef0c072d6f1cbf06fbd3c65b',1,'Karm::LlItem::next()']]],
   ['niche_5fptr_8',['NICHE_PTR',['../namespaceKarm.html#a48d3400ae25e8c5af7c4d59abb60fb20',1,'Karm']]],
   ['no_5fmatch_9',['NO_MATCH',['../structKarm_1_1Gfx_1_1FontWeight.html#a5989917095a821f68607a4421dd5b79b',1,'Karm::Gfx::FontWeight::NO_MATCH()'],['../structKarm_1_1Gfx_1_1FontStretch.html#a78c28f23cb35cd1509979d81af5f70f0',1,'Karm::Gfx::FontStretch::NO_MATCH()']]],
   ['none_10',['NONE',['../structKarm_1_1Math_1_1Align.html#a30fcbaeed0c5767d28e757c69ddcb803',1,'Karm::Math::Align::NONE()'],['../namespaceKarm.html#ad1321baaaac39d3c9e044f9fb4308639',1,'Karm::NONE()']]],

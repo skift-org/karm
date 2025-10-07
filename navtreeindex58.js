@@ -1,6 +1,5 @@
 var NAVTREEINDEX58 =
 {
-"test-book_8cpp.html#a71f40777a0ea74d3aad6cb7a03245612":[3,0,0,1,7,1,0,1],
 "test-book_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6":[3,0,0,1,7,1,0,2],
 "test-box_8cpp.html":[3,0,0,1,4,2,1,1],
 "test-box_8cpp.html#ab6ef030c2d20b7ac8ba25811d759c076":[3,0,0,1,4,2,1,1,0],
@@ -73,6 +72,7 @@ var NAVTREEINDEX58 =
 "test-fmt_8cpp.html#aacb3b3dff82a2cdfdcbc1764cc8d462e":[3,0,0,1,4,5,0,4,16],
 "test-fmt_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5":[3,0,0,1,4,5,0,4,19],
 "test-fmt_8cpp.html#ade715e6f3d38335f2da586a839593588":[3,0,0,1,4,5,0,4,17],
+"test-fmt_8cpp.html#ade9c999f65d06abc86ce3cce78a704fc":[3,0,0,1,4,5,0,4,20],
 "test-fmt_8cpp.html#ae88b2cf52aec1c2a89db19bba415514e":[3,0,0,1,4,5,0,4,8],
 "test-fmt_8cpp.html#af7614e50226aa33f15bd8ba65aa58013":[3,0,0,1,4,5,0,4,9],
 "test-fmt_8cpp.html#afeb59429ec10020034f2fb6b0b76de94":[3,0,0,1,4,5,0,4,11],
