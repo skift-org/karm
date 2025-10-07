@@ -13,13 +13,13 @@ export struct TtfGlyphInfoAdapter {
 
     Rc<Font::Ttf::Fontface> _font;
 
-    Map<u16, u16> codeMappings;
+    Vec<Tuple<u16, u16>> codeMappings;
 
-    TtfGlyphInfoAdapter(Rc<Font::Ttf::Fontface> font, Map<u16, u16> mappings)
+    TtfGlyphInfoAdapter(Rc<Font::Ttf::Fontface> font, Vec<Tuple<u16, u16>> mappings)
         : _font{font}, codeMappings{mappings} {}
 
     static TtfGlyphInfoAdapter build(Rc<Font::Ttf::Fontface> font) {
-        Map<u16, u16> codeMappings = font->_parser._cmapTable.extractMapping();
+        auto codeMappings = font->_parser._cmapTable.extractMapping();
         return TtfGlyphInfoAdapter{font, codeMappings};
     }
 
@@ -30,7 +30,7 @@ export struct TtfGlyphInfoAdapter {
         f64 yMin = 0;
         f64 yMax = 0;
 
-        for (auto [_, GID] : codeMappings.iter()) {
+        for (auto [_, GID] : iter(codeMappings)) {
             Gfx::Glyph glyph{.index = GID, .font = 0};
             auto metrics = _font->_parser.glyphMetrics(glyph);
 
@@ -62,7 +62,7 @@ export struct TtfGlyphInfoAdapter {
         };
 
         Opt<u16> prevCid;
-        for (auto const& [cid, gid] : codeMappings.iter()) {
+        for (auto const& [cid, gid] : iter(codeMappings)) {
 
             if (prevCid and prevCid.unwrap() + 1 != cid)
                 flushCollectedWidths();
@@ -91,7 +91,11 @@ export struct TtfGlyphInfoAdapter {
 
         usize consecutiveUnmappedCIDs = 0;
         for (usize i = 0; i < CODESPACE; ++i) {
-            auto glyph = codeMappings.tryGet(i);
+            auto glyph =
+                iter(codeMappings)
+                    .first([&](auto const& rec) {
+                        return rec.v0 == i;
+                    });
 
             if (not glyph) {
                 consecutiveUnmappedCIDs++;
@@ -104,7 +108,7 @@ export struct TtfGlyphInfoAdapter {
             }
             consecutiveUnmappedCIDs = 0;
 
-            auto gid = glyph.unwrap();
+            auto gid = glyph->v1;
             buf.insert(buf.len(), (gid >> 8) & BYTE_MASK);
             buf.insert(buf.len(), gid & BYTE_MASK);
         }

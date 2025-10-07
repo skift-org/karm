@@ -76,7 +76,7 @@ export struct Header : Map<String, String> {
     }
 
     Res<> unparse(Io::TextWriter& w) {
-        for (auto& [key, value] : iter()) {
+        for (auto& [key, value] : iterUnordered()) {
             try$(Io::format(w, "{}: {}\r\n", key, value));
         }
         return Ok();

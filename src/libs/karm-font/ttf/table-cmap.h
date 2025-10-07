@@ -20,8 +20,8 @@ struct Cmap : Io::BChunk {
             return slice;
         }
 
-        Map<u16, u16> _extractMappingForType12() {
-            Map<u16, u16> codeMappings;
+        Vec<Tuple<u16, u16>> _extractMappingForType12() {
+            Vec<Tuple<u16, u16>> codeMappings;
 
             auto s = begin().skip(12);
             u32 nGroups = s.nextU32be();
@@ -33,7 +33,7 @@ struct Cmap : Io::BChunk {
                 u32 glyphOffset = s.nextU32be();
 
                 for (usize r = startCode; r <= endCode; ++r) {
-                    codeMappings.put(r, (r - startCode) + glyphOffset);
+                    codeMappings.pushBack({(u16)r, (u16)((r - startCode) + glyphOffset)});
                 }
             }
             return codeMappings;
@@ -72,8 +72,8 @@ struct Cmap : Io::BChunk {
             return Gfx::Glyph(0);
         }
 
-        Map<u16, u16> _extractMappingForType4() {
-            Map<u16, u16> codeMappings;
+        Vec<Tuple<u16, u16>> _extractMappingForType4() {
+            Vec<Tuple<u16, u16>> codeMappings;
 
             u16 segCountX2 = begin().skip(6).nextU16be();
             u16 segCount = segCountX2 / 2;
@@ -91,12 +91,12 @@ struct Cmap : Io::BChunk {
 
                 if (idRangeOffset == 0) {
                     for (usize code = startCode; code <= endCode; code++) {
-                        codeMappings.put(code, (u16)((code + idDelta) & 0xFFFF));
+                        codeMappings.pushBack({(u16)code, (u16)((code + idDelta) & 0xFFFF)});
                     }
                 } else {
                     for (usize code = startCode; code <= endCode; code++) {
                         auto offset = idRangeOffset + (code - startCode) * 2;
-                        codeMappings.put(code, s.skip(offset).nextU16be());
+                        codeMappings.pushBack({(u16)code, s.skip(offset).nextU16be()});
                     }
                 }
             }
@@ -127,7 +127,7 @@ struct Cmap : Io::BChunk {
             return Gfx::Glyph(0);
         }
 
-        Map<u16, u16> extractMapping() {
+        Vec<Tuple<u16, u16>> extractMapping() {
             if (type == 4) {
                 return _extractMappingForType4();
             } else if (type == 12) {

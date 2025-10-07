@@ -164,6 +164,10 @@ export struct None {
 
     bool operator==(None const&) const = default;
     auto operator<=>(None const&) const = default;
+
+    operator std::nullptr_t() const {
+        return nullptr;
+    }
 };
 
 export constexpr auto NONE = None{};

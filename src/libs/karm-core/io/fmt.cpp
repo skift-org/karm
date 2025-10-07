@@ -745,7 +745,7 @@ struct Formatter<Map<K, V>> {
     Res<> format(TextWriter& writer, Map<K, V> const& val) {
         try$(writer.writeStr("{"s));
         bool first = true;
-        for (auto const& [key, value] : val.iter()) {
+        for (auto const& [key, value] : val.iterUnordered()) {
             if (not first)
                 try$(writer.writeStr(", "s));
             first = false;

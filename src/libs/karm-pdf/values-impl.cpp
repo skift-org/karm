@@ -25,7 +25,7 @@ void Array::write(Io::Emit& e) const {
 
 void Dict::write(Io::Emit& e) const {
     e("<<\n");
-    for (auto const& [k, v] : iter()) {
+    for (auto const& [k, v] : iterUnordered()) {
         e('/');
         e(k);
         e(' ');
@@ -81,7 +81,7 @@ Res<> File::write(Io::Writer& w) const {
 
     XRef xref;
 
-    for (auto const& [k, v] : body.iter()) {
+    for (auto const& [k, v] : body.iterUnordered()) {
         try$(e.flush());
         xref.add(try$(Io::tell(count)), k.gen);
         e("{} {} obj\n", k.num, k.gen);

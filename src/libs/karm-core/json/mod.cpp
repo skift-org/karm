@@ -274,7 +274,7 @@ export Res<> unparse(Io::Emit& emit, Serde::Value const& v) {
             [&](Serde::Object const& m) -> Res<> {
                 emit('{');
                 bool first = true;
-                for (auto const& kv : m.iter()) {
+                for (auto const& kv : m.iterUnordered()) {
                     if (not first) {
                         emit(',');
                     }

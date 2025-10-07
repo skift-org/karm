@@ -138,16 +138,12 @@ struct Map {
         return false;
     }
 
-    auto iter() {
+    auto iterUnordered() {
         return Karm::iter(_els);
     }
 
-    auto iter() const {
+    auto iterUnordered() const {
         return Karm::iter(_els);
-    }
-
-    V at(usize index) const {
-        return _els[index].v1;
     }
 
     usize len() const {

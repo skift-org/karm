@@ -108,7 +108,7 @@ struct Iter {
         return next();
     }
 
-    constexpr auto first(auto f) {
+    constexpr auto first(auto f) -> Item {
         for (auto item = next(); item; item = next()) {
             if (f(*item)) {
                 return item;
