@@ -24,7 +24,7 @@ namespace Karm::Image::Jpeg {
 
 export struct Decoder {
     static bool sniff(Bytes slice) {
-        return slice[0] == 0xFF and slice[1] == SOI;
+        return slice.len() > 2 and slice[0] == 0xFF and slice[1] == SOI;
     }
 
     static Res<Decoder> init(Bytes slice) {
