@@ -19,7 +19,13 @@ export struct Clear : Proxy {
             return;
 
         if (o.showBackgroundGraphics) {
-            g.clear(color.blendOver(Gfx::WHITE));
+            if (color.alpha == 255) {
+                g.clear(color);
+            } else {
+                g.beginPath();
+                g.rect(r);
+                g.fill(color);
+            }
         }
         _node->paint(g, r, o);
     }
