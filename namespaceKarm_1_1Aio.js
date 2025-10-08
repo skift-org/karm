@@ -9,5 +9,6 @@ var namespaceKarm_1_1Aio =
     [ "adapt", "namespaceKarm_1_1Aio.html#aaaee8254804c16af34cc4294dbd14bc1", null ],
     [ "copyAsync", "namespaceKarm_1_1Aio.html#a70d5982fa3e9120bb23f978065161992", null ],
     [ "pipe", "namespaceKarm_1_1Aio.html#a96d92ce05c4a3ef64f1a5fa3d0fc9955", null ],
+    [ "readAllAsync", "namespaceKarm_1_1Aio.html#a5dd0bbca58bafc24316f373f9642042a", null ],
     [ "readAllUtf8Async", "namespaceKarm_1_1Aio.html#a364f01fa69b0f141af437861da8756f0", null ]
 ];

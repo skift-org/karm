@@ -1,5 +1,6 @@
 var NAVTREEINDEX9 =
 {
+"karm-tty_2mod_8cpp.html":[3,0,0,1,27,1],
 "karm-tty_2mod_8cpp.html#ace7fc12e7922529692bfe1fbb81ae9a6":[3,0,0,1,27,1,1],
 "karm-tty_2mod_8cpp.html#aff55674fa41a3a4ef62434c039b6c32d":[3,0,0,1,27,1,0],
 "karm-ui_2box_8cpp.html":[3,0,0,1,28,4],
@@ -248,6 +249,5 @@ var NAVTREEINDEX9 =
 "mat_8cpp.html":[3,0,0,1,17,14],
 "mat_8cpp.html#a22e2bee150b58772ebd29fa846258609":[3,0,0,1,17,14,5],
 "mat_8cpp.html#a28c2fbd9aa2c78a61e465672c2d73596":[3,0,0,1,17,14,6],
-"mat_8cpp.html#a4661801a1238dd1ffc5b03f9c454c202":[3,0,0,1,17,14,7],
-"mat_8cpp.html#a5f84de234d02460f2f59107b41ac7c22":[3,0,0,1,17,14,8]
+"mat_8cpp.html#a4661801a1238dd1ffc5b03f9c454c202":[3,0,0,1,17,14,7]
 };

@@ -1,5 +1,6 @@
 var NAVTREEINDEX7 =
 {
+"karm-core_2math_2funcs_8cpp.html#a776975f014a6b6b7ca4b1295e6e41402":[3,0,0,1,4,7,2,19],
 "karm-core_2math_2funcs_8cpp.html#a8078902bb75cd35da4485914c6366621":[3,0,0,1,4,7,2,22],
 "karm-core_2math_2funcs_8cpp.html#a8c73d98c4d8515e291ee41d058a014af":[3,0,0,1,4,7,2,10],
 "karm-core_2math_2funcs_8cpp.html#a92dd56b379b02da92c7e57152c809dbd":[3,0,0,1,4,7,2,20],
@@ -248,6 +249,5 @@ var NAVTREEINDEX7 =
 "karm-image_2jpeg_2base_8cpp.html#af7022f5c263dd1247b0212ffec582808ad6583228659d7f7c190f9feb3c0bb776":[3,0,0,1,13,3,0,5,27],
 "karm-image_2jpeg_2base_8cpp.html#af7022f5c263dd1247b0212ffec582808ad94ca94652e04cb680b7f5c2536851f1":[3,0,0,1,13,3,0,5,19],
 "karm-image_2jpeg_2base_8cpp.html#af7022f5c263dd1247b0212ffec582808addd196bdbfc52e1e7b9bea4132a08999":[3,0,0,1,13,3,0,5,45],
-"karm-image_2jpeg_2base_8cpp.html#af7022f5c263dd1247b0212ffec582808ade5df1213abf42759e5a5836088c01a1":[3,0,0,1,13,3,0,5,61],
-"karm-image_2jpeg_2base_8cpp.html#af7022f5c263dd1247b0212ffec582808ae0182e1c673b86ee34187b229693f608":[3,0,0,1,13,3,0,5,38]
+"karm-image_2jpeg_2base_8cpp.html#af7022f5c263dd1247b0212ffec582808ade5df1213abf42759e5a5836088c01a1":[3,0,0,1,13,3,0,5,61]
 };

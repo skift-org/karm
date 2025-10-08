@@ -1,5 +1,7 @@
 var NAVTREEINDEX15 =
 {
+"namespaceKarm_1_1Logger.html":[0,0,0,21],
+"namespaceKarm_1_1Math.html":[0,0,0,22],
 "namespaceKarm_1_1Math.html#a0000f8ab46a8474911bc9dc03a8fe3b6":[0,0,0,22,117],
 "namespaceKarm_1_1Math.html#a053947d113880b6f5ebd6c1f624d6ae2":[0,0,0,22,59],
 "namespaceKarm_1_1Math.html#a0a25c3c446e37b9f890ca96f5166ae77":[0,0,0,22,65],
@@ -247,7 +249,5 @@ var NAVTREEINDEX15 =
 "namespaceKarm_1_1Net_1_1Dns.html#abd2f32101ab24c08b4a25c169aa9a7b5":[0,0,0,26,0,11],
 "namespaceKarm_1_1Net_1_1Dns.html#ac07401f51286224d75588c74fec82010":[0,0,0,26,0,10],
 "namespaceKarm_1_1Net_1_1Dns.html#ac23d343ce7043f220ba582d79efa39f6":[0,0,0,26,0,12],
-"namespaceKarm_1_1Net_1_1Dns.html#afdc41d84596321984a29bae536776a54":[0,0,0,26,0,9],
-"namespaceKarm_1_1Net_1_1Dns.html#afdc41d84596321984a29bae536776a54a0b2f2c31ecee9725330fbb16aa35b62e":[0,0,0,26,0,9,5],
-"namespaceKarm_1_1Net_1_1Dns.html#afdc41d84596321984a29bae536776a54a2af73d6691a0a7dda289e49aecb225fd":[0,0,0,26,0,9,7]
+"namespaceKarm_1_1Net_1_1Dns.html#afdc41d84596321984a29bae536776a54":[0,0,0,26,0,9]
 };
