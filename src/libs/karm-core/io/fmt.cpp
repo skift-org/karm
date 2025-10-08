@@ -303,6 +303,9 @@ export struct NumberFormatter {
 
 #ifndef __ck_freestanding__
     Res<> formatFloat(TextWriter& writer, f64 val) {
+        if (Math::isNan(val))
+            return writer.writeStr("nan"s);
+
         NumberFormatter formatter;
         isize ipart = (isize)val;
         f64 fpart = Math::abs(val - (f64)ipart);

@@ -4,8 +4,11 @@ module;
 
 export module Karm.Core:aio.funcs;
 
+import :base.vec;
 import :io.text;
+import :io.impls;
 import :aio.traits;
+import :aio.adapt;
 
 namespace Karm::Aio {
 
@@ -23,6 +26,13 @@ export Async::Task<usize> copyAsync(AsyncReadable auto& reader, AsyncWritable au
         if (written != read)
             co_return Ok(result);
     }
+}
+
+export Async::Task<Vec<u8>> readAllAsync(AsyncReadable auto& reader) {
+    Io::BufferWriter buf;
+    auto bufAsync = Aio::adapt(buf);
+    co_trya$(Aio::copyAsync(reader, bufAsync));
+    co_return Ok(buf.take());
 }
 
 export Async::Task<String> readAllUtf8Async(AsyncReadable auto& reader) {
