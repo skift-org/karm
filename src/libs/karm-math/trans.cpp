@@ -74,6 +74,19 @@ union Trans2 {
         };
     }
 
+    static constexpr Trans2 map(Rect<T> content, Rect<T> container) {
+        T sx = container.width / content.width;
+        T sy = container.height / content.height;
+        T tx = container.x - content.x * sx;
+        T ty = container.y - content.y * sy;
+
+        return {
+            sx, 0,
+            0, sy,
+            tx, ty
+        };
+    }
+
     bool rotated() const {
         return xx * yy - xy * yx < 0;
     }
