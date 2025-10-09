@@ -37,6 +37,7 @@ export struct Node {
         Gfx::CpuCanvas g;
         g.begin(*surface);
         g.scale(density);
+        g.clear(Gfx::ALPHA);
         paint(g, Math::Rectf{size.cast<f64>()});
         g.end();
 
