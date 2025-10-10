@@ -360,7 +360,7 @@ Rect<T> const Rect<T>::ONE = {1, 1};
 template <typename T>
 Rect<T> const Rect<T>::MAX = {Limits<T>::MAX, Limits<T>::MAX};
 
-export using Recti = Rect<i64>;
+export using Recti = Rect<isize>;
 
 export using Rectf = Rect<f64>;
 
