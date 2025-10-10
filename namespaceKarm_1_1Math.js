@@ -87,7 +87,7 @@ var namespaceKarm_1_1Math =
     [ "Rayf", "namespaceKarm_1_1Math.html#a0a25c3c446e37b9f890ca96f5166ae77", null ],
     [ "Rayi", "namespaceKarm_1_1Math.html#a54557b2c866ae13dc2ec831348b8580a", null ],
     [ "Rectf", "namespaceKarm_1_1Math.html#a388d1f2947455eb1d5dde3f305ecae37", null ],
-    [ "Recti", "namespaceKarm_1_1Math.html#a1f1d4d7b6346406f96ebdcbb151ffcd0", null ],
+    [ "Recti", "namespaceKarm_1_1Math.html#abf00418779b75396e0a087af865d8061", null ],
     [ "Trans2f", "namespaceKarm_1_1Math.html#a5444aba1c691220d8ed59f9209ad4d35", null ],
     [ "Tri2f", "namespaceKarm_1_1Math.html#a9d43a6e00d661123054084d550a00822", null ],
     [ "Tri2i", "namespaceKarm_1_1Math.html#a20a13fca9cce1cc66dd97aa273dd139f", null ],
