@@ -15,9 +15,6 @@ export struct Clear : Proxy {
         : Proxy(node), color(color) {}
 
     void paint(Gfx::Canvas& g, Math::Rectf r, PaintOptions o) override {
-        if (not bound().colide(r))
-            return;
-
         if (o.showBackgroundGraphics) {
             if (color.alpha == 255) {
                 g.clear(color);
