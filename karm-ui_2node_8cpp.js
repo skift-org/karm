@@ -26,6 +26,7 @@ var karm_ui_2node_8cpp =
     [ "SINK", "karm-ui_2node_8cpp.html#a302165f70e66b0d95cbcc10de1ebdec1", null ],
     [ "App", "karm-ui_2node_8cpp.html#ab217fce9727b55e386bc7eab0ed28441", null ],
     [ "Core", "karm-ui_2node_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5", null ],
+    [ "DISABLED", "karm-ui_2node_8cpp.html#a75b792a6eac8b82f35647812285ceae4", null ],
     [ "Gfx", "karm-ui_2node_8cpp.html#a7c0089b00689a79148a84c5b7fe95679", null ],
     [ "Math", "karm-ui_2node_8cpp.html#a062e19c831932519c33a396b9b0f4a04", null ],
     [ "Sys", "karm-ui_2node_8cpp.html#a3974c0216d383a8ee20f65600aacb6c5", null ],

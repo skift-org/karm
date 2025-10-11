@@ -2,8 +2,8 @@ var searchData=
 [
   ['p_0',['p',['../structKarm_1_1Math_1_1Path_1_1Op.html#aaa18f47907b0070ef9f2006de91628f8',1,'Karm::Math::Path::Op']]],
   ['packed_1',['packed',['../structKarm_1_1Image_1_1Gif_1_1Decoder_1_1LogicalScreenDescriptor.html#a5930e39fbb01a02432eded9a53376c36',1,'Karm::Image::Gif::Decoder::LogicalScreenDescriptor']]],
-  ['padding_2',['PADDING',['../structKarm_1_1Kira_1_1Toggle.html#a4d1c45b67ec4f40edc80f50b0ba540a3',1,'Karm::Kira::Toggle']]],
-  ['padding_3',['padding',['../structKarm_1_1Ui_1_1BoxStyle.html#a03d6084d9a9062338e0849361229f792',1,'Karm::Ui::BoxStyle']]],
+  ['padding_2',['padding',['../structKarm_1_1Ui_1_1BoxStyle.html#a03d6084d9a9062338e0849361229f792',1,'Karm::Ui::BoxStyle']]],
+  ['padding_3',['PADDING',['../structKarm_1_1Kira_1_1Toggle.html#a4d1c45b67ec4f40edc80f50b0ba540a3',1,'Karm::Kira::Toggle']]],
   ['paddr_4',['paddr',['../structKarm_1_1Sys_1_1MmapProps.html#a0f6c16f4f8247c1b9581491a1d12b6ac',1,'Karm::Sys::MmapProps::paddr()'],['../structKarm_1_1Sys_1_1MmapResult.html#aa6c98e096326222d98f2a25db30bb2b2',1,'Karm::Sys::MmapResult::paddr()']]],
   ['page_5',['page',['../structKarm_1_1Kira_1_1State.html#a2ba6be23aa5d841989255ab0740810dc',1,'Karm::Kira::State::page()'],['../structKarm_1_1Kira_1_1UpdatePage.html#aa7343b50b64fbe81838ba10a196f4444',1,'Karm::Kira::UpdatePage::page()']]],
   ['paper_6',['paper',['../structKarm_1_1Print_1_1Settings.html#a562c0f4eed5b09624397cfe6b5dc97bf',1,'Karm::Print::Settings::paper()'],['../structKarm_1_1Print_1_1PdfPage.html#acea58d3ff389b46b3d5d771340d040de',1,'Karm::Print::PdfPage::paper()']]],

@@ -19,7 +19,7 @@ var searchData=
   ['message_16',['Message',['../structKarm_1_1Sys_1_1Message.html',1,'Karm::Sys']]],
   ['messagedeserializer_17',['MessageDeserializer',['../structKarm_1_1Sys_1_1MessageDeserializer.html',1,'Karm::Sys']]],
   ['messageserializer_18',['MessageSerializer',['../structKarm_1_1Sys_1_1MessageSerializer.html',1,'Karm::Sys']]],
-  ['metrics_19',['Metrics',['../structKarm_1_1Font_1_1Ttf_1_1Glyf_1_1Metrics.html',1,'Karm::Font::Ttf::Glyf::Metrics'],['../structKarm_1_1Font_1_1Ttf_1_1Hmtx_1_1Metrics.html',1,'Karm::Font::Ttf::Hmtx::Metrics'],['../structKarm_1_1Font_1_1Ttf_1_1Metrics.html',1,'Karm::Font::Ttf::Metrics']]],
+  ['metrics_19',['Metrics',['../structKarm_1_1Font_1_1Ttf_1_1Glyf_1_1Metrics.html',1,'Karm::Font::Ttf::Glyf::Metrics'],['../structKarm_1_1Font_1_1Ttf_1_1Hmtx_1_1Metrics.html',1,'Karm::Font::Ttf::Hmtx::Metrics'],['../structKarm_1_1Font_1_1Ttf_1_1Metrics.html',1,'Karm::Font::Ttf::Metrics'],['../structKarm_1_1Vte_1_1Metrics.html',1,'Karm::Vte::Metrics']]],
   ['mime_20',['Mime',['../structKarm_1_1Ref_1_1Mime.html',1,'Karm::Ref']]],
   ['mimepattern_21',['MimePattern',['../structKarm_1_1Ref_1_1MimePattern.html',1,'Karm::Ref']]],
   ['mmap_22',['Mmap',['../structKarm_1_1Sys_1_1Mmap.html',1,'Karm::Sys']]],

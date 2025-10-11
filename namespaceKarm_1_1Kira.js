@@ -107,6 +107,7 @@ var namespaceKarm_1_1Kira =
     [ "resizable", "namespaceKarm_1_1Kira.html#adacf9514cd5369092795269e7ff9f744", null ],
     [ "rowContent", "namespaceKarm_1_1Kira.html#af97990cb67473768bbf613538d51d9de", null ],
     [ "rowContent", "namespaceKarm_1_1Kira.html#a29812503865b112564eca6fb1abc43df", null ],
+    [ "rowSpacer", "namespaceKarm_1_1Kira.html#ab380ce1f71a1260bd5cb1972396485ff", null ],
     [ "scaffold", "namespaceKarm_1_1Kira.html#a408aaad231c70f6c35281895c4bea0bc", null ],
     [ "searchbar", "namespaceKarm_1_1Kira.html#ae2ffbde9fc66bf7cc8d29edae4bc719d", null ],
     [ "select", "namespaceKarm_1_1Kira.html#a9ac3dd38656f5f1a831cf9ccf8cc15a3", null ],

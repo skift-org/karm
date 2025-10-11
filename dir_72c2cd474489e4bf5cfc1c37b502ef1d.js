@@ -6,7 +6,7 @@ var dir_72c2cd474489e4bf5cfc1c37b502ef1d =
     [ "svg", "dir_1d9652e0e418fede3087497145039166.html", "dir_1d9652e0e418fede3087497145039166" ],
     [ "tests", "dir_97453833ac48e51250498f419eb34a72.html", "dir_97453833ac48e51250498f419eb34a72" ],
     [ "borders.cpp", "borders_8cpp.html", "borders_8cpp" ],
-    [ "buffer.cpp", "buffer_8cpp.html", "buffer_8cpp" ],
+    [ "buffer.cpp", "karm-gfx_2buffer_8cpp.html", "karm-gfx_2buffer_8cpp" ],
     [ "canvas.cpp", "karm-gfx_2canvas_8cpp.html", "karm-gfx_2canvas_8cpp" ],
     [ "color.cpp", "color_8cpp.html", "color_8cpp" ],
     [ "colors.cpp", "colors_8cpp.html", "colors_8cpp" ],

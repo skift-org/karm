@@ -30,11 +30,12 @@ var searchData=
   ['bscan_27',['BScan',['../structKarm_1_1Io_1_1BScan.html',1,'Karm::Io']]],
   ['buf_28',['Buf',['../structKarm_1_1Buf.html',1,'Karm']]],
   ['buf_3c_20u8_20_3e_29',['Buf&lt; u8 &gt;',['../structKarm_1_1Buf.html',1,'Karm']]],
-  ['bufferwriter_30',['BufferWriter',['../structKarm_1_1Io_1_1BufferWriter.html',1,'Karm::Io']]],
-  ['bufreader_31',['BufReader',['../structKarm_1_1Io_1_1BufReader.html',1,'Karm::Io']]],
-  ['bufwriter_32',['BufWriter',['../structKarm_1_1Io_1_1BufWriter.html',1,'Karm::Io']]],
-  ['builder_33',['Builder',['../structKarm_1_1Gfx_1_1Gradient_1_1Builder.html',1,'Karm::Gfx::Gradient']]],
-  ['bundle_34',['Bundle',['../structKarm_1_1Sys_1_1Bundle.html',1,'Karm::Sys']]],
-  ['button_35',['Button',['../structKarm_1_1Ui_1_1Button.html',1,'Karm::Ui']]],
-  ['buttonstyle_36',['ButtonStyle',['../structKarm_1_1Ui_1_1ButtonStyle.html',1,'Karm::Ui']]]
+  ['buffer_30',['Buffer',['../structKarm_1_1Vte_1_1Buffer.html',1,'Karm::Vte']]],
+  ['bufferwriter_31',['BufferWriter',['../structKarm_1_1Io_1_1BufferWriter.html',1,'Karm::Io']]],
+  ['bufreader_32',['BufReader',['../structKarm_1_1Io_1_1BufReader.html',1,'Karm::Io']]],
+  ['bufwriter_33',['BufWriter',['../structKarm_1_1Io_1_1BufWriter.html',1,'Karm::Io']]],
+  ['builder_34',['Builder',['../structKarm_1_1Gfx_1_1Gradient_1_1Builder.html',1,'Karm::Gfx::Gradient']]],
+  ['bundle_35',['Bundle',['../structKarm_1_1Sys_1_1Bundle.html',1,'Karm::Sys']]],
+  ['button_36',['Button',['../structKarm_1_1Ui_1_1Button.html',1,'Karm::Ui']]],
+  ['buttonstyle_37',['ButtonStyle',['../structKarm_1_1Ui_1_1ButtonStyle.html',1,'Karm::Ui']]]
 ];

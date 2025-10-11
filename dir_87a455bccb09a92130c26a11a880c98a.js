@@ -29,5 +29,6 @@ var dir_87a455bccb09a92130c26a11a880c98a =
     [ "karm-tls", "dir_02110ab1cbddbbffe152044734133b99.html", "dir_02110ab1cbddbbffe152044734133b99" ],
     [ "karm-tty", "dir_6a88cdd6b6812bbb635057f6a793657b.html", "dir_6a88cdd6b6812bbb635057f6a793657b" ],
     [ "karm-ui", "dir_0f17f98ad79c645a91f7de19e2f55579.html", "dir_0f17f98ad79c645a91f7de19e2f55579" ],
+    [ "karm-vte", "dir_9f17dc05c35bb3be0aa0f45c50254458.html", "dir_9f17dc05c35bb3be0aa0f45c50254458" ],
     [ "mod.cpp", "mod_8cpp.html", "mod_8cpp" ]
 ];

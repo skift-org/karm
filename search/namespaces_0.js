@@ -52,5 +52,6 @@ var searchData=
   ['ttf_49',['Ttf',['../namespaceKarm_1_1Font_1_1Ttf.html',1,'Karm::Font']]],
   ['tty_50',['Tty',['../namespaceKarm_1_1Tty.html',1,'Karm']]],
   ['ui_51',['Ui',['../namespaceKarm_1_1Ui.html',1,'Karm']]],
-  ['wav_52',['Wav',['../namespaceKarm_1_1Av_1_1Wav.html',1,'Karm::Av']]]
+  ['vte_52',['Vte',['../namespaceKarm_1_1Vte.html',1,'Karm']]],
+  ['wav_53',['Wav',['../namespaceKarm_1_1Av_1_1Wav.html',1,'Karm::Av']]]
 ];

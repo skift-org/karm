@@ -43,6 +43,7 @@ var namespaceKarm =
     [ "Tls", "namespaceKarm_1_1Tls.html", "namespaceKarm_1_1Tls" ],
     [ "Tty", "namespaceKarm_1_1Tty.html", "namespaceKarm_1_1Tty" ],
     [ "Ui", "namespaceKarm_1_1Ui.html", "namespaceKarm_1_1Ui" ],
+    [ "Vte", "namespaceKarm_1_1Vte.html", "namespaceKarm_1_1Vte" ],
     [ "ArmedDefer", "structKarm_1_1ArmedDefer.html", "structKarm_1_1ArmedDefer" ],
     [ "Array", "structKarm_1_1Array.html", "structKarm_1_1Array" ],
     [ "Ascii", "structKarm_1_1Ascii.html", "structKarm_1_1Ascii" ],

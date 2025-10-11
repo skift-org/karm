@@ -278,6 +278,7 @@ var namespaceKarm_1_1Ui =
     [ "ACCENT950", "namespaceKarm_1_1Ui.html#a134a0d37031b3ff30fce06ac73f2a134", null ],
     [ "ACCENTS", "namespaceKarm_1_1Ui.html#ab8ca4e70cff081c8277b77b584743c8a", null ],
     [ "darkMode", "namespaceKarm_1_1Ui.html#a1c48579e659fefe3594323ce15a0af2e", null ],
+    [ "DISABLED", "namespaceKarm_1_1Ui.html#a75b792a6eac8b82f35647812285ceae4", null ],
     [ "FRAME_RATE", "namespaceKarm_1_1Ui.html#a0019be1f0cf0acb6816300ae86767cb3", null ],
     [ "FRAME_TIME", "namespaceKarm_1_1Ui.html#a78833d1fc35381f7cc7ad18182a547e6", null ],
     [ "GRAY", "namespaceKarm_1_1Ui.html#a96103c94788a1a081f4511cad4720cd9", null ],

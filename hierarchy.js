@@ -31,6 +31,7 @@ var hierarchy =
     [ "Karm::Array< BorderStyle, 4 >", "structKarm_1_1Array.html", null ],
     [ "Karm::Array< char, 4 >", "structKarm_1_1Array.html", null ],
     [ "Karm::Array< Karm::Fs::Mbr::Entry, 4 >", "structKarm_1_1Array.html", null ],
+    [ "Karm::Array< Karm::Gfx::Color, 16 >", "structKarm_1_1Array.html", null ],
     [ "Karm::Array< Karm::Gfx::Fill, 4 >", "structKarm_1_1Array.html", null ],
     [ "Karm::Array< Karm::Math::Vec2< T >, 2 >", "structKarm_1_1Array.html", null ],
     [ "Karm::Array< Karm::Math::Vec3< T >, 3 >", "structKarm_1_1Array.html", null ],
@@ -51,6 +52,7 @@ var hierarchy =
     [ "Karm::Ascii", "structKarm_1_1Ascii.html", null ],
     [ "Karm::Atomic< T >", "structKarm_1_1Atomic.html", null ],
     [ "Karm::Io::AtoxOptions", "structKarm_1_1Io_1_1AtoxOptions.html", null ],
+    [ "Karm::Vte::Attrs", "structKarm_1_1Vte_1_1Attrs.html", null ],
     [ "Karm::Av::Audio", "structKarm_1_1Av_1_1Audio.html", null ],
     [ "Karm::Io::BChunk", "structKarm_1_1Io_1_1BChunk.html", [
       [ "Karm::Font::Ttf::ClassDef", "structKarm_1_1Font_1_1Ttf_1_1ClassDef.html", null ],
@@ -107,6 +109,7 @@ var hierarchy =
     [ "Karm::Io::BScan", "structKarm_1_1Io_1_1BScan.html", null ],
     [ "Karm::Buf< T >", "structKarm_1_1Buf.html", null ],
     [ "Karm::Buf< u8 >", "structKarm_1_1Buf.html", null ],
+    [ "Karm::Vte::Buffer", "structKarm_1_1Vte_1_1Buffer.html", null ],
     [ "Karm::Gfx::Gradient::Builder", "structKarm_1_1Gfx_1_1Gradient_1_1Builder.html", null ],
     [ "Karm::Sys::Bundle", "structKarm_1_1Sys_1_1Bundle.html", null ],
     [ "Karm::Ui::ButtonStyle", "structKarm_1_1Ui_1_1ButtonStyle.html", null ],
@@ -117,6 +120,7 @@ var hierarchy =
     [ "Karm::Io::Cased< T >", "structKarm_1_1Io_1_1Cased.html", null ],
     [ "Karm::Gc::Cell", "structKarm_1_1Gc_1_1Cell.html", null ],
     [ "Karm::Gfx::Prose::Cell", "structKarm_1_1Gfx_1_1Prose_1_1Cell.html", null ],
+    [ "Karm::Vte::Cell", "structKarm_1_1Vte_1_1Cell.html", null ],
     [ "Karm::Av::Riff::Chunk", "structKarm_1_1Av_1_1Riff_1_1Chunk.html", null ],
     [ "Karm::Av::Riff::ChunkHeader", "structKarm_1_1Av_1_1Riff_1_1ChunkHeader.html", null ],
     [ "Karm::Net::Dns::Client", "structKarm_1_1Net_1_1Dns_1_1Client.html", null ],
@@ -125,6 +129,8 @@ var hierarchy =
     [ "Karm::Tty::Cmd", "structKarm_1_1Tty_1_1Cmd.html", null ],
     [ "Karm::Md::Code", "structKarm_1_1Md_1_1Code.html", null ],
     [ "Karm::Gfx::Color", "structKarm_1_1Gfx_1_1Color.html", null ],
+    [ "Karm::Vte::ColorScheme", "structKarm_1_1Vte_1_1ColorScheme.html", null ],
+    [ "Karm::Sys::Command", "structKarm_1_1Sys_1_1Command.html", null ],
     [ "Karm::Image::Jpeg::Decoder::Component", "structKarm_1_1Image_1_1Jpeg_1_1Decoder_1_1Component.html", null ],
     [ "Karm::Sys::CondVar", "structKarm_1_1Sys_1_1CondVar.html", null ],
     [ "Karm::Niche< bool >::Content", "structKarm_1_1Niche_3_01bool_01_4_1_1Content.html", null ],
@@ -225,6 +231,7 @@ var hierarchy =
         [ "Karm::Ui::LeafNode< SlideIn >", "structKarm_1_1Ui_1_1LeafNode.html", null ],
         [ "Karm::Ui::LeafNode< StackLayout >", "structKarm_1_1Ui_1_1LeafNode.html", null ],
         [ "Karm::Ui::LeafNode< Text >", "structKarm_1_1Ui_1_1LeafNode.html", null ],
+        [ "Karm::Ui::LeafNode< Viewport >", "structKarm_1_1Ui_1_1LeafNode.html", null ],
         [ "Karm::Ui::Host", "structKarm_1_1Ui_1_1Host.html", null ],
         [ "Karm::Ui::LeafNode< Crtp >", "structKarm_1_1Ui_1_1LeafNode.html", [
           [ "Karm::Ui::GroupNode< Carousel >", "structKarm_1_1Ui_1_1GroupNode.html", [
@@ -354,6 +361,9 @@ var hierarchy =
           ] ],
           [ "Karm::Ui::View< Text >", "structKarm_1_1Ui_1_1View.html", [
             [ "Karm::Ui::Text", "structKarm_1_1Ui_1_1Text.html", null ]
+          ] ],
+          [ "Karm::Ui::View< Viewport >", "structKarm_1_1Ui_1_1View.html", [
+            [ "Karm::Vte::Viewport", "structKarm_1_1Vte_1_1Viewport.html", null ]
           ] ],
           [ "Karm::Ui::GroupNode< Crtp >", "structKarm_1_1Ui_1_1GroupNode.html", null ],
           [ "Karm::Ui::ProxyNode< Crtp >", "structKarm_1_1Ui_1_1ProxyNode.html", [
@@ -581,6 +591,7 @@ var hierarchy =
     [ "Karm::Limits< unsigned long long >", "structKarm_1_1Limits_3_01unsigned_01long_01long_01_4.html", null ],
     [ "Karm::Limits< unsigned short >", "structKarm_1_1Limits_3_01unsigned_01short_01_4.html", null ],
     [ "Karm::Gfx::Prose::Line", "structKarm_1_1Gfx_1_1Prose_1_1Line.html", null ],
+    [ "Karm::Vte::Line", "structKarm_1_1Vte_1_1Line.html", null ],
     [ "Karm::List< T >", "structKarm_1_1List.html", null ],
     [ "Karm::Async::State< T >::Listener", "structKarm_1_1Async_1_1State_1_1Listener.html", null ],
     [ "Karm::Ll< T, Item >", "structKarm_1_1Ll.html", null ],
@@ -617,6 +628,7 @@ var hierarchy =
     [ "Karm::Font::Ttf::Glyf::Metrics", "structKarm_1_1Font_1_1Ttf_1_1Glyf_1_1Metrics.html", null ],
     [ "Karm::Font::Ttf::Hmtx::Metrics", "structKarm_1_1Font_1_1Ttf_1_1Hmtx_1_1Metrics.html", null ],
     [ "Karm::Font::Ttf::Metrics", "structKarm_1_1Font_1_1Ttf_1_1Metrics.html", null ],
+    [ "Karm::Vte::Metrics", "structKarm_1_1Vte_1_1Metrics.html", null ],
     [ "Karm::Ref::Mime", "structKarm_1_1Ref_1_1Mime.html", null ],
     [ "Karm::Ref::MimePattern", "structKarm_1_1Ref_1_1MimePattern.html", null ],
     [ "Karm::Sys::MmapProps", "structKarm_1_1Sys_1_1MmapProps.html", null ],
@@ -718,6 +730,7 @@ var hierarchy =
     [ "Karm::Opt< Rc< Karm::Gfx::Prose::Span > >", "structKarm_1_1Opt.html", null ],
     [ "Karm::Opt< Rc< Karm::Gfx::Surface > >", "structKarm_1_1Opt.html", null ],
     [ "Karm::Opt< Rc< Karm::Http::Body > >", "structKarm_1_1Opt.html", null ],
+    [ "Karm::Opt< Rc< Karm::Sys::Fd > >", "structKarm_1_1Opt.html", null ],
     [ "Karm::Opt< S::Inner >", "structKarm_1_1Opt.html", null ],
     [ "Karm::Opt< T >", "structKarm_1_1Opt_3_01T_01_4.html", null ],
     [ "Karm::Opt< u64 >", "structKarm_1_1Opt.html", null ],
@@ -733,10 +746,12 @@ var hierarchy =
     [ "Karm::Print::PaperSeries", "structKarm_1_1Print_1_1PaperSeries.html", null ],
     [ "Karm::Print::PaperStock", "structKarm_1_1Print_1_1PaperStock.html", null ],
     [ "Karm::Font::Ttf::Parser", "structKarm_1_1Font_1_1Ttf_1_1Parser.html", null ],
+    [ "Karm::Vte::Parser", "structKarm_1_1Vte_1_1Parser.html", null ],
     [ "Karm::Math::Path", "structKarm_1_1Math_1_1Path.html", null ],
     [ "Karm::Ref::Path", "structKarm_1_1Ref_1_1Path.html", null ],
     [ "Karm::Av::Wav::PcmFormat", "structKarm_1_1Av_1_1Wav_1_1PcmFormat.html", null ],
     [ "Karm::Print::PdfPage", "structKarm_1_1Print_1_1PdfPage.html", null ],
+    [ "Karm::Sys::Pid", "structKarm_1_1Sys_1_1Pid.html", null ],
     [ "Karm::Meta::Pinned", "structKarm_1_1Meta_1_1Pinned.html", [
       [ "Karm::LlItem< Karm::Async::State::Listener >", "structKarm_1_1LlItem.html", null ],
       [ "Karm::LlItem< Karm::List::Item >", "structKarm_1_1LlItem.html", null ],
@@ -774,6 +789,7 @@ var hierarchy =
         [ "Karm::Print::PdfPrinter", "structKarm_1_1Print_1_1PdfPrinter.html", null ]
       ] ]
     ] ],
+    [ "Karm::Sys::Process", "structKarm_1_1Sys_1_1Process.html", null ],
     [ "Karm::Generator< T >::promise_type", "structKarm_1_1Generator_1_1promise__type.html", null ],
     [ "Karm::Gfx::ProseStyle", "structKarm_1_1Gfx_1_1ProseStyle.html", null ],
     [ "Karm::Gc::Ptr< T >", "structKarm_1_1Gc_1_1Ptr.html", null ],
@@ -927,9 +943,11 @@ var hierarchy =
     [ "Karm::SystemClock", "structKarm_1_1SystemClock.html", null ],
     [ "Karm::Font::Ttf::Cmap::Table", "structKarm_1_1Font_1_1Ttf_1_1Cmap_1_1Table.html", null ],
     [ "Karm::Ml::Gguf::TensorInfos", "structKarm_1_1Ml_1_1Gguf_1_1TensorInfos.html", null ],
+    [ "Karm::Vte::Terminal", "structKarm_1_1Vte_1_1Terminal.html", null ],
     [ "Karm::Ui::TextAction", "structKarm_1_1Ui_1_1TextAction.html", null ],
     [ "Karm::Ui::TextModel", "structKarm_1_1Ui_1_1TextModel.html", null ],
     [ "Karm::Ui::TextStyles", "structKarm_1_1Ui_1_1TextStyles.html", null ],
+    [ "Karm::Vte::Theme", "structKarm_1_1Vte_1_1Theme.html", null ],
     [ "Karm::Time", "structKarm_1_1Time.html", null ],
     [ "Karm::Gfx::TintFilter", "structKarm_1_1Gfx_1_1TintFilter.html", null ],
     [ "Karm::Kira::TitlebarContent", "structKarm_1_1Kira_1_1TitlebarContent.html", null ],

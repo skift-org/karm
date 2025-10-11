@@ -9,12 +9,16 @@ var searchData=
   ['enum_6',['ENUM',['../structKarm_1_1Serde_1_1Type.html#a698e78d8e5325ed8a371eedee1546e0ba85a1979d26d0ef93dcc13a72fee80705',1,'Karm::Serde::Type']]],
   ['enum_5fitem_7',['ENUM_ITEM',['../structKarm_1_1Serde_1_1Type.html#a698e78d8e5325ed8a371eedee1546e0ba876e73be7e0b9aac31807c438ccce89b',1,'Karm::Serde::Type']]],
   ['eoi_8',['EOI',['../namespaceKarm_1_1Image_1_1Jpeg.html#af7022f5c263dd1247b0212ffec582808a4884f31ca27078292dcc4945f1f328f0',1,'Karm::Image::Jpeg']]],
-  ['error_9',['ERROR',['../namespaceKarm_1_1Kira.html#aa7d4919c45b313a4d69df1e93a2b0464abb1ca97ec761fc37101737ba0aa2e7c5',1,'Karm::Kira']]],
+  ['error_9',['ERROR',['../structKarm_1_1Vte_1_1Parser.html#a827442e86818796d0da962f6523f0495abb1ca97ec761fc37101737ba0aa2e7c5',1,'Karm::Vte::Parser::ERROR()'],['../namespaceKarm_1_1Kira.html#aa7d4919c45b313a4d69df1e93a2b0464abb1ca97ec761fc37101737ba0aa2e7c5',1,'Karm::Kira::ERROR()']]],
   ['es_10',['ES',['../namespaceKarm_1_1Icu.html#a374f62108410f9c0065ef638d0b1fb63a04c19fa1e772ab66f0aad2efe61f25cd',1,'Karm::Icu']]],
-  ['et_11',['ET',['../namespaceKarm_1_1Icu.html#a374f62108410f9c0065ef638d0b1fb63aae41a6d38b78679b4675941ff0c0c92d',1,'Karm::Icu']]],
-  ['evenodd_12',['EVENODD',['../namespaceKarm_1_1Gfx.html#a73160514b37fa34caf7e34f1d3da6b29a8812e6916764c080e8061a9f1ca382de',1,'Karm::Gfx']]],
-  ['exec_13',['EXEC',['../namespaceKarm_1_1Sys.html#a4bc4dd239ab723c5768e73b651e5c8d4af28b3aad7d43b371527fde69de8d93ff',1,'Karm::Sys']]],
-  ['exp_14',['EXP',['../namespaceKarm_1_1Image_1_1Jpeg.html#af7022f5c263dd1247b0212ffec582808aa56d00216d4d968790220991d50760b6',1,'Karm::Image::Jpeg']]],
-  ['extension_5fpositioning_15',['EXTENSION_POSITIONING',['../namespaceKarm_1_1Font_1_1Ttf.html#a8aff7083e7ad767f8dd513de43aa9ae4ae3c96247f51e7f1af29d5c1d2c73ec54',1,'Karm::Font::Ttf']]],
-  ['extra_16',['EXTRA',['../structKarm_1_1Cli_1_1Token.html#a4c9fb0da0d8a646b925e07bacadc7aeeaa21f6af4d39dbd2643527651dd4e694b',1,'Karm::Cli::Token::EXTRA()'],['../namespaceKarm_1_1Cli.html#adad269924e06d6f9a5c912b24b17bf93aa21f6af4d39dbd2643527651dd4e694b',1,'Karm::Cli::EXTRA()']]]
+  ['esc_5fdispatch_11',['ESC_DISPATCH',['../structKarm_1_1Vte_1_1Parser.html#a827442e86818796d0da962f6523f0495a06777d9dfcb804704827fac3189e26e9',1,'Karm::Vte::Parser']]],
+  ['escape_12',['ESCAPE',['../structKarm_1_1Vte_1_1Parser.html#a8000025773c78bfb6cd52122eece607dadaaedac409335b869929ea43fa44be5d',1,'Karm::Vte::Parser']]],
+  ['escape_5fintermediate_13',['ESCAPE_INTERMEDIATE',['../structKarm_1_1Vte_1_1Parser.html#a8000025773c78bfb6cd52122eece607da4b0cc1a03ec1a7d2eacc1581507312d9',1,'Karm::Vte::Parser']]],
+  ['et_14',['ET',['../namespaceKarm_1_1Icu.html#a374f62108410f9c0065ef638d0b1fb63aae41a6d38b78679b4675941ff0c0c92d',1,'Karm::Icu']]],
+  ['evenodd_15',['EVENODD',['../namespaceKarm_1_1Gfx.html#a73160514b37fa34caf7e34f1d3da6b29a8812e6916764c080e8061a9f1ca382de',1,'Karm::Gfx']]],
+  ['exec_16',['EXEC',['../namespaceKarm_1_1Sys.html#a4bc4dd239ab723c5768e73b651e5c8d4af28b3aad7d43b371527fde69de8d93ff',1,'Karm::Sys']]],
+  ['execute_17',['EXECUTE',['../structKarm_1_1Vte_1_1Parser.html#a827442e86818796d0da962f6523f0495a5d76688e2261e6805ee36ad961b3fa7a',1,'Karm::Vte::Parser']]],
+  ['exp_18',['EXP',['../namespaceKarm_1_1Image_1_1Jpeg.html#af7022f5c263dd1247b0212ffec582808aa56d00216d4d968790220991d50760b6',1,'Karm::Image::Jpeg']]],
+  ['extension_5fpositioning_19',['EXTENSION_POSITIONING',['../namespaceKarm_1_1Font_1_1Ttf.html#a8aff7083e7ad767f8dd513de43aa9ae4ae3c96247f51e7f1af29d5c1d2c73ec54',1,'Karm::Font::Ttf']]],
+  ['extra_20',['EXTRA',['../structKarm_1_1Cli_1_1Token.html#a4c9fb0da0d8a646b925e07bacadc7aeeaa21f6af4d39dbd2643527651dd4e694b',1,'Karm::Cli::Token::EXTRA()'],['../namespaceKarm_1_1Cli.html#adad269924e06d6f9a5c912b24b17bf93aa21f6af4d39dbd2643527651dd4e694b',1,'Karm::Cli::EXTRA()']]]
 ];

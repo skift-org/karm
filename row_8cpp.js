@@ -9,6 +9,7 @@ var row_8cpp =
     [ "radioRow", "row_8cpp.html#a46045cc9ebd052b6d57f87eccbb47613", null ],
     [ "rowContent", "row_8cpp.html#af97990cb67473768bbf613538d51d9de", null ],
     [ "rowContent", "row_8cpp.html#a29812503865b112564eca6fb1abc43df", null ],
+    [ "rowSpacer", "row_8cpp.html#ab380ce1f71a1260bd5cb1972396485ff", null ],
     [ "selectRow", "row_8cpp.html#af0a6e67f5b248bb4881af801a97883e4", null ],
     [ "sliderRow", "row_8cpp.html#a7c1537c2bd286c9d7792291ccd5b91af", null ],
     [ "titleRow", "row_8cpp.html#abbbb090375c8441590ff2c07aa6fa4e1", null ],
