@@ -1,0 +1,9 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "karm-vte",
+    "type": "lib",
+    "description": "Virtual terminal emulator",
+    "requires": [
+        "karm-ui"
+    ]
+}
