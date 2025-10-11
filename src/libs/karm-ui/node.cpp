@@ -30,6 +30,9 @@ using Send = SharedFunc<void(Node&, Ts...)>;
 export template <typename... Ts>
 auto SINK(Ui::Node&, Ts&&...) {}
 
+export template <typename... Ts>
+Opt<Send<Ts...>> DISABLED = NONE;
+
 struct Node : App::Dispatch {
     Key _key = NONE;
     bool _consumed = false;
@@ -165,18 +168,26 @@ struct GroupNode : LeafNode<Crtp> {
     }
 
     void reconcile(Crtp& o) override {
-        auto& us = children();
+        auto& us = _children;
         auto& them = o.children();
 
         for (usize i = 0; i < them.len(); i++) {
             if (i < us.len()) {
-                us.replace(i, us[i]->reconcile(them[i]).unwrapOr(us[i]));
+                auto old = us[i];
+                auto next = us[i]->reconcile(them[i]).unwrapOr(us[i]);
+                if (&*next != &*old) {
+                    us.replace(i, next);
+                    old->detach(this);
+                    next->attach(this);
+                }
             } else {
                 us.insert(i, them[i]);
+                us[i]->attach(this);
             }
-            us[i]->attach(this);
         }
 
+        for (usize i = them.len(); i < us.len(); ++i)
+            us[i]->detach(this);
         us.trunc(them.len());
     }
 
