@@ -10,6 +10,7 @@ namespace Karm::Sys {
 
 export struct Intent;
 export struct Fd;
+export struct Pid;
 export struct Sched;
 export struct DirEntry;
 export struct Stat;
@@ -17,6 +18,7 @@ export struct SysInfo;
 export struct MemInfo;
 export struct CpuInfo;
 export struct UserInfo;
+export struct Command;
 
 } // namespace Karm::Sys
 
@@ -55,6 +57,10 @@ export Res<Stat> stat(Ref::Url const& url);
 export Res<> launch(Intent intent);
 
 export Async::Task<> launchAsync(Intent intent);
+
+// MARK: Process ---------------------------------------------------------------
+
+export Res<Rc<Pid>> run(Command const&);
 
 // MARK: Sockets ---------------------------------------------------------------
 

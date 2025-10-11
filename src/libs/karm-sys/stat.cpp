@@ -4,13 +4,11 @@ module;
 
 export module Karm.Sys:stat;
 
-
 import Karm.Core;
 import Karm.Ref;
 
 import :_embed;
-import :proc;
-
+import :sandbox;
 
 namespace Karm::Sys {
 
@@ -32,7 +30,7 @@ export struct Stat {
     }
 };
 
-export Res<Stat> stat(Ref::Url const& url)  {
+export Res<Stat> stat(Ref::Url const& url) {
     if (url.scheme != "bundle")
         try$(ensureUnrestricted());
     return _Embed::stat(url);

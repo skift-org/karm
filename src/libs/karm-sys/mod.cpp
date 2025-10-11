@@ -1,12 +1,12 @@
 export module Karm.Sys;
 
+export import :_embed;
 export import :addr;
 export import :async;
 export import :bundle;
 export import :chan;
 export import :context;
 export import :dir;
-export import :_embed;
 export import :endpoint;
 export import :fd;
 export import :file;
@@ -16,8 +16,10 @@ export import :lookup;
 export import :message;
 export import :mmap;
 export import :mutex;
+export import :pid;
 export import :pipe;
 export import :proc;
+export import :sandbox;
 export import :socket;
 export import :stat;
 export import :time;

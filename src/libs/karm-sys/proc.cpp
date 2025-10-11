@@ -6,6 +6,8 @@ export module Karm.Sys:proc;
 
 import :_embed;
 import :time;
+import :pid;
+import :sandbox;
 
 namespace Karm::Sys {
 
@@ -27,20 +29,26 @@ export [[noreturn]] void exit(Res<> res) {
     unreachable();
 }
 
-// MARK: Sandboxing ------------------------------------------------------------
+// MARK: Process ---------------------------------------------------------------
 
-static bool _sandboxed = false;
+export struct Process {
+    Rc<Pid> _pid;
 
-export Res<> enterSandbox() {
-    try$(_Embed::hardenSandbox());
-    _sandboxed = true;
-    return Ok();
-}
+    Res<> kill() { return _pid->kill(); }
 
-export Res<> ensureUnrestricted() {
-    if (_sandboxed)
-        return Error::permissionDenied("sandboxed");
-    return Ok();
-}
+    Res<> wait() { return _pid->wait(); }
+};
+
+export struct Command {
+    String exe;
+    Vec<String> args = {};
+    Map<String, String> env = {};
+    Opt<Rc<Fd>> in = NONE, out = NONE, err = NONE;
+
+    Res<Process> run() {
+        auto pid = try$(_Embed::run(*this));
+        return Ok(pid);
+    }
+};
 
 } // namespace Karm::Sys

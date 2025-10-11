@@ -292,6 +292,101 @@ Async::Task<> launchAsync(Intent intent) {
     co_return _Embed::launch(intent);
 }
 
+// MARK: Process ---------------------------------------------------------------
+
+struct PosixPid : Sys::Pid {
+    pid_t _pid;
+
+    PosixPid(pid_t pid) : Pid(), _pid(pid) {}
+
+    Res<> kill() override {
+        if (::kill(_pid, SIGKILL) == -1)
+            return Posix::fromLastErrno();
+        return Ok();
+    }
+
+    Res<> wait() override {
+        int status;
+        if (::waitpid(_pid, &status, 0) == -1)
+            return Posix::fromLastErrno();
+        return Ok();
+    }
+};
+
+Res<Rc<Pid>> run(Command const& cmd) {
+    if (not cmd.exe or cmd.exe.len() == 0)
+        return Error::invalidInput("no executable provided");
+
+    auto buildArgv = [&](Vec<char*>& argv) {
+        argv.pushBack(const_cast<char*>(cmd.exe.buf())); // argv[0]
+        for (auto const& arg : cmd.args)
+            argv.pushBack(const_cast<char*>(arg.buf()));
+        argv.pushBack(nullptr);
+    };
+
+    auto buildEnvp = [&](Vec<String>& kvStore, Vec<char*>& envp) {
+        kvStore.clear();
+        envp.clear();
+        for (auto const& [key, val] : cmd.env.iterUnordered()) {
+            kvStore.pushBack(Io::format("{}={}", key, val));
+        }
+        for (auto& kv : kvStore)
+            envp.pushBack(const_cast<char*>(kv.buf()));
+        envp.pushBack(nullptr);
+    };
+
+    int inFd = -1;
+    if (cmd.in)
+        inFd = try$(Posix::toPosixFd(cmd.in.unwrap()))->_raw;
+
+    int outFd = -1;
+    if (cmd.out)
+        outFd = try$(Posix::toPosixFd(cmd.out.unwrap()))->_raw;
+
+    int errFd = -1;
+    if (cmd.err)
+        errFd = try$(Posix::toPosixFd(cmd.err.unwrap()))->_raw;
+
+    pid_t pid = ::fork();
+    if (pid < 0)
+        return Posix::fromLastErrno();
+
+    if (pid == 0) {
+        // Child
+        if (cmd.in) {
+            if (::dup2(inFd, STDIN_FILENO) < 0)
+                _exit(127);
+        }
+
+        if (cmd.out) {
+            if (::dup2(outFd, STDOUT_FILENO) < 0)
+                _exit(127);
+        }
+
+        if (cmd.err) {
+            if (::dup2(errFd, STDERR_FILENO) < 0)
+                _exit(127);
+        }
+
+        Vec<char*> argv;
+        buildArgv(argv);
+
+        if (cmd.env.len()) {
+            Vec<String> kvStore;
+            Vec<char*> envp;
+            buildEnvp(kvStore, envp);
+            ::execve(cmd.exe.buf(), argv.buf(), envp.buf());
+        } else {
+            ::execvp(cmd.exe.buf(), argv.buf());
+        }
+
+        _exit(127); // exec failed
+    }
+
+    // Parent
+    return Ok(makeRc<PosixPid>(pid));
+}
+
 // MARK: Sockets ---------------------------------------------------------------
 
 Res<Rc<Fd>> listenUdp(SocketAddr addr) {
