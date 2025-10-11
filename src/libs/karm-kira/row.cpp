@@ -22,6 +22,10 @@ export Ui::Child rowContent(Ui::Child child) {
            Ui::minSize({Ui::UNCONSTRAINED, 64});
 }
 
+export Ui::Child rowSpacer() {
+    return Ui::empty(8);
+}
+
 export Ui::Child rowContent(Opt<Ui::Child> leading, String title, Opt<String> subtitle, Opt<Ui::Child> trailing) {
     auto lead = leading
                     ? *leading |

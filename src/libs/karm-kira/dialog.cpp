@@ -15,7 +15,7 @@ export Ui::Child dialogContent(Ui::Children children) {
         .borderRadii = 8,
         .borderWidth = 1,
         .borderFill = Ui::GRAY800,
-        .backgroundFill = Ui::GRAY900,
+        .backgroundFill = Ui::GRAY950,
         .shadowStyle = Gfx::BoxShadow::elevated(16)
     };
 
@@ -32,8 +32,11 @@ export Ui::Child dialogTitleBar(String title) {
             Ui::titleSmall(title) | Ui::vcenter(),
             Ui::grow(NONE),
             Ui::button(Ui::closeDialog, Ui::ButtonStyle::subtle(), Mdi::CLOSE)
-        ) |
-            Ui::insets({4, 4, 4, 16}),
+        ) | Ui::box({
+                .padding = {4, 4, 4, 16},
+                .borderRadii = {8, 8, 0, 0},
+                .backgroundFill = Ui::GRAY900,
+            }),
         separator()
     );
 }

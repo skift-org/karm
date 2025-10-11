@@ -79,10 +79,11 @@ export Ui::Child contextMenuItem(Opt<Ui::Send<>> onPress, Opt<Gfx::Icon> i, Str 
            Ui::insets({6, 6, 6, 10}) |
            Ui::minSize({Ui::UNCONSTRAINED, 36}) |
            Ui::button(
-               [onPress = std::move(onPress)](auto& n) {
+               onPress ? [onPress = std::move(onPress)](auto& n) {
                    onPress(n);
                    Ui::closePopover(n);
-               },
+               }
+                       : Ui::DISABLED<>,
                Ui::ButtonStyle::subtle()
            ) |
            Ui::insets(4);
