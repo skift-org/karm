@@ -1,5 +1,6 @@
 var NAVTREEINDEX11 =
 {
+"namespaceKarm.html#a718c25b0b8e27ecee23d188093b4ea60":[0,0,0,369],
 "namespaceKarm.html#a71e163d21ce1f8f1b5b9458eb69e9323":[0,0,0,212],
 "namespaceKarm.html#a73f7e293263511b498c891af1ccc4c2b":[0,0,0,467],
 "namespaceKarm.html#a745a13fcd9d717b89f9910c329aa75e4":[0,0,0,469],
@@ -234,6 +235,7 @@ var NAVTREEINDEX11 =
 "namespaceKarm_1_1App.html#ae8b0398827181942904ae3adf1faf662":[0,0,0,1,13],
 "namespaceKarm_1_1App.html#ae8b0398827181942904ae3adf1faf662a835669054d277609644215a014523c42":[0,0,0,1,13,0],
 "namespaceKarm_1_1App.html#ae8b0398827181942904ae3adf1faf662ad9e3110063ba107ab79340dceebc2d7b":[0,0,0,1,13,1],
+"namespaceKarm_1_1App.html#ae8b0398827181942904ae3adf1faf662ae29d1d2ceca88985d2cf3bd5ba380301":[0,0,0,1,13,2],
 "namespaceKarm_1_1Archive.html":[0,0,0,2],
 "namespaceKarm_1_1Archive.html#a34e24c6ffeb6e0aa55bb80fe241ba12c":[0,0,0,2,11],
 "namespaceKarm_1_1Archive.html#a53cc00fb7422a0d7afeed470a31fc66b":[0,0,0,2,12],
@@ -247,7 +249,5 @@ var NAVTREEINDEX11 =
 "namespaceKarm_1_1Archive.html#af117d9f311321a09b1c5bd4d7e7554b0":[0,0,0,2,3],
 "namespaceKarm_1_1Archive.html#af8c86539b542e37b2f7054298d80b424":[0,0,0,2,7],
 "namespaceKarm_1_1Archive_1_1Tests.html":[0,0,0,2,0],
-"namespaceKarm_1_1Archive_1_1Tests.html#a1f60ab68f401374fa6e0192483361ae4":[0,0,0,2,0,3],
-"namespaceKarm_1_1Archive_1_1Tests.html#a3b8aea2e80d5086abea5da102e48ed12":[0,0,0,2,0,0],
-"namespaceKarm_1_1Archive_1_1Tests.html#a413bf7925cd37378d86dd6c5536afafb":[0,0,0,2,0,7]
+"namespaceKarm_1_1Archive_1_1Tests.html#a1f60ab68f401374fa6e0192483361ae4":[0,0,0,2,0,3]
 };

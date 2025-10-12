@@ -15,7 +15,8 @@ var namespaceKarm_1_1App =
     [ "TypeEvent", "structKarm_1_1App_1_1TypeEvent.html", "structKarm_1_1App_1_1TypeEvent" ],
     [ "FormFactor", "namespaceKarm_1_1App.html#ae8b0398827181942904ae3adf1faf662", [
       [ "DESKTOP", "namespaceKarm_1_1App.html#ae8b0398827181942904ae3adf1faf662a835669054d277609644215a014523c42", null ],
-      [ "MOBILE", "namespaceKarm_1_1App.html#ae8b0398827181942904ae3adf1faf662ad9e3110063ba107ab79340dceebc2d7b", null ]
+      [ "MOBILE", "namespaceKarm_1_1App.html#ae8b0398827181942904ae3adf1faf662ad9e3110063ba107ab79340dceebc2d7b", null ],
+      [ "_LEN", "namespaceKarm_1_1App.html#ae8b0398827181942904ae3adf1faf662ae29d1d2ceca88985d2cf3bd5ba380301", null ]
     ] ],
     [ "KeyMod", "namespaceKarm_1_1App.html#ad07c9914f5689fc3c0360845e694c5d1", [
       [ "LSHIFT", "namespaceKarm_1_1App.html#ad07c9914f5689fc3c0360845e694c5d1adff23c74b1d8d80f33e8a894964c74d7", null ],

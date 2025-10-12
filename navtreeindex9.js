@@ -1,5 +1,6 @@
 var NAVTREEINDEX9 =
 {
+"karm-test_2mod_8cpp.html":[3,0,0,1,25,4],
 "karm-test_2mod_8cpp.html#a880188ae9787b72e47b801730316129b":[3,0,0,1,25,4,1],
 "karm-test_2mod_8cpp.html#aff55674fa41a3a4ef62434c039b6c32d":[3,0,0,1,25,4,0],
 "karm-tls_2mod_8cpp.html":[3,0,0,1,26,0],
@@ -248,6 +249,5 @@ var NAVTREEINDEX9 =
 "libs_2karm-sys_2async_8cpp.html#ab6032c85c347fba164e6d08b655b4ad8":[3,0,0,1,24,2,1],
 "libs_2karm-sys_2async_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5":[3,0,0,1,24,2,3],
 "libs_2karm-sys_2entry_8h.html":[3,0,0,1,24,9],
-"libs_2karm-sys_2entry_8h.html#a3974c0216d383a8ee20f65600aacb6c5":[3,0,0,1,24,9,3],
-"libs_2karm-sys_2entry_8h.html#abedc7e19652ef6fd2984ea9cb3d62db5":[3,0,0,1,24,9,1]
+"libs_2karm-sys_2entry_8h.html#a3974c0216d383a8ee20f65600aacb6c5":[3,0,0,1,24,9,3]
 };
