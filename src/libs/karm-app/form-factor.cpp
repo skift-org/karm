@@ -5,6 +5,8 @@ namespace Karm::App {
 export enum struct FormFactor {
     DESKTOP,
     MOBILE,
+
+    _LEN,
 };
 
 export FormFactor formFactor = FormFactor::DESKTOP;
