@@ -16,6 +16,7 @@ module;
 #include <sys/wait.h>
 #include <time.h>
 #include <unistd.h>
+#include <signal.h>
 
 //
 #include <karm-core/macros.h>
