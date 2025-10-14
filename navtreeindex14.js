@@ -1,5 +1,7 @@
 var NAVTREEINDEX14 =
 {
+"namespaceKarm_1_1Image_1_1Qoi.html#aacde60f0fc4bacd02d89f5cee6479d84":[0,0,0,16,4,1],
+"namespaceKarm_1_1Image_1_1Qoi.html#aacde60f0fc4bacd02d89f5cee6479d84a13aa80bfce3f5d3de254870dd69b9656":[0,0,0,16,4,1,2],
 "namespaceKarm_1_1Image_1_1Qoi.html#aacde60f0fc4bacd02d89f5cee6479d84a15b6b14fa4a96b95cf1d3f7fbaf745ff":[0,0,0,16,4,1,1],
 "namespaceKarm_1_1Image_1_1Qoi.html#aacde60f0fc4bacd02d89f5cee6479d84a35d82fae1bc21eab896ab787f9a33520":[0,0,0,16,4,1,4],
 "namespaceKarm_1_1Image_1_1Qoi.html#aacde60f0fc4bacd02d89f5cee6479d84a6f7845993be274716b1d2350eddf6108":[0,0,0,16,4,1,0],
@@ -247,7 +249,5 @@ var NAVTREEINDEX14 =
 "namespaceKarm_1_1Kira.html#aa7d4919c45b313a4d69df1e93a2b0464ae29d1d2ceca88985d2cf3bd5ba380301":[0,0,0,19,17,4],
 "namespaceKarm_1_1Kira.html#aacdadde2871ea211d4c739d36a9594fc":[0,0,0,19,57],
 "namespaceKarm_1_1Kira.html#aad36c03a132ffb84ffabec339c2be02f":[0,0,0,19,39],
-"namespaceKarm_1_1Kira.html#aaf5981f649bb0d5efb69ba73067a6c6a":[0,0,0,19,48],
-"namespaceKarm_1_1Kira.html#ab29744745a158d759d3a9b97bb1aef26":[0,0,0,19,53],
-"namespaceKarm_1_1Kira.html#ab380ce1f71a1260bd5cb1972396485ff":[0,0,0,19,89]
+"namespaceKarm_1_1Kira.html#aaf5981f649bb0d5efb69ba73067a6c6a":[0,0,0,19,48]
 };
