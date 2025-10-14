@@ -6,11 +6,11 @@ namespace Karm {
 
 export template <typename T>
 struct Cow {
-    Rc<T> _inner = base();
+    Rc<T> _inner = default_();
 
     static Opt<Rc<T>> _base;
 
-    static Rc<T> base() {
+    static Rc<T> default_() {
         if (not _base) {
             _base = makeRc<T>();
         }
@@ -21,6 +21,10 @@ struct Cow {
         if (_inner.refs() > 1)
             _inner = makeRc<T>(_inner.unwrap());
         return _inner.unwrap();
+    }
+
+    bool defaulted() const {
+        return &_inner.unwrap() == &default_().unwrap();
     }
 
     constexpr T const* operator->() const {
