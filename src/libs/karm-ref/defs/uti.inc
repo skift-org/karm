@@ -4,6 +4,7 @@ UTI(PUBLIC_MODIFY, "public.modify", "")
 UTI(PUBLIC_SHARE, "public.share", "")
 UTI(PUBLIC_PRINT, "public.print", "")
 
+UTI(PUBLIC_DATA, "public.data", "application/octet-stream")
 UTI(PUBLIC_BMP, "public.bmp", "image/bmp")
 UTI(PUBLIC_TGA, "public.tga", "image/x-tga")
 UTI(PUBLIC_JPEG, "public.jpeg", "image/jpeg")
