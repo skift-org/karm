@@ -16,6 +16,8 @@ export struct Emit : TextWriter {
     usize _ident = 0;
     Res<> _error = Ok();
     bool _newline = false;
+    bool _needIdent = false;
+    bool _startOfLine = true;
 
     Emit(Io::TextWriter& writer)
         : _writer(writer) {
@@ -28,6 +30,7 @@ export struct Emit : TextWriter {
 
     void indent() {
         _ident++;
+        _needIdent = true;
     }
 
     void indentNewline() {
@@ -60,8 +63,15 @@ export struct Emit : TextWriter {
             return _error.none();
         try$(_writer.writeRune('\n'));
         _newline = false;
+        _needIdent = true;
+        _startOfLine = true;
+        return Ok();
+    }
+
+    Res<> _insertIdent() {
         for (usize i = 0; i < _ident; i++)
             try$(_writer.writeStr("    "s));
+        _needIdent = false;
         return Ok();
     }
 
@@ -79,6 +89,10 @@ export struct Emit : TextWriter {
         if (_newline)
             try$(_insertNewline());
 
+        if (_needIdent and _startOfLine)
+            try$(_insertIdent());
+
+        _startOfLine = false;
         return _writer.writeRune(r);
     }
 
