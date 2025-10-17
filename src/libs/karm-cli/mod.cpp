@@ -310,8 +310,10 @@ static Res<> handleDescriptors(Debug::FlagType type, Slice<DebugFlagDescriptor> 
 // MARK: Command ---------------------------------------------------------------
 
 export struct Section {
-    String name;
-    Vec<Rc<_OptionImpl>> options;
+    String title;
+    Vec<Rc<_OptionImpl>> options = {};
+    String prolog = ""s;
+    String epilog = ""s;
 };
 
 export struct Command : Meta::Pinned {
@@ -356,7 +358,7 @@ export struct Command : Meta::Pinned {
           _callbackAsync(std::move(callbackAsync)) {
 
         _sections.pushFront({
-            .name = "Common Options"s,
+            .title = "Common Options"s,
             .options = {
                 _help,
                 _usage,
@@ -365,7 +367,7 @@ export struct Command : Meta::Pinned {
         });
 
         _sections.pushBack({
-            .name = "Developer Options"s,
+            .title = "Developer Options"s,
             .options = {
                 _debug,
                 _features,
@@ -446,21 +448,37 @@ export struct Command : Meta::Pinned {
         try$(format(w, "Description:\n  {}\n\n", _description));
 
         for (auto& sec : _sections) {
-            if (Karm::any(sec.options)) {
-                if (sec.name)
-                    try$(Io::format(w, "{}:\n"s, sec.name));
+            if (Karm::any(sec.options) or sec.prolog or sec.epilog) {
+                if (sec.title)
+                    try$(Io::format(w, "{}:\n"s, sec.title));
 
-                for (auto& opt : sec.options) {
-                    if (opt->kind != OptionKind::OPTION)
-                        continue;
-
-                    try$(w.writeStr("  "s));
-                    if (opt->shortName)
-                        try$(format(w, "-{c}, ", opt->shortName.unwrap()));
-
-                    try$(format(w, "--{} - {}\n", opt->longName, opt->description));
+                Io::Emit e{w};
+                e.indent();
+                if (sec.prolog) {
+                    e("{}", sec.prolog);
+                    try$(e.flush());
+                    try$(w.writeRune('\n'));
                 }
-                try$(w.writeRune('\n'));
+
+                if (sec.options) {
+                    for (auto& opt : sec.options) {
+                        if (opt->kind != OptionKind::OPTION)
+                            continue;
+
+                        try$(w.writeStr("  "s));
+                        if (opt->shortName)
+                            try$(format(w, "-{c}, ", opt->shortName.unwrap()));
+
+                        try$(format(w, "--{} - {}\n", opt->longName, opt->description));
+                    }
+                    try$(w.writeRune('\n'));
+                }
+
+                if (sec.epilog) {
+                    e("{}", sec.epilog);
+                    try$(e.flush());
+                    try$(w.writeRune('\n'));
+                }
             }
         }
 
