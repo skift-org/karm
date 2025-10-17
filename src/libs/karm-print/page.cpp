@@ -20,7 +20,7 @@ export struct Page {
 
     void print(Printer& doc, Scene::PaintOptions o = {.showBackgroundGraphics = false}) {
         auto& canvas = doc.beginPage(_paper);
-        content()->paint(canvas, _paper.size().cast<f64>(), o);
+        content()->paint(canvas, _paper.size(), o);
     }
 
     void repr(Io::Emit& e) const {
