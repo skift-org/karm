@@ -1000,6 +1000,7 @@ var hierarchy =
     [ "Karm::Cli::ValueParser< isize >", "structKarm_1_1Cli_1_1ValueParser_3_01isize_01_4.html", null ],
     [ "Karm::Cli::ValueParser< Opt< T > >", "structKarm_1_1Cli_1_1ValueParser_3_01Opt_3_01T_01_4_01_4.html", null ],
     [ "Karm::Cli::ValueParser< Str >", "structKarm_1_1Cli_1_1ValueParser_3_01Str_01_4.html", null ],
+    [ "Karm::Cli::ValueParser< T >", "structKarm_1_1Cli_1_1ValueParser_3_01T_01_4.html", null ],
     [ "Karm::Cli::ValueParser< Vec< T > >", "structKarm_1_1Cli_1_1ValueParser_3_01Vec_3_01T_01_4_01_4.html", null ],
     [ "Karm::Font::Ttf::ValueRecord", "structKarm_1_1Font_1_1Ttf_1_1ValueRecord.html", null ],
     [ "Karm::Math::Vec2< T >", "unionKarm_1_1Math_1_1Vec2.html", null ],

@@ -5,7 +5,7 @@ var searchData=
   ['ellipse_2ecpp_2',['ellipse.cpp',['../ellipse_8cpp.html',1,'']]],
   ['emit_2ecpp_3',['emit.cpp',['../emit_8cpp.html',1,'']]],
   ['emoji_2ecpp_4',['emoji.cpp',['../emoji_8cpp.html',1,'']]],
-  ['encoder_2ecpp_5',['encoder.cpp',['../tga_2encoder_8cpp.html',1,'(Global Namespace)'],['../qoi_2encoder_8cpp.html',1,'(Global Namespace)'],['../bmp_2encoder_8cpp.html',1,'(Global Namespace)'],['../jpeg_2encoder_8cpp.html',1,'(Global Namespace)']]],
+  ['encoder_2ecpp_5',['encoder.cpp',['../bmp_2encoder_8cpp.html',1,'(Global Namespace)'],['../jpeg_2encoder_8cpp.html',1,'(Global Namespace)'],['../qoi_2encoder_8cpp.html',1,'(Global Namespace)'],['../tga_2encoder_8cpp.html',1,'(Global Namespace)']]],
   ['endian_2ecpp_6',['endian.cpp',['../endian_8cpp.html',1,'']]],
   ['endpoint_2ecpp_7',['endpoint.cpp',['../endpoint_8cpp.html',1,'']]],
   ['entry_2ecpp_8',['entry.cpp',['../entry_8cpp.html',1,'']]],

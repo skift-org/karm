@@ -14,7 +14,7 @@ var searchData=
   ['max_11',['MAX',['../namespaceKarm_1_1Ui.html#a47337947b6baee770180e75cd510a26fa26a4b44a837bf97b972628509912b4a5',1,'Karm::Ui']]],
   ['middle_12',['MIDDLE',['../namespaceKarm_1_1App.html#a6be91eb6569c46f6a8e9d7faee8e5b9aa43eedd8685eb86592022f8da962e3474',1,'Karm::App']]],
   ['min_13',['MIN',['../namespaceKarm_1_1Ui.html#a47337947b6baee770180e75cd510a26face31e2a082d17e038fcc6e3006166653',1,'Karm::Ui']]],
-  ['minimum_14',['MINIMUM',['../structKarm_1_1Print_1_1Margins.html#acf0ee111afe9889278a772d631dfa150',1,'Karm::Print::Margins']]],
+  ['minimum_14',['MINIMUM',['../structKarm_1_1Print_1_1Margins.html#aaf3757e041b97bcd03e8cefd031e1272acf0ee111afe9889278a772d631dfa150',1,'Karm::Print::Margins']]],
   ['miter_5fjoin_15',['MITER_JOIN',['../namespaceKarm_1_1Gfx.html#a5827d24ebac75e2f39962ef53e2f0442afba79aa6e32522f3933c83c5d7d39aac',1,'Karm::Gfx']]],
   ['mobile_16',['MOBILE',['../namespaceKarm_1_1App.html#ae8b0398827181942904ae3adf1faf662ad9e3110063ba107ab79340dceebc2d7b',1,'Karm::App']]],
   ['mode_17',['MODE',['../namespaceKarm_1_1App.html#ad07c9914f5689fc3c0360845e694c5d1ab742db58b16f1d7de716d5e8a8afabbb',1,'Karm::App']]],

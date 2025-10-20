@@ -42,7 +42,7 @@ var searchData=
   ['current_39',['CURRENT',['../namespaceKarm_1_1Io.html#a22d6cdaab0f64553050fcefa7a55a172aa2770969c827f0f2910f6179418462df',1,'Karm::Io']]],
   ['cursive_40',['CURSIVE',['../namespaceKarm_1_1Gfx.html#a22c0f6cfe7909d4ebec0d59ea8f7bfccac02370ee7d395c075c293be914d5859d',1,'Karm::Gfx']]],
   ['cursive_5fattachment_41',['CURSIVE_ATTACHMENT',['../namespaceKarm_1_1Font_1_1Ttf.html#a8aff7083e7ad767f8dd513de43aa9ae4ad86e6ddf9731f11599e4f47bdc34172e',1,'Karm::Font::Ttf']]],
-  ['custom_42',['CUSTOM',['../structKarm_1_1Print_1_1Margins.html#a72baef04098f035e8a320b03ad197818',1,'Karm::Print::Margins']]],
+  ['custom_42',['CUSTOM',['../structKarm_1_1Print_1_1Margins.html#aaf3757e041b97bcd03e8cefd031e1272a72baef04098f035e8a320b03ad197818',1,'Karm::Print::Margins']]],
   ['cut_43',['CUT',['../structKarm_1_1Ui_1_1TextAction.html#a423fe970cba054599e6fea242504dfcf',1,'Karm::Ui::TextAction']]],
   ['cutekit_44',['CUTEKIT',['../namespaceKarm_1_1Posix.html#a03e5f325172c380b18142edb1927ec01a9d4629b4c331c01ba046d7f02a8de5f8',1,'Karm::Posix']]],
   ['cyan_45',['CYAN',['../namespaceKarm_1_1Tty.html#a4f786745082298c1da840bc65f4b8ad5aca49b139f8d2a6e8879e067404f6efc8',1,'Karm::Tty']]],

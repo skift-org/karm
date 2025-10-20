@@ -2,6 +2,7 @@ var karm_cli_2mod_8cpp =
 [
     [ "Karm::Cli::Token", "structKarm_1_1Cli_1_1Token.html", "structKarm_1_1Cli_1_1Token" ],
     [ "Karm::Cli::ValueParser< bool >", "structKarm_1_1Cli_1_1ValueParser_3_01bool_01_4.html", null ],
+    [ "Karm::Cli::ValueParser< T >", "structKarm_1_1Cli_1_1ValueParser_3_01T_01_4.html", null ],
     [ "Karm::Cli::ValueParser< isize >", "structKarm_1_1Cli_1_1ValueParser_3_01isize_01_4.html", null ],
     [ "Karm::Cli::ValueParser< Str >", "structKarm_1_1Cli_1_1ValueParser_3_01Str_01_4.html", null ],
     [ "Karm::Cli::ValueParser< Vec< T > >", "structKarm_1_1Cli_1_1ValueParser_3_01Vec_3_01T_01_4_01_4.html", null ],

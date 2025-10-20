@@ -79,6 +79,7 @@ var annotated_dup =
         [ "ValueParser< isize >", "structKarm_1_1Cli_1_1ValueParser_3_01isize_01_4.html", null ],
         [ "ValueParser< Opt< T > >", "structKarm_1_1Cli_1_1ValueParser_3_01Opt_3_01T_01_4_01_4.html", null ],
         [ "ValueParser< Str >", "structKarm_1_1Cli_1_1ValueParser_3_01Str_01_4.html", null ],
+        [ "ValueParser< T >", "structKarm_1_1Cli_1_1ValueParser_3_01T_01_4.html", null ],
         [ "ValueParser< Vec< T > >", "structKarm_1_1Cli_1_1ValueParser_3_01Vec_3_01T_01_4_01_4.html", null ]
       ] ],
       [ "Crypto", "namespaceKarm_1_1Crypto.html", [
