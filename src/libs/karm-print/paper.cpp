@@ -146,7 +146,7 @@ export Res<PaperStock> findPaperStock(Str name) {
 // MARK: Print Settings --------------------------------------------------------
 
 export struct Margins {
-    enum struct _Named {
+    enum struct Named {
         DEFAULT,
         NONE,
         MINIMUM,
@@ -154,17 +154,17 @@ export struct Margins {
 
         _LEN
     };
-    using enum _Named;
-    _Named named;
+    using enum Named;
+    Named named;
     Math::Insetsf custom = 20 * UNIT;
 
-    Margins(_Named named)
+    Margins(Named named)
         : named(named) {}
 
     Margins(Math::Insetsf custom)
-        : named(_Named::CUSTOM), custom(custom) {}
+        : named(Named::CUSTOM), custom(custom) {}
 
-    bool operator==(_Named named) const {
+    bool operator==(Named named) const {
         return this->named == named;
     }
 

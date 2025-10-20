@@ -92,6 +92,36 @@ struct ValueParser<bool> {
     }
 };
 
+export template <Meta::Enum T>
+struct ValueParser<T> {
+    static Res<> usage(Io::TextWriter& w) {
+        auto items = enumItems<T>();
+        bool first = false;
+        for (auto& i : items) {
+            if (not first)
+                try$(w.writeStr("|"s));
+            try$(w.writeStr(i.name));
+            first = true;
+        }
+        return Ok();
+    }
+
+    static Res<T> parse(Cursor<Token>& c) {
+        if (c.ended() or c->kind != Token::OPERAND)
+            return Error::invalidInput("expected enum value");
+
+        auto value = c.next().value;
+
+        auto items = enumItems<T>();
+        for (auto& i : items) {
+            if (eqCi(i.name, value))
+                return Ok(static_cast<T>(i.value));
+        }
+
+        return Error::invalidInput("expected enum value");
+    }
+};
+
 export template <>
 struct ValueParser<isize> {
     static Res<> usage(Io::TextWriter& w) {
