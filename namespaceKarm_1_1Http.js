@@ -19,10 +19,14 @@ var namespaceKarm_1_1Http =
     [ "PipeTransport", "structKarm_1_1Http_1_1PipeTransport.html", "structKarm_1_1Http_1_1PipeTransport" ],
     [ "Request", "structKarm_1_1Http_1_1Request.html", "structKarm_1_1Http_1_1Request" ],
     [ "Response", "structKarm_1_1Http_1_1Response.html", "structKarm_1_1Http_1_1Response" ],
+    [ "RoutePattern", "structKarm_1_1Http_1_1RoutePattern.html", "structKarm_1_1Http_1_1RoutePattern" ],
+    [ "Router", "structKarm_1_1Http_1_1Router.html", "structKarm_1_1Http_1_1Router" ],
     [ "Server", "structKarm_1_1Http_1_1Server.html", "structKarm_1_1Http_1_1Server" ],
     [ "Service", "structKarm_1_1Http_1_1Service.html", "structKarm_1_1Http_1_1Service" ],
     [ "Transport", "structKarm_1_1Http_1_1Transport.html", "structKarm_1_1Http_1_1Transport" ],
     [ "Version", "structKarm_1_1Http_1_1Version.html", "structKarm_1_1Http_1_1Version" ],
+    [ "Handler", "namespaceKarm_1_1Http.html#af2b6fc059fcc82c86d02d8c9af368253", null ],
+    [ "Params", "namespaceKarm_1_1Http.html#ae5dde23901ce7ef1a1d179b4af07cf3a", null ],
     [ "Code", "namespaceKarm_1_1Http.html#ad68477145de564d2a910b9441365aa1a", [
       [ "ITER", "namespaceKarm_1_1Http.html#ad68477145de564d2a910b9441365aa1aae72cb5ed973687a2bf3cae4bf30581b2", null ]
     ] ],
@@ -39,7 +43,8 @@ var namespaceKarm_1_1Http =
       [ "ALLOW_ALL", "namespaceKarm_1_1Http.html#a1d720f9dab0fdc754b2d6b9ae4efaae7af1bf44bac4da849c95f05665ec8af5ab", null ]
     ] ],
     [ "Method", "namespaceKarm_1_1Http.html#a04c0f4a44a817c0a1e0018359b7a38c2", [
-      [ "ITER", "namespaceKarm_1_1Http.html#a04c0f4a44a817c0a1e0018359b7a38c2ac92b7e612e5b3a95e8394b4914215b16", null ]
+      [ "ITER", "namespaceKarm_1_1Http.html#a04c0f4a44a817c0a1e0018359b7a38c2ac92b7e612e5b3a95e8394b4914215b16", null ],
+      [ "_LEN", "namespaceKarm_1_1Http.html#a04c0f4a44a817c0a1e0018359b7a38c2ae29d1d2ceca88985d2cf3bd5ba380301", null ]
     ] ],
     [ "codeClass", "namespaceKarm_1_1Http.html#aa30787939493f3b406f8de83a4577318", null ],
     [ "defaultClient", "namespaceKarm_1_1Http.html#af767e6af72b067c138d8926b7765ed90", null ],

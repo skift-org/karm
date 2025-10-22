@@ -30,6 +30,8 @@ var searchData=
   ['response_27',['Response',['../structKarm_1_1Http_1_1Response.html',1,'Karm::Http']]],
   ['rgba8888_28',['Rgba8888',['../structKarm_1_1Gfx_1_1Rgba8888.html',1,'Karm::Gfx']]],
   ['ring_29',['Ring',['../structKarm_1_1Ring.html',1,'Karm']]],
-  ['runoptions_30',['RunOptions',['../structKarm_1_1Test_1_1RunOptions.html',1,'Karm::Test']]],
-  ['rwlock_31',['RwLock',['../structKarm_1_1RwLock.html',1,'Karm']]]
+  ['routepattern_30',['RoutePattern',['../structKarm_1_1Http_1_1RoutePattern.html',1,'Karm::Http']]],
+  ['router_31',['Router',['../structKarm_1_1Http_1_1Router.html',1,'Karm::Http']]],
+  ['runoptions_32',['RunOptions',['../structKarm_1_1Test_1_1RunOptions.html',1,'Karm::Test']]],
+  ['rwlock_33',['RwLock',['../structKarm_1_1RwLock.html',1,'Karm']]]
 ];

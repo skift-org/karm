@@ -20,5 +20,5 @@ var searchData=
   ['execute_17',['EXECUTE',['../structKarm_1_1Vte_1_1Parser.html#a827442e86818796d0da962f6523f0495a5d76688e2261e6805ee36ad961b3fa7a',1,'Karm::Vte::Parser']]],
   ['exp_18',['EXP',['../namespaceKarm_1_1Image_1_1Jpeg.html#af7022f5c263dd1247b0212ffec582808aa56d00216d4d968790220991d50760b6',1,'Karm::Image::Jpeg']]],
   ['extension_5fpositioning_19',['EXTENSION_POSITIONING',['../namespaceKarm_1_1Font_1_1Ttf.html#a8aff7083e7ad767f8dd513de43aa9ae4ae3c96247f51e7f1af29d5c1d2c73ec54',1,'Karm::Font::Ttf']]],
-  ['extra_20',['EXTRA',['../structKarm_1_1Cli_1_1Token.html#a4c9fb0da0d8a646b925e07bacadc7aeeaa21f6af4d39dbd2643527651dd4e694b',1,'Karm::Cli::Token::EXTRA()'],['../namespaceKarm_1_1Cli.html#adad269924e06d6f9a5c912b24b17bf93aa21f6af4d39dbd2643527651dd4e694b',1,'Karm::Cli::EXTRA()']]]
+  ['extra_20',['EXTRA',['../structKarm_1_1Http_1_1RoutePattern_1_1Segment.html#af21928c67d9bb5fb021c4821a13c977caa21f6af4d39dbd2643527651dd4e694b',1,'Karm::Http::RoutePattern::Segment::EXTRA()'],['../structKarm_1_1Cli_1_1Token.html#a4c9fb0da0d8a646b925e07bacadc7aeeaa21f6af4d39dbd2643527651dd4e694b',1,'Karm::Cli::Token::EXTRA()'],['../namespaceKarm_1_1Cli.html#adad269924e06d6f9a5c912b24b17bf93aa21f6af4d39dbd2643527651dd4e694b',1,'Karm::Cli::EXTRA()']]]
 ];

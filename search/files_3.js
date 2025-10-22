@@ -6,7 +6,7 @@ var searchData=
   ['decoder_2ecpp_3',['decoder.cpp',['../bmp_2decoder_8cpp.html',1,'(Global Namespace)'],['../gif_2decoder_8cpp.html',1,'(Global Namespace)'],['../jpeg_2decoder_8cpp.html',1,'(Global Namespace)'],['../png_2decoder_8cpp.html',1,'(Global Namespace)'],['../qoi_2decoder_8cpp.html',1,'(Global Namespace)'],['../tga_2decoder_8cpp.html',1,'(Global Namespace)']]],
   ['defer_2ecpp_4',['defer.cpp',['../defer_8cpp.html',1,'']]],
   ['defs_2eh_5',['defs.h',['../defs_8h.html',1,'']]],
-  ['dialog_2ecpp_6',['dialog.cpp',['../karm-kira_2dialog_8cpp.html',1,'(Global Namespace)'],['../karm-ui_2dialog_8cpp.html',1,'(Global Namespace)']]],
+  ['dialog_2ecpp_6',['dialog.cpp',['../karm-ui_2dialog_8cpp.html',1,'(Global Namespace)'],['../karm-kira_2dialog_8cpp.html',1,'(Global Namespace)']]],
   ['dir_2ecpp_7',['dir.cpp',['../dir_8cpp.html',1,'']]],
   ['distinct_2ecpp_8',['distinct.cpp',['../distinct_8cpp.html',1,'']]],
   ['drag_2ecpp_9',['drag.cpp',['../drag_8cpp.html',1,'']]],

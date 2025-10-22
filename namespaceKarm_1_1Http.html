@@ -99,6 +99,7 @@ $(document).ready(function(){initNavTree('namespaceKarm_1_1Http.html',''); initR
   <div class="summary">
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">Karm::Http Namespace Reference</div></div>
@@ -136,6 +137,10 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Response.html">Response</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1RoutePattern.html">RoutePattern</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Router.html">Router</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Server.html">Server</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Service.html">Service</a></td></tr>
@@ -144,6 +149,13 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Version.html">Version</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:ae5dde23901ce7ef1a1d179b4af07cf3a"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#ae5dde23901ce7ef1a1d179b4af07cf3a">Params</a> = <a class="el" href="structKarm_1_1Map.html">Map</a>&lt; <a class="el" href="namespaceKarm.html#ae6adab057126d950320de3262006925b">String</a>, <a class="el" href="namespaceKarm.html#ae6adab057126d950320de3262006925b">String</a> &gt;</td></tr>
+<tr class="separator:ae5dde23901ce7ef1a1d179b4af07cf3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2b6fc059fcc82c86d02d8c9af368253"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#af2b6fc059fcc82c86d02d8c9af368253">Handler</a> = <a class="el" href="structKarm_1_1SharedFunc.html">SharedFunc</a>&lt; <a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a>&lt;&gt;(<a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Request.html">Request</a> &gt;, <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Response_1_1Writer.html">Response::Writer</a> &gt;)&gt;</td></tr>
+<tr class="separator:af2b6fc059fcc82c86d02d8c9af368253"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -162,6 +174,7 @@ Enumerations</h2></td></tr>
  }</td></tr>
 <tr class="separator:a5845f99333d8889a8c0de8901840f671"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a04c0f4a44a817c0a1e0018359b7a38c2"><td class="memItemLeft" align="right" valign="top">enum struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#a04c0f4a44a817c0a1e0018359b7a38c2">Method</a> : u8 { <a class="el" href="namespaceKarm_1_1Http.html#a04c0f4a44a817c0a1e0018359b7a38c2ac92b7e612e5b3a95e8394b4914215b16">ITER</a>
+, <b>_LEN</b>
  }</td></tr>
 <tr class="separator:a04c0f4a44a817c0a1e0018359b7a38c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1d720f9dab0fdc754b2d6b9ae4efaae7"><td class="memItemLeft" align="right" valign="top">enum struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#a1d720f9dab0fdc754b2d6b9ae4efaae7">LocalTransportPolicy</a> { <a class="el" href="namespaceKarm_1_1Http.html#a1d720f9dab0fdc754b2d6b9ae4efaae7ae75ab17a550f46adbbe891b819cf951d">FILTER</a>
@@ -204,6 +217,35 @@ Functions</h2></td></tr>
 <tr class="memitem:aaf89444a0219effd695ebf482ea956b7"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Transport.html">Transport</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#aaf89444a0219effd695ebf482ea956b7">multiplexTransport</a> (<a class="el" href="namespaceKarm.html#a1b428ca1be30466bf8f6acae574ee5c6">Vec</a>&lt; <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Transport.html">Transport</a> &gt; &gt; transports)</td></tr>
 <tr class="separator:aaf89444a0219effd695ebf482ea956b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="af2b6fc059fcc82c86d02d8c9af368253" name="af2b6fc059fcc82c86d02d8c9af368253"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af2b6fc059fcc82c86d02d8c9af368253">&#9670;&#160;</a></span>Handler</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespaceKarm_1_1Http.html#af2b6fc059fcc82c86d02d8c9af368253">Karm::Http::Handler</a> = typedef <a class="el" href="structKarm_1_1SharedFunc.html">SharedFunc</a>&lt;<a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a>&lt;&gt;(<a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt;<a class="el" href="structKarm_1_1Http_1_1Request.html">Request</a>&gt;, <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt;<a class="el" href="structKarm_1_1Http_1_1Response_1_1Writer.html">Response::Writer</a>&gt;)&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae5dde23901ce7ef1a1d179b4af07cf3a" name="ae5dde23901ce7ef1a1d179b4af07cf3a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae5dde23901ce7ef1a1d179b4af07cf3a">&#9670;&#160;</a></span>Params</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespaceKarm_1_1Http.html#ae5dde23901ce7ef1a1d179b4af07cf3a">Karm::Http::Params</a> = typedef <a class="el" href="structKarm_1_1Map.html">Map</a>&lt;<a class="el" href="namespaceKarm.html#ae6adab057126d950320de3262006925b">String</a>, <a class="el" href="namespaceKarm.html#ae6adab057126d950320de3262006925b">String</a>&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="ad68477145de564d2a910b9441365aa1a" name="ad68477145de564d2a910b9441365aa1a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad68477145de564d2a910b9441365aa1a">&#9670;&#160;</a></span>Code</h2>

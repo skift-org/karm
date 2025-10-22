@@ -845,6 +845,7 @@ var hierarchy =
     [ "Karm::Http::Response", "structKarm_1_1Http_1_1Response.html", null ],
     [ "Karm::Gfx::Rgba8888", "structKarm_1_1Gfx_1_1Rgba8888.html", null ],
     [ "Karm::Ring< T >", "structKarm_1_1Ring.html", null ],
+    [ "Karm::Http::RoutePattern", "structKarm_1_1Http_1_1RoutePattern.html", null ],
     [ "Karm::Test::RunOptions", "structKarm_1_1Test_1_1RunOptions.html", null ],
     [ "Karm::Gfx::SaturationFilter", "structKarm_1_1Gfx_1_1SaturationFilter.html", null ],
     [ "Karm::Image::Saver", "structKarm_1_1Image_1_1Saver.html", null ],
@@ -861,6 +862,7 @@ var hierarchy =
       [ "Karm::Io::WriterSlice< Writable >", "structKarm_1_1Io_1_1WriterSlice.html", null ],
       [ "Karm::Sys::_File", null, null ]
     ] ],
+    [ "Karm::Http::RoutePattern::Segment", "structKarm_1_1Http_1_1RoutePattern_1_1Segment.html", null ],
     [ "Karm::Sys::Sema", "structKarm_1_1Sys_1_1Sema.html", null ],
     [ "Karm::Gfx::SepiaFilter", "structKarm_1_1Gfx_1_1SepiaFilter.html", null ],
     [ "Karm::Serde::Serde< T >", "structKarm_1_1Serde_1_1Serde.html", null ],
@@ -892,7 +894,9 @@ var hierarchy =
       ] ]
     ] ],
     [ "Karm::Http::Server", "structKarm_1_1Http_1_1Server.html", null ],
-    [ "Karm::Http::Service", "structKarm_1_1Http_1_1Service.html", null ],
+    [ "Karm::Http::Service", "structKarm_1_1Http_1_1Service.html", [
+      [ "Karm::Http::Router", "structKarm_1_1Http_1_1Router.html", null ]
+    ] ],
     [ "Karm::Sys::Service", "structKarm_1_1Sys_1_1Service.html", [
       [ "Karm::Sys::ArgsHook", "structKarm_1_1Sys_1_1ArgsHook.html", null ],
       [ "Karm::Sys::ChannelHook", "structKarm_1_1Sys_1_1ChannelHook.html", null ]
