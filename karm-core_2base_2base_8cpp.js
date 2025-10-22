@@ -5,7 +5,6 @@ var karm_core_2base_2base_8cpp =
     [ "Karm::Wrap", "structKarm_1_1Wrap.html", null ],
     [ "Karm::None", "structKarm_1_1None.html", "structKarm_1_1None" ],
     [ "ExternSym", "karm-core_2base_2base_8cpp.html#a9073376a4b4c45912fad7f2afd966037", null ],
-    [ "f16", "karm-core_2base_2base_8cpp.html#a2571ec7b26bc60267960479a59015c01", null ],
     [ "f32", "karm-core_2base_2base_8cpp.html#aafee350481bb6972d50cd80124ba59d0", null ],
     [ "f64", "karm-core_2base_2base_8cpp.html#aaa50825017672262b5fd33f91f7d8ed9", null ],
     [ "i16", "karm-core_2base_2base_8cpp.html#a6275f9592c5033b4f01a1354b05b4dae", null ],

@@ -181,7 +181,6 @@ var namespaceKarm =
     [ "c8x8", "namespaceKarm.html#a17df0a8c8fa50b66d142cce411fd8b7f", null ],
     [ "CStr", "namespaceKarm.html#a96d1d9f52e76f5e3d73657b33b86fa63", null ],
     [ "ExternSym", "namespaceKarm.html#a9073376a4b4c45912fad7f2afd966037", null ],
-    [ "f16", "namespaceKarm.html#a2571ec7b26bc60267960479a59015c01", null ],
     [ "f16x2", "namespaceKarm.html#a6e410f8862658dad517b9e330a546bbe", null ],
     [ "f16x4", "namespaceKarm.html#a7f1a63abf3dc5aa377231d11687c0344", null ],
     [ "f16x8", "namespaceKarm.html#a229d6484cd3c5bcb11cc5ac758202aac", null ],
