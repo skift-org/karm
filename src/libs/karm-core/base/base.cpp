@@ -127,7 +127,10 @@ export using i128 = __int128_t;
 
 // MARK: Floating point --------------------------------------------------------
 
+#ifdef __FLT16_MANT_DIG__
 export using f16 = _Float16;
+#endif
+
 export using f32 = float;
 export using f64 = double;
 
