@@ -6,6 +6,10 @@ import :response;
 
 namespace Karm::Http {
 
+using Params = Map<String, String>;
+
+using Handler = SharedFunc<Async::Task<>(Rc<Request>, Rc<Response::Writer>)>;
+
 export struct Service {
     virtual ~Service() = default;
     virtual Async::Task<> handleAsync(Rc<Request>, Rc<Response::Writer>) = 0;
@@ -17,7 +21,9 @@ export struct Server {
     }
 
     Rc<Service> _srv;
+
     virtual ~Server() = default;
+
     virtual Async::Task<> serveAsync() = 0;
 };
 

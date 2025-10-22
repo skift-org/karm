@@ -19,6 +19,7 @@ export enum struct Method : u8 {
 #define ITER(NAME) NAME,
     FOREACH_METHOD(ITER)
 #undef ITER
+        _LEN,
 };
 
 using enum Method;
@@ -39,6 +40,8 @@ export Str toStr(Method method) {
         return #NAME;
         FOREACH_METHOD(ITER)
 #undef ITER
+    default:
+        unreachable();
     }
     return "UNKNOWN";
 }
