@@ -5,3 +5,4 @@ export import :path;
 export import :sniff;
 export import :url;
 export import :uti;
+export import :uuid;
