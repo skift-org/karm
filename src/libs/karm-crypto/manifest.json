@@ -5,6 +5,7 @@
     "description": "Cryptographic functions and utilities",
     "requires": [
         "karm-core",
-        "karm-math"
+        "karm-math",
+        "karm-crypto-impl"
     ]
 }
