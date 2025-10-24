@@ -8,6 +8,7 @@ var namespaceKarm_1_1Http =
       [ "test$", "namespaceKarm_1_1Http_1_1Tests.html#ab3a2b3e5f0e4430ffeafa1c5548a48d4", null ]
     ] ],
     [ "Body", "structKarm_1_1Http_1_1Body.html", null ],
+    [ "CacheTransport", "structKarm_1_1Http_1_1CacheTransport.html", "structKarm_1_1Http_1_1CacheTransport" ],
     [ "ChunkedBody", "structKarm_1_1Http_1_1ChunkedBody.html", "structKarm_1_1Http_1_1ChunkedBody" ],
     [ "Client", "structKarm_1_1Http_1_1Client.html", "structKarm_1_1Http_1_1Client" ],
     [ "ContentBody", "structKarm_1_1Http_1_1ContentBody.html", "structKarm_1_1Http_1_1ContentBody" ],
@@ -46,6 +47,8 @@ var namespaceKarm_1_1Http =
       [ "ITER", "namespaceKarm_1_1Http.html#a04c0f4a44a817c0a1e0018359b7a38c2ac92b7e612e5b3a95e8394b4914215b16", null ],
       [ "_LEN", "namespaceKarm_1_1Http.html#a04c0f4a44a817c0a1e0018359b7a38c2ae29d1d2ceca88985d2cf3bd5ba380301", null ]
     ] ],
+    [ "cacheTransport", "namespaceKarm_1_1Http.html#a571439238beecf6e625cd100efcdbb72", null ],
+    [ "cacheTransport", "namespaceKarm_1_1Http.html#a59f29505fef41c86548778d74ed6e997", null ],
     [ "codeClass", "namespaceKarm_1_1Http.html#aa30787939493f3b406f8de83a4577318", null ],
     [ "defaultClient", "namespaceKarm_1_1Http.html#af767e6af72b067c138d8926b7765ed90", null ],
     [ "doAsync", "namespaceKarm_1_1Http.html#a30c31811dcc7e5293a19cfe7374309d9", null ],
@@ -61,5 +64,6 @@ var namespaceKarm_1_1Http =
     [ "postAsync", "namespaceKarm_1_1Http.html#aa64dfe6c8bea58e1a6b8b88ce7b33dd0", null ],
     [ "servAsync", "namespaceKarm_1_1Http.html#a2cb644722aa7971ecfe06e5dba85c4ad", null ],
     [ "toStr", "namespaceKarm_1_1Http.html#a85d5d3a532933caba9af5037207fd42c", null ],
-    [ "toStr", "namespaceKarm_1_1Http.html#a6f9f37dfdb88da1656cbba3657156a25", null ]
+    [ "toStr", "namespaceKarm_1_1Http.html#a6f9f37dfdb88da1656cbba3657156a25", null ],
+    [ "BUF_SIZE", "namespaceKarm_1_1Http.html#a2e7f89820d6eb5e76cd4b1e6da25b4e6", null ]
 ];

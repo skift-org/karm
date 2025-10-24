@@ -961,6 +961,7 @@ var hierarchy =
     [ "Karm::Ml::BpeVocab::TokenInfos", "structKarm_1_1Ml_1_1BpeVocab_1_1TokenInfos.html", null ],
     [ "Karm::Math::Trans2< T >", "unionKarm_1_1Math_1_1Trans2.html", null ],
     [ "Karm::Http::Transport", "structKarm_1_1Http_1_1Transport.html", [
+      [ "Karm::Http::CacheTransport", "structKarm_1_1Http_1_1CacheTransport.html", null ],
       [ "Karm::Http::Client", "structKarm_1_1Http_1_1Client.html", null ],
       [ "Karm::Http::HttpTransport", "structKarm_1_1Http_1_1HttpTransport.html", null ],
       [ "Karm::Http::LocalTransport", "structKarm_1_1Http_1_1LocalTransport.html", null ],

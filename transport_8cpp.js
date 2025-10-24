@@ -17,6 +17,7 @@ var transport_8cpp =
     [ "localTransport", "transport_8cpp.html#af1c2f04b07946af18c6b0b6c87e203b5", null ],
     [ "multiplexTransport", "transport_8cpp.html#aaf89444a0219effd695ebf482ea956b7", null ],
     [ "pipeTransport", "transport_8cpp.html#a76579a1b687f7dd65ca9a98c4a386987", null ],
+    [ "BUF_SIZE", "transport_8cpp.html#a2e7f89820d6eb5e76cd4b1e6da25b4e6", null ],
     [ "Core", "transport_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5", null ],
     [ "Http", "transport_8cpp.html#ae4e6389ba964884ff5221427019b2efc", null ],
     [ "Logger", "transport_8cpp.html#ade9c999f65d06abc86ce3cce78a704fc", null ],

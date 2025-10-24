@@ -101,7 +101,8 @@ $(document).ready(function(){initNavTree('namespaceKarm_1_1Http.html',''); initR
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
 <a href="#enum-members">Enumerations</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">Karm::Http Namespace Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -114,6 +115,8 @@ Namespaces</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Body.html">Body</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1CacheTransport.html">CacheTransport</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1ChunkedBody.html">ChunkedBody</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -184,6 +187,10 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a571439238beecf6e625cd100efcdbb72"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Transport.html">Transport</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#a571439238beecf6e625cd100efcdbb72">cacheTransport</a> (<a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Transport.html">Transport</a> &gt; <a class="el" href="namespaceKarm.html#a701fbc6c5af438f4965bd679181e2796">next</a>)</td></tr>
+<tr class="separator:a571439238beecf6e625cd100efcdbb72"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a59f29505fef41c86548778d74ed6e997"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Transport.html">Transport</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#a59f29505fef41c86548778d74ed6e997">cacheTransport</a> (<a class="el" href="namespaceKarm.html#a1b428ca1be30466bf8f6acae574ee5c6">Vec</a>&lt; <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Transport.html">Transport</a> &gt; &gt; transports)</td></tr>
+<tr class="separator:a59f29505fef41c86548778d74ed6e997"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af767e6af72b067c138d8926b7765ed90"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Client.html">Client</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#af767e6af72b067c138d8926b7765ed90">defaultClient</a> ()</td></tr>
 <tr class="separator:af767e6af72b067c138d8926b7765ed90"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3cf01fdd4c09fbb6c236f0cc90466925"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a>&lt; <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Response.html">Response</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#a3cf01fdd4c09fbb6c236f0cc90466925">getAsync</a> (<a class="el" href="structKarm_1_1Ref_1_1Url.html">Ref::Url</a> url)</td></tr>
@@ -216,6 +223,11 @@ Functions</h2></td></tr>
 <tr class="separator:af1c2f04b07946af18c6b0b6c87e203b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaf89444a0219effd695ebf482ea956b7"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Transport.html">Transport</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#aaf89444a0219effd695ebf482ea956b7">multiplexTransport</a> (<a class="el" href="namespaceKarm.html#a1b428ca1be30466bf8f6acae574ee5c6">Vec</a>&lt; <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Transport.html">Transport</a> &gt; &gt; transports)</td></tr>
 <tr class="separator:aaf89444a0219effd695ebf482ea956b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a2e7f89820d6eb5e76cd4b1e6da25b4e6"><td class="memItemLeft" align="right" valign="top">constexpr <a class="el" href="namespaceKarm.html#a7826e564b525f4f5a2a0e63f961c2dbd">usize</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#a2e7f89820d6eb5e76cd4b1e6da25b4e6">BUF_SIZE</a> = 4096</td></tr>
+<tr class="separator:a2e7f89820d6eb5e76cd4b1e6da25b4e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Typedef Documentation</h2>
 <a id="af2b6fc059fcc82c86d02d8c9af368253" name="af2b6fc059fcc82c86d02d8c9af368253"></a>
@@ -354,6 +366,42 @@ Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="a571439238beecf6e625cd100efcdbb72" name="a571439238beecf6e625cd100efcdbb72"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a571439238beecf6e625cd100efcdbb72">&#9670;&#160;</a></span>cacheTransport() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">export <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Transport.html">Transport</a> &gt; Karm::Http::cacheTransport </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Transport.html">Transport</a> &gt;&#160;</td>
+          <td class="paramname"><em>next</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a59f29505fef41c86548778d74ed6e997" name="a59f29505fef41c86548778d74ed6e997"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a59f29505fef41c86548778d74ed6e997">&#9670;&#160;</a></span>cacheTransport() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">export <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Transport.html">Transport</a> &gt; Karm::Http::cacheTransport </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKarm.html#a1b428ca1be30466bf8f6acae574ee5c6">Vec</a>&lt; <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Transport.html">Transport</a> &gt; &gt;&#160;</td>
+          <td class="paramname"><em>transports</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aa30787939493f3b406f8de83a4577318" name="aa30787939493f3b406f8de83a4577318"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa30787939493f3b406f8de83a4577318">&#9670;&#160;</a></span>codeClass()</h2>
 
@@ -645,6 +693,29 @@ Functions</h2></td></tr>
           <td></td>
         </tr>
       </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="a2e7f89820d6eb5e76cd4b1e6da25b4e6" name="a2e7f89820d6eb5e76cd4b1e6da25b4e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2e7f89820d6eb5e76cd4b1e6da25b4e6">&#9670;&#160;</a></span>BUF_SIZE</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr <a class="el" href="namespaceKarm.html#a7826e564b525f4f5a2a0e63f961c2dbd">usize</a> Karm::Http::BUF_SIZE = 4096</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 </div>

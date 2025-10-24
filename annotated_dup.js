@@ -197,6 +197,7 @@ var annotated_dup =
       ] ],
       [ "Http", "namespaceKarm_1_1Http.html", [
         [ "Body", "structKarm_1_1Http_1_1Body.html", null ],
+        [ "CacheTransport", "structKarm_1_1Http_1_1CacheTransport.html", "structKarm_1_1Http_1_1CacheTransport" ],
         [ "ChunkedBody", "structKarm_1_1Http_1_1ChunkedBody.html", "structKarm_1_1Http_1_1ChunkedBody" ],
         [ "Client", "structKarm_1_1Http_1_1Client.html", "structKarm_1_1Http_1_1Client" ],
         [ "ContentBody", "structKarm_1_1Http_1_1ContentBody.html", "structKarm_1_1Http_1_1ContentBody" ],

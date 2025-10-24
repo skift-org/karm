@@ -9,6 +9,7 @@ var structKarm_1_1Ref_1_1Path =
     [ "len", "structKarm_1_1Ref_1_1Path.html#a39e53878d1ec191ae810b22eddd4173a", null ],
     [ "normalize", "structKarm_1_1Ref_1_1Path.html#a24c5b2b2889e5dab63f27f43b51a82b0", null ],
     [ "operator<=>", "structKarm_1_1Ref_1_1Path.html#ae97a3700f16290a243c90ce7ec1f7cac", null ],
+    [ "operator==", "structKarm_1_1Ref_1_1Path.html#a09648a95da4f20f583e967c5053f69d7", null ],
     [ "operator[]", "structKarm_1_1Ref_1_1Path.html#a7d3c8b4b802351573a9724dc91bdc467", null ],
     [ "parent", "structKarm_1_1Ref_1_1Path.html#a4082515b6445eacecf8abe14f2705a23", null ],
     [ "str", "structKarm_1_1Ref_1_1Path.html#ad9ede6bf39adc2165e597f1b5d2688a0", null ],
