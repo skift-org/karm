@@ -5,7 +5,8 @@ import Karm.Math;
 
 namespace Karm::Print {
 
-export constexpr f64 UNIT = (1 / 25.4) * 96.0;
+export constexpr f64 DPI = 96.0;
+export constexpr f64 UNIT = (1 / 25.4) * DPI;
 
 export struct PaperStock {
     // Size in CSS pixels at 96 DPI
