@@ -3,7 +3,7 @@ var searchData=
   ['callable_2ecpp_0',['callable.cpp',['../callable_8cpp.html',1,'']]],
   ['camera_2ecpp_1',['camera.cpp',['../camera_8cpp.html',1,'']]],
   ['cancellation_2ecpp_2',['cancellation.cpp',['../cancellation_8cpp.html',1,'']]],
-  ['canvas_2ecpp_3',['canvas.cpp',['../karm-gfx_2svg_2canvas_8cpp.html',1,'(Global Namespace)'],['../karm-pdf_2canvas_8cpp.html',1,'(Global Namespace)'],['../karm-gfx_2cpu_2canvas_8cpp.html',1,'(Global Namespace)'],['../karm-gfx_2canvas_8cpp.html',1,'(Global Namespace)']]],
+  ['canvas_2ecpp_3',['canvas.cpp',['../karm-gfx_2cpu_2canvas_8cpp.html',1,'(Global Namespace)'],['../karm-pdf_2canvas_8cpp.html',1,'(Global Namespace)'],['../karm-gfx_2svg_2canvas_8cpp.html',1,'(Global Namespace)'],['../karm-gfx_2canvas_8cpp.html',1,'(Global Namespace)']]],
   ['card_2ecpp_4',['card.cpp',['../card_8cpp.html',1,'']]],
   ['case_2ecpp_5',['case.cpp',['../case_8cpp.html',1,'']]],
   ['chan_2ecpp_6',['chan.cpp',['../chan_8cpp.html',1,'']]],
@@ -21,12 +21,13 @@ var searchData=
   ['cond_2ecpp_18',['cond.cpp',['../cond_8cpp.html',1,'']]],
   ['const_2ecpp_19',['const.cpp',['../const_8cpp.html',1,'']]],
   ['context_2dmenu_2ecpp_20',['context-menu.cpp',['../context-menu_8cpp.html',1,'']]],
-  ['context_2ecpp_21',['context.cpp',['../karm-core_2async_2context_8cpp.html',1,'(Global Namespace)'],['../karm-sys_2context_8cpp.html',1,'(Global Namespace)']]],
+  ['context_2ecpp_21',['context.cpp',['../karm-sys_2context_8cpp.html',1,'(Global Namespace)'],['../karm-core_2async_2context_8cpp.html',1,'(Global Namespace)']]],
   ['cow_2ecpp_22',['cow.cpp',['../cow_8cpp.html',1,'']]],
   ['crc32_2ecpp_23',['crc32.cpp',['../crc32_8cpp.html',1,'']]],
-  ['cstr_2ecpp_24',['cstr.cpp',['../cstr_8cpp.html',1,'']]],
-  ['ctype_2ecpp_25',['ctype.cpp',['../ctype_8cpp.html',1,'']]],
-  ['cursor_2ecpp_26',['cursor.cpp',['../karm-core_2base_2cursor_8cpp.html',1,'(Global Namespace)'],['../karm-tty_2cursor_8cpp.html',1,'(Global Namespace)']]],
-  ['curve_2ecpp_27',['curve.cpp',['../curve_8cpp.html',1,'']]],
-  ['cvrp_2ecpp_28',['cvrp.cpp',['../cvrp_8cpp.html',1,'']]]
+  ['crypto_2ecpp_24',['crypto.cpp',['../crypto_8cpp.html',1,'']]],
+  ['cstr_2ecpp_25',['cstr.cpp',['../cstr_8cpp.html',1,'']]],
+  ['ctype_2ecpp_26',['ctype.cpp',['../ctype_8cpp.html',1,'']]],
+  ['cursor_2ecpp_27',['cursor.cpp',['../karm-core_2base_2cursor_8cpp.html',1,'(Global Namespace)'],['../karm-tty_2cursor_8cpp.html',1,'(Global Namespace)']]],
+  ['curve_2ecpp_28',['curve.cpp',['../curve_8cpp.html',1,'']]],
+  ['cvrp_2ecpp_29',['cvrp.cpp',['../cvrp_8cpp.html',1,'']]]
 ];

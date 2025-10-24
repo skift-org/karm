@@ -447,7 +447,8 @@ var annotated_dup =
         [ "Path", "structKarm_1_1Ref_1_1Path.html", "structKarm_1_1Ref_1_1Path" ],
         [ "Suffix2Mime", "structKarm_1_1Ref_1_1Suffix2Mime.html", "structKarm_1_1Ref_1_1Suffix2Mime" ],
         [ "Url", "structKarm_1_1Ref_1_1Url.html", "structKarm_1_1Ref_1_1Url" ],
-        [ "Uti", "structKarm_1_1Ref_1_1Uti.html", "structKarm_1_1Ref_1_1Uti" ]
+        [ "Uti", "structKarm_1_1Ref_1_1Uti.html", "structKarm_1_1Ref_1_1Uti" ],
+        [ "Uuid", "structKarm_1_1Ref_1_1Uuid.html", "structKarm_1_1Ref_1_1Uuid" ]
       ] ],
       [ "Regex", "namespaceKarm_1_1Regex.html", [
         [ "AssertionMatcher", "structKarm_1_1Regex_1_1AssertionMatcher.html", "structKarm_1_1Regex_1_1AssertionMatcher" ],

@@ -58,6 +58,7 @@ var namespaceKarm_1_1Print =
     [ "C_SERIES", "namespaceKarm_1_1Print.html#af995956690f2c8d41fc49d92711e0ff3", null ],
     [ "COMM10E", "namespaceKarm_1_1Print.html#a1c53fc3cd9a990c07c6dd1d1ef85f63d", null ],
     [ "DLE", "namespaceKarm_1_1Print.html#ab82b1d05879cbd6c51a4d06989d99b3c", null ],
+    [ "DPI", "namespaceKarm_1_1Print.html#a342692c4cb4c95a31f6a978f4deedcbc", null ],
     [ "ENVELOPE_SERIES", "namespaceKarm_1_1Print.html#ae595c16a82855c8426eb32cfd1790dcd", null ],
     [ "EXECUTIVE", "namespaceKarm_1_1Print.html#a3ca1f627bbc210f08bfd9f9b5b66dcb0", null ],
     [ "FOLIO", "namespaceKarm_1_1Print.html#a3a361b203f80b0be132a93ad26e2ade2", null ],

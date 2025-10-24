@@ -8,5 +8,6 @@ var dir_64d689c50079b40879800cbdc2041784 =
     [ "path.cpp", "karm-ref_2path_8cpp.html", "karm-ref_2path_8cpp" ],
     [ "sniff.cpp", "sniff_8cpp.html", "sniff_8cpp" ],
     [ "url.cpp", "url_8cpp.html", "url_8cpp" ],
-    [ "uti.cpp", "uti_8cpp.html", "uti_8cpp" ]
+    [ "uti.cpp", "uti_8cpp.html", "uti_8cpp" ],
+    [ "uuid.cpp", "uuid_8cpp.html", "uuid_8cpp" ]
 ];

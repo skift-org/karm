@@ -13,5 +13,6 @@ var searchData=
   ['utf16_10',['Utf16',['../structKarm_1_1Utf16.html',1,'Karm']]],
   ['utf32_11',['Utf32',['../structKarm_1_1Utf32.html',1,'Karm']]],
   ['utf8_12',['Utf8',['../structKarm_1_1Utf8.html',1,'Karm']]],
-  ['uti_13',['Uti',['../structKarm_1_1Ref_1_1Uti.html',1,'Karm::Ref']]]
+  ['uti_13',['Uti',['../structKarm_1_1Ref_1_1Uti.html',1,'Karm::Ref']]],
+  ['uuid_14',['Uuid',['../structKarm_1_1Ref_1_1Uuid.html',1,'Karm::Ref']]]
 ];

@@ -160,7 +160,6 @@ var hierarchy =
     [ "Karm::Ui::TextModel::Cur", "structKarm_1_1Ui_1_1TextModel_1_1Cur.html", null ],
     [ "Karm::Cursor< T >", "structKarm_1_1Cursor.html", null ],
     [ "Karm::Math::Curve< T >", "unionKarm_1_1Math_1_1Curve.html", null ],
-    [ "Karm::Font::Database", "structKarm_1_1Font_1_1Database.html", null ],
     [ "Karm::Date", "structKarm_1_1Date.html", null ],
     [ "Karm::DateTime", "structKarm_1_1DateTime.html", null ],
     [ "Karm::Day", "structKarm_1_1Day.html", null ],
@@ -664,6 +663,7 @@ var hierarchy =
       ] ],
       [ "Karm::ArmedDefer< F >", "structKarm_1_1ArmedDefer.html", null ],
       [ "Karm::Async::Awaiter< S >", "structKarm_1_1Async_1_1Awaiter.html", null ],
+      [ "Karm::Font::Database", "structKarm_1_1Font_1_1Database.html", null ],
       [ "Karm::Gfx::Canvas", "structKarm_1_1Gfx_1_1Canvas.html", [
         [ "Karm::Gfx::CpuCanvas", "structKarm_1_1Gfx_1_1CpuCanvas.html", null ],
         [ "Karm::Gfx::SvgCanvas", "structKarm_1_1Gfx_1_1SvgCanvas.html", null ],
@@ -997,6 +997,7 @@ var hierarchy =
     [ "Karm::Utf32", "structKarm_1_1Utf32.html", null ],
     [ "Karm::Utf8", "structKarm_1_1Utf8.html", null ],
     [ "Karm::Ref::Uti", "structKarm_1_1Ref_1_1Uti.html", null ],
+    [ "Karm::Ref::Uuid", "structKarm_1_1Ref_1_1Uuid.html", null ],
     [ "Karm::Serde::Value", "structKarm_1_1Serde_1_1Value.html", null ],
     [ "Karm::Cli::ValueParser< T >", "structKarm_1_1Cli_1_1ValueParser.html", null ],
     [ "Karm::Cli::ValueParser< bool >", "structKarm_1_1Cli_1_1ValueParser_3_01bool_01_4.html", null ],

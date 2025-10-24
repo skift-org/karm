@@ -50,6 +50,7 @@ var paper_8cpp =
     [ "COMM10E", "paper_8cpp.html#a1c53fc3cd9a990c07c6dd1d1ef85f63d", null ],
     [ "Core", "paper_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5", null ],
     [ "DLE", "paper_8cpp.html#ab82b1d05879cbd6c51a4d06989d99b3c", null ],
+    [ "DPI", "paper_8cpp.html#a342692c4cb4c95a31f6a978f4deedcbc", null ],
     [ "ENVELOPE_SERIES", "paper_8cpp.html#ae595c16a82855c8426eb32cfd1790dcd", null ],
     [ "EXECUTIVE", "paper_8cpp.html#a3ca1f627bbc210f08bfd9f9b5b66dcb0", null ],
     [ "FOLIO", "paper_8cpp.html#a3a361b203f80b0be132a93ad26e2ade2", null ],
