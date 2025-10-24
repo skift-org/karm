@@ -163,6 +163,8 @@ export struct Path {
         return _parts.len();
     }
 
+    bool operator==(Path const&) const = default;
+
     auto operator<=>(Path const&) const = default;
 
     Str suffix() const {

@@ -49,6 +49,12 @@ test$("karm-ref-url-parse") {
     return Ok();
 }
 
+test$("karm-ref-url-unparse") {
+    expectEq$("http://smnx.sh/"_url.str(), "http://smnx.sh/"s);
+    expectEq$("http://smnx.sh"_url.str(), "http://smnx.sh"s);
+    return Ok();
+}
+
 test$("karm-ref-url-parent-of") {
     expect$("http://example.com/"_url.isParentOf("http://example.com/"_url));
     expect$("http://example.com"_url.isParentOf("http://example.com/a"_url));

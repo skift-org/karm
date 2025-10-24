@@ -69,7 +69,7 @@ export struct Uuid {
     }
 
     static Res<Uuid> deserialize(Serde::Deserializer& de) {
-        return parse( try$(Serde::deserialize<String>(de));
+        return parse(try$(Serde::deserialize<String>(de)));
     }
 };
 

@@ -170,7 +170,8 @@ export struct Url {
         if (port)
             try$(Io::format(writer, ":{}", port.unwrap()));
 
-        try$(path.unparse(writer));
+        if (path.rooted or path.len() > 0)
+            try$(path.unparse(writer));
 
         if (query)
             try$(Io::format(writer, "?{}", query));
