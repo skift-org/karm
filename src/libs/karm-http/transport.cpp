@@ -22,10 +22,10 @@ export struct Transport {
 
 // MARK: Http Transport --------------------------------------------------------
 
-static constexpr usize BUF_SIZE = 4096;
+constexpr usize BUF_SIZE = 4096;
 
 struct ContentBody : Body {
-    Buf<u8> _resumes;
+    Vec<u8> _resumes;
     usize _resumesPos = 0;
     Sys::TcpConnection _conn;
     usize _contentLength;
@@ -55,7 +55,7 @@ struct ContentBody : Body {
 };
 
 struct ChunkedBody : Body {
-    Buf<u8> _buf;
+    Vec<u8> _buf;
     Sys::TcpConnection _conn;
 
     ChunkedBody(Bytes resumes, Sys::TcpConnection conn)
@@ -114,7 +114,7 @@ export Rc<Transport> httpTransport() {
 // MARK: Pipe Transport --------------------------------------------------------
 
 struct PipeBody : Body {
-    Buf<u8> _resumes;
+    Vec<u8> _resumes;
     usize _resumesPos = 0;
     usize _contentLength;
 
@@ -282,7 +282,7 @@ struct MultiplexTransport : Transport {
                 co_return res.none();
         }
 
-        co_return Error::notFound("no client could handle the request");
+        co_return Error::unsupported("no client could handle the request");
     }
 };
 

@@ -57,11 +57,11 @@ export struct Request {
         return Ok(req);
     }
 
-    Res<> unparse(Io::TextWriter& w) {
+    Res<> unparse(Io::TextWriter& w) const {
         // Start line
-        url.path.rooted = true;
+        auto path = url.path;
+        path.rooted = true;
         try$(Io::format(w, "{} {} ", toStr(method), url.path));
-        url.path.rooted = false;
 
         try$(version.unparse(w));
         try$(w.writeStr("\r\n"s));

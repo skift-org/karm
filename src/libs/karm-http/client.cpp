@@ -14,6 +14,7 @@ import :transport;
 namespace Karm::Http {
 
 static auto debugClient = Debug::Flag::debug("http-client"s, "Log HTTP client requests"s);
+static auto debugClientExtra = Debug::Flag::debug("http-client-extra"s, "Log extra info about HTTP client requests"s);
 
 export struct Client : Transport {
     String userAgent = "Karm-Http/" stringify$(__ck_version_value) ""s;
@@ -26,12 +27,19 @@ export struct Client : Transport {
         request->header.add("User-Agent", userAgent);
         auto maybeResp = co_await _transport->doAsync(request);
         if (not maybeResp) {
-            logDebugIf(debugClient, "\"{} {}\" {}", request->method, request->url, maybeResp.none());
+            logErrorIf(debugClient, "\"{} {}\" {}", request->method, request->url, maybeResp.none());
             co_return maybeResp.none();
         }
 
         auto resp = maybeResp.unwrap();
-        logDebugIf(debugClient, "\"{} {}\" {} {}", request->method, request->url, toUnderlyingType(resp->code), resp->code);
+        if (debugClient or debugClientExtra) {
+            Io::StringWriter sw;
+            if (debugClientExtra) {
+                if (auto cache = resp->header.tryGet("X-Karm-Cache"s))
+                    co_try$(Io::format(sw, " ({})"s, cache));
+            }
+            logInfo("\"{} {}\" {} {}{}", request->method, request->url, toUnderlyingType(resp->code), resp->code, sw.take());
+        }
         co_return Ok(resp);
     }
 

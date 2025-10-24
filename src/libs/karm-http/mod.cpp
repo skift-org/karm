@@ -1,6 +1,7 @@
 export module Karm.Http;
 
 export import :body;
+export import :cache;
 export import :client;
 export import :code;
 export import :header;

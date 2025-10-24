@@ -23,7 +23,7 @@ export struct Version {
         return Ok(v);
     }
 
-    Res<> unparse(Io::TextWriter& w) {
+    Res<> unparse(Io::TextWriter& w) const {
         try$(Io::format(w, "HTTP/{}.{}", major, minor));
         return Ok();
     }
@@ -75,7 +75,7 @@ export struct Header : Map<String, String> {
         return Ok();
     }
 
-    Res<> unparse(Io::TextWriter& w) {
+    Res<> unparse(Io::TextWriter& w) const {
         for (auto& [key, value] : iterUnordered()) {
             try$(Io::format(w, "{}: {}\r\n", key, value));
         }
