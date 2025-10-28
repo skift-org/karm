@@ -40,6 +40,13 @@ export struct Url {
     String fragment;
     Res<Rc<Blob>> blob = NONE;
 
+    static Url data(Mime mime, Bytes data) {
+        Url url;
+        url.scheme = "data"_sym;
+        url.blob = Ok(makeRc<Blob>(mime, data));
+        return url;
+    }
+
     static Res<Rc<Blob>> _parseData(Io::SScan& s) {
         s.begin();
         while (not s.ahead(";base64,") and
