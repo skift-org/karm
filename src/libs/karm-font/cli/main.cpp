@@ -69,7 +69,7 @@ Async::Task<> entryPointAsync(Sys::Context& ctx) {
 
         auto url = Ref::parseUrlOrPath(args[1], co_try$(Sys::pwd()));
         auto file = co_try$(Sys::File::open(url));
-        auto map = co_try$(Sys::mmap().map(file));
+        auto map = co_try$(Sys::mmap(file));
         auto ttf = co_try$(Font::Ttf::Parser::init(map.bytes()));
 
         Sys::println("ttf is valid");

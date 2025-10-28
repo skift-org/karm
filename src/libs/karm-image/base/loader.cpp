@@ -87,7 +87,7 @@ export Res<Rc<Gfx::Surface>> load(Ref::Url url) {
         return load(blob->data);
     }
     auto file = try$(Sys::File::open(url));
-    auto map = try$(Sys::mmap().map(file));
+    auto map = try$(Sys::mmap(file));
     return load(map.bytes());
 }
 

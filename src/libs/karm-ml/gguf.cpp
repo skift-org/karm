@@ -207,7 +207,7 @@ Res<Vec<TensorInfos>> _loadTensors(Io::BScan& s, usize len) {
 export Res<> loadGguf(Ref::Url url) {
     yap("loading gguf file from {}", url);
     auto file = try$(Sys::File::open(url));
-    auto mmap = try$(Sys::mmap().map(file));
+    auto mmap = try$(Sys::mmap(file));
 
     yap("mmap'ed model file of {}mib", mmap.bytes().len() / mib(1));
     Io::BScan s{mmap.bytes()};

@@ -6,6 +6,7 @@ module;
 #include <fcntl.h>
 #include <netdb.h>
 #include <netinet/in.h>
+#include <signal.h>
 #include <stdlib.h>
 #include <sys/mman.h>
 #include <sys/socket.h>
@@ -16,7 +17,6 @@ module;
 #include <sys/wait.h>
 #include <time.h>
 #include <unistd.h>
-#include <signal.h>
 
 //
 #include <karm-core/macros.h>
@@ -482,7 +482,7 @@ Duration uptime() {
 
 // MARK: Memory Managment ------------------------------------------------------
 
-isize MmapPropsToProt(MmapProps const& options) {
+isize _mmapPropsToProt(MmapProps const& options) {
     isize prot = 0;
 
     if (options.options & MmapOption::READ)
@@ -498,7 +498,7 @@ isize MmapPropsToProt(MmapProps const& options) {
 }
 
 Res<MmapResult> memMap(MmapProps const& options) {
-    void* addr = ::mmap(reinterpret_cast<void*>(options.vaddr), options.size, MmapPropsToProt(options), MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+    void* addr = ::mmap(reinterpret_cast<void*>(options.vaddr), options.size, _mmapPropsToProt(options), MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
 
     if (addr == MAP_FAILED)
         return Posix::fromLastErrno();
@@ -518,7 +518,7 @@ Res<MmapResult> memMap(MmapProps const& options, Rc<Fd> maybeFd) {
     if (size == 0)
         size = try$(Io::size(*fd));
 
-    void* addr = ::mmap(reinterpret_cast<void*>(options.vaddr), size, MmapPropsToProt(options), MAP_SHARED, fd->_raw, options.offset);
+    void* addr = ::mmap(reinterpret_cast<void*>(options.vaddr), size, _mmapPropsToProt(options), MAP_SHARED, fd->_raw, options.offset);
 
     if (addr == MAP_FAILED)
         return Posix::fromLastErrno();
@@ -539,6 +539,12 @@ Res<> memFlush(void* flush, usize len) {
 
     return Ok();
 }
+
+usize pageSize() {
+    return getpagesize();
+}
+
+// MARK: System Information ----------------------------------------------------
 
 Res<> populate(SysInfo& infos) {
     struct utsname uts;

@@ -26,29 +26,29 @@ namespace Karm::Sys::_Embed {
 
 // MARK: Fd --------------------------------------------------------------------
 
-export Res<Rc<Sys::Fd>> deserializeFd(Serde::Deserializer&);
+export Res<Rc<Fd>> deserializeFd(Serde::Deserializer&);
 
 // MARK: File I/O --------------------------------------------------------------
 
-export Res<Rc<Sys::Fd>> openFile(Ref::Url const& url);
+export Res<Rc<Fd>> openFile(Ref::Url const& url);
 
-export Res<Rc<Sys::Fd>> createFile(Ref::Url const& url);
+export Res<Rc<Fd>> createFile(Ref::Url const& url);
 
-export Res<Rc<Sys::Fd>> openOrCreateFile(Ref::Url const& url);
+export Res<Rc<Fd>> openOrCreateFile(Ref::Url const& url);
 
-export Res<Pair<Rc<Sys::Fd>, Rc<Sys::Fd>>> createPipe();
+export Res<Pair<Rc<Fd>, Rc<Fd>>> createPipe();
 
-export Res<Rc<Sys::Fd>> createIn();
+export Res<Rc<Fd>> createIn();
 
-export Res<Rc<Sys::Fd>> createOut();
+export Res<Rc<Fd>> createOut();
 
-export Res<Rc<Sys::Fd>> createErr();
+export Res<Rc<Fd>> createErr();
 
-export Res<Vec<Sys::DirEntry>> readDir(Ref::Url const& url);
+export Res<Vec<DirEntry>> readDir(Ref::Url const& url);
 
 export Res<> createDir(Ref::Url const& url);
 
-export Res<Vec<Sys::DirEntry>> readDirOrCreate(Ref::Url const& url);
+export Res<Vec<DirEntry>> readDirOrCreate(Ref::Url const& url);
 
 export Res<Stat> stat(Ref::Url const& url);
 
@@ -64,13 +64,13 @@ export Res<Rc<Pid>> run(Command const&);
 
 // MARK: Sockets ---------------------------------------------------------------
 
-export Res<Rc<Sys::Fd>> listenUdp(SocketAddr addr);
+export Res<Rc<Fd>> listenUdp(SocketAddr addr);
 
-export Res<Rc<Sys::Fd>> connectTcp(SocketAddr addr);
+export Res<Rc<Fd>> connectTcp(SocketAddr addr);
 
-export Res<Rc<Sys::Fd>> listenTcp(SocketAddr addr);
+export Res<Rc<Fd>> listenTcp(SocketAddr addr);
 
-export Res<Rc<Sys::Fd>> listenIpc(Ref::Url url);
+export Res<Rc<Fd>> listenIpc(Ref::Url url);
 
 // MARK: Time ------------------------------------------------------------------
 
@@ -82,27 +82,29 @@ export Duration uptime();
 
 // MARK: Memory Managment ------------------------------------------------------
 
-export Res<Sys::MmapResult> memMap(Sys::MmapProps const& options);
+export Res<MmapResult> memMap(MmapProps const& options);
 
-export Res<Sys::MmapResult> memMap(Sys::MmapProps const& options, Rc<Sys::Fd> fd);
+export Res<MmapResult> memMap(MmapProps const& options, Rc<Fd> fd);
 
 export Res<> memUnmap(void const* buf, usize len);
 
 export Res<> memFlush(void* flush, usize len);
 
-// MARK: System Informations ---------------------------------------------------
+export usize pageSize();
 
-export Res<> populate(Sys::SysInfo&);
+// MARK: System Information ----------------------------------------------------
 
-export Res<> populate(Sys::MemInfo&);
+export Res<> populate(SysInfo&);
 
-export Res<> populate(Vec<Sys::CpuInfo>&);
+export Res<> populate(MemInfo&);
 
-export Res<> populate(Sys::UserInfo&);
+export Res<> populate(Vec<CpuInfo>&);
 
-export Res<> populate(Vec<Sys::UserInfo>&);
+export Res<> populate(UserInfo&);
 
-// MARK: Process Managment -----------------------------------------------------
+export Res<> populate(Vec<UserInfo>&);
+
+// MARK: Process Management ----------------------------------------------------
 
 export Res<> sleep(Duration);
 

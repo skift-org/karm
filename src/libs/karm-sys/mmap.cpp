@@ -178,89 +178,44 @@ export struct MutMmap :
     void leak() {
         _owned = false;
     }
-};
 
-export struct _Mmap {
-    using enum MmapOption;
-
-    MmapProps _props{};
-    Opt<Rc<Fd>> _fd;
-
-    _Mmap& read() {
-        _props.options |= READ;
-        return *this;
-    }
-
-    _Mmap& write() {
-        _props.options |= WRITE;
-        return *this;
-    }
-
-    _Mmap& exec() {
-        _props.options |= EXEC;
-        return *this;
-    }
-
-    _Mmap& stack() {
-        _props.options |= STACK;
-        return *this;
-    }
-
-    _Mmap& paddr(usize paddr) {
-        _props.paddr = paddr;
-        return *this;
-    }
-
-    _Mmap& vaddr(usize paddr) {
-        _props.vaddr = paddr;
-        return *this;
-    }
-
-    _Mmap& offset(usize offset) {
-        _props.offset = offset;
-        return *this;
-    }
-
-    _Mmap& size(usize size) {
-        _props.size = size;
-        return *this;
-    }
-
-    Res<Mmap> map() {
-        _props.options |= READ;
-        MmapResult range = try$(_Embed::memMap(_props));
-        return Ok(Mmap{range.paddr, (void const*)range.vaddr, range.size});
-    }
-
-    Res<Mmap> map(Rc<Fd> fd) {
-        _props.options |= READ;
-        MmapResult range = try$(_Embed::memMap(_props, fd));
-        return Ok(Mmap{range.paddr, (void const*)range.vaddr, range.size});
-    }
-
-    Res<Mmap> map(AsFd auto& what) {
-        return map(what.fd());
-    }
-
-    Res<MutMmap> mapMut() {
-        _props.options |= WRITE;
-        MmapResult range = try$(_Embed::memMap(_props));
-        return Ok(MutMmap{range.paddr, (void*)range.vaddr, range.size});
-    }
-
-    Res<MutMmap> mapMut(Rc<Fd> fd) {
-        _props.options |= WRITE;
-        MmapResult result = try$(_Embed::memMap(_props, fd));
-        return Ok(MutMmap{result.paddr, (void*)result.vaddr, result.size});
-    }
-
-    Res<MutMmap> mapMut(AsFd auto& what) {
-        return mapMut(what.fd());
+    Mmap seal() {
+        Mmap mmap{_paddr, _buf, _size, _owned};
+        leak();
+        return mmap;
     }
 };
 
-export _Mmap mmap() {
-    return {};
+export usize pageSize() {
+    return _Embed::pageSize();
+}
+
+export Res<Mmap> mmap(Opt<Rc<Fd>> fd = NONE, MmapProps props = {}) {
+    props.options |= MmapOption::READ;
+    MmapResult result;
+    if (fd)
+        result = try$(_Embed::memMap(props, fd.unwrap()));
+    else
+        result = try$(_Embed::memMap(props));
+    return Ok(Mmap{result.paddr, (void*)result.vaddr, result.size});
+}
+
+export Res<Mmap> mmap(AsFd auto& what, MmapProps props = {}) {
+    return mmap(what.fd(), props);
+}
+
+export Res<MutMmap> mutMmap(Opt<Rc<Fd>> fd = NONE, MmapProps props = {}) {
+    props.options |= MmapOption::WRITE;
+    MmapResult result;
+    if (fd)
+        result = try$(_Embed::memMap(props, fd.unwrap()));
+    else
+        result = try$(_Embed::memMap(props));
+    return Ok(MutMmap{result.paddr, (void*)result.vaddr, result.size});
+}
+
+export Res<MutMmap> mutMmap(AsFd auto& what, MmapProps props = {}) {
+    return mutMmap(what.fd(), props);
 }
 
 } // namespace Karm::Sys

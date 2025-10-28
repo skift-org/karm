@@ -17,7 +17,7 @@ export Res<Rc<Gfx::Fontface>> loadFontface(Sys::Mmap&& map) {
 
 export Res<Rc<Gfx::Fontface>> loadFontface(Ref::Url url) {
     auto file = try$(Sys::File::open(url));
-    auto map = try$(Sys::mmap().map(file));
+    auto map = try$(Sys::mmap(file));
     return loadFontface(std::move(map));
 }
 

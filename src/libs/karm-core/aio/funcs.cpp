@@ -30,7 +30,7 @@ export Async::Task<usize> copyAsync(AsyncReadable auto& reader, AsyncWritable au
 
 export Async::Task<Vec<u8>> readAllAsync(AsyncReadable auto& reader) {
     Io::BufferWriter buf;
-    auto bufAsync = Aio::adapt(buf);
+    auto bufAsync = adapt(buf);
     co_trya$(Aio::copyAsync(reader, bufAsync));
     co_return Ok(buf.take());
 }
