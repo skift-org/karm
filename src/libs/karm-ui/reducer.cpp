@@ -69,8 +69,8 @@ template <typename Model>
 struct Reducer :
     LeafNode<Reducer<Model>> {
 
-    using State = typename Model::State;
-    using Action = typename Model::Action;
+    using State = Model::State;
+    using Action = Model::Action;
 
     State _state;
     Func<Child(State const&)> _build;

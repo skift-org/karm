@@ -238,7 +238,7 @@ struct Parser {
         if (glyfOffset == _loca.glyfOffset(glyph.index + 1, _head))
             return;
 
-        _glyf.contour(g, glyfOffset);
+        _glyf.contour(g, glyfOffset, _loca, _head);
     }
 
     Metrics metrics() const {

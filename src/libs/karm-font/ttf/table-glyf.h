@@ -7,6 +7,8 @@ import Karm.Logger;
 
 #include <karm-core/macros.h>
 
+#include "table-loca.h"
+
 namespace Karm::Font::Ttf {
 
 static constexpr bool DEBUG_GLYF = false;
@@ -47,6 +49,19 @@ struct Glyf : Io::BChunk {
         auto s = begin();
         return metrics(s, glyfOffset);
     }
+
+    void contour(Gfx::Canvas& g, usize glyfOffset, Loca const& loca, Head const& head) const {
+        auto s = begin();
+        auto m = metrics(s, glyfOffset);
+
+        if (m.numContours > 0) {
+            contourSimple(g, m, s);
+        } else if (m.numContours < 0) {
+            contourComposite(g, s, loca, head);
+        }
+    }
+
+    // MARK: Simple Contour ----------------------------------------------------
 
     struct SimpleContour {
         enum Flag {
@@ -158,18 +173,84 @@ struct Glyf : Io::BChunk {
         }
     }
 
-    void contourComposite(Gfx::Canvas&, Metrics, Io::BScan&) const {
-        logDebugIf(DEBUG_GLYF, "composite glyph not implemented");
-    }
+    // MARK: Composite Contour -------------------------------------------------
 
-    void contour(Gfx::Canvas& g, usize glyfOffset) const {
-        auto s = begin();
-        auto m = metrics(s, glyfOffset);
+    static constexpr u16 ARG_1_AND_2_ARE_WORDS = 0x0001;
+    static constexpr u16 ARGS_ARE_XY_VALUES = 0x0002;
+    static constexpr u16 ROUND_XY_TO_GRID = 0x0004;
+    static constexpr u16 WE_HAVE_A_SCALE = 0x0008;
+    static constexpr u16 MORE_COMPONENTS = 0x0020;
+    static constexpr u16 WE_HAVE_AN_X_AND_Y_SCALE = 0x0040;
+    static constexpr u16 WE_HAVE_A_TWO_BY_TWO = 0x0080;
+    static constexpr u16 WE_HAVE_INSTRUCTIONS = 0x0100;
+    static constexpr u16 USE_MY_METRICS = 0x0200;
+    static constexpr u16 OVERLAP_COMPOUND = 0x0400; // ignore for rasterless outline
 
-        if (m.numContours > 0) {
-            contourSimple(g, m, s);
-        } else if (m.numContours < 0) {
-            contourComposite(g, m, s);
+    void contourComposite(Gfx::Canvas& g, Io::BScan& s, Loca const& loca, Head const& head) const {
+        while (true) {
+            u16 flags = s.nextU16be();
+            u16 glyphIndex = s.nextU16be();
+
+            // args
+            i16 arg1 = 0, arg2 = 0;
+            if (flags & ARG_1_AND_2_ARE_WORDS) {
+                arg1 = s.nextI16be();
+                arg2 = s.nextI16be();
+            } else {
+                arg1 = (i8)s.nextU8be();
+                arg2 = (i8)s.nextU8be();
+            }
+
+            f64 tx = 0, ty = 0;
+            i16 compPoint = 0, basePoint = 0;
+
+            if (flags & ARGS_ARE_XY_VALUES) {
+                tx = arg1;
+                ty = -(f64)arg2;
+                if (flags & ROUND_XY_TO_GRID) {
+                    tx = Math::round(tx);
+                    ty = Math::round(ty);
+                }
+            } else {
+                compPoint = arg1;
+                basePoint = arg2;
+                logDebugIf(DEBUG_GLYF, "glyf: anchor-point composite (base={}, comp={}) not aligned", basePoint, compPoint);
+            }
+
+            f64 a = 1, b = 0, c = 0, d = 1;
+            if (flags & WE_HAVE_A_SCALE) {
+                f64 s14 = (f64)s.nextI16be() / 16384.0;
+                a = d = s14;
+            } else if (flags & WE_HAVE_AN_X_AND_Y_SCALE) {
+                a = (f64)s.nextI16be() / 16384.0;
+                d = (f64)s.nextI16be() / 16384.0;
+            } else if (flags & WE_HAVE_A_TWO_BY_TWO) {
+                a = (f64)s.nextI16be() / 16384.0;
+                b = (f64)s.nextI16be() / 16384.0;
+                c = (f64)s.nextI16be() / 16384.0;
+                d = (f64)s.nextI16be() / 16384.0;
+            }
+
+            Math::Trans2f t{a, c, b, d, tx, ty};
+
+            // resolve and render child
+            if (usize subOff = loca.glyfOffset(glyphIndex, head)) {
+                g.push();
+                g.transform(t);
+                contour(g, subOff, loca, head);
+                g.pop();
+            } else {
+                logWarn("glyf: component {} has no offset", glyphIndex);
+            }
+
+            // last component?
+            if (!(flags & MORE_COMPONENTS)) {
+                if (flags & WE_HAVE_INSTRUCTIONS) {
+                    u16 ilen = s.nextU16be();
+                    s.skip(ilen);
+                }
+                break;
+            }
         }
     }
 };
