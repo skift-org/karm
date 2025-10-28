@@ -146,6 +146,10 @@ export struct FontStretch : Distinct<u16, struct _FontStretchTag> {
 
     static FontStretch const NO_MATCH;
 
+    static FontStretch fromPercent(f64 f) {
+        return FontStretch{static_cast<u16>(f * 10)};
+    }
+
     void repr(Io::Emit& e) const {
         if (value() <= 100)
             e("ULTRA_CONDENSED");
@@ -180,15 +184,15 @@ export struct FontStretch : Distinct<u16, struct _FontStretchTag> {
     }
 };
 
-constexpr FontStretch FontStretch::ULTRA_CONDENSED{100};
-constexpr FontStretch FontStretch::EXTRA_CONDENSED{200};
-constexpr FontStretch FontStretch::CONDENSED{300};
-constexpr FontStretch FontStretch::SEMI_CONDENSED{400};
-constexpr FontStretch FontStretch::NORMAL{500};
-constexpr FontStretch FontStretch::SEMI_EXPANDED{600};
-constexpr FontStretch FontStretch::EXPANDED{700};
-constexpr FontStretch FontStretch::EXTRA_EXPANDED{800};
-constexpr FontStretch FontStretch::ULTRA_EXPANDED{900};
+constexpr FontStretch FontStretch::ULTRA_CONDENSED{500};
+constexpr FontStretch FontStretch::EXTRA_CONDENSED{625};
+constexpr FontStretch FontStretch::CONDENSED{750};
+constexpr FontStretch FontStretch::SEMI_CONDENSED{875};
+constexpr FontStretch FontStretch::NORMAL{1000};
+constexpr FontStretch FontStretch::SEMI_EXPANDED{1125};
+constexpr FontStretch FontStretch::EXPANDED{1250};
+constexpr FontStretch FontStretch::EXTRA_EXPANDED{1500};
+constexpr FontStretch FontStretch::ULTRA_EXPANDED{2000};
 
 constexpr FontStretch FontStretch::NO_MATCH{Limits<u16>::MAX};
 
@@ -473,7 +477,7 @@ export struct Font {
         return m;
     }
 
-    Glyph glyph(Rune rune)  {
+    Glyph glyph(Rune rune) {
         return fontface->glyph(rune);
     }
 
@@ -517,7 +521,7 @@ export struct Font {
         return advance(glyph('0'));
     }
 
-    f64 lineHeight()  {
+    f64 lineHeight() {
         return metrics().lineheight();
     }
 };
