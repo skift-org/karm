@@ -14,6 +14,7 @@ var structKarm_1_1Sys_1_1MutMmap =
     [ "operator=", "structKarm_1_1Sys_1_1MutMmap.html#a6da1fdc42feab6b4f13a6d773a03e0a5", null ],
     [ "paddr", "structKarm_1_1Sys_1_1MutMmap.html#a78fece0d9192bf734f476bad01e6a2e7", null ],
     [ "prange", "structKarm_1_1Sys_1_1MutMmap.html#a9d3eec50873955a3b28a5a7387fbb8bd", null ],
+    [ "seal", "structKarm_1_1Sys_1_1MutMmap.html#a78098cb1cf83a4aef1627cf3383a16ce", null ],
     [ "unmap", "structKarm_1_1Sys_1_1MutMmap.html#ad7c741999f62d932dae2fb37b7eb52e3", null ],
     [ "vaddr", "structKarm_1_1Sys_1_1MutMmap.html#ac749e54d408d6b7b7c508900994dbf54", null ],
     [ "vrange", "structKarm_1_1Sys_1_1MutMmap.html#a6aad9a74f1df82065789707fb28b2527", null ]
