@@ -8,7 +8,7 @@ var searchData=
   ['slot_5',['Slot',['../namespaceKarm_1_1Ui.html#a42eff427ab5c7586bf0eea0b481a592e',1,'Karm::Ui']]],
   ['slots_6',['Slots',['../namespaceKarm_1_1Ui.html#a01e70a66e4a33de92964f391700eb383',1,'Karm::Ui']]],
   ['sscan_7',['SScan',['../namespaceKarm_1_1Io.html#a6cee1ccb2229cb0d94e469d387a41c2a',1,'Karm::Io']]],
-  ['state_8',['State',['../structKarm_1_1Ui_1_1Model.html#aedb2f8e38f116a3c691a99fcec013f8e',1,'Karm::Ui::Model::State()'],['../structKarm_1_1Ui_1_1Reducer.html#a89724ba7488939e71c7b60c03b6b323b',1,'Karm::Ui::Reducer::State()']]],
+  ['state_8',['State',['../structKarm_1_1Ui_1_1Model.html#aedb2f8e38f116a3c691a99fcec013f8e',1,'Karm::Ui::Model::State()'],['../structKarm_1_1Ui_1_1Reducer.html#a88379dd9cf91d41c3652d4b796ad7320',1,'Karm::Ui::Reducer::State()']]],
   ['stop_9',['Stop',['../structKarm_1_1Gfx_1_1Gradient.html#a1ac7507e574b402f018ebb4a007fa86e',1,'Karm::Gfx::Gradient']]],
   ['storageoffset_10',['StorageOffset',['../structKarm_1_1Font_1_1Ttf_1_1Name.html#ad016636c4af46203388a2d6b736542c5',1,'Karm::Font::Ttf::Name']]],
   ['str_11',['Str',['../namespaceKarm.html#ad13bfdef3971d180d820f6489f550505',1,'Karm']]],

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['action_0',['Action',['../structKarm_1_1Kira_1_1Scaffold.html#a2b55189a304ebf41a173487ccfa96864',1,'Karm::Kira::Scaffold::Action()'],['../structKarm_1_1Ui_1_1Model.html#a91197826a9f01087a816a1406935824d',1,'Karm::Ui::Model::Action()'],['../structKarm_1_1Ui_1_1Reducer.html#a3ee83d16cae4593ba1b62fd10f2dd923',1,'Karm::Ui::Reducer::Action()'],['../namespaceKarm_1_1Kira.html#a9d7a75f38b063815cf75f68c697f6d12',1,'Karm::Kira::Action()'],['../namespaceKarm_1_1Ui.html#ae33e84d87edde37e4a2f159f690aae80',1,'Karm::Ui::Action()']]],
+  ['action_0',['Action',['../structKarm_1_1Kira_1_1Scaffold.html#a2b55189a304ebf41a173487ccfa96864',1,'Karm::Kira::Scaffold::Action()'],['../structKarm_1_1Ui_1_1Model.html#a91197826a9f01087a816a1406935824d',1,'Karm::Ui::Model::Action()'],['../structKarm_1_1Ui_1_1Reducer.html#a3b0eb957cd57d5d209a77098ce15054f',1,'Karm::Ui::Reducer::Action()'],['../namespaceKarm_1_1Kira.html#a9d7a75f38b063815cf75f68c697f6d12',1,'Karm::Kira::Action()'],['../namespaceKarm_1_1Ui.html#ae33e84d87edde37e4a2f159f690aae80',1,'Karm::Ui::Action()']]],
   ['advancewidthmax_1',['AdvanceWidthMax',['../structKarm_1_1Font_1_1Ttf_1_1Hhea.html#a29140a834580aa2647f21e36c1eddddf',1,'Karm::Font::Ttf::Hhea']]],
   ['arc_2',['Arc',['../namespaceKarm.html#ad120fe892922685cda8fc248ea0e8ee2',1,'Karm']]],
   ['arcf_3',['Arcf',['../namespaceKarm_1_1Math.html#af114c7e5f927db9ce62968838ec11e30',1,'Karm::Math']]],

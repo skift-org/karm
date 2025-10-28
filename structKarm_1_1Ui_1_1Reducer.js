@@ -1,7 +1,7 @@
 var structKarm_1_1Ui_1_1Reducer =
 [
-    [ "Action", "structKarm_1_1Ui_1_1Reducer.html#a3ee83d16cae4593ba1b62fd10f2dd923", null ],
-    [ "State", "structKarm_1_1Ui_1_1Reducer.html#a89724ba7488939e71c7b60c03b6b323b", null ],
+    [ "Action", "structKarm_1_1Ui_1_1Reducer.html#a3b0eb957cd57d5d209a77098ce15054f", null ],
+    [ "State", "structKarm_1_1Ui_1_1Reducer.html#a88379dd9cf91d41c3652d4b796ad7320", null ],
     [ "Reducer", "structKarm_1_1Ui_1_1Reducer.html#aceb1e32ab7cecd4ae4beccb353d5d2c6", null ],
     [ "~Reducer", "structKarm_1_1Ui_1_1Reducer.html#ab8e9f214188ff5308e231d85a13203e6", null ],
     [ "bound", "structKarm_1_1Ui_1_1Reducer.html#acac02552fe6de988acd166baa89db3e8", null ],
