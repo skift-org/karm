@@ -1,7 +1,5 @@
 var NAVTREEINDEX16 =
 {
-"namespaceKarm_1_1Ml_1_1Gguf.html#a5bbf19e28eca480c0956db66ad3bfe3aa48d8f1a723d44ff4a87db1bb6c551c62":[0,0,0,25,0,3,2],
-"namespaceKarm_1_1Ml_1_1Gguf.html#a5bbf19e28eca480c0956db66ad3bfe3aa4e866b275c85fbb439f6484251cfb31c":[0,0,0,25,0,3,11],
 "namespaceKarm_1_1Ml_1_1Gguf.html#a5bbf19e28eca480c0956db66ad3bfe3aa5f90af42814c0a419d715d43ae54fd7a":[0,0,0,25,0,3,3],
 "namespaceKarm_1_1Ml_1_1Gguf.html#a5bbf19e28eca480c0956db66ad3bfe3aa63b588d5559f64f89a416e656880b949":[0,0,0,25,0,3,8],
 "namespaceKarm_1_1Ml_1_1Gguf.html#a5bbf19e28eca480c0956db66ad3bfe3aa6495adba09844fac8eeb0aba86e6f1bf":[0,0,0,25,0,3,5],
@@ -249,5 +247,7 @@ var NAVTREEINDEX16 =
 "namespaceKarm_1_1Regex_1_1Tests.html#a7e835454b274407d5c5108d9f5e067d7":[0,0,0,32,0,2],
 "namespaceKarm_1_1Regex_1_1Tests.html#ac3bb4e54da4f2a785faa5b573b43f98e":[0,0,0,32,0,0],
 "namespaceKarm_1_1Scene.html":[0,0,0,33],
-"namespaceKarm_1_1Serde.html":[0,0,0,34]
+"namespaceKarm_1_1Serde.html":[0,0,0,34],
+"namespaceKarm_1_1Serde.html#a114ad999395f96dd1b01780ffb185254":[0,0,0,34,35],
+"namespaceKarm_1_1Serde.html#a1a1b70b654ef349fd8186570ea7ca34e":[0,0,0,34,34]
 };

@@ -484,8 +484,6 @@ Typedefs</h2></td></tr>
 <tr class="separator:a9073376a4b4c45912fad7f2afd966037"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae9c5b9c5336bcdba7ecd9f121dd81aef"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm.html#ae9c5b9c5336bcdba7ecd9f121dd81aef">BitsRange</a> = <a class="el" href="structKarm_1_1Range.html">Range</a>&lt; <a class="el" href="namespaceKarm.html#a7826e564b525f4f5a2a0e63f961c2dbd">usize</a>, struct BitsRangeTag &gt;</td></tr>
 <tr class="separator:ae9c5b9c5336bcdba7ecd9f121dd81aef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96d1d9f52e76f5e3d73657b33b86fa63"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm.html#a96d1d9f52e76f5e3d73657b33b86fa63">CStr</a> = char const  *</td></tr>
-<tr class="separator:a96d1d9f52e76f5e3d73657b33b86fa63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3adb2f087811138ae6d3f8edaf53cc61"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm.html#a3adb2f087811138ae6d3f8edaf53cc61">u8be</a> = <a class="el" href="structKarm_1_1Be.html">Be</a>&lt; <a class="el" href="namespaceKarm.html#ac298594d3e426dcab0de4127070d0b33">u8</a> &gt;</td></tr>
 <tr class="separator:a3adb2f087811138ae6d3f8edaf53cc61"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f2d3e4bb1dea41b21697f8e07b5bfcf"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm.html#a3f2d3e4bb1dea41b21697f8e07b5bfcf">u16be</a> = <a class="el" href="structKarm_1_1Be.html">Be</a>&lt; <a class="el" href="namespaceKarm.html#ad16f1afb3e5ed2bc1cdf9273ab539216">u16</a> &gt;</td></tr>
@@ -822,8 +820,8 @@ requires (sizeof(T) == sizeof(U))</td></tr>
 <tr class="memitem:a04628b1a9b396f70989a1159aee54c5b"><td class="memTemplParams" colspan="2">template&lt;typename T , typename... Args&gt; </td></tr>
 <tr class="memitem:a04628b1a9b396f70989a1159aee54c5b"><td class="memTemplItemLeft" align="right" valign="top">export <a class="el" href="structKarm_1_1Cow.html">Cow</a>&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceKarm.html#a04628b1a9b396f70989a1159aee54c5b">makeCow</a> (Args &amp;&amp;... args)</td></tr>
 <tr class="separator:a04628b1a9b396f70989a1159aee54c5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8e0acdfcea512ea0b55e6dba11f5dd75"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="karm-core_2macros_8h.html#ac620672df61cb1f3f6bf8901869b6be2">always_inline</a> constexpr <a class="el" href="namespaceKarm.html#a7826e564b525f4f5a2a0e63f961c2dbd">usize</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm.html#a8e0acdfcea512ea0b55e6dba11f5dd75">cstrLen</a> (<a class="el" href="namespaceKarm.html#a96d1d9f52e76f5e3d73657b33b86fa63">CStr</a> s)</td></tr>
-<tr class="separator:a8e0acdfcea512ea0b55e6dba11f5dd75"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02768b76a5ccb1b8e506e96109cf4742"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="karm-core_2macros_8h.html#ac620672df61cb1f3f6bf8901869b6be2">always_inline</a> constexpr <a class="el" href="namespaceKarm.html#a7826e564b525f4f5a2a0e63f961c2dbd">usize</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm.html#a02768b76a5ccb1b8e506e96109cf4742">cstrLen</a> (char const *s)</td></tr>
+<tr class="separator:a02768b76a5ccb1b8e506e96109cf4742"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0582f73cd7724c5fb8c0ef8eed772e98"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="karm-core_2macros_8h.html#ac620672df61cb1f3f6bf8901869b6be2">always_inline</a> constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm.html#a0582f73cd7724c5fb8c0ef8eed772e98">cstrEq</a> (char const *str1, char const *str2)</td></tr>
 <tr class="separator:a0582f73cd7724c5fb8c0ef8eed772e98"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6775fae6a5792acab6d1d198475c84a2"><td class="memItemLeft" align="right" valign="top">export constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm.html#a6775fae6a5792acab6d1d198475c84a2">isAscii</a> (<a class="el" href="namespaceKarm.html#ac50ed2a179daef0b0d391d9c11d431ae">Rune</a> rune)</td></tr>
@@ -1446,20 +1444,6 @@ template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">using <a class="el" href="namespaceKarm.html#a17df0a8c8fa50b66d142cce411fd8b7f">Karm::c8x8</a> = typedef char __attribute__((vector_size(8)))</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a96d1d9f52e76f5e3d73657b33b86fa63" name="a96d1d9f52e76f5e3d73657b33b86fa63"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a96d1d9f52e76f5e3d73657b33b86fa63">&#9670;&#160;</a></span>CStr</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="namespaceKarm.html#a96d1d9f52e76f5e3d73657b33b86fa63">Karm::CStr</a> = typedef char const*</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -3685,8 +3669,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="a8e0acdfcea512ea0b55e6dba11f5dd75" name="a8e0acdfcea512ea0b55e6dba11f5dd75"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8e0acdfcea512ea0b55e6dba11f5dd75">&#9670;&#160;</a></span>cstrLen()</h2>
+<a id="a02768b76a5ccb1b8e506e96109cf4742" name="a02768b76a5ccb1b8e506e96109cf4742"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a02768b76a5ccb1b8e506e96109cf4742">&#9670;&#160;</a></span>cstrLen()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3697,7 +3681,7 @@ template&lt;typename T &gt; </div>
         <tr>
           <td class="memname">export <a class="el" href="karm-core_2macros_8h.html#ac620672df61cb1f3f6bf8901869b6be2">always_inline</a> constexpr <a class="el" href="namespaceKarm.html#a7826e564b525f4f5a2a0e63f961c2dbd">usize</a> Karm::cstrLen </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="namespaceKarm.html#a96d1d9f52e76f5e3d73657b33b86fa63">CStr</a>&#160;</td>
+          <td class="paramtype">char const *&#160;</td>
           <td class="paramname"><em>s</em></td><td>)</td>
           <td></td>
         </tr>
