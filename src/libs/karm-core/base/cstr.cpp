@@ -10,9 +10,7 @@ namespace Karm {
 
 #pragma clang unsafe_buffer_usage begin
 
-export using CStr = char const*;
-
-export always_inline constexpr usize cstrLen(CStr s) {
+export always_inline constexpr usize cstrLen(char const* s) {
     usize len = 0;
     while (*s++) {
         len++;

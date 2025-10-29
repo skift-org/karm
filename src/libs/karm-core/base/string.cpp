@@ -11,7 +11,7 @@ import :base.slice;
 
 namespace Karm {
 
-export template <StaticEncoding E, typename U = typename E::Unit>
+export template <StaticEncoding E, typename U = E::Unit>
 struct _Str : Slice<U> {
     using Encoding = E;
     using Unit = U;

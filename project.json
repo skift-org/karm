@@ -15,7 +15,7 @@
         },
         "cute-engineering/ce-libc": {
             "git": "https://github.com/cute-engineering/ce-libc.git",
-            "tag": "v1.1.0"
+            "tag": "v1.1.1"
         },
         "cute-engineering/ce-libm": {
             "git": "https://github.com/cute-engineering/ce-libm.git",

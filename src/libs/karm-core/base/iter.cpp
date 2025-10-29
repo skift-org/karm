@@ -259,13 +259,13 @@ struct Iter {
 
     struct It {
         Item curr;
-        Iter iter;
+        Iter& iter;
 
         constexpr auto& operator*() {
             return *curr;
         }
 
-        constexpr auto operator++() {
+        constexpr auto& operator++() {
             curr = iter.next();
             return *this;
         }
