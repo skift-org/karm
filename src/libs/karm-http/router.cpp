@@ -43,7 +43,7 @@ export struct RoutePattern {
                     seg.type = Segment::EXTRA;
                 s.skip('}');
             } else {
-                seg.type = Segment::PARAM;
+                seg.type = Segment::PATH;
                 seg.value = s.token(Re::until('/'_re));
             }
         }

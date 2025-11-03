@@ -1,3 +1,7 @@
+module;
+
+#include <karm-core/macros.h>
+
 export module Karm.Http:body;
 
 import Karm.Core;
@@ -58,6 +62,11 @@ export struct Body : Aio::Reader {
         return from(bytes(str));
     }
 
+    static Rc<Body> fromJson(Serde::Value const& value) {
+        auto string = Json::unparse(value).take();
+        return from(string);
+    }
+
     static Rc<Body> empty() {
         struct EmptyBody : Body {
             Async::Task<usize> readAsync(MutBytes) override {
@@ -66,6 +75,11 @@ export struct Body : Aio::Reader {
         };
 
         return makeRc<EmptyBody>();
+    }
+
+    Async::Task<Serde::Value> readJsonAsync() {
+        auto str = co_trya$(Aio::readAllUtf8Async(*this));
+        co_return Json::parse(str);
     }
 };
 

@@ -57,6 +57,22 @@ export struct Request {
         return Ok(req);
     }
 
+    static Res<Request> read(Io::Reader& r) {
+        Io::BufferWriter bw;
+        while (true) {
+            auto [read, reachedDelim] = try$(Io::readLine(r, bw, "\r\n"_bytes));
+
+            if (not reachedDelim)
+                return Error::invalidInput("input stream ended with incomplete http header");
+
+            if (read == 0)
+                break;
+        }
+
+        Io::SScan scan{bw.bytes().cast<char>()};
+        return parse(scan);
+    }
+
     Res<> unparse(Io::TextWriter& w) const {
         // Start line
         auto path = url.path;
@@ -71,6 +87,12 @@ export struct Request {
         try$(w.writeStr("\r\n"s));
 
         return Ok();
+    }
+
+    Async::Task<Serde::Value> readJsonAsync() {
+        if (not body)
+            co_return Error::invalidInput("request has no body");
+        co_return co_await body.unwrap()->readJsonAsync();
     }
 };
 

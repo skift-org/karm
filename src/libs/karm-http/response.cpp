@@ -13,13 +13,25 @@ namespace Karm::Http {
 
 export struct Response {
     Version version;
-    Code code = Code::OK;
+    Code code = OK;
     Header header;
     Opt<Rc<Body>> body;
 
-    struct Writer : Io::Writer {
-        virtual Header& header() = 0;
-        virtual Res<> writeHeader(Code code) = 0;
+    struct Writer : Aio::Writer {
+        Header header;
+    
+        virtual Async::Task<> writeHeaderAsync(Code code) = 0;
+
+        Async::Task<> writeJsonAsync(Serde::Value const& value) {
+            auto string = co_try$(Json::unparse(value));
+            co_trya$(writeAsync(bytes(string)));
+            co_return Ok();
+        }
+
+        Async::Task<> writeStrAsync(Str str) {
+            co_trya$(writeAsync(bytes(str)));
+            co_return Ok();
+        }
     };
 
     static Res<Response> parse(Io::SScan& s) {
@@ -56,22 +68,6 @@ export struct Response {
 
         Io::SScan scan{bw.bytes().cast<char>()};
         return parse(scan);
-    }
-
-    Res<Opt<Buf<u8>>> readBody(Io::Reader& r) {
-        auto contentLengthValue = header.tryGet("Content-Length"s);
-        if (not contentLengthValue)
-            return Ok(NONE);
-
-        auto contentLength = try$(Io::atou(contentLengthValue.unwrap().str()));
-
-        Io::BufferWriter bodyBytes;
-        auto read = try$(Io::copy(r, bodyBytes, contentLength));
-
-        if (read < contentLength)
-            return Error::invalidInput("read body length is smaller than Content-Length header value");
-
-        return Ok(bodyBytes.take());
     }
 };
 

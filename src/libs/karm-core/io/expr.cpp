@@ -188,6 +188,8 @@ export constexpr Expr auto nothing() {
 
 export constexpr Expr auto any() {
     return [](auto& scan) {
+        if (scan.ended())
+            return false;
         scan.next();
         return true;
     };
