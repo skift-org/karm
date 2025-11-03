@@ -62,7 +62,7 @@ export struct Url {
 
         Io::BufferWriter buf;
         if (base64) {
-            try$(Crypto::base64Decode(s, buf));
+            try$(Crypto::base64Decode(s, buf, {.urlEncoded = true}));
         } else {
             Io::TextEncoder enc{buf};
             try$(enc.writeStr(s.remStr()));

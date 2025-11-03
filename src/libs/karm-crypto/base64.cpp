@@ -16,12 +16,25 @@ constexpr Array _MAP = {
     'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/'};
 // clang-format on
 
-export Res<> base64Decode(Io::SScan& s, Io::Writer& out) {
+struct Base64Props {
+    bool urlEncoded = false;
+};
+
+export Res<> base64Decode(Io::SScan& s, Io::Writer& out, Base64Props props = {}) {
     u8 i = 0;
     Array<u8, 4> buf;
 
     while (not s.ended()) {
-        Rune r = s.next();
+        Rune r;
+        if (props.urlEncoded and
+            s.peek() == '%' and
+            isAsciiHexDigit(s.peek(1)) and
+            isAsciiHexDigit(s.peek(1))) {
+            s.next();
+            r = Io::atou(s.slice(2), {.base = 16}).unwrap();
+        } else {
+            r = s.next();
+        }
 
         u8 k = 0;
         while (k < 64 and _MAP[k] != r)
