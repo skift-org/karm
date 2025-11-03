@@ -1,5 +1,6 @@
 var NAVTREEINDEX10 =
 {
+"libs_2karm-logger_2logger_8cpp.html#aa72aa897b1893cde8d6db7f99749a4f1":[3,0,0,1,16,0,22],
 "libs_2karm-logger_2logger_8cpp.html#aae742963fe81eac8fcdefd4ddc1858c5":[3,0,0,1,16,0,20],
 "libs_2karm-logger_2logger_8cpp.html#abd566c392341733ea46df4064b9861f5":[3,0,0,1,16,0,11],
 "libs_2karm-logger_2logger_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5":[3,0,0,1,16,0,15],
@@ -248,6 +249,5 @@ var NAVTREEINDEX10 =
 "namespaceKarm.html#a5cbc8ad3baee90d04d966961dcaf4965":[0,0,0,439],
 "namespaceKarm.html#a5cd5b84c011a6c3f28723632dec3e0dc":[0,0,0,461],
 "namespaceKarm.html#a5d29e668f2026225571396025e282454":[0,0,0,270],
-"namespaceKarm.html#a5d29e668f2026225571396025e282454a98a11b6a207bf1c64618790847ab8055":[0,0,0,270,1],
-"namespaceKarm.html#a5d29e668f2026225571396025e282454adc30ec20708ef7b0f641ef78b7880a15":[0,0,0,270,0]
+"namespaceKarm.html#a5d29e668f2026225571396025e282454a98a11b6a207bf1c64618790847ab8055":[0,0,0,270,1]
 };

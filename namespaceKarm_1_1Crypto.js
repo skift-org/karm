@@ -8,9 +8,10 @@ var namespaceKarm_1_1Crypto =
       [ "test$", "namespaceKarm_1_1Crypto_1_1Tests.html#a62eb8c9a7bd7f752f43ac48b8f9de663", null ],
       [ "test$", "namespaceKarm_1_1Crypto_1_1Tests.html#a3032686cbb798c3c376e1ecf107eed6f", null ]
     ] ],
+    [ "Base64Props", "structKarm_1_1Crypto_1_1Base64Props.html", "structKarm_1_1Crypto_1_1Base64Props" ],
     [ "Crc32", "structKarm_1_1Crypto_1_1Crc32.html", "structKarm_1_1Crypto_1_1Crc32" ],
     [ "adler32", "namespaceKarm_1_1Crypto.html#abe34fc518d19969ee448d6b8a1109bc3", null ],
-    [ "base64Decode", "namespaceKarm_1_1Crypto.html#a071ccef6229d90253c4a377b119bee0a", null ],
+    [ "base64Decode", "namespaceKarm_1_1Crypto.html#acfdc31c15d9618dcfc37057915ab0ba5", null ],
     [ "crc32", "namespaceKarm_1_1Crypto.html#a61b737c703026ba99243e8446e52f8d4", null ],
     [ "entropy", "namespaceKarm_1_1Crypto.html#ad8af3783581fc339ee0aed25236bb904", null ],
     [ "hexDecode", "namespaceKarm_1_1Crypto.html#a5aa0a6eaafa750016bd59b4611de2f12", null ],

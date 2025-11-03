@@ -211,8 +211,8 @@ Functions</h2></td></tr>
 <tr class="separator:a67c9f0343cc32ada30956766b7c011ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6f9f37dfdb88da1656cbba3657156a25"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#a6f9f37dfdb88da1656cbba3657156a25">toStr</a> (<a class="el" href="namespaceKarm_1_1Http.html#a04c0f4a44a817c0a1e0018359b7a38c2">Method</a> method)</td></tr>
 <tr class="separator:a6f9f37dfdb88da1656cbba3657156a25"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2cb644722aa7971ecfe06e5dba85c4ad"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#a2cb644722aa7971ecfe06e5dba85c4ad">servAsync</a> (<a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Service.html">Service</a> &gt; srv)</td></tr>
-<tr class="separator:a2cb644722aa7971ecfe06e5dba85c4ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d6d677788749d5208ad1807b987e83f"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#a2d6d677788749d5208ad1807b987e83f">servAsync</a> (<a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Service.html">Service</a> &gt; srv, <a class="el" href="structKarm_1_1Sys_1_1SocketAddr.html">Sys::SocketAddr</a> addr=<a class="el" href="unionKarm_1_1Sys_1_1Ip4.html#af242999d5bce558284544d7b8fce1031">Sys::Ip4::localhost</a>(80))</td></tr>
+<tr class="separator:a2d6d677788749d5208ad1807b987e83f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace2e3939874efaf4374b19d0876c02ec"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Transport.html">Transport</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#ace2e3939874efaf4374b19d0876c02ec">httpTransport</a> ()</td></tr>
 <tr class="separator:ace2e3939874efaf4374b19d0876c02ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a76579a1b687f7dd65ca9a98c4a386987"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Transport.html">Transport</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#a76579a1b687f7dd65ca9a98c4a386987">pipeTransport</a> ()</td></tr>
@@ -643,8 +643,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a2cb644722aa7971ecfe06e5dba85c4ad" name="a2cb644722aa7971ecfe06e5dba85c4ad"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2cb644722aa7971ecfe06e5dba85c4ad">&#9670;&#160;</a></span>servAsync()</h2>
+<a id="a2d6d677788749d5208ad1807b987e83f" name="a2d6d677788749d5208ad1807b987e83f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d6d677788749d5208ad1807b987e83f">&#9670;&#160;</a></span>servAsync()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -653,8 +653,18 @@ Variables</h2></td></tr>
           <td class="memname">export <a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a> Karm::Http::servAsync </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Service.html">Service</a> &gt;&#160;</td>
-          <td class="paramname"><em>srv</em></td><td>)</td>
+          <td class="paramname"><em>srv</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="structKarm_1_1Sys_1_1SocketAddr.html">Sys::SocketAddr</a>&#160;</td>
+          <td class="paramname"><em>addr</em> = <code><a class="el" href="unionKarm_1_1Sys_1_1Ip4.html#af242999d5bce558284544d7b8fce1031">Sys::Ip4::localhost</a>(80)</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">

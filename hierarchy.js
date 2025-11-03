@@ -54,6 +54,7 @@ var hierarchy =
     [ "Karm::Io::AtoxOptions", "structKarm_1_1Io_1_1AtoxOptions.html", null ],
     [ "Karm::Vte::Attrs", "structKarm_1_1Vte_1_1Attrs.html", null ],
     [ "Karm::Av::Audio", "structKarm_1_1Av_1_1Audio.html", null ],
+    [ "Karm::Crypto::Base64Props", "structKarm_1_1Crypto_1_1Base64Props.html", null ],
     [ "Karm::Io::BChunk", "structKarm_1_1Io_1_1BChunk.html", [
       [ "Karm::Font::Ttf::ClassDef", "structKarm_1_1Font_1_1Ttf_1_1ClassDef.html", null ],
       [ "Karm::Font::Ttf::Cmap", "structKarm_1_1Font_1_1Ttf_1_1Cmap.html", null ],
@@ -1024,10 +1025,10 @@ var hierarchy =
     [ "Karm::Wrap", "structKarm_1_1Wrap.html", null ],
     [ "Karm::Aio::Writer", "structKarm_1_1Aio_1_1Writer.html", [
       [ "Karm::Aio::Adapter< T >", "structKarm_1_1Aio_1_1Adapter.html", null ],
-      [ "Karm::Aio::Pipe::Writer", "structKarm_1_1Aio_1_1Pipe_1_1Writer.html", null ]
+      [ "Karm::Aio::Pipe::Writer", "structKarm_1_1Aio_1_1Pipe_1_1Writer.html", null ],
+      [ "Karm::Http::Response::Writer", "structKarm_1_1Http_1_1Response_1_1Writer.html", null ]
     ] ],
     [ "Karm::Io::Writer", "structKarm_1_1Io_1_1Writer.html", [
-      [ "Karm::Http::Response::Writer", "structKarm_1_1Http_1_1Response_1_1Writer.html", null ],
       [ "Karm::Io::BufWriter", "structKarm_1_1Io_1_1BufWriter.html", null ],
       [ "Karm::Io::BufferWriter", "structKarm_1_1Io_1_1BufferWriter.html", null ],
       [ "Karm::Io::Count", "structKarm_1_1Io_1_1Count.html", null ],

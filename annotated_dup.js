@@ -83,6 +83,7 @@ var annotated_dup =
         [ "ValueParser< Vec< T > >", "structKarm_1_1Cli_1_1ValueParser_3_01Vec_3_01T_01_4_01_4.html", null ]
       ] ],
       [ "Crypto", "namespaceKarm_1_1Crypto.html", [
+        [ "Base64Props", "structKarm_1_1Crypto_1_1Base64Props.html", "structKarm_1_1Crypto_1_1Base64Props" ],
         [ "Crc32", "structKarm_1_1Crypto_1_1Crc32.html", "structKarm_1_1Crypto_1_1Crc32" ]
       ] ],
       [ "Debug", "namespaceKarm_1_1Debug.html", [
@@ -196,7 +197,7 @@ var annotated_dup =
         [ "YCbCr", "structKarm_1_1Gfx_1_1YCbCr.html", "structKarm_1_1Gfx_1_1YCbCr" ]
       ] ],
       [ "Http", "namespaceKarm_1_1Http.html", [
-        [ "Body", "structKarm_1_1Http_1_1Body.html", null ],
+        [ "Body", "structKarm_1_1Http_1_1Body.html", "structKarm_1_1Http_1_1Body" ],
         [ "CacheTransport", "structKarm_1_1Http_1_1CacheTransport.html", "structKarm_1_1Http_1_1CacheTransport" ],
         [ "ChunkedBody", "structKarm_1_1Http_1_1ChunkedBody.html", "structKarm_1_1Http_1_1ChunkedBody" ],
         [ "Client", "structKarm_1_1Http_1_1Client.html", "structKarm_1_1Http_1_1Client" ],

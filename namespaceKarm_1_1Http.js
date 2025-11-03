@@ -7,7 +7,7 @@ var namespaceKarm_1_1Http =
       [ "test$", "namespaceKarm_1_1Http_1_1Tests.html#ab415fd1b357d531fa800cbc60edf9757", null ],
       [ "test$", "namespaceKarm_1_1Http_1_1Tests.html#ab3a2b3e5f0e4430ffeafa1c5548a48d4", null ]
     ] ],
-    [ "Body", "structKarm_1_1Http_1_1Body.html", null ],
+    [ "Body", "structKarm_1_1Http_1_1Body.html", "structKarm_1_1Http_1_1Body" ],
     [ "CacheTransport", "structKarm_1_1Http_1_1CacheTransport.html", "structKarm_1_1Http_1_1CacheTransport" ],
     [ "ChunkedBody", "structKarm_1_1Http_1_1ChunkedBody.html", "structKarm_1_1Http_1_1ChunkedBody" ],
     [ "Client", "structKarm_1_1Http_1_1Client.html", "structKarm_1_1Http_1_1Client" ],
@@ -62,7 +62,7 @@ var namespaceKarm_1_1Http =
     [ "parseMethod", "namespaceKarm_1_1Http.html#a67c9f0343cc32ada30956766b7c011ae", null ],
     [ "pipeTransport", "namespaceKarm_1_1Http.html#a76579a1b687f7dd65ca9a98c4a386987", null ],
     [ "postAsync", "namespaceKarm_1_1Http.html#aa64dfe6c8bea58e1a6b8b88ce7b33dd0", null ],
-    [ "servAsync", "namespaceKarm_1_1Http.html#a2cb644722aa7971ecfe06e5dba85c4ad", null ],
+    [ "servAsync", "namespaceKarm_1_1Http.html#a2d6d677788749d5208ad1807b987e83f", null ],
     [ "toStr", "namespaceKarm_1_1Http.html#a85d5d3a532933caba9af5037207fd42c", null ],
     [ "toStr", "namespaceKarm_1_1Http.html#a6f9f37dfdb88da1656cbba3657156a25", null ],
     [ "BUF_SIZE", "namespaceKarm_1_1Http.html#a2e7f89820d6eb5e76cd4b1e6da25b4e6", null ]
