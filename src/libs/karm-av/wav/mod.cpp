@@ -54,7 +54,6 @@ struct Decoder {
         if (type != Type::PCM)
             return Error::invalidData("only pcm data supported");
         _format = s.next<PcmFormat>();
-        yap("format: {}", _format);
         return Ok();
     }
 
