@@ -5,6 +5,10 @@
     "version": "v0.1.0",
     "description": "A batteries included framework for modern cross-platform C++ applications",
     "extern": {
+        "skift-org/assets": {
+            "git": "https://github.com/skift-org/assets.git",
+            "tag": "main"
+        },
         "cute-engineering/ce-heap": {
             "git": "https://github.com/cute-engineering/ce-heap.git",
             "tag": "v1.1.0"
