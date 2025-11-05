@@ -8,7 +8,7 @@ import :transport;
 
 namespace Karm::Http {
 
-static auto debugNoCache = Debug::Flag::debug("http-nocache", "Disable http caching");
+static auto debugNoCache = Debug::Flag::debug("http-client-nocache", "Disable http caching");
 
 struct CacheTransport : Transport {
     Rc<Transport> _next;

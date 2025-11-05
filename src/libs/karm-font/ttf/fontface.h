@@ -76,7 +76,7 @@ struct Fontface : Gfx::Fontface {
     f64 _unitPerEm = 0;
 
     static Res<Rc<Fontface>> load(Rc<Container> container) {
-        auto ff = makeRc<Fontface>();
+        auto ff = makeRc<Fontface>(container);
 
         ff->_head = try$(container->requireTable<Head>());
         ff->_cmap = try$(container->requireTable<Cmap>());
@@ -213,7 +213,7 @@ struct Fontface : Gfx::Fontface {
         if (glyfOffset == _loca.glyfOffset(glyph.index + 1, _head))
             return;
 
-        _glyf.contour(g, glyfOffset);
+        _glyf.contour(g, glyfOffset, _loca, _head);
     }
 };
 

@@ -1,7 +1,6 @@
 module;
 
 #include <karm-core/macros.h>
-#include <karm-sys/mmap.h>
 
 #include "../ttf/fontface.h"
 
@@ -9,10 +8,11 @@ export module Karm.Font:woff.container;
 
 import Karm.Core;
 import Karm.Archive;
+import Karm.Sys;
 
 namespace Karm::Font::Woff1 {
 
-static constexpr Array<char, u8> SIGNATURE = {'w', 'O', 'F', 'F'};
+static constexpr Array<char, 4> SIGNATURE = {'w', 'O', 'F', 'F'};
 
 // https://www.w3.org/TR/WOFF/#WOFFHeader
 struct [[gnu::packed]] Header {
@@ -98,7 +98,7 @@ export struct Container : Ttf::Container {
             return Error::invalidData("expected woff1 font");
 
         Vec<Table> tables;
-        for (usize i : range<usize>(header.numTables)) {
+        for (usize _ : range<usize>(header.numTables)) {
             auto entry = s.next<TableDirectoryEntry>();
             auto data = sub(mmap.bytes(), entry.offset, entry.offset + entry.compLength);
 

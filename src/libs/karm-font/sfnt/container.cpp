@@ -1,12 +1,11 @@
 module;
 
-#include <karm-sys/mmap.h>
-
 #include "../ttf/fontface.h"
 
 export module Karm.Font:sfnt.container;
 
 import Karm.Core;
+import Karm.Sys;
 
 namespace Karm::Font::Sfnt {
 
@@ -73,7 +72,7 @@ export struct Container : Ttf::Container {
         Io::BScan s{_mmap.bytes()};
         s.skip(sizeof(Header));
 
-        for (usize i : range(_header.numTables.value())) {
+        for (usize _ : range(_header.numTables.value())) {
             auto record = s.next<TableRecord>();
             co_yield Ttf::Table{
                 record.tableTag,

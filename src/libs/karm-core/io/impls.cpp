@@ -252,4 +252,57 @@ export struct BitReader {
     }
 };
 
+export struct BitWriter {
+    Writer& _writer;
+    u8 _bit{};
+    u8 _bitLen{};
+
+    BitWriter(Writer& writer)
+        : _writer(writer) {}
+
+    always_inline Res<> writeBit(u8 bit) {
+        _bit = (_bit << 1) | (bit & 1);
+        _bitLen++;
+
+        if (_bitLen == 8) {
+            try$(putByte(_bit));
+            _bit = 0;
+            _bitLen = 0;
+        }
+
+        return Ok();
+    }
+
+    always_inline Res<> putByte(u8 byte) {
+        try$(_writer.write(Bytes{&byte, 1}));
+        if (byte == 0xFF)
+            try$(_writer.write(Bytes{(u8[]){0}, 1}));
+        return Ok();
+    }
+
+    always_inline Res<> writeBits(u64 bits, usize len) {
+        for (usize i = 0; i < len; ++i) {
+            try$(writeBit((bits >> (len - i - 1)) & 1));
+        }
+        return Ok();
+    }
+
+    always_inline Res<> alignToByte() {
+        while (_bitLen != 0) {
+            try$(writeBit(0));
+        }
+        return Ok();
+    }
+
+    always_inline Res<> flush() {
+        if (_bitLen > 0) {
+            _bit <<= (8 - _bitLen);
+            try$(putByte(_bit));
+            _bit = 0;
+            _bitLen = 0;
+        }
+        return Ok();
+    }
+};
+
 } // namespace Karm::Io

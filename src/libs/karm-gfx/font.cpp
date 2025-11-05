@@ -17,6 +17,12 @@ export struct Glyph {
     bool operator==(Glyph const& other) const = default;
 
     auto operator<=>(Glyph const& other) const = default;
+
+    u64 hash() const {
+        u64 r = ::Karm::hash(index);
+        r = ::Karm::hash(r, font);
+        return r;
+    }
 };
 
 constexpr Glyph Glyph::TOFU{0, 0};

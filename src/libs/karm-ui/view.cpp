@@ -33,7 +33,7 @@ static Opt<Rc<Gfx::Fontface>> _regularFontface = NONE;
 
 Rc<Gfx::Fontface> regularFontface() {
     if (not _regularFontface) {
-        _regularFontface = Font::loadFontfaceOrFallback("bundle://fonts-inter/fonts/Inter-Regular.ttf"_url).unwrap();
+        _regularFontface = Font::loadFontface("bundle://fonts-inter/fonts/Inter-Regular.ttf"_url).unwrap();
     }
     return *_regularFontface;
 }
@@ -42,7 +42,7 @@ static Opt<Rc<Gfx::Fontface>> _mediumFontface = NONE;
 
 Rc<Gfx::Fontface> mediumFontface() {
     if (not _mediumFontface) {
-        _mediumFontface = Font::loadFontfaceOrFallback("bundle://fonts-inter/fonts/Inter-Medium.ttf"_url).unwrap();
+        _mediumFontface = Font::loadFontface("bundle://fonts-inter/fonts/Inter-Medium.ttf"_url).unwrap();
     }
     return *_mediumFontface;
 }
@@ -51,7 +51,7 @@ static Opt<Rc<Gfx::Fontface>> _boldFontface = NONE;
 
 Rc<Gfx::Fontface> boldFontface() {
     if (not _boldFontface) {
-        _boldFontface = Font::loadFontfaceOrFallback("bundle://fonts-inter/fonts/Inter-Bold.ttf"_url).unwrap();
+        _boldFontface = Font::loadFontface("bundle://fonts-inter/fonts/Inter-Bold.ttf"_url).unwrap();
     }
     return *_boldFontface;
 }
@@ -60,7 +60,7 @@ static Opt<Rc<Gfx::Fontface>> _italicFontface = NONE;
 
 Rc<Gfx::Fontface> italicFontface() {
     if (not _italicFontface) {
-        _italicFontface = Font::loadFontfaceOrFallback("bundle://fonts-inter/fonts/Inter-Italic.ttf"_url).unwrap();
+        _italicFontface = Font::loadFontface("bundle://fonts-inter/fonts/Inter-Italic.ttf"_url).unwrap();
     }
     return *_italicFontface;
 }
@@ -69,7 +69,7 @@ static Opt<Rc<Gfx::Fontface>> _codeFontface = NONE;
 
 Rc<Gfx::Fontface> codeFontface() {
     if (not _codeFontface) {
-        _codeFontface = Font::loadFontfaceOrFallback("bundle://fonts-fira-code/fonts/FiraCode-Regular.ttf"_url).unwrap();
+        _codeFontface = Font::loadFontface("bundle://fonts-fira-code/fonts/FiraCode-Regular.ttf"_url).unwrap();
     }
     return *_codeFontface;
 }

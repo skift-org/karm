@@ -219,15 +219,7 @@ export struct Database : Meta::NoCopy {
                     logWarn("could not load {}: {}", fontUrl, res);
             }
         }
-
-        auto ibmVga = Gfx::Fontface::fallback();
-
-        add({
-            .url = ""_url,
-            .attrs = ibmVga->attrs(),
-            .face = ibmVga,
-        });
-
+        
         return Ok();
     }
 

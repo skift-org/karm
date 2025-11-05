@@ -1,10 +1,10 @@
 module;
 
-#include <karm-gfx/font.h>
-
 export module Karm.Font:subset;
 
+import Karm.Gfx;
 import Karm.Core;
+import Karm.Ref;
 
 namespace Karm::Font {
 
@@ -27,6 +27,6 @@ export struct Subset {
     }
 };
 
-Res<> subset(Rc<Gfx::Fontface> font, Subset& subset, Io::Writer& out);
+Res<> subset(Rc<Gfx::Fontface> font, Subset const& subset, Io::Writer& out);
 
 } // namespace Karm::Font

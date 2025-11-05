@@ -181,6 +181,8 @@ constexpr Array<u16, 30> DEXT = {
     10, 11, 11, 12, 12, 13, 13
 };
 
+// MARK: Inflate ---------------------------------------------------------------
+
 Res<> inflate(Io::BitReader& r, Window& out, Huff& lens, Huff& dists) {
     auto sym = try$(lens.decode(r));
     while (sym != 256) {
@@ -227,6 +229,53 @@ export Res<> inflate(Io::BitReader& r, Io::Writer& out) {
             logWarnIf(debugFlate, "invalid block type {}", btype);
             return Error::invalidData("invalid block type");
         }
+    }
+
+    return Ok();
+}
+
+// MARK: Deflate ---------------------------------------------------------------
+
+export Res<> deflate(Io::Reader& r, Io::Writer& out) {
+    Io::BitWriter bw{out};
+
+    // 64 KiB - 1 is the max stored block size per RFC 1951.
+    static constexpr usize MAX_STORED = 65535;
+    Vec<u8> buf;
+    buf.resize(MAX_STORED);
+
+    for (;;) {
+        // Read up to MAX_STORED from input
+        usize n = try$(r.read({buf.buf(), buf.len()}));
+
+        bool last = n < MAX_STORED;
+
+        // --- Block header (3 bits), then align to byte boundary ---
+        // BFINAL
+        try$(bw.writeBit(last));
+        // BTYPE = 00 (stored)
+        try$(bw.writeBits(0, 2));
+        // Stored blocks start on next byte boundary
+        try$(bw.alignToByte());
+
+        // --- LEN and NLEN (little-endian) ---
+        u16 len = static_cast<u16>(n);
+        u16 nlen = static_cast<u16>(~len);
+
+        // Write LEN
+        try$(Io::putByte(out, static_cast<u8>(len & 0xff)));
+        try$(Io::putByte(out, static_cast<u8>((len >> 8) & 0xff)));
+
+        // Write NLEN
+        try$(Io::putByte(out, static_cast<u8>(nlen & 0xff)));
+        try$(Io::putByte(out, static_cast<u8>((nlen >> 8) & 0xff)));
+
+        // --- Payload ---
+        for (usize i = 0; i < n; ++i)
+            try$(Io::putByte(out, buf[i]));
+
+        if (last)
+            break;
     }
 
     return Ok();

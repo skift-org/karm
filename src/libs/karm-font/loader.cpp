@@ -36,23 +36,9 @@ export Res<Rc<Gfx::Fontface>> loadFontface(Ref::Url url) {
     return loadFontface(std::move(map));
 }
 
-export Res<Rc<Gfx::Fontface>> loadFontfaceOrFallback(Ref::Url url) {
-    if (auto result = loadFontface(url); result) {
-        return result;
-    }
-    return Ok(Gfx::Fontface::fallback());
-}
-
 export Res<Gfx::Font> loadFont(f64 size, Ref::Url url) {
     return Ok(Gfx::Font{
         .fontface = try$(loadFontface(url)),
-        .fontsize = size,
-    });
-}
-
-export Res<Gfx::Font> loadFontOrFallback(f64 size, Ref::Url url) {
-    return Ok(Gfx::Font{
-        .fontface = try$(loadFontfaceOrFallback(url)),
         .fontsize = size,
     });
 }
