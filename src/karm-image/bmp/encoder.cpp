@@ -13,7 +13,10 @@ Vec<u8> _encodePixelData(Gfx::Pixels pixels) {
     usize i = 0;
     for (isize y = pixels.height() - 1; y >= 0; --y) {
         for (isize x = 0; x < pixels.width(); ++x) {
+            // NOTE: In this code loadUnsafe is safe because we are iterating
+            //       over the valid range of pixels.
             auto color = pixels.loadUnsafe({x, y});
+        
             data[i++] = color.blue;
             data[i++] = color.green;
             data[i++] = color.red;

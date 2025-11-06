@@ -37,6 +37,7 @@ export struct ImagePrinter : FilePrinter {
         if (_pages.len() == 0)
             return Gfx::Surface::alloc(GAPS, Gfx::RGBA8888);
 
+        // NOTE: There is only one page, no need to merge
         if (_pages.len() == 1)
             return _pages[0];
 

@@ -11,7 +11,6 @@ namespace Karm::Pdf {
 static auto debugCanvas = Debug::Flag::debug("pdf-canvas", "Log PDF canvas failures");
 
 export struct FontManager {
-    // FIXME: using the address of the fontface since there is not comparison for the fontface obj
     Map<Gfx::FontAttrs, Tuple<usize, Rc<Gfx::Fontface>>> mapping;
 
     usize getFontId(Rc<Gfx::Fontface> font) {
