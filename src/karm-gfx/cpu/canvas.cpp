@@ -58,7 +58,7 @@ export struct CpuCanvas : Canvas {
     }
 
     // Get the pixels being drawn on.
-    MutPixels mutPixels()  {
+    MutPixels mutPixels() {
         return _pixels.unwrap("no pixels");
     }
 
@@ -142,6 +142,8 @@ export struct CpuCanvas : Canvas {
     void _FillSmoothImpl(auto fill, auto format, FillRule fillRule) {
         Math::Vec2f last = {0, 0};
         auto opacity = current().opacity;
+        if (opacity < 0.001)
+            return;
         auto fillComponent = [&](auto comp, Math::Vec2f pos) {
             _poly.offset(pos - last);
             last = pos;
@@ -205,7 +207,7 @@ export struct CpuCanvas : Canvas {
         _path.hlineTo(x, options);
     }
 
-    void vlineTo(f64 y, Flags<Math::Path::Option> options) override  {
+    void vlineTo(f64 y, Flags<Math::Path::Option> options) override {
         _path.vlineTo(y, options);
     }
 
@@ -332,14 +334,14 @@ export struct CpuCanvas : Canvas {
         _fill(current().stroke.fill);
     }
 
-    void fill(Math::Path const& path, FillRule rule = FillRule::NONZERO) override  {
+    void fill(Math::Path const& path, FillRule rule = FillRule::NONZERO) override {
         _poly.clear();
         createSolid(_poly, path);
         _poly.transform(current().trans);
         _fill(current().fill, rule);
     }
 
-    void fill(Font& font, Glyph glyph, Math::Vec2f baseline) override  {
+    void fill(Font& font, Glyph glyph, Math::Vec2f baseline) override {
         _useSpaa = true;
         Canvas::fill(font, glyph, baseline);
         _useSpaa = false;
@@ -347,13 +349,13 @@ export struct CpuCanvas : Canvas {
 
     // MARK: Clear Operations --------------------------------------------------
 
-    void clear(Color color = BLACK) override  {
+    void clear(Color color = BLACK) override {
         mutPixels()
             .clip(current().clip)
             .clear(color);
     }
 
-    void clear(Math::Recti rect, Color color = BLACK) override  {
+    void clear(Math::Recti rect, Color color = BLACK) override {
         // FIXME: Properly handle offaxis rectangles
         rect = current().trans.apply(rect.cast<f64>()).bound().cast<isize>();
 
@@ -365,14 +367,14 @@ export struct CpuCanvas : Canvas {
 
     // MARK: Plot Operations ---------------------------------------------------
 
-    void plot(Math::Vec2i point, Color color) override  {
+    void plot(Math::Vec2i point, Color color) override {
         point = current().trans.apply(point.cast<f64>()).cast<isize>();
         if (current().clip.contains(point)) {
             mutPixels().blend(point, color);
         }
     }
 
-    void plot(Math::Edgei edge, Color color) override  {
+    void plot(Math::Edgei edge, Color color) override {
         isize dx = Math::abs(edge.ex - edge.sx);
         isize sx = edge.sx < edge.ex ? 1 : -1;
 

@@ -67,8 +67,8 @@ export struct File {
     Map<Ref, Value> body;
     Dict trailer;
 
-    Ref add(Ref ref, Value Value) {
-        body.put(ref, Value);
+    Ref add(Ref ref, Value value) {
+        body.put(ref, std::move(value));
         return ref;
     }
 

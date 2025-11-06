@@ -7,16 +7,20 @@ namespace Karm::Image::Bmp {
 
 namespace {
 
-void _writePixelData(Gfx::Pixels pixels, Io::BEmit& e) {
+Vec<u8> _encodePixelData(Gfx::Pixels pixels) {
+    Vec<u8> data;
+    data.resize(pixels.height() * pixels.width() * 4);
+    usize i = 0;
     for (isize y = pixels.height() - 1; y >= 0; --y) {
         for (isize x = 0; x < pixels.width(); ++x) {
-            auto color = pixels.load({x, y});
-            e.writeU8le(color.blue);
-            e.writeU8le(color.green);
-            e.writeU8le(color.red);
-            e.writeU8le(color.alpha);
+            auto color = pixels.loadUnsafe({x, y});
+            data[i++] = color.blue;
+            data[i++] = color.green;
+            data[i++] = color.red;
+            data[i++] = color.alpha;
         }
     }
+    return data;
 }
 
 } // namespace
@@ -32,11 +36,9 @@ export Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
     usize infoSize = 40;
     usize pixelOffset = headerSize + infoSize;
 
-    Io::BufferWriter pixelData{(usize)pixels.width() * (usize)pixels.height() * 4};
-    Io::BEmit p{pixelData};
-    _writePixelData(pixels, p);
+    auto pixelData = _encodePixelData(pixels);
 
-    usize fileSize = pixelOffset + pixelData.bytes().len();
+    usize fileSize = pixelOffset + pixelData.len();
 
     e.writeStr("BM"s);
     e.writeU32le(fileSize);    // file size
@@ -55,7 +57,7 @@ export Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
     e.writeU32le(0);               // colors used
     e.writeU32le(0);               // important colors
 
-    e.writeBytes(pixelData.bytes());
+    e.writeBytes(pixelData);
 
     return Ok();
 }

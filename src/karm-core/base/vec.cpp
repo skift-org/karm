@@ -57,11 +57,11 @@ struct _Vec {
 
     // MARK: Random Access
 
-    void insert(usize index, T const& value) { _buf.insert(index, T(value)); }
+    always_inline void insert(usize index, T const& value) { _buf.insert(index, T(value)); }
 
-    void insert(usize index, T&& value) { _buf.insert(index, std::move(value)); }
+    always_inline void insert(usize index, T&& value) { _buf.insert(index, std::move(value)); }
 
-    void insertMany(usize index, Sliceable<T> auto const& other) {
+    always_inline void insertMany(usize index, Sliceable<T> auto const& other) {
         for (auto& v : other) {
             insert(index++, v);
         }
@@ -105,7 +105,7 @@ struct _Vec {
     }
 
     T popFront() {
-        if (len() == 0) 
+        if (len() == 0)
             panic("pop on empty");
         return _buf.removeAt(0);
     }

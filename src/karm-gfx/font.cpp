@@ -246,6 +246,8 @@ export struct FontAttrs {
                monospace == Monospace::NO;
     }
 
+    bool operator==(FontAttrs const&) const = default;
+
     auto operator<=>(FontAttrs const& other) const {
         // NOTE: Comparison order is important
         auto ordr = family <=> other.family;

@@ -37,6 +37,9 @@ export struct ImagePrinter : FilePrinter {
         if (_pages.len() == 0)
             return Gfx::Surface::alloc(GAPS, Gfx::RGBA8888);
 
+        if (_pages.len() == 1)
+            return _pages[0];
+
         isize finalHeight =
             iter(_pages)
                 .map([](auto& page) {

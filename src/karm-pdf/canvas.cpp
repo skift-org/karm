@@ -12,15 +12,14 @@ static auto debugCanvas = Debug::Flag::debug("pdf-canvas", "Log PDF canvas failu
 
 export struct FontManager {
     // FIXME: using the address of the fontface since there is not comparison for the fontface obj
-    Map<_Cell<NoLock>*, Tuple<usize, Rc<Gfx::Fontface>>> mapping;
+    Map<Gfx::FontAttrs, Tuple<usize, Rc<Gfx::Fontface>>> mapping;
 
     usize getFontId(Rc<Gfx::Fontface> font) {
-        auto* addr = font._cell;
-        if (auto id = mapping.tryGet(addr))
+        if (auto id = mapping.tryGet(font->attrs()))
             return id.unwrap().v0;
 
         auto id = mapping.len() + 1;
-        mapping.put(addr, {id, font});
+        mapping.put(font->attrs(), {id, font});
         return id;
     }
 };

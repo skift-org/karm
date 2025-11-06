@@ -162,7 +162,7 @@ Gfx::FontStyle _pickFontStyle(Gfx::FontStyle curr, Gfx::FontStyle best, Gfx::Fon
     return best;
 }
 
-export struct Database : Meta::NoCopy {
+export struct Database {
     Vec<Record> _records;
 
     // FIXME: these value depend on the correct loading of the bundle
