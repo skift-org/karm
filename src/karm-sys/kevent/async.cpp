@@ -6,9 +6,10 @@ module;
 #include <unistd.h>
 
 //
-#include <impl-posix/fd.h>
-#include <impl-posix/utils.h>
 #include <karm-core/macros.h>
+
+#include "../posix/fd.h"
+#include "../posix/utils.h"
 
 module Karm.Sys;
 
