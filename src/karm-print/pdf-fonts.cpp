@@ -20,6 +20,9 @@ export struct TtfGlyphInfoAdapter {
 
     static TtfGlyphInfoAdapter build(Rc<Font::Ttf::Fontface> font) {
         auto codeMappings = font->_parser._cmapTable.extractMapping();
+        sort(codeMappings, [](auto& lhs, auto& rhs) {
+            return lhs.v0 <=> rhs.v0;
+        });
         return TtfGlyphInfoAdapter{font, codeMappings};
     }
 
@@ -86,29 +89,20 @@ export struct TtfGlyphInfoAdapter {
 
     Buf<u8> CIDToGIDMap() {
         Buf<u8> buf;
+        buf.ensure(CODESPACE * 2);
 
         u16 const BYTE_MASK = 255;
 
-        usize consecutiveUnmappedCIDs = 0;
-        for (usize i = 0; i < CODESPACE; ++i) {
-            auto glyph =
-                iter(codeMappings)
-                    .first([&](auto const& rec) {
-                        return rec.v0 == i;
-                    });
-
-            if (not glyph) {
-                consecutiveUnmappedCIDs++;
-                continue;
-            }
-
-            for (usize j = 0; j < consecutiveUnmappedCIDs; ++j) {
+        usize last = 0;
+        for (auto& rec : iter(codeMappings)) {
+            // handle unmapped CIDs
+            for (usize i = last; i < rec.v0; ++i) {
                 buf.insert(buf.len(), 0);
                 buf.insert(buf.len(), 0);
             }
-            consecutiveUnmappedCIDs = 0;
 
-            auto gid = glyph->v1;
+            last = rec.v0 + 1;
+            auto gid = rec.v1;
             buf.insert(buf.len(), (gid >> 8) & BYTE_MASK);
             buf.insert(buf.len(), gid & BYTE_MASK);
         }
