@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['exit_5ffailure_0',['EXIT_FAILURE',['../impls_2impl-posix_2entry_8h.html#a73efe787c131b385070f25d18b7c9aa4',1,'entry.h']]],
-  ['exit_5fsuccess_1',['EXIT_SUCCESS',['../impls_2impl-posix_2entry_8h.html#a687984f47d8cce148d1b914d2b79612a',1,'entry.h']]],
+  ['exit_5ffailure_0',['EXIT_FAILURE',['../posix_2entry_8h.html#a73efe787c131b385070f25d18b7c9aa4',1,'entry.h']]],
+  ['exit_5fsuccess_1',['EXIT_SUCCESS',['../posix_2entry_8h.html#a687984f47d8cce148d1b914d2b79612a',1,'entry.h']]],
   ['expect_2',['expect',['../karm-test_2macros_8h.html#a6d7a86c23770c79c113444caa7b5fd88',1,'macros.h']]],
   ['expecteq_3',['expectEq',['../karm-test_2macros_8h.html#a068f70923c556388bd516fcc547a5435',1,'macros.h']]],
   ['expectgt_4',['expectGt',['../karm-test_2macros_8h.html#aef45e6b1caa2a1be6554b6ae26bba1e5',1,'macros.h']]],

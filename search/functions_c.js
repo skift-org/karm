@@ -1,7 +1,7 @@
 var searchData=
 [
   ['magic_0',['magic',['../structKarm_1_1Image_1_1Qoi_1_1Decoder.html#ab46658942be3ac9cbd294eab72de2b1b',1,'Karm::Image::Qoi::Decoder']]],
-  ['main_1',['main',['../impls_2impl-posix_2entry_8h.html#a790aa8b99fa3d90918361b8936af0b14',1,'entry.h']]],
+  ['main_1',['main',['../posix_2entry_8h.html#a790aa8b99fa3d90918361b8936af0b14',1,'entry.h']]],
   ['makearc_2',['makeArc',['../namespaceKarm.html#a14bdf48000357320ca3d38297c1a7d39',1,'Karm']]],
   ['makearray_3',['makeArray',['../namespaceKarm.html#a1a530ca2c8145d49233298c87ddf4e24',1,'Karm']]],
   ['makebox_4',['makeBox',['../namespaceKarm.html#aa5274c6b955dfa02e8a68c104ad7ff40',1,'Karm']]],

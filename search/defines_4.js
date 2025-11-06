@@ -9,6 +9,6 @@ var searchData=
   ['foreach_5fmonth_6',['FOREACH_MONTH',['../karm-core_2base_2time_8cpp.html#a5a1f756b28790a4e14ec53212aad14b7',1,'time.cpp']]],
   ['foreach_5frcode_7',['FOREACH_RCODE',['../karm-dns_2mod_8cpp.html#a183ea1afcb179c9b06d8ef6444f50ebf',1,'mod.cpp']]],
   ['foreach_5frelational_8',['FOREACH_RELATIONAL',['../karm-math_2expr_8cpp.html#ab4926c4a2ede894f50482096453a94e5',1,'expr.cpp']]],
-  ['foreach_5fsyscalls_9',['FOREACH_SYSCALLS',['../impls_2impl-posix_2seccomp_2sandbox_8cpp.html#a9ba4200ed97f59d13b33ba0be0c839c4',1,'sandbox.cpp']]],
+  ['foreach_5fsyscalls_9',['FOREACH_SYSCALLS',['../seccomp_2sandbox_8cpp.html#a9ba4200ed97f59d13b33ba0be0c839c4',1,'sandbox.cpp']]],
   ['foreach_5funary_10',['FOREACH_UNARY',['../karm-math_2expr_8cpp.html#a27ae887c41766cf034721e9e4fc10aa7',1,'expr.cpp']]]
 ];

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['sandbox_2ecpp_0',['sandbox.cpp',['../impls_2impl-posix_2seccomp_2sandbox_8cpp.html',1,'(Global Namespace)'],['../libs_2karm-sys_2sandbox_8cpp.html',1,'(Global Namespace)'],['../impls_2impl-posix_2darwin_2sandbox_8cpp.html',1,'(Global Namespace)']]],
+  ['sandbox_2ecpp_0',['sandbox.cpp',['../seccomp_2sandbox_8cpp.html',1,'(Global Namespace)'],['../sandbox_8cpp.html',1,'(Global Namespace)'],['../darwin_2sandbox_8cpp.html',1,'(Global Namespace)']]],
   ['saver_2ecpp_1',['saver.cpp',['../saver_8cpp.html',1,'']]],
   ['scaffold_2ecpp_2',['scaffold.cpp',['../scaffold_8cpp.html',1,'']]],
   ['scroll_2ecpp_3',['scroll.cpp',['../scroll_8cpp.html',1,'']]],

@@ -19,7 +19,7 @@ var searchData=
   ['_7eedge_16',['~Edge',['../unionKarm_1_1Math_1_1Edge.html#ad4f4b4313d7ff21e37a8ed868ea3e895',1,'Karm::Math::Edge']]],
   ['_7eellipse_17',['~Ellipse',['../unionKarm_1_1Math_1_1Ellipse.html#a3dcdbfa3304f0c7da19ac938a45e3e17',1,'Karm::Math::Ellipse']]],
   ['_7eevent_18',['~Event',['../structKarm_1_1App_1_1Event.html#a51dfc621eff38be84bcbb0a6a27b0a67',1,'Karm::App::Event']]],
-  ['_7efd_19',['~Fd',['../structKarm_1_1Posix_1_1Fd.html#ae22e0a241bfb5ed24777789733806bd6',1,'Karm::Posix::Fd::~Fd()'],['../structKarm_1_1Sys_1_1Fd.html#ad84afe3c3cb278f4f1ba4defbe929a1f',1,'Karm::Sys::Fd::~Fd()']]],
+  ['_7efd_19',['~Fd',['../structKarm_1_1Sys_1_1Fd.html#ad84afe3c3cb278f4f1ba4defbe929a1f',1,'Karm::Sys::Fd::~Fd()'],['../structKarm_1_1Posix_1_1Fd.html#ae22e0a241bfb5ed24777789733806bd6',1,'Karm::Posix::Fd::~Fd()']]],
   ['_7eflusher_20',['~Flusher',['../structKarm_1_1Io_1_1Flusher.html#a55d8a13526f3d870002ead79eccb731a',1,'Karm::Io::Flusher']]],
   ['_7efontface_21',['~Fontface',['../structKarm_1_1Gfx_1_1Fontface.html#aeac8687661e444096f07b84552be163c',1,'Karm::Gfx::Fontface']]],
   ['_7egenerator_22',['~Generator',['../structKarm_1_1Generator.html#a4fd6ae2d16b9a5a063fe7df02f42ebf7',1,'Karm::Generator']]],

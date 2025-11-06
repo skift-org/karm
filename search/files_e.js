@@ -14,7 +14,7 @@ var searchData=
   ['pkg_2ecpp_11',['pkg.cpp',['../pkg_8cpp.html',1,'']]],
   ['poly_2ecpp_12',['poly.cpp',['../poly_8cpp.html',1,'']]],
   ['popover_2ecpp_13',['popover.cpp',['../popover_8cpp.html',1,'']]],
-  ['prefs_2ecpp_14',['prefs.cpp',['../libs_2karm-app_2prefs_8cpp.html',1,'(Global Namespace)'],['../impls_2impl-posix_2xdg_2prefs_8cpp.html',1,'(Global Namespace)']]],
+  ['prefs_2ecpp_14',['prefs.cpp',['../xdg_2prefs_8cpp.html',1,'(Global Namespace)'],['../prefs_8cpp.html',1,'(Global Namespace)']]],
   ['printer_2ecpp_15',['printer.cpp',['../printer_8cpp.html',1,'']]],
   ['proc_2ecpp_16',['proc.cpp',['../proc_8cpp.html',1,'']]],
   ['progress_2ecpp_17',['progress.cpp',['../progress_8cpp.html',1,'']]],

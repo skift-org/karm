@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.6"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Karm: src/impls/impl-posix/utils.h Source File</title>
+<title>Karm: src/karm-sys/posix/utils.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript">var page_layout=1;</script>
 <script type="text/javascript" src="jquery.js"></script>
@@ -117,7 +117,7 @@ $(document).ready(function(){initNavTree('utils_8h_source.html',''); initResizab
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>Res&lt;&gt; <a class="code hl_function" href="namespaceKarm_1_1Posix.html#a6c8d1cb1c16849fa8fcd4eb8e39a115c">consumeErrno</a>();</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">struct </span>sockaddr_in <a class="code hl_function" href="namespaceKarm_1_1Posix.html#ab57edc6e5c10102fb6de7d3e04e70e5a">toSockAddr</a>(<a class="code hl_variable" href="impls_2impl-posix_2darwin_2sandbox_8cpp.html#abb980e57bc06506358d18fe6c64fe46d">Sys</a>::SocketAddr addr);</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">struct </span>sockaddr_in <a class="code hl_function" href="namespaceKarm_1_1Posix.html#ab57edc6e5c10102fb6de7d3e04e70e5a">toSockAddr</a>(<a class="code hl_variable" href="xdg_2prefs_8cpp.html#a3974c0216d383a8ee20f65600aacb6c5">Sys</a>::SocketAddr addr);</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>Sys::SocketAddr <a class="code hl_function" href="namespaceKarm_1_1Posix.html#ac752423bd25b7d9787b75146ca71434d">fromSockAddr</a>(struct sockaddr_in sockaddr);</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
@@ -137,7 +137,6 @@ $(document).ready(function(){initNavTree('utils_8h_source.html',''); initResizab
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="keywordtype">void</span> <a class="code hl_function" href="namespaceKarm_1_1Posix.html#aafd365386cccec6a4ebf9cacaa5f8275">overrideRepo</a>(<a class="code hl_struct" href="structKarm_1_1Tuple.html">Tuple&lt;Str, RepoType&gt;</a> repo);</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>} <span class="comment">// namespace Karm::Posix</span></div>
-<div class="ttc" id="aimpls_2impl-posix_2darwin_2sandbox_8cpp_html_abb980e57bc06506358d18fe6c64fe46d"><div class="ttname"><a href="impls_2impl-posix_2darwin_2sandbox_8cpp.html#abb980e57bc06506358d18fe6c64fe46d">Sys</a></div><div class="ttdeci">module Karm Sys</div><div class="ttdef"><b>Definition:</b> sandbox.cpp:1</div></div>
 <div class="ttc" id="anamespaceKarm_1_1Posix_html"><div class="ttname"><a href="namespaceKarm_1_1Posix.html">Karm::Posix</a></div><div class="ttdef"><b>Definition:</b> fd.cpp:6</div></div>
 <div class="ttc" id="anamespaceKarm_1_1Posix_html_a03e5f325172c380b18142edb1927ec01"><div class="ttname"><a href="namespaceKarm_1_1Posix.html#a03e5f325172c380b18142edb1927ec01">Karm::Posix::RepoType</a></div><div class="ttdeci">RepoType</div><div class="ttdef"><b>Definition:</b> utils.h:29</div></div>
 <div class="ttc" id="anamespaceKarm_1_1Posix_html_a03e5f325172c380b18142edb1927ec01a4e076080d87888ac96f19b271a6ee406"><div class="ttname"><a href="namespaceKarm_1_1Posix.html#a03e5f325172c380b18142edb1927ec01a4e076080d87888ac96f19b271a6ee406">Karm::Posix::RepoType::PREFIX</a></div><div class="ttdeci">@ PREFIX</div></div>
@@ -152,17 +151,18 @@ $(document).ready(function(){initNavTree('utils_8h_source.html',''); initResizab
 <div class="ttc" id="anamespaceKarm_1_1Posix_html_ac752423bd25b7d9787b75146ca71434d"><div class="ttname"><a href="namespaceKarm_1_1Posix.html#ac752423bd25b7d9787b75146ca71434d">Karm::Posix::fromSockAddr</a></div><div class="ttdeci">Sys::SocketAddr fromSockAddr(struct sockaddr_in sockaddr)</div><div class="ttdef"><b>Definition:</b> utils.cpp:211</div></div>
 <div class="ttc" id="anamespaceKarm_1_1Posix_html_ac7adf9f39ae572d89ea043bcc269468b"><div class="ttname"><a href="namespaceKarm_1_1Posix.html#ac7adf9f39ae572d89ea043bcc269468b">Karm::Posix::fromErrno</a></div><div class="ttdeci">Error fromErrno(isize error)</div><div class="ttdef"><b>Definition:</b> utils.cpp:10</div></div>
 <div class="ttc" id="anamespaceKarm_1_1Posix_html_adc43afe46e3890de2a0dcd3bbeeafac9"><div class="ttname"><a href="namespaceKarm_1_1Posix.html#adc43afe46e3890de2a0dcd3bbeeafac9">Karm::Posix::fromStat</a></div><div class="ttdeci">Sys::Stat fromStat(struct stat const &amp;buf)</div><div class="ttdef"><b>Definition:</b> utils.cpp:218</div></div>
-<div class="ttc" id="anamespaceKarm_1_1Sys_html"><div class="ttname"><a href="namespaceKarm_1_1Sys.html">Karm::Sys</a></div><div class="ttdef"><b>Definition:</b> sandbox.cpp:5</div></div>
-<div class="ttc" id="anamespaceKarm_html"><div class="ttname"><a href="namespaceKarm.html">Karm</a></div><div class="ttdef"><b>Definition:</b> lock.cpp:3</div></div>
+<div class="ttc" id="anamespaceKarm_1_1Sys_html"><div class="ttname"><a href="namespaceKarm_1_1Sys.html">Karm::Sys</a></div><div class="ttdef"><b>Definition:</b> addr.cpp:9</div></div>
+<div class="ttc" id="anamespaceKarm_html"><div class="ttname"><a href="namespaceKarm.html">Karm</a></div><div class="ttdef"><b>Definition:</b> event.cpp:5</div></div>
 <div class="ttc" id="anamespaceKarm_html_ad82b8e5abde741498d909649c69a5ba1"><div class="ttname"><a href="namespaceKarm.html#ad82b8e5abde741498d909649c69a5ba1">Karm::isize</a></div><div class="ttdeci">__PTRDIFF_TYPE__ isize</div><div class="ttdef"><b>Definition:</b> base.cpp:117</div></div>
 <div class="ttc" id="astructKarm_1_1Res_html"><div class="ttname"><a href="structKarm_1_1Res.html">Karm::Res</a></div><div class="ttdef"><b>Definition:</b> res.cpp:43</div></div>
 <div class="ttc" id="astructKarm_1_1Tuple_html"><div class="ttname"><a href="structKarm_1_1Tuple.html">Karm::Tuple</a></div><div class="ttdef"><b>Definition:</b> tuple.cpp:20</div></div>
+<div class="ttc" id="axdg_2prefs_8cpp_html_a3974c0216d383a8ee20f65600aacb6c5"><div class="ttname"><a href="xdg_2prefs_8cpp.html#a3974c0216d383a8ee20f65600aacb6c5">Sys</a></div><div class="ttdeci">import Karm Sys</div><div class="ttdef"><b>Definition:</b> prefs.cpp:10</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_fa27ec2c3b75498649bd4d12640aea45.html">impls</a></li><li class="navelem"><a class="el" href="dir_6cc7b3837b08f81af9a69fbf4a5f04f2.html">impl-posix</a></li><li class="navelem"><a class="el" href="utils_8h.html">utils.h</a></li>
+    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_7f791425bd8b549242225c06b94215b1.html">karm-sys</a></li><li class="navelem"><a class="el" href="dir_e633746cee6bcb8ce4694659df01b56b.html">posix</a></li><li class="navelem"><a class="el" href="utils_8h.html">utils.h</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6 </li>
   </ul>
 </div>
