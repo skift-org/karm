@@ -2,7 +2,7 @@ var searchData=
 [
   ['manual_0',['Manual',['../structKarm_1_1Manual.html',1,'Karm']]],
   ['map_1',['Map',['../structKarm_1_1Map.html',1,'Karm']]],
-  ['map_3c_20_5fcell_3c_20karm_3a_3anolock_20_3e_20_2a_2c_20karm_3a_3atuple_3c_20usize_2c_20rc_3c_20karm_3a_3agfx_3a_3afontface_20_3e_20_3e_20_3e_2',['Map&lt; _Cell&lt; Karm::NoLock &gt; *, Karm::Tuple&lt; usize, Rc&lt; Karm::Gfx::Fontface &gt; &gt; &gt;',['../structKarm_1_1Map.html',1,'Karm']]],
+  ['map_3c_20karm_3a_3agfx_3a_3afontattrs_2c_20karm_3a_3atuple_3c_20usize_2c_20rc_3c_20karm_3a_3agfx_3a_3afontface_20_3e_20_3e_20_3e_2',['Map&lt; Karm::Gfx::FontAttrs, Karm::Tuple&lt; usize, Rc&lt; Karm::Gfx::Fontface &gt; &gt; &gt;',['../structKarm_1_1Map.html',1,'Karm']]],
   ['map_3c_20karm_3a_3apdf_3a_3aref_2c_20karm_3a_3apdf_3a_3avalue_20_3e_3',['Map&lt; Karm::Pdf::Ref, Karm::Pdf::Value &gt;',['../structKarm_1_1Map.html',1,'Karm']]],
   ['map_3c_20name_2c_20value_20_3e_4',['Map&lt; Name, Value &gt;',['../structKarm_1_1Map.html',1,'Karm']]],
   ['map_3c_20string_2c_20string_20_3e_5',['Map&lt; String, String &gt;',['../structKarm_1_1Map.html',1,'Karm']]],

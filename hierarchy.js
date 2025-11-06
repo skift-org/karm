@@ -161,6 +161,7 @@ var hierarchy =
     [ "Karm::Ui::TextModel::Cur", "structKarm_1_1Ui_1_1TextModel_1_1Cur.html", null ],
     [ "Karm::Cursor< T >", "structKarm_1_1Cursor.html", null ],
     [ "Karm::Math::Curve< T >", "unionKarm_1_1Math_1_1Curve.html", null ],
+    [ "Karm::Font::Database", "structKarm_1_1Font_1_1Database.html", null ],
     [ "Karm::Date", "structKarm_1_1Date.html", null ],
     [ "Karm::DateTime", "structKarm_1_1DateTime.html", null ],
     [ "Karm::Day", "structKarm_1_1Day.html", null ],
@@ -601,6 +602,7 @@ var hierarchy =
     [ "Karm::Lru< K, V >", "structKarm_1_1Lru.html", null ],
     [ "Karm::Manual< T >", "structKarm_1_1Manual.html", null ],
     [ "Karm::Map< K, V >", "structKarm_1_1Map.html", null ],
+    [ "Karm::Map< Karm::Gfx::FontAttrs, Karm::Tuple< usize, Rc< Karm::Gfx::Fontface > > >", "structKarm_1_1Map.html", null ],
     [ "Karm::Map< Karm::Pdf::Ref, Karm::Pdf::Value >", "structKarm_1_1Map.html", null ],
     [ "Karm::Map< Name, Value >", "structKarm_1_1Map.html", [
       [ "Karm::Pdf::Dict", "structKarm_1_1Pdf_1_1Dict.html", null ]
@@ -664,7 +666,6 @@ var hierarchy =
       ] ],
       [ "Karm::ArmedDefer< F >", "structKarm_1_1ArmedDefer.html", null ],
       [ "Karm::Async::Awaiter< S >", "structKarm_1_1Async_1_1Awaiter.html", null ],
-      [ "Karm::Font::Database", "structKarm_1_1Font_1_1Database.html", null ],
       [ "Karm::Gfx::Canvas", "structKarm_1_1Gfx_1_1Canvas.html", [
         [ "Karm::Gfx::CpuCanvas", "structKarm_1_1Gfx_1_1CpuCanvas.html", null ],
         [ "Karm::Gfx::SvgCanvas", "structKarm_1_1Gfx_1_1SvgCanvas.html", null ],
