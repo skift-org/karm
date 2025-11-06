@@ -1,5 +1,6 @@
 module;
 
+#include <errno.h>
 #include <karm-core/macros.h>
 #include <sys/epoll.h>
 #include <sys/timerfd.h>
@@ -33,8 +34,32 @@ struct EpollSched : Sys::Sched {
         auto future = promise.future();
 
         ev.data.u64 = id;
-        if (::epoll_ctl(_epollFd, EPOLL_CTL_ADD, fd, &ev) < 0)
+
+        // Bypass things epoll won't touch (regular files, directories, many procfs entries).
+        struct stat st{};
+        if (fstat(fd, &st) == 0 && (S_ISREG(st.st_mode) || S_ISDIR(st.st_mode))) {
+            // Treat as immediately "ready" for our purposes.
+            return Async::makeTask(Async::One<Res<>>{Ok()});
+        }
+
+        // Try to add to epoll
+        if (::epoll_ctl(_epollFd, EPOLL_CTL_ADD, fd, &ev) < 0) {
+            if (errno == EEXIST) {
+                // Already tracked: just update its interest set.
+                if (::epoll_ctl(_epollFd, EPOLL_CTL_MOD, fd, &ev) == 0) {
+                    _promises.put(id, std::move(promise));
+                    return Async::makeTask(future);
+                }
+                return Async::makeTask(Async::One<Res<>>{Posix::fromLastErrno()});
+            }
+
+            if (errno == EPERM) {
+                // Not epollable (e.g., regular file, some character devices). Consider it ready.
+                return Async::makeTask(Async::One<Res<>>{Ok()});
+            }
+
             return Async::makeTask(Async::One<Res<>>{Posix::fromLastErrno()});
+        }
 
         _promises.put(id, std::move(promise));
         return Async::makeTask(future);
