@@ -33,6 +33,6 @@ var searchData=
   ['arc_5fto_30',['ARC_TO',['../structKarm_1_1Math_1_1Path.html#a1a219937914ccedcf08cb1852aa8eca7af60d3e4d98896742370dea24c6b224ca',1,'Karm::Math::Path']]],
   ['array_31',['ARRAY',['../structKarm_1_1Serde_1_1Type.html#a698e78d8e5325ed8a371eedee1546e0bacb4fb1757fb37c43cded35d3eb857c43',1,'Karm::Serde::Type::ARRAY()'],['../namespaceKarm_1_1Ml_1_1Gguf.html#a5bbf19e28eca480c0956db66ad3bfe3aacb4fb1757fb37c43cded35d3eb857c43',1,'Karm::Ml::Gguf::ARRAY()']]],
   ['async_32',['ASYNC',['../structKarm_1_1Test_1_1Test.html#a76304e729b87b76ed24842e30c27ee16abe553330beb7b3d994656e0a4e66cd96',1,'Karm::Test::Test']]],
-  ['auto_33',['AUTO',['../structKarm_1_1Ui_1_1GridUnit.html#a349ec47e0a09b966e7d081f166deaeb8',1,'Karm::Ui::GridUnit::AUTO()'],['../namespaceKarm_1_1Serde.html#a1a1b70b654ef349fd8186570ea7ca34eae1f2d5134ed2543d38a0de9751cf75d9',1,'Karm::Serde::AUTO()']]],
+  ['auto_33',['AUTO',['../structKarm_1_1Fs_1_1FsTab.html#abee600217f2a8f3fd3b9d3e70cec9bc8ae1f2d5134ed2543d38a0de9751cf75d9',1,'Karm::Fs::FsTab::AUTO()'],['../structKarm_1_1Ui_1_1GridUnit.html#a349ec47e0a09b966e7d081f166deaeb8',1,'Karm::Ui::GridUnit::AUTO()'],['../namespaceKarm_1_1Serde.html#a1a1b70b654ef349fd8186570ea7ca34eae1f2d5134ed2543d38a0de9751cf75d9',1,'Karm::Serde::AUTO()']]],
   ['average_34',['AVERAGE',['../namespaceKarm_1_1Image_1_1Png.html#af2a868aafe622078a15d268663739bc6a16de38737a9f8366e9b2042b4e9b6290',1,'Karm::Image::Png']]]
 ];

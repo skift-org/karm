@@ -517,6 +517,7 @@ var hierarchy =
     [ "Karm::Av::Frame", "structKarm_1_1Av_1_1Frame.html", null ],
     [ "Karm::Av::Frames", "structKarm_1_1Av_1_1Frames.html", null ],
     [ "Karm::Av::FramesIter", "structKarm_1_1Av_1_1FramesIter.html", null ],
+    [ "Karm::Fs::FsTab", "structKarm_1_1Fs_1_1FsTab.html", null ],
     [ "Karm::Func< typename >", "structKarm_1_1Func.html", null ],
     [ "Karm::Func< Child()>", "structKarm_1_1Func.html", null ],
     [ "Karm::Func< Out(In...)>", "structKarm_1_1Func_3_01Out_07In_8_8_8_08_4.html", null ],
@@ -610,6 +611,7 @@ var hierarchy =
     [ "Karm::Map< String, String >", "structKarm_1_1Map.html", [
       [ "Karm::Http::Header", "structKarm_1_1Http_1_1Header.html", null ]
     ] ],
+    [ "Karm::Map< String, Value >", "structKarm_1_1Map.html", null ],
     [ "Karm::Print::Margins", "structKarm_1_1Print_1_1Margins.html", null ],
     [ "Karm::Math::Mat2< T >", "unionKarm_1_1Math_1_1Mat2.html", null ],
     [ "Karm::Math::Mat3< T >", "unionKarm_1_1Math_1_1Mat3.html", null ],
@@ -691,7 +693,7 @@ var hierarchy =
       [ "Karm::Fs::Mbr", "structKarm_1_1Fs_1_1Mbr.html", null ],
       [ "Karm::Fs::VDir", "structKarm_1_1Fs_1_1VDir.html", null ],
       [ "Karm::Fs::VFile", "structKarm_1_1Fs_1_1VFile.html", null ],
-      [ "Karm::Fs::Vfs", "structKarm_1_1Fs_1_1Vfs.html", null ]
+      [ "Karm::Fs::VFileMmap", "structKarm_1_1Fs_1_1VFileMmap.html", null ]
     ] ],
     [ "Karm::Scene::Node", "structKarm_1_1Scene_1_1Node.html", [
       [ "Karm::Scene::Box", "structKarm_1_1Scene_1_1Box.html", null ],
@@ -1007,6 +1009,11 @@ var hierarchy =
     [ "Karm::Cli::ValueParser< DebugFlagDescriptor >", "structKarm_1_1Cli_1_1ValueParser_3_01DebugFlagDescriptor_01_4.html", null ],
     [ "Karm::Cli::ValueParser< isize >", "structKarm_1_1Cli_1_1ValueParser_3_01isize_01_4.html", null ],
     [ "Karm::Cli::ValueParser< Opt< T > >", "structKarm_1_1Cli_1_1ValueParser_3_01Opt_3_01T_01_4_01_4.html", null ],
+    [ "Karm::Cli::ValueParser< Ref::Mime >", "structKarm_1_1Cli_1_1ValueParser_3_01Ref_1_1Mime_01_4.html", null ],
+    [ "Karm::Cli::ValueParser< Ref::Path >", "structKarm_1_1Cli_1_1ValueParser_3_01Ref_1_1Path_01_4.html", null ],
+    [ "Karm::Cli::ValueParser< Ref::Url >", "structKarm_1_1Cli_1_1ValueParser_3_01Ref_1_1Url_01_4.html", null ],
+    [ "Karm::Cli::ValueParser< Ref::Uti >", "structKarm_1_1Cli_1_1ValueParser_3_01Ref_1_1Uti_01_4.html", null ],
+    [ "Karm::Cli::ValueParser< Ref::Uuid >", "structKarm_1_1Cli_1_1ValueParser_3_01Ref_1_1Uuid_01_4.html", null ],
     [ "Karm::Cli::ValueParser< Str >", "structKarm_1_1Cli_1_1ValueParser_3_01Str_01_4.html", null ],
     [ "Karm::Cli::ValueParser< T >", "structKarm_1_1Cli_1_1ValueParser_3_01T_01_4.html", null ],
     [ "Karm::Cli::ValueParser< Vec< T > >", "structKarm_1_1Cli_1_1ValueParser_3_01Vec_3_01T_01_4_01_4.html", null ],

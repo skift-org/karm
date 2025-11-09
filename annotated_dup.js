@@ -78,6 +78,11 @@ var annotated_dup =
         [ "ValueParser< DebugFlagDescriptor >", "structKarm_1_1Cli_1_1ValueParser_3_01DebugFlagDescriptor_01_4.html", null ],
         [ "ValueParser< isize >", "structKarm_1_1Cli_1_1ValueParser_3_01isize_01_4.html", null ],
         [ "ValueParser< Opt< T > >", "structKarm_1_1Cli_1_1ValueParser_3_01Opt_3_01T_01_4_01_4.html", null ],
+        [ "ValueParser< Ref::Mime >", "structKarm_1_1Cli_1_1ValueParser_3_01Ref_1_1Mime_01_4.html", null ],
+        [ "ValueParser< Ref::Path >", "structKarm_1_1Cli_1_1ValueParser_3_01Ref_1_1Path_01_4.html", null ],
+        [ "ValueParser< Ref::Url >", "structKarm_1_1Cli_1_1ValueParser_3_01Ref_1_1Url_01_4.html", null ],
+        [ "ValueParser< Ref::Uti >", "structKarm_1_1Cli_1_1ValueParser_3_01Ref_1_1Uti_01_4.html", null ],
+        [ "ValueParser< Ref::Uuid >", "structKarm_1_1Cli_1_1ValueParser_3_01Ref_1_1Uuid_01_4.html", null ],
         [ "ValueParser< Str >", "structKarm_1_1Cli_1_1ValueParser_3_01Str_01_4.html", null ],
         [ "ValueParser< T >", "structKarm_1_1Cli_1_1ValueParser_3_01T_01_4.html", null ],
         [ "ValueParser< Vec< T > >", "structKarm_1_1Cli_1_1ValueParser_3_01Vec_3_01T_01_4_01_4.html", null ]
@@ -129,13 +134,14 @@ var annotated_dup =
       ] ],
       [ "Fs", "namespaceKarm_1_1Fs.html", [
         [ "Fat32", "structKarm_1_1Fs_1_1Fat32.html", null ],
+        [ "FsTab", "structKarm_1_1Fs_1_1FsTab.html", "structKarm_1_1Fs_1_1FsTab" ],
         [ "Gpt", "structKarm_1_1Fs_1_1Gpt.html", null ],
         [ "Image", "structKarm_1_1Fs_1_1Image.html", "structKarm_1_1Fs_1_1Image" ],
         [ "Mbr", "structKarm_1_1Fs_1_1Mbr.html", "structKarm_1_1Fs_1_1Mbr" ],
         [ "Node", "structKarm_1_1Fs_1_1Node.html", "structKarm_1_1Fs_1_1Node" ],
-        [ "VDir", "structKarm_1_1Fs_1_1VDir.html", null ],
+        [ "VDir", "structKarm_1_1Fs_1_1VDir.html", "structKarm_1_1Fs_1_1VDir" ],
         [ "VFile", "structKarm_1_1Fs_1_1VFile.html", null ],
-        [ "Vfs", "structKarm_1_1Fs_1_1Vfs.html", null ]
+        [ "VFileMmap", "structKarm_1_1Fs_1_1VFileMmap.html", "structKarm_1_1Fs_1_1VFileMmap" ]
       ] ],
       [ "Gc", "namespaceKarm_1_1Gc.html", [
         [ "Tests", "namespaceKarm_1_1Gc_1_1Tests.html", [

@@ -5,6 +5,11 @@ var karm_cli_2mod_8cpp =
     [ "Karm::Cli::ValueParser< T >", "structKarm_1_1Cli_1_1ValueParser_3_01T_01_4.html", null ],
     [ "Karm::Cli::ValueParser< isize >", "structKarm_1_1Cli_1_1ValueParser_3_01isize_01_4.html", null ],
     [ "Karm::Cli::ValueParser< Str >", "structKarm_1_1Cli_1_1ValueParser_3_01Str_01_4.html", null ],
+    [ "Karm::Cli::ValueParser< Ref::Uuid >", "structKarm_1_1Cli_1_1ValueParser_3_01Ref_1_1Uuid_01_4.html", null ],
+    [ "Karm::Cli::ValueParser< Ref::Mime >", "structKarm_1_1Cli_1_1ValueParser_3_01Ref_1_1Mime_01_4.html", null ],
+    [ "Karm::Cli::ValueParser< Ref::Uti >", "structKarm_1_1Cli_1_1ValueParser_3_01Ref_1_1Uti_01_4.html", null ],
+    [ "Karm::Cli::ValueParser< Ref::Path >", "structKarm_1_1Cli_1_1ValueParser_3_01Ref_1_1Path_01_4.html", null ],
+    [ "Karm::Cli::ValueParser< Ref::Url >", "structKarm_1_1Cli_1_1ValueParser_3_01Ref_1_1Url_01_4.html", null ],
     [ "Karm::Cli::ValueParser< Vec< T > >", "structKarm_1_1Cli_1_1ValueParser_3_01Vec_3_01T_01_4_01_4.html", null ],
     [ "Karm::Cli::ValueParser< Opt< T > >", "structKarm_1_1Cli_1_1ValueParser_3_01Opt_3_01T_01_4_01_4.html", null ],
     [ "Karm::Cli::OptionImpl< T >", "structKarm_1_1Cli_1_1OptionImpl.html", "structKarm_1_1Cli_1_1OptionImpl" ],
@@ -30,5 +35,6 @@ var karm_cli_2mod_8cpp =
     [ "Core", "karm-cli_2mod_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5", null ],
     [ "Debug", "karm-cli_2mod_8cpp.html#ae9c22628d1cefdb9b7dc5262029cb360", null ],
     [ "module", "karm-cli_2mod_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6", null ],
+    [ "Ref", "karm-cli_2mod_8cpp.html#add789519f7f2dc7d37718eab411af552", null ],
     [ "Sys", "karm-cli_2mod_8cpp.html#a3974c0216d383a8ee20f65600aacb6c5", null ]
 ];
