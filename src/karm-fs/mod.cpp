@@ -6,3 +6,4 @@ export import :image;
 export import :mbr;
 export import :node;
 export import :vfs;
+export import :mount;

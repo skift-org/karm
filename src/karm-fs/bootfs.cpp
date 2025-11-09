@@ -11,7 +11,7 @@ import :vfs;
 
 namespace Karm::Fs {
 
-Async::Task<Rc<Node>> bootfsLoadAsync(Ref::Url const& url) {
+Async::Task<Rc<Node>> mountBootfsAsync(Ref::Url url) {
     auto file = co_try$(Sys::File::open(url));
     auto fsMmap = co_try$(Sys::mmap(file));
     auto fsRoot = co_trya$(createAsync<VDir>());

@@ -59,6 +59,22 @@ export struct VDir : Node {
         co_return Ok();
     }
 
+    Async::Task<Vec<Sys::DirEntry>> listAsync() override {
+        Vec<Sys::DirEntry> entries;
+        for (auto& [k, v] : _entries.iterUnordered()) {
+            Sys::Stat stat = co_trya$(v->statAsync());
+            entries.pushBack({k, stat.type});
+        }
+
+        co_return Ok(std::move(entries));
+    }
+
+    Async::Task<Sys::Stat> statAsync() override {
+        auto stat = co_trya$(Node::statAsync());
+        stat.type = Sys::Type::DIR;
+        co_return Ok(stat);
+    }
+
     Async::Task<Rc<Node>> createAsync(Str name, Sys::Type type) override {
         if (type == Sys::Type::DIR) {
             auto node = co_trya$(Fs::createAsync<VDir>());
