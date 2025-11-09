@@ -7,6 +7,9 @@ namespace Karm::Ref::Tests {
 test$("karm-ref-path-up-down") {
     auto path = "/a/b/c/d/e/f"_path;
 
+    auto up = path.parent();
+    expectEq$(up.str(), "/a/b/c/d/e"s);
+
     auto up1 = path.parent(1);
     expectEq$(up1.str(), "/a/b/c/d/e"s);
 

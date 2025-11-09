@@ -7,6 +7,7 @@ export module Karm.Cli;
 import Karm.Core;
 import Karm.Debug;
 import Karm.Sys;
+import Karm.Ref;
 
 namespace Karm::Cli {
 
@@ -150,9 +151,79 @@ struct ValueParser<Str> {
 
     static Res<Str> parse(Cursor<Token>& c) {
         if (c.ended() or c->kind != Token::OPERAND)
-            return Error::other("missing value");
+            return Error::other("expected string");
 
         return Ok(c.next().value);
+    }
+};
+
+export template <>
+struct ValueParser<Ref::Uuid> {
+    static Res<> usage(Io::TextWriter& w) {
+        return w.writeStr("mime"s);
+    }
+
+    static Res<Ref::Uuid> parse(Cursor<Token>& c) {
+        if (c.ended() or c->kind != Token::OPERAND)
+            return Error::other("expected mime");
+
+        return Ref::Uuid::parse(c.next().value);
+    }
+};
+
+export template <>
+struct ValueParser<Ref::Mime> {
+    static Res<> usage(Io::TextWriter& w) {
+        return w.writeStr("mime"s);
+    }
+
+    static Res<Ref::Mime> parse(Cursor<Token>& c) {
+        if (c.ended() or c->kind != Token::OPERAND)
+            return Error::other("expected mime");
+
+        return Ok(Ref::Mime{c.next().value});
+    }
+};
+
+export template <>
+struct ValueParser<Ref::Uti> {
+    static Res<> usage(Io::TextWriter& w) {
+        return w.writeStr("uti"s);
+    }
+
+    static Res<Ref::Uti> parse(Cursor<Token>& c) {
+        if (c.ended() or c->kind != Token::OPERAND)
+            return Error::other("expected uti");
+
+        return Ok(Ref::Uti{c.next().value});
+    }
+};
+
+export template <>
+struct ValueParser<Ref::Path> {
+    static Res<> usage(Io::TextWriter& w) {
+        return w.writeStr("path"s);
+    }
+
+    static Res<Ref::Path> parse(Cursor<Token>& c) {
+        if (c.ended() or c->kind != Token::OPERAND)
+            return Error::other("expected path");
+
+        return Ok(Ref::Path::parse(c.next().value));
+    }
+};
+
+export template <>
+struct ValueParser<Ref::Url> {
+    static Res<> usage(Io::TextWriter& w) {
+        return w.writeStr("url"s);
+    }
+
+    static Res<Ref::Url> parse(Cursor<Token>& c) {
+        if (c.ended() or c->kind != Token::OPERAND)
+            return Error::other("expected url");
+
+        return Ok(Ref::parseUrlOrPath(c.next().value, try$(Sys::pwd())));
     }
 };
 
@@ -258,6 +329,10 @@ struct Option {
 
     T const& value() const {
         return _impl->value.unwrap();
+    }
+
+    bool has() const {
+        return _impl->value.has();
     }
 
     operator Rc<_OptionImpl>() {

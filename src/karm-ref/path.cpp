@@ -105,12 +105,9 @@ export struct Path {
         _parts.pushBack(part);
     }
 
-    Path parent(usize n = 0) const {
+    Path parent(usize n = 1) const {
         Path path = *this;
-        if (path._parts.len() >= n) {
-            for (usize i = 0; i < n; i++)
-                path._parts.popBack();
-        }
+        path._parts.resize(path._parts.len() > n ? path._parts.len() - n : 0);
         return path;
     }
 

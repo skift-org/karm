@@ -258,13 +258,11 @@ export struct Url {
 };
 
 export Url parseUrlOrPath(Str str, Opt<Url> baseUrl = NONE) {
-    if (Url::isUrl(str)) {
+    if (Url::isUrl(str))
         return Url::parse(str, baseUrl);
-    }
 
     Url url = baseUrl.unwrapOr(Url::parse(""));
     url.path = url.path.join(Path::parse(str));
-
     return url;
 }
 
