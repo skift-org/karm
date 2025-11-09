@@ -34,9 +34,8 @@ export struct Node {
 
     Async::Task<Rc<Node>> lookupAsync(Ref::Path const& path) {
         auto res = co_try$(_self.unwrap("node not self bound").upgrade());
-        for (auto const& i : path.iter()) {
-            res = co_trya$(lookupAsync(i));
-        }
+        for (auto const& i : path.iter())
+            res = co_trya$(res->lookupAsync(i));
         co_return Ok(res);
     }
 
@@ -64,12 +63,12 @@ export struct Node {
     virtual Async::Task<usize> writeAsync(Bytes buf, usize offset) {
         (void)buf;
         (void)offset;
-        co_return Ok(buf.len());
+        co_return Error::readOnlyFilesystem();
     }
 
     virtual Async::Task<> truncateAsync(usize len) {
         (void)len;
-        co_return Ok();
+        co_return Error::readOnlyFilesystem();
     }
 
     virtual Async::Task<Rc<Node>> openAsync() {
@@ -102,6 +101,19 @@ Async::Task<Rc<T>> createAsync(Args&&... args) {
     node->_self = node;
     co_trya$(node->initAsync());
     co_return Ok(node);
+}
+
+Async::Task<Rc<Node>> mkdirsAsync(Rc<Node> root, Ref::Path path) {
+    for (auto seg : path.iter()) {
+        auto maybeChild = co_await root->lookupAsync(seg);
+        if (maybeChild) {
+            root = maybeChild.take();
+            continue;
+        }
+
+        root = co_trya$(root->createAsync(seg, Sys::Type::DIR));
+    }
+    co_return Ok(root);
 }
 
 } // namespace Karm::Fs

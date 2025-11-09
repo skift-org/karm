@@ -33,6 +33,10 @@
             "git": "https://github.com/cute-engineering/ce-targets.git",
             "tag": "v0.4.0"
         },
+        "cute-engineering/ce-bootfs": {
+            "git": "https://github.com/cute-engineering/ce-bootfs.git",
+            "tag": "main"
+        },
         "sdl3": {
             "description": "A cross-platform development library designed to provide low level access to hardware",
             "names": [
