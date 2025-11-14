@@ -123,7 +123,10 @@ struct _Rc {
     }
 
     constexpr _Rc(_Rc const& other)
-        : _cell(other._cell->refStrong()) {
+        : _cell(other._cell) {
+        if (not _cell)
+            panic("null rc copy");
+        _cell->refStrong();
     }
 
     constexpr _Rc(_Rc&& other)
