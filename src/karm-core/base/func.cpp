@@ -132,6 +132,7 @@ struct SharedFunc<Out(In...)> {
 
     // clang-format on
 
+    [[clang::coro_wrapper]]
     Out operator()(In... in) const {
         return (*_wrap)(std::forward<In>(in)...);
     }
