@@ -19,7 +19,7 @@ export struct Response {
 
     struct Writer : Aio::Writer {
         Header header;
-    
+
         virtual Async::Task<> writeHeaderAsync(Code code) = 0;
 
         Async::Task<> writeJsonAsync(Serde::Value const& value) {
@@ -68,6 +68,18 @@ export struct Response {
 
         Io::SScan scan{bw.bytes().cast<char>()};
         return parse(scan);
+    }
+
+    Res<> unparse(Io::TextWriter& w) const {
+        // Start line
+        try$(Io::format(w, "{} {} {}", version, toUnderlyingType(code), toStr(code)));
+        try$(w.writeStr("\r\n"s));
+
+        // Headers and empty line
+        try$(header.unparse(w));
+        try$(w.writeStr("\r\n"s));
+
+        return Ok();
     }
 };
 

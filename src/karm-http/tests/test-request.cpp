@@ -1,6 +1,7 @@
 #include <karm-test/macros.h>
 
 import Karm.Http;
+import Karm.Ref;
 
 namespace Karm::Http::Tests {
 
@@ -12,8 +13,8 @@ test$("parse-unparse-http-request-no-header") {
     Io::SScan s{rawRequest};
     auto request = try$(Request::parse(s));
 
-    expectEq$(request.path, ""_path);
-    expectEq$(request.method, GET);
+    expectEq$(request.url.path, "/"_path);
+    expectEq$(request.method, Method::GET);
 
     auto expectedVersion = Version{1u, 1u};
     expectEq$(request.version, expectedVersion);
@@ -37,8 +38,8 @@ test$("parse-unparse-http-request-with-header") {
     Io::SScan s{rawRequest};
     auto request = try$(Request::parse(s));
 
-    expectEq$(request.path, ""_path);
-    expectEq$(request.method, POST);
+    expectEq$(request.url.path, "/"_path);
+    expectEq$(request.method, Method::POST);
 
     auto expectedVersion = Version{1u, 2u};
     expectEq$(request.version.major, expectedVersion.major);

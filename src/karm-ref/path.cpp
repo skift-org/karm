@@ -23,7 +23,7 @@ export struct Path {
     static constexpr auto SEP = '/';
 
     bool rooted = false;
-    Vec<String> _parts;
+    Vec<String> _segs;
 
     static Path parse(Io::SScan& s, bool inUrl = false, bool stopAtWhitespace = false) {
         Path path;
@@ -41,7 +41,7 @@ export struct Path {
                 break;
 
             if (s.peek() == SEP) {
-                path._parts.pushBack(s.end());
+                path._segs.pushBack(s.end());
                 s.next();
                 s.begin();
             } else {
@@ -51,7 +51,7 @@ export struct Path {
 
         auto last = s.end();
         if (last.len() > 0)
-            path._parts.pushBack(last);
+            path._segs.pushBack(last);
 
         return path;
     }
@@ -63,7 +63,7 @@ export struct Path {
 
     void normalize() {
         Vec<String> parts;
-        for (auto const& part : _parts) {
+        for (auto const& part : _segs) {
             if (part == ".")
                 continue;
 
@@ -77,14 +77,14 @@ export struct Path {
                 parts.pushBack(part);
         }
 
-        _parts = parts;
+        _segs = parts;
     }
 
     Str basename() const {
-        if (not _parts.len())
+        if (not _segs.len())
             return {};
 
-        return last(_parts);
+        return last(_segs);
     }
 
     Path join(Path const& other) const {
@@ -92,7 +92,7 @@ export struct Path {
             return other;
 
         Path path = *this;
-        path._parts.pushBack(other._parts);
+        path._segs.pushBack(other._segs);
         path.normalize();
         return path;
     }
@@ -102,12 +102,12 @@ export struct Path {
     }
 
     void append(Str part) {
-        _parts.pushBack(part);
+        _segs.pushBack(part);
     }
 
     Path parent(usize n = 1) const {
         Path path = *this;
-        path._parts.resize(path._parts.len() > n ? path._parts.len() - n : 0);
+        path._segs.resize(path._segs.len() > n ? path._segs.len() - n : 0);
         return path;
     }
 
@@ -116,7 +116,7 @@ export struct Path {
             return false;
 
         for (usize i = 0; i < len(); i++) {
-            if (_parts[i] != other._parts[i])
+            if (_segs[i] != other._segs[i])
                 return false;
         }
 
@@ -132,7 +132,7 @@ export struct Path {
 
         bool first = not rooted;
 
-        for (auto const& part : _parts) {
+        for (auto const& part : _segs) {
             if (not first)
                 try$(writer.writeRune(SEP));
             try$(writer.writeStr(part.str()));
@@ -148,16 +148,20 @@ export struct Path {
         return writer.str();
     }
 
+    Slice<String> parts() const {
+        return _segs;
+    }
+
     auto iter() const {
-        return Karm::iter(_parts);
+        return Karm::iter(_segs);
     }
 
     Str operator[](usize i) const {
-        return _parts[i];
+        return _segs[i];
     }
 
     usize len() const {
-        return _parts.len();
+        return _segs.len();
     }
 
     bool operator==(Path const&) const = default;
@@ -165,12 +169,12 @@ export struct Path {
     auto operator<=>(Path const&) const = default;
 
     Str suffix() const {
-        if (not _parts.len())
+        if (not _segs.len())
             return "";
-        auto dotIndex = lastIndexOf(last(_parts), '.');
+        auto dotIndex = lastIndexOf(last(_segs), '.');
         if (not dotIndex.has())
             return "";
-        return next(last(_parts), *dotIndex + 1);
+        return next(last(_segs), *dotIndex + 1);
     }
 };
 

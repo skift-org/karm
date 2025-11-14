@@ -6,7 +6,7 @@
         "cpp-excluded": true
     },
     "requires": [
-        "karm-net.http",
+        "karm-http",
         "karm-test"
     ],
     "injects": [

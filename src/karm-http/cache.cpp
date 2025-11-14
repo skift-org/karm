@@ -21,7 +21,7 @@ struct CacheTransport : Transport {
         response->version = request->version;
         response->code = OK;
         response->body = Body::from(blob);
-        response->header.put("Content-Type"s, blob->type.str());
+        response->header.put(Header::CONTENT_TYPE, blob->type.str());
 
         return response;
     }
@@ -45,13 +45,13 @@ struct CacheTransport : Transport {
             _cached.put(request->url, blob);
 
             auto response = _createResponse(request, blob);
-            response->header.put("X-Karm-Cache"s, "miss"s);
+            response->header.put("X-Karm-Cache"_sym, "miss"s);
             co_return Ok(response);
         }
 
         auto blob = _cached.get(request->url);
         auto response = _createResponse(request, blob);
-        response->header.put("X-Karm-Cache"s, "hit"s);
+        response->header.put("X-Karm-Cache"_sym, "hit"s);
         co_return Ok(response);
     }
 };

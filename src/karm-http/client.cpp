@@ -24,7 +24,7 @@ export struct Client : Transport {
         : _transport(std::move(transport)) {}
 
     Async::Task<Rc<Response>> doAsync(Rc<Request> request) override {
-        request->header.add("User-Agent", userAgent);
+        request->header.put(Header::USER_AGENT, userAgent);
         auto maybeResp = co_await _transport->doAsync(request);
         if (not maybeResp) {
             logErrorIf(debugClient, "\"{} {}\" {}", request->method, request->url, maybeResp.none());
@@ -35,7 +35,7 @@ export struct Client : Transport {
         if (debugClient or debugClientExtra) {
             Io::StringWriter sw;
             if (debugClientExtra) {
-                if (auto cache = resp->header.tryGet("X-Karm-Cache"s))
+                if (auto cache = resp->header.tryGet("X-Karm-Cache"_sym))
                     co_try$(Io::format(sw, " ({})"s, cache));
             }
             logInfo("\"{} {}\" {} {}{}", request->method, request->url, toUnderlyingType(resp->code), resp->code, sw.take());
@@ -48,7 +48,7 @@ export struct Client : Transport {
         auto req = makeRc<Request>();
         req->method = Method::GET;
         req->url = url;
-        req->header.add("Host", url.host.str());
+        req->header.put(Header::HOST, url.host.str());
 
         return doAsync(req);
     }
@@ -58,7 +58,7 @@ export struct Client : Transport {
         auto req = makeRc<Request>();
         req->method = Method::HEAD;
         req->url = url;
-        req->header.add("Host", url.host.str());
+        req->header.put(Header::HOST, url.host.str());
 
         return doAsync(req);
     }
@@ -69,7 +69,7 @@ export struct Client : Transport {
         req->method = Method::POST;
         req->url = url;
         req->body = body;
-        req->header.add("Host", url.host.str());
+        req->header.put(Header::HOST, url.host.str());
 
         return doAsync(req);
     }

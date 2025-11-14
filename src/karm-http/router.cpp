@@ -1,3 +1,7 @@
+module;
+
+#include <karm-core/macros.h>
+
 export module Karm.Http:router;
 
 import :server;
@@ -34,13 +38,19 @@ export struct RoutePattern {
         if (s.peek() != '/')
             p._host = s.token(Re::until('/'_re));
 
+        bool seenExtra = false;
+
         while (not s.ended() and s.skip('/')) {
             Segment seg;
             if (s.skip('{')) {
                 seg.type = Segment::PARAM;
                 seg.value = s.token(Re::until('}'_re | "..."_re));
-                if (s.skip("..."))
+                if (s.skip("...")) {
                     seg.type = Segment::EXTRA;
+                    if (seenExtra)
+                        panic("multiple EXTRA segments not allowed");
+                    seenExtra = true;
+                }
                 s.skip('}');
             } else {
                 seg.type = Segment::PATH;
@@ -65,6 +75,46 @@ export struct RoutePattern {
 
         Params params;
 
+        Cursor parts = url.path.parts();
+
+        for (auto& seg : _segments) {
+            if (parts.ended())
+                return NONE;
+
+            switch (seg.type) {
+            case Segment::PARAM:
+                params.put(seg.value, parts.next());
+                break;
+
+            case Segment::PATH:
+                if (seg.value != *parts)
+                    return NONE;
+                parts.next();
+                break;
+
+            case Segment::EXTRA: {
+                StringBuilder sb;
+
+                bool first = true;
+                while (not parts.ended()) {
+                    if (not first)
+                        sb.append('/');
+                    sb.append(parts.next());
+                    first = false;
+                }
+
+                params.put(seg.value, sb.take());
+                return params; // we're done, EXTRA is terminal
+            }
+
+            default:
+                unreachable();
+            }
+        }
+
+        if (not parts.ended())
+            return NONE;
+
         return params;
     }
 
@@ -73,19 +123,32 @@ export struct RoutePattern {
     }
 };
 
+using RouteHandlerAsync = SharedFunc<Async::Task<>(Rc<Request>, Rc<Response::Writer>)>;
+
 export struct Router : Service {
-    Vec<Tuple<RoutePattern, Handler>> _routes;
+    Vec<Tuple<RoutePattern, RouteHandlerAsync>> _routes;
 
-    void route(RoutePattern pattern, Handler func) {
-        _routes.emplaceBack(pattern, func);
+    void route(RoutePattern pattern, RouteHandlerAsync handlerAsync) {
+        _routes.emplaceBack(pattern, handlerAsync);
     }
 
-    void route(Str pattern, Handler func) {
-        route(RoutePattern::parse(pattern), func);
+    void route(Str pattern, RouteHandlerAsync handlerAsync) {
+        route(RoutePattern::parse(pattern), handlerAsync);
     }
 
-    Async::Task<> handleAsync(Rc<Request>, Rc<Response::Writer>) override {
-        co_return Error::notImplemented();
+    Async::Task<> _handle404Async(Rc<Response::Writer> resp) {
+        co_trya$(resp->writeHeaderAsync(Code::NOT_FOUND));
+        co_return co_await resp->writeStrAsync("404 Not Found"s);
+    }
+
+    Async::Task<> handleAsync(Rc<Request> req, Rc<Response::Writer> resp) override {
+        for (auto& [pattern, handler] : _routes) {
+            if (auto params = pattern.match(req->method, req->url)) {
+                co_return co_await handler(req, resp);
+            }
+        }
+
+        co_return co_await _handle404Async(resp);
     }
 };
 

@@ -27,12 +27,12 @@ constexpr usize BUF_SIZE = 4096;
 struct ContentBody : Body {
     Vec<u8> _resumes;
     usize _resumesPos = 0;
-    Sys::TcpConnection _conn;
+    Rc<Sys::TcpConnection> _conn;
     usize _contentLength;
 
-    ContentBody(Bytes resumes, Sys::TcpConnection conn, usize contentLength)
+    ContentBody(Bytes resumes, Rc<Sys::TcpConnection> conn, usize contentLength)
         : _resumes(resumes),
-          _conn(std::move(conn)),
+          _conn(conn),
           _contentLength(contentLength - resumes.len()) {
     }
 
@@ -48,7 +48,7 @@ struct ContentBody : Body {
             co_return 0;
 
         usize n = min(buf.len(), _contentLength);
-        n = co_trya$(_conn.readAsync(mutSub(buf, 0, n)));
+        n = co_trya$(_conn->readAsync(mutSub(buf, 0, n)));
         _contentLength -= n;
         co_return n;
     }
@@ -75,19 +75,19 @@ struct HttpTransport : Transport {
         co_return Ok();
     }
 
-    Async::Task<Rc<Response>> _recvResponseAsync(Sys::TcpConnection& conn) {
+    Async::Task<Rc<Response>> _recvResponseAsync(Rc<Sys::TcpConnection> conn) {
         Array<u8, BUF_SIZE> buf = {};
-        Io::BufReader reader = sub(buf, 0, co_trya$(conn.readAsync(buf)));
+        Io::BufReader reader = sub(buf, 0, co_trya$(conn->readAsync(buf)));
         auto response = co_try$(Response::read(reader));
 
         if (auto contentLength = response.header.contentLength()) {
-            response.body = makeRc<ContentBody>(reader.bytes(), std::move(conn), contentLength.unwrap());
-        } else if (auto transferEncoding = response.header.tryGet("Transfer-Encoding"s)) {
+            response.body = makeRc<ContentBody>(reader.bytes(), conn, contentLength.unwrap());
+        } else if (auto transferEncoding = response.header.tryGet(Header::TRANSFER_ENCODING)) {
             logWarn("Transfer-Encoding: {} not supported", transferEncoding);
         } else {
             // NOTE: When there is no content length, and no transfer encoding,
             //       we read until the server closes the socket.
-            response.body = makeRc<ContentBody>(reader.bytes(), std::move(conn), Limits<usize>::MAX);
+            response.body = makeRc<ContentBody>(reader.bytes(), conn, Limits<usize>::MAX);
         }
 
         co_return Ok(makeRc<Response>(std::move(response)));
@@ -101,8 +101,8 @@ struct HttpTransport : Transport {
         auto ips = co_trya$(Sys::lookupAsync(url.host.str()));
         auto port = url.port.unwrapOr(80);
         Sys::SocketAddr addr{first(ips), (u16)port};
-        auto conn = co_try$(Sys::TcpConnection::connect(addr));
-        co_trya$(_sendRequestAsync(*request, conn));
+        auto conn = makeRc<Sys::TcpConnection>(co_try$(Sys::TcpConnection::connect(addr)));
+        co_trya$(_sendRequestAsync(*request, *conn));
         co_return co_trya$(_recvResponseAsync(conn));
     }
 };
@@ -249,7 +249,7 @@ struct LocalTransport : Transport {
         if (request->method == GET or request->method == POST) {
             auto [body, mime] = co_try$(_load(request->url));
             response->body = body;
-            response->header.add("Content-Type", mime.str());
+            response->header.put(Header::CONTENT_TYPE, mime.str());
         }
 
         co_return Ok(response);

@@ -24,7 +24,7 @@ export struct Request {
 
         req->method = method;
         req->url = url;
-        req->header.add("Host", url.host.str());
+        req->header.put(Header::HOST, url.host.str());
         req->body = body;
 
         return req;
@@ -41,7 +41,6 @@ export struct Request {
         auto path = Ref::Path::parse(s, true, true);
         path.rooted = true;
         path.normalize();
-        path.rooted = false;
         req.url.path = path;
 
         if (not s.skip(' '))
