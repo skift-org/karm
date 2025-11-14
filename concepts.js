@@ -50,6 +50,7 @@ var concepts =
         [ "Union", "conceptKarm_1_1Meta_1_1Union.html", null ],
         [ "Struct", "conceptKarm_1_1Meta_1_1Struct.html", null ],
         [ "Integral", "conceptKarm_1_1Meta_1_1Integral.html", null ],
+        [ "Integer", "conceptKarm_1_1Meta_1_1Integer.html", null ],
         [ "Empty", "conceptKarm_1_1Meta_1_1Empty.html", null ],
         [ "Trivial", "conceptKarm_1_1Meta_1_1Trivial.html", null ],
         [ "StandardLayout", "conceptKarm_1_1Meta_1_1StandardLayout.html", null ],

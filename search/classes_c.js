@@ -12,7 +12,7 @@ var searchData=
   ['niche_3c_20union_3c_20ts_2e_2e_2e_20_3e_20_3e_9',['Niche&lt; Union&lt; Ts... &gt; &gt;',['../structKarm_1_1Niche_3_01Union_3_01Ts_8_8_8_01_4_01_4.html',1,'Karm']]],
   ['niche_3c_20viewbuf_3c_20t_20_3e_20_3e_10',['Niche&lt; ViewBuf&lt; T &gt; &gt;',['../structKarm_1_1Niche_3_01ViewBuf_3_01T_01_4_01_4.html',1,'Karm']]],
   ['nocopy_11',['NoCopy',['../structKarm_1_1Meta_1_1NoCopy.html',1,'Karm::Meta']]],
-  ['node_12',['Node',['../structKarm_1_1Fs_1_1Node.html',1,'Karm::Fs::Node'],['../structKarm_1_1Md_1_1Node.html',1,'Karm::Md::Node'],['../structKarm_1_1Scene_1_1Node.html',1,'Karm::Scene::Node'],['../structKarm_1_1Ui_1_1Node.html',1,'Karm::Ui::Node']]],
+  ['node_12',['Node',['../structKarm_1_1Fs_1_1Node.html',1,'Karm::Fs::Node'],['../structKarm_1_1Md_1_1Node.html',1,'Karm::Md::Node'],['../structKarm_1_1Scene_1_1Node.html',1,'Karm::Scene::Node'],['../structKarm_1_1Template_1_1Node.html',1,'Karm::Template::Node'],['../structKarm_1_1Ui_1_1Node.html',1,'Karm::Ui::Node']]],
   ['noisefilter_13',['NoiseFilter',['../structKarm_1_1Gfx_1_1NoiseFilter.html',1,'Karm::Gfx']]],
   ['nolock_14',['NoLock',['../structKarm_1_1NoLock.html',1,'Karm']]],
   ['none_15',['None',['../structKarm_1_1None.html',1,'Karm']]],

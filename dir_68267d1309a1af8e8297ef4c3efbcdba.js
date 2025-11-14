@@ -25,6 +25,7 @@ var dir_68267d1309a1af8e8297ef4c3efbcdba =
     [ "karm-ref", "dir_159ad9816ceaeb78b0679543f778ccb4.html", "dir_159ad9816ceaeb78b0679543f778ccb4" ],
     [ "karm-scene", "dir_e258cf64af33e382daaa48cf3ca31fea.html", "dir_e258cf64af33e382daaa48cf3ca31fea" ],
     [ "karm-sys", "dir_7f791425bd8b549242225c06b94215b1.html", "dir_7f791425bd8b549242225c06b94215b1" ],
+    [ "karm-template", "dir_5478e46ab1badf9cffcfb666583fbb58.html", "dir_5478e46ab1badf9cffcfb666583fbb58" ],
     [ "karm-test", "dir_959de51ea80a163a8f5f4a783eb22df7.html", "dir_959de51ea80a163a8f5f4a783eb22df7" ],
     [ "karm-tls", "dir_8151a16c9657e3bf2a50ad6340113673.html", "dir_8151a16c9657e3bf2a50ad6340113673" ],
     [ "karm-tty", "dir_ff35838e1abf94871adf7372083731c6.html", "dir_ff35838e1abf94871adf7372083731c6" ],

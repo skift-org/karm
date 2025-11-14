@@ -36,6 +36,7 @@ var namespaceKarm =
     [ "Scene", "namespaceKarm_1_1Scene.html", "namespaceKarm_1_1Scene" ],
     [ "Serde", "namespaceKarm_1_1Serde.html", "namespaceKarm_1_1Serde" ],
     [ "Sys", "namespaceKarm_1_1Sys.html", "namespaceKarm_1_1Sys" ],
+    [ "Template", "namespaceKarm_1_1Template.html", "namespaceKarm_1_1Template" ],
     [ "Test", "namespaceKarm_1_1Test.html", "namespaceKarm_1_1Test" ],
     [ "Tests", "namespaceKarm_1_1Tests.html", [
       [ "test$", "namespaceKarm_1_1Tests.html#aea7fa5a478f0ba91cc5bb4ea693badb0", null ]

@@ -111,6 +111,8 @@ $(document).ready(function(){initNavTree('server_8cpp.html',''); initResizable()
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Service.html">Karm::Http::Service</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1ServerProps.html">Karm::Http::ServerProps</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Server.html">Karm::Http::Server</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -125,13 +127,11 @@ Namespaces</h2></td></tr>
 Typedefs</h2></td></tr>
 <tr class="memitem:ae5dde23901ce7ef1a1d179b4af07cf3a"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#ae5dde23901ce7ef1a1d179b4af07cf3a">Karm::Http::Params</a> = Map&lt; String, String &gt;</td></tr>
 <tr class="separator:ae5dde23901ce7ef1a1d179b4af07cf3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af2b6fc059fcc82c86d02d8c9af368253"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#af2b6fc059fcc82c86d02d8c9af368253">Karm::Http::Handler</a> = SharedFunc&lt; Async::Task&lt;&gt;(Rc&lt; Request &gt;, Rc&lt; Response::Writer &gt;)&gt;</td></tr>
-<tr class="separator:af2b6fc059fcc82c86d02d8c9af368253"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a2d6d677788749d5208ad1807b987e83f"><td class="memItemLeft" align="right" valign="top">export Async::Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#a2d6d677788749d5208ad1807b987e83f">Karm::Http::servAsync</a> (Rc&lt; Service &gt; srv, Sys::SocketAddr addr=Sys::Ip4::localhost(80))</td></tr>
-<tr class="separator:a2d6d677788749d5208ad1807b987e83f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad0144cffd971e505a7369397c5b2ddf6"><td class="memItemLeft" align="right" valign="top">export Async::Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#ad0144cffd971e505a7369397c5b2ddf6">Karm::Http::servAsync</a> (Rc&lt; Service &gt; srv, ServerProps const &amp;props={})</td></tr>
+<tr class="separator:ad0144cffd971e505a7369397c5b2ddf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>

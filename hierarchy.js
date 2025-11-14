@@ -106,6 +106,7 @@ var hierarchy =
     [ "Karm::Ui::BoxStyle", "structKarm_1_1Ui_1_1BoxStyle.html", null ],
     [ "Karm::Io::BPattern", "structKarm_1_1Io_1_1BPattern.html", null ],
     [ "Karm::Ml::BpeVocab", "structKarm_1_1Ml_1_1BpeVocab.html", null ],
+    [ "Karm::Template::IfNode::Branch", "structKarm_1_1Template_1_1IfNode_1_1Branch.html", null ],
     [ "Karm::Gfx::BrightnessFilter", "structKarm_1_1Gfx_1_1BrightnessFilter.html", null ],
     [ "Karm::Io::BScan", "structKarm_1_1Io_1_1BScan.html", null ],
     [ "Karm::Buf< T >", "structKarm_1_1Buf.html", null ],
@@ -393,6 +394,7 @@ var hierarchy =
       [ "Karm::Sys::Port", "structKarm_1_1Sys_1_1Port.html", null ]
     ] ],
     [ "Karm::Md::Document", "structKarm_1_1Md_1_1Document.html", null ],
+    [ "Karm::Template::Document", "structKarm_1_1Template_1_1Document.html", null ],
     [ "Karm::Ui::DragEvent", "structKarm_1_1Ui_1_1DragEvent.html", null ],
     [ "Karm::Test::Driver", "structKarm_1_1Test_1_1Driver.html", null ],
     [ "Karm::Duration", "structKarm_1_1Duration.html", null ],
@@ -406,6 +408,13 @@ var hierarchy =
     [ "Karm::Pdf::XRef::Entry", "structKarm_1_1Pdf_1_1XRef_1_1Entry.html", null ],
     [ "Karm::Error", "structKarm_1_1Error.html", null ],
     [ "Karm::App::Event", "structKarm_1_1App_1_1Event.html", null ],
+    [ "Karm::Template::Expr", "structKarm_1_1Template_1_1Expr.html", [
+      [ "Karm::Template::DotExpr", "structKarm_1_1Template_1_1DotExpr.html", null ],
+      [ "Karm::Template::InfixExpr", "structKarm_1_1Template_1_1InfixExpr.html", null ],
+      [ "Karm::Template::PrefixExpr", "structKarm_1_1Template_1_1PrefixExpr.html", null ],
+      [ "Karm::Template::SelfExpr", "structKarm_1_1Template_1_1SelfExpr.html", null ],
+      [ "Karm::Template::ValueExpr", "structKarm_1_1Template_1_1ValueExpr.html", null ]
+    ] ],
     [ "Karm::Pdf::File", "structKarm_1_1Pdf_1_1File.html", null ],
     [ "Karm::Print::FilePrinterProps", "structKarm_1_1Print_1_1FilePrinterProps.html", null ],
     [ "Karm::Gfx::FilterChain", "structKarm_1_1Gfx_1_1FilterChain.html", null ],
@@ -608,10 +617,11 @@ var hierarchy =
     [ "Karm::Map< Name, Value >", "structKarm_1_1Map.html", [
       [ "Karm::Pdf::Dict", "structKarm_1_1Pdf_1_1Dict.html", null ]
     ] ],
-    [ "Karm::Map< String, String >", "structKarm_1_1Map.html", [
+    [ "Karm::Map< String, String >", "structKarm_1_1Map.html", null ],
+    [ "Karm::Map< String, Value >", "structKarm_1_1Map.html", null ],
+    [ "Karm::Map< Symbol, String >", "structKarm_1_1Map.html", [
       [ "Karm::Http::Header", "structKarm_1_1Http_1_1Header.html", null ]
     ] ],
-    [ "Karm::Map< String, Value >", "structKarm_1_1Map.html", null ],
     [ "Karm::Print::Margins", "structKarm_1_1Print_1_1Margins.html", null ],
     [ "Karm::Math::Mat2< T >", "unionKarm_1_1Math_1_1Mat2.html", null ],
     [ "Karm::Math::Mat3< T >", "unionKarm_1_1Math_1_1Mat3.html", null ],
@@ -708,6 +718,12 @@ var hierarchy =
       [ "Karm::Scene::Shape", "structKarm_1_1Scene_1_1Shape.html", null ],
       [ "Karm::Scene::Stack", "structKarm_1_1Scene_1_1Stack.html", null ],
       [ "Karm::Scene::Text", "structKarm_1_1Scene_1_1Text.html", null ]
+    ] ],
+    [ "Karm::Template::Node", "structKarm_1_1Template_1_1Node.html", [
+      [ "Karm::Template::ForNode", "structKarm_1_1Template_1_1ForNode.html", null ],
+      [ "Karm::Template::IfNode", "structKarm_1_1Template_1_1IfNode.html", null ],
+      [ "Karm::Template::PrintNode", "structKarm_1_1Template_1_1PrintNode.html", null ],
+      [ "Karm::Template::TextNode", "structKarm_1_1Template_1_1TextNode.html", null ]
     ] ],
     [ "Karm::Gfx::NoiseFilter", "structKarm_1_1Gfx_1_1NoiseFilter.html", null ],
     [ "Karm::None", "structKarm_1_1None.html", null ],
@@ -898,6 +914,7 @@ var hierarchy =
       ] ]
     ] ],
     [ "Karm::Http::Server", "structKarm_1_1Http_1_1Server.html", null ],
+    [ "Karm::Http::ServerProps", "structKarm_1_1Http_1_1ServerProps.html", null ],
     [ "Karm::Http::Service", "structKarm_1_1Http_1_1Service.html", [
       [ "Karm::Http::Router", "structKarm_1_1Http_1_1Router.html", null ]
     ] ],

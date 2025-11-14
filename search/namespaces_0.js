@@ -45,13 +45,14 @@ var searchData=
   ['scene_42',['Scene',['../namespaceKarm_1_1Scene.html',1,'Karm']]],
   ['serde_43',['Serde',['../namespaceKarm_1_1Serde.html',1,'Karm']]],
   ['sys_44',['Sys',['../namespaceKarm_1_1Sys.html',1,'Karm']]],
-  ['test_45',['Test',['../namespaceKarm_1_1Test.html',1,'Karm']]],
-  ['tests_46',['Tests',['../namespaceKarm_1_1Archive_1_1Tests.html',1,'Karm::Archive::Tests'],['../namespaceKarm_1_1Async_1_1Tests.html',1,'Karm::Async::Tests'],['../namespaceKarm_1_1Base_1_1Tests.html',1,'Karm::Base::Tests'],['../namespaceKarm_1_1Cli_1_1Tests.html',1,'Karm::Cli::Tests'],['../namespaceKarm_1_1Crypto_1_1Tests.html',1,'Karm::Crypto::Tests'],['../namespaceKarm_1_1Font_1_1Tests.html',1,'Karm::Font::Tests'],['../namespaceKarm_1_1Gc_1_1Tests.html',1,'Karm::Gc::Tests'],['../namespaceKarm_1_1Gfx_1_1Tests.html',1,'Karm::Gfx::Tests'],['../namespaceKarm_1_1Glob_1_1Tests.html',1,'Karm::Glob::Tests'],['../namespaceKarm_1_1Http_1_1Tests.html',1,'Karm::Http::Tests'],['../namespaceKarm_1_1Io_1_1Tests.html',1,'Karm::Io::Tests'],['../namespaceKarm_1_1Json_1_1Tests.html',1,'Karm::Json::Tests'],['../namespaceKarm_1_1Math_1_1Tests.html',1,'Karm::Math::Tests'],['../namespaceKarm_1_1Ml_1_1Tests.html',1,'Karm::Ml::Tests'],['../namespaceKarm_1_1Ref_1_1Tests.html',1,'Karm::Ref::Tests'],['../namespaceKarm_1_1Regex_1_1Tests.html',1,'Karm::Regex::Tests'],['../namespaceKarm_1_1Serde_1_1Tests.html',1,'Karm::Serde::Tests'],['../namespaceKarm_1_1Sys_1_1Tests.html',1,'Karm::Sys::Tests'],['../namespaceKarm_1_1Test_1_1Tests.html',1,'Karm::Test::Tests'],['../namespaceKarm_1_1Tests.html',1,'Karm::Tests'],['../namespaceKarm_1_1Ui_1_1Tests.html',1,'Karm::Ui::Tests']]],
-  ['tga_47',['Tga',['../namespaceKarm_1_1Image_1_1Tga.html',1,'Karm::Image']]],
-  ['tls_48',['Tls',['../namespaceKarm_1_1Tls.html',1,'Karm']]],
-  ['ttf_49',['Ttf',['../namespaceKarm_1_1Font_1_1Ttf.html',1,'Karm::Font']]],
-  ['tty_50',['Tty',['../namespaceKarm_1_1Tty.html',1,'Karm']]],
-  ['ui_51',['Ui',['../namespaceKarm_1_1Ui.html',1,'Karm']]],
-  ['vte_52',['Vte',['../namespaceKarm_1_1Vte.html',1,'Karm']]],
-  ['wav_53',['Wav',['../namespaceKarm_1_1Av_1_1Wav.html',1,'Karm::Av']]]
+  ['template_45',['Template',['../namespaceKarm_1_1Template.html',1,'Karm']]],
+  ['test_46',['Test',['../namespaceKarm_1_1Test.html',1,'Karm']]],
+  ['tests_47',['Tests',['../namespaceKarm_1_1Archive_1_1Tests.html',1,'Karm::Archive::Tests'],['../namespaceKarm_1_1Async_1_1Tests.html',1,'Karm::Async::Tests'],['../namespaceKarm_1_1Base_1_1Tests.html',1,'Karm::Base::Tests'],['../namespaceKarm_1_1Cli_1_1Tests.html',1,'Karm::Cli::Tests'],['../namespaceKarm_1_1Crypto_1_1Tests.html',1,'Karm::Crypto::Tests'],['../namespaceKarm_1_1Font_1_1Tests.html',1,'Karm::Font::Tests'],['../namespaceKarm_1_1Gc_1_1Tests.html',1,'Karm::Gc::Tests'],['../namespaceKarm_1_1Gfx_1_1Tests.html',1,'Karm::Gfx::Tests'],['../namespaceKarm_1_1Glob_1_1Tests.html',1,'Karm::Glob::Tests'],['../namespaceKarm_1_1Http_1_1Tests.html',1,'Karm::Http::Tests'],['../namespaceKarm_1_1Io_1_1Tests.html',1,'Karm::Io::Tests'],['../namespaceKarm_1_1Json_1_1Tests.html',1,'Karm::Json::Tests'],['../namespaceKarm_1_1Math_1_1Tests.html',1,'Karm::Math::Tests'],['../namespaceKarm_1_1Ml_1_1Tests.html',1,'Karm::Ml::Tests'],['../namespaceKarm_1_1Ref_1_1Tests.html',1,'Karm::Ref::Tests'],['../namespaceKarm_1_1Regex_1_1Tests.html',1,'Karm::Regex::Tests'],['../namespaceKarm_1_1Serde_1_1Tests.html',1,'Karm::Serde::Tests'],['../namespaceKarm_1_1Sys_1_1Tests.html',1,'Karm::Sys::Tests'],['../namespaceKarm_1_1Template_1_1Tests.html',1,'Karm::Template::Tests'],['../namespaceKarm_1_1Test_1_1Tests.html',1,'Karm::Test::Tests'],['../namespaceKarm_1_1Tests.html',1,'Karm::Tests'],['../namespaceKarm_1_1Ui_1_1Tests.html',1,'Karm::Ui::Tests']]],
+  ['tga_48',['Tga',['../namespaceKarm_1_1Image_1_1Tga.html',1,'Karm::Image']]],
+  ['tls_49',['Tls',['../namespaceKarm_1_1Tls.html',1,'Karm']]],
+  ['ttf_50',['Ttf',['../namespaceKarm_1_1Font_1_1Ttf.html',1,'Karm::Font']]],
+  ['tty_51',['Tty',['../namespaceKarm_1_1Tty.html',1,'Karm']]],
+  ['ui_52',['Ui',['../namespaceKarm_1_1Ui.html',1,'Karm']]],
+  ['vte_53',['Vte',['../namespaceKarm_1_1Vte.html',1,'Karm']]],
+  ['wav_54',['Wav',['../namespaceKarm_1_1Av_1_1Wav.html',1,'Karm::Av']]]
 ];

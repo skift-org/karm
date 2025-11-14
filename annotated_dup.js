@@ -219,6 +219,7 @@ var annotated_dup =
         [ "RoutePattern", "structKarm_1_1Http_1_1RoutePattern.html", "structKarm_1_1Http_1_1RoutePattern" ],
         [ "Router", "structKarm_1_1Http_1_1Router.html", "structKarm_1_1Http_1_1Router" ],
         [ "Server", "structKarm_1_1Http_1_1Server.html", "structKarm_1_1Http_1_1Server" ],
+        [ "ServerProps", "structKarm_1_1Http_1_1ServerProps.html", "structKarm_1_1Http_1_1ServerProps" ],
         [ "Service", "structKarm_1_1Http_1_1Service.html", "structKarm_1_1Http_1_1Service" ],
         [ "Transport", "structKarm_1_1Http_1_1Transport.html", "structKarm_1_1Http_1_1Transport" ],
         [ "Version", "structKarm_1_1Http_1_1Version.html", "structKarm_1_1Http_1_1Version" ]
@@ -569,6 +570,20 @@ var annotated_dup =
         [ "TcpListener", "structKarm_1_1Sys_1_1TcpListener.html", "structKarm_1_1Sys_1_1TcpListener" ],
         [ "UdpConnection", "structKarm_1_1Sys_1_1UdpConnection.html", "structKarm_1_1Sys_1_1UdpConnection" ],
         [ "UserInfo", "structKarm_1_1Sys_1_1UserInfo.html", "structKarm_1_1Sys_1_1UserInfo" ]
+      ] ],
+      [ "Template", "namespaceKarm_1_1Template.html", [
+        [ "Document", "structKarm_1_1Template_1_1Document.html", "structKarm_1_1Template_1_1Document" ],
+        [ "DotExpr", "structKarm_1_1Template_1_1DotExpr.html", "structKarm_1_1Template_1_1DotExpr" ],
+        [ "Expr", "structKarm_1_1Template_1_1Expr.html", "structKarm_1_1Template_1_1Expr" ],
+        [ "ForNode", "structKarm_1_1Template_1_1ForNode.html", "structKarm_1_1Template_1_1ForNode" ],
+        [ "IfNode", "structKarm_1_1Template_1_1IfNode.html", "structKarm_1_1Template_1_1IfNode" ],
+        [ "InfixExpr", "structKarm_1_1Template_1_1InfixExpr.html", "structKarm_1_1Template_1_1InfixExpr" ],
+        [ "Node", "structKarm_1_1Template_1_1Node.html", "structKarm_1_1Template_1_1Node" ],
+        [ "PrefixExpr", "structKarm_1_1Template_1_1PrefixExpr.html", "structKarm_1_1Template_1_1PrefixExpr" ],
+        [ "PrintNode", "structKarm_1_1Template_1_1PrintNode.html", "structKarm_1_1Template_1_1PrintNode" ],
+        [ "SelfExpr", "structKarm_1_1Template_1_1SelfExpr.html", "structKarm_1_1Template_1_1SelfExpr" ],
+        [ "TextNode", "structKarm_1_1Template_1_1TextNode.html", "structKarm_1_1Template_1_1TextNode" ],
+        [ "ValueExpr", "structKarm_1_1Template_1_1ValueExpr.html", "structKarm_1_1Template_1_1ValueExpr" ]
       ] ],
       [ "Test", "namespaceKarm_1_1Test.html", [
         [ "Driver", "structKarm_1_1Test_1_1Driver.html", "structKarm_1_1Test_1_1Driver" ],

@@ -1,5 +1,14 @@
 var NAVTREEINDEX16 =
 {
+"namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1a5aef4e3ea379fa0eb2bf42d979443902":[0,0,0,25,0,2,24],
+"namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1a5c88a632016b735caca1d23292603459":[0,0,0,25,0,2,4],
+"namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1a64b80571197f559f2c15e74a518960f6":[0,0,0,25,0,2,5],
+"namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1a693bb5993d888b061e45be607b548701":[0,0,0,25,0,2,20],
+"namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1a73d3aa0494690b259220a85295554de2":[0,0,0,25,0,2,7],
+"namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1a7d752b3cc49838890790999912af5a83":[0,0,0,25,0,2,8],
+"namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1a81a680ad169c16cb082a6f8eab8685db":[0,0,0,25,0,2,14],
+"namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1a86372613388e667c8f9b8922523fee05":[0,0,0,25,0,2,23],
+"namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1ab17dfc9b9b5ce4b2aa0b658b4e3b0d72":[0,0,0,25,0,2,3],
 "namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1ab52647ac3a23c5d47d3c290846686516":[0,0,0,25,0,2,22],
 "namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1abcd774f891b5f9df7099f3ea75dadf8d":[0,0,0,25,0,2,25],
 "namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1ac71547376963e5bf8860ef349e7b2a86":[0,0,0,25,0,2,9],
@@ -240,14 +249,5 @@ var NAVTREEINDEX16 =
 "namespaceKarm_1_1Serde_1_1Tests.html#abfa42173fbf46e7fbac685c85f95d3d9":[0,0,0,34,0,0],
 "namespaceKarm_1_1Serde_1_1Tests.html#ac36e090d039dd781e24305b1ca53b641":[0,0,0,34,0,4],
 "namespaceKarm_1_1Sys.html":[0,0,0,35],
-"namespaceKarm_1_1Sys.html#a09c6f7cd033db1a1c4b84e592e98eb87":[0,0,0,35,90],
-"namespaceKarm_1_1Sys.html#a0b8d5b287bfe3467c732b230eb8dbbe5":[0,0,0,35,71],
-"namespaceKarm_1_1Sys.html#a0bd5139bac275261599a893c55dd11ca":[0,0,0,35,84],
-"namespaceKarm_1_1Sys.html#a0c4a50e8416e12abd5807c40c1d89c52":[0,0,0,35,74],
-"namespaceKarm_1_1Sys.html#a0eb3627afa5e6055826f6858cb65aed7":[0,0,0,35,91],
-"namespaceKarm_1_1Sys.html#a10df7fcfa078fb37092e2212216702aa":[0,0,0,35,57],
-"namespaceKarm_1_1Sys.html#a124f169f3a2991e3cf55dcb6221d1fc7":[0,0,0,35,79],
-"namespaceKarm_1_1Sys.html#a17c32d9613af233b8aeed7cddd989894":[0,0,0,35,98],
-"namespaceKarm_1_1Sys.html#a23e5b651dde118d2489b9aa5eadd4a17":[0,0,0,35,53],
-"namespaceKarm_1_1Sys.html#a3bb020edba4a1d0bc18245af5117e12a":[0,0,0,35,68]
+"namespaceKarm_1_1Sys.html#a09c6f7cd033db1a1c4b84e592e98eb87":[0,0,0,35,90]
 };

@@ -12,6 +12,7 @@ var structKarm_1_1Ref_1_1Path =
     [ "operator==", "structKarm_1_1Ref_1_1Path.html#a09648a95da4f20f583e967c5053f69d7", null ],
     [ "operator[]", "structKarm_1_1Ref_1_1Path.html#a7d3c8b4b802351573a9724dc91bdc467", null ],
     [ "parent", "structKarm_1_1Ref_1_1Path.html#add0475c5361d7fbf7a3f832ee83ba053", null ],
+    [ "parts", "structKarm_1_1Ref_1_1Path.html#a9c22a494442d9556ae478070c36701f0", null ],
     [ "str", "structKarm_1_1Ref_1_1Path.html#ad9ede6bf39adc2165e597f1b5d2688a0", null ],
     [ "suffix", "structKarm_1_1Ref_1_1Path.html#a8de8e7f4913168401f5de68a1fb1a0bf", null ],
     [ "unparse", "structKarm_1_1Ref_1_1Path.html#a7920bcbcfdb8cce18ae741e4ce76f996", null ],

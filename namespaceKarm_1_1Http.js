@@ -23,11 +23,12 @@ var namespaceKarm_1_1Http =
     [ "RoutePattern", "structKarm_1_1Http_1_1RoutePattern.html", "structKarm_1_1Http_1_1RoutePattern" ],
     [ "Router", "structKarm_1_1Http_1_1Router.html", "structKarm_1_1Http_1_1Router" ],
     [ "Server", "structKarm_1_1Http_1_1Server.html", "structKarm_1_1Http_1_1Server" ],
+    [ "ServerProps", "structKarm_1_1Http_1_1ServerProps.html", "structKarm_1_1Http_1_1ServerProps" ],
     [ "Service", "structKarm_1_1Http_1_1Service.html", "structKarm_1_1Http_1_1Service" ],
     [ "Transport", "structKarm_1_1Http_1_1Transport.html", "structKarm_1_1Http_1_1Transport" ],
     [ "Version", "structKarm_1_1Http_1_1Version.html", "structKarm_1_1Http_1_1Version" ],
-    [ "Handler", "namespaceKarm_1_1Http.html#af2b6fc059fcc82c86d02d8c9af368253", null ],
     [ "Params", "namespaceKarm_1_1Http.html#ae5dde23901ce7ef1a1d179b4af07cf3a", null ],
+    [ "RouteHandlerAsync", "namespaceKarm_1_1Http.html#a56ec0b10679a6952b7b27d83ac8df044", null ],
     [ "Code", "namespaceKarm_1_1Http.html#ad68477145de564d2a910b9441365aa1a", [
       [ "ITER", "namespaceKarm_1_1Http.html#ad68477145de564d2a910b9441365aa1aae72cb5ed973687a2bf3cae4bf30581b2", null ]
     ] ],
@@ -62,7 +63,7 @@ var namespaceKarm_1_1Http =
     [ "parseMethod", "namespaceKarm_1_1Http.html#a67c9f0343cc32ada30956766b7c011ae", null ],
     [ "pipeTransport", "namespaceKarm_1_1Http.html#a76579a1b687f7dd65ca9a98c4a386987", null ],
     [ "postAsync", "namespaceKarm_1_1Http.html#aa64dfe6c8bea58e1a6b8b88ce7b33dd0", null ],
-    [ "servAsync", "namespaceKarm_1_1Http.html#a2d6d677788749d5208ad1807b987e83f", null ],
+    [ "servAsync", "namespaceKarm_1_1Http.html#ad0144cffd971e505a7369397c5b2ddf6", null ],
     [ "toStr", "namespaceKarm_1_1Http.html#a85d5d3a532933caba9af5037207fd42c", null ],
     [ "toStr", "namespaceKarm_1_1Http.html#a6f9f37dfdb88da1656cbba3657156a25", null ],
     [ "BUF_SIZE", "namespaceKarm_1_1Http.html#a2e7f89820d6eb5e76cd4b1e6da25b4e6", null ]

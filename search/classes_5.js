@@ -94,13 +94,14 @@ var searchData=
   ['formatter_3c_20union_3c_20ts_2e_2e_2e_20_3e_20_3e_91',['Formatter&lt; Union&lt; Ts... &gt; &gt;',['../structKarm_1_1Io_1_1Formatter_3_01Union_3_01Ts_8_8_8_01_4_01_4.html',1,'Karm::Io']]],
   ['formatter_3c_20v_20_3e_92',['Formatter&lt; V &gt;',['../structKarm_1_1Io_1_1Formatter.html',1,'Karm::Io']]],
   ['formatter_3c_20weak_3c_20t_20_3e_20_3e_93',['Formatter&lt; Weak&lt; T &gt; &gt;',['../structKarm_1_1Io_1_1Formatter_3_01Weak_3_01T_01_4_01_4.html',1,'Karm::Io']]],
-  ['frac_94',['Frac',['../structKarm_1_1Math_1_1Frac.html',1,'Karm::Math']]],
-  ['frag_95',['Frag',['../structKarm_1_1Gfx_1_1CpuRast_1_1Frag.html',1,'Karm::Gfx::CpuRast']]],
-  ['frame_96',['Frame',['../structKarm_1_1Av_1_1Frame.html',1,'Karm::Av']]],
-  ['frames_97',['Frames',['../structKarm_1_1Av_1_1Frames.html',1,'Karm::Av']]],
-  ['framesiter_98',['FramesIter',['../structKarm_1_1Av_1_1FramesIter.html',1,'Karm::Av']]],
-  ['fstab_99',['FsTab',['../structKarm_1_1Fs_1_1FsTab.html',1,'Karm::Fs']]],
-  ['func_100',['Func',['../structKarm_1_1Func.html',1,'Karm']]],
-  ['func_3c_20child_28_29_3e_101',['Func&lt; Child()&gt;',['../structKarm_1_1Func.html',1,'Karm']]],
-  ['func_3c_20out_28in_2e_2e_2e_29_3e_102',['Func&lt; Out(In...)&gt;',['../structKarm_1_1Func_3_01Out_07In_8_8_8_08_4.html',1,'Karm']]]
+  ['fornode_94',['ForNode',['../structKarm_1_1Template_1_1ForNode.html',1,'Karm::Template']]],
+  ['frac_95',['Frac',['../structKarm_1_1Math_1_1Frac.html',1,'Karm::Math']]],
+  ['frag_96',['Frag',['../structKarm_1_1Gfx_1_1CpuRast_1_1Frag.html',1,'Karm::Gfx::CpuRast']]],
+  ['frame_97',['Frame',['../structKarm_1_1Av_1_1Frame.html',1,'Karm::Av']]],
+  ['frames_98',['Frames',['../structKarm_1_1Av_1_1Frames.html',1,'Karm::Av']]],
+  ['framesiter_99',['FramesIter',['../structKarm_1_1Av_1_1FramesIter.html',1,'Karm::Av']]],
+  ['fstab_100',['FsTab',['../structKarm_1_1Fs_1_1FsTab.html',1,'Karm::Fs']]],
+  ['func_101',['Func',['../structKarm_1_1Func.html',1,'Karm']]],
+  ['func_3c_20child_28_29_3e_102',['Func&lt; Child()&gt;',['../structKarm_1_1Func.html',1,'Karm']]],
+  ['func_3c_20out_28in_2e_2e_2e_29_3e_103',['Func&lt; Out(In...)&gt;',['../structKarm_1_1Func_3_01Out_07In_8_8_8_08_4.html',1,'Karm']]]
 ];

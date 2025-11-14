@@ -9,6 +9,7 @@ var meta_2traits_8cpp =
     [ "Karm::Meta::Union", "conceptKarm_1_1Meta_1_1Union.html", null ],
     [ "Karm::Meta::Struct", "conceptKarm_1_1Meta_1_1Struct.html", null ],
     [ "Karm::Meta::Integral", "conceptKarm_1_1Meta_1_1Integral.html", null ],
+    [ "Karm::Meta::Integer", "conceptKarm_1_1Meta_1_1Integer.html", null ],
     [ "Karm::Meta::Empty", "conceptKarm_1_1Meta_1_1Empty.html", null ],
     [ "Karm::Meta::Trivial", "conceptKarm_1_1Meta_1_1Trivial.html", null ],
     [ "Karm::Meta::StandardLayout", "conceptKarm_1_1Meta_1_1StandardLayout.html", null ],
