@@ -120,6 +120,6 @@ struct _MakeUnsigned<unsigned long long> {
 };
 
 export template <typename T>
-using MakeUnsigned = typename _MakeUnsigned<T>::Type;
+using MakeUnsigned = _MakeUnsigned<T>::Type;
 
 } // namespace Karm::Meta

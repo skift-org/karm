@@ -49,6 +49,9 @@ concept Struct = __is_class(T);
 export template <typename T>
 concept Integral = __is_integral(T);
 
+template <typename T>
+concept Integer = Integral<T> and not Meta::Boolean<T>;
+
 // MARK: Type properties -------------------------------------------------------
 
 template <typename T>

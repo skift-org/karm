@@ -2,6 +2,7 @@ export module Karm.Core:base.map;
 
 import :base.cursor;
 import :base.vec;
+import :base.tuple;
 
 namespace Karm {
 
@@ -11,8 +12,8 @@ struct Map {
 
     Map() = default;
 
-    Map(std::initializer_list<Pair<K, V>>&& list)
-        : _els(std::move(list)) {}
+    Map(std::initializer_list<Pair<K, V>> list) 
+        : _els(list) {}
 
     void put(K const& key, V value) {
         for (auto& i : mutIter(_els)) {

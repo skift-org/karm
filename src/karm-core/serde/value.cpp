@@ -5,6 +5,7 @@ module;
 export module Karm.Core:serde.value;
 
 import :base.map;
+import :base.tuple;
 import :base.string;
 import :base.union_;
 import :base.vec;
@@ -44,24 +45,27 @@ export struct Value {
     Value(None)
         : _store(NONE) {}
 
-    Value(Array v)
+    Value(Array const& v)
         : _store(v) {}
 
-    Value(Object m)
+    Value(Object const& m)
         : _store(m) {}
 
-    Value(String s)
+    Value(Str s)
+        : _store(String{s}) {}
+
+    Value(String const& s)
         : _store(s) {}
 
-    Value(Integer d)
-        : _store(d) {}
+    Value(Meta::Integer auto const& d)
+        : _store(Integer{d}) {}
 
 #ifndef __ck_freestanding__
-    Value(Number d)
-        : _store(d) {}
+    Value(Meta::Float auto const& d)
+        : _store(Number{d}) {}
 #endif
 
-    Value(bool b)
+    Value(Meta::Boolean auto const& b)
         : _store(b) {}
 
     Value& operator=(None) {
@@ -255,6 +259,12 @@ export struct Value {
         if (not isObject())
             return NONE;
         return try$(asObject().tryGet(key));
+    }
+
+    bool has(Str key) const {
+        if (not isObject())
+            return false;
+        return asObject().has(key);
     }
 
     Value getOr(Str key, Value const& def) const {
