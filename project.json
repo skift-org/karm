@@ -2,7 +2,6 @@
     "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.project.v1",
     "id": "skift-org/karm",
     "type": "project",
-    "version": "v0.1.0",
     "description": "A batteries included framework for modern cross-platform C++ applications",
     "extern": {
         "skift-org/assets": {
@@ -19,7 +18,7 @@
         },
         "cute-engineering/ce-libc": {
             "git": "https://github.com/cute-engineering/ce-libc.git",
-            "tag": "v1.1.1"
+            "tag": "v1.1.2"
         },
         "cute-engineering/ce-libm": {
             "git": "https://github.com/cute-engineering/ce-libm.git",
