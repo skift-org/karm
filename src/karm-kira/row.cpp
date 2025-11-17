@@ -36,10 +36,10 @@ export Ui::Child rowContent(Opt<Ui::Child> leading, String title, Opt<String> su
 
     auto t = subtitle
                  ? Ui::vflow(
-                       8,
+                       2,
                        Ui::labelMedium(title),
-                       Ui::labelSmall(*subtitle)
-                   )
+                       Ui::labelSmall(Ui::GRAY400, *subtitle)
+                   ) | Ui::insets({6, 0})
                  : Ui::labelMedium(title);
 
     auto trail = trailing
@@ -81,25 +81,21 @@ export Ui::Child pressableRow(Opt<Ui::Send<>> onPress, Opt<Ui::Child> leading, S
     );
 }
 
-export Ui::Child buttonRow(Opt<Ui::Send<>> onPress, Gfx::Icon i, String title, String subtitle) {
-    return button(
-        std::move(onPress),
-        Ui::ButtonStyle::subtle(),
-        rowContent(
-            Ui::icon(i, 24),
-            title,
-            subtitle,
-            NONE
-        )
+export Ui::Child buttonRow(Opt<Ui::Send<>> onPress, Gfx::Icon i, String title, Opt<String> subtitle, String action) {
+    return rowContent(
+        Ui::icon(i, 24),
+        title,
+        subtitle,
+        Ui::button(onPress, action) | Ui::insets({0, 0, 0, 12})
     );
 }
 
-export Ui::Child buttonRow(Opt<Ui::Send<>> onPress, String title, String text) {
+export Ui::Child buttonRow(Opt<Ui::Send<>> onPress, String title, Opt<String> subtitle, String action) {
     return rowContent(
         NONE,
         title,
-        NONE,
-        button(std::move(onPress), Ui::ButtonStyle::primary(), text)
+        subtitle,
+        Ui::button(onPress, action) | Ui::insets({0, 0, 0, 12})
     );
 }
 
