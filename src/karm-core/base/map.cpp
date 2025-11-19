@@ -12,7 +12,7 @@ struct Map {
 
     Map() = default;
 
-    Map(std::initializer_list<Pair<K, V>> list) 
+    Map(std::initializer_list<Pair<K, V>> list)
         : _els(list) {}
 
     void put(K const& key, V value) {
@@ -145,6 +145,14 @@ struct Map {
 
     auto iterUnordered() const {
         return Karm::iter(_els);
+    }
+
+    Vec<K> keys() const {
+        Vec<K> res;
+        for (auto& [k, _] : _els) {
+            res.pushBack(k);
+        }
+        return res;
     }
 
     usize len() const {

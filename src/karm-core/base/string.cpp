@@ -304,7 +304,9 @@ struct _StringBuilder {
     Buf<typename E::Unit> _buf{};
 
     _StringBuilder(usize cap = 16)
-        : _buf(cap) {}
+        // NOTE: This way client code don't have to take
+        //       the null-terminator into account
+        : _buf(cap + 1) {}
 
     _StringBuilder(String&& str)
         : _buf(MOVE, std::exchange(str._buf, nullptr), std::exchange(str._len, 0)) {

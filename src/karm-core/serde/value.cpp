@@ -58,7 +58,7 @@ export struct Value {
         : _store(s) {}
 
     Value(Meta::Integer auto const& d)
-        : _store(Integer{d}) {}
+        : _store(static_cast<Integer>(d)) {}
 
 #ifndef __ck_freestanding__
     Value(Meta::Float auto const& d)
