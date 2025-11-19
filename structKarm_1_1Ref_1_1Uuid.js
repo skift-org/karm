@@ -6,6 +6,7 @@ var structKarm_1_1Ref_1_1Uuid =
     [ "operator==", "structKarm_1_1Ref_1_1Uuid.html#a6bb044576ae0f921d51be3b3abc8c380", null ],
     [ "repr", "structKarm_1_1Ref_1_1Uuid.html#a11af641aff7343f63e6a4e9b23a1eee7", null ],
     [ "serialize", "structKarm_1_1Ref_1_1Uuid.html#ad9d840fcb814517a352cf8f0bfe8fd0b", null ],
+    [ "unparsed", "structKarm_1_1Ref_1_1Uuid.html#a6179b4ca560c903110ad50e820b54fc2", null ],
     [ "a", "structKarm_1_1Ref_1_1Uuid.html#a41c64f06b21b8f8250d426e1664fa3bf", null ],
     [ "b", "structKarm_1_1Ref_1_1Uuid.html#aefe732f6c9822ae38e69e42905b61abe", null ],
     [ "c", "structKarm_1_1Ref_1_1Uuid.html#abfc038b770483b1ed08ece5a0b2c251d", null ],

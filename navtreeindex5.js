@@ -1,5 +1,12 @@
 var NAVTREEINDEX5 =
 {
+"gguf_8cpp.html#a5bbf19e28eca480c0956db66ad3bfe3aaee9d73311ff0658494edfff14c3ec1e3":[3,0,0,19,2,3,1],
+"gguf_8cpp.html#a6d8227d26b6d08018b69b980afe099c1":[3,0,0,19,2,2],
+"gguf_8cpp.html#a6d8227d26b6d08018b69b980afe099c1a0319ba7945fc5786466efbacad79aadb":[3,0,0,19,2,2,2],
+"gguf_8cpp.html#a6d8227d26b6d08018b69b980afe099c1a04953235ae8c6402cc42ab8ec878449d":[3,0,0,19,2,2,19],
+"gguf_8cpp.html#a6d8227d26b6d08018b69b980afe099c1a04ce1b136d495cee55f3fcd3407e9ca1":[3,0,0,19,2,2,18],
+"gguf_8cpp.html#a6d8227d26b6d08018b69b980afe099c1a04ede23d32a3fb7a1b0efd69f2876b72":[3,0,0,19,2,2,16],
+"gguf_8cpp.html#a6d8227d26b6d08018b69b980afe099c1a17c30ffb0c4d70d05d7859a87d43e66f":[3,0,0,19,2,2,12],
 "gguf_8cpp.html#a6d8227d26b6d08018b69b980afe099c1a1aa99bd964246d92c0b4cba322ad58ea":[3,0,0,19,2,2,15],
 "gguf_8cpp.html#a6d8227d26b6d08018b69b980afe099c1a1ad5f6f3069070ec4cbbdc94d5e61e0e":[3,0,0,19,2,2,28],
 "gguf_8cpp.html#a6d8227d26b6d08018b69b980afe099c1a2b3307eb7a3523a00833aac6301dd3ca":[3,0,0,19,2,2,13],
@@ -62,8 +69,8 @@ var NAVTREEINDEX5 =
 "globals_t.html":[3,1,0,16],
 "globals_u.html":[3,1,0,17],
 "globals_v.html":[3,1,0,18],
-"globals_vars.html":[3,1,2,0],
 "globals_vars.html":[3,1,2],
+"globals_vars.html":[3,1,2,0],
 "globals_vars_c.html":[3,1,2,1],
 "globals_vars_d.html":[3,1,2,2],
 "globals_vars_f.html":[3,1,2,3],
@@ -242,12 +249,5 @@ var NAVTREEINDEX5 =
 "karm-archive_2mod_8cpp.html#a86b50ee343a3808e5f5ce7f325f572a3":[3,0,0,1,2,0],
 "karm-archive_2mod_8cpp.html#aff55674fa41a3a4ef62434c039b6c32d":[3,0,0,1,2,1],
 "karm-av_2loader_8cpp.html":[3,0,0,2,6],
-"karm-av_2loader_8cpp.html#a192c527ba8da6753b34ed7a51ccc9897":[3,0,0,2,6,1],
-"karm-av_2loader_8cpp.html#a2344025113efc24cf33d691f0575d5a6":[3,0,0,2,6,2],
-"karm-av_2loader_8cpp.html#a3974c0216d383a8ee20f65600aacb6c5":[3,0,0,2,6,6],
-"karm-av_2loader_8cpp.html#a88c176ed3a6768104b99d90b3e9a3eb0":[3,0,0,2,6,0],
-"karm-av_2loader_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6":[3,0,0,2,6,4],
-"karm-av_2loader_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5":[3,0,0,2,6,3],
-"karm-av_2loader_8cpp.html#add789519f7f2dc7d37718eab411af552":[3,0,0,2,6,5],
-"karm-av_2main_2main_8cpp.html":[3,0,0,2,0,0]
+"karm-av_2loader_8cpp.html#a192c527ba8da6753b34ed7a51ccc9897":[3,0,0,2,6,1]
 };

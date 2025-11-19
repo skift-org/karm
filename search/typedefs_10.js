@@ -24,6 +24,6 @@ var searchData=
   ['reqfeatureindex_21',['ReqFeatureIndex',['../structKarm_1_1Font_1_1Ttf_1_1LangSys.html#a4631211d1b82bce50ddc402e81fabf2f',1,'Karm::Font::Ttf::LangSys']]],
   ['ret_22',['Ret',['../namespaceKarm_1_1Meta.html#ae0daf0804cc358f5d09264c0d94699b8',1,'Karm::Meta']]],
   ['root_23',['Root',['../namespaceKarm_1_1Gc.html#a9bf6a87a8b091e376d789530e43ba1e5',1,'Karm::Gc']]],
-  ['routehandlerasync_24',['RouteHandlerAsync',['../namespaceKarm_1_1Http.html#a56ec0b10679a6952b7b27d83ac8df044',1,'Karm::Http']]],
+  ['routeparams_24',['RouteParams',['../namespaceKarm_1_1Http.html#a99e0d2fdf89fbcf2ed31f63e9007e41d',1,'Karm::Http']]],
   ['rune_25',['Rune',['../namespaceKarm.html#ac50ed2a179daef0b0d391d9c11d431ae',1,'Karm']]]
 ];

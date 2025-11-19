@@ -123,6 +123,12 @@ Functions</h2></td></tr>
 <tr class="separator:abe34fc518d19969ee448d6b8a1109bc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acfdc31c15d9618dcfc37057915ab0ba5"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="structKarm_1_1Res.html">Res</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Crypto.html#acfdc31c15d9618dcfc37057915ab0ba5">base64Decode</a> (<a class="el" href="namespaceKarm_1_1Io.html#a6cee1ccb2229cb0d94e469d387a41c2a">Io::SScan</a> &amp;s, <a class="el" href="structKarm_1_1Io_1_1Writer.html">Io::Writer</a> &amp;out, <a class="el" href="structKarm_1_1Crypto_1_1Base64Props.html">Base64Props</a> props={})</td></tr>
 <tr class="separator:acfdc31c15d9618dcfc37057915ab0ba5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a483237c87b4551ccdc4f6a89bfd2d2c4"><td class="memItemLeft" align="right" valign="top">export constexpr <a class="el" href="namespaceKarm.html#a7826e564b525f4f5a2a0e63f961c2dbd">usize</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Crypto.html#a483237c87b4551ccdc4f6a89bfd2d2c4">base64EncodedLen</a> (<a class="el" href="namespaceKarm.html#a7826e564b525f4f5a2a0e63f961c2dbd">usize</a> n)</td></tr>
+<tr class="separator:a483237c87b4551ccdc4f6a89bfd2d2c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae0d41fa8229882fb4c160c2ae5ea4e17"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="structKarm_1_1Res.html">Res</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Crypto.html#ae0d41fa8229882fb4c160c2ae5ea4e17">base64Encode</a> (<a class="el" href="structKarm_1_1Io_1_1Reader.html">Io::Reader</a> &amp;in, <a class="el" href="structKarm_1_1Io_1_1Emit.html">Io::Emit</a> &amp;e)</td></tr>
+<tr class="separator:ae0d41fa8229882fb4c160c2ae5ea4e17"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac983fa82ab8c6a798fc4d9846d98c76e"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="namespaceKarm.html#ae6adab057126d950320de3262006925b">String</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Crypto.html#ac983fa82ab8c6a798fc4d9846d98c76e">base64Encode</a> (<a class="el" href="namespaceKarm.html#a3d0e6679f40bc938c4e7e9c543c3d6ea">Bytes</a> in)</td></tr>
+<tr class="separator:ac983fa82ab8c6a798fc4d9846d98c76e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61b737c703026ba99243e8446e52f8d4"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="structKarm_1_1Crypto_1_1Crc32.html#af6eff3f3e7ed8f7da8883cc9a74f7cec">Crc32::Digest</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Crypto.html#a61b737c703026ba99243e8446e52f8d4">crc32</a> (<a class="el" href="namespaceKarm.html#a3d0e6679f40bc938c4e7e9c543c3d6ea">Bytes</a> <a class="el" href="namespaceKarm.html#a3bdf6315e5ed232fc27f650ba669cc70">bytes</a>, <a class="el" href="namespaceKarm.html#a24f8a7dd7a500ebbcb2f332dfad59e79">u32</a> crc=0xFFFFFFFF)</td></tr>
 <tr class="separator:a61b737c703026ba99243e8446e52f8d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8af3783581fc339ee0aed25236bb904"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="structKarm_1_1Res.html">Res</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Crypto.html#ad8af3783581fc339ee0aed25236bb904">entropy</a> (<a class="el" href="namespaceKarm.html#aae9861e68f8d76cbdfb6427494441e55">MutBytes</a> out)</td></tr>
@@ -208,6 +214,78 @@ Variables</h2></td></tr>
           <td></td><td></td>
         </tr>
       </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac983fa82ab8c6a798fc4d9846d98c76e" name="ac983fa82ab8c6a798fc4d9846d98c76e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac983fa82ab8c6a798fc4d9846d98c76e">&#9670;&#160;</a></span>base64Encode() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">export <a class="el" href="namespaceKarm.html#ae6adab057126d950320de3262006925b">String</a> Karm::Crypto::base64Encode </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKarm.html#a3d0e6679f40bc938c4e7e9c543c3d6ea">Bytes</a>&#160;</td>
+          <td class="paramname"><em>in</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae0d41fa8229882fb4c160c2ae5ea4e17" name="ae0d41fa8229882fb4c160c2ae5ea4e17"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae0d41fa8229882fb4c160c2ae5ea4e17">&#9670;&#160;</a></span>base64Encode() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">export <a class="el" href="structKarm_1_1Res.html">Res</a> Karm::Crypto::base64Encode </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structKarm_1_1Io_1_1Reader.html">Io::Reader</a> &amp;&#160;</td>
+          <td class="paramname"><em>in</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structKarm_1_1Io_1_1Emit.html">Io::Emit</a> &amp;&#160;</td>
+          <td class="paramname"><em>e</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a483237c87b4551ccdc4f6a89bfd2d2c4" name="a483237c87b4551ccdc4f6a89bfd2d2c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a483237c87b4551ccdc4f6a89bfd2d2c4">&#9670;&#160;</a></span>base64EncodedLen()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">export constexpr <a class="el" href="namespaceKarm.html#a7826e564b525f4f5a2a0e63f961c2dbd">usize</a> Karm::Crypto::base64EncodedLen </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKarm.html#a7826e564b525f4f5a2a0e63f961c2dbd">usize</a>&#160;</td>
+          <td class="paramname"><em>n</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 </div>

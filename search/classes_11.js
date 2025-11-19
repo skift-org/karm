@@ -46,7 +46,7 @@ var searchData=
   ['serializer_43',['Serializer',['../structKarm_1_1Serde_1_1Serializer.html',1,'Karm::Serde']]],
   ['server_44',['Server',['../structKarm_1_1Http_1_1Server.html',1,'Karm::Http']]],
   ['serverprops_45',['ServerProps',['../structKarm_1_1Http_1_1ServerProps.html',1,'Karm::Http']]],
-  ['service_46',['Service',['../structKarm_1_1Http_1_1Service.html',1,'Karm::Http::Service'],['../structKarm_1_1Sys_1_1Service.html',1,'Karm::Sys::Service']]],
+  ['service_46',['Service',['../structKarm_1_1Sys_1_1Service.html',1,'Karm::Sys']]],
   ['set_47',['Set',['../structKarm_1_1Set.html',1,'Karm']]],
   ['settings_48',['Settings',['../structKarm_1_1Print_1_1Settings.html',1,'Karm::Print']]],
   ['shape_49',['Shape',['../structKarm_1_1Scene_1_1Shape.html',1,'Karm::Scene']]],

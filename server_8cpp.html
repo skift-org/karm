@@ -99,7 +99,7 @@ $(document).ready(function(){initNavTree('server_8cpp.html',''); initResizable()
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
-<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#concepts">Concepts</a> &#124;
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">server.cpp File Reference</div></div>
@@ -109,7 +109,7 @@ $(document).ready(function(){initNavTree('server_8cpp.html',''); initResizable()
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Service.html">Karm::Http::Service</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Handler.html">Karm::Http::Handler</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1ServerProps.html">Karm::Http::ServerProps</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -123,15 +123,20 @@ Namespaces</h2></td></tr>
 <tr class="memitem:namespaceKarm_1_1Http"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html">Karm::Http</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
-Typedefs</h2></td></tr>
-<tr class="memitem:ae5dde23901ce7ef1a1d179b4af07cf3a"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#ae5dde23901ce7ef1a1d179b4af07cf3a">Karm::Http::Params</a> = Map&lt; String, String &gt;</td></tr>
-<tr class="separator:ae5dde23901ce7ef1a1d179b4af07cf3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="concepts" name="concepts"></a>
+Concepts</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">concept &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="conceptKarm_1_1Http_1_1HandlerFunc.html">Karm::Http::HandlerFunc</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ad0144cffd971e505a7369397c5b2ddf6"><td class="memItemLeft" align="right" valign="top">export Async::Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#ad0144cffd971e505a7369397c5b2ddf6">Karm::Http::servAsync</a> (Rc&lt; Service &gt; srv, ServerProps const &amp;props={})</td></tr>
-<tr class="separator:ad0144cffd971e505a7369397c5b2ddf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad9a28bdf16d88435accf2a6f520a3269"><td class="memTemplParams" colspan="2">template&lt;HandlerFunc F&gt; </td></tr>
+<tr class="memitem:ad9a28bdf16d88435accf2a6f520a3269"><td class="memTemplItemLeft" align="right" valign="top">Rc&lt; Handler &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#ad9a28bdf16d88435accf2a6f520a3269">Karm::Http::makeHandler</a> (F func)</td></tr>
+<tr class="separator:ad9a28bdf16d88435accf2a6f520a3269"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69925a425f283d6e00227b8f8e2f8294"><td class="memItemLeft" align="right" valign="top">export Async::Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#a69925a425f283d6e00227b8f8e2f8294">Karm::Http::serveAsync</a> (Rc&lt; Handler &gt; handler, ServerProps const &amp;props={})</td></tr>
+<tr class="separator:a69925a425f283d6e00227b8f8e2f8294"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a14ac6d70c284edf8e9608a3b932b6d64"><td class="memItemLeft" align="right" valign="top">export Async::Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#a14ac6d70c284edf8e9608a3b932b6d64">Karm::Http::serveAsync</a> (HandlerFunc auto handler, ServerProps const &amp;props={})</td></tr>
+<tr class="separator:a14ac6d70c284edf8e9608a3b932b6d64"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>

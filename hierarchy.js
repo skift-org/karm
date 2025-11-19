@@ -539,6 +539,9 @@ var hierarchy =
     [ "Karm::Gfx::Greyscale8", "structKarm_1_1Gfx_1_1Greyscale8.html", null ],
     [ "Karm::Ui::GridStyle", "structKarm_1_1Ui_1_1GridStyle.html", null ],
     [ "Karm::Ui::GridUnit", "structKarm_1_1Ui_1_1GridUnit.html", null ],
+    [ "Karm::Http::Handler", "structKarm_1_1Http_1_1Handler.html", [
+      [ "Karm::Http::Router", "structKarm_1_1Http_1_1Router.html", null ]
+    ] ],
     [ "Karm::Fs::Mbr::Header", "structKarm_1_1Fs_1_1Mbr_1_1Header.html", null ],
     [ "Karm::Image::Gif::Decoder::Header", "structKarm_1_1Image_1_1Gif_1_1Decoder_1_1Header.html", null ],
     [ "Karm::Image::Tga::Header", "structKarm_1_1Image_1_1Tga_1_1Header.html", null ],
@@ -915,9 +918,6 @@ var hierarchy =
     ] ],
     [ "Karm::Http::Server", "structKarm_1_1Http_1_1Server.html", null ],
     [ "Karm::Http::ServerProps", "structKarm_1_1Http_1_1ServerProps.html", null ],
-    [ "Karm::Http::Service", "structKarm_1_1Http_1_1Service.html", [
-      [ "Karm::Http::Router", "structKarm_1_1Http_1_1Router.html", null ]
-    ] ],
     [ "Karm::Sys::Service", "structKarm_1_1Sys_1_1Service.html", [
       [ "Karm::Sys::ArgsHook", "structKarm_1_1Sys_1_1ArgsHook.html", null ],
       [ "Karm::Sys::ChannelHook", "structKarm_1_1Sys_1_1ChannelHook.html", null ]

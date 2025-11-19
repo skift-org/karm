@@ -13,6 +13,9 @@ var concepts =
       [ "Gfx", "namespaceKarm_1_1Gfx.html", [
         [ "RawIcon", "conceptKarm_1_1Gfx_1_1RawIcon.html", null ]
       ] ],
+      [ "Http", "namespaceKarm_1_1Http.html", [
+        [ "HandlerFunc", "conceptKarm_1_1Http_1_1HandlerFunc.html", null ]
+      ] ],
       [ "Io", "namespaceKarm_1_1Io.html", [
         [ "ReprMethod", "conceptKarm_1_1Io_1_1ReprMethod.html", null ],
         [ "Reprable", "conceptKarm_1_1Io_1_1Reprable.html", null ],

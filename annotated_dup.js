@@ -208,6 +208,7 @@ var annotated_dup =
         [ "ChunkedBody", "structKarm_1_1Http_1_1ChunkedBody.html", "structKarm_1_1Http_1_1ChunkedBody" ],
         [ "Client", "structKarm_1_1Http_1_1Client.html", "structKarm_1_1Http_1_1Client" ],
         [ "ContentBody", "structKarm_1_1Http_1_1ContentBody.html", "structKarm_1_1Http_1_1ContentBody" ],
+        [ "Handler", "structKarm_1_1Http_1_1Handler.html", "structKarm_1_1Http_1_1Handler" ],
         [ "Header", "structKarm_1_1Http_1_1Header.html", "structKarm_1_1Http_1_1Header" ],
         [ "HttpTransport", "structKarm_1_1Http_1_1HttpTransport.html", "structKarm_1_1Http_1_1HttpTransport" ],
         [ "LocalTransport", "structKarm_1_1Http_1_1LocalTransport.html", "structKarm_1_1Http_1_1LocalTransport" ],
@@ -220,7 +221,6 @@ var annotated_dup =
         [ "Router", "structKarm_1_1Http_1_1Router.html", "structKarm_1_1Http_1_1Router" ],
         [ "Server", "structKarm_1_1Http_1_1Server.html", "structKarm_1_1Http_1_1Server" ],
         [ "ServerProps", "structKarm_1_1Http_1_1ServerProps.html", "structKarm_1_1Http_1_1ServerProps" ],
-        [ "Service", "structKarm_1_1Http_1_1Service.html", "structKarm_1_1Http_1_1Service" ],
         [ "Transport", "structKarm_1_1Http_1_1Transport.html", "structKarm_1_1Http_1_1Transport" ],
         [ "Version", "structKarm_1_1Http_1_1Version.html", "structKarm_1_1Http_1_1Version" ]
       ] ],

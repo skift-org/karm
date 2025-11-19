@@ -108,25 +108,189 @@ Inheritance diagram for Karm::Http::Router:</div>
  <div class="center">
   <img src="structKarm_1_1Http_1_1Router.png" usemap="#Karm::Http::Router_map" alt=""/>
   <map id="Karm::Http::Router_map" name="Karm::Http::Router_map">
-<area href="structKarm_1_1Http_1_1Service.html" alt="Karm::Http::Service" shape="rect" coords="0,0,119,24"/>
+<area href="structKarm_1_1Http_1_1Handler.html" alt="Karm::Http::Handler" shape="rect" coords="0,0,120,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a14cdaf76be8fb8693a148b153b5edf5c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Router.html#a14cdaf76be8fb8693a148b153b5edf5c">route</a> (<a class="el" href="structKarm_1_1Http_1_1RoutePattern.html">RoutePattern</a> pattern, <a class="el" href="namespaceKarm_1_1Http.html#a56ec0b10679a6952b7b27d83ac8df044">RouteHandlerAsync</a> handlerAsync)</td></tr>
-<tr class="separator:a14cdaf76be8fb8693a148b153b5edf5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8b654fb708b7397e9d1b11f3c04b9ee5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Router.html#a8b654fb708b7397e9d1b11f3c04b9ee5">route</a> (<a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a> pattern, <a class="el" href="namespaceKarm_1_1Http.html#a56ec0b10679a6952b7b27d83ac8df044">RouteHandlerAsync</a> handlerAsync)</td></tr>
-<tr class="separator:a8b654fb708b7397e9d1b11f3c04b9ee5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07beaf23e840816c96e128771e7a33a9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Router.html#a07beaf23e840816c96e128771e7a33a9">route</a> (<a class="el" href="structKarm_1_1Http_1_1RoutePattern.html">RoutePattern</a> pattern, <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Handler.html">Handler</a> &gt; handler)</td></tr>
+<tr class="separator:a07beaf23e840816c96e128771e7a33a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04ca2852139609e07c2ec6e31de84599"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Router.html#a04ca2852139609e07c2ec6e31de84599">route</a> (<a class="el" href="structKarm_1_1Http_1_1RoutePattern.html">RoutePattern</a> pattern, HandlerFunc auto handlerFunc)</td></tr>
+<tr class="separator:a04ca2852139609e07c2ec6e31de84599"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a039ed9556cd2fedb3acadab72a99e821"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Router.html#a039ed9556cd2fedb3acadab72a99e821">route</a> (<a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a> pattern, <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Handler.html">Handler</a> &gt; handler)</td></tr>
+<tr class="separator:a039ed9556cd2fedb3acadab72a99e821"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba5d7479f07cd673956ad2db909d638b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Router.html#aba5d7479f07cd673956ad2db909d638b">route</a> (<a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a> pattern, HandlerFunc auto handlerFunc)</td></tr>
+<tr class="separator:aba5d7479f07cd673956ad2db909d638b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74c963496f364155a9daaaaf9c553a2d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Router.html#a74c963496f364155a9daaaaf9c553a2d">get</a> (<a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a> pattern, <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Handler.html">Handler</a> &gt; handler)</td></tr>
+<tr class="separator:a74c963496f364155a9daaaaf9c553a2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6dc3f6abed566c05a30bab1edca831b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Router.html#ae6dc3f6abed566c05a30bab1edca831b">get</a> (<a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a> pattern, HandlerFunc auto handlerFunc)</td></tr>
+<tr class="separator:ae6dc3f6abed566c05a30bab1edca831b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ef8437ea9d37c9674a1b92b3dc36b3a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Router.html#a0ef8437ea9d37c9674a1b92b3dc36b3a">post</a> (<a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a> pattern, <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Handler.html">Handler</a> &gt; handler)</td></tr>
+<tr class="separator:a0ef8437ea9d37c9674a1b92b3dc36b3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4f7ac01094361e4154651e8d5ab9c9b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Router.html#af4f7ac01094361e4154651e8d5ab9c9b">post</a> (<a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a> pattern, HandlerFunc auto handlerFunc)</td></tr>
+<tr class="separator:af4f7ac01094361e4154651e8d5ab9c9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2de8e5dee7768545877c9938e5eefe80"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Router.html#a2de8e5dee7768545877c9938e5eefe80">put</a> (<a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a> pattern, <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Handler.html">Handler</a> &gt; handler)</td></tr>
+<tr class="separator:a2de8e5dee7768545877c9938e5eefe80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc4665c846b344d166a1ec075c889369"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Router.html#acc4665c846b344d166a1ec075c889369">put</a> (<a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a> pattern, HandlerFunc auto handlerFunc)</td></tr>
+<tr class="separator:acc4665c846b344d166a1ec075c889369"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf554d7d881a5f7e10b853df34f51076"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Router.html#abf554d7d881a5f7e10b853df34f51076">delete_</a> (<a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a> pattern, <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Handler.html">Handler</a> &gt; handler)</td></tr>
+<tr class="separator:abf554d7d881a5f7e10b853df34f51076"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aab8c935eaa092474932d9b2e744a2fbc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Router.html#aab8c935eaa092474932d9b2e744a2fbc">delete_</a> (<a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a> pattern, HandlerFunc auto handlerFunc)</td></tr>
+<tr class="separator:aab8c935eaa092474932d9b2e744a2fbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0a5c87dc4563619f2671516bacc394cc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Router.html#a0a5c87dc4563619f2671516bacc394cc">handleAsync</a> (<a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Request.html">Request</a> &gt; req, <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Response_1_1Writer.html">Response::Writer</a> &gt; resp) override</td></tr>
 <tr class="separator:a0a5c87dc4563619f2671516bacc394cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_methods_structKarm_1_1Http_1_1Service"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_structKarm_1_1Http_1_1Service')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="structKarm_1_1Http_1_1Service.html">Karm::Http::Service</a></td></tr>
-<tr class="memitem:a1b227079814980965425cc775ad607c7 inherit pub_methods_structKarm_1_1Http_1_1Service"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Service.html#a1b227079814980965425cc775ad607c7">~Service</a> ()=default</td></tr>
-<tr class="separator:a1b227079814980965425cc775ad607c7 inherit pub_methods_structKarm_1_1Http_1_1Service"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4752e2ed39e4e0bbd4e1981cadbcac82 inherit pub_methods_structKarm_1_1Http_1_1Service"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Service.html#a4752e2ed39e4e0bbd4e1981cadbcac82">handleAsync</a> (<a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Request.html">Request</a> &gt;, <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Response_1_1Writer.html">Response::Writer</a> &gt;)=0</td></tr>
-<tr class="separator:a4752e2ed39e4e0bbd4e1981cadbcac82 inherit pub_methods_structKarm_1_1Http_1_1Service"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_structKarm_1_1Http_1_1Handler"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_structKarm_1_1Http_1_1Handler')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="structKarm_1_1Http_1_1Handler.html">Karm::Http::Handler</a></td></tr>
+<tr class="memitem:a0b2aaa64cb615078a9c5b4d6e40c6352 inherit pub_methods_structKarm_1_1Http_1_1Handler"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Handler.html#a0b2aaa64cb615078a9c5b4d6e40c6352">~Handler</a> ()=default</td></tr>
+<tr class="separator:a0b2aaa64cb615078a9c5b4d6e40c6352 inherit pub_methods_structKarm_1_1Http_1_1Handler"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa71dbbb4a8e4384e2744085a90c7ead2 inherit pub_methods_structKarm_1_1Http_1_1Handler"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Handler.html#aa71dbbb4a8e4384e2744085a90c7ead2">handleAsync</a> (<a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Request.html">Request</a> &gt;, <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Response_1_1Writer.html">Response::Writer</a> &gt;)=0</td></tr>
+<tr class="separator:aa71dbbb4a8e4384e2744085a90c7ead2 inherit pub_methods_structKarm_1_1Http_1_1Handler"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="aab8c935eaa092474932d9b2e744a2fbc" name="aab8c935eaa092474932d9b2e744a2fbc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aab8c935eaa092474932d9b2e744a2fbc">&#9670;&#160;</a></span>delete_() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Karm::Http::Router::delete_ </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a>&#160;</td>
+          <td class="paramname"><em>pattern</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">HandlerFunc auto&#160;</td>
+          <td class="paramname"><em>handlerFunc</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="abf554d7d881a5f7e10b853df34f51076" name="abf554d7d881a5f7e10b853df34f51076"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf554d7d881a5f7e10b853df34f51076">&#9670;&#160;</a></span>delete_() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Karm::Http::Router::delete_ </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a>&#160;</td>
+          <td class="paramname"><em>pattern</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Handler.html">Handler</a> &gt;&#160;</td>
+          <td class="paramname"><em>handler</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae6dc3f6abed566c05a30bab1edca831b" name="ae6dc3f6abed566c05a30bab1edca831b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae6dc3f6abed566c05a30bab1edca831b">&#9670;&#160;</a></span>get() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Karm::Http::Router::get </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a>&#160;</td>
+          <td class="paramname"><em>pattern</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">HandlerFunc auto&#160;</td>
+          <td class="paramname"><em>handlerFunc</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a74c963496f364155a9daaaaf9c553a2d" name="a74c963496f364155a9daaaaf9c553a2d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a74c963496f364155a9daaaaf9c553a2d">&#9670;&#160;</a></span>get() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Karm::Http::Router::get </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a>&#160;</td>
+          <td class="paramname"><em>pattern</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Handler.html">Handler</a> &gt;&#160;</td>
+          <td class="paramname"><em>handler</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a0a5c87dc4563619f2671516bacc394cc" name="a0a5c87dc4563619f2671516bacc394cc"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0a5c87dc4563619f2671516bacc394cc">&#9670;&#160;</a></span>handleAsync()</h2>
 
@@ -161,12 +325,12 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="structKarm_1_1Http_1_1Service.html#a4752e2ed39e4e0bbd4e1981cadbcac82">Karm::Http::Service</a>.</p>
+<p>Implements <a class="el" href="structKarm_1_1Http_1_1Handler.html#aa71dbbb4a8e4384e2744085a90c7ead2">Karm::Http::Handler</a>.</p>
 
 </div>
 </div>
-<a id="a14cdaf76be8fb8693a148b153b5edf5c" name="a14cdaf76be8fb8693a148b153b5edf5c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a14cdaf76be8fb8693a148b153b5edf5c">&#9670;&#160;</a></span>route() <span class="overload">[1/2]</span></h2>
+<a id="af4f7ac01094361e4154651e8d5ab9c9b" name="af4f7ac01094361e4154651e8d5ab9c9b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af4f7ac01094361e4154651e8d5ab9c9b">&#9670;&#160;</a></span>post() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -175,16 +339,16 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void Karm::Http::Router::route </td>
+          <td class="memname">void Karm::Http::Router::post </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structKarm_1_1Http_1_1RoutePattern.html">RoutePattern</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a>&#160;</td>
           <td class="paramname"><em>pattern</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespaceKarm_1_1Http.html#a56ec0b10679a6952b7b27d83ac8df044">RouteHandlerAsync</a>&#160;</td>
-          <td class="paramname"><em>handlerAsync</em>&#160;</td>
+          <td class="paramtype">HandlerFunc auto&#160;</td>
+          <td class="paramname"><em>handlerFunc</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -201,8 +365,188 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a8b654fb708b7397e9d1b11f3c04b9ee5" name="a8b654fb708b7397e9d1b11f3c04b9ee5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8b654fb708b7397e9d1b11f3c04b9ee5">&#9670;&#160;</a></span>route() <span class="overload">[2/2]</span></h2>
+<a id="a0ef8437ea9d37c9674a1b92b3dc36b3a" name="a0ef8437ea9d37c9674a1b92b3dc36b3a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ef8437ea9d37c9674a1b92b3dc36b3a">&#9670;&#160;</a></span>post() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Karm::Http::Router::post </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a>&#160;</td>
+          <td class="paramname"><em>pattern</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Handler.html">Handler</a> &gt;&#160;</td>
+          <td class="paramname"><em>handler</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="acc4665c846b344d166a1ec075c889369" name="acc4665c846b344d166a1ec075c889369"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acc4665c846b344d166a1ec075c889369">&#9670;&#160;</a></span>put() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Karm::Http::Router::put </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a>&#160;</td>
+          <td class="paramname"><em>pattern</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">HandlerFunc auto&#160;</td>
+          <td class="paramname"><em>handlerFunc</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2de8e5dee7768545877c9938e5eefe80" name="a2de8e5dee7768545877c9938e5eefe80"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2de8e5dee7768545877c9938e5eefe80">&#9670;&#160;</a></span>put() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Karm::Http::Router::put </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a>&#160;</td>
+          <td class="paramname"><em>pattern</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Handler.html">Handler</a> &gt;&#160;</td>
+          <td class="paramname"><em>handler</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a04ca2852139609e07c2ec6e31de84599" name="a04ca2852139609e07c2ec6e31de84599"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a04ca2852139609e07c2ec6e31de84599">&#9670;&#160;</a></span>route() <span class="overload">[1/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Karm::Http::Router::route </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structKarm_1_1Http_1_1RoutePattern.html">RoutePattern</a>&#160;</td>
+          <td class="paramname"><em>pattern</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">HandlerFunc auto&#160;</td>
+          <td class="paramname"><em>handlerFunc</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a07beaf23e840816c96e128771e7a33a9" name="a07beaf23e840816c96e128771e7a33a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07beaf23e840816c96e128771e7a33a9">&#9670;&#160;</a></span>route() <span class="overload">[2/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Karm::Http::Router::route </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structKarm_1_1Http_1_1RoutePattern.html">RoutePattern</a>&#160;</td>
+          <td class="paramname"><em>pattern</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Handler.html">Handler</a> &gt;&#160;</td>
+          <td class="paramname"><em>handler</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aba5d7479f07cd673956ad2db909d638b" name="aba5d7479f07cd673956ad2db909d638b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aba5d7479f07cd673956ad2db909d638b">&#9670;&#160;</a></span>route() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -219,8 +563,44 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespaceKarm_1_1Http.html#a56ec0b10679a6952b7b27d83ac8df044">RouteHandlerAsync</a>&#160;</td>
-          <td class="paramname"><em>handlerAsync</em>&#160;</td>
+          <td class="paramtype">HandlerFunc auto&#160;</td>
+          <td class="paramname"><em>handlerFunc</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a039ed9556cd2fedb3acadab72a99e821" name="a039ed9556cd2fedb3acadab72a99e821"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a039ed9556cd2fedb3acadab72a99e821">&#9670;&#160;</a></span>route() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Karm::Http::Router::route </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a>&#160;</td>
+          <td class="paramname"><em>pattern</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Handler.html">Handler</a> &gt;&#160;</td>
+          <td class="paramname"><em>handler</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
