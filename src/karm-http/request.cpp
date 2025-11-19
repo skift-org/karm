@@ -12,12 +12,17 @@ import :method;
 
 namespace Karm::Http {
 
+export using RouteParams = Map<String, String>;
+
 export struct Request {
     Method method;
     Ref::Url url;
     Version version;
     Header header;
     Opt<Rc<Body>> body;
+
+    // Used by the router to pass path params
+    RouteParams routeParams = {};
 
     static Rc<Request> from(Method method, Ref::Url url, Opt<Rc<Body>> body = NONE) {
         auto req = makeRc<Request>();

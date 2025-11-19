@@ -13,12 +13,31 @@ import :transport;
 
 namespace Karm::Http {
 
-export using Params = Map<String, String>;
-
-export struct Service {
-    virtual ~Service() = default;
+export struct Handler {
+    virtual ~Handler() = default;
     virtual Async::Task<> handleAsync(Rc<Request>, Rc<Response::Writer>) = 0;
 };
+
+template <typename F>
+concept HandlerFunc = requires(F f, Rc<Request> req, Rc<Response::Writer> resp) {
+    { f(req, resp) } -> Meta::Same<Async::Task<>>;
+};
+
+template <HandlerFunc F>
+Rc<Handler> makeHandler(F func) {
+    struct FuncHandler : Handler {
+        F _func;
+
+        FuncHandler(F func) : _func(std::move(func)) {}
+
+        [[clang::coro_wrapper]]
+        Async::Task<> handleAsync(Rc<Request> req, Rc<Response::Writer> resp) override {
+            return _func(req, resp);
+        }
+    };
+
+    return makeRc<FuncHandler>(func);
+}
 
 export struct ServerProps {
     String name = "Karm HTTP Server"s;
@@ -26,11 +45,11 @@ export struct ServerProps {
 };
 
 export struct Server {
-    static Rc<Server> simple(Rc<Service> srv, ServerProps const& props) {
-        return makeRc<Server>(srv, props);
+    static Rc<Server> simple(Rc<Handler> handler, ServerProps const& props) {
+        return makeRc<Server>(handler, props);
     }
 
-    Rc<Service> _srv;
+    Rc<Handler> _handler;
     ServerProps _props;
 
     Async::Task<Rc<Request>> _recvRequestAsync(Rc<Sys::TcpConnection> conn) {
@@ -88,7 +107,7 @@ export struct Server {
         logInfo("{} {} {}", req->method, req->url, req->version);
         auto resp = makeRc<ResponseWriter>(std::move(conn));
         resp->header.put(Header::SERVER, _props.name);
-        co_trya$(_srv->handleAsync(req, resp));
+        co_trya$(_handler->handleAsync(req, resp));
         co_return Ok();
     }
 
@@ -104,9 +123,14 @@ export struct Server {
 
 // MARK: Serverless ------------------------------------------------------------
 
-export Async::Task<> servAsync(Rc<Service> srv, ServerProps const& props = {}) {
-    auto server = Server::simple(srv, props);
+export Async::Task<> serveAsync(Rc<Handler> handler, ServerProps const& props = {}) {
+    auto server = Server::simple(handler, props);
     co_return co_await server->serveAsync();
+}
+
+export [[clang::coro_wrapper]]
+Async::Task<> serveAsync(HandlerFunc auto handler, ServerProps const& props = {}) {
+    return serveAsync(makeHandler(handler, props));
 }
 
 } // namespace Karm::Http

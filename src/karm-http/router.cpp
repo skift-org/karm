@@ -5,6 +5,8 @@ module;
 export module Karm.Http:router;
 
 import :server;
+import :response;
+import :request;
 
 namespace Karm::Http {
 
@@ -32,8 +34,18 @@ export struct RoutePattern {
     Vec<Segment> _segments;
 
     static RoutePattern parse(Io::SScan& s) {
+        auto method = parseMethod(s).unwrap("invalid pattern method");
+        return parse(method, s);
+    }
+
+    static RoutePattern parse(Str str) {
+        Io::SScan scan{str};
+        return parse(scan);
+    }
+
+    static RoutePattern parse(Method method, Io::SScan& s) {
         RoutePattern p;
-        p._method = parseMethod(s).unwrap("invalid pattern method");
+        p._method = method;
         s.skip(Re::space());
         if (s.peek() != '/')
             p._host = s.token(Re::until('/'_re));
@@ -61,19 +73,19 @@ export struct RoutePattern {
         return p;
     }
 
-    static RoutePattern parse(Str str) {
+    static RoutePattern parse(Method method, Str str) {
         Io::SScan scan{str};
-        return parse(scan);
+        return parse(method, scan);
     }
 
-    Opt<Params> match(Method method, Ref::Url const& url) {
+    Opt<RouteParams> match(Method method, Ref::Url const& url) {
         if (_method != method)
             return NONE;
 
         if (not Glob::matchGlob(_host, url.host.str()))
             return NONE;
 
-        Params params;
+        RouteParams params;
 
         Cursor parts = url.path.parts();
 
@@ -123,17 +135,55 @@ export struct RoutePattern {
     }
 };
 
-using RouteHandlerAsync = SharedFunc<Async::Task<>(Rc<Request>, Rc<Response::Writer>)>;
+export struct Router : Handler {
+    Vec<Tuple<RoutePattern, Rc<Handler>>> _routes;
 
-export struct Router : Service {
-    Vec<Tuple<RoutePattern, RouteHandlerAsync>> _routes;
-
-    void route(RoutePattern pattern, RouteHandlerAsync handlerAsync) {
-        _routes.emplaceBack(pattern, handlerAsync);
+    void route(RoutePattern pattern, Rc<Handler> handler) {
+        _routes.emplaceBack(pattern, handler);
     }
 
-    void route(Str pattern, RouteHandlerAsync handlerAsync) {
-        route(RoutePattern::parse(pattern), handlerAsync);
+    void route(RoutePattern pattern, HandlerFunc auto handlerFunc) {
+        return route(pattern, makeHandler(std::move(handlerFunc)));
+    }
+
+    void route(Str pattern, Rc<Handler> handler) {
+        route(RoutePattern::parse(pattern), handler);
+    }
+
+    void route(Str pattern, HandlerFunc auto handlerFunc) {
+        route(RoutePattern::parse(pattern), makeHandler(std::move(handlerFunc)));
+    }
+
+    void get(Str pattern, Rc<Handler> handler) {
+        route(RoutePattern::parse(GET, pattern), handler);
+    }
+
+    void get(Str pattern, HandlerFunc auto handlerFunc) {
+        route(RoutePattern::parse(GET, pattern), makeHandler(std::move(handlerFunc)));
+    }
+
+    void post(Str pattern, Rc<Handler> handler) {
+        route(RoutePattern::parse(POST, pattern), handler);
+    }
+
+    void post(Str pattern, HandlerFunc auto handlerFunc) {
+        route(RoutePattern::parse(POST, pattern), makeHandler(std::move(handlerFunc)));
+    }
+
+    void put(Str pattern, Rc<Handler> handler) {
+        route(RoutePattern::parse(PUT, pattern), handler);
+    }
+
+    void put(Str pattern, HandlerFunc auto handlerFunc) {
+        route(RoutePattern::parse(PUT, pattern), makeHandler(std::move(handlerFunc)));
+    }
+
+    void delete_(Str pattern, Rc<Handler> handler) {
+        route(RoutePattern::parse(DELETE, pattern), handler);
+    }
+
+    void delete_(Str pattern, HandlerFunc auto handlerFunc) {
+        route(RoutePattern::parse(DELETE, pattern), makeHandler(std::move(handlerFunc)));
     }
 
     Async::Task<> _handle404Async(Rc<Response::Writer> resp) {
@@ -141,14 +191,16 @@ export struct Router : Service {
         co_return co_await resp->writeStrAsync("404 Not Found"s);
     }
 
+    [[clang::coro_wrapper]]
     Async::Task<> handleAsync(Rc<Request> req, Rc<Response::Writer> resp) override {
         for (auto& [pattern, handler] : _routes) {
             if (auto params = pattern.match(req->method, req->url)) {
-                co_return co_await handler(req, resp);
+                req->routeParams = params.take();
+                return handler->handleAsync(req, resp);
             }
         }
 
-        co_return co_await _handle404Async(resp);
+        return _handle404Async(resp);
     }
 };
 

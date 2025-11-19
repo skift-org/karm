@@ -73,6 +73,27 @@ export struct Client : Transport {
 
         return doAsync(req);
     }
+
+    [[clang::coro_wrapper]]
+    Async::Task<Rc<Response>> putAsync(Ref::Url url, Rc<Body> body) {
+        auto req = makeRc<Request>();
+        req->method = Method::PUT;
+        req->url = url;
+        req->body = body;
+        req->header.put(Header::HOST, url.host.str());
+
+        return doAsync(req);
+    }
+
+    [[clang::coro_wrapper]]
+    Async::Task<Rc<Response>> deleteAsync(Ref::Url url) {
+        auto req = makeRc<Request>();
+        req->method = Method::DELETE;
+        req->url = url;
+        req->header.put(Header::HOST, url.host.str());
+
+        return doAsync(req);
+    }
 };
 
 // MARK: Clientless ------------------------------------------------------------
@@ -99,6 +120,16 @@ export Async::Task<Rc<Response>> headAsync(Ref::Url url) {
 export Async::Task<Rc<Response>> postAsync(Ref::Url url, Rc<Body> body) {
     auto client = defaultClient();
     co_return co_await client->postAsync(url, body);
+}
+
+export Async::Task<Rc<Response>> putAsync(Ref::Url url, Rc<Body> body) {
+    auto client = defaultClient();
+    co_return co_await client->putAsync(url, body);
+}
+
+export Async::Task<Rc<Response>> deleteAsync(Ref::Url url) {
+    auto client = defaultClient();
+    co_return co_await client->deleteAsync(url);
 }
 
 export Async::Task<Rc<Response>> doAsync(Rc<Request> request) {
