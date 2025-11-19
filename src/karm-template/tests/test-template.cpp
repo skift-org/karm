@@ -17,16 +17,14 @@ test$("template-eval") {
         return Ok();
     };
 
-    "bundle://id/fsdhflskdhf"_url
-
-        // Basic value printing
-        try$(testCase(
-            "{{.foo}}",
-            {
-                {"foo"s, "bar"s},
-            },
-            "bar"s
-        ));
+    // Basic value printing
+    try$(testCase(
+        "{{.foo}}"s,
+        {
+            {"foo"s, "bar"s},
+        },
+        "bar"s
+    ));
 
     // Text with interpolation
     try$(testCase(
