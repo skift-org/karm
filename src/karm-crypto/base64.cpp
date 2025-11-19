@@ -54,4 +54,87 @@ export Res<> base64Decode(Io::SScan& s, Io::Writer& out, Base64Props props = {})
     return Ok();
 }
 
+export constexpr usize base64EncodedLen(usize n) {
+    return ((n + 2) / 3) * 4;
+}
+
+export Res<> base64Encode(Io::Reader& in, Io::Emit& e) {
+    Array<u8, 1024> inBuf;
+    Array<u8, 3> triple;
+    usize tripleLen = 0;
+
+    auto flushTriple = [&](usize len) -> Res<> {
+        Array<u8, 4> out;
+
+        switch (len) {
+        case 3: {
+            u8 b0 = triple[0];
+            u8 b1 = triple[1];
+            u8 b2 = triple[2];
+
+            out[0] = _MAP[(b0 >> 2) & 0x3F];
+            out[1] = _MAP[((b0 & 0x03) << 4) | (b1 >> 4)];
+            out[2] = _MAP[((b1 & 0x0F) << 2) | (b2 >> 6)];
+            out[3] = _MAP[b2 & 0x3F];
+            break;
+        }
+
+        case 2: {
+            u8 b0 = triple[0];
+            u8 b1 = triple[1];
+
+            out[0] = _MAP[(b0 >> 2) & 0x3F];
+            out[1] = _MAP[((b0 & 0x03) << 4) | (b1 >> 4)];
+            out[2] = _MAP[(b1 & 0x0F) << 2];
+            out[3] = '=';
+            break;
+        }
+
+        case 1: {
+            u8 b0 = triple[0];
+
+            out[0] = _MAP[(b0 >> 2) & 0x3F];
+            out[1] = _MAP[(b0 & 0x03) << 4];
+            out[2] = '=';
+            out[3] = '=';
+            break;
+        }
+
+        default:
+            return Ok();
+        }
+
+        try$(e.write(out));
+        return Ok();
+    };
+
+    for (;;) {
+        usize n = try$(in.read(inBuf));
+        if (n == 0)
+            break;
+
+        for (usize i = 0; i < n; ++i) {
+            triple[tripleLen++] = inBuf[i];
+
+            if (tripleLen == 3) {
+                try$(flushTriple(3));
+                tripleLen = 0;
+            }
+        }
+    }
+
+    if (tripleLen)
+        try$(flushTriple(tripleLen));
+
+    return Ok();
+}
+
+export String base64Encode(Bytes in) {
+    Io::BufReader br = in;
+    Io::StringWriter sw{base64EncodedLen(in.len())};
+    Io::Emit e{sw};
+    base64Encode(br, e).unwrap();
+    return sw.take();
+}
+
 } // namespace Karm::Crypto
