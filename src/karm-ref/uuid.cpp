@@ -64,6 +64,10 @@ export struct Uuid {
         Crypto::hexEncode(d, e).unwrap();
     }
 
+    String unparsed() const {
+        return Io::toStr(*this);
+    }
+
     Res<> serialize(Serde::Serializer& ser) const {
         return Serde::serialize(ser, Io::toStr(*this));
     }
