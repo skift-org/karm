@@ -54,6 +54,8 @@ export struct RoutePattern {
 
         while (not s.ended() and s.skip('/')) {
             Segment seg;
+            if (seenExtra)
+                panic("EXTRA segment must be the last segment");
             if (s.skip('{')) {
                 seg.type = Segment::PARAM;
                 seg.value = s.token(Re::until('}'_re | "..."_re));
@@ -64,10 +66,14 @@ export struct RoutePattern {
                     seenExtra = true;
                 }
                 s.skip('}');
+            } else if (s.rem() == 0) {
+                // ignore trailing slash
+                break;
             } else {
                 seg.type = Segment::PATH;
                 seg.value = s.token(Re::until('/'_re));
             }
+            p._segments.pushBack(seg);
         }
 
         return p;
@@ -194,6 +200,7 @@ export struct Router : Handler {
     [[clang::coro_wrapper]]
     Async::Task<> handleAsync(Rc<Request> req, Rc<Response::Writer> resp) override {
         for (auto& [pattern, handler] : _routes) {
+            logDebug("trying pattern {}: {}", pattern, req->url);
             if (auto params = pattern.match(req->method, req->url)) {
                 req->routeParams = params.take();
                 return handler->handleAsync(req, resp);
