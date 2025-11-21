@@ -329,6 +329,231 @@ struct [[nodiscard]] Opt {
     }
 };
 
+export template <typename T>
+struct [[nodiscard]] Opt<T&> {
+    T* _ptr;
+
+    always_inline constexpr Opt()
+        : _ptr(nullptr) {}
+
+    always_inline constexpr Opt(None)
+        : _ptr(nullptr) {}
+
+    always_inline constexpr Opt(T& value)
+        : _ptr(&value) {}
+
+    // Copy / move -------------------------------------------------------------
+
+    always_inline constexpr Opt(Opt const& other) = default;
+    always_inline constexpr Opt(Opt&& other) = default;
+
+    always_inline constexpr Opt& operator=(Opt const& other) = default;
+    always_inline constexpr Opt& operator=(Opt&& other) = default;
+
+    // Assign from None / value -----------------------------------------------
+
+    always_inline constexpr Opt& operator=(None) {
+        _ptr = nullptr;
+        return *this;
+    }
+
+    always_inline constexpr Opt& operator=(T& value) {
+        _ptr = &value;
+        return *this;
+    }
+
+    // State -------------------------------------------------------------------
+
+    always_inline constexpr explicit operator bool() const {
+        return _ptr != nullptr;
+    }
+
+    always_inline constexpr bool has() const {
+        return _ptr != nullptr;
+    }
+
+    always_inline constexpr void clear() {
+        _ptr = nullptr;
+    }
+
+    always_inline constexpr None none() const {
+        return NONE;
+    }
+
+    // Access ------------------------------------------------------------------
+
+    always_inline constexpr T* operator->() lifetimebound {
+        if (not _ptr) [[unlikely]]
+            panic("unwrapping None");
+        return _ptr;
+    }
+
+    always_inline constexpr T& operator*() lifetimebound {
+        if (not _ptr) [[unlikely]]
+            panic("unwrapping None");
+        return *_ptr;
+    }
+
+    always_inline constexpr T const* operator->() const lifetimebound {
+        if (not _ptr) [[unlikely]]
+            panic("unwrapping None");
+        return _ptr;
+    }
+
+    always_inline constexpr T const& operator*() const lifetimebound {
+        if (not _ptr) [[unlikely]]
+            panic("unwrapping None");
+        return *_ptr;
+    }
+
+    // "emplace" just rebinds the reference -----------------------------------
+
+    always_inline constexpr T& emplace(T& value) lifetimebound {
+        _ptr = &value;
+        return *_ptr;
+    }
+
+    // Unwrap / default --------------------------------------------------------
+
+    always_inline constexpr T& unwrap(char const* msg = "unwraping none") lifetimebound {
+        if (not _ptr) [[unlikely]]
+            panic(msg);
+        return *_ptr;
+    }
+
+    always_inline constexpr T const& unwrap(char const* msg = "unwraping none") const lifetimebound {
+        if (not _ptr) [[unlikely]]
+            panic(msg);
+        return *_ptr;
+    }
+
+    always_inline constexpr T& unwrapOr(T& other) const lifetimebound {
+        if (_ptr)
+            return *_ptr;
+        return other;
+    }
+
+    always_inline constexpr T& unwrapOrDefault(T& other) const lifetimebound {
+        if (_ptr)
+            return *_ptr;
+        return other;
+    }
+
+    always_inline constexpr T& unwrapOrElse(auto f) const lifetimebound {
+        if (_ptr)
+            return *_ptr;
+        return f();
+    }
+
+    always_inline constexpr T& take(char const* msg = "unwraping none") {
+        if (not _ptr) [[unlikely]]
+            panic(msg);
+        T& v = *_ptr;
+        _ptr = nullptr;
+        return v;
+    }
+
+    // visit / map -------------------------------------------------------------
+
+    always_inline constexpr auto visit(auto visitor)
+        -> decltype(visitor(*_ptr)) {
+        if (_ptr)
+            return visitor(*_ptr);
+        return decltype(visitor(*_ptr)){};
+    }
+
+    always_inline constexpr auto visit(auto visitor) const
+        -> decltype(visitor(*_ptr)) {
+        if (_ptr)
+            return visitor(*_ptr);
+        return decltype(visitor(*_ptr)){};
+    }
+
+    always_inline constexpr auto map(auto f) -> Opt<decltype(f(unwrap()))> {
+        if (_ptr)
+            return {f(unwrap())};
+        return {NONE};
+    }
+
+    // Call operator -----------------------------------------------------------
+
+    template <typename... Args>
+    always_inline constexpr auto operator()(Args&&... args) {
+        using Ret = Meta::Ret<T&, Args...>;
+        using OptRet = Opt<Ret>;
+
+        if constexpr (Meta::Same<void, Ret>) {
+            if (not _ptr)
+                return false;
+            (*_ptr)(std::forward<Args>(args)...);
+            return true;
+        } else {
+            if (not _ptr)
+                return OptRet{NONE};
+            return OptRet{(*_ptr)(std::forward<Args>(args)...)};
+        }
+    }
+
+    template <typename... Args>
+    always_inline constexpr auto operator()(Args&&... args) const {
+        using Ret = Meta::Ret<T const&, Args...>;
+        using OptRet = Opt<Ret>;
+
+        if constexpr (Meta::Same<void, Ret>) {
+            if (not _ptr)
+                return false;
+            (*_ptr)(std::forward<Args>(args)...);
+            return true;
+        } else {
+            if (not _ptr)
+                return OptRet{NONE};
+            return OptRet{(*_ptr)(std::forward<Args>(args)...)};
+        }
+    }
+
+    // Comparisons -------------------------------------------------------------
+
+    always_inline constexpr bool operator==(None) const {
+        return not _ptr;
+    }
+
+    template <typename U>
+        requires Meta::Equatable<T, U>
+    always_inline constexpr bool operator==(U const& other) const {
+        if (_ptr)
+            return **this == other;
+        return false;
+    }
+
+    template <typename U>
+        requires Meta::Comparable<T, U>
+    always_inline constexpr std::partial_ordering operator<=>(U const& other) const {
+        if (_ptr)
+            return **this <=> other;
+        return std::partial_ordering::unordered;
+    }
+
+    always_inline constexpr bool operator==(Opt const& other) const {
+        if constexpr (Meta::Equatable<T>)
+            if (_ptr and other._ptr)
+                return **this == *other;
+        return not _ptr and not other._ptr;
+    }
+
+    always_inline constexpr std::partial_ordering operator<=>(Opt const& other) const {
+        if constexpr (Meta::Comparable<T>)
+            if (_ptr and other._ptr)
+                return **this <=> *other;
+        return std::partial_ordering::unordered;
+    }
+
+    always_inline u64 hash() const {
+        if (_ptr)
+            return hash(hash(true), *_ptr);
+        return hash(false);
+    }
+};
+
 export template <Nicheable T>
 struct [[nodiscard]] Opt<T> {
     union {

@@ -482,7 +482,7 @@ struct Formatter<bool> {
 
 export template <typename T>
 struct Formatter<Opt<T>> {
-    Formatter<T> formatter;
+    Formatter<Meta::RemoveConstVolatileRef<T>> formatter;
 
     void parse(SScan& scan) {
         if constexpr (requires() {
@@ -503,7 +503,7 @@ struct Formatter<Opt<T>> {
 
 export template <typename T>
 struct Formatter<Ok<T>> {
-    Formatter<T> formatter;
+    Formatter<Meta::RemoveConstVolatileRef<T>> formatter;
 
     void parse(SScan& scan) {
         if constexpr (requires() {
@@ -517,7 +517,7 @@ struct Formatter<Ok<T>> {
         if constexpr (Meta::Same<T, None>)
             return writer.writeStr("Ok"s);
         else
-            return formatter.format(writer, val.inner);
+            return formatter.format(writer, val.unwrap());
     }
 };
 
@@ -532,7 +532,7 @@ struct Formatter<Error> {
 
 export template <typename T, typename E>
 struct Formatter<Res<T, E>> {
-    Formatter<T> _fmtOk;
+    Formatter<Meta::RemoveConstVolatileRef<T>> _fmtOk;
     Formatter<E> _fmtErr;
 
     void parse(SScan& scan) {
