@@ -163,7 +163,7 @@ export Mime sniffBytes(Bytes bytes) {
         {Io::BPattern::from("77 4F 46 32", "FF FF FF FF"), {}, {}, "font/woff2"_mime},      // WOFF 2.0 "wOF2"
     };
 
-    for (auto p : patterns) {
+    for (auto const& p : patterns) {
         if (p.match(bytes))
             return p.mime;
     }
