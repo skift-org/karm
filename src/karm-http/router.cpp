@@ -200,7 +200,6 @@ export struct Router : Handler {
     [[clang::coro_wrapper]]
     Async::Task<> handleAsync(Rc<Request> req, Rc<Response::Writer> resp) override {
         for (auto& [pattern, handler] : _routes) {
-            logDebug("trying pattern {}: {}", pattern, req->url);
             if (auto params = pattern.match(req->method, req->url)) {
                 req->routeParams = params.take();
                 return handler->handleAsync(req, resp);

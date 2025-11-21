@@ -85,8 +85,8 @@ export struct Server {
                 resp.version = Version{1, 1};
                 resp.code = code;
                 resp.header = header;
-
-                Io::StringWriter sb;
+                // NOTE: Seems to be the average size of an HTTP header
+                Io::StringWriter sb{1024};
                 co_try$(resp.unparse(sb));
                 co_trya$(_conn->writeAsync(sb.bytes()));
                 _headerSent = true;
@@ -97,17 +97,37 @@ export struct Server {
                 if (not _headerSent) {
                     if (not header.has(Header::CONTENT_TYPE))
                         header.put(Header::CONTENT_TYPE, Ref::sniffBytes(buf).str());
+                    if (not header.has(Header::CONTENT_LENGTH))
+                        header.put(Header::CONTENT_LENGTH, Io::format("{}", buf.len()));
                     co_trya$(writeHeaderAsync(Code::OK));
                 }
                 co_return co_await _conn->writeAsync(buf);
             }
         };
 
-        auto req = co_trya$(_recvRequestAsync(conn));
-        logInfo("{} {} {}", req->method, req->url, req->version);
-        auto resp = makeRc<ResponseWriter>(std::move(conn));
-        resp->header.put(Header::SERVER, _props.name);
-        co_trya$(_handler->handleAsync(req, resp));
+        bool keepAlive = true;
+
+        while (keepAlive) {
+            auto req = co_trya$(_recvRequestAsync(conn));
+            logInfo("{} {} {}", req->method, req->url, req->version);
+            if (auto connection = req->header.access(Header::CONNECTION)) {
+                if (eqCi(connection->str(), "close"s)) {
+                    keepAlive = false;
+                } else if (eqCi(connection->str(), "keep-alive"s)) {
+                    keepAlive = true;
+                }
+            }
+
+            auto resp = makeRc<ResponseWriter>(conn);
+            resp->header.put(Header::SERVER, _props.name);
+            if (not keepAlive) {
+                resp->header.put(Header::CONNECTION, "close"s);
+            } else {
+                resp->header.put(Header::CONNECTION, "keep-alive"s);
+            }
+
+            co_trya$(_handler->handleAsync(req, resp));
+        }
         co_return Ok();
     }
 
