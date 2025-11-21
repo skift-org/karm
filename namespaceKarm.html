@@ -364,7 +364,11 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Ok.html">Ok</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Ok_3_01T_01_6_01_4.html">Ok&lt; T &amp; &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Opt.html">Opt</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Opt_3_01T_01_6_01_4.html">Opt&lt; T &amp; &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Opt_3_01T_01_4.html">Opt&lt; T &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1000,9 +1004,9 @@ requires requires(T const t) { { t.hash() } -&gt; Meta::Same&lt;<a class="el" hr
 <tr class="memitem:a14bdf48000357320ca3d38297c1a7d39"><td class="memTemplParams" colspan="2">template&lt;typename T , typename... Args&gt; </td></tr>
 <tr class="memitem:a14bdf48000357320ca3d38297c1a7d39"><td class="memTemplItemLeft" align="right" valign="top">export constexpr <a class="el" href="namespaceKarm.html#ad120fe892922685cda8fc248ea0e8ee2">Arc</a>&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceKarm.html#a14bdf48000357320ca3d38297c1a7d39">makeArc</a> (Args &amp;&amp;... args)</td></tr>
 <tr class="separator:a14bdf48000357320ca3d38297c1a7d39"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a492da09eaf05c551bba246da51a8ad9d"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:a492da09eaf05c551bba246da51a8ad9d"><td class="memTemplItemLeft" align="right" valign="top">export&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceKarm.html#a492da09eaf05c551bba246da51a8ad9d">Ok</a> (Args &amp;&amp;...) -&gt; <a class="el" href="structKarm_1_1Ok.html">Ok</a>&lt; <a class="el" href="namespaceKarm_1_1Meta.html#ab664a0c5ad4a62af27b8e8db9b61fa71">Meta::RemoveConstVolatileRef</a>&lt; Args &gt;... &gt;</td></tr>
-<tr class="separator:a492da09eaf05c551bba246da51a8ad9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a558ff25e84a8090d6a4c24631405c187"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a558ff25e84a8090d6a4c24631405c187"><td class="memTemplItemLeft" align="right" valign="top">export&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceKarm.html#a558ff25e84a8090d6a4c24631405c187">Ok</a> (T &amp;&amp;) -&gt; <a class="el" href="structKarm_1_1Ok.html">Ok</a>&lt; <a class="el" href="namespaceKarm_1_1Meta.html#ab664a0c5ad4a62af27b8e8db9b61fa71">Meta::RemoveConstVolatileRef</a>&lt; T &gt; &gt;</td></tr>
+<tr class="separator:a558ff25e84a8090d6a4c24631405c187"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a49e296cf59d67b88d9caf192af1d9951"><td class="memTemplParams" colspan="2">template&lt;StaticEncoding Source, StaticEncoding Target&gt; </td></tr>
 <tr class="memitem:a49e296cf59d67b88d9caf192af1d9951"><td class="memTemplItemLeft" align="right" valign="top">export <a class="el" href="namespaceKarm.html#a7826e564b525f4f5a2a0e63f961c2dbd">usize</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceKarm.html#a49e296cf59d67b88d9caf192af1d9951">transcodeLen</a> (<a class="el" href="structKarm_1_1Cursor.html">Cursor</a>&lt; typename Source::Unit &gt; input)</td></tr>
 <tr class="separator:a49e296cf59d67b88d9caf192af1d9951"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -6637,20 +6641,20 @@ template&lt;Sliceable S, typename T  = typename S::Inner&gt; </div>
 
 </div>
 </div>
-<a id="a492da09eaf05c551bba246da51a8ad9d" name="a492da09eaf05c551bba246da51a8ad9d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a492da09eaf05c551bba246da51a8ad9d">&#9670;&#160;</a></span>Ok()</h2>
+<a id="a558ff25e84a8090d6a4c24631405c187" name="a558ff25e84a8090d6a4c24631405c187"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a558ff25e84a8090d6a4c24631405c187">&#9670;&#160;</a></span>Ok()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename... Args&gt; </div>
+template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">export <a class="el" href="structKarm_1_1Ok.html">Karm::Ok</a> </td>
           <td>(</td>
-          <td class="paramtype">Args &amp;&amp;&#160;</td>
-          <td class="paramname"><em>...</em></td><td>)</td>
-          <td> -&gt;  <a class="el" href="structKarm_1_1Ok.html">Ok</a>&lt; <a class="el" href="namespaceKarm_1_1Meta.html#ab664a0c5ad4a62af27b8e8db9b61fa71">Meta::RemoveConstVolatileRef</a>&lt; Args &gt;... &gt;</td>
+          <td class="paramtype">T &amp;&amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td> -&gt;  <a class="el" href="structKarm_1_1Ok.html">Ok</a>&lt; <a class="el" href="namespaceKarm_1_1Meta.html#ab664a0c5ad4a62af27b8e8db9b61fa71">Meta::RemoveConstVolatileRef</a>&lt; T &gt; &gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">

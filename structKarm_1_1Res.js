@@ -1,6 +1,7 @@
 var structKarm_1_1Res =
 [
     [ "Inner", "structKarm_1_1Res.html#ace86c7c3e76e98ea0a69c7308f5f8289", null ],
+    [ "Value", "structKarm_1_1Res.html#a8347cc4acbdf9ec596ac1d1bac5dc459", null ],
     [ "Res", "structKarm_1_1Res.html#a08f31cd01e1de338b254918901ce1ecd", null ],
     [ "Res", "structKarm_1_1Res.html#ac1f89be51f8e28f94b75c779a399fde8", null ],
     [ "Res", "structKarm_1_1Res.html#a752f2c9c54abbe21dbabad592b11b030", null ],
@@ -22,7 +23,7 @@ var structKarm_1_1Res =
     [ "take", "structKarm_1_1Res.html#a893f08f39e752aa855ee2b4fb25cdd38", null ],
     [ "unwrap", "structKarm_1_1Res.html#a06380a4e1fcb8f14e0ac0dc5998b288b", null ],
     [ "unwrap", "structKarm_1_1Res.html#a884492f90e370ec82a8c71b2444a338c", null ],
-    [ "unwrapOr", "structKarm_1_1Res.html#a14dba26dcad0fa59cd021ad9ee5dd662", null ],
-    [ "unwrapOrDefault", "structKarm_1_1Res.html#ab35a9c03b02bae8c23b0103f2b8e11e6", null ],
-    [ "unwrapOrElse", "structKarm_1_1Res.html#acc7b718ba226190744e88303f1f6eaf7", null ]
+    [ "unwrapOr", "structKarm_1_1Res.html#acd81a7a1ae7b39dab08202f11479381d", null ],
+    [ "unwrapOrDefault", "structKarm_1_1Res.html#ac17d3b8c642636db3f24cbb4ea4a4ffa", null ],
+    [ "unwrapOrElse", "structKarm_1_1Res.html#aec90bb3d941d3b9398ac09ce970eaf0a", null ]
 ];

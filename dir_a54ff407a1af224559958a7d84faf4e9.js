@@ -10,6 +10,7 @@ var dir_a54ff407a1af224559958a7d84faf4e9 =
     [ "test-map.cpp", "test-map_8cpp.html", "test-map_8cpp" ],
     [ "test-opt.cpp", "test-opt_8cpp.html", "test-opt_8cpp" ],
     [ "test-rc.cpp", "test-rc_8cpp.html", "test-rc_8cpp" ],
+    [ "test-result.cpp", "test-result_8cpp.html", "test-result_8cpp" ],
     [ "test-ring.cpp", "test-ring_8cpp.html", "test-ring_8cpp" ],
     [ "test-set.cpp", "test-set_8cpp.html", "test-set_8cpp" ],
     [ "test-sieve.cpp", "test-sieve_8cpp.html", "test-sieve_8cpp" ],

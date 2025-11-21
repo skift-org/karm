@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['value_0',['Value',['../structKarm_1_1Iter.html#a234b30938a58947390b19c1902f11037',1,'Karm::Iter']]],
+  ['value_0',['Value',['../structKarm_1_1Iter.html#a234b30938a58947390b19c1902f11037',1,'Karm::Iter::Value()'],['../structKarm_1_1Res.html#a8347cc4acbdf9ec596ac1d1bac5dc459',1,'Karm::Res::Value()']]],
   ['vec_1',['Vec',['../namespaceKarm.html#a1b428ca1be30466bf8f6acae574ee5c6',1,'Karm']]],
   ['vec2au_2',['Vec2Au',['../namespaceKarm.html#ad47961b6f80b71e0d07a35ff03cd5691',1,'Karm']]],
   ['vec2f_3',['Vec2f',['../namespaceKarm_1_1Math.html#a613db4fdffaade82aa2708cabea92fc5',1,'Karm::Math']]],
