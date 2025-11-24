@@ -286,3 +286,4 @@ struct Karm::Io::Formatter<Karm::Ref::Url> {
         return url.unparse(writer);
     }
 };
+

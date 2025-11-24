@@ -9,6 +9,7 @@
     "requires": [
         "karm-core",
         "karm-sys",
-        "karm-logger"
+        "karm-logger",
+        "karm-debug"
     ]
 }
