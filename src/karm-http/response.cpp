@@ -32,6 +32,11 @@ export struct Response {
             co_trya$(writeAsync(bytes(str)));
             co_return Ok();
         }
+
+        Async::Task<> writeFileAsync(Ref::Url const& url) {
+            auto data = co_try$(Sys::readAllUtf8(url));
+            co_return co_await writeStrAsync(data);
+        }
     };
 
     static Res<Response> parse(Io::SScan& s) {
