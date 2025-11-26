@@ -18,6 +18,7 @@ export struct Response {
     Opt<Rc<Body>> body;
 
     struct Writer : Aio::Writer {
+        Code code = OK;
         Header header;
 
         virtual Async::Task<> writeHeaderAsync(Code code) = 0;

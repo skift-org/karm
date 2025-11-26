@@ -55,11 +55,197 @@ struct ContentBody : Body {
 };
 
 struct ChunkedBody : Body {
-    Vec<u8> _buf;
-    Sys::TcpConnection _conn;
+    Vec<u8> _buf;   // buffer of raw bytes (chunk headers + data)
+    usize _pos = 0; // current read position in _buf
+    Rc<Sys::TcpConnection> _conn;
 
-    ChunkedBody(Bytes resumes, Sys::TcpConnection conn)
-        : _buf(resumes), _conn(std::move(conn)) {}
+    usize _chunkRemaining = 0; // bytes left to read in current chunk
+    bool _eof = false;         // reached terminating 0-chunk
+
+    ChunkedBody(Bytes resumes, Rc<Sys::TcpConnection> conn)
+        : _buf(resumes),
+          _conn(std::move(conn)) {
+    }
+
+    usize _available() const {
+        return _buf.len() - _pos;
+    }
+
+    // Compact buffer when we've consumed a good part of it.
+    void _compact() {
+        if (_pos == 0)
+            return;
+
+        if (_pos == _buf.len()) {
+            _buf = {};
+            _pos = 0;
+            return;
+        }
+
+        // Keep only [ _pos, end )
+        _buf = Vec<u8>(sub(_buf, _pos, _buf.len()));
+        _pos = 0;
+    }
+
+    Async::Task<> _fillAsync() {
+        if (_eof)
+            co_return Ok();
+
+        _compact();
+
+        Array<u8, BUF_SIZE> tmp = {};
+        usize n = co_trya$(_conn->readAsync(tmp));
+        if (n == 0) {
+            // connection closed unexpectedly
+            _eof = true;
+            co_return Ok();
+        }
+
+        for (usize i = 0; i < n; ++i)
+            _buf.pushBack(tmp[i]);
+
+        co_return Ok();
+    }
+
+    Async::Task<> _ensureAsync(usize need) {
+        while (_available() < need && not _eof) {
+            co_trya$(_fillAsync());
+            if (_available() == 0 && _eof)
+                break;
+        }
+        co_return Ok();
+    }
+
+    // Read a single CRLF-terminated line into `line` (without CRLF).
+    // Returns false on EOF before a full line.
+    Async::Task<bool> _readLineAsync(Bytes& line) {
+        while (true) {
+            for (usize i = _pos; i + 1 < _buf.len(); ++i) {
+                if (_buf[i] == '\r' && _buf[i + 1] == '\n') {
+                    line = sub(_buf, _pos, i);
+                    _pos = i + 2;
+                    co_return true;
+                }
+            }
+
+            if (_eof) {
+                co_return false;
+            }
+
+            co_trya$(_fillAsync());
+        }
+    }
+
+    static usize _hexDigit(u8 c) {
+        if (c >= '0' && c <= '9')
+            return c - '0';
+        if (c >= 'a' && c <= 'f')
+            return 10 + (c - 'a');
+        if (c >= 'A' && c <= 'F')
+            return 10 + (c - 'A');
+        return Limits<usize>::MAX;
+    }
+
+    static Res<usize> _parseChunkSize(Bytes line) {
+        usize size = 0;
+        for (usize i = 0; i < line.len(); ++i) {
+            u8 c = line[i];
+
+            if (c == ';')
+                break;
+
+            auto d = _hexDigit(c);
+            if (d == Limits<usize>::MAX)
+                continue;
+
+            size = (size << 4) | d;
+        }
+        return Ok(size);
+    }
+
+    Async::Task<> _readNextChunkHeaderAsync() {
+        Bytes line{};
+        bool ok = co_trya$(_readLineAsync(line));
+        if (not ok) {
+            _eof = true;
+            co_return Ok();
+        }
+
+        auto size = co_try$(_parseChunkSize(line));
+        if (size == 0) {
+            while (true) {
+                Bytes trailer{};
+                bool has = co_trya$(_readLineAsync(trailer));
+                if (not has)
+                    break;
+                if (trailer.len() == 0)
+                    break;
+            }
+            _eof = true;
+            _chunkRemaining = 0;
+            co_return Ok();
+        }
+
+        _chunkRemaining = size;
+        co_return Ok();
+    }
+
+    Async::Task<usize> readAsync(MutBytes out) override {
+        if (_eof)
+            co_return 0;
+
+        usize written = 0;
+
+        while (written < out.len()) {
+            if (_eof)
+                break;
+
+            // Need a new chunk?
+            if (_chunkRemaining == 0) {
+                co_trya$(_readNextChunkHeaderAsync());
+                if (_eof)
+                    break;
+            }
+
+            if (_chunkRemaining == 0)
+                continue;
+
+            usize toCopy = min(_chunkRemaining, out.len() - written);
+            co_trya$(_ensureAsync(toCopy));
+            usize avail = min(toCopy, _available());
+
+            if (avail == 0) {
+                // EOF mid-chunk
+                _eof = true;
+                break;
+            }
+
+            copy(sub(_buf, _pos, _pos + avail), mutSub(out, written, written + avail));
+
+            _pos += avail;
+            written += avail;
+            _chunkRemaining -= avail;
+
+            // Finished this chunk: must consume trailing CRLF.
+            if (_chunkRemaining == 0) {
+                co_trya$(_ensureAsync(2));
+                if (_available() >= 2 &&
+                    _buf[_pos] == '\r' &&
+                    _buf[_pos + 1] == '\n') {
+                    _pos += 2;
+                } else {
+                    // invalid framing, bail out
+                    _eof = true;
+                    break;
+                }
+            }
+        }
+
+        if (written == 0 && _eof)
+            co_return 0;
+
+        co_return written;
+    }
 };
 
 struct HttpTransport : Transport {
@@ -83,7 +269,12 @@ struct HttpTransport : Transport {
         if (auto contentLength = response.header.contentLength()) {
             response.body = makeRc<ContentBody>(reader.bytes(), conn, contentLength.unwrap());
         } else if (auto transferEncoding = response.header.tryGet(Header::TRANSFER_ENCODING)) {
-            logWarn("Transfer-Encoding: {} not supported", transferEncoding);
+            // For now we only support plain "chunked".
+            if (*transferEncoding == "chunked") {
+                response.body = makeRc<ChunkedBody>(reader.bytes(), conn);
+            } else {
+                logWarn("Transfer-Encoding: {} not supported", *transferEncoding);
+            }
         } else {
             // NOTE: When there is no content length, and no transfer encoding,
             //       we read until the server closes the socket.

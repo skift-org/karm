@@ -99,7 +99,7 @@ export struct Server {
                         header.put(Header::CONTENT_TYPE, Ref::sniffBytes(buf).str());
                     if (not header.has(Header::CONTENT_LENGTH))
                         header.put(Header::CONTENT_LENGTH, Io::format("{}", buf.len()));
-                    co_trya$(writeHeaderAsync(Code::OK));
+                    co_trya$(writeHeaderAsync(code));
                 }
                 co_return co_await _conn->writeAsync(buf);
             }
