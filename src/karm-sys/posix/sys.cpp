@@ -627,7 +627,7 @@ Res<Ref::Url> pwd() {
 
 Async::Task<Vec<Ip>> ipLookupAsync(Str host) {
     struct addrinfo hints = {};
-    hints.ai_family = AF_UNSPEC;
+    hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
 
     Vec<Ip> ips;
@@ -638,8 +638,29 @@ Async::Task<Vec<Ip>> ipLookupAsync(Str host) {
     }
 
     struct addrinfo* res;
-    if (getaddrinfo(host.buf(), nullptr, &hints, &res) < 0)
-        co_return Posix::fromLastErrno();
+    auto result = getaddrinfo(host.buf(), nullptr, &hints, &res);
+    if (result != 0) {
+        switch (result) {
+        case EAI_ADDRFAMILY:
+            co_return Error::invalidInput("address family not supported");
+        case EAI_AGAIN:
+            co_return Error::timedOut("temporary failure in name resolution");
+        case EAI_FAIL:
+            co_return Error::other("non-recoverable failure in name resolution");
+        case EAI_FAMILY:
+            co_return Error::invalidInput("address family not supported");
+        case EAI_MEMORY:
+            co_return Error::outOfMemory("memory allocation failure");
+        case EAI_NONAME:
+            co_return Error::notFound("name or service not known");
+        case EAI_SERVICE:
+            co_return Error::invalidInput("service not supported for socket type");
+        case EAI_SOCKTYPE:
+            co_return Error::invalidInput("socket type not supported");
+        default:
+            co_return Posix::fromLastErrno();
+        }
+    }
 
     for (auto* p = res; p; p = p->ai_next) {
         if (p->ai_family == AF_INET) {
