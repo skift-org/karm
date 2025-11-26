@@ -64,7 +64,7 @@ export Res<> base64Encode(Io::Reader& in, Io::Emit& e) {
     usize tripleLen = 0;
 
     auto flushTriple = [&](usize len) -> Res<> {
-        Array<u8, 4> out;
+        Array<char, 4> out;
 
         switch (len) {
         case 3: {
@@ -104,7 +104,8 @@ export Res<> base64Encode(Io::Reader& in, Io::Emit& e) {
             return Ok();
         }
 
-        try$(e.write(out));
+        Str str = sub(out);
+        try$(e.writeStr(str));
         return Ok();
     };
 
