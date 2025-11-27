@@ -108,9 +108,9 @@ struct ChunkedBody : Body {
     }
 
     Async::Task<> _ensureAsync(usize need) {
-        while (_available() < need && not _eof) {
+        while (_available() < need and not _eof) {
             co_trya$(_fillAsync());
-            if (_available() == 0 && _eof)
+            if (_available() == 0 and _eof)
                 break;
         }
         co_return Ok();
@@ -121,7 +121,7 @@ struct ChunkedBody : Body {
     Async::Task<bool> _readLineAsync(Bytes& line) {
         while (true) {
             for (usize i = _pos; i + 1 < _buf.len(); ++i) {
-                if (_buf[i] == '\r' && _buf[i + 1] == '\n') {
+                if (_buf[i] == '\r' and _buf[i + 1] == '\n') {
                     line = sub(_buf, _pos, i);
                     _pos = i + 2;
                     co_return true;
@@ -137,11 +137,11 @@ struct ChunkedBody : Body {
     }
 
     static usize _hexDigit(u8 c) {
-        if (c >= '0' && c <= '9')
+        if (c >= '0' and c <= '9')
             return c - '0';
-        if (c >= 'a' && c <= 'f')
+        if (c >= 'a' and c <= 'f')
             return 10 + (c - 'a');
-        if (c >= 'A' && c <= 'F')
+        if (c >= 'A' and c <= 'F')
             return 10 + (c - 'A');
         return Limits<usize>::MAX;
     }
@@ -229,8 +229,8 @@ struct ChunkedBody : Body {
             // Finished this chunk: must consume trailing CRLF.
             if (_chunkRemaining == 0) {
                 co_trya$(_ensureAsync(2));
-                if (_available() >= 2 &&
-                    _buf[_pos] == '\r' &&
+                if (_available() >= 2 and
+                    _buf[_pos] == '\r' and
                     _buf[_pos + 1] == '\n') {
                     _pos += 2;
                 } else {
@@ -241,7 +241,7 @@ struct ChunkedBody : Body {
             }
         }
 
-        if (written == 0 && _eof)
+        if (written == 0 and _eof)
             co_return 0;
 
         co_return written;
