@@ -30,6 +30,42 @@ export struct Blob {
     bool operator==(Blob const&) const = default;
 };
 
+export String urlDecode(Io::SScan& s) {
+    Io::StringWriter sw;
+
+    while (not s.ended()) {
+        if (s.skip('%')) {
+            auto hex = s.token(Re::xdigit() & Re::xdigit());
+            if (not hex) {
+                sw.append('%');
+                continue;
+            }
+            Rune rune = Io::atou(hex, {.base = 16}).take();
+            sw.append(rune);
+        } else {
+            sw.append(s.next());
+        }
+    }
+
+    return sw.take();
+}
+
+export String urlEncode(Io::SScan& s) {
+    Io::StringWriter sw;
+
+    while (not s.ended()) {
+        Rune r = s.next();
+        if (isAsciiAlnum(r) or r == '-' or r == '_' or r == '.' or r == '~') {
+            sw.append(r);
+        } else {
+            sw.append('%');
+            sw.appendFmt("{:02X}", (u8)r);
+        }
+    }
+
+    return sw.take();
+}
+
 export struct Url {
     Symbol scheme = ""_sym;
     String userInfo;
@@ -65,7 +101,7 @@ export struct Url {
             try$(Crypto::base64Decode(s, buf, {.urlEncoded = true}));
         } else {
             Io::TextEncoder enc{buf};
-            try$(enc.writeStr(s.remStr()));
+            try$(enc.writeStr(urlDecode(s).str()));
         }
         return Ok(makeRc<Blob>(mime, buf.take()));
     }
@@ -286,4 +322,3 @@ struct Karm::Io::Formatter<Karm::Ref::Url> {
         return url.unparse(writer);
     }
 };
-
