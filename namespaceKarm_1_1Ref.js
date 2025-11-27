@@ -24,6 +24,8 @@ var namespaceKarm_1_1Ref =
     [ "sniffReader", "namespaceKarm_1_1Ref.html#a6bd1e5c52230ed7b67372b2da6813567", null ],
     [ "sniffSuffix", "namespaceKarm_1_1Ref.html#ab1824889267251806b7910b7cccc5b3f", null ],
     [ "suffixOf", "namespaceKarm_1_1Ref.html#ab5b5dad07d4f9f3d38d13ca4e3d06eee", null ],
+    [ "urlDecode", "namespaceKarm_1_1Ref.html#a791cb3d1b8605c1f6f9c6d2ce7870ce1", null ],
+    [ "urlEncode", "namespaceKarm_1_1Ref.html#a256d114b54d023423765753afd9f190c", null ],
     [ "RE_COMPONENT", "namespaceKarm_1_1Ref.html#a5e9c3009addb44f8e513fad387dc02aa", null ],
     [ "RE_SCHEME", "namespaceKarm_1_1Ref.html#ae1e3c8dce8ad23fa6a575de60ced6ad5", null ],
     [ "SUFFIXES2MIME", "namespaceKarm_1_1Ref.html#a6227d300faeb5ca421fb15e6a099efc2", null ]
