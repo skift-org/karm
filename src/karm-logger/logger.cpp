@@ -137,7 +137,7 @@ export template <typename... Args>
 [[noreturn]] void logFatal(Format fmt, Args&&... va) {
     Io::Args<Args...> args{std::forward<Args>(va)...};
     _log(FATAL, fmt, args);
-    panic("fatal error occured, see logs");
+    panic("fatal error occurred, see logs");
 }
 
 } // namespace Karm
