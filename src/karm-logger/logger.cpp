@@ -62,7 +62,6 @@ void _log(Level level, Format fmt, Io::_Args& args) {
     _catch(Io::format(out, "{}", Tty::reset()));
     _catch(Io::_format(out, fmt.str, args));
     _catch(Io::format(out, "{}\n", Tty::reset()));
-    _catch(out.flush());
 
     Logger::_Embed::loggerUnlock();
 }
