@@ -1,6 +1,8 @@
-export module Karm.Core:io.types;
+export module Karm.Core:io.base;
 
 import :base.base;
+import :base.flags;
+import :async.task;
 
 namespace Karm::Io {
 
@@ -44,6 +46,26 @@ export struct Seek {
 
     bool operator==(Whence const& other) const {
         return whence == other;
+    }
+};
+
+export struct Stream {
+    virtual ~Stream() = default;
+
+    virtual Res<usize> write(Bytes) {
+        return Error::unsupported("not writable");
+    }
+
+    virtual Res<usize> read(MutBytes) {
+        return Error::unsupported("not readable");
+    }
+
+    virtual Res<usize> seek(Seek) {
+        return Error::unsupported("not seekable");
+    }
+
+    virtual Res<> flush() {
+        return Ok();
     }
 };
 

@@ -6,24 +6,28 @@ export module Karm.Core:io.impls;
 
 import :base.buf;
 import :base.res;
-import :io.traits;
-import :io.types;
+import :io.base;
+import :io.funcs;
 
 namespace Karm::Io {
 
-export struct Sink : Writer {
+export struct Sink : Stream {
     Res<usize> write(Bytes bytes) override {
         return Ok(sizeOf(bytes));
     }
+
+    Res<usize> read(MutBytes) override {
+        return Ok(0uz);
+    }
 };
 
-export struct Zero : Reader {
+export struct Zero : Stream {
     Res<usize> read(MutBytes bytes) override {
         return Ok(zeroFill(bytes));
     }
 };
 
-export struct Repeat : Reader {
+export struct Repeat : Stream {
     u8 _byte{};
 
     Repeat(u8 byte) : _byte(byte) {}
@@ -33,17 +37,11 @@ export struct Repeat : Reader {
     }
 };
 
-export struct Empty : Reader {
-    Res<usize> read(MutBytes) override {
-        return Ok(0uz);
-    }
-};
-
-export struct Count : Writer, Seeker {
-    Writer& _reader;
+export struct Count : Stream {
+    Stream& _reader;
     usize _pos{};
 
-    Count(Writer& reader)
+    Count(Stream& reader)
         : _reader(reader) {}
 
     Res<usize> write(Bytes bytes) override {
@@ -59,36 +57,34 @@ export struct Count : Writer, Seeker {
     }
 };
 
-export template <Readable Readable>
-struct Limit : Reader {
-    Readable _reader{};
+struct Limit : Stream {
+    Stream& _reader;
     usize _limit{};
     usize _read{};
 
-    Limit(Readable&& reader, usize limit)
-        : _reader(std::forward<Readable>(reader)),
+    Limit(Stream& reader, usize limit)
+        : _reader(reader),
           _limit(limit) {}
 
     Res<usize> read(MutBytes bytes) override {
         usize size = clamp(sizeOf(bytes), 0uz, _limit - _read);
-        usize read = try$(_reader.read(bytes.buf(), size));
+        usize read = try$(_reader.read({bytes.buf(), size}));
         _read += read;
         return Ok(read);
     }
 };
 
-export template <SeekableWritable Writable>
-struct WriterSlice : Writer, Seeker {
-    Writable _writer{};
+struct WriterSlice : Stream {
+    Stream& _writer;
     usize _start{};
     usize _end{};
 
-    WriterSlice(Writable writer, usize start, usize end)
+    WriterSlice(Stream& writer, usize start, usize end)
         : _writer(writer), _start(start), _end(end) {}
 
     Res<usize> seek(Seek seek) override {
         usize pos = try$(tell(_writer));
-        usize s = size(*this);
+        usize s = try$(size(*this));
         pos = seek.apply(pos, s);
         pos = clamp(pos, _start, _end);
         return _writer.seek(Seek::fromBegin(pos));
@@ -110,17 +106,15 @@ struct WriterSlice : Writer, Seeker {
     }
 };
 
-export template <SeekableWritable Writable>
-Res<Slice<Writable>> makeSlice(Writable&& writer, usize size) {
-    auto start = try$(writer.tell());
+Res<WriterSlice> makeSlice(Stream& writer, usize size) {
+    auto start = try$(tell(writer));
     auto end = start + size;
 
-    return Slice{std::forward<Writable>(writer), start, end};
+    return Ok(WriterSlice{writer, start, end});
 }
 
 export struct BufReader :
-    Reader,
-    Seeker {
+    Stream {
 
     Bytes _buf{};
     usize _pos{};
@@ -149,9 +143,7 @@ export struct BufReader :
     }
 };
 
-export struct BufWriter :
-    Writer,
-    Seeker {
+export struct BufWriter : Stream {
 
     MutBytes _buf;
     usize _pos = 0;
@@ -172,7 +164,7 @@ export struct BufWriter :
     }
 };
 
-export struct BufferWriter : Writer, Flusher {
+export struct BufferWriter : Stream {
     Buf<u8> _buf{};
 
     BufferWriter(usize cap = 16) : _buf(cap) {}
@@ -201,11 +193,11 @@ export struct BufferWriter : Writer, Flusher {
 };
 
 export struct BitReader {
-    Reader& _reader;
+    Stream& _reader;
     u8 _bits{};
     u8 _len{};
 
-    BitReader(Reader& reader)
+    BitReader(Stream& reader)
         : _reader(reader) {
     }
 

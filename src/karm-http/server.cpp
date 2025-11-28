@@ -96,7 +96,7 @@ export struct Server {
             Async::Task<usize> writeAsync(Bytes buf) override {
                 if (not _headerSent) {
                     if (not header.has(Header::CONTENT_TYPE))
-                        header.put(Header::CONTENT_TYPE, Ref::sniffBytes(buf).str());
+                        header.put(Header::CONTENT_TYPE, Ref::sniff(buf).str());
                     if (not header.has(Header::CONTENT_LENGTH))
                         header.put(Header::CONTENT_LENGTH, Io::format("{}", buf.len()));
                     co_trya$(writeHeaderAsync(code));

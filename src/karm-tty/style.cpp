@@ -116,7 +116,6 @@ export struct Style {
     }
 
     void repr([[maybe_unused]] Io::Emit& e) const {
-
 #ifdef __ck_sys_terminal_ansi__
         if (_reset) {
             e("\x1b[0m"s);

@@ -12,7 +12,7 @@ import :fd;
 
 namespace Karm::Sys {
 
-export struct In : Io::Reader {
+export struct In : Io::Stream {
     Rc<Fd> _fd;
 
     In(Rc<Fd> fd)
@@ -27,7 +27,7 @@ export struct In : Io::Reader {
     }
 };
 
-export struct Out : Io::TextWriter, Io::Writer, Io::Flusher {
+export struct Out : Io::TextWriter, Io::Stream {
     using E = Sys::Encoding;
     Rc<Fd> _fd;
 
@@ -55,7 +55,7 @@ export struct Out : Io::TextWriter, Io::Writer, Io::Flusher {
     }
 };
 
-export struct Err : Io::TextWriter, Io::Writer, Io::Flusher {
+export struct Err : Io::TextWriter, Io::Stream {
     using E = Sys::Encoding;
 
     Rc<Fd> _fd;

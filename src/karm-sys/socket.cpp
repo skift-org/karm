@@ -15,16 +15,9 @@ namespace Karm::Sys {
 // MARK: Abstract Socket -------------------------------------------------------
 
 export struct _Connection :
-    Io::Reader,
-    Io::Writer,
-    Io::Flusher,
+    Io::Stream,
+    Aio::Stream,
     Meta::NoCopy {
-
-    virtual Async::Task<usize> readAsync(MutBytes buf) = 0;
-
-    virtual Async::Task<usize> writeAsync(Bytes buf) = 0;
-
-    virtual Async::Task<> flushAsync() = 0;
 };
 
 export struct Connection :

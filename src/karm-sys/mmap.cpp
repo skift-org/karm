@@ -82,7 +82,6 @@ export struct Mmap :
 };
 
 export struct MutMmap :
-    Io::Flusher,
     Meta::NoCopy {
     using enum MmapOption;
 
@@ -99,7 +98,7 @@ export struct MutMmap :
         : _paddr(paddr), _buf(buf), _size(size), _owned(owned) {
     }
 
-    Res<> flush() override {
+    Res<> flush() {
         try$(_Embed::memFlush(_buf, _size));
         return Ok();
     }

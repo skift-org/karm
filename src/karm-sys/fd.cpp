@@ -16,17 +16,7 @@ export using _Accepted = Pair<Rc<Fd>, SocketAddr>;
 export using _Sent = Pair<usize, usize>;
 export using _Received = Tuple<usize, usize, SocketAddr>;
 
-export struct Fd : Meta::NoCopy {
-    virtual ~Fd() = default;
-
-    virtual Res<usize> read(MutBytes) = 0;
-
-    virtual Res<usize> write(Bytes) = 0;
-
-    virtual Res<usize> seek(Io::Seek) = 0;
-
-    virtual Res<> flush() = 0;
-
+export struct Fd : Io::Stream, Meta::NoCopy {
     virtual Res<Rc<Fd>> dup() = 0;
 
     virtual Res<_Accepted> accept() = 0;

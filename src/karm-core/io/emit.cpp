@@ -6,7 +6,7 @@ export module Karm.Core:io.emit;
 
 import :io.fmt;
 import :io.funcs;
-import :io.traits;
+import :io.base;
 import :io.text;
 
 namespace Karm::Io {

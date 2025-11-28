@@ -14,7 +14,7 @@ namespace Karm::Archive {
 
 static auto debugZlib = Debug::Flag::debug("zlib", "Log zlib decompression"s);
 
-export Res<> zlibDecompress(Io::BitReader& r, Io::Writer& out) {
+export Res<> zlibDecompress(Io::BitReader& r, Io::Stream& out) {
     u8 cmf = try$(r.readByte());
     logDebugIf(debugZlib, "cmf: {:#02x}", cmf);
 
@@ -43,12 +43,12 @@ export Res<> zlibDecompress(Io::BitReader& r, Io::Writer& out) {
     return Ok();
 }
 
-export Res<> zlibDecompress(Io::Reader& reader, Io::Writer& out) {
+export Res<> zlibDecompress(Io::Stream& reader, Io::Stream& out) {
     Io::BitReader bits{reader};
     return zlibDecompress(bits, out);
 }
 
-export Res<> zlibDecompress(Bytes bytes, Io::Writer& out) {
+export Res<> zlibDecompress(Bytes bytes, Io::Stream& out) {
     Io::BufReader reader{bytes};
     return zlibDecompress(reader, out);
 }

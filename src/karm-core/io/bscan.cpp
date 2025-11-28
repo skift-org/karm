@@ -7,7 +7,7 @@ export module Karm.Core:io.bscan;
 import :base.endian;
 import :base.vec;
 import :io.aton;
-import :io.traits;
+import :io.base;
 
 namespace Karm::Io {
 
@@ -434,9 +434,9 @@ export struct BChunk {
 };
 
 export struct BEmit {
-    Io::Writer& _writer;
+    Io::Stream& _writer;
 
-    always_inline constexpr BEmit(Io::Writer& writer)
+    always_inline constexpr BEmit(Io::Stream& writer)
         : _writer(writer) {}
 
     template <Meta::TrivialyCopyable T>

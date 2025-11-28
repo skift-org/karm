@@ -83,7 +83,7 @@ export struct ImagePrinter : FilePrinter {
         return finalImage;
     }
 
-    Res<> write(Io::Writer& w) override {
+    Res<> write(Io::Stream& w) override {
         return Image::save(
             _mergedImages()->pixels(),
             w,

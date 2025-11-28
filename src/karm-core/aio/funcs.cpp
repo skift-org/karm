@@ -12,7 +12,7 @@ import :aio.adapt;
 
 namespace Karm::Aio {
 
-export Async::Task<usize> copyAsync(AsyncReadable auto& reader, AsyncWritable auto& writer) {
+export Async::Task<usize> copyAsync(Stream& reader, Stream& writer) {
     Array<u8, 4096> buffer = {};
     usize result = 0;
     while (true) {
@@ -28,14 +28,14 @@ export Async::Task<usize> copyAsync(AsyncReadable auto& reader, AsyncWritable au
     }
 }
 
-export Async::Task<Vec<u8>> readAllAsync(AsyncReadable auto& reader) {
+export Async::Task<Vec<u8>> readAllAsync(auto& reader) {
     Io::BufferWriter buf;
     auto bufAsync = adapt(buf);
     co_trya$(Aio::copyAsync(reader, bufAsync));
     co_return Ok(buf.take());
 }
 
-export Async::Task<String> readAllUtf8Async(AsyncReadable auto& reader) {
+export Async::Task<String> readAllUtf8Async(Stream& reader) {
     Io::StringWriter w;
     Array<Utf8::Unit, 512> buf = {};
     while (true) {

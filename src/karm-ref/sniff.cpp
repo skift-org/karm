@@ -104,7 +104,7 @@ bool _isBinaryData(Bytes const bytes) {
 }
 
 // https://mimesniff.spec.whatwg.org/#identifying-a-resource-with-an-unknown-mime-type
-export Mime sniffBytes(Bytes bytes) {
+export Mime sniff(Bytes bytes) {
     static Vec<MimePattern> patterns = {
         {Io::BPattern::from("3C 21 44 4F 43 54 59 50 45 20 48 54 4D 4C", "FF FF DF DF DF DF DF DF DF FF DF DF DF DF"), {' ', '\t', '\n', '\r'}, {' ', '>'}, "text/html"_mime},
         {Io::BPattern::from("3C 48 54 4D 4C", "FF DF DF DF DF"), {' ', '\t', '\n', '\r'}, {' ', '>'}, "text/html"_mime},
@@ -177,10 +177,10 @@ export Mime sniffBytes(Bytes bytes) {
     return "application/octet-stream"_mime;
 }
 
-export Res<Mime> sniffReader(Io::Reader& reader) {
+export Res<Mime> sniff(Io::Stream& reader) {
     Array<u8, 1445> header;
     auto len = try$(reader.read(header));
-    return Ok(sniffBytes(sub(header, 0, len)));
+    return Ok(sniff(sub(header, 0, len)));
 }
 
 } // namespace Karm::Ref

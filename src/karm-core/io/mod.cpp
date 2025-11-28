@@ -10,5 +10,4 @@ export import :io.funcs;
 export import :io.impls;
 export import :io.sscan;
 export import :io.text;
-export import :io.traits;
-export import :io.types;
+export import :io.base;

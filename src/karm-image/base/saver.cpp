@@ -45,7 +45,7 @@ export Res<> save(Gfx::Pixels pixels, Io::BEmit& e, Saver const& props = {}) {
     }
 }
 
-export Res<> save(Gfx::Pixels pixels, Io::Writer& w, Saver const& props = {}) {
+export Res<> save(Gfx::Pixels pixels, Io::Stream& w, Saver const& props = {}) {
     Io::BEmit e{w};
     return save(pixels, e, props);
 }

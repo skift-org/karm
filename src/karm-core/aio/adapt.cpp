@@ -1,36 +1,26 @@
 export module Karm.Core:aio.adapt;
 
-import :io.traits;
+import :io.base;
 import :aio.traits;
 
 namespace Karm::Aio {
 
-export template <typename T>
-struct Adapter : Reader, Writer {
-    T& _inner;
+struct Adapter : Stream {
+    Io::Stream& _inner;
 
-    Adapter(T& inner)
+    Adapter(Io::Stream& inner)
         : _inner(inner) {}
 
     Async::Task<usize> writeAsync(Bytes buf) override {
-        if constexpr (Io::Writable<T>) {
-            co_return _inner.write(buf);
-        } else {
-            co_return Ok(buf.len());
-        }
+        co_return _inner.write(buf);
     }
 
     Async::Task<usize> readAsync(MutBytes buf) override {
-        if constexpr (Io::Readable<T>) {
-            co_return _inner.read(buf);
-        } else {
-            co_return Ok(0);
-        }
+        co_return _inner.read(buf);
     }
 };
 
-export template <typename T>
-Adapter<T> adapt(T& t) {
+export Adapter adapt(Io::Stream& t) {
     return {t};
 }
 
