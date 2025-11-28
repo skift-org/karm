@@ -75,11 +75,6 @@ export struct Emit : TextWriter {
         return Ok();
     }
 
-    Res<usize> write(Bytes bytes) override {
-        auto written = try$(_writer.write(bytes));
-        return Ok(written);
-    }
-
     Res<> writeRune(Rune r) override {
         if (r == '\n') {
             newline();
@@ -119,7 +114,7 @@ export struct Emit : TextWriter {
         newline();
     }
 
-    Res<> flush() override {
+    Res<> flush() {
         try$(_error);
         if (_newline)
             try$(_insertNewline());

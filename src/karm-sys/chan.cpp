@@ -1,5 +1,6 @@
 module;
 
+#include <karm-core/macros.h>
 #include "defs.h"
 
 export module Karm.Sys:chan;
@@ -26,7 +27,8 @@ export struct In : Io::Reader {
     }
 };
 
-export struct Out : Io::TextEncoderBase<Sys::Encoding> {
+export struct Out : Io::TextWriter, Io::Writer, Io::Flusher {
+    using E = Sys::Encoding;
     Rc<Fd> _fd;
 
     Out(Rc<Fd> fd)
@@ -34,6 +36,14 @@ export struct Out : Io::TextEncoderBase<Sys::Encoding> {
 
     Res<usize> write(Bytes bytes) override {
         return _fd->write(bytes);
+    }
+
+    Res<> writeRune(Rune rune) override {
+        typename E::One one;
+        if (not E::encodeUnit(rune, one))
+            return Error::invalidInput("encoding error");
+        try$(write(bytes(one)));
+        return Ok();
     }
 
     Rc<Fd> fd() {
@@ -45,7 +55,9 @@ export struct Out : Io::TextEncoderBase<Sys::Encoding> {
     }
 };
 
-export struct Err : Io::TextEncoderBase<Sys::Encoding> {
+export struct Err : Io::TextWriter, Io::Writer, Io::Flusher {
+    using E = Sys::Encoding;
+
     Rc<Fd> _fd;
 
     Err(Rc<Fd> fd)
@@ -53,6 +65,14 @@ export struct Err : Io::TextEncoderBase<Sys::Encoding> {
 
     Res<usize> write(Bytes bytes) override {
         return _fd->write(bytes);
+    }
+
+    Res<> writeRune(Rune rune) override {
+        typename E::One one;
+        if (not E::encodeUnit(rune, one))
+            return Error::invalidInput("encoding error");
+        try$(write(bytes(one)));
+        return Ok();
     }
 
     Rc<Fd> fd() {
