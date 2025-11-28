@@ -61,7 +61,7 @@ export struct Request {
         return Ok(req);
     }
 
-    static Res<Request> read(Io::Reader& r) {
+    static Res<Request> read(Io::Stream& r) {
         Io::BufferWriter bw;
         while (true) {
             auto [read, reachedDelim] = try$(Io::readLine(r, bw, "\r\n"_bytes));

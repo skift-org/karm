@@ -5,7 +5,7 @@ module;
 export module Karm.Core:io.text;
 
 import :base.string;
-import :io.traits;
+import :io.base;
 
 namespace Karm::Io {
 
@@ -22,9 +22,9 @@ export struct TextWriter {
 
 export template <StaticEncoding E = Utf8>
 struct TextEncoder : TextWriter {
-    Io::Writer& _writer;
+    Io::Stream& _writer;
 
-    TextEncoder(Io::Writer& writer)
+    TextEncoder(Io::Stream& writer)
         : _writer(writer) {}
 
     Res<> writeRune(Rune rune) override {

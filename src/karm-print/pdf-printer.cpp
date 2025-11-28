@@ -171,7 +171,7 @@ export struct PdfPrinter : FilePrinter {
         return file;
     }
 
-    Res<> write(Io::Writer& w) override {
+    Res<> write(Io::Stream& w) override {
         return pdf().write(w);
     }
 };

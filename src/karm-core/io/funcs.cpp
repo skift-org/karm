@@ -5,25 +5,26 @@ module;
 export module Karm.Core:io.funcs;
 
 import :base.ring;
-import :io.impls;
 import :io.text;
 
 namespace Karm::Io {
 
+export Res<usize> copy(Stream& reader, Stream& writer, usize size);
+
 // MARK: Read ------------------------------------------------------------------
 
-export Res<usize> pread(Readable auto& reader, MutBytes bytes, Seek seek) {
-    auto result = try$(reader.seek(seek));
+export Res<usize> pread(Stream& reader, MutBytes bytes, Seek seek) {
+    try$(reader.seek(seek));
     return reader.read(bytes);
 }
 
-export Res<u8> getByte(Readable auto& reader) {
+export Res<u8> getByte(Stream& reader) {
     u8 byte;
     try$(reader.read({&byte, 1}));
     return Ok(byte);
 }
 
-export Res<String> readAllUtf8(Readable auto& reader) {
+export Res<String> readAllUtf8(Stream& reader) {
     StringWriter writer;
     Array<Utf8::Unit, 512> buf;
     while (true) {
@@ -38,48 +39,39 @@ export Res<String> readAllUtf8(Readable auto& reader) {
 
 // MARK: Write -----------------------------------------------------------------
 
-export Res<usize> pwrite(Writable auto& writer, Bytes bytes, Seek seek) {
-    auto result = try$(writer.seek(seek));
+export Res<usize> pwrite(Stream& writer, Bytes bytes, Seek seek) {
+    try$(writer.seek(seek));
     return writer.write(bytes);
 }
 
-export Res<usize> putByte(Writable auto& writer, u8 byte) {
+export Res<usize> putByte(Stream& writer, u8 byte) {
     return writer.write({&byte, 1});
 }
 
 // MARK: Seek ------------------------------------------------------------------
 
-export Res<usize> tell(Seekable auto& seeker) {
+export Res<usize> tell(Stream& seeker) {
     return seeker.seek(Seek::fromCurrent(0));
 }
 
-export Res<usize> size(Seekable auto& seeker) {
+export Res<usize> size(Stream& seeker) {
     usize current = try$(tell(seeker));
     usize end = try$(seeker.seek(Seek::fromEnd(0)));
     try$(seeker.seek(Seek::fromBegin(current)));
     return Ok(end);
 }
 
-export Res<usize> skip(Seekable auto& seeker, usize n) {
-    return seeker.seek(Seek::fromCurrent(n));
-}
-
-export Res<usize> skip(Readable auto& reader, usize n) {
-    Sink sink;
-    return copy(reader, sink, n);
-}
-
 // MARK: Copy ------------------------------------------------------------------
 
-export Res<usize> copy(Readable auto& reader, MutBytes bytes) {
+export Res<usize> copy(Stream& reader, MutBytes bytes) {
     usize readed = 0;
     while (readed < bytes.len()) {
-        readed += try$(reader.read(next(bytes, readed)));
+        readed += try$(reader.read(mutNext(bytes, readed)));
     }
     return Ok(readed);
 }
 
-export Res<usize> copy(Readable auto& reader, Writable auto& writer) {
+export Res<usize> copy(Stream& reader, Stream& writer) {
     Array<u8, 4096> buffer;
     usize result = 0;
     while (true) {
@@ -95,7 +87,7 @@ export Res<usize> copy(Readable auto& reader, Writable auto& writer) {
     }
 }
 
-export Res<usize> copy(Readable auto& reader, Writable auto& writer, usize size) {
+export Res<usize> copy(Stream& reader, Stream& writer, usize size) {
     Array<u8, 4096> buf;
     usize result = 0;
     while (size > 0) {
@@ -114,7 +106,7 @@ export Res<usize> copy(Readable auto& reader, Writable auto& writer, usize size)
     return Ok(result);
 }
 
-export Res<Tuple<usize, bool>> readLine(Readable auto& reader, Writable auto& writer, Bytes delim) {
+export Res<Tuple<usize, bool>> readLine(Stream& reader, Stream& writer, Bytes delim) {
     if (delim.len() > 16)
         panic("delimiter string too large");
 

@@ -17,7 +17,7 @@ export struct Response {
     Header header;
     Opt<Rc<Body>> body;
 
-    struct Writer : Aio::Writer {
+    struct Writer : Aio::Stream {
         Code code = OK;
         Header header;
 
@@ -60,7 +60,7 @@ export struct Response {
         return Ok(res);
     }
 
-    static Res<Response> read(Io::Reader& r) {
+    static Res<Response> read(Io::Stream& r) {
         Io::BufferWriter bw;
         while (true) {
             auto [read, reachedDelim] = try$(Io::readLine(r, bw, "\r\n"_bytes));

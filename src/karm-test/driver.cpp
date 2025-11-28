@@ -1,3 +1,7 @@
+module;
+
+#include <karm-core/macros.h>
+
 export module Karm.Test:driver;
 
 import Karm.Core;

@@ -10,12 +10,12 @@ import Karm.Ref;
 
 namespace Karm::Http {
 
-export struct Body : Aio::Reader {
-    static Rc<Body> from(Sys::FileReader file) {
+export struct Body : Aio::Stream {
+    static Rc<Body> from(Sys::File file) {
         struct FileBody : Body {
-            Sys::FileReader _file;
+            Sys::File _file;
 
-            FileBody(Sys::FileReader file)
+            FileBody(Sys::File file)
                 : _file(std::move(file)) {}
 
             Async::Task<usize> readAsync(MutBytes buf) override {

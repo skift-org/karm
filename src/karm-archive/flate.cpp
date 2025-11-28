@@ -126,7 +126,7 @@ struct Huff {
 };
 
 struct Window {
-    Io::Writer& _w;
+    Io::Stream& _w;
     Ring<u8> _r{32768};
 
     Res<> emit(u8 b) {
@@ -208,7 +208,7 @@ Res<> inflate(Io::BitReader& r, Window& out, Huff& lens, Huff& dists) {
     return Ok();
 }
 
-export Res<> inflate(Io::BitReader& r, Io::Writer& out) {
+export Res<> inflate(Io::BitReader& r, Io::Stream& out) {
     Window w{out};
     bool bfinal = false;
     auto [fixLens, fixDists] = Huff::buildFixed();

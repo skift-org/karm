@@ -20,7 +20,7 @@ struct Base64Props {
     bool urlEncoded = false;
 };
 
-export Res<> base64Decode(Io::SScan& s, Io::Writer& out, Base64Props props = {}) {
+export Res<> base64Decode(Io::SScan& s, Io::Stream& out, Base64Props props = {}) {
     u8 i = 0;
     Array<u8, 4> buf;
 
@@ -58,7 +58,7 @@ export constexpr usize base64EncodedLen(usize n) {
     return ((n + 2) / 3) * 4;
 }
 
-export Res<> base64Encode(Io::Reader& in, Io::Emit& e) {
+export Res<> base64Encode(Io::Stream& in, Io::TextWriter& e) {
     Array<u8, 1024> inBuf;
     Array<u8, 3> triple;
     usize tripleLen = 0;
@@ -133,8 +133,7 @@ export Res<> base64Encode(Io::Reader& in, Io::Emit& e) {
 export String base64Encode(Bytes in) {
     Io::BufReader br = in;
     Io::StringWriter sw{base64EncodedLen(in.len())};
-    Io::Emit e{sw};
-    base64Encode(br, e).unwrap();
+    base64Encode(br, sw).unwrap();
     return sw.take();
 }
 

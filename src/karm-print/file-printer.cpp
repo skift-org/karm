@@ -14,7 +14,7 @@ export struct FilePrinterProps {
 export struct FilePrinter : Printer {
     static Res<Rc<FilePrinter>> create(Ref::Uti uti, FilePrinterProps props = {});
 
-    virtual Res<> write(Io::Writer& w) = 0;
+    virtual Res<> write(Io::Stream& w) = 0;
 
     Res<> save(Ref::Url url);
 };
