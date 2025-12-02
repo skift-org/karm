@@ -55,11 +55,11 @@ export String urlEncode(Io::SScan& s) {
 
     while (not s.ended()) {
         Rune r = s.next();
-        if (isAsciiAlnum(r) or r == '-' or r == '_' or r == '.' or r == '~') {
+        if (isAsciiAlphaNum(r) or r == '-' or r == '_' or r == '.' or r == '~') {
             sw.append(r);
         } else {
             sw.append('%');
-            sw.appendFmt("{:02X}", (u8)r);
+            Io::format(sw, "{:02X}", (u8)r).unwrap();
         }
     }
 
