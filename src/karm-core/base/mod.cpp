@@ -32,6 +32,7 @@ export import :base.lru;
 export import :base.manual;
 export import :base.map;
 export import :base.niche;
+export import :base.ok;
 export import :base.opt;
 export import :base.panic;
 export import :base.range;
