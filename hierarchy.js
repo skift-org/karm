@@ -757,8 +757,6 @@ var hierarchy =
     [ "Karm::Opt< Rc< Karm::Http::Body > >", "structKarm_1_1Opt.html", null ],
     [ "Karm::Opt< Rc< Karm::Sys::Fd > >", "structKarm_1_1Opt.html", null ],
     [ "Karm::Opt< S::Inner >", "structKarm_1_1Opt.html", null ],
-    [ "Karm::Opt< T & >", "structKarm_1_1Opt_3_01T_01_6_01_4.html", null ],
-    [ "Karm::Opt< T >", "structKarm_1_1Opt_3_01T_01_4.html", null ],
     [ "Karm::Opt< u64 >", "structKarm_1_1Opt.html", null ],
     [ "Karm::Opt< usize >", "structKarm_1_1Opt.html", null ],
     [ "Karm::Cli::Option< T >", "structKarm_1_1Cli_1_1Option.html", null ],
