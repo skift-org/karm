@@ -35,6 +35,7 @@ var dir_37a6748bc3e1a1d64cdc6efd5224d4be =
     [ "map.cpp", "map_8cpp.html", "map_8cpp" ],
     [ "mod.cpp", "karm-core_2base_2mod_8cpp.html", "karm-core_2base_2mod_8cpp" ],
     [ "niche.cpp", "niche_8cpp.html", "niche_8cpp" ],
+    [ "ok.cpp", "ok_8cpp.html", "ok_8cpp" ],
     [ "opt.cpp", "opt_8cpp.html", "opt_8cpp" ],
     [ "panic.cpp", "panic_8cpp.html", "panic_8cpp" ],
     [ "range.cpp", "range_8cpp.html", "range_8cpp" ],
