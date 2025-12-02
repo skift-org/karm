@@ -47,6 +47,12 @@ struct ArmedDefer : Meta::NoCopy {
     always_inline void arm() {
         _armed = true;
     }
+
+    always_inline void fire() {
+        if (_armed)
+            _f();
+        disarm();
+    }
 };
 
 export template <typename F>
