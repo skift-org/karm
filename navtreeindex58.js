@@ -1,7 +1,5 @@
 var NAVTREEINDEX58 =
 {
-"structKarm_1_1Ui_1_1TextModel.html#a18b0c75848083e8b76ffb8f8b4b35788":[0,0,0,41,61,19],
-"structKarm_1_1Ui_1_1TextModel.html#a2017265189a0b0a8573d8523664ae1d0":[2,0,0,36,60,37],
 "structKarm_1_1Ui_1_1TextModel.html#a2017265189a0b0a8573d8523664ae1d0":[0,0,0,41,61,37],
 "structKarm_1_1Ui_1_1TextModel.html#a2cb535e34373cba6f4630019a7caff15":[0,0,0,41,61,24],
 "structKarm_1_1Ui_1_1TextModel.html#a2cb535e34373cba6f4630019a7caff15":[2,0,0,36,60,24],
@@ -249,5 +247,7 @@ var NAVTREEINDEX58 =
 "structKarm_1_1Vte_1_1Attrs.html#ac33ad79103db2f5c2f44f73336218242":[2,0,0,37,0,1],
 "structKarm_1_1Vte_1_1Attrs.html#aea0c35ef69f93f64ceca574ab460bd92":[2,0,0,37,0,0],
 "structKarm_1_1Vte_1_1Attrs.html#aea0c35ef69f93f64ceca574ab460bd92":[0,0,0,42,0,0],
-"structKarm_1_1Vte_1_1Buffer.html":[2,0,0,37,1]
+"structKarm_1_1Vte_1_1Buffer.html":[2,0,0,37,1],
+"structKarm_1_1Vte_1_1Buffer.html":[0,0,0,42,1],
+"structKarm_1_1Vte_1_1Buffer.html#a00889aec3f772db4f738528ba7dfaf99":[2,0,0,37,1,1]
 };

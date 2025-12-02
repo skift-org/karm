@@ -1,7 +1,5 @@
 var NAVTREEINDEX59 =
 {
-"structKarm_1_1Vte_1_1Buffer.html":[0,0,0,42,1],
-"structKarm_1_1Vte_1_1Buffer.html#a00889aec3f772db4f738528ba7dfaf99":[2,0,0,37,1,1],
 "structKarm_1_1Vte_1_1Buffer.html#a00889aec3f772db4f738528ba7dfaf99":[0,0,0,42,1,1],
 "structKarm_1_1Vte_1_1Buffer.html#a3b6a372aae426742ad692a27856c85ed":[0,0,0,42,1,5],
 "structKarm_1_1Vte_1_1Buffer.html#a3b6a372aae426742ad692a27856c85ed":[2,0,0,37,1,5],
@@ -249,5 +247,7 @@ var NAVTREEINDEX59 =
 "table-gpos_8h.html#a8aff7083e7ad767f8dd513de43aa9ae4ae7d330012e67009075cb31cfa2690de4":[3,0,0,8,2,7,1,7],
 "table-gpos_8h.html#a8aff7083e7ad767f8dd513de43aa9ae4af3b5439306d9c6e03539fb77906a2d7d":[3,0,0,8,2,7,1,0],
 "table-gpos_8h.html#a8aff7083e7ad767f8dd513de43aa9ae4af637fd5e3eedfa3d13dfdc4a1739c7ff":[3,0,0,8,2,7,1,3],
-"table-gpos_8h.html#ade9c999f65d06abc86ce3cce78a704fc":[3,0,0,8,2,7,2]
+"table-gpos_8h.html#ade9c999f65d06abc86ce3cce78a704fc":[3,0,0,8,2,7,2],
+"table-gpos_8h_source.html":[3,0,0,8,2,7],
+"table-gsub_8h.html":[3,0,0,8,2,8]
 };

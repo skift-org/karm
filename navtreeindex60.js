@@ -1,7 +1,5 @@
 var NAVTREEINDEX60 =
 {
-"table-gpos_8h_source.html":[3,0,0,8,2,7],
-"table-gsub_8h.html":[3,0,0,8,2,8],
 "table-gsub_8h_source.html":[3,0,0,8,2,8],
 "table-head_8h.html":[3,0,0,8,2,9],
 "table-head_8h.html#abedc7e19652ef6fd2984ea9cb3d62db5":[3,0,0,8,2,9,1],
@@ -249,5 +247,7 @@ var NAVTREEINDEX60 =
 "test-parse_8cpp.html#a7e035e48d5d6331722cccb4690555bbb":[3,0,0,4,6,0,0,5],
 "test-parse_8cpp.html#a9ece1e38636dae08ed231b46a47bd2ee":[3,0,0,4,6,0,0,3],
 "test-parse_8cpp.html#aa0ad6a4287ee65c4d77e1eb241b82316":[3,0,0,4,6,0,0,1],
-"test-parse_8cpp.html#aacc2cf44709dd1591305864990f62f82":[3,0,0,4,6,0,0,6]
+"test-parse_8cpp.html#aacc2cf44709dd1591305864990f62f82":[3,0,0,4,6,0,0,6],
+"test-parse_8cpp.html#ab4ab498078f00ac6d936c0bd2dd9c83d":[3,0,0,4,6,0,0,0],
+"test-parse_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5":[3,0,0,4,6,0,0,7]
 };

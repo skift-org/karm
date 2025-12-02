@@ -1,7 +1,5 @@
 var NAVTREEINDEX52 =
 {
-"structKarm_1_1Sys_1_1Err.html#a4942d8c1a378bbdc3c0e1c8bea2606db":[2,0,0,31,12,2],
-"structKarm_1_1Sys_1_1Err.html#a6635f3b36fbeb52c0029fe5818bdce5a":[0,0,0,35,13,3],
 "structKarm_1_1Sys_1_1Err.html#a6635f3b36fbeb52c0029fe5818bdce5a":[2,0,0,31,12,3],
 "structKarm_1_1Sys_1_1Err.html#acac3736bf9a9e21919a0d5113b7b90ab":[0,0,0,35,13,1],
 "structKarm_1_1Sys_1_1Err.html#acac3736bf9a9e21919a0d5113b7b90ab":[2,0,0,31,12,1],
@@ -249,5 +247,7 @@ var NAVTREEINDEX52 =
 "structKarm_1_1Sys_1_1Mutex.html":[0,0,0,35,33],
 "structKarm_1_1Sys_1_1Mutex.html#a436274a81619fa8da5d0b37524076f32":[0,0,0,35,33,0],
 "structKarm_1_1Sys_1_1Mutex.html#a436274a81619fa8da5d0b37524076f32":[2,0,0,31,32,0],
-"structKarm_1_1Sys_1_1Mutex.html#a4a0b83b28cd2912914cf979c56d94ce0":[2,0,0,31,32,4]
+"structKarm_1_1Sys_1_1Mutex.html#a4a0b83b28cd2912914cf979c56d94ce0":[2,0,0,31,32,4],
+"structKarm_1_1Sys_1_1Mutex.html#a4a0b83b28cd2912914cf979c56d94ce0":[0,0,0,35,33,4],
+"structKarm_1_1Sys_1_1Mutex.html#a97badb071253594ceac7f91b0e59ac3b":[2,0,0,31,32,1]
 };

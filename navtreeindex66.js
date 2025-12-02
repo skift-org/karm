@@ -1,7 +1,5 @@
 var NAVTREEINDEX66 =
 {
-"unionKarm_1_1Math_1_1Vec4.html#a8767b1500b3aaf4f0bad7a72fc56052d":[2,0,0,19,31,24],
-"unionKarm_1_1Math_1_1Vec4.html#a8767b1500b3aaf4f0bad7a72fc56052d":[0,0,0,22,32,24],
 "unionKarm_1_1Math_1_1Vec4.html#a87b78d9114c21cdc7371aa00058e3639":[2,0,0,19,31,21],
 "unionKarm_1_1Math_1_1Vec4.html#a87b78d9114c21cdc7371aa00058e3639":[0,0,0,22,32,21],
 "unionKarm_1_1Math_1_1Vec4.html#a883e164cbd5962e6dc16b3834fdc342b":[2,0,0,19,31,27],

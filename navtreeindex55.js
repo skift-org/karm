@@ -1,7 +1,5 @@
 var NAVTREEINDEX55 =
 {
-"structKarm_1_1Ui_1_1BoxStyle.html#a24ae6d9bd5a8d19d26042c34e1039f0f":[0,0,0,41,6,6],
-"structKarm_1_1Ui_1_1BoxStyle.html#a3d55fa559ca383c6df5003ea6e15389e":[0,0,0,41,6,4],
 "structKarm_1_1Ui_1_1BoxStyle.html#a3d55fa559ca383c6df5003ea6e15389e":[2,0,0,36,5,4],
 "structKarm_1_1Ui_1_1BoxStyle.html#a67aae824a0c5474ee6ccb4f18c16578c":[0,0,0,41,6,2],
 "structKarm_1_1Ui_1_1BoxStyle.html#a67aae824a0c5474ee6ccb4f18c16578c":[2,0,0,36,5,2],
@@ -249,5 +247,7 @@ var NAVTREEINDEX55 =
 "structKarm_1_1Ui_1_1FocusListener.html#a51147f68a197319dccb42bfc2595931b":[2,0,0,36,25,1],
 "structKarm_1_1Ui_1_1FocusListener.html#a725b0e522b691d42c54b7c4dffe384bf":[0,0,0,41,26,2],
 "structKarm_1_1Ui_1_1FocusListener.html#a725b0e522b691d42c54b7c4dffe384bf":[2,0,0,36,25,2],
-"structKarm_1_1Ui_1_1FocusListener.html#a94d2c09b33837fa4e7359e8c1e976314":[0,0,0,41,26,0]
+"structKarm_1_1Ui_1_1FocusListener.html#a94d2c09b33837fa4e7359e8c1e976314":[0,0,0,41,26,0],
+"structKarm_1_1Ui_1_1FocusListener.html#a94d2c09b33837fa4e7359e8c1e976314":[2,0,0,36,25,0],
+"structKarm_1_1Ui_1_1Focusable.html":[0,0,0,41,24]
 };
