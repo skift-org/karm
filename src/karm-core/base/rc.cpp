@@ -369,7 +369,9 @@ using Weak = _Weak<NoLock, T>;
 /// Allocates an object of type `T` on the heap and returns
 /// a strong reference to it.
 export template <typename T, typename... Args>
-constexpr Rc<T> makeRc(Args&&... args) {
+constexpr Rc<T> makeRc(Args&&... args)
+    requires Meta::Constructible<T, Args...>
+{
     return {MOVE, new Cell<NoLock, T>(std::forward<Args>(args)...)};
 }
 
@@ -380,7 +382,9 @@ export template <typename T>
 using Aweak = _Weak<Lock, T>;
 
 export template <typename T, typename... Args>
-constexpr Arc<T> makeArc(Args&&... args) {
+constexpr Arc<T> makeArc(Args&&... args)
+    requires Meta::Constructible<T, Args...>
+{
     return {MOVE, new Cell<Lock, T>(std::forward<Args>(args)...)};
 }
 

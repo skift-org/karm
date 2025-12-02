@@ -129,6 +129,7 @@ struct Niche<Box<T>> {
 };
 
 export template <typename T, typename... Args>
+    requires Meta::Constructible<T, Args...>
 constexpr Box<T> makeBox(Args... args) {
     return {MOVE, new T(std::forward<Args>(args)...)};
 }
