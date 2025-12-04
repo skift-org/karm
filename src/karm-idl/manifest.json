@@ -1,6 +1,6 @@
 {
     "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
-    "id": "karm-http",
+    "id": "karm-idl",
     "type": "lib",
     "requires": [
         "karm-core",

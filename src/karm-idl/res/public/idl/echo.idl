@@ -1,0 +1,7 @@
+module Strata.Echo;
+
+interface IEcho {
+    method ping ( message : String<    boo    >           ) -> String   ;
+    method ping (    message : String           ) -> String   ;
+    method ping (   message : String   ) -> String                    ;
+}
