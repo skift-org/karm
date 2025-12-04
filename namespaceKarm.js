@@ -16,6 +16,7 @@ var namespaceKarm =
     [ "Glob", "namespaceKarm_1_1Glob.html", "namespaceKarm_1_1Glob" ],
     [ "Http", "namespaceKarm_1_1Http.html", "namespaceKarm_1_1Http" ],
     [ "Icu", "namespaceKarm_1_1Icu.html", "namespaceKarm_1_1Icu" ],
+    [ "Idl", "namespaceKarm_1_1Idl.html", "namespaceKarm_1_1Idl" ],
     [ "Image", "namespaceKarm_1_1Image.html", "namespaceKarm_1_1Image" ],
     [ "Io", "namespaceKarm_1_1Io.html", "namespaceKarm_1_1Io" ],
     [ "Json", "namespaceKarm_1_1Json.html", "namespaceKarm_1_1Json" ],

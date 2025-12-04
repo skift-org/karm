@@ -13,6 +13,7 @@ var dir_68267d1309a1af8e8297ef4c3efbcdba =
     [ "karm-gc", "dir_6a5ae373ce989b72405ea1fc2969a38e.html", "dir_6a5ae373ce989b72405ea1fc2969a38e" ],
     [ "karm-gfx", "dir_0423ff8b33268590d0b0e29f7816ae1e.html", "dir_0423ff8b33268590d0b0e29f7816ae1e" ],
     [ "karm-http", "dir_b12f7e02a2f18ca45c0078580d56ea4c.html", "dir_b12f7e02a2f18ca45c0078580d56ea4c" ],
+    [ "karm-idl", "dir_c0f264d59ee2f5d99cd4c57e3777e079.html", "dir_c0f264d59ee2f5d99cd4c57e3777e079" ],
     [ "karm-image", "dir_80ba144d71070374e14a796debf02092.html", "dir_80ba144d71070374e14a796debf02092" ],
     [ "karm-kira", "dir_a65ea3cd32a0f1a3625076dec9cdd855.html", "dir_a65ea3cd32a0f1a3625076dec9cdd855" ],
     [ "karm-kv", "dir_1c5abecb0fe4b5cf537918786f822a64.html", "dir_1c5abecb0fe4b5cf537918786f822a64" ],

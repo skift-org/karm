@@ -227,6 +227,13 @@ var annotated_dup =
       [ "Icu", "namespaceKarm_1_1Icu.html", [
         [ "Bidi", "structKarm_1_1Icu_1_1Bidi.html", "structKarm_1_1Icu_1_1Bidi" ]
       ] ],
+      [ "Idl", "namespaceKarm_1_1Idl.html", [
+        [ "Interface", "structKarm_1_1Idl_1_1Interface.html", "structKarm_1_1Idl_1_1Interface" ],
+        [ "Method", "structKarm_1_1Idl_1_1Method.html", "structKarm_1_1Idl_1_1Method" ],
+        [ "Module", "structKarm_1_1Idl_1_1Module.html", "structKarm_1_1Idl_1_1Module" ],
+        [ "Parameter", "structKarm_1_1Idl_1_1Parameter.html", "structKarm_1_1Idl_1_1Parameter" ],
+        [ "Type", "structKarm_1_1Idl_1_1Type.html", "structKarm_1_1Idl_1_1Type" ]
+      ] ],
       [ "Image", "namespaceKarm_1_1Image.html", [
         [ "Bmp", "namespaceKarm_1_1Image_1_1Bmp.html", [
           [ "Decoder", "structKarm_1_1Image_1_1Bmp_1_1Decoder.html", "structKarm_1_1Image_1_1Bmp_1_1Decoder" ]
@@ -787,5 +794,6 @@ var annotated_dup =
       [ "WriteLockScope", "structKarm_1_1WriteLockScope.html", "structKarm_1_1WriteLockScope" ],
       [ "Year", "structKarm_1_1Year.html", "structKarm_1_1Year" ]
     ] ],
+    [ "IEcho", "interfaceIEcho.html", "interfaceIEcho" ],
     [ "Sin", "structSin.html", "structSin" ]
 ];
