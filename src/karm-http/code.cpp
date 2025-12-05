@@ -126,7 +126,7 @@ export Str toStr(Code code) {
 
 template <>
 struct Karm::Io::Formatter<Karm::Http::Code> {
-    Res<> format(Io::TextWriter& writer, Karm::Http::Code code) {
-        return writer.writeStr(Karm::Http::toStr(code));
+    Res<> format(TextWriter& writer, Http::Code code) {
+        return writer.writeStr(Http::toStr(code));
     }
 };

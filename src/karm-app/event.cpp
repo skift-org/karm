@@ -80,9 +80,9 @@ Box<Event> makeEvent(Args&&... args) {
 export struct Dispatch {
     virtual ~Dispatch() = default;
 
-    virtual void event(App::Event&) = 0;
+    virtual void event(Event&) = 0;
 
-    virtual void bubble(App::Event&) = 0;
+    virtual void bubble(Event&) = 0;
 };
 
 } // namespace Karm::App

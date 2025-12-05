@@ -100,7 +100,7 @@ export struct Key {
 
     Code _code;
 
-    Key(Code code = Code::INVALID)
+    Key(Code code = INVALID)
         : _code(code) {}
 
     Str name() const {

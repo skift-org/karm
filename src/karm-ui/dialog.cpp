@@ -71,7 +71,7 @@ struct DialogLayer : LeafNode<DialogLayer> {
 
         if (_visibility.value() > 0.001) {
             g.push();
-            g.fillStyle(Ui::GRAY950.withOpacity(0.8 * _visibility.value()));
+            g.fillStyle(GRAY950.withOpacity(0.8 * _visibility.value()));
             g.fill(bound());
             g.pop();
         }
@@ -95,7 +95,7 @@ struct DialogLayer : LeafNode<DialogLayer> {
             return;
 
         if (_visibility.needRepaint(*this, e))
-            Ui::shouldRepaint(*this);
+            shouldRepaint(*this);
 
         auto ke = e.is<App::KeyboardEvent>();
 

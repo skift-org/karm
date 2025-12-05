@@ -16,7 +16,7 @@ struct One {
             R _r;
 
             bool start() {
-                _r.recv(Async::INLINE, _t);
+                _r.recv(INLINE, _t);
                 return true;
             }
         };

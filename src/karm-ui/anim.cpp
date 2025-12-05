@@ -37,7 +37,7 @@ struct Eased {
         _duration = 0;
 
         _animated = true;
-        Ui::shouldAnimate(n);
+        shouldAnimate(n);
     }
 
     auto& delay(f64 delay) {
@@ -64,7 +64,7 @@ struct Eased {
         _easing = easing;
         _animated = true;
 
-        Ui::shouldAnimate(n);
+        shouldAnimate(n);
     }
 
     bool needRepaint(Node& n, App::Event& e) {
@@ -75,7 +75,7 @@ struct Eased {
         if (not ae)
             return false;
 
-        Ui::shouldAnimate(n);
+        shouldAnimate(n);
 
         if (_delay > 0) {
             _delay -= ae->dt;
@@ -187,7 +187,7 @@ struct SlideIn : ProxyNode<SlideIn> {
     SlideFrom _from;
     Easedf _slide{};
 
-    SlideIn(SlideFrom from, Ui::Child child)
+    SlideIn(SlideFrom from, Child child)
         : ProxyNode(std::move(child)),
           _from(from) {
     }
@@ -231,19 +231,19 @@ struct SlideIn : ProxyNode<SlideIn> {
                     child().bound().offset(translation())
                 );
 
-            Ui::shouldRepaint(*this, repaintBound);
+            shouldRepaint(*this, repaintBound);
         }
 
-        Ui::ProxyNode<SlideIn>::event(e);
+        ProxyNode<SlideIn>::event(e);
     }
 
     void attach(Node* parent) override {
-        Ui::ProxyNode<SlideIn>::attach(parent);
+        ProxyNode<SlideIn>::attach(parent);
         _slide.animate(*this, 1.0, 0.25, Math::Easing::cubicOut);
     }
 };
 
-export Child slideIn(SlideFrom from, Ui::Child child) {
+export Child slideIn(SlideFrom from, Child child) {
     return makeRc<SlideIn>(from, std::move(child));
 }
 
@@ -258,7 +258,7 @@ export auto slideIn(SlideFrom from) {
 export struct ScaleIn : ProxyNode<ScaleIn> {
     Easedf _scale{};
 
-    ScaleIn(Ui::Child child)
+    ScaleIn(Child child)
         : ProxyNode(std::move(child)) {
     }
 
@@ -278,13 +278,13 @@ export struct ScaleIn : ProxyNode<ScaleIn> {
 
     void event(App::Event& e) override {
         if (_scale.needRepaint(*this, e))
-            Ui::shouldRepaint(*this, bound());
+            shouldRepaint(*this, bound());
 
-        Ui::ProxyNode<ScaleIn>::event(e);
+        ProxyNode<ScaleIn>::event(e);
     }
 
     void attach(Node* parent) override {
-        Ui::ProxyNode<ScaleIn>::attach(parent);
+        ProxyNode<ScaleIn>::attach(parent);
         _scale.animate(*this, 1.0, 0.25, Math::Easing::cubicOut);
     }
 };
@@ -338,7 +338,7 @@ struct Carousel : GroupNode<Carousel> {
 
     void event(App::Event& e) override {
         if (_slide.needRepaint(*this, e)) {
-            Ui::shouldRepaint(*this, bound());
+            shouldRepaint(*this, bound());
         }
 
         GroupNode::event(e);

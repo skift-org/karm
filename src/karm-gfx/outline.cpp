@@ -11,8 +11,8 @@ export struct Outline {
     Fill fill;
     BorderStyle style;
 
-    void paint(Gfx::Canvas& c, Math::Rectf rect, Math::Radiif radii) {
-        Gfx::Borders borders;
+    void paint(Canvas& c, Math::Rectf rect, Math::Radiif radii) {
+        Borders borders;
         for (auto& s : borders.styles) {
             s = style;
         }

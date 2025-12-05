@@ -22,7 +22,7 @@ export LcdLayout VRGB = {{0.0, +0.33}, {0.0, 0.0}, {0.0, -0.33}};
 
 export struct CpuCanvas : Canvas {
     struct Scope {
-        Fill fill = Gfx::WHITE;
+        Fill fill = WHITE;
         Stroke stroke{};
         Math::Recti clip{};
         Math::Trans2f trans = Math::Trans2f::identity();
@@ -268,7 +268,7 @@ export struct CpuCanvas : Canvas {
 
         auto clipBound = _poly.bound().ceil().cast<isize>().clipTo(current().clip);
 
-        Rc<Surface> newClipMask = Surface::alloc(clipBound.wh, Gfx::GREYSCALE8);
+        Rc<Surface> newClipMask = Surface::alloc(clipBound.wh, GREYSCALE8);
 
         current().clip = clipBound;
         _rast.fill(_poly, current().clip, rule, [&](CpuRast::Frag frag) {
@@ -282,7 +282,7 @@ export struct CpuCanvas : Canvas {
 
     // MARK: Shape Operations --------------------------------------------------
 
-    void _fillRect(Math::Recti r, Gfx::Color color) {
+    void _fillRect(Math::Recti r, Color color) {
         // FIXME: Properly handle offaxis rectangles
         r = current().trans.apply(r.cast<f64>()).bound().cast<isize>();
 

@@ -23,7 +23,7 @@ export struct Icon {
     Icon(RawIcon auto const& icon)
         : path(Str::fromNullterminated(icon.path)), size(icon.size), name(Str::fromNullterminated(icon.name)) {}
 
-    void fill(Gfx::Canvas& g, Math::Vec2f pos, isize size) const {
+    void fill(Canvas& g, Math::Vec2f pos, isize size) const {
         g.push();
         g.beginPath();
         g.origin(pos.cast<f64>());
@@ -34,7 +34,7 @@ export struct Icon {
         g.pop();
     }
 
-    void stroke(Gfx::Canvas& g, Math::Vec2f pos, isize size) const  {
+    void stroke(Canvas& g, Math::Vec2f pos, isize size) const {
         g.push();
         g.beginPath();
         g.origin(pos.cast<f64>());
@@ -44,11 +44,11 @@ export struct Icon {
         g.pop();
     }
 
-    void fill(Gfx::Canvas& g, Math::Vec2f pos = {}) const {
+    void fill(Canvas& g, Math::Vec2f pos = {}) const {
         fill(g, pos, size);
     }
 
-    void stroke(Gfx::Canvas& g, Math::Vec2f pos = {}) const {
+    void stroke(Canvas& g, Math::Vec2f pos = {}) const {
         stroke(g, pos, size);
     }
 };

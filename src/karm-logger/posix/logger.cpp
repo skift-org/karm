@@ -1,8 +1,7 @@
 module;
 
-#include <stdio.h>
 #include <karm-core/macros.h>
-
+#include <stdio.h>
 
 module Karm.Logger;
 
@@ -15,7 +14,7 @@ void loggerUnlock() {}
 Io::TextWriter& loggerOut() {
     struct LoggerOut : Io::TextWriter {
         Res<> writeRune(Rune rune) override {
-             Utf8::One one;
+            Utf8::One one;
             if (not Utf8::encodeUnit(rune, one))
                 return Error::invalidInput("encoding error");
             if (fwrite(one.buf(), 1, one.len(), stderr) < one.len()) {

@@ -267,9 +267,9 @@ export struct Surface {
     Buf<u8> _buf;
     Math::Vec2i _size;
     usize _stride;
-    Gfx::Fmt _fmt;
+    Fmt _fmt;
 
-    static Rc<Surface> alloc(Math::Vec2i size, Gfx::Fmt fmt = Gfx::RGBA8888) {
+    static Rc<Surface> alloc(Math::Vec2i size, Fmt fmt = RGBA8888) {
         return makeRc<Surface>(
             Buf<u8>::init(size.x * size.y * fmt.bpp()),
             size,
@@ -279,8 +279,8 @@ export struct Surface {
     }
 
     static Rc<Surface> fallback() {
-        auto img = alloc({2, 2}, Gfx::RGBA8888);
-        img->mutPixels().clear(Gfx::Color::fromHex(0xFF00FF));
+        auto img = alloc({2, 2}, RGBA8888);
+        img->mutPixels().clear(Color::fromHex(0xFF00FF));
         return img;
     }
 
@@ -292,11 +292,11 @@ export struct Surface {
         return mutPixels();
     }
 
-    always_inline Gfx::Pixels pixels() const {
+    always_inline Pixels pixels() const {
         return {_buf.buf(), _size, _stride, _fmt};
     }
 
-    always_inline Gfx::MutPixels mutPixels() {
+    always_inline MutPixels mutPixels() {
         return {_buf.buf(), _size, _stride, _fmt};
     }
 
@@ -312,7 +312,7 @@ export struct Surface {
         return {0, 0, width(), height()};
     }
 
-    always_inline Gfx::Color sample(Math::Vec2f pos) const {
+    always_inline Color sample(Math::Vec2f pos) const {
         return pixels().sample(pos);
     }
 };
@@ -324,8 +324,7 @@ export [[gnu::flatten]] void blitUnsafe(MutPixels dst, Pixels src) {
         panic("blitUnsafe() called with buffers of different sizes");
 
     // HACK: fast path if the stride and fmt are the same
-    if (dst.stride() == src.stride() and dst.fmt().index() == src.fmt().index())
-    {
+    if (dst.stride() == src.stride() and dst.fmt().index() == src.fmt().index()) {
         std::memcpy(dst._buf, src._buf, src._stride * src.height() * sizeof(u8));
         return;
     }

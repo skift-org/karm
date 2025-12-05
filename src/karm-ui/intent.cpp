@@ -46,7 +46,7 @@ export auto intent(Send<App::Event&> filter) {
 }
 
 export auto keyboardShortcut(App::Key key, Flags<App::KeyMod> mods, Send<> onPress) {
-    return intent([=](Ui::Node& n, App::Event& e) {
+    return intent([=](Node& n, App::Event& e) {
         if (auto it = e.is<App::KeyboardEvent>();
             it and it->type == App::KeyboardEvent::PRESS and it->key == key and match(it->mods, mods)) {
             onPress(n);
@@ -63,7 +63,7 @@ export auto keyboardShortcut(App::Key key, Send<> onPress) {
 
 export auto keyboardShortcut(App::Key key, Flags<App::KeyMod> mods = {}) {
     return keyboardShortcut(
-        key, mods, [=](Ui::Node& n) {
+        key, mods, [=](Node& n) {
             event<KeyboardShortcutActivated>(n);
         }
     );

@@ -23,7 +23,7 @@ export struct FocusEvent {
 export struct FocusListener {
     bool _focused = false;
 
-    void event(Ui::Node& n, App::Event& e) {
+    void event(Node& n, App::Event& e) {
         if (auto fe = e.is<FocusEvent>()) {
             if (fe->type == FocusEvent::ENTER) {
                 _focused = true;
@@ -47,7 +47,7 @@ export struct FocusListener {
 struct Focusable : ProxyNode<Focusable> {
     bool _focused = false;
 
-    Focusable(Ui::Child child)
+    Focusable(Child child)
         : ProxyNode<Focusable>(std::move(child)) {
     }
 
@@ -97,12 +97,12 @@ struct Focusable : ProxyNode<Focusable> {
     }
 };
 
-export Ui::Child focusable(Ui::Child child) {
+export Child focusable(Child child) {
     return makeRc<Focusable>(std::move(child));
 }
 
 export auto focusable() {
-    return [](Ui::Child child) {
+    return [](Child child) {
         return focusable(std::move(child));
     };
 }

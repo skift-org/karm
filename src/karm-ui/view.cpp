@@ -249,13 +249,13 @@ public:
 };
 
 struct Text : View<Text> {
-    Rc<Karm::Gfx::Prose> _prose;
+    Rc<Gfx::Prose> _prose;
 
-    Text(Rc<Karm::Gfx::Prose> prose)
+    Text(Rc<Gfx::Prose> prose)
         : _prose(std::move(prose)) {}
 
-    Text(Karm::Gfx::ProseStyle style, Str text)
-        : _prose(makeRc<Karm::Gfx::Prose>(style, text)) {}
+    Text(Gfx::ProseStyle style, Str text)
+        : _prose(makeRc<Gfx::Prose>(style, text)) {}
 
     void reconcile(Text& o) override {
         _prose = std::move(o._prose);
@@ -279,7 +279,7 @@ struct Text : View<Text> {
     }
 };
 
-export Child text(Karm::Gfx::ProseStyle style, Str text) {
+export Child text(Gfx::ProseStyle style, Str text) {
     return makeRc<Text>(style, text);
 }
 
@@ -287,12 +287,12 @@ export Child text(Str text) {
     return makeRc<Text>(TextStyles::labelMedium(), text);
 }
 
-export Child text(Rc<Karm::Gfx::Prose> prose) {
+export Child text(Rc<Gfx::Prose> prose) {
     return makeRc<Text>(prose);
 }
 
 export template <typename... Args>
-Child text(Karm::Gfx::ProseStyle style, Str format, Args&&... args) {
+Child text(Gfx::ProseStyle style, Str format, Args&&... args) {
     return text(style, Io::format(format, std::forward<Args>(args)...));
 }
 

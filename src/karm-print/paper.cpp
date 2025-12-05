@@ -163,7 +163,7 @@ export struct Margins {
         : named(named) {}
 
     Margins(Math::Insetsf custom)
-        : named(Named::CUSTOM), custom(custom) {}
+        : named(CUSTOM), custom(custom) {}
 
     bool operator==(Named named) const {
         return this->named == named;
@@ -182,7 +182,7 @@ export enum struct Orientation {
 };
 
 export struct Settings {
-    PaperStock paper = Print::A4;
+    PaperStock paper = A4;
     Margins margins = Margins::DEFAULT;
     Orientation orientation = Orientation::PORTRAIT;
 

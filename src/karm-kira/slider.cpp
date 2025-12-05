@@ -19,11 +19,11 @@ export struct Slider : Ui::View<Slider> {
     static constexpr auto THUMP_RADIUS = 10;
 
     double _value = 0.0;
-    Origin _origin = Origin::ZERO;
+    Origin _origin = ZERO;
     Opt<Ui::Send<double>> _onChange;
     Ui::MouseListener _mouseListener;
 
-    Slider(double value, Opt<Ui::Send<double>> onChange, Origin origin = Origin::ZERO)
+    Slider(double value, Opt<Ui::Send<double>> onChange, Origin origin = ZERO)
         : _value(Math::isNan(value) ? 0 : value),
           _origin(origin),
           _onChange(std::move(onChange)) {}
@@ -38,12 +38,12 @@ export struct Slider : Ui::View<Slider> {
         g.push();
 
         double full = bound().width - THUMP_RADIUS * 2;
-        double v = (_origin == Origin::ZERO)
+        double v = (_origin == ZERO)
                        ? full * _value
                        : full * (_value - 0.5);
 
         auto base = bound().startCenter().cast<double>() + Math::Vec2f{THUMP_RADIUS, 0};
-        auto thumbCenter = base + Math::Vec2f{(_origin == Origin::ZERO ? v : v + full / 2), 0};
+        auto thumbCenter = base + Math::Vec2f{(_origin == ZERO ? v : v + full / 2), 0};
 
         // full track
         g.strokeStyle(Gfx::stroke(Ui::GRAY600).withWidth(4).withAlign(Gfx::CENTER_ALIGN).withCap(Gfx::ROUND_CAP));
@@ -55,7 +55,7 @@ export struct Slider : Ui::View<Slider> {
         // active track
         g.strokeStyle(Gfx::stroke(_mouseListener.isHover() ? Ui::ACCENT400 : Ui::ACCENT500).withWidth(4).withAlign(Gfx::CENTER_ALIGN).withCap(Gfx::ROUND_CAP));
         g.beginPath();
-        g.moveTo(base + Math::Vec2f{_origin == Origin::ZERO ? 0 : full / 2, 0});
+        g.moveTo(base + Math::Vec2f{_origin == ZERO ? 0 : full / 2, 0});
         g.lineTo(thumbCenter);
         g.stroke();
 
@@ -79,7 +79,7 @@ export struct Slider : Ui::View<Slider> {
             auto p = _mouseListener.pos();
             double full = static_cast<double>(bound().width) - THUMP_RADIUS * 2;
 
-            if (_origin == Origin::ZERO) {
+            if (_origin == ZERO) {
                 _value = (p.x - THUMP_RADIUS) / full;
             } else {
                 _value = 0.5 + ((p.x - THUMP_RADIUS) - full / 2) / full;

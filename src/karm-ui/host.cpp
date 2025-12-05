@@ -87,13 +87,13 @@ export struct Host : Node {
     }
 
     void bubble(App::Event& event) override {
-        if (auto e = event.is<Node::PaintEvent>()) {
+        if (auto e = event.is<PaintEvent>()) {
             _dirty.pushBack(e->bound);
             event.accept();
-        } else if (auto e = event.is<Node::LayoutEvent>()) {
+        } else if (auto e = event.is<LayoutEvent>()) {
             _shouldLayout = true;
             event.accept();
-        } else if (auto e = event.is<Node::AnimateEvent>()) {
+        } else if (auto e = event.is<AnimateEvent>()) {
             _shouldAnimate = true;
             event.accept();
         } else if (auto e = event.is<App::RequestExitEvent>()) {
@@ -131,7 +131,7 @@ export struct Host : Node {
         while (not _res) {
             if (_shouldAnimate and scheduleFrame()) {
                 _shouldAnimate = false;
-                auto e = App::makeEvent<Node::AnimateEvent>(FRAME_TIME);
+                auto e = App::makeEvent<AnimateEvent>(FRAME_TIME);
                 event(*e);
             }
 
@@ -143,7 +143,7 @@ export struct Host : Node {
             }
 
             if (_dirty.len() > 0) {
-                Host::paint();
+                paint();
                 _dirty.clear();
             }
 

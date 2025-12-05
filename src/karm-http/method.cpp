@@ -50,7 +50,7 @@ export Str toStr(Method method) {
 
 template <>
 struct Karm::Io::Formatter<Karm::Http::Method> {
-    Res<> format(Io::TextWriter& writer, Karm::Http::Method method) {
-        return writer.writeStr(Karm::Http::toStr(method));
+    Res<> format(TextWriter& writer, Http::Method method) {
+        return writer.writeStr(Http::toStr(method));
     }
 };

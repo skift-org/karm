@@ -211,6 +211,6 @@ Child state(auto build) {
 }
 
 export template <typename T>
-using Action = SharedFunc<void(Ui::Node&, T const&)>;
+using Action = SharedFunc<void(Node&, T const&)>;
 
 } // namespace Karm::Ui

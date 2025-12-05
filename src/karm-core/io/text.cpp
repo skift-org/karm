@@ -22,9 +22,9 @@ export struct TextWriter {
 
 export template <StaticEncoding E = Utf8>
 struct TextEncoder : TextWriter {
-    Io::Stream& _writer;
+    Stream& _writer;
 
-    TextEncoder(Io::Stream& writer)
+    TextEncoder(Stream& writer)
         : _writer(writer) {}
 
     Res<> writeRune(Rune rune) override {

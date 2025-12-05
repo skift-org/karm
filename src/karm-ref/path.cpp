@@ -194,7 +194,7 @@ export auto operator/(Karm::Ref::Path const& path, Karm::Str other) {
 
 export template <>
 struct Karm::Io::Formatter<Karm::Ref::Path> {
-    Res<> format(Io::TextWriter& writer, Karm::Ref::Path const& path) {
+    Res<> format(TextWriter& writer, Ref::Path const& path) {
         return path.unparse(writer);
     }
 };

@@ -84,27 +84,27 @@ export struct FontWeight : Distinct<u16, struct _FontWeightTag> {
         if (value() < 100)
             return FontWeight{value()};
         if (value() < 350)
-            return FontWeight::THIN;
+            return THIN;
         if (value() < 550)
-            return FontWeight::THIN;
+            return THIN;
         if (value() < 750)
-            return FontWeight::REGULAR;
+            return REGULAR;
         if (value() < 900)
-            return FontWeight::BOLD;
-        return FontWeight::BOLD;
+            return BOLD;
+        return BOLD;
     }
 
     FontWeight bolder() const {
         if (value() < 100)
-            return FontWeight::REGULAR;
+            return REGULAR;
         if (value() < 350)
-            return FontWeight::REGULAR;
+            return REGULAR;
         if (value() < 550)
-            return FontWeight::BOLD;
+            return BOLD;
         if (value() < 750)
-            return FontWeight::BLACK;
+            return BLACK;
         if (value() < 900)
-            return FontWeight::BLACK;
+            return BLACK;
         return FontWeight{value()};
     }
 
@@ -308,12 +308,12 @@ export struct FontMetrics {
 
     FontMetrics combine(FontMetrics other) {
         return {
-            .ascend = Karm::max(ascend, other.ascend),
-            .captop = Karm::max(captop, other.captop),
-            .descend = Karm::max(descend, other.descend),
-            .linegap = Karm::max(linegap, other.linegap),
-            .advance = Karm::max(advance, other.advance),
-            .xHeight = Karm::max(xHeight, other.xHeight),
+            .ascend = max(ascend, other.ascend),
+            .captop = max(captop, other.captop),
+            .descend = max(descend, other.descend),
+            .linegap = max(linegap, other.linegap),
+            .advance = max(advance, other.advance),
+            .xHeight = max(xHeight, other.xHeight),
         };
     }
 

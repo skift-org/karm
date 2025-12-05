@@ -16,7 +16,7 @@ static auto const RE_SEP =
 
 using CaseFn = auto(Rune, usize, usize) -> Rune;
 
-Res<usize> _changeCase(SScan& s, Io::TextWriter& w, CaseFn fn) {
+Res<usize> _changeCase(SScan& s, TextWriter& w, CaseFn fn) {
     bool wasLower = false;
 
     usize si = 0, wi = 0;
@@ -50,8 +50,8 @@ Res<usize> _changeCase(SScan& s, Io::TextWriter& w, CaseFn fn) {
 }
 
 Res<String> _changeCase(Str str, CaseFn fn) {
-    Io::StringWriter writer;
-    Io::SScan scan{str};
+    StringWriter writer;
+    SScan scan{str};
     try$(_changeCase(scan, writer, fn));
     return Ok(writer.take());
 }
@@ -338,7 +338,7 @@ export template <typename T>
 struct Formatter<Cased<T>> {
     Formatter<T> _innerFmt{};
 
-    void parse(Io::SScan& scan) {
+    void parse(SScan& scan) {
         if constexpr (requires() {
                           _innerFmt.parse(scan);
                       }) {
@@ -346,8 +346,8 @@ struct Formatter<Cased<T>> {
         }
     }
 
-    Res<> format(Io::TextWriter& writer, Cased<T> val) {
-        Io::StringWriter sw;
+    Res<> format(TextWriter& writer, Cased<T> val) {
+        StringWriter sw;
         try$(_innerFmt.format(sw, val._inner));
         String result = try$(changeCase(sw.str(), val._case));
         try$(writer.writeStr(result.str()));

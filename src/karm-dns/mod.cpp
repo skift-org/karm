@@ -95,11 +95,11 @@ struct Header {
     u16be arcount;
 
     OpCode opcode() const {
-        return (OpCode)((u16)flags & (u16)Flags::OPCODE);
+        return (OpCode)((u16)flags & (u16)OPCODE);
     }
 
     RCode rcode() const {
-        return (RCode)((u16)flags & (u16)Flags::RCODE);
+        return (RCode)((u16)flags & (u16)RCODE);
     }
 
     Bytes bytes() const {
@@ -275,7 +275,7 @@ struct Client {
     }
 
     Res<Vec<Answer>> ask(Slice<Question> qs) {
-        Packet req{420, Flags::RD};
+        Packet req{420, RD};
         req._qs = qs;
 
         logDebug("sending dns request to {}", _server);
@@ -294,7 +294,7 @@ struct Client {
         if (resp._id != req._id)
             return Error::invalidData("received response with wrong id");
 
-        if (resp.header().rcode() != RCode::NO_ERROR)
+        if (resp.header().rcode() != NO_ERROR)
             return Error::invalidData("received response with error code");
 
         return Ok(std::move(resp._ans));
@@ -302,14 +302,14 @@ struct Client {
 
     Res<Sys::Ip> resolve(Str host) {
         auto qs = Vec<Question>{};
-        qs.pushBack(Question{host, Type::A, Class::IN});
+        qs.pushBack(Question{host, A, IN});
 
         auto answers = try$(ask(qs));
         if (answers.len() == 0)
             return Error::invalidData("no answers");
 
         auto ans = answers[0];
-        if (ans.type != Type::A)
+        if (ans.type != A)
             return Error::invalidData("invalid answer type");
 
         if (ans.data.len() != 4)

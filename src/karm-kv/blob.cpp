@@ -28,7 +28,7 @@ export struct MutBlob {
     }
 
     static MutBlob from(Bytes bytes) {
-        auto blob = MutBlob::alloc(bytes.len());
+        auto blob = alloc(bytes.len());
         copy(bytes, blob.mutBytes());
         return blob;
     }

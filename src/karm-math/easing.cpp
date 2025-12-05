@@ -88,15 +88,15 @@ export struct Easing {
     }
 
     static f64 sineIn(f64 p) {
-        return sin((p - 1) * Math::TAU) + 1;
+        return sin((p - 1) * TAU) + 1;
     }
 
     static f64 sineOut(f64 p) {
-        return sin(p * Math::TAU);
+        return sin(p * TAU);
     }
 
     static f64 sineInOut(f64 p) {
-        return 0.5 * (1 - cos(p * Math::PI));
+        return 0.5 * (1 - cos(p * PI));
     }
 
     static f64 circularIn(f64 p) {
@@ -135,39 +135,39 @@ export struct Easing {
     }
 
     static f64 elasticIn(f64 p) {
-        return sin(13 * Math::TAU * p) * pow<f64>(2, 10 * (p - 1));
+        return sin(13 * TAU * p) * pow<f64>(2, 10 * (p - 1));
     }
 
     static f64 elasticOut(f64 p) {
-        return sin(-13 * Math::TAU * (p + 1)) * pow<f64>(2, -10 * p) + 1;
+        return sin(-13 * TAU * (p + 1)) * pow<f64>(2, -10 * p) + 1;
     }
 
     static f64 elasticInOut(f64 p) {
         if (p < 0.5) {
-            return 0.5 * sin(13 * Math::TAU * (2 * p)) * pow<f64>(2, 10 * ((2 * p) - 1));
+            return 0.5 * sin(13 * TAU * (2 * p)) * pow<f64>(2, 10 * ((2 * p) - 1));
         }
 
-        return 0.5 * (sin(-13 * Math::TAU * ((2 * p - 1) + 1)) * pow<f64>(2, -10 * (2 * p - 1)) + 2);
+        return 0.5 * (sin(-13 * TAU * ((2 * p - 1) + 1)) * pow<f64>(2, -10 * (2 * p - 1)) + 2);
     }
 
     static f64 backIn(f64 p) {
-        return p * p * p - p * sin(p * Math::PI);
+        return p * p * p - p * sin(p * PI);
     }
 
     static f64 backOut(f64 p) {
         f64 f = (1 - p);
-        return 1 - (f * f * f - f * sin(f * Math::PI));
+        return 1 - (f * f * f - f * sin(f * PI));
     }
 
     static f64 backInOut(f64 p) {
         if (p < 0.5) {
             f64 f = 2 * p;
-            return 0.5 * (f * f * f - f * sin(f * Math::PI));
+            return 0.5 * (f * f * f - f * sin(f * PI));
         }
 
         f64 f = (1 - (2 * p - 1));
 
-        return 0.5 * (1 - (f * f * f - f * sin(f * Math::PI))) + 0.5;
+        return 0.5 * (1 - (f * f * f - f * sin(f * PI))) + 0.5;
     }
 
     static f64 bounceOut(f64 p) {

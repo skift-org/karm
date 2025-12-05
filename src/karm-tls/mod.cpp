@@ -31,9 +31,9 @@ static bool isHello(Bytes buf) {
 }
 
 struct TlsConnection : Sys::_Connection {
-    Sys::_Connection& _conn;
+    _Connection& _conn;
 
-    static Res<TlsConnection> accept(Sys::_Connection& conn, Bytes hello) {
+    static Res<TlsConnection> accept(_Connection& conn, Bytes hello) {
         if (not isHello(hello))
             return Error::connectionRefused("not a tls client hello");
 
@@ -50,7 +50,7 @@ struct TlsConnection : Sys::_Connection {
         return Ok(std::move(tls));
     }
 
-    TlsConnection(Sys::_Connection& conn)
+    TlsConnection(_Connection& conn)
         : _conn(conn) {}
 
     Res<usize> read(MutBytes buf) override {
@@ -81,4 +81,4 @@ struct TlsConnection : Sys::_Connection {
     }
 };
 
-} // namespace Tls
+} // namespace Karm::Tls

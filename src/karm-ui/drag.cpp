@@ -46,7 +46,7 @@ struct Dismisable :
     Math::Vec2i _last{};
     bool _dismissed{};
 
-    Dismisable(Send<> onDismis, Flags<DismisDir> dir, f64 threshold, Ui::Child child)
+    Dismisable(Send<> onDismis, Flags<DismisDir> dir, f64 threshold, Child child)
         : ProxyNode(child),
           _onDismis(std::move(onDismis)),
           _dir(dir),
@@ -80,10 +80,10 @@ struct Dismisable :
             me->pos = me->pos - drag();
             child().event(e);
             me->pos = me->pos + drag();
-        } else if (e.is<Node::AnimateEvent>() and _dismissed and _drag.reached()) {
+        } else if (e.is<AnimateEvent>() and _dismissed and _drag.reached()) {
             _onDismis(*this);
             _dismissed = false;
-            Ui::ProxyNode<Dismisable>::event(e);
+            ProxyNode<Dismisable>::event(e);
         } else if (_drag.needRepaint(*this, e)) {
             auto childBound = child().bound();
             auto repaintBound =
@@ -92,10 +92,10 @@ struct Dismisable :
                                 .offset(_last)
                                 .mergeWith(childBound.offset(drag())));
             _last = drag();
-            Ui::shouldRepaint(*this, repaintBound);
-            Ui::ProxyNode<Dismisable>::event(e);
+            shouldRepaint(*this, repaintBound);
+            ProxyNode<Dismisable>::event(e);
         } else {
-            Ui::ProxyNode<Dismisable>::event(e);
+            ProxyNode<Dismisable>::event(e);
         }
     }
 
@@ -142,16 +142,16 @@ struct Dismisable :
             }
         }
 
-        Ui::ProxyNode<Dismisable>::bubble(e);
+        ProxyNode<Dismisable>::bubble(e);
     }
 };
 
-export Child dismisable(Send<> onDismis, Flags<DismisDir> dir, f64 threshold, Ui::Child child) {
+export Child dismisable(Send<> onDismis, Flags<DismisDir> dir, f64 threshold, Child child) {
     return makeRc<Dismisable>(onDismis, dir, threshold, std::move(child));
 }
 
 export auto dismisable(Send<> onDismis, Flags<DismisDir> dir, f64 threshold) {
-    return [=](Ui::Child child) mutable {
+    return [=](Child child) mutable {
         return dismisable(onDismis, dir, threshold, child);
     };
 }

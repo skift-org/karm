@@ -46,7 +46,7 @@ export struct Client : Transport {
     [[clang::coro_wrapper]]
     Async::Task<Rc<Response>> getAsync(Ref::Url url) {
         auto req = makeRc<Request>();
-        req->method = Method::GET;
+        req->method = GET;
         req->url = url;
         req->header.put(Header::HOST, url.host.str());
 
@@ -56,7 +56,7 @@ export struct Client : Transport {
     [[clang::coro_wrapper]]
     Async::Task<Rc<Response>> headAsync(Ref::Url url) {
         auto req = makeRc<Request>();
-        req->method = Method::HEAD;
+        req->method = HEAD;
         req->url = url;
         req->header.put(Header::HOST, url.host.str());
 
@@ -66,7 +66,7 @@ export struct Client : Transport {
     [[clang::coro_wrapper]]
     Async::Task<Rc<Response>> postAsync(Ref::Url url, Rc<Body> body) {
         auto req = makeRc<Request>();
-        req->method = Method::POST;
+        req->method = POST;
         req->url = url;
         req->body = body;
         req->header.put(Header::HOST, url.host.str());
@@ -77,7 +77,7 @@ export struct Client : Transport {
     [[clang::coro_wrapper]]
     Async::Task<Rc<Response>> putAsync(Ref::Url url, Rc<Body> body) {
         auto req = makeRc<Request>();
-        req->method = Method::PUT;
+        req->method = PUT;
         req->url = url;
         req->body = body;
         req->header.put(Header::HOST, url.host.str());
@@ -88,7 +88,7 @@ export struct Client : Transport {
     [[clang::coro_wrapper]]
     Async::Task<Rc<Response>> deleteAsync(Ref::Url url) {
         auto req = makeRc<Request>();
-        req->method = Method::DELETE;
+        req->method = DELETE;
         req->url = url;
         req->header.put(Header::HOST, url.host.str());
 

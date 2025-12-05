@@ -6,12 +6,12 @@ import :canvas;
 namespace Karm::Gfx {
 
 export struct BoxShadow {
-    Gfx::Color fill;
+    Color fill;
     f64 blur;
     f64 spread;
     Math::Vec2i offset;
 
-    static BoxShadow elevated(f64 v, Gfx::Color fill = Gfx::BLACK) {
+    static BoxShadow elevated(f64 v, Color fill = BLACK) {
         return {
             fill.withOpacity(0.25),
             v * 2,
@@ -20,7 +20,7 @@ export struct BoxShadow {
         };
     }
 
-    auto& withFill(Gfx::Color p) {
+    auto& withFill(Color p) {
         fill = p;
         return *this;
     }
@@ -40,7 +40,7 @@ export struct BoxShadow {
         return *this;
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti bound) const {
+    void paint(Canvas& g, Math::Recti bound) const {
         /// 1 / sqrt(2)
         static constexpr f64 IS2 = 0.7071067811865475;
 
@@ -50,7 +50,7 @@ export struct BoxShadow {
         bound = bound.grow(spread);
         bound = bound.offset(offset);
 
-        auto grad = Gfx::Gradient::linear().withColors(fill, fill.withOpacity(0)).bake();
+        auto grad = Gradient::linear().withColors(fill, fill.withOpacity(0)).bake();
 
         auto topStart = Math::Recti::fromTwoPoint(
             bound.topStart(),
@@ -123,8 +123,8 @@ export struct BoxShadow {
     }
 };
 
-Gfx::BoxShadow boxShadow(auto... args) {
-    return Gfx::BoxShadow(args...);
+BoxShadow boxShadow(auto... args) {
+    return BoxShadow(args...);
 }
 
 } // namespace Karm::Gfx

@@ -27,8 +27,7 @@ Async::Task<> entryPointAsync(Sys::Context& ctx) {
                 globArg,
                 fastArg,
             },
-        }
-        },
+        },},
         [=](Sys::Context&) -> Async::Task<> {
             Test::Driver driver;
             co_return co_await driver.runAllAsync({

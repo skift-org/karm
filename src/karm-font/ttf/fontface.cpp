@@ -7,7 +7,7 @@ Res<Rc<Fontface>> Fontface::load(Sys::Mmap&& mmap) {
     return Ok(makeRc<Fontface>(std::move(mmap), ttf));
 }
 
-Fontface::Fontface(Sys::Mmap&& mmap, Ttf::Parser parser)
+Fontface::Fontface(Sys::Mmap&& mmap, Parser parser)
     : _mmap(std::move(mmap)),
       _parser(std::move(parser)) {
     _unitPerEm = _parser.unitPerEm();
@@ -31,7 +31,7 @@ Gfx::FontAttrs Fontface::attrs() const {
 
     if (_parser._name.present()) {
         auto name = _parser._name;
-        attrs.family = Symbol::from(name.string(name.lookupRecord(Ttf::Name::FAMILY)));
+        attrs.family = Symbol::from(name.string(name.lookupRecord(Name::FAMILY)));
     }
 
     if (_parser._post.present()) {

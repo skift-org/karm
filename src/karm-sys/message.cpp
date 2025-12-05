@@ -43,7 +43,7 @@ export struct MessageSerializer : Serde::PackSerializer {
 
     Res<> serializeUnsigned(u64 v, Serde::SizeHint hint) override {
         if (_inHandle) {
-            give(Sys::Handle{v});
+            give(Handle{v});
             return Ok();
         }
         return PackSerializer::serializeUnsigned(v, hint);

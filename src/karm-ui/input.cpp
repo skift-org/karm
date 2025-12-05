@@ -447,8 +447,8 @@ struct Input : View<Input> {
 
         if (_focus) {
             g.push();
-            _paintSelection(g, text, _model->_cur.head, _model->_cur.tail, Ui::ACCENT500.withOpacity(0.5));
-            _paintCaret(g, text, _model->_cur.head, _style.color.unwrapOr(Ui::GRAY100));
+            _paintSelection(g, text, _model->_cur.head, _model->_cur.tail, ACCENT500.withOpacity(0.5));
+            _paintCaret(g, text, _model->_cur.head, _style.color.unwrapOr(GRAY100));
             g.pop();
         }
 
@@ -535,8 +535,8 @@ struct SimpleInput : View<SimpleInput> {
 
         if (_focus) {
             g.push();
-            _paintSelection(g, text, _model->_cur.head, _model->_cur.tail, Ui::ACCENT500.withOpacity(0.5));
-            _paintCaret(g, text, _ensureModel()._cur.head, _style.color.unwrapOr(Ui::GRAY100));
+            _paintSelection(g, text, _model->_cur.head, _model->_cur.tail, ACCENT500.withOpacity(0.5));
+            _paintCaret(g, text, _ensureModel()._cur.head, _style.color.unwrapOr(GRAY100));
             g.pop();
         }
 

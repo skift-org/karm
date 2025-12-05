@@ -70,7 +70,7 @@ Res<Rc<Device>> create(Options const& options) {
 
 // MARK: Video Capture ---------------------------------------------------------
 
-struct SdlCameraStream : Av::VideoStream {
+struct SdlCameraStream : VideoStream {
     SDL_Camera* _sdlCamera;
     Opt<VideoFrame> _curr;
 
@@ -109,7 +109,7 @@ struct SdlCameraStream : Av::VideoStream {
     }
 };
 
-struct SdlCamera : Av::Camera {
+struct SdlCamera : Camera {
     SDL_CameraID _id;
 
     SdlCamera(SDL_CameraID id) : _id(id) {}
@@ -131,7 +131,7 @@ struct SdlCamera : Av::Camera {
         Defer _ = [&] {
             SDL_free(formats);
         };
-        Vec<Av::CameraFormat> fmts;
+        Vec<CameraFormat> fmts;
         for (int i = 0; i < len; i++) {
             auto& f = *formats[i];
             fmts.pushBack({

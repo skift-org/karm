@@ -295,12 +295,12 @@ export struct Player : Stream {
 
     Status status() const {
         if (not _audio)
-            return Status::STOPPED;
+            return STOPPED;
         if (_currentFrame.load() >= _audio.unwrap()->frames().len())
-            return Status::ENDED;
+            return ENDED;
         if (_pause)
-            return Status::PAUSED;
-        return Status::PLAYING;
+            return PAUSED;
+        return PLAYING;
     }
 
     void process(Frames, Frames output) override {

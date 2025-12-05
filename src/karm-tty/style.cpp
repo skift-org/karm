@@ -121,11 +121,11 @@ export struct Style {
             e("\x1b[0m"s);
         }
 
-        if (_fg != Karm::Tty::_COLOR_UNDEF) {
+        if (_fg != _COLOR_UNDEF) {
             e("\x1b[{}m", _fg + 30);
         }
 
-        if (_bg != Karm::Tty::_COLOR_UNDEF) {
+        if (_bg != _COLOR_UNDEF) {
             e("\x1b[{}m", _bg + 40);
         }
 
@@ -182,10 +182,10 @@ Styled<T> operator|(T inner, Color color) {
 
 export template <typename T>
 struct Karm::Io::Formatter<Karm::Tty::Styled<T>> {
-    Formatter<Karm::Tty::Style> _styleFmt{};
+    Formatter<Tty::Style> _styleFmt{};
     Formatter<T> _innerFmt{};
 
-    void parse(Io::SScan& scan) {
+    void parse(SScan& scan) {
         if constexpr (requires() {
                           _innerFmt.parse(scan);
                       }) {
@@ -193,7 +193,7 @@ struct Karm::Io::Formatter<Karm::Tty::Styled<T>> {
         }
     }
 
-    Res<> format(Io::TextWriter& writer, Karm::Tty::Styled<T> const& val) {
+    Res<> format(TextWriter& writer, Tty::Styled<T> const& val) {
 #ifdef __ck_sys_terminal_ansi__
         try$(_styleFmt.format(writer, val._color));
         try$(_innerFmt.format(writer, val._inner));

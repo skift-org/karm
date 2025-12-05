@@ -7,11 +7,11 @@ import :tga.base;
 namespace Karm::Image::Tga {
 
 export Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
-    Tga::Header header = {};
+    Header header = {};
     header.width = pixels.width();
     header.height = pixels.height();
     header.bpp = 32;
-    header.imageType = Tga::UNC_TC;
+    header.imageType = UNC_TC;
     header.desc = 0;
 
     e.writeFrom(header);

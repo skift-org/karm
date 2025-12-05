@@ -1,6 +1,7 @@
 module;
 
 #include <karm-core/macros.h>
+
 #include "defs.h"
 
 export module Karm.Sys:chan;
@@ -28,7 +29,7 @@ export struct In : Io::Stream {
 };
 
 export struct Out : Io::TextWriter, Io::Stream {
-    using E = Sys::Encoding;
+    using E = Encoding;
     Rc<Fd> _fd;
 
     Out(Rc<Fd> fd)
@@ -56,7 +57,7 @@ export struct Out : Io::TextWriter, Io::Stream {
 };
 
 export struct Err : Io::TextWriter, Io::Stream {
-    using E = Sys::Encoding;
+    using E = Encoding;
 
     Rc<Fd> _fd;
 
@@ -109,13 +110,13 @@ export void err(Str str = "", auto&&... args) {
 
 export void println(Str str = "", auto&&... args) {
     (void)Io::format(out(), str, std::forward<decltype(args)>(args)...);
-    (void)out().writeStr(Str{Sys::LINE_ENDING});
+    (void)out().writeStr(Str{LINE_ENDING});
     (void)out().flush();
 }
 
 export void errln(Str str = "", auto&&... args) {
     (void)Io::format(err(), str, std::forward<decltype(args)>(args)...);
-    (void)err().writeStr(Str{Sys::LINE_ENDING});
+    (void)err().writeStr(Str{LINE_ENDING});
     (void)err().flush();
 }
 

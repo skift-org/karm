@@ -95,15 +95,19 @@ Res<> format(TextWriter& writer, Str format, Ts&&... ts) {
     return _format(writer, format, args);
 }
 
-export template <StaticEncoding E = Utf8, Meta::Derive<Io::Stream> S, typename... Ts>
-Res<> format(S& w, Str format, Ts&&... ts) requires (not Meta::Derive<S, Io::TextWriter>) {
-    Io::TextEncoder<E> enc{w};
+export template <StaticEncoding E = Utf8, Meta::Derive<Stream> S, typename... Ts>
+Res<> format(S& w, Str format, Ts&&... ts)
+    requires(not Meta::Derive<S, TextWriter>)
+{
+    TextEncoder<E> enc{w};
     return Io::format(enc, format, std::forward<Ts>(ts)...);
 }
 
-export template <StaticEncoding E = Utf8, Meta::Derive<Io::Stream> S, typename... Ts>
-Res<> formatln(S& w, Str format, Ts&&... ts) requires (not Meta::Derive<S, Io::TextWriter>) {
-    Io::TextEncoder<E> enc{w};
+export template <StaticEncoding E = Utf8, Meta::Derive<Stream> S, typename... Ts>
+Res<> formatln(S& w, Str format, Ts&&... ts)
+    requires(not Meta::Derive<S, TextWriter>)
+{
+    TextEncoder<E> enc{w};
     try$(Io::format(enc, format, std::forward<Ts>(ts)...));
     return enc.writeRune('\n');
 }

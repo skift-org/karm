@@ -54,11 +54,11 @@ export struct SvgCanvas : Canvas {
 
     static Str lineCapToSvg(StrokeCap c) {
         switch (c) {
-        case StrokeCap::BUTT_CAP:
+        case BUTT_CAP:
             return "butt";
-        case StrokeCap::ROUND_CAP:
+        case ROUND_CAP:
             return "round";
-        case StrokeCap::SQUARE_CAP:
+        case SQUARE_CAP:
             return "square";
         default:
             return "butt";
@@ -67,11 +67,11 @@ export struct SvgCanvas : Canvas {
 
     static Str lineJoinToSvg(StrokeJoin j) {
         switch (j) {
-        case StrokeJoin::MITER_JOIN:
+        case MITER_JOIN:
             return "miter";
-        case StrokeJoin::ROUND_JOIN:
+        case ROUND_JOIN:
             return "round";
-        case StrokeJoin::BEVEL_JOIN:
+        case BEVEL_JOIN:
             return "bevel";
         default:
             return "miter";
