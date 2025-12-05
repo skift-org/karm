@@ -85,7 +85,7 @@ struct WriterSlice : Stream {
     Res<usize> seek(Seek seek) override {
         usize pos = try$(tell(_writer));
         usize s = try$(size(*this));
-        pos = seek.apply(pos, s);
+        pos = try$(seek.apply(pos, s));
         pos = clamp(pos, _start, _end);
         return _writer.seek(Seek::fromBegin(pos));
     }
@@ -129,7 +129,7 @@ export struct BufReader :
     }
 
     Res<usize> seek(Seek seek) override {
-        _pos = seek.apply(_pos, sizeOf(_buf));
+        _pos = try$(seek.apply(_pos, sizeOf(_buf)));
         _pos = clamp(_pos, 0uz, sizeOf(_buf));
         return Ok(_pos);
     }
@@ -151,7 +151,7 @@ export struct BufWriter : Stream {
     BufWriter(MutBytes buf) : _buf(buf) {}
 
     Res<usize> seek(Seek seek) override {
-        _pos = seek.apply(_pos, sizeOf(_buf));
+        _pos = try$(seek.apply(_pos, sizeOf(_buf)));
         _pos = clamp(_pos, 0uz, sizeOf(_buf));
         return Ok(_pos);
     }
