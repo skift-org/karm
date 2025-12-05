@@ -182,6 +182,16 @@ bool operator==(None, T* ptr) {
     return ptr == nullptr;
 }
 
+// MARK: Forward Res, Opt, Error -----------------------------------------------
+
+export struct Error;
+
+export template <typename V = None, typename E = Error>
+struct [[nodiscard]] Res;
+
+export template <typename T>
+struct [[nodiscard]] Opt;
+
 // MARK: Misc ------------------------------------------------------------------
 
 /// A linker symbol.
