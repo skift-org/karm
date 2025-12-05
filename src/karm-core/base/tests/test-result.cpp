@@ -53,11 +53,11 @@ test$("res-ok-err-access") {
     Res<int> r2 = Error::other("nope");
 
     expect$(r1.ok().has());
-    expect$(not r1.err().has());
+    expect$(not r1.error().has());
 
     expect$(not r2.ok().has());
-    expect$(r2.err().has());
-    expectEq$(r2.err().unwrap().msg(), "nope");
+    expect$(r2.error().has());
+    expectEq$(r2.error().unwrap().msg(), "nope");
 
     return Ok();
 }
@@ -113,7 +113,7 @@ test$("res-map-err") {
     });
 
     expect$(not r2.has());
-    expectEq$(r2.err().unwrap().msg(), "boom");
+    expectEq$(r2.error().unwrap().msg(), "boom");
 
     return Ok();
 }
@@ -128,7 +128,7 @@ test$("res-map-err-transform") {
     });
 
     expect$(not r2.has());
-    expectEq$(r2.err().unwrap().msg(), "new:old");
+    expectEq$(r2.error().unwrap().msg(), "new:old");
 
     return Ok();
 }
@@ -267,7 +267,7 @@ test$("res-ref-mapErr") {
     });
 
     expect$(not r2.has());
-    expectEq$(r2.err().unwrap().msg(), "new:bad");
+    expectEq$(r2.error().unwrap().msg(), "new:bad");
 
     return Ok();
 }

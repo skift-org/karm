@@ -6,13 +6,12 @@ export module Karm.Core:base.res;
 
 import :base.error;
 import :base.union_;
-import :base.opt;
 import :base.ok;
 import :meta.traits;
 
 namespace Karm {
 
-export template <typename V = None, typename E = Error>
+export template <typename V, typename E>
 struct [[nodiscard]] Res {
     using Inner = Union<Ok<V>, E>;
     using Value = Meta::RemoveConstVolatileRef<V>;
@@ -49,7 +48,7 @@ struct [[nodiscard]] Res {
         return _inner.template unwrap<Ok<V>>().unwrap();
     }
 
-    always_inline constexpr Opt<E> err() const {
+    always_inline constexpr Opt<E> error() const {
         if (not _inner.template is<E>()) [[unlikely]]
             return NONE;
         return _inner.template unwrap<E>();

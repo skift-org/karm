@@ -8,6 +8,7 @@ import :base.std;
 import :base.niche;
 import :base.panic;
 import :base.try_;
+import :base.ok;
 import :meta.callable;
 import :meta.traits;
 
@@ -61,6 +62,7 @@ struct _OptStore {
         return _value;
     }
 
+    [[clang::coro_wrapper]]
     always_inline constexpr T take() {
         T v = std::move(_value);
         clear();
@@ -384,6 +386,14 @@ struct [[nodiscard]] Opt {
         return f();
     }
 
+    template <typename E>
+    always_inline constexpr Res<T, E> okOr(E error) const {
+        if (not has())
+            return error;
+        return Ok(unwrap());
+    }
+
+    [[clang::coro_wrapper]]
     always_inline constexpr T take(char const* msg = "unwrapping none") {
         if (not _store.has()) [[unlikely]]
             panic(msg);
@@ -402,6 +412,12 @@ struct [[nodiscard]] Opt {
         if (_store.has())
             return visitor(_store.unwrap());
         return {};
+    }
+
+    always_inline constexpr auto map(auto f) -> Opt<decltype(f(unwrap()))> {
+        if (_store.has())
+            return {f(unwrap())};
+        return {NONE};
     }
 
     // call operator
@@ -446,13 +462,6 @@ struct [[nodiscard]] Opt {
 
             return OptRet{unwrap()(std::forward<Args>(args)...)};
         }
-    }
-
-    always_inline constexpr auto map(auto f) -> Opt<decltype(f(unwrap()))> {
-        if (_store.has()) {
-            return {f(unwrap())};
-        }
-        return {NONE};
     }
 
     always_inline constexpr bool operator==(None) const {
