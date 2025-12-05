@@ -30,23 +30,23 @@ struct Insets {
         return start == T{} and top == T{} and end == T{} and bottom == T{};
     }
 
-    constexpr Math::Vec2<T> topStart() const {
+    constexpr Vec2<T> topStart() const {
         return {start, top};
     }
 
-    constexpr Math::Vec2<T> topEnd() const {
+    constexpr Vec2<T> topEnd() const {
         return {end, top};
     }
 
-    constexpr Math::Vec2<T> bottomStart() const {
+    constexpr Vec2<T> bottomStart() const {
         return {start, bottom};
     }
 
-    constexpr Math::Vec2<T> bottomEnd() const {
+    constexpr Vec2<T> bottomEnd() const {
         return {end, bottom};
     }
 
-    constexpr Math::Vec2<T> all() const {
+    constexpr Vec2<T> all() const {
         return {start + end, top + bottom};
     }
 

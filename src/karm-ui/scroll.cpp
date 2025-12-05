@@ -98,7 +98,7 @@ export struct ScrollListener {
             auto scrollBarHeight = (_containerBound.height) * _containerBound.height / _contentBound.height;
             auto scrollBarY = _containerBound.top() + (-_scroll.y * _containerBound.height / _contentBound.height);
 
-            g.fillStyle(Ui::GRAY500.withOpacity(0.5 * clamp01(_scrollOpacity.value())));
+            g.fillStyle(GRAY500.withOpacity(0.5 * clamp01(_scrollOpacity.value())));
             g.fill(Math::Recti{_containerBound.end() - SCROLL_BAR_WIDTH, (isize)scrollBarY, SCROLL_BAR_WIDTH, scrollBarHeight});
         }
 
@@ -191,7 +191,7 @@ struct Scroll : ProxyNode<Scroll> {
     }
 
     void bubble(App::Event& e) override {
-        if (auto pe = e.is<Node::PaintEvent>()) {
+        if (auto pe = e.is<PaintEvent>()) {
             pe->bound.xy = pe->bound.xy + _listener.scroll().cast<isize>();
             pe->bound = pe->bound.clipTo(bound());
         }

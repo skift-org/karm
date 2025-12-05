@@ -76,7 +76,7 @@ export struct Borders {
         };
     }
 
-    void _paintCurveEdge(Gfx::Canvas& c, Pair<Math::Curvef> const& start, Pair<Math::Curvef> const& end, Gfx::Fill const& color) {
+    void _paintCurveEdge(Canvas& c, Pair<Math::Curvef> const& start, Pair<Math::Curvef> const& end, Fill const& color) {
         c.beginPath();
 
         // Outer edge
@@ -100,7 +100,7 @@ export struct Borders {
         c.fill(color);
     }
 
-    void _paintCurveEdges(Gfx::Canvas& c, Math::Rectf rect) {
+    void _paintCurveEdges(Canvas& c, Math::Rectf rect) {
         // Calculates outer rectangles and their corresponding radii.
         Math::Rectf outerRect = rect;
         Math::Radiif outerRadii = radii;
@@ -187,7 +187,7 @@ export struct Borders {
             );
     }
 
-    void _paintStraightEdge(Gfx::Canvas& c, Pair<Math::Vec2f> const& start, Pair<Math::Vec2f> const& end, Gfx::Fill const& color) {
+    void _paintStraightEdge(Canvas& c, Pair<Math::Vec2f> const& start, Pair<Math::Vec2f> const& end, Fill const& color) {
         c.beginPath();
 
         // Outer edge
@@ -203,7 +203,7 @@ export struct Borders {
         c.fill(color);
     }
 
-    void _paintStraightEdges(Gfx::Canvas& c, Math::Rectf rect) {
+    void _paintStraightEdges(Canvas& c, Math::Rectf rect) {
         Math::Rectf outerRect = rect;
         Math::Rectf innerRect = rect.shrink(widths);
 
@@ -240,7 +240,7 @@ export struct Borders {
             );
     }
 
-    void _paintSimpleEdges(Gfx::Canvas& c, Math::Rectf rect) {
+    void _paintSimpleEdges(Canvas& c, Math::Rectf rect) {
         Math::Rectf outerRect = rect;
         Math::Radiif outerRadii = radii;
         outerRadii.reduceOverlap(outerRect.size());
@@ -273,7 +273,7 @@ export struct Borders {
         return true;
     }
 
-    void paint(Gfx::Canvas& c, Math::Rectf rect) {
+    void paint(Canvas& c, Math::Rectf rect) {
         if (widths.zero())
             return;
 

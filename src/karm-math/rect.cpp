@@ -308,7 +308,7 @@ union Rect {
         return res;
     }
 
-    always_inline constexpr Math::Rect<T> grow(Insets<T> insets) const {
+    always_inline constexpr Rect<T> grow(Insets<T> insets) const {
         Rect res = *this;
 
         res.x -= insets.start;

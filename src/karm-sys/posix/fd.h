@@ -32,8 +32,8 @@ struct Fd : Sys::Fd {
     Res<Sys::_Received> recv(MutBytes, MutSlice<Sys::Handle>) override;
 };
 
-static inline Res<Rc<Posix::Fd>> toPosixFd(Rc<Sys::Fd> fd) {
-    auto posixFd = fd.cast<Posix::Fd>();
+static inline Res<Rc<Fd>> toPosixFd(Rc<Sys::Fd> fd) {
+    auto posixFd = fd.cast<Fd>();
     if (not posixFd)
         return Error::invalidInput("expected posix fd");
     return Ok(posixFd.take());

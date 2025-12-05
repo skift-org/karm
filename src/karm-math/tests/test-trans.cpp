@@ -74,8 +74,8 @@ test$("transform-composite-2") {
     Vec2<f64> b{0.0, 1.0};
     Vec2<f64> c{1.0, 1.0};
 
-    auto m1 = Trans2f::translate({1.0, 1.0}).rotated(Math::PI / 2.0);
-    auto m2 = Trans2f::rotate(Math::PI / 2.0).translated({1.0, 1.0});
+    auto m1 = Trans2f::translate({1.0, 1.0}).rotated(PI / 2.0);
+    auto m2 = Trans2f::rotate(PI / 2.0).translated({1.0, 1.0});
 
     expectEq$(m1.apply(a), (Vec2<f64>{1.0, 2.0}));
     expectEq$(m1.apply(b), (Vec2<f64>{0.0, 1.0}));

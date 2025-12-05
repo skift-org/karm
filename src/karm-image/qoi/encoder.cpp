@@ -30,21 +30,21 @@ export Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
             if (curr == prev) {
                 run++;
                 if (run == 62 or end) {
-                    e.writeU8be(Chunk::RUN | (run - 1));
+                    e.writeU8be(RUN | (run - 1));
                     run = 0;
                 }
                 continue;
             }
 
             if (run > 0) {
-                e.writeU8be(Chunk::RUN | (run - 1));
+                e.writeU8be(RUN | (run - 1));
                 run = 0;
             }
 
             usize index_pos = hashColor(curr) % 64;
 
             if (index[index_pos] == curr) {
-                e.writeU8be(Chunk::INDEX | index_pos);
+                e.writeU8be(INDEX | index_pos);
                 continue;
             }
 
@@ -63,7 +63,7 @@ export Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
                     vg > -3 and vg < 2 and
                     vb > -3 and vb < 2
                 ) {
-                    e.writeU8be(Chunk::DIFF | (vr + 2) << 4 | (vg + 2) << 2 | (vb + 2));
+                    e.writeU8be(DIFF | (vr + 2) << 4 | (vg + 2) << 2 | (vb + 2));
                     continue;
                 }
 
@@ -72,10 +72,10 @@ export Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
                     vg > -33 and vg < 32 &&
                     vg_b > -9 and vg_b < 8
                 ) {
-                    e.writeU8be(Chunk::LUMA | (vg + 32));
+                    e.writeU8be(LUMA | (vg + 32));
                     e.writeU8be((vg_r + 8) << 4 | (vg_b + 8));
                 } else {
-                    e.writeU8be(Chunk::RGB);
+                    e.writeU8be(RGB);
                     e.writeU8be(curr.red);
                     e.writeU8be(curr.green);
                     e.writeU8be(curr.blue);
@@ -83,7 +83,7 @@ export Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
                 continue;
             }
 
-            e.writeU8be(Chunk::RGBA);
+            e.writeU8be(RGBA);
             e.writeU8be(curr.red);
             e.writeU8be(curr.green);
             e.writeU8be(curr.blue);

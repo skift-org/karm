@@ -23,9 +23,9 @@ export struct _Connection :
 export struct Connection :
     _Connection {
 
-    Rc<Sys::Fd> _fd;
+    Rc<Fd> _fd;
 
-    Connection(Rc<Sys::Fd> fd)
+    Connection(Rc<Fd> fd)
         : _fd(std::move(fd)) {}
 
     Res<usize> read(MutBytes buf) override {
@@ -62,9 +62,9 @@ template <typename C>
 struct _Listener :
     Meta::NoCopy {
 
-    Rc<Sys::Fd> _fd;
+    Rc<Fd> _fd;
 
-    _Listener(Rc<Sys::Fd> fd)
+    _Listener(Rc<Fd> fd)
         : _fd(std::move(fd)) {}
 
     Res<C> accept() {
@@ -85,7 +85,7 @@ struct _Listener :
 export struct UdpConnection :
     Meta::NoCopy {
 
-    Rc<Sys::Fd> _fd;
+    Rc<Fd> _fd;
     SocketAddr _addr;
 
     static Res<UdpConnection> listen(SocketAddr addr) {
@@ -94,7 +94,7 @@ export struct UdpConnection :
         return Ok(UdpConnection(std::move(fd), addr));
     }
 
-    UdpConnection(Rc<Sys::Fd> fd, SocketAddr addr)
+    UdpConnection(Rc<Fd> fd, SocketAddr addr)
         : _fd(std::move(fd)), _addr(addr) {}
 
     Res<usize> send(Bytes buf, SocketAddr addr) {
@@ -131,7 +131,7 @@ export struct TcpConnection :
         return Ok(TcpConnection(std::move(fd), addr));
     }
 
-    TcpConnection(Rc<Sys::Fd> fd, SocketAddr addr)
+    TcpConnection(Rc<Fd> fd, SocketAddr addr)
         : Connection(std::move(fd)), _addr(addr) {}
 
     SocketAddr addr() const {
@@ -150,7 +150,7 @@ export struct TcpListener :
         return Ok(TcpListener(std::move(fd), addr));
     }
 
-    TcpListener(Rc<Sys::Fd> fd, SocketAddr addr)
+    TcpListener(Rc<Fd> fd, SocketAddr addr)
         : _Listener(std::move(fd)), _addr(addr) {}
 
     SocketAddr addr() const {
@@ -161,7 +161,7 @@ export struct TcpListener :
 // MARK: Ipc Socket -----------------------------------------------------------
 
 export struct IpcConnection {
-    Rc<Sys::Fd> _fd;
+    Rc<Fd> _fd;
     Opt<Ref::Url> _url;
 
     static constexpr usize MAX_BUF_SIZE = 4096;
@@ -169,7 +169,7 @@ export struct IpcConnection {
 
     static Res<IpcConnection> connect(Ref::Url url);
 
-    IpcConnection(Rc<Sys::Fd> fd, Opt<Ref::Url> url)
+    IpcConnection(Rc<Fd> fd, Opt<Ref::Url> url)
         : _fd(std::move(fd)), _url(std::move(url)) {}
 
     Res<> send(Bytes buf, Slice<Handle> hnds) {
@@ -203,7 +203,7 @@ export struct IpcListener {
         return Ok(IpcListener(std::move(fd), url));
     }
 
-    IpcListener(Rc<Sys::Fd> fd, Ref::Url url)
+    IpcListener(Rc<Fd> fd, Ref::Url url)
         : _fd(fd), _url(url) {}
 
     Res<IpcConnection> accept() {

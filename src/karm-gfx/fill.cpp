@@ -80,13 +80,13 @@ export struct Gradient {
             return *this;
         }
 
-        static Color _lerp(Gradient::Stop lhs, Gradient::Stop rhs, f64 pos) {
+        static Color _lerp(Stop lhs, Stop rhs, f64 pos) {
             f64 t = (pos - lhs.v1) / (rhs.v1 - lhs.v1);
             return lhs.v0.lerpWith(rhs.v0, t);
         }
 
-        static void _bakeStops(Slice<Gradient::Stop> stops, Gradient::Buf& buf, bool wraparound) {
-            fill(mutSub(buf), Gfx::BLACK);
+        static void _bakeStops(Slice<Stop> stops, Buf& buf, bool wraparound) {
+            fill(mutSub(buf), BLACK);
 
             if (stops.len() == 0)
                 return;

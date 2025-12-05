@@ -77,6 +77,6 @@ export auto& useArgs(Context& ctx) {
     return ctx.use<ArgsHook>();
 }
 
-export using EntryPointAsync = Async::Task<>(Sys::Context&);
+export using EntryPointAsync = Async::Task<>(Context&);
 
 } // namespace Karm::Sys

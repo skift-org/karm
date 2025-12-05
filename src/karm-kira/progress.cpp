@@ -46,13 +46,13 @@ struct Progress : Ui::View<Progress> {
     }
 
     void event(App::Event& e) override {
-        if (auto ae = e.is<Node::AnimateEvent>()) {
+        if (auto ae = e.is<AnimateEvent>()) {
             _spin += ae->dt * 8;
             Ui::shouldAnimate(*this);
             Ui::shouldRepaint(*this);
         }
 
-        Ui::View<Progress>::event(e);
+        View<Progress>::event(e);
     }
 
     Math::Vec2i size(Math::Vec2i, Ui::Hint) override {

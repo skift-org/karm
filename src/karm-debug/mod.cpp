@@ -22,19 +22,19 @@ export struct Flag : Meta::Pinned {
     Str name;
     Str description;
     bool enabled = false;
-    FlagType type = FlagType::DEBUG;
+    FlagType type = DEBUG;
 
     Flag* next = nullptr;
 
     static Flag debug(Str name, Str description, bool enabled = false) {
-        return {name, description, enabled, FlagType::DEBUG};
+        return {name, description, enabled, DEBUG};
     }
 
     static Flag feature(Str name, Str description, bool enabled = false) {
-        return {name, description, enabled, FlagType::FEATURE};
+        return {name, description, enabled, FEATURE};
     }
 
-    Flag(Str name, Str description, bool enabled = false, FlagType type = FlagType::DEBUG)
+    Flag(Str name, Str description, bool enabled = false, FlagType type = DEBUG)
         : name(name), description(description), enabled(enabled), type(type) {
         if (_firstFlag)
             next = _firstFlag;

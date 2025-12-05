@@ -69,7 +69,7 @@ struct Decoder {
         if (format.bitsPerSample != 16)
             return Error::invalidData("only pcm data supported");
 
-        auto audio = makeRc<Audio>(Av::Format{format.freq, format.channels}, c.data.len() / 2 / format.channels);
+        auto audio = makeRc<Audio>(Format{format.freq, format.channels}, c.data.len() / 2 / format.channels);
 
         for (auto sample : audio->frames().iter()) {
             for (auto channel : range<usize>(format.channels)) {

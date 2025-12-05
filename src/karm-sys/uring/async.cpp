@@ -2,9 +2,9 @@ module;
 
 #include <liburing.h>
 //
+#include <karm-core/macros.h>
 #include <karm-sys/posix/fd.h>
 #include <karm-sys/posix/utils.h>
-#include <karm-core/macros.h>
 
 module Karm.Sys;
 
@@ -38,7 +38,7 @@ struct __kernel_timespec toKernelTimespec(Duration ts) {
     return kts;
 }
 
-struct UringSched : Sys::Sched {
+struct UringSched : Sched {
     static constexpr auto NCQES = 128;
 
     struct _Job {

@@ -13,10 +13,10 @@ export constexpr Color WHITE = {255, 255, 255, 255};
 
 export using ColorRamp = Array<Color, 11>;
 
-#define MAKE_COLOR_RAMP(NAME, COLORS...)                                         \
+#define MAKE_COLOR_RAMP(NAME, COLORS...)                                  \
     export constexpr ColorRamp NAME##_RAMP = [](auto... v) -> ColorRamp { \
-        return {Color::fromHex(v)...};                                           \
-    }(COLORS);                                                                   \
+        return {Color::fromHex(v)...};                                    \
+    }(COLORS);                                                            \
     export constexpr Color NAME = NAME##_RAMP[5];                         \
     export constexpr Color NAME##50 = NAME##_RAMP[0];                     \
     export constexpr Color NAME##100 = NAME##_RAMP[1];                    \

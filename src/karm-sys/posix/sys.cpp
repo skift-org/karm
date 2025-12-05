@@ -49,7 +49,7 @@ Res<Ref::Path> resolve(Ref::Url const& url) {
         auto const* runtimeDir = getenv("XDG_RUNTIME_DIR");
         if (not runtimeDir) {
             runtimeDir = "/tmp/";
-            Sys::errln("XDG_RUNTIME_DIR not set, falling back on {}", runtimeDir);
+            errln("XDG_RUNTIME_DIR not set, falling back on {}", runtimeDir);
         }
 
         auto path = url.path;
@@ -96,7 +96,7 @@ Res<Ref::Path> resolve(Ref::Url const& url) {
 
 // MARK: Fd --------------------------------------------------------------------
 
-Res<Rc<Sys::Fd>> deserializeFd(Serde::Deserializer&) {
+Res<Rc<Fd>> deserializeFd(Serde::Deserializer&) {
     return Error::notImplemented();
 }
 
@@ -105,7 +105,7 @@ Res<Rc<Sys::Fd>> deserializeFd(Serde::Deserializer&) {
 Res<Rc<Fd>> openFile(Ref::Url const& url) {
     String str = try$(resolve(url)).str();
 
-    isize raw = ::open(str.buf(), O_RDONLY);
+    isize raw = open(str.buf(), O_RDONLY);
     if (raw < 0)
         return Posix::fromLastErrno();
     auto fd = makeRc<Posix::Fd>(raw);
@@ -117,7 +117,7 @@ Res<Rc<Fd>> openFile(Ref::Url const& url) {
 Res<Rc<Fd>> createFile(Ref::Url const& url) {
     String str = try$(resolve(url)).str();
 
-    auto raw = ::open(str.buf(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    auto raw = open(str.buf(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (raw < 0)
         return Posix::fromLastErrno();
     return Ok(makeRc<Posix::Fd>(raw));
@@ -126,7 +126,7 @@ Res<Rc<Fd>> createFile(Ref::Url const& url) {
 Res<Rc<Fd>> openOrCreateFile(Ref::Url const& url) {
     String str = try$(resolve(url)).str();
 
-    auto raw = ::open(str.buf(), O_RDWR | O_CREAT, 0644);
+    auto raw = open(str.buf(), O_RDWR | O_CREAT, 0644);
     if (raw < 0)
         return Posix::fromLastErrno();
     auto fd = makeRc<Posix::Fd>(raw);
@@ -138,7 +138,7 @@ Res<Rc<Fd>> openOrCreateFile(Ref::Url const& url) {
 Res<Pair<Rc<Fd>>> createPipe() {
     int fds[2];
 
-    if (::pipe(fds) < 0)
+    if (pipe(fds) < 0)
         return Posix::fromLastErrno();
 
     return Ok(Pair<Rc<Fd>>{
@@ -168,14 +168,14 @@ Res<Rc<Fd>> createErr() {
 Res<Vec<DirEntry>> readDir(Ref::Url const& url) {
     String str = try$(resolve(url)).str();
 
-    DIR* dir = ::opendir(str.buf());
+    DIR* dir = opendir(str.buf());
     if (not dir)
         return Posix::fromLastErrno();
 
     Vec<DirEntry> entries;
     dirent* entry;
     errno = 0;
-    while ((entry = ::readdir(dir))) {
+    while ((entry = readdir(dir))) {
         try$(Posix::consumeErrno());
 
         if (std::strcmp(entry->d_name, ".") == 0 or
@@ -185,11 +185,11 @@ Res<Vec<DirEntry>> readDir(Ref::Url const& url) {
 
         entries.pushBack(DirEntry{
             Str::fromNullterminated(entry->d_name),
-            entry->d_type == DT_DIR ? Sys::Type::DIR : Sys::Type::FILE,
+            entry->d_type == DT_DIR ? Type::DIR : Type::FILE,
         });
     }
 
-    if (::closedir(dir) < 0)
+    if (closedir(dir) < 0)
         return Posix::fromLastErrno();
 
     return Ok(entries);
@@ -198,7 +198,7 @@ Res<Vec<DirEntry>> readDir(Ref::Url const& url) {
 Res<> createDir(Ref::Url const& url) {
     String str = try$(resolve(url)).str();
 
-    if (::mkdir(str.buf(), 0755) < 0) {
+    if (mkdir(str.buf(), 0755) < 0) {
         if (errno == EEXIST) {
             return Error::alreadyExists("directory already exists");
         }
@@ -208,20 +208,20 @@ Res<> createDir(Ref::Url const& url) {
     return Ok();
 }
 
-Res<Vec<Sys::DirEntry>> readDirOrCreate(Ref::Url const& url) {
+Res<Vec<DirEntry>> readDirOrCreate(Ref::Url const& url) {
     String str = try$(resolve(url)).str();
 
-    DIR* dir = ::opendir(str.buf());
+    DIR* dir = opendir(str.buf());
     Defer _{[&]() {
         if (dir)
-            ::closedir(dir);
+            closedir(dir);
     }};
 
     if (dir) {
         Vec<DirEntry> entries;
         dirent* entry;
         errno = 0;
-        while ((entry = ::readdir(dir))) {
+        while ((entry = readdir(dir))) {
             try$(Posix::consumeErrno());
 
             if (std::strcmp(entry->d_name, ".") == 0 or
@@ -231,7 +231,7 @@ Res<Vec<Sys::DirEntry>> readDirOrCreate(Ref::Url const& url) {
 
             entries.pushBack(DirEntry{
                 Str::fromNullterminated(entry->d_name),
-                entry->d_type == DT_DIR ? Sys::Type::DIR : Sys::Type::FILE,
+                entry->d_type == DT_DIR ? Type::DIR : Type::FILE,
             });
         }
 
@@ -295,7 +295,7 @@ Async::Task<> launchAsync(Intent intent) {
 
 // MARK: Process ---------------------------------------------------------------
 
-struct PosixPid : Sys::Pid {
+struct PosixPid : Pid {
     pid_t _pid;
 
     PosixPid(pid_t pid) : Pid(), _pid(pid) {}
@@ -308,7 +308,7 @@ struct PosixPid : Sys::Pid {
 
     Res<> wait() override {
         int status;
-        if (::waitpid(_pid, &status, 0) == -1)
+        if (waitpid(_pid, &status, 0) == -1)
             return Posix::fromLastErrno();
         return Ok();
     }
@@ -348,24 +348,24 @@ Res<Rc<Pid>> run(Command const& cmd) {
     if (cmd.err)
         errFd = try$(Posix::toPosixFd(cmd.err.unwrap()))->_raw;
 
-    pid_t pid = ::fork();
+    pid_t pid = fork();
     if (pid < 0)
         return Posix::fromLastErrno();
 
     if (pid == 0) {
         // Child
         if (cmd.in) {
-            if (::dup2(inFd, STDIN_FILENO) < 0)
+            if (dup2(inFd, STDIN_FILENO) < 0)
                 _exit(127);
         }
 
         if (cmd.out) {
-            if (::dup2(outFd, STDOUT_FILENO) < 0)
+            if (dup2(outFd, STDOUT_FILENO) < 0)
                 _exit(127);
         }
 
         if (cmd.err) {
-            if (::dup2(errFd, STDERR_FILENO) < 0)
+            if (dup2(errFd, STDERR_FILENO) < 0)
                 _exit(127);
         }
 
@@ -376,9 +376,9 @@ Res<Rc<Pid>> run(Command const& cmd) {
             Vec<String> kvStore;
             Vec<char*> envp;
             buildEnvp(kvStore, envp);
-            ::execve(cmd.exe.buf(), argv.buf(), envp.buf());
+            execve(cmd.exe.buf(), argv.buf(), envp.buf());
         } else {
-            ::execvp(cmd.exe.buf(), argv.buf());
+            execvp(cmd.exe.buf(), argv.buf());
         }
 
         _exit(127); // exec failed
@@ -391,7 +391,7 @@ Res<Rc<Pid>> run(Command const& cmd) {
 // MARK: Sockets ---------------------------------------------------------------
 
 Res<Rc<Fd>> listenUdp(SocketAddr addr) {
-    int fd = ::socket(AF_INET, SOCK_DGRAM, 0);
+    int fd = socket(AF_INET, SOCK_DGRAM, 0);
     if (fd < 0)
         return Posix::fromLastErrno();
 
@@ -404,24 +404,24 @@ Res<Rc<Fd>> listenUdp(SocketAddr addr) {
 }
 
 Res<Rc<Fd>> connectTcp(SocketAddr addr) {
-    int fd = ::socket(AF_INET, SOCK_STREAM, 0);
+    int fd = socket(AF_INET, SOCK_STREAM, 0);
     if (fd < 0)
         return Posix::fromLastErrno();
 
     struct sockaddr_in addr_ = Posix::toSockAddr(addr);
-    if (::connect(fd, (struct sockaddr*)&addr_, sizeof(addr_)) < 0)
+    if (connect(fd, (struct sockaddr*)&addr_, sizeof(addr_)) < 0)
         return Posix::fromLastErrno();
 
     return Ok(makeRc<Posix::Fd>(fd));
 }
 
 Res<Rc<Fd>> listenTcp(SocketAddr addr) {
-    int fd = ::socket(AF_INET, SOCK_STREAM, 0);
+    int fd = socket(AF_INET, SOCK_STREAM, 0);
     if (fd < 0)
         return Posix::fromLastErrno();
 
     int opt = 1;
-    if (::setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+    if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
         return Posix::fromLastErrno();
 
     struct sockaddr_in addr_ = Posix::toSockAddr(addr);
@@ -429,14 +429,14 @@ Res<Rc<Fd>> listenTcp(SocketAddr addr) {
     if (::bind(fd, (struct sockaddr*)&addr_, sizeof(addr_)) < 0)
         return Posix::fromLastErrno();
 
-    if (::listen(fd, 128) < 0)
+    if (listen(fd, 128) < 0)
         return Posix::fromLastErrno();
 
     return Ok(makeRc<Posix::Fd>(fd));
 }
 
 Res<Rc<Fd>> listenIpc(Ref::Url url) {
-    int fd = ::socket(AF_UNIX, SOCK_STREAM, 0);
+    int fd = socket(AF_UNIX, SOCK_STREAM, 0);
     if (fd < 0)
         return Posix::fromLastErrno();
 
@@ -449,7 +449,7 @@ Res<Rc<Fd>> listenIpc(Ref::Url url) {
     if (::bind(fd, (struct sockaddr*)&addr, sizeof(addr)) < 0)
         return Posix::fromLastErrno();
 
-    if (::listen(fd, 128) < 0)
+    if (listen(fd, 128) < 0)
         return Posix::fromLastErrno();
 
     return Ok(makeRc<Posix::Fd>(fd));
@@ -527,14 +527,14 @@ Res<MmapResult> memMap(MmapProps const& options, Rc<Fd> maybeFd) {
 }
 
 Res<> memUnmap(void const* buf, usize len) {
-    if (::munmap((void*)buf, len) < 0)
+    if (munmap((void*)buf, len) < 0)
         return Posix::fromLastErrno();
 
     return Ok();
 }
 
 Res<> memFlush(void* flush, usize len) {
-    if (::msync(flush, len, MS_INVALIDATE) < 0)
+    if (msync(flush, len, MS_INVALIDATE) < 0)
         return Posix::fromLastErrno();
 
     return Ok();
@@ -611,7 +611,7 @@ Res<> exit(i32 res) {
 Res<Ref::Url> pwd() {
     auto buf = Buf<char>::init(256);
     while (true) {
-        if (::getcwd(buf.buf(), buf.len()) != NULL)
+        if (getcwd(buf.buf(), buf.len()) != NULL)
             break;
 
         if (errno != ERANGE)

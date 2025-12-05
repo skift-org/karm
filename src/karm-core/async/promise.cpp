@@ -73,12 +73,12 @@ struct _Future {
         }
 
         void resume() {
-            _r.recv(Async::LATER, _state->unwrap());
+            _r.recv(LATER, _state->unwrap());
         }
 
         bool start() {
             if (_state->has()) {
-                _r.recv(Async::INLINE, _state->unwrap());
+                _r.recv(INLINE, _state->unwrap());
                 return true;
             }
 

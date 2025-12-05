@@ -318,7 +318,7 @@ export Karm::Ref::Url operator/(Karm::Ref::Url const& url, Karm::Ref::Path const
 
 export template <>
 struct Karm::Io::Formatter<Karm::Ref::Url> {
-    Karm::Res<> format(Karm::Io::TextWriter& writer, Karm::Ref::Url const& url) {
+    Res<> format(TextWriter& writer, Ref::Url const& url) {
         return url.unparse(writer);
     }
 };

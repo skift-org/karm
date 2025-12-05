@@ -453,7 +453,7 @@ struct Serde<Distinct<T, Tag>> {
     using D = Distinct<T, Tag>;
 
     static Res<> serialize(Serializer& ser, D const& v) {
-        return ::Karm::Serde::serialize(ser, v.value());
+        return Karm::Serde::serialize(ser, v.value());
     }
 
     static Res<D> deserialize(Deserializer& de) {
@@ -468,7 +468,7 @@ struct Serde<Flags<E, U>> {
     using F = Flags<E, U>;
 
     static Res<> serialize(Serializer& ser, F const& v) {
-        return ::Karm::Serde::serialize(ser, v.raw());
+        return Karm::Serde::serialize(ser, v.raw());
     }
 
     static Res<F> deserialize(Deserializer& de) {

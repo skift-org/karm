@@ -31,24 +31,24 @@ export struct BlurFilter {
 
         Math::Vec4u outgoingSumCurrent() const {
             Math::Vec4u sum = {};
-            for (isize i = 0; i <= _radius; i++) 
+            for (isize i = 0; i <= _radius; i++)
                 sum = sum + _queue.peekFront(i);
             return sum;
         }
 
         Math::Vec4u incomingSumWith(Math::Vec4u in) const {
             Math::Vec4u sum = in;
-            for (isize i = 0; i < _radius; i++) 
+            for (isize i = 0; i < _radius; i++)
                 sum = sum + _queue.peekFront(width() - 1 - i);
             return sum;
         }
 
-        isize width() const { 
+        isize width() const {
             return _radius * 2 + 1;
         }
 
-        isize denominator() const { 
-            return (_radius + 1) * (_radius + 1); 
+        isize denominator() const {
+            return (_radius + 1) * (_radius + 1);
         }
 
         void enqueue(Math::Vec4u color) {
@@ -65,11 +65,10 @@ export struct BlurFilter {
         void clear() {
             _sum = {};
             _queue.clear();
-            for (isize i = 0; i < width(); i++) 
+            for (isize i = 0; i < width(); i++)
                 _queue.pushBack({});
         }
     };
-
 
     void apply(MutPixels p) const {
         if (amount == 0)
@@ -116,6 +115,7 @@ export struct SaturationFilter {
     static constexpr f64 DEFAULT = 1;
 
     f64 amount = DEFAULT;
+
     void apply(MutPixels p) const {
         auto b = p.bound();
 
@@ -194,6 +194,7 @@ export struct BrightnessFilter {
     static constexpr f64 DEFAULT = 1;
 
     f64 amount = DEFAULT;
+
     void apply(MutPixels p) const {
         if (Math::epsilonEq(amount, 1.0))
             return;
@@ -248,6 +249,7 @@ export struct SepiaFilter {
     static constexpr f64 DEFAULT = 0.5;
 
     f64 amount = DEFAULT;
+
     void apply(MutPixels p) const {
         if (Math::epsilonEq(amount, 0.0))
             return;
@@ -276,6 +278,7 @@ export struct TintFilter {
     static constexpr Color DEFAULT = Color::fromHex(0xffffff);
 
     Color amount = DEFAULT;
+
     void apply(MutPixels p) const {
         auto b = p.bound();
 
@@ -301,6 +304,7 @@ export struct OverlayFilter {
     static constexpr Color DEFAULT{};
 
     Color amount = DEFAULT;
+
     void apply(MutPixels p) const {
         auto b = p.bound();
 

@@ -71,29 +71,29 @@ export struct Decoder : Io::BChunk {
                 }
 
                 auto b1 = s.nextU8be();
-                if (b1 == Chunk::RGB) {
+                if (b1 == RGB) {
                     pixel.red = s.nextU8be();
                     pixel.green = s.nextU8be();
                     pixel.blue = s.nextU8be();
-                } else if (b1 == Chunk::RGBA) {
+                } else if (b1 == RGBA) {
                     pixel.red = s.nextU8be();
                     pixel.green = s.nextU8be();
                     pixel.blue = s.nextU8be();
                     pixel.alpha = s.nextU8be();
-                } else if ((b1 & Chunk::MASK) == Chunk::INDEX) {
+                } else if ((b1 & MASK) == INDEX) {
                     pixel = index[b1];
-                } else if ((b1 & Chunk::MASK) == Chunk::DIFF) {
+                } else if ((b1 & MASK) == DIFF) {
                     pixel.red += ((b1 >> 4) & 0x03) - 2;
                     pixel.green += ((b1 >> 2) & 0x03) - 2;
                     pixel.blue += (b1 & 0x03) - 2;
-                } else if ((b1 & Chunk::MASK) == Chunk::LUMA) {
+                } else if ((b1 & MASK) == LUMA) {
                     auto b2 = s.nextU8be();
                     auto vg = (b1 & 0x3f) - 32;
                     pixel.red += vg - 8 + ((b2 >> 4) & 0x0f);
                     pixel.green += vg;
                     pixel.blue += vg - 8 + (b2 & 0x0f);
-                } else if ((b1 & Chunk::MASK) == Chunk::RUN) {
-                    run = b1 & (~Chunk::MASK);
+                } else if ((b1 & MASK) == RUN) {
+                    run = b1 & (~MASK);
                 } else {
                     return Error::invalidData("invalid chunk");
                 }

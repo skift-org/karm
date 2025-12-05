@@ -28,7 +28,7 @@ export template <typename... Ts>
 using Send = SharedFunc<void(Node&, Ts...)>;
 
 export template <typename... Ts>
-auto SINK(Ui::Node&, Ts&&...) {}
+auto SINK(Node&, Ts&&...) {}
 
 export template <typename... Ts>
 Opt<Send<Ts...>> DISABLED = NONE;

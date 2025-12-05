@@ -30,7 +30,7 @@ export struct Token {
     Str value = "";
 
     Token(Str value)
-        : Token(Kind::OPERAND, value) {}
+        : Token(OPERAND, value) {}
 
     Token(Kind kind, Str value)
         : kind(kind), value(value) {}
@@ -39,12 +39,12 @@ export struct Token {
         : kind(kind) {}
 
     Token(Rune flag)
-        : kind(Kind::FLAG), flag(flag) {}
+        : kind(FLAG), flag(flag) {}
 
     bool operator==(Token const& other) const = default;
 
     void repr(Io::Emit& e) const {
-        if (kind == Kind::FLAG)
+        if (kind == FLAG)
             e("(token {} {#c})", kind, flag);
         else
             e("(token {} {#})", kind, value);

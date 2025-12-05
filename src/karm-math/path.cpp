@@ -46,58 +46,58 @@ export struct Path {
         Code code{};
         Flags<Option> options{};
 
-        Math::Vec2f radii{};
+        Vec2f radii{};
         f64 angle{};
-        Math::Vec2f cp1{};
-        Math::Vec2f cp2{};
-        Math::Vec2f p{};
+        Vec2f cp1{};
+        Vec2f cp2{};
+        Vec2f p{};
 
         Op(Code code, Flags<Option> options = {})
             : code(code), options(options) {}
 
-        Op(Code code, Math::Vec2f p, Flags<Option> options = {})
+        Op(Code code, Vec2f p, Flags<Option> options = {})
             : code(code), options(options), p(p) {}
 
-        Op(Code code, Math::Vec2f cp2, Math::Vec2f p, Flags<Option> options = {})
+        Op(Code code, Vec2f cp2, Vec2f p, Flags<Option> options = {})
             : code(code), options(options), cp2(cp2), p(p) {}
 
-        Op(Code code, Math::Vec2f cp1, Math::Vec2f cp2, Math::Vec2f p, Flags<Option> options = {})
+        Op(Code code, Vec2f cp1, Vec2f cp2, Vec2f p, Flags<Option> options = {})
             : code(code), options(options), cp1(cp1), cp2(cp2), p(p) {}
 
-        Op(Code code, Math::Vec2f radii, f64 angle, Math::Vec2f p, Flags<Option> options = {})
+        Op(Code code, Vec2f radii, f64 angle, Vec2f p, Flags<Option> options = {})
             : code(code), options(options), radii(radii), angle(angle), p(p) {}
 
         void repr(Io::Emit& e) const {
             e("(Op");
             switch (code) {
-            case Code::NOP:
+            case NOP:
                 e(" NOP");
                 break;
-            case Code::CLEAR:
+            case CLEAR:
                 e(" CLEAR");
                 break;
-            case Code::CLOSE:
+            case CLOSE:
                 e(" CLOSE");
                 break;
-            case Code::MOVE_TO:
+            case MOVE_TO:
                 e(" MOVE_TO p:{}", p);
                 break;
-            case Code::LINE_TO:
+            case LINE_TO:
                 e(" LINE_TO {}", p);
                 break;
-            case Code::HLINE_TO:
+            case HLINE_TO:
                 e(" HLINE_TO {}", p);
                 break;
-            case Code::VLINE_TO:
+            case VLINE_TO:
                 e(" VLINE_TO {}", p);
                 break;
-            case Code::CUBIC_TO:
+            case CUBIC_TO:
                 e(" CUBIC_TO cp1: {} cp2: {} p: {}", cp1, cp2, p);
                 break;
-            case Code::QUAD_TO:
+            case QUAD_TO:
                 e(" QUAD_TO cp: {} p: {}", cp2, p);
                 break;
-            case Code::ARC_TO:
+            case ARC_TO:
                 e(" ARC_TO radii: {} angle: {} p: {}", radii, angle, p);
                 break;
             }
@@ -125,16 +125,16 @@ export struct Path {
     };
 
     Vec<Contour> _contours{};
-    Vec<Math::Vec2f> _verts{};
+    Vec<Vec2f> _verts{};
 
-    Math::Vec2f _lastCp;
-    Math::Vec2f _lastP;
+    Vec2f _lastCp;
+    Vec2f _lastP;
 
-    struct _Contour : Slice<Math::Vec2f> {
+    struct _Contour : Slice<Vec2f> {
         bool close;
 
-        _Contour(Slice<Math::Vec2f> slice, bool close)
-            : Slice<Math::Vec2f>(slice), close(close) {}
+        _Contour(Slice<Vec2f> slice, bool close)
+            : Slice<Vec2f>(slice), close(close) {}
     };
 
     auto iterContours() const {
@@ -152,16 +152,16 @@ export struct Path {
         });
     }
 
-    Opt<Math::Rectf> _bound;
+    Opt<Rectf> _bound;
 
-    Math::Rectf bound() {
+    Rectf bound() {
         if (isEmpty(_verts))
             return {};
 
         if (_bound)
             return *_bound;
 
-        Math::Rectf rect = {_verts[0], 0};
+        Rectf rect = {_verts[0], 0};
         for (auto& p : _verts)
             rect = rect.mergeWith(p);
         _bound = rect;
@@ -176,7 +176,7 @@ export struct Path {
             auto start = _verts[last(_contours).start];
 
             // NOTE: remove last edge if it is manually closing the path, since 'z' should be the one closing
-            if (Math::epsilonEq(start, end, 0.001)) {
+            if (epsilonEq(start, end, 0.001)) {
                 _verts.popBack();
                 last(_contours).end--;
             }
@@ -185,14 +185,14 @@ export struct Path {
         last(_contours).close = true;
     }
 
-    void _flattenLineTo(Math::Vec2f p) {
+    void _flattenLineTo(Vec2f p) {
         if (not _contours.len()) {
             // moveTo must be called before lineTo
             return;
         }
 
         if (last(_contours).start != last(_contours).end and
-            Math::epsilonEq(last(_verts), p)) {
+            epsilonEq(last(_verts), p)) {
             return;
         }
 
@@ -200,7 +200,7 @@ export struct Path {
         last(_contours).end++;
     }
 
-    void _flattenCurveTo(Math::Curvef curve, isize depth = 0) {
+    void _flattenCurveTo(Curvef curve, isize depth = 0) {
         if (depth > 16)
             return;
 
@@ -217,7 +217,7 @@ export struct Path {
         _flattenCurveTo(right, depth + 1);
     }
 
-    void _flattenArcTo(Math::Vec2f start, Math::Vec2f radii, f64 angle, Flags<Option> options, Math::Vec2f point) {
+    void _flattenArcTo(Vec2f start, Vec2f radii, f64 angle, Flags<Option> options, Vec2f point) {
         // Ported from canvg (https://github.com/canvg/canvg)
         f64 x1 = start.x;
         f64 y1 = start.y;
@@ -226,7 +226,7 @@ export struct Path {
 
         f64 dx = x1 - x2;
         f64 dy = y1 - y2;
-        f64 d = Math::sqrt(dx * dx + dy * dy);
+        f64 d = sqrt(dx * dx + dy * dy);
 
         if (d < 1e-6f or radii.x < 1e-6f or radii.y < 1e-6f) {
             // The arc degenerates to a line
@@ -234,9 +234,9 @@ export struct Path {
             return;
         }
 
-        f64 rotx = angle / 180.0 * Math::PI; // x rotation angle
-        f64 sinrx = Math::sin(rotx);
-        f64 cosrx = Math::cos(rotx);
+        f64 rotx = angle / 180.0 * PI; // x rotation angle
+        f64 sinrx = sin(rotx);
+        f64 cosrx = cos(rotx);
 
         // Convert to center point parameterization.
         // http://www.w3.org/TR/SVG11/implnote.html#ArcImplementationNotes
@@ -245,21 +245,21 @@ export struct Path {
         f64 x1p = cosrx * dx / 2.0 + sinrx * dy / 2.0;
         f64 y1p = -sinrx * dx / 2.0 + cosrx * dy / 2.0;
 
-        d = Math::pow2(x1p) / Math::pow2(radii.x) + Math::pow2(y1p) / Math::pow2(radii.y);
+        d = pow2(x1p) / pow2(radii.x) + pow2(y1p) / pow2(radii.y);
 
         if (d > 1) {
-            d = Math::sqrt(d);
+            d = sqrt(d);
             radii.x *= d;
             radii.y *= d;
         }
 
         // 2) Compute cx', cy'
-        f64 sa = Math::pow2(radii.x) * Math::pow2(radii.y) -
-                Math::pow2(radii.x) * Math::pow2(y1p) -
-                Math::pow2(radii.y) * Math::pow2(x1p);
+        f64 sa = pow2(radii.x) * pow2(radii.y) -
+                 pow2(radii.x) * pow2(y1p) -
+                 pow2(radii.y) * pow2(x1p);
 
-        f64 sb = Math::pow2(radii.x) * Math::pow2(y1p) +
-                Math::pow2(radii.y) * Math::pow2(x1p);
+        f64 sb = pow2(radii.x) * pow2(y1p) +
+                 pow2(radii.y) * pow2(x1p);
 
         if (sa < 0.0)
             sa = 0.0;
@@ -267,7 +267,7 @@ export struct Path {
         f64 s = 0.0;
 
         if (sb > 0.0)
-            s = Math::sqrt(sa / sb);
+            s = sqrt(sa / sb);
 
         bool fa = options & LARGE;
         bool fs = options & SWEEP;
@@ -284,45 +284,45 @@ export struct Path {
         f64 cy = sinrx * cxp + cosrx * cyp + (y1 + y2) / 2.0;
 
         // 4) Calculate theta1, and delta theta.
-        Math::Vec2f u = {(x1p - cxp) / radii.x, (y1p - cyp) / radii.y};
-        Math::Vec2f v = {(-x1p - cxp) / radii.x, (-y1p - cyp) / radii.y};
+        Vec2f u = {(x1p - cxp) / radii.x, (y1p - cyp) / radii.y};
+        Vec2f v = {(-x1p - cxp) / radii.x, (-y1p - cyp) / radii.y};
 
-        f64 a1 = Math::Vec2f(1, 0).angleWith(u); // Initial angle
+        f64 a1 = Vec2f(1, 0).angleWith(u); // Initial angle
         f64 da = u.angleWith(v);
 
         if (not fs and da > 0) {
-            da -= 2 * Math::PI;
+            da -= 2 * PI;
         } else if (fs and da < 0) {
-            da += 2 * Math::PI;
+            da += 2 * PI;
         }
 
         // Approximate the arc using cubic spline segments.
-        Math::Trans2f t{cosrx, sinrx, -sinrx, cosrx, cx, cy};
+        Trans2f t{cosrx, sinrx, -sinrx, cosrx, cx, cy};
 
         // Split arc into max 90 degree segments.
         // The loop assumes an Iter per end point (including start and end), this +1.
-        isize ndivs = (isize)(Math::abs(da) / (Math::PI * 0.5) + 1.0);
+        isize ndivs = (isize)(abs(da) / (PI * 0.5) + 1.0);
         f64 hda = (da / (f64)ndivs) / 2.0;
-        f64 kappa = Math::abs(4.0 / 3.0 * (1.0 - Math::cos(hda)) / Math::sin(hda));
+        f64 kappa = abs(4.0 / 3.0 * (1.0 - cos(hda)) / sin(hda));
 
         if (da < 0.0) {
             kappa = -kappa;
         }
 
-        Math::Vec2f current = {};
-        Math::Vec2f ptan = {};
+        Vec2f current = {};
+        Vec2f ptan = {};
 
         for (isize i = 0; i <= ndivs; i++) {
             f64 a = a1 + da * (i / (f64)ndivs);
 
-            dx = Math::cos(a);
-            dy = Math::sin(a);
+            dx = cos(a);
+            dy = sin(a);
 
-            Math::Vec2f p = t.apply(Math::Vec2f{dx * radii.x, dy * radii.y});
-            Math::Vec2f tan = t.applyVector({-dy * radii.x * kappa, dx * radii.y * kappa});
+            Vec2f p = t.apply(Vec2f{dx * radii.x, dy * radii.y});
+            Vec2f tan = t.applyVector({-dy * radii.x * kappa, dx * radii.y * kappa});
 
             if (i > 0)
-                _flattenCurveTo(Math::Curvef::cubic(current, current + ptan, p - tan, p));
+                _flattenCurveTo(Curvef::cubic(current, current + ptan, p - tan, p));
 
             current = p;
             ptan = tan;
@@ -387,14 +387,14 @@ export struct Path {
         case CUBIC_TO:
             if (op.options & SMOOTH)
                 op.cp1 = _lastP * 2 - _lastCp;
-            _flattenCurveTo(Math::Curvef::cubic(_lastP, op.cp1, op.cp2, op.p));
+            _flattenCurveTo(Curvef::cubic(_lastP, op.cp1, op.cp2, op.p));
             _lastCp = op.cp2;
             break;
 
         case QUAD_TO:
             if (op.options & SMOOTH)
                 op.cp2 = _lastP * 2 - _lastCp;
-            _flattenCurveTo(Math::Curvef::quadratic(_lastP, op.cp2, op.p));
+            _flattenCurveTo(Curvef::quadratic(_lastP, op.cp2, op.p));
             _lastCp = op.cp2;
             break;
 
@@ -418,11 +418,11 @@ export struct Path {
         evalOp(CLOSE);
     }
 
-    void moveTo(Math::Vec2f p, Flags<Option> options = {}) {
+    void moveTo(Vec2f p, Flags<Option> options = {}) {
         evalOp({MOVE_TO, p, options});
     }
 
-    void lineTo(Math::Vec2f p, Flags<Option> options = {}) {
+    void lineTo(Vec2f p, Flags<Option> options = {}) {
         evalOp({LINE_TO, p, options});
     }
 
@@ -430,44 +430,44 @@ export struct Path {
         evalOp({HLINE_TO, {x, 0}, options});
     }
 
-    void vlineTo(f64 y, Flags<Option> options = {})  {
+    void vlineTo(f64 y, Flags<Option> options = {}) {
         evalOp({VLINE_TO, {0, y}, options});
     }
 
-    void cubicTo(Math::Vec2f cp1, Math::Vec2f cp2, Math::Vec2f p, Flags<Option> options = {})  {
+    void cubicTo(Vec2f cp1, Vec2f cp2, Vec2f p, Flags<Option> options = {}) {
         evalOp({CUBIC_TO, cp1, cp2, p, options});
     }
 
-    void smoothCubicTo(Math::Vec2f cp2, Math::Vec2f p, Flags<Option> options = {}) {
+    void smoothCubicTo(Vec2f cp2, Vec2f p, Flags<Option> options = {}) {
         evalOp({CUBIC_TO, {}, cp2, p, options | SMOOTH});
     }
 
-    void quadTo(Math::Vec2f cp, Math::Vec2f p, Flags<Option> options = {}) {
+    void quadTo(Vec2f cp, Vec2f p, Flags<Option> options = {}) {
         evalOp({QUAD_TO, cp, p, options});
     }
 
-    void smoothQuadTo(Math::Vec2f p, Flags<Option> options = {}) {
+    void smoothQuadTo(Vec2f p, Flags<Option> options = {}) {
         evalOp({QUAD_TO, {}, p, options | SMOOTH});
     }
 
-    void arcTo(Math::Vec2f radii, f64 angle, Math::Vec2f p, Flags<Option> options = {}) {
+    void arcTo(Vec2f radii, f64 angle, Vec2f p, Flags<Option> options = {}) {
         evalOp({ARC_TO, radii, angle, p, options});
     }
 
     // MARK: Shapes ------------------------------------------------------------
 
-    void line(Math::Edgef edge) {
+    void line(Edgef edge) {
         moveTo(edge.start);
         lineTo(edge.end);
     }
 
-    void curve(Math::Curvef curve) {
+    void curve(Curvef curve) {
         moveTo(curve.a);
         cubicTo(curve.b, curve.c, curve.d);
     }
 
-    void rect(Math::Rectf rect, Math::Radiif radii = 0) {
-        if (Math::epsilonEq(min(rect.width, rect.height), 0.0, 0.001))
+    void rect(Rectf rect, Radiif radii = 0) {
+        if (epsilonEq(min(rect.width, rect.height), 0.0, 0.001))
             return;
 
         if (radii.zero()) {
@@ -529,15 +529,15 @@ export struct Path {
         }
     }
 
-    void ellipse(Math::Ellipsef ellipse) {
+    void ellipse(Ellipsef ellipse) {
         auto bound = ellipse.bound();
         moveTo(bound.topCenter());
-        arcTo(ellipse.radii, 0, bound.bottomCenter(), Path::SWEEP);
-        arcTo(ellipse.radii, 0, bound.topCenter(), Path::SWEEP);
+        arcTo(ellipse.radii, 0, bound.bottomCenter(), SWEEP);
+        arcTo(ellipse.radii, 0, bound.topCenter(), SWEEP);
         close();
     }
 
-    void arc(Math::Arcf arc) {
+    void arc(Arcf arc) {
         moveTo(arc.eval(0.0));
         for (auto t = 0.0; t < 1.0; t += 0.1) {
             auto p = arc.eval(t);
@@ -545,7 +545,7 @@ export struct Path {
         }
     }
 
-    void path(Math::Path const& path)  {
+    void path(Path const& path) {
         for (auto contour : path.iterContours()) {
             if (contour.len() == 0)
                 panic("it is not possible to have an empty contour at this point");
@@ -562,15 +562,15 @@ export struct Path {
 
     // MARK: Transform ---------------------------------------------------------
 
-    void offset(Math::Vec2f offset) {
+    void offset(Vec2f offset) {
         for (auto& v : _verts)
             v = v + offset;
     }
 
     // MARK: Svg ---------------------------------------------------------------
 
-    Opt<Math::Vec2f> _nextVec2f(Io::SScan& s)  {
-        return Math::Vec2f{
+    Opt<Vec2f> _nextVec2f(Io::SScan& s) {
+        return Vec2f{
             try$(Io::atof(s)),
             try$(Io::atof(s)),
         };
@@ -591,8 +591,8 @@ export struct Path {
             return try$(Io::atof(s));
         };
 
-        auto nextCoordPair = [&] -> Opt<Math::Vec2f> {
-            auto r = Math::Vec2f{try$(nextCoord()), try$(nextCoord())};
+        auto nextCoordPair = [&] -> Opt<Vec2f> {
+            auto r = Vec2f{try$(nextCoord()), try$(nextCoord())};
             nextSep();
             return r;
         };

@@ -12,14 +12,14 @@ import :io.text;
 namespace Karm::Io {
 
 export struct Emit : TextWriter {
-    Io::TextWriter& _writer;
+    TextWriter& _writer;
     usize _ident = 0;
     Res<> _error = Ok();
     bool _newline = false;
     bool _needIdent = false;
     bool _startOfLine = true;
 
-    Emit(Io::TextWriter& writer)
+    Emit(TextWriter& writer)
         : _writer(writer) {
     }
 
@@ -124,13 +124,13 @@ export struct Emit : TextWriter {
 
 export template <ReprMethod T>
 struct Repr<T> {
-    static void repr(Io::Emit& emit, T const& val) {
+    static void repr(Emit& emit, T const& val) {
         val.repr(emit);
     }
 };
 
 export template <Reprable T>
-void repr(Io::Emit& emit, T const& val) {
+void repr(Emit& emit, T const& val) {
     if constexpr (ReprMethod<T>) {
         val.repr(emit);
     } else {
@@ -140,8 +140,8 @@ void repr(Io::Emit& emit, T const& val) {
 
 export template <Reprable T>
 struct Formatter<T> {
-    Res<> format(Io::TextWriter& writer, T const& val) {
-        Io::Emit emit{writer};
+    Res<> format(TextWriter& writer, T const& val) {
+        Emit emit{writer};
         repr(emit, val);
         return emit.flush();
     }

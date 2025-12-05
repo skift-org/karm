@@ -16,7 +16,7 @@ test$("strong-rc") {
 
 test$("weak-self") {
     struct Foo {
-        Opt<Karm::Weak<Foo>> _self;
+        Opt<Weak<Foo>> _self;
 
         Rc<Foo> self() {
             return _self

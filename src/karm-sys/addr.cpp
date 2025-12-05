@@ -173,11 +173,11 @@ export struct SocketAddr {
 };
 
 SocketAddr Ip4::unspecified(u16 port) {
-    return SocketAddr{Ip4::unspecified(), port};
+    return SocketAddr{unspecified(), port};
 }
 
 SocketAddr Ip4::localhost(u16 port) {
-    return SocketAddr{Ip4::localhost(), port};
+    return SocketAddr{localhost(), port};
 }
 
 Res<Ip4> Ip4::parse(Io::SScan& s) {
@@ -208,11 +208,11 @@ Res<Ip4> Ip4::parse(Str str) {
 }
 
 SocketAddr Ip6::unspecified(u16 port) {
-    return SocketAddr{Ip6::unspecified(), port};
+    return SocketAddr{unspecified(), port};
 }
 
 SocketAddr Ip6::localhost(u16 port) {
-    return SocketAddr{Ip6::localhost(), port};
+    return SocketAddr{localhost(), port};
 }
 
 Res<Ip6> Ip6::parse(Io::SScan& s) {
@@ -241,14 +241,14 @@ Res<Ip6> Ip6::parse(Str str) {
 
 export template <>
 struct Karm::Io::Formatter<Karm::Sys::Ip4> {
-    Res<> format(Io::TextWriter& writer, Karm::Sys::Ip4 addr) {
+    Res<> format(TextWriter& writer, Sys::Ip4 addr) {
         return Io::format(writer, "{}.{}.{}.{}", addr.a, addr.b, addr.c, addr.d);
     }
 };
 
 export template <>
 struct Karm::Io::Formatter<Karm::Sys::Ip6> {
-    Res<> format(Io::TextWriter& writer, Karm::Sys::Ip6 addr) {
+    Res<> format(TextWriter& writer, Sys::Ip6 addr) {
         return Io::format(
             writer,
             "{04x}:{04x}:{04x}:{04x}:{04x}:{04x}:{04x}:{04x}",
@@ -259,7 +259,7 @@ struct Karm::Io::Formatter<Karm::Sys::Ip6> {
 
 export template <>
 struct Karm::Io::Formatter<Karm::Sys::Ip> {
-    Res<> format(Io::TextWriter& writer, Karm::Sys::Ip addr) {
+    Res<> format(TextWriter& writer, Sys::Ip addr) {
         return addr.visit([&](auto addr) {
             return Io::format(writer, "{}", addr);
         });
@@ -268,7 +268,7 @@ struct Karm::Io::Formatter<Karm::Sys::Ip> {
 
 export template <>
 struct Karm::Io::Formatter<Karm::Sys::SocketAddr> {
-    Res<> format(Io::TextWriter& writer, Karm::Sys::SocketAddr addr) {
+    Res<> format(TextWriter& writer, Sys::SocketAddr addr) {
         return Io::format(writer, "{}:{}", addr.addr, addr.port);
     }
 };

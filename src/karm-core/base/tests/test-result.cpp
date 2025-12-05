@@ -41,7 +41,7 @@ test$("res-take-ok") {
     auto v = r.take();
     expectEq$(v, "hello");
     // NOTE: take() works like move, Res is in the moved-from Ok state
-    expect$(r.has()); 
+    expect$(r.has());
 
     return Ok();
 }
@@ -78,8 +78,14 @@ test$("res-unwrap-or-else") {
     Res<int> r1 = Ok(5);
     Res<int> r2 = Error::other("dead");
 
-    expectEq$(r1.unwrapOrElse([] { return 999; }), 5);
-    expectEq$(r2.unwrapOrElse([] { return 999; }), 999);
+    expectEq$(r1.unwrapOrElse([] {
+        return 999;
+    }),
+              5);
+    expectEq$(r2.unwrapOrElse([] {
+        return 999;
+    }),
+              999);
 
     return Ok();
 }
@@ -89,7 +95,9 @@ test$("res-unwrap-or-else") {
 test$("res-map-ok") {
     Res<int> r = Ok(2);
 
-    auto r2 = r.map<int>([](int v) { return v * 3; });
+    auto r2 = r.map<int>([](int v) {
+        return v * 3;
+    });
 
     expect$(r2.has());
     expectEq$(r2.unwrap(), 6);
@@ -100,7 +108,9 @@ test$("res-map-ok") {
 test$("res-map-err") {
     Res<int> r = Error::other("boom");
 
-    auto r2 = r.map<int>([](int v) { return v * 3; });
+    auto r2 = r.map<int>([](int v) {
+        return v * 3;
+    });
 
     expect$(not r2.has());
     expectEq$(r2.error().unwrap().msg(), "boom");
@@ -215,8 +225,14 @@ test$("res-ref-unwrapOrElse") {
     Res<int&> r1 = Ok<int&>(v);
     Res<int&> r2 = Error::other("err");
 
-    expectEq$(r1.unwrapOrElse([] { return 500; }), 10);
-    expectEq$(r2.unwrapOrElse([] { return 500; }), 500);
+    expectEq$(r1.unwrapOrElse([] {
+        return 500;
+    }),
+              10);
+    expectEq$(r2.unwrapOrElse([] {
+        return 500;
+    }),
+              500);
 
     return Ok();
 }
@@ -227,7 +243,9 @@ test$("res-ref-map") {
     int v = 3;
     Res<int&> r = Ok<int&>(v);
 
-    auto r2 = r.map<int>([](int& x) { return x * 4; });
+    auto r2 = r.map<int>([](int& x) {
+        return x * 4;
+    });
 
     expect$(r2.has());
     expectEq$(r2.unwrap(), 12);
@@ -270,6 +288,5 @@ test$("res-ref-conversion") {
 
     return Ok();
 }
-
 
 } // namespace Karm::Base::Tests

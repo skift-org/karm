@@ -107,12 +107,12 @@ struct [[nodiscard, clang::coro_return_type, clang::coro_lifetimebound]] _Task {
                 if (cfp != Cfp::PAST_SUSPEND)
                     return false;
 
-                _r.recv(Async::INLINE, value.take());
+                _r.recv(INLINE, value.take());
                 return true;
             }
 
             void resume() override {
-                _r.recv(Async::LATER, value.take());
+                _r.recv(LATER, value.take());
             }
         };
 

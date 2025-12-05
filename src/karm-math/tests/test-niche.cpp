@@ -14,9 +14,9 @@ test$("f64-niche") {
     expectEq$(test.unwrap(), 5);
     expectEq$(test.take(), 5);
     expectEq$(test, NONE);
-    test = Math::NAN;
+    test = NAN;
     expectEq$(test.has(), true);
-    test = -Math::NAN;
+    test = -NAN;
     expectEq$(test.has(), true);
 
     return Ok();

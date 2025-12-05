@@ -13,17 +13,17 @@ struct ContextMenu : Ui::ProxyNode<ContextMenu> {
     Ui::Slot _menu;
 
     ContextMenu(Ui::Child child, Ui::Slot menu)
-        : Ui::ProxyNode<ContextMenu>(child),
+        : ProxyNode<ContextMenu>(child),
           _menu(std::move(menu)) {
     }
 
     void reconcile(ContextMenu& o) override {
-        Ui::ProxyNode<ContextMenu>::reconcile(o);
+        ProxyNode<ContextMenu>::reconcile(o);
         _menu = std::move(o._menu);
     }
 
     void event(App::Event& event) override {
-        Ui::ProxyNode<ContextMenu>::event(event);
+        ProxyNode<ContextMenu>::event(event);
 
         if (event.accepted())
             return;
