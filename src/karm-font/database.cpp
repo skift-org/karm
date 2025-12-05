@@ -344,7 +344,7 @@ export struct Database {
 export Database const& globalDatabase() {
     static Database db = [] {
         Database res;
-        res.loadSystemFonts().unwrap("unable to load system fonts");
+        (void)res.loadSystemFonts();
         return res;
     }();
     return db;
