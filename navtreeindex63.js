@@ -1,5 +1,7 @@
 var NAVTREEINDEX63 =
 {
+"unionKarm_1_1Math_1_1Curve.html#ab44bb89b39ace76057fb3e507f842851":[0,0,0,23,5,22],
+"unionKarm_1_1Math_1_1Curve.html#ab44bb89b39ace76057fb3e507f842851":[2,0,0,20,4,22],
 "unionKarm_1_1Math_1_1Curve.html#ab6ae74b35a9d0ff25cb5ce60147575d0":[2,0,0,20,4,0],
 "unionKarm_1_1Math_1_1Curve.html#ab6ae74b35a9d0ff25cb5ce60147575d0":[0,0,0,23,5,0],
 "unionKarm_1_1Math_1_1Curve.html#ac80cd0b6f0df02b9653f0ea839eb4a8c":[0,0,0,23,5,11],
@@ -247,7 +249,5 @@ var NAVTREEINDEX63 =
 "unionKarm_1_1Math_1_1Quad.html":[2,0,0,20,19],
 "unionKarm_1_1Math_1_1Quad.html":[0,0,0,23,20],
 "unionKarm_1_1Math_1_1Quad.html#a0237bd6bf7b8562b8d71044bd54f98f6":[0,0,0,23,20,13],
-"unionKarm_1_1Math_1_1Quad.html#a0237bd6bf7b8562b8d71044bd54f98f6":[2,0,0,20,19,13],
-"unionKarm_1_1Math_1_1Quad.html#a08d21bc040f25dfcf3e99428632be7d8":[0,0,0,23,20,6],
-"unionKarm_1_1Math_1_1Quad.html#a08d21bc040f25dfcf3e99428632be7d8":[2,0,0,20,19,6]
+"unionKarm_1_1Math_1_1Quad.html#a0237bd6bf7b8562b8d71044bd54f98f6":[2,0,0,20,19,13]
 };

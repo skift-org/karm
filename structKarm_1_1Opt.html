@@ -196,20 +196,23 @@ requires (Meta::MoveConstructible&lt;T, U&gt;)</td></tr>
 <tr class="separator:a5fa2ce078e1189af849b90df5bce476b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab9d9d3a8e6909655060d173737a579b5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="karm-core_2macros_8h.html#ac620672df61cb1f3f6bf8901869b6be2">always_inline</a> constexpr T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Opt.html#ab9d9d3a8e6909655060d173737a579b5">unwrapOrElse</a> (auto f) const <a class="el" href="karm-core_2macros_8h.html#a022a4ac48aa34e9cd055ac22154c3d55">lifetimebound</a></td></tr>
 <tr class="separator:ab9d9d3a8e6909655060d173737a579b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a22abdc07090919580efce593b7bd18a8"><td class="memTemplParams" colspan="2">template&lt;typename E &gt; </td></tr>
+<tr class="memitem:a22abdc07090919580efce593b7bd18a8"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="karm-core_2macros_8h.html#ac620672df61cb1f3f6bf8901869b6be2">always_inline</a> constexpr <a class="el" href="structKarm_1_1Res.html">Res</a>&lt; T, E &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structKarm_1_1Opt.html#a22abdc07090919580efce593b7bd18a8">okOr</a> (E error) const</td></tr>
+<tr class="separator:a22abdc07090919580efce593b7bd18a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3ffa127092848e9dcd6720bed6f892df"><td class="memItemLeft" align="right" valign="top"><a class="el" href="karm-core_2macros_8h.html#ac620672df61cb1f3f6bf8901869b6be2">always_inline</a> constexpr T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Opt.html#a3ffa127092848e9dcd6720bed6f892df">take</a> (char const *msg=&quot;unwrapping none&quot;)</td></tr>
 <tr class="separator:a3ffa127092848e9dcd6720bed6f892df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac27623092ec11e268f3f2afc585e2974"><td class="memItemLeft" align="right" valign="top"><a class="el" href="karm-core_2macros_8h.html#ac620672df61cb1f3f6bf8901869b6be2">always_inline</a> constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Opt.html#ac27623092ec11e268f3f2afc585e2974">visit</a> (auto visitor) -&gt; decltype(visitor(_store.unwrap()))</td></tr>
 <tr class="separator:ac27623092ec11e268f3f2afc585e2974"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0c0333a95612295003d380817ceb65e1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="karm-core_2macros_8h.html#ac620672df61cb1f3f6bf8901869b6be2">always_inline</a> constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Opt.html#a0c0333a95612295003d380817ceb65e1">visit</a> (auto visitor) const -&gt; decltype(visitor(_store.unwrap()))</td></tr>
 <tr class="separator:a0c0333a95612295003d380817ceb65e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d708cf644ba52a8b90c6341f0a215a6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="karm-core_2macros_8h.html#ac620672df61cb1f3f6bf8901869b6be2">always_inline</a> constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Opt.html#a0d708cf644ba52a8b90c6341f0a215a6">map</a> (auto f) -&gt; <a class="el" href="structKarm_1_1Opt.html">Opt</a>&lt; decltype(f(<a class="el" href="structKarm_1_1Opt.html#af890ca0e3e906db86775de8bccd11869">unwrap</a>()))&gt;</td></tr>
+<tr class="separator:a0d708cf644ba52a8b90c6341f0a215a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad6c848908571387bc8ac4557f719d992"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
 <tr class="memitem:ad6c848908571387bc8ac4557f719d992"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="karm-core_2macros_8h.html#ac620672df61cb1f3f6bf8901869b6be2">always_inline</a> constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structKarm_1_1Opt.html#ad6c848908571387bc8ac4557f719d992">operator()</a> (Args &amp;&amp;... args)</td></tr>
 <tr class="separator:ad6c848908571387bc8ac4557f719d992"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3888200b3b91bf20631b02c4560e47f7"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
 <tr class="memitem:a3888200b3b91bf20631b02c4560e47f7"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="karm-core_2macros_8h.html#ac620672df61cb1f3f6bf8901869b6be2">always_inline</a> constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structKarm_1_1Opt.html#a3888200b3b91bf20631b02c4560e47f7">operator()</a> (Args &amp;&amp;... args) const</td></tr>
 <tr class="separator:a3888200b3b91bf20631b02c4560e47f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d708cf644ba52a8b90c6341f0a215a6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="karm-core_2macros_8h.html#ac620672df61cb1f3f6bf8901869b6be2">always_inline</a> constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Opt.html#a0d708cf644ba52a8b90c6341f0a215a6">map</a> (auto f) -&gt; <a class="el" href="structKarm_1_1Opt.html">Opt</a>&lt; decltype(f(<a class="el" href="structKarm_1_1Opt.html#af890ca0e3e906db86775de8bccd11869">unwrap</a>()))&gt;</td></tr>
-<tr class="separator:a0d708cf644ba52a8b90c6341f0a215a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adf2b1723e6311f3b4f807ebf58c4d727"><td class="memItemLeft" align="right" valign="top"><a class="el" href="karm-core_2macros_8h.html#ac620672df61cb1f3f6bf8901869b6be2">always_inline</a> constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Opt.html#adf2b1723e6311f3b4f807ebf58c4d727">operator==</a> (<a class="el" href="structKarm_1_1None.html">None</a>) const</td></tr>
 <tr class="separator:adf2b1723e6311f3b4f807ebf58c4d727"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a200dd82b6ed793de58bfa8dfb4353dcf"><td class="memTemplParams" colspan="2">template&lt;typename U &gt; <br />
@@ -690,6 +693,36 @@ template&lt;typename T &gt; </div>
           <td class="memname"><a class="el" href="karm-core_2macros_8h.html#ac620672df61cb1f3f6bf8901869b6be2">always_inline</a> constexpr <a class="el" href="structKarm_1_1None.html">None</a> <a class="el" href="structKarm_1_1Opt.html">Karm::Opt</a>&lt; T &gt;::none </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a22abdc07090919580efce593b7bd18a8" name="a22abdc07090919580efce593b7bd18a8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a22abdc07090919580efce593b7bd18a8">&#9670;&#160;</a></span>okOr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<div class="memtemplate">
+template&lt;typename E &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="karm-core_2macros_8h.html#ac620672df61cb1f3f6bf8901869b6be2">always_inline</a> constexpr <a class="el" href="structKarm_1_1Res.html">Res</a>&lt; T, E &gt; <a class="el" href="structKarm_1_1Opt.html">Karm::Opt</a>&lt; T &gt;::okOr </td>
+          <td>(</td>
+          <td class="paramtype">E&#160;</td>
+          <td class="paramname"><em>error</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -1534,7 +1567,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+<hr/>The documentation for this struct was generated from the following files:<ul>
+<li>src/karm-core/base/<a class="el" href="karm-core_2base_2base_8cpp.html">base.cpp</a></li>
 <li>src/karm-core/base/<a class="el" href="opt_8cpp.html">opt.cpp</a></li>
 </ul>
 </div><!-- contents -->

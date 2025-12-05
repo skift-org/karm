@@ -8,7 +8,7 @@ var structKarm_1_1Res =
     [ "Res", "structKarm_1_1Res.html#aa6afe39ecfdc59619727fa92cb3d846c", null ],
     [ "Res", "structKarm_1_1Res.html#a15d91cf806e31b95ec6e3a86ef688c1c", null ],
     [ "Res", "structKarm_1_1Res.html#a94832ea394dbe9dca9e2cddfb532c071", null ],
-    [ "err", "structKarm_1_1Res.html#ac898553adbaf73371c987960a219c969", null ],
+    [ "error", "structKarm_1_1Res.html#aca5b5b787ca87cd731cff883a81cafd4", null ],
     [ "has", "structKarm_1_1Res.html#abacfc6a9abf2eafad60ee8c037f21ee0", null ],
     [ "map", "structKarm_1_1Res.html#a41167cc243440636077dc43266586df1", null ],
     [ "map", "structKarm_1_1Res.html#ad3b430095db87ff91c7bdaa3d7654dac", null ],

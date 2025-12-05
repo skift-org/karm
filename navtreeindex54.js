@@ -1,5 +1,7 @@
 var NAVTREEINDEX54 =
 {
+"structKarm_1_1Sys_1_1UdpConnection.html#a81a7d683035c24ccbd9f111be7b19dea":[0,0,0,36,50,0],
+"structKarm_1_1Sys_1_1UdpConnection.html#a906019ed7472778da0ca284e82f3b94e":[2,0,0,32,49,4],
 "structKarm_1_1Sys_1_1UdpConnection.html#a906019ed7472778da0ca284e82f3b94e":[0,0,0,36,50,4],
 "structKarm_1_1Sys_1_1UdpConnection.html#ac2948a3d4651df3dea456c6ca1e165dc":[2,0,0,32,49,3],
 "structKarm_1_1Sys_1_1UdpConnection.html#ac2948a3d4651df3dea456c6ca1e165dc":[0,0,0,36,50,3],
@@ -247,7 +249,5 @@ var NAVTREEINDEX54 =
 "structKarm_1_1Tty_1_1Style.html#ab9dd0b6ad6f9b1bf34d10097371db453":[2,0,0,36,1,3],
 "structKarm_1_1Tty_1_1Style.html#ad025ac4071d69cf7eed2d0a6086582e6":[2,0,0,36,1,6],
 "structKarm_1_1Tty_1_1Style.html#ad025ac4071d69cf7eed2d0a6086582e6":[0,0,0,41,1,6],
-"structKarm_1_1Tty_1_1Styled.html":[2,0,0,36,2],
-"structKarm_1_1Tty_1_1Styled.html":[0,0,0,41,2],
-"structKarm_1_1Tuple.html":[0,0,0,143]
+"structKarm_1_1Tty_1_1Styled.html":[2,0,0,36,2]
 };

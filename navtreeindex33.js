@@ -245,9 +245,9 @@ var NAVTREEINDEX33 =
 "structKarm_1_1Gfx_1_1TintFilter.html#ac8a3243eead978db1c1f1e643dcb1984":[0,0,0,12,45,1],
 "structKarm_1_1Gfx_1_1Unfiltered.html":[2,0,0,12,45],
 "structKarm_1_1Gfx_1_1Unfiltered.html":[0,0,0,12,46],
-"structKarm_1_1Gfx_1_1Unfiltered.html#aaa4e2bb2262067ff2cd87cbc973c71f1":[0,0,0,12,46,0],
 "structKarm_1_1Gfx_1_1Unfiltered.html#aaa4e2bb2262067ff2cd87cbc973c71f1":[2,0,0,12,45,0],
+"structKarm_1_1Gfx_1_1Unfiltered.html#aaa4e2bb2262067ff2cd87cbc973c71f1":[0,0,0,12,46,0],
 "structKarm_1_1Gfx_1_1VgaFontface.html":[0,0,0,12,47],
 "structKarm_1_1Gfx_1_1VgaFontface.html":[2,0,0,12,46],
-"structKarm_1_1Gfx_1_1VgaFontface.html#a2883e79f587976378f5a2e4c1e3f5902":[2,0,0,12,46,4]
+"structKarm_1_1Gfx_1_1VgaFontface.html#a2883e79f587976378f5a2e4c1e3f5902":[0,0,0,12,47,4]
 };

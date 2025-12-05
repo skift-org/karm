@@ -1,5 +1,7 @@
 var NAVTREEINDEX60 =
 {
+"structKarm_1_1Year.html#af05addfb5bf194faa324b3a22038809f":[0,0,0,153,1],
+"structSin.html":[2,0,2],
 "structSin.html#a6f2ec2c8c337014f0bcf2c4f50482186":[2,0,2,1],
 "structSin.html#aba945e7880a123a751a32ae6cd8cc67d":[2,0,2,0],
 "structSin.html#af9096347224c9cc5869c7c1949228c1f":[2,0,2,2],
@@ -247,7 +249,5 @@ var NAVTREEINDEX60 =
 "test-gc_8cpp.html#a1cf0572448f002e1eb6beee206c18ac3":[3,0,0,10,0,0,2],
 "test-gc_8cpp.html#a50a02f5f842d32b5bc04e3b8e3260ba5":[3,0,0,10,0,0,1],
 "test-glob_8cpp.html":[3,0,0,4,3,0,0],
-"test-glob_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5":[3,0,0,4,3,0,0,1],
-"test-glob_8cpp.html#ac92df7a35c19f46322d77a88e49bac30":[3,0,0,4,3,0,0,0],
-"test-hsl_8cpp.html":[3,0,0,11,4,0]
+"test-glob_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5":[3,0,0,4,3,0,0,1]
 };

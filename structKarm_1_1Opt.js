@@ -17,6 +17,7 @@ var structKarm_1_1Opt =
     [ "hash", "structKarm_1_1Opt.html#a0feea79ca0775f15c0546618d789f39e", null ],
     [ "map", "structKarm_1_1Opt.html#a0d708cf644ba52a8b90c6341f0a215a6", null ],
     [ "none", "structKarm_1_1Opt.html#a5c38277e746c00d1fd20027b6d711683", null ],
+    [ "okOr", "structKarm_1_1Opt.html#a22abdc07090919580efce593b7bd18a8", null ],
     [ "operator bool", "structKarm_1_1Opt.html#ae50847165f4236322b4a821264538db5", null ],
     [ "operator()", "structKarm_1_1Opt.html#ad6c848908571387bc8ac4557f719d992", null ],
     [ "operator()", "structKarm_1_1Opt.html#a3888200b3b91bf20631b02c4560e47f7", null ],

@@ -1,5 +1,7 @@
 var NAVTREEINDEX57 =
 {
+"structKarm_1_1Ui_1_1Intent.html#afb4881dcd722b02d1465fcb30d4e9309":[2,0,0,37,37,0],
+"structKarm_1_1Ui_1_1KeyboardShortcutActivated.html":[2,0,0,37,38],
 "structKarm_1_1Ui_1_1KeyboardShortcutActivated.html":[0,0,0,42,39],
 "structKarm_1_1Ui_1_1LeafNode.html":[2,0,0,37,39],
 "structKarm_1_1Ui_1_1LeafNode.html":[0,0,0,42,40],
@@ -247,7 +249,5 @@ var NAVTREEINDEX57 =
 "structKarm_1_1Ui_1_1Sizing.html#a2352a276b5519a5bc88deae98e88a9c5":[0,0,0,42,55,1],
 "structKarm_1_1Ui_1_1Sizing.html#a420439e8d2ebeb12dbab7a1085bb3f68":[0,0,0,42,55,4],
 "structKarm_1_1Ui_1_1Sizing.html#a420439e8d2ebeb12dbab7a1085bb3f68":[2,0,0,37,54,4],
-"structKarm_1_1Ui_1_1Sizing.html#a7cacba913517d140496200d25797a7da":[0,0,0,42,55,2],
-"structKarm_1_1Ui_1_1Sizing.html#a7cacba913517d140496200d25797a7da":[2,0,0,37,54,2],
-"structKarm_1_1Ui_1_1Sizing.html#ab6d53d1adbdc464114dec01013adc7bf":[0,0,0,42,55,3]
+"structKarm_1_1Ui_1_1Sizing.html#a7cacba913517d140496200d25797a7da":[0,0,0,42,55,2]
 };
