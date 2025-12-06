@@ -1,5 +1,9 @@
 var NAVTREEINDEX14 =
 {
+"namespaceKarm_1_1Image_1_1Jpeg.html#af7022f5c263dd1247b0212ffec582808a3420bb325f79ce7496fa84eee5797c70":[0,0,0,17,2,6,21],
+"namespaceKarm_1_1Image_1_1Jpeg.html#af7022f5c263dd1247b0212ffec582808a37c4602b7d5990e3ac4aeabff49e2396":[0,0,0,17,2,6,42],
+"namespaceKarm_1_1Image_1_1Jpeg.html#af7022f5c263dd1247b0212ffec582808a38385946e30674db1ecc137f99150238":[0,0,0,17,2,6,20],
+"namespaceKarm_1_1Image_1_1Jpeg.html#af7022f5c263dd1247b0212ffec582808a42d2eeec20b3b7530468a7db9fcb73a4":[0,0,0,17,2,6,57],
 "namespaceKarm_1_1Image_1_1Jpeg.html#af7022f5c263dd1247b0212ffec582808a44adb9c8ba17a13814d0a6bddff361dd":[0,0,0,17,2,6,46],
 "namespaceKarm_1_1Image_1_1Jpeg.html#af7022f5c263dd1247b0212ffec582808a46c7a4d18f968c3bb83a8931028cc6e0":[0,0,0,17,2,6,23],
 "namespaceKarm_1_1Image_1_1Jpeg.html#af7022f5c263dd1247b0212ffec582808a4884f31ca27078292dcc4945f1f328f0":[0,0,0,17,2,6,26],
@@ -245,9 +249,5 @@ var NAVTREEINDEX14 =
 "namespaceKarm_1_1Kira.html#a05aee2b63a5914d48dd882fd936413f9":[0,0,0,20,72],
 "namespaceKarm_1_1Kira.html#a06566b84594573d79ba631556a625022":[0,0,0,20,122],
 "namespaceKarm_1_1Kira.html#a0825e1cedbe4454948d84ff8fe7a6915":[0,0,0,20,104],
-"namespaceKarm_1_1Kira.html#a08a0c20919a343a439ff33014f006852":[0,0,0,20,50],
-"namespaceKarm_1_1Kira.html#a10509f24d898b4c46cd3ce461dccbb0e":[0,0,0,20,97],
-"namespaceKarm_1_1Kira.html#a17ae21271e4fb92c9563252c82f39fe7":[0,0,0,20,66],
-"namespaceKarm_1_1Kira.html#a1b827da8c7509f1db388dd7899b00ad7":[0,0,0,20,52],
-"namespaceKarm_1_1Kira.html#a22cda00e84572579fc1f55d83bf9e9a6":[0,0,0,20,44]
+"namespaceKarm_1_1Kira.html#a08a0c20919a343a439ff33014f006852":[0,0,0,20,50]
 };
