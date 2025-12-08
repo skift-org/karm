@@ -8,110 +8,103 @@ import Karm.Core;
 
 namespace Karm::Pdf {
 
-void Name::write(Io::Emit& e) const {
-    e("/{}", str());
+Res<> Name::write(Io::Writer& w) const {
+    return Io::format(w, "/{}", str());
 }
 
-void Array::write(Io::Emit& e) const {
-    e('[');
+Res<> Array::write(Io::Writer& w) const {
+    try$(Io::format(w, "["));
     for (usize i = 0; i < len(); ++i) {
         if (i > 0) {
-            e(' ');
+            try$(Io::format(w, " "));
         }
-        buf()[i].write(e);
+        try$(buf()[i].write(w));
     }
-    e(']');
+    return Io::format(w, "]");
 }
 
-void Dict::write(Io::Emit& e) const {
-    e("<<\n");
+Res<> Dict::write(Io::Writer& w) const {
+    try$(Io::format(w, "<<\n"));
     for (auto const& [k, v] : iterUnordered()) {
-        e('/');
-        e(k);
-        e(' ');
-        v.write(e);
-        e('\n');
+        try$(Io::format(w, "/{} ", k));
+        try$(v.write(w));
+        try$(Io::format(w, "\n"));
     }
-    e(">>");
+    return Io::format(w, ">>");
 }
 
-void Stream::write(Io::Emit& e) const {
-    dict.write(e);
-    e("stream\n");
-    (void)e.flush();
-    (void)e.write(data);
-    e("\nendstream\n");
+Res<> Stream::write(Io::Writer& w) const {
+    try$(dict.write(w));
+    try$(Io::format(w, "stream\n"));
+    try$(w.write(data));
+    return Io::format(w, "\nendstream\n");
 }
 
-void Value::write(Io::Emit& e) const {
-    visit(Visitor{
-        [&](None) {
-            e("null");
+Res<> Value::write(Io::Writer& w) const {
+    return visit(Visitor{
+        [&](None) -> Res<> {
+            return Io::format(w, "null");
         },
-        [&](Ref const& ref) {
-            e("{} {} R", ref.num, ref.gen);
+        [&](Ref const& ref) -> Res<> {
+            return Io::format(w, "{} {} R", ref.num, ref.gen);
         },
-        [&](bool b) {
-            e(b ? "true" : "false");
+        [&](bool b) -> Res<> {
+            return Io::format(w, b ? "true" : "false");
         },
-        [&](isize i) {
-            e("{}", i);
+        [&](isize i) -> Res<> {
+            return Io::format(w, "{}", i);
         },
-        [&](usize i) {
-            e("{}", i);
+        [&](usize i) -> Res<> {
+            return Io::format(w, "{}", i);
         },
-        [&](f64 f) {
-            e("{}", f);
+        [&](f64 f) -> Res<> {
+            return Io::format(w, "{}", f);
         },
-        [&](String const& s) {
-            e("({})", s);
+        [&](String const& s) -> Res<> {
+            return Io::format(w, "({})", s);
         },
-        [&](auto const& v) {
-            v.write(e);
+        [&](auto const& v) -> Res<> {
+            return v.write(w);
         },
     });
 }
 
-Res<> File::write(Io::Writer& w) const {
-    Io::Count count{w};
-    Io::TextEncoder<> enc{count};
-    Io::Emit e{enc};
-    e("%{}\n", header);
-    e("%Powered By Karm PDF 🐢🏳️‍⚧️🦔\n", header);
+Res<> File::write(Io::Writer& writer) const {
+    Io::Count count{writer};
+
+    try$(Io::format(count, "%{}\n", header));
+    try$(Io::format(count, "%Powered By Karm PDF 🐢🏳️‍⚧️🦔\n"));
 
     XRef xref;
 
     for (auto const& [k, v] : body.iterUnordered()) {
-        try$(e.flush());
         xref.add(try$(Io::tell(count)), k.gen);
-        e("{} {} obj\n", k.num, k.gen);
-        v.write(e);
-        e("\nendobj\n");
+        try$(Io::format(count, "{} {} obj\n", k.num, k.gen));
+        try$(v.write(count));
+        try$(Io::format(count, "\nendobj\n"));
     }
 
-    try$(e.flush());
     auto startxref = try$(Io::tell(count));
-    e("xref\n");
-    xref.write(e);
+    try$(Io::format(count, "xref\n"));
+    try$(xref.write(count));
 
-    e("trailer\n");
-    trailer.write(e);
+    try$(Io::format(count, "trailer\n"));
+    try$(trailer.write(count));
 
-    e("\nstartxref\n");
-    e("{}\n", startxref);
-    e("%%EOF");
-
-    return Ok();
+    try$(Io::format(count, "\nstartxref\n"));
+    try$(Io::format(count, "{}\n", startxref));
+    return Io::format(count, "%%EOF");
 }
 
-void XRef::write(Io::Emit& e) const {
-    e("1 {}\n", entries.len());
+Res<> XRef::write(Io::Writer& w) const {
+    try$(Io::format(w, "1 {}\n", entries.len()));
     for (usize i = 0; i < entries.len(); ++i) {
         auto const& entry = entries[i];
         if (entry.used) {
-            e("{:010} {:05} n\n", entry.offset, entry.gen);
+            try$(Io::format(w, "{:010} {:05} n\n", entry.offset, entry.gen));
         }
     }
+    return Ok();
 }
 
 } // namespace Karm::Pdf

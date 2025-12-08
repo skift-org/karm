@@ -29,8 +29,7 @@ Res<Rc<FilePrinter>> FilePrinter::create(Ref::Uti uti, FilePrinterProps props) {
 
 Res<> FilePrinter::save(Ref::Url url) {
     auto outFile = try$(Sys::File::create(url));
-    Io::TextEncoder<> outEncoder{outFile};
-    try$(write(outEncoder));
+    try$(write(outFile));
     try$(outFile.flush());
     return Ok();
 }

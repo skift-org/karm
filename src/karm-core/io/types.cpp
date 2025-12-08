@@ -1,6 +1,7 @@
 export module Karm.Core:io.types;
 
 import :base.base;
+import :base.res;
 
 namespace Karm::Io {
 

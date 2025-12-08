@@ -21,26 +21,26 @@ export struct Ref {
 export struct Name : String {
     using String::String;
 
-    void write(Io::Emit& e) const;
+    Res<> write(Io::Writer& writer) const;
 };
 
 export struct Array : Vec<Value> {
     using Vec<Value>::Vec;
 
-    void write(Io::Emit& e) const;
+    Res<> write(Io::Writer& writer) const;
 };
 
 export struct Dict : Map<Name, Value> {
-    using Map<Name, Value>::Map;
+    using Map::Map;
 
-    void write(Io::Emit& e) const;
+    Res<> write(Io::Writer& writer) const;
 };
 
 export struct Stream {
     Dict dict;
     Buf<u8> data;
 
-    void write(Io::Emit& e) const;
+    Res<> write(Io::Writer& writer) const;
 };
 
 export using _Value = Union<
@@ -59,7 +59,7 @@ export using _Value = Union<
 export struct Value : _Value {
     using _Value::_Value;
 
-    void write(Io::Emit& e) const;
+    Res<> write(Io::Writer& writer) const;
 };
 
 export struct File {
@@ -88,7 +88,7 @@ export struct XRef {
         entries.pushBack({offset, gen, true});
     }
 
-    void write(Io::Emit& e) const;
+    Res<> write(Io::Writer& writer) const;
 };
 
 } // namespace Karm::Pdf
