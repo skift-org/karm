@@ -1,3 +1,7 @@
+module;
+
+#include <karm-core/macros.h>
+
 export module Karm.Sys:fd;
 
 import Karm.Core;
@@ -59,7 +63,7 @@ export struct BlobFd : Fd {
     }
 
     Res<usize> seek(Io::Seek seek) override {
-        _offset = seek.apply(_offset, _blob->len());
+        _offset = try$(seek.apply(_offset, _blob->len()));
         return Ok(_offset);
     }
 
