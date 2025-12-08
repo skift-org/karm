@@ -4,7 +4,6 @@
     "type": "lib",
     "description": "The core of the Karm Framework",
     "subdirs": [
-        "aio",
         "async",
         "base",
         "glob",

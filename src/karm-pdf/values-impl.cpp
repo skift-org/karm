@@ -36,8 +36,8 @@ Res<> Dict::write(Io::Stream& w) const {
 Res<> Stream::write(Io::Stream& w) const {
     try$(dict.write(w));
     try$(Io::format(w, "stream\n"));
-    try$(w.flush());
-    try$(w.write(data));
+    try$(w.flushAsync());
+    try$(w.writeAsync(data));
     return Io::format(w, "\nendstream\n");
 }
 
@@ -79,15 +79,15 @@ Res<> File::write(Io::Stream& writer) const {
     XRef xref;
 
     for (auto const& [k, v] : body.iterUnordered()) {
-        try$(count.flush());
-        xref.add(try$(Io::tell(count)), k.gen);
+        try$(count.flushAsync());
+        xref.add(try$(Io::tellAsync(count)), k.gen);
         try$(Io::format(count, "{} {} obj\n", k.num, k.gen));
         try$(v.write(count));
         try$(Io::format(count, "\nendobj\n"));
     }
 
-    try$(count.flush());
-    auto startxref = try$(Io::tell(count));
+    try$(count.flushAsync());
+    auto startxref = try$(Io::tellAsync(count));
     try$(Io::format(count, "xref\n"));
     try$(xref.write(count));
 

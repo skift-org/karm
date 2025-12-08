@@ -64,20 +64,20 @@ export struct Seek {
 export struct Stream {
     virtual ~Stream() = default;
 
-    virtual Res<usize> write(Bytes) {
-        return Error::unsupported("not writable");
+    virtual Async::Task<usize> writeAsync(Bytes) {
+        co_return Error::unsupported("not writable");
     }
 
-    virtual Res<usize> read(MutBytes) {
-        return Error::unsupported("not readable");
+    virtual Async::Task<usize> readAsync(MutBytes) {
+        co_return Error::unsupported("not readable");
     }
 
-    virtual Res<usize> seek(Seek) {
-        return Error::unsupported("not seekable");
+    virtual Async::Task<usize> seekAsync(Seek) {
+        co_return Error::unsupported("not seekable");
     }
 
-    virtual Res<> flush() {
-        return Ok();
+    virtual Async::Task<> flushAsync() {
+        co_return Ok();
     }
 };
 

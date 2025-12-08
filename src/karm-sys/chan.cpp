@@ -19,8 +19,8 @@ export struct In : Io::Stream {
     In(Rc<Fd> fd)
         : _fd(fd) {}
 
-    Res<usize> read(MutBytes bytes) override {
-        return _fd->read(bytes);
+    Res<usize> readAsync(MutBytes bytes) override {
+        return _fd->readAsync(bytes);
     }
 
     Rc<Fd> fd() {
@@ -35,15 +35,15 @@ export struct Out : Io::TextWriter, Io::Stream {
     Out(Rc<Fd> fd)
         : _fd(fd) {}
 
-    Res<usize> write(Bytes bytes) override {
-        return _fd->write(bytes);
+    Res<usize> writeAsync(Bytes bytes) override {
+        return _fd->writeAsync(bytes);
     }
 
     Res<> writeRune(Rune rune) override {
         typename E::One one;
         if (not E::encodeUnit(rune, one))
             return Error::invalidInput("encoding error");
-        try$(write(bytes(one)));
+        try$(writeAsync(bytes(one)));
         return Ok();
     }
 
@@ -51,8 +51,8 @@ export struct Out : Io::TextWriter, Io::Stream {
         return _fd;
     }
 
-    Res<> flush() override {
-        return _fd->flush();
+    Res<> flushAsync() override {
+        return _fd->flushAsync();
     }
 };
 
@@ -64,15 +64,15 @@ export struct Err : Io::TextWriter, Io::Stream {
     Err(Rc<Fd> fd)
         : _fd(fd) {}
 
-    Res<usize> write(Bytes bytes) override {
-        return _fd->write(bytes);
+    Res<usize> writeAsync(Bytes bytes) override {
+        return _fd->writeAsync(bytes);
     }
 
     Res<> writeRune(Rune rune) override {
         typename E::One one;
         if (not E::encodeUnit(rune, one))
             return Error::invalidInput("encoding error");
-        try$(write(bytes(one)));
+        try$(writeAsync(bytes(one)));
         return Ok();
     }
 
@@ -80,8 +80,8 @@ export struct Err : Io::TextWriter, Io::Stream {
         return _fd;
     }
 
-    Res<> flush() override {
-        return _fd->flush();
+    Res<> flushAsync() override {
+        return _fd->flushAsync();
     }
 };
 
@@ -111,13 +111,13 @@ export void err(Str str = "", auto&&... args) {
 export void println(Str str = "", auto&&... args) {
     (void)Io::format(out(), str, std::forward<decltype(args)>(args)...);
     (void)out().writeStr(Str{LINE_ENDING});
-    (void)out().flush();
+    (void)out().flushAsync();
 }
 
 export void errln(Str str = "", auto&&... args) {
     (void)Io::format(err(), str, std::forward<decltype(args)>(args)...);
     (void)err().writeStr(Str{LINE_ENDING});
-    (void)err().flush();
+    (void)err().flushAsync();
 }
 
 } // namespace Karm::Sys

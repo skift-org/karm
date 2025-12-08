@@ -14,7 +14,6 @@ namespace Karm::Sys {
 
 export struct File :
     Io::Stream,
-    Aio::Stream,
     Meta::NoCopy {
 
     Rc<Fd> _fd;
@@ -48,17 +47,9 @@ export struct File :
     File(Rc<Fd> fd, Ref::Url url)
         : _fd(fd), _url(url) {}
 
-    Res<usize> read(MutBytes bytes) override {
-        return _fd->read(bytes);
-    }
-
     [[clang::coro_wrapper]]
     Async::Task<usize> readAsync(MutBytes bytes) override {
         return globalSched().readAsync(_fd, bytes);
-    }
-
-    Res<usize> write(Bytes bytes) override {
-        return _fd->write(bytes);
     }
 
     [[clang::coro_wrapper]]
@@ -66,12 +57,8 @@ export struct File :
         return globalSched().writeAsync(_fd, bytes);
     }
 
-    Res<usize> seek(Io::Seek seek) override {
-        return _fd->seek(seek);
-    }
-
-    Res<> flush() override {
-        return _fd->flush();
+    Async::Task<usize> seekAsync(Io::Seek seek) override {
+        return _fd->seekAsync(seek);
     }
 
     [[clang::coro_wrapper]]
@@ -87,26 +74,24 @@ export struct File :
         return _fd;
     }
 
-    Res<Ref::Mime> sniff(bool ignoreUrl = false) {
+    Async::Task<Ref::Mime> sniffAsync(bool ignoreUrl = false) {
         if (not ignoreUrl) {
             if (auto mime = Ref::sniffSuffix(_url.path.suffix()))
-                return Ok(mime.take());
+                co_return Ok(mime.take());
         }
 
-        auto old = try$(Io::tell(*this));
-        Defer _ = [&] {
-            seek(Io::Seek::fromBegin(old)).unwrap();
-        };
-        try$(seek(Io::Seek::fromBegin(0)));
-        auto mime = try$(Ref::sniff(*this));
-        return Ok(mime);
+        auto old = co_trya$(Io::tellAsync(*this));
+        co_trya$(seekAsync(Io::Seek::fromBegin(0)));
+        auto mime = co_try$(Ref::sniff(*this));
+        co_trya$(seekAsync(Io::Seek::fromBegin(old)));
+        co_return Ok(mime);
     }
 };
 
 /// Read the entire file as a UTF-8 string.
-export Res<String> readAllUtf8(Ref::Url const& url) {
-    auto file = try$(Sys::File::open(url));
-    return Io::readAllUtf8(file);
+export Async::Task<String> readAllUtf8Async(Ref::Url const& url) {
+    auto file = co_try$(Sys::File::open(url));
+    co_return Io::readAllUtf8Async(file);
 }
 
 } // namespace Karm::Sys

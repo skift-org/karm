@@ -13,13 +13,13 @@ struct Fd : Sys::Fd {
 
     ~Fd() override;
 
-    Res<usize> read(MutBytes bytes) override;
+    Res<usize> readAsync(MutBytes bytes) override;
 
-    Res<usize> write(Bytes bytes) override;
+    Res<usize> writeAsync(Bytes bytes) override;
 
-    Res<usize> seek(Io::Seek seek) override;
+    Res<usize> seekAsync(Io::Seek seek) override;
 
-    Res<> flush() override;
+    Res<> flushAsync() override;
 
     Res<Rc<Sys::Fd>> dup() override;
 

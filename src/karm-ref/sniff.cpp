@@ -179,7 +179,7 @@ export Mime sniff(Bytes bytes) {
 
 export Res<Mime> sniff(Io::Stream& reader) {
     Array<u8, 1445> header;
-    auto len = try$(reader.read(header));
+    auto len = try$(reader.readAsync(header));
     return Ok(sniff(sub(header, 0, len)));
 }
 

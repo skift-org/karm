@@ -130,7 +130,7 @@ struct Window {
     Ring<u8> _r{32768};
 
     Res<> emit(u8 b) {
-        try$(Io::putByte(_w, b));
+        try$(Io::putByteAsync(_w, b));
         if (_r.rem() == 0)
             _r.popFront();
         _r.pushBack(b);

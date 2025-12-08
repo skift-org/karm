@@ -189,7 +189,7 @@ export struct Message {
             msg._hnds[msg._hndsLen++] = h;
         }
 
-        msg._len = try$(Io::tell(reqBuf)) + sizeof(Header);
+        msg._len = try$(Io::tellAsync(reqBuf)) + sizeof(Header);
 
         return Ok(std::move(msg));
     }
@@ -211,7 +211,7 @@ export struct Message {
         MessageSerializer messageSerializer{emit};
         try$(Serde::serialize(messageSerializer, payload));
 
-        resp._len = try$(Io::tell(respBuf)) + sizeof(Header);
+        resp._len = try$(Io::tellAsync(respBuf)) + sizeof(Header);
 
         return Ok(std::move(resp));
     }

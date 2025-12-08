@@ -212,7 +212,7 @@ export struct Decoder {
     Io::BufferWriter _compressedData;
 
     Res<> _handleIdat(Io::BScan& s) {
-        try$(_compressedData.write(s.remBytes()));
+        try$(_compressedData.writeAsync(s.remBytes()));
 
         return Ok();
     }

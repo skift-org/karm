@@ -20,7 +20,7 @@ struct Base64Props {
     bool urlEncoded = false;
 };
 
-export Res<> base64Decode(Io::SScan& s, Io::Stream& out, Base64Props props = {}) {
+export Async::Task<> base64Decode(Io::SScan& s, Io::Stream& out, Base64Props props = {}) {
     u8 i = 0;
     Array<u8, 4> buf;
 
@@ -43,22 +43,22 @@ export Res<> base64Decode(Io::SScan& s, Io::Stream& out, Base64Props props = {})
 
         if (i != 4)
             continue;
-        try$(Io::putByte(out, (buf[0] << 2) + (buf[1] >> 4)));
+        co_trya$(Io::putByteAsync(out, (buf[0] << 2) + (buf[1] >> 4)));
         if (buf[2] != 64)
-            try$(Io::putByte(out, (buf[1] << 4) + (buf[2] >> 2)));
+            co_trya$(Io::putByteAsync(out, (buf[1] << 4) + (buf[2] >> 2)));
         if (buf[3] != 64)
-            try$(Io::putByte(out, (buf[2] << 6) + buf[3]));
+            co_trya$(Io::putByteAsync(out, (buf[2] << 6) + buf[3]));
         i = 0;
     }
 
-    return Ok();
+    co_return Ok();
 }
 
 export constexpr usize base64EncodedLen(usize n) {
     return ((n + 2) / 3) * 4;
 }
 
-export Res<> base64Encode(Io::Stream& in, Io::TextWriter& e) {
+export Async::Task<> base64Encode(Io::Stream& in, Io::TextWriter& e) {
     Array<u8, 1024> inBuf;
     Array<u8, 3> triple;
     usize tripleLen = 0;
@@ -110,7 +110,7 @@ export Res<> base64Encode(Io::Stream& in, Io::TextWriter& e) {
     };
 
     for (;;) {
-        usize n = try$(in.read(inBuf));
+        usize n = co_trya$(in.readAsync(inBuf));
         if (n == 0)
             break;
 
@@ -118,16 +118,16 @@ export Res<> base64Encode(Io::Stream& in, Io::TextWriter& e) {
             triple[tripleLen++] = inBuf[i];
 
             if (tripleLen == 3) {
-                try$(flushTriple(3));
+                co_try$(flushTriple(3));
                 tripleLen = 0;
             }
         }
     }
 
     if (tripleLen)
-        try$(flushTriple(tripleLen));
+        co_try$(flushTriple(tripleLen));
 
-    return Ok();
+    co_return Ok();
 }
 
 export String base64Encode(Bytes in) {

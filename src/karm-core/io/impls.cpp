@@ -12,18 +12,18 @@ import :io.funcs;
 namespace Karm::Io {
 
 export struct Sink : Stream {
-    Res<usize> write(Bytes bytes) override {
-        return Ok(sizeOf(bytes));
+    Async::Task<usize> writeAsync(Bytes bytes) override {
+        co_return Ok(sizeOf(bytes));
     }
 
-    Res<usize> read(MutBytes) override {
-        return Ok(0uz);
+    Async::Task<usize> readAsync(MutBytes) override {
+        co_return Ok(0uz);
     }
 };
 
 export struct Zero : Stream {
-    Res<usize> read(MutBytes bytes) override {
-        return Ok(zeroFill(bytes));
+    Async::Task<usize> readAsync(MutBytes bytes) override {
+        co_return Ok(zeroFill(bytes));
     }
 };
 
@@ -32,8 +32,8 @@ export struct Repeat : Stream {
 
     Repeat(u8 byte) : _byte(byte) {}
 
-    Res<usize> read(MutBytes bytes) override {
-        return Ok(fill(bytes, _byte));
+    Async::Task<usize> readAsync(MutBytes bytes) override {
+        co_return Ok(fill(bytes, _byte));
     }
 };
 
@@ -44,16 +44,16 @@ export struct Count : Stream {
     Count(Stream& reader)
         : _reader(reader) {}
 
-    Res<usize> write(Bytes bytes) override {
-        usize written = try$(_reader.write(bytes));
+    Async::Task<usize> writeAsync(Bytes bytes) override {
+        usize written = co_trya$(_reader.writeAsync(bytes));
         _pos += written;
-        return Ok(written);
+        co_return Ok(written);
     }
 
-    Res<usize> seek(Seek seek) override {
+    Async::Task<usize> seekAsync(Seek seek) override {
         if (seek != Whence::CURRENT and seek.offset != 0)
-            return Error::invalidData("can't seek count reader");
-        return Ok(_pos);
+            co_return Error::invalidData("can't seek count reader");
+        co_return Ok(_pos);
     }
 };
 
@@ -66,11 +66,11 @@ struct Limit : Stream {
         : _reader(reader),
           _limit(limit) {}
 
-    Res<usize> read(MutBytes bytes) override {
+    Async::Task<usize> readAsync(MutBytes bytes) override {
         usize size = clamp(sizeOf(bytes), 0uz, _limit - _read);
-        usize read = try$(_reader.read({bytes.buf(), size}));
+        usize read = co_trya$(_reader.readAsync({bytes.buf(), size}));
         _read += read;
-        return Ok(read);
+        co_return Ok(read);
     }
 };
 
@@ -82,35 +82,34 @@ struct WriterSlice : Stream {
     WriterSlice(Stream& writer, usize start, usize end)
         : _writer(writer), _start(start), _end(end) {}
 
-    Res<usize> seek(Seek seek) override {
-        usize pos = try$(tell(_writer));
-        usize s = try$(size(*this));
-        pos = try$(seek.apply(pos, s));
+    Async::Task<usize> seekAsync(Seek seek) override {
+        usize pos = co_trya$(tellAsync(_writer));
+        usize s = co_trya$(sizeAsync(*this));
+        pos = co_try$(seek.apply(pos, s));
         pos = clamp(pos, _start, _end);
-        return _writer.seek(Seek::fromBegin(pos));
+        co_return co_await _writer.seekAsync(Seek::fromBegin(pos));
     }
 
-    Res<usize> write(Bytes bytes) override {
-        usize pos = try$(tell(_writer));
+    Async::Task<usize> writeAsync(Bytes bytes) override {
+        usize pos = co_trya$(tellAsync(_writer));
 
         if (pos < _start) {
-            try$(_writer.seek(Seek::fromBegin(_start)));
+            co_trya$(_writer.seekAsync(Seek::fromBegin(_start)));
         }
 
         if (pos > _end) {
-            return Ok(0uz);
+            co_return Ok(0uz);
         }
 
         usize size = clamp(sizeOf(bytes), 0uz, _end - pos);
-        return _writer.write(sub(bytes, 0, size));
+        co_return co_await _writer.writeAsync(sub(bytes, 0, size));
     }
 };
 
-Res<WriterSlice> makeSlice(Stream& writer, usize size) {
-    auto start = try$(tell(writer));
+Async::Task<WriterSlice> makeSlice(Stream& writer, usize size) {
+    auto start = co_trya$(tellAsync(writer));
     auto end = start + size;
-
-    return Ok(WriterSlice{writer, start, end});
+    co_return Ok(WriterSlice{writer, start, end});
 }
 
 export struct BufReader :
@@ -121,17 +120,17 @@ export struct BufReader :
 
     BufReader(Bytes buf) : _buf(buf), _pos(0) {}
 
-    Res<usize> read(MutBytes bytes) override {
+    Async::Task<usize> readAsync(MutBytes bytes) override {
         Bytes slice = sub(_buf, _pos, _pos + sizeOf(bytes));
         usize read = copy(slice, bytes);
         _pos += read;
-        return Ok(read);
+        co_return Ok(read);
     }
 
-    Res<usize> seek(Seek seek) override {
-        _pos = try$(seek.apply(_pos, sizeOf(_buf)));
+    Async::Task<usize> seekAsync(Seek seek) override {
+        _pos = co_try$(seek.apply(_pos, sizeOf(_buf)));
         _pos = clamp(_pos, 0uz, sizeOf(_buf));
-        return Ok(_pos);
+        co_return Ok(_pos);
     }
 
     Bytes bytes() const {
@@ -150,17 +149,17 @@ export struct BufWriter : Stream {
 
     BufWriter(MutBytes buf) : _buf(buf) {}
 
-    Res<usize> seek(Seek seek) override {
-        _pos = try$(seek.apply(_pos, sizeOf(_buf)));
+    Async::Task<usize> seekAsync(Seek seek) override {
+        _pos = co_try$(seek.apply(_pos, sizeOf(_buf)));
         _pos = clamp(_pos, 0uz, sizeOf(_buf));
-        return Ok(_pos);
+        co_return Ok(_pos);
     }
 
-    Res<usize> write(Bytes bytes) override {
+    Async::Task<usize> writeAsync(Bytes bytes) override {
         MutBytes slice = mutNext(_buf, _pos);
         usize written = copy(bytes, slice);
         _pos += written;
-        return Ok(written);
+        co_return Ok(written);
     }
 };
 
@@ -169,18 +168,18 @@ export struct BufferWriter : Stream {
 
     BufferWriter(usize cap = 16) : _buf(cap) {}
 
-    Res<usize> write(Bytes bytes) override {
+    Async::Task<usize> writeAsync(Bytes bytes) override {
         _buf.insert(COPY, _buf.len(), bytes.buf(), bytes.len());
-        return Ok(bytes.len());
+        co_return Ok(bytes.len());
     }
 
     Bytes bytes() const {
         return _buf;
     }
 
-    Res<> flush() override {
+    Async::Task<> flushAsync() override {
         _buf.trunc(0);
-        return Ok();
+        co_return Ok();
     }
 
     Buf<u8> take() {
@@ -201,10 +200,10 @@ export struct BitReader {
         : _reader(reader) {
     }
 
-    Res<u8> readBit() {
+    Async::Task<u8> readBitAsync() {
         if (_len == 0) {
-            if (try$(_reader.read(MutBytes{&_bits, 1})) == 0)
-                return Error::unexpectedEof();
+            if (co_trya$(_reader.readAsync(MutBytes{&_bits, 1})) == 0)
+                co_return Error::unexpectedEof();
             _len = 8;
         }
 
@@ -212,16 +211,15 @@ export struct BitReader {
         _bits >>= 1;
         _len -= 1;
 
-        return Ok(bit);
+        co_return Ok(bit);
     }
 
     template <Meta::Unsigned T>
-    Res<T> readBits(usize n) {
+    Async::Task<T> readBitsAsync(usize n) {
         T bits = 0;
-        for (usize i = 0; i < n; i++) {
-            bits |= try$(readBit()) << i;
-        }
-        return Ok(bits);
+        for (usize i = 0; i < n; i++)
+            bits |= co_trya$(readBitAsync()) << i;
+        co_return Ok(bits);
     }
 
     void align() {
@@ -229,18 +227,18 @@ export struct BitReader {
         _len = 0;
     }
 
-    Res<u8> readByte() {
+    Async::Task<u8> readByteAsync() {
         align();
-        return readBits<u8>(8);
+        co_return co_await readBitsAsync<u8>(8);
     }
 
     template <Meta::Unsigned T>
-    Res<T> readBytes(usize n) {
+    Async::Task<T> readBytesAsync(usize n) {
         align();
         T bytes = {};
         for (usize i = 0; i < n; i++)
-            bytes |= try$(readByte()) << (8 * i);
-        return Ok(bytes);
+            bytes |= co_trya$(readByteAsync()) << (8 * i);
+        co_return Ok(bytes);
     }
 };
 

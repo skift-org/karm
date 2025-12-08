@@ -326,7 +326,7 @@ struct PipeBody : Body {
             co_return 0;
 
         usize n = min(buf.len(), _contentLength);
-        n = co_try$(Sys::in().read(mutSub(buf, 0, n)));
+        n = co_try$(Sys::in().readAsync(mutSub(buf, 0, n)));
         _contentLength -= n;
 
         co_return n;
@@ -348,7 +348,7 @@ struct PipeTransport : Transport {
 
     Async::Task<Rc<Response>> _recvResponse() {
         Array<u8, BUF_SIZE> buf = {};
-        Io::BufReader reader = sub(buf, 0, co_try$(Sys::in().read(buf)));
+        Io::BufReader reader = sub(buf, 0, co_try$(Sys::in().readAsync(buf)));
         auto response = co_try$(Response::read(reader));
         if (auto contentLength = response.header.contentLength()) {
             response.body = makeRc<PipeBody>(reader.bytes(), contentLength.unwrap());

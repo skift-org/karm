@@ -434,14 +434,14 @@ export struct BChunk {
 };
 
 export struct BEmit {
-    Io::Stream& _writer;
+    Vec<u8> _buf;
 
-    always_inline constexpr BEmit(Io::Stream& writer)
-        : _writer(writer) {}
+    always_inline constexpr BEmit() {}
 
     template <Meta::TrivialyCopyable T>
     always_inline constexpr void writeFrom(T const& v) {
-        (void)_writer.write(Bytes{(u8 const*)&v, sizeof(v)});
+        Bytes bytes{reinterpret_cast<u8 const*>(&v), sizeof(v)};
+        writeBytes(bytes);
     }
 
     always_inline constexpr void writeU8be(u8be v) {
@@ -517,16 +517,25 @@ export struct BEmit {
     }
 
     always_inline constexpr void writeStr(Str s) {
-        (void)_writer.write(Bytes{(u8 const*)s.buf(), s.len()});
+        writeBytes(Bytes{reinterpret_cast<u8 const*>(s.buf()), s.len()});
     }
 
     always_inline constexpr void writeCStr(Str s) {
-        (void)_writer.write(Bytes{(u8 const*)s.buf(), s.len()});
-        (void)_writer.write(Bytes{(u8 const*)"\0", 1});
+        writeBytes(Bytes{reinterpret_cast<u8 const*>(s.buf()), s.len()});
+        writeBytes(Bytes{reinterpret_cast<u8 const*>("\0"), 1});
     }
 
-    always_inline constexpr void writeBytes(Bytes b) {
-        (void)_writer.write(b);
+    always_inline constexpr void writeBytes(Bytes bytes) {
+        _buf.ensure(_buf.len() + bytes.len());
+        _buf.insertMany(_buf.len(), bytes);
+    }
+
+    always_inline Bytes bytes() const {
+        return _buf;
+    }
+
+    always_inline Vec<u8> take() {
+        return std::move(_buf);
     }
 };
 

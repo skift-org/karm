@@ -19,7 +19,7 @@ export struct Body : Aio::Stream {
                 : _file(std::move(file)) {}
 
             Async::Task<usize> readAsync(MutBytes buf) override {
-                co_return _file.read(buf);
+                co_return _file.readAsync(buf);
             }
         };
 
@@ -35,7 +35,7 @@ export struct Body : Aio::Stream {
                 : _buf(std::move(buf)) {}
 
             Async::Task<usize> readAsync(MutBytes buf) override {
-                co_return _reader.read(buf);
+                co_return _reader.readAsync(buf);
             }
         };
 
@@ -51,7 +51,7 @@ export struct Body : Aio::Stream {
                 : _blob(std::move(blob)) {}
 
             Async::Task<usize> readAsync(MutBytes buf) override {
-                co_return _reader.read(buf);
+                co_return _reader.readAsync(buf);
             }
         };
 

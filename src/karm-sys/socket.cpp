@@ -28,8 +28,8 @@ export struct Connection :
     Connection(Rc<Fd> fd)
         : _fd(std::move(fd)) {}
 
-    Res<usize> read(MutBytes buf) override {
-        return _fd->read(buf);
+    Res<usize> readAsync(MutBytes buf) override {
+        return _fd->readAsync(buf);
     }
 
     [[clang::coro_wrapper]]
@@ -37,8 +37,8 @@ export struct Connection :
         return globalSched().readAsync(_fd, buf);
     }
 
-    Res<usize> write(Bytes buf) override {
-        return _fd->write(buf);
+    Res<usize> writeAsync(Bytes buf) override {
+        return _fd->writeAsync(buf);
     }
 
     [[clang::coro_wrapper]]
@@ -46,8 +46,8 @@ export struct Connection :
         return globalSched().writeAsync(_fd, buf);
     }
 
-    Res<> flush() override {
-        return _fd->flush();
+    Res<> flushAsync() override {
+        return _fd->flushAsync();
     }
 
     [[clang::coro_wrapper]]

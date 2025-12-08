@@ -5,6 +5,7 @@ module;
 export module Karm.Core:io.text;
 
 import :base.string;
+import :base.vec;
 import :io.base;
 
 namespace Karm::Io {
@@ -22,23 +23,29 @@ export struct TextWriter {
 
 export template <StaticEncoding E = Utf8>
 struct TextEncoder : TextWriter {
-    Stream& _writer;
-
-    TextEncoder(Stream& writer)
-        : _writer(writer) {}
+    Vec<u8> _buf;
 
     Res<> writeRune(Rune rune) override {
         typename E::One one;
         if (not E::encodeUnit(rune, one))
             return Error::invalidInput("encoding error");
-        try$(_writer.write(bytes(one)));
+        auto b = bytes(one);
+        _buf.ensure(_buf.len() + b.len());
+        _buf.insertMany(_buf.len(), b);
         return Ok();
+    }
+
+    Bytes bytes() const {
+        return _buf;
+    }
+
+    Vec<u8> take() {
+        return std::move(_buf);
     }
 };
 
 export template <StaticEncoding E>
 struct _StringWriter : TextWriter, _StringBuilder<E> {
-
     _StringWriter(usize cap = 16) : _StringBuilder<E>(cap) {}
 
     Res<> writeRune(Rune rune) override {

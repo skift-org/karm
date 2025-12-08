@@ -516,7 +516,7 @@ Res<MmapResult> memMap(MmapProps const& options, Rc<Fd> maybeFd) {
     usize size = options.size;
 
     if (size == 0)
-        size = try$(Io::size(*fd));
+        size = try$(Io::sizeAsync(*fd));
 
     void* addr = ::mmap(reinterpret_cast<void*>(options.vaddr), size, _mmapPropsToProt(options), MAP_SHARED, fd->_raw, options.offset);
 

@@ -1,6 +1,5 @@
 export module Karm.Core;
 
-export import :aio;
 export import :async;
 export import :base;
 export import :glob;

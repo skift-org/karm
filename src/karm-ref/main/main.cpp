@@ -7,7 +7,7 @@ using namespace Karm;
 
 Res<Ref::Mime> sniffFile(Ref::Url url) {
     auto file = try$(Sys::File::open(url));
-    return file.sniff(true);
+    return file.sniffAsync(true);
 }
 
 Async::Task<> entryPointAsync(Sys::Context& c) {

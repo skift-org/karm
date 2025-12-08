@@ -11,7 +11,7 @@ test$("readline-ends-with-delim-len-1") {
 
     {
         auto [read, untilDel] = try$(
-            readLine(bufReader, bufWriter, bytes("\n"s))
+            readLineAsync(bufReader, bufWriter, bytes("\n"s))
         );
         expectEq$(bufWriter.take(), bytes("hello\n"s));
         expectEq$(read, 5u);
@@ -19,7 +19,7 @@ test$("readline-ends-with-delim-len-1") {
     }
 
     {
-        auto [read, untilDel] = try$(readLine(
+        auto [read, untilDel] = try$(readLineAsync(
             bufReader, bufWriter, bytes("\n"s)
         ));
         expectEq$(bufWriter.take(), bytes("worldd\n"s));
@@ -37,7 +37,7 @@ test$("readline-ends-with-stream") {
     BufferWriter bufWriter;
 
     {
-        auto [read, untilDel] = try$(readLine(
+        auto [read, untilDel] = try$(readLineAsync(
             bufReader, bufWriter, bytes("\n"s)
         ));
         expectEq$(bufWriter.take(), bytes("hello\n"s));
@@ -47,7 +47,7 @@ test$("readline-ends-with-stream") {
     }
 
     {
-        auto [read, untilDel] = try$(readLine(
+        auto [read, untilDel] = try$(readLineAsync(
             bufReader, bufWriter, bytes("\n"s)
         ));
         expectEq$(bufWriter.take(), bytes("wrld"s));
@@ -65,7 +65,7 @@ test$("readline-ends-with-delim-len-5") {
     BufferWriter bufWriter;
 
     {
-        auto [read, untilDel] = try$(readLine(
+        auto [read, untilDel] = try$(readLineAsync(
             bufReader, bufWriter, bytes("12345"s)
         ));
         expectEq$(bufWriter.take(), bytes("hello12345"s));
@@ -74,7 +74,7 @@ test$("readline-ends-with-delim-len-5") {
     }
 
     {
-        auto [read, untilDel] = try$(readLine(
+        auto [read, untilDel] = try$(readLineAsync(
             bufReader, bufWriter, bytes("12345"s)
         ));
         expectEq$(bufWriter.take(), bytes("worlds12345"s));
@@ -83,7 +83,7 @@ test$("readline-ends-with-delim-len-5") {
     }
 
     {
-        auto [read, untilDel] = try$(readLine(
+        auto [read, untilDel] = try$(readLineAsync(
             bufReader, bufWriter, bytes("12345"s)
         ));
         expectEq$(bufWriter.take(), bytes("he12345"s));

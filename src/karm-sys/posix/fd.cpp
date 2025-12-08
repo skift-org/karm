@@ -12,7 +12,7 @@ Fd::~Fd() {
         close(_raw);
 }
 
-Res<usize> Fd::read(MutBytes bytes) {
+Res<usize> Fd::readAsync(MutBytes bytes) {
     isize result = ::read(_raw, bytes.buf(), sizeOf(bytes));
 
     if (result < 0)
@@ -21,7 +21,7 @@ Res<usize> Fd::read(MutBytes bytes) {
     return Ok(static_cast<usize>(result));
 }
 
-Res<usize> Fd::write(Bytes bytes) {
+Res<usize> Fd::writeAsync(Bytes bytes) {
     isize result = ::write(_raw, bytes.buf(), sizeOf(bytes));
 
     if (result < 0)
@@ -30,7 +30,7 @@ Res<usize> Fd::write(Bytes bytes) {
     return Ok(static_cast<usize>(result));
 }
 
-Res<usize> Fd::seek(Io::Seek seek) {
+Res<usize> Fd::seekAsync(Io::Seek seek) {
     off_t offset = 0;
 
     switch (seek.whence) {
@@ -51,7 +51,7 @@ Res<usize> Fd::seek(Io::Seek seek) {
     return Ok(static_cast<usize>(offset));
 }
 
-Res<> Fd::flush() {
+Res<> Fd::flushAsync() {
     // NOTE: No-op
     return Ok();
 }

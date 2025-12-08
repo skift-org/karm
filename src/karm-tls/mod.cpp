@@ -53,16 +53,16 @@ struct TlsConnection : Sys::_Connection {
     TlsConnection(_Connection& conn)
         : _conn(conn) {}
 
-    Res<usize> read(MutBytes buf) override {
-        return _conn.read(buf);
+    Res<usize> readAsync(MutBytes buf) override {
+        return _conn.readAsync(buf);
     }
 
-    Res<usize> write(Bytes buf) override {
-        return _conn.write(buf);
+    Res<usize> writeAsync(Bytes buf) override {
+        return _conn.writeAsync(buf);
     }
 
-    Res<> flush() override {
-        return _conn.flush();
+    Res<> flushAsync() override {
+        return _conn.flushAsync();
     }
 
     [[clang::coro_wrapper]]

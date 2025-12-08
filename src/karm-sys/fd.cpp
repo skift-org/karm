@@ -43,21 +43,21 @@ export struct BlobFd : Fd {
     BlobFd(Rc<Ref::Blob> const& blob)
         : _blob(blob) {}
 
-    Res<usize> read(MutBytes bytes) override {
+    Res<usize> readAsync(MutBytes bytes) override {
         auto src = sub(_blob->data, _offset, _offset + bytes.len());
         return Ok(copy(src, bytes));
     }
 
-    Res<usize> write(Bytes) override {
+    Res<usize> writeAsync(Bytes) override {
         return Error::readOnlyFilesystem();
     }
 
-    Res<usize> seek(Io::Seek seek) override {
+    Res<usize> seekAsync(Io::Seek seek) override {
         _offset = try$(seek.apply(_offset, _blob->len()));
         return Ok(_offset);
     }
 
-    Res<> flush() override {
+    Res<> flushAsync() override {
         return Ok();
     }
 
@@ -89,19 +89,19 @@ export struct BlobFd : Fd {
 };
 
 export struct NullFd : Fd {
-    Res<usize> read(MutBytes) override {
+    Res<usize> readAsync(MutBytes) override {
         return Ok(0uz);
     }
 
-    Res<usize> write(Bytes) override {
+    Res<usize> writeAsync(Bytes) override {
         return Ok(0uz);
     }
 
-    Res<usize> seek(Io::Seek) override {
+    Res<usize> seekAsync(Io::Seek) override {
         return Ok(0uz);
     }
 
-    Res<> flush() override {
+    Res<> flushAsync() override {
         return Ok();
     }
 

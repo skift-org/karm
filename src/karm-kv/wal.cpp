@@ -83,17 +83,17 @@ export struct Wal {
         if (Sys::isFile(url)) {
             auto file = try$(Sys::File::openOrCreate(url));
             RawHeader header;
-            try$(file.read(header.mutBytes()));
+            try$(file.readAsync(header.mutBytes()));
             if (header.magic != RawHeader::MAGIC)
                 return Error::invalidData("invalid wal file");
 
-            try$(file.seek(Io::Seek::fromEnd(0)));
+            try$(file.seekAsync(Io::Seek::fromEnd(0)));
             return Ok(makeRc<Wal>(std::move(file), header));
         }
 
         auto file = try$(Sys::File::openOrCreate(url));
         RawHeader header = {RawHeader::MAGIC};
-        try$(file.write(header.bytes()));
+        try$(file.writeAsync(header.bytes()));
         return Ok(makeRc<Wal>(std::move(file)));
     }
 
@@ -106,26 +106,26 @@ export struct Wal {
         record.crc = 0;
         record.crc = Crypto::crc32(record.bytes());
 
-        try$(_file.write(record.bytes()));
+        try$(_file.writeAsync(record.bytes()));
 
-        try$(_file.write(key));
-        try$(_file.write(value));
+        try$(_file.writeAsync(key));
+        try$(_file.writeAsync(value));
 
         Crypto::Crc32 crc = {};
         crc.update(key);
         crc.update(value);
-        try$(_file.write({reinterpret_cast<u8 const*>(&crc), sizeof(crc)}));
+        try$(_file.writeAsync({reinterpret_cast<u8 const*>(&crc), sizeof(crc)}));
 
         return Ok();
     }
 
     Generator<Record> iter() {
         // FIXME: Handle errors properly
-        _file.seek(Io::Seek::fromBegin(sizeof(RawHeader))).unwrap("could not seek");
+        _file.seekAsync(Io::Seek::fromBegin(sizeof(RawHeader))).unwrap("could not seek");
 
         while (true) {
             RawRecord record;
-            auto res = _file.read(record.mutBytes());
+            auto res = _file.readAsync(record.mutBytes());
             if (res.unwrapOr(0) == 0)
                 co_return;
 
@@ -135,12 +135,12 @@ export struct Wal {
             }
 
             auto key = MutBlob::alloc(record.keylen);
-            _file.read(key.mutBytes()).unwrap("could not read key");
+            _file.readAsync(key.mutBytes()).unwrap("could not read key");
             auto value = MutBlob::alloc(record.vallen);
-            _file.read(value.mutBytes()).unwrap("could not read value");
+            _file.readAsync(value.mutBytes()).unwrap("could not read value");
 
             u32le crc;
-            _file.read({reinterpret_cast<u8*>(&crc), sizeof(crc)}).unwrap("could not read crc");
+            _file.readAsync({reinterpret_cast<u8*>(&crc), sizeof(crc)}).unwrap("could not read crc");
 
             Crypto::Crc32 c;
             c.update(key.bytes());
