@@ -1,5 +1,10 @@
 var NAVTREEINDEX16 =
 {
+"namespaceKarm_1_1Math_1_1Tests.html#a1d8f5195c7ea830f07c2c65ff67797fd":[0,0,0,23,0,5],
+"namespaceKarm_1_1Math_1_1Tests.html#a2b7f9fd20a290dbf3e03a9923ad9e08e":[0,0,0,23,0,2],
+"namespaceKarm_1_1Math_1_1Tests.html#a2fdb192658fd2056d7bcdd427e7bffcd":[0,0,0,23,0,8],
+"namespaceKarm_1_1Math_1_1Tests.html#a469d93cd49ebf8e9c49da7f898f38ee6":[0,0,0,23,0,16],
+"namespaceKarm_1_1Math_1_1Tests.html#a55de3a45eb99e673a171095394e55e0a":[0,0,0,23,0,15],
 "namespaceKarm_1_1Math_1_1Tests.html#a68c719208e5234666e9c688756dddd51":[0,0,0,23,0,11],
 "namespaceKarm_1_1Math_1_1Tests.html#a96d673465d9927c289fdcd7e0b00b0ff":[0,0,0,23,0,14],
 "namespaceKarm_1_1Math_1_1Tests.html#aa4f1f3b7d778dcf6ecacf99d7bf636e6":[0,0,0,23,0,13],
@@ -244,10 +249,5 @@ var NAVTREEINDEX16 =
 "namespaceKarm_1_1Re.html#ab17d8005401f1004ee14df5aebcc4158":[0,0,0,31,32],
 "namespaceKarm_1_1Re.html#ab466b495c61a1fbdfea82e3b308e38a4":[0,0,0,31,17],
 "namespaceKarm_1_1Re.html#ab9572bd8d0f5f526e706697816f7ee8b":[0,0,0,31,6],
-"namespaceKarm_1_1Re.html#aba78413c65992fdfddd0609b9d0a8452":[0,0,0,31,13],
-"namespaceKarm_1_1Re.html#abe9087a9ae87b07282d190d2a83e51c8":[0,0,0,31,23],
-"namespaceKarm_1_1Re.html#ac044224e1bbe664482fc2781e9236829":[0,0,0,31,28],
-"namespaceKarm_1_1Re.html#ac2c8b7df8a460f2ba97f667c8d0b4d84":[0,0,0,31,10],
-"namespaceKarm_1_1Re.html#ac7085ffd41002b782ded5be1e9804be1":[0,0,0,31,9],
-"namespaceKarm_1_1Re.html#ac72f7ca5ad9e10d9e028154fc3f572f3":[0,0,0,31,31]
+"namespaceKarm_1_1Re.html#aba78413c65992fdfddd0609b9d0a8452":[0,0,0,31,13]
 };

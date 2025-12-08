@@ -1,5 +1,8 @@
 var NAVTREEINDEX13 =
 {
+"namespaceKarm_1_1Font.html#a4003d9422e962abd6c24e68b314ebdc1":[0,0,0,9,6],
+"namespaceKarm_1_1Font.html#a64a9b83f85f3cde519209b1a556f83b3":[0,0,0,9,8],
+"namespaceKarm_1_1Font.html#a931f9ec8c81401ca2b42e8eff6ccacb4":[0,0,0,9,9],
 "namespaceKarm_1_1Font.html#ab8c7805db7fa983b64613ec8b1433544":[0,0,0,9,7],
 "namespaceKarm_1_1Font.html#ae51d16451a3a53819e158e25cb998d82":[0,0,0,9,10],
 "namespaceKarm_1_1Font_1_1Tests.html":[0,0,0,9,0],
@@ -246,8 +249,5 @@ var NAVTREEINDEX13 =
 "namespaceKarm_1_1Image_1_1Jpeg.html#af7022f5c263dd1247b0212ffec582808a1fe9e37c497c8ed7c0349d0c465c2f99":[0,0,0,17,2,6,18],
 "namespaceKarm_1_1Image_1_1Jpeg.html#af7022f5c263dd1247b0212ffec582808a25bffcf254eaf2105a347e9aa9f9635b":[0,0,0,17,2,6,63],
 "namespaceKarm_1_1Image_1_1Jpeg.html#af7022f5c263dd1247b0212ffec582808a262033002053a976ae3caf28d2af31fe":[0,0,0,17,2,6,54],
-"namespaceKarm_1_1Image_1_1Jpeg.html#af7022f5c263dd1247b0212ffec582808a2b3ad0768f1e6a188e15bd84629bd439":[0,0,0,17,2,6,24],
-"namespaceKarm_1_1Image_1_1Jpeg.html#af7022f5c263dd1247b0212ffec582808a2c2c332e3c09156154bbdfe642f98aab":[0,0,0,17,2,6,28],
-"namespaceKarm_1_1Image_1_1Jpeg.html#af7022f5c263dd1247b0212ffec582808a2fa7acf7c3fd94579140b80092cfefa3":[0,0,0,17,2,6,51],
-"namespaceKarm_1_1Image_1_1Jpeg.html#af7022f5c263dd1247b0212ffec582808a2fb2dea68c8c141cf7f534954a98fa28":[0,0,0,17,2,6,60]
+"namespaceKarm_1_1Image_1_1Jpeg.html#af7022f5c263dd1247b0212ffec582808a2b3ad0768f1e6a188e15bd84629bd439":[0,0,0,17,2,6,24]
 };

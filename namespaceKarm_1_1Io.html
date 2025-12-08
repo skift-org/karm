@@ -264,8 +264,6 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Io_1_1TextEncoder.html">TextEncoder</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Io_1_1TextEncoderBase.html">TextEncoderBase</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Io_1_1TextWriter.html">TextWriter</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Io_1_1Writer.html">Writer</a></td></tr>
@@ -417,6 +415,14 @@ Functions</h2></td></tr>
 <tr class="memitem:a2a2623d501fcffb2e5b4f2cd00b94ca8"><td class="memTemplParams" colspan="2">template&lt;typename... Ts&gt; </td></tr>
 <tr class="memitem:a2a2623d501fcffb2e5b4f2cd00b94ca8"><td class="memTemplItemLeft" align="right" valign="top">export <a class="el" href="structKarm_1_1Res.html">Res</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Io.html#a2a2623d501fcffb2e5b4f2cd00b94ca8">format</a> (<a class="el" href="structKarm_1_1Io_1_1TextWriter.html">TextWriter</a> &amp;writer, <a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a> format, Ts &amp;&amp;... ts)</td></tr>
 <tr class="separator:a2a2623d501fcffb2e5b4f2cd00b94ca8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31d953f30e3d49e7855de7ef8db3f565"><td class="memTemplParams" colspan="2">template&lt;StaticEncoding E = Utf8, Meta::Derive&lt; <a class="el" href="structKarm_1_1Io_1_1Writer.html">Io::Writer</a> &gt; W, typename... Ts&gt; <br />
+requires (not Meta::Derive&lt;W, <a class="el" href="structKarm_1_1Io_1_1TextWriter.html">Io::TextWriter</a>&gt;)</td></tr>
+<tr class="memitem:a31d953f30e3d49e7855de7ef8db3f565"><td class="memTemplItemLeft" align="right" valign="top">export <a class="el" href="structKarm_1_1Res.html">Res</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Io.html#a31d953f30e3d49e7855de7ef8db3f565">format</a> (W &amp;w, <a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a> format, Ts &amp;&amp;... ts)</td></tr>
+<tr class="separator:a31d953f30e3d49e7855de7ef8db3f565"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ad515fe9bb478749e99db0e0e7b6ad2"><td class="memTemplParams" colspan="2">template&lt;StaticEncoding E = Utf8, Meta::Derive&lt; <a class="el" href="structKarm_1_1Io_1_1Writer.html">Io::Writer</a> &gt; W, typename... Ts&gt; <br />
+requires (not Meta::Derive&lt;W, <a class="el" href="structKarm_1_1Io_1_1TextWriter.html">Io::TextWriter</a>&gt;)</td></tr>
+<tr class="memitem:a9ad515fe9bb478749e99db0e0e7b6ad2"><td class="memTemplItemLeft" align="right" valign="top">export <a class="el" href="structKarm_1_1Res.html">Res</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Io.html#a9ad515fe9bb478749e99db0e0e7b6ad2">formatln</a> (W &amp;w, <a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a> <a class="el" href="namespaceKarm_1_1Io.html#ab628c8c55e2fd03bb9b7edb448be1935">format</a>, Ts &amp;&amp;... ts)</td></tr>
+<tr class="separator:a9ad515fe9bb478749e99db0e0e7b6ad2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a744bdda8d4acc8b3ac9758dec0298d1f"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="namespaceKarm.html#ae6adab057126d950320de3262006925b">String</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Io.html#a744bdda8d4acc8b3ac9758dec0298d1f">format</a> (<a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a> format)</td></tr>
 <tr class="separator:a744bdda8d4acc8b3ac9758dec0298d1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade7912445229a66e93a69a9b07e73b69"><td class="memTemplParams" colspan="2">template&lt;typename... Ts&gt; </td></tr>
@@ -960,7 +966,7 @@ template&lt;StaticEncoding E&gt; </div>
 </div>
 </div>
 <a id="a744bdda8d4acc8b3ac9758dec0298d1f" name="a744bdda8d4acc8b3ac9758dec0298d1f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a744bdda8d4acc8b3ac9758dec0298d1f">&#9670;&#160;</a></span>format() <span class="overload">[1/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a744bdda8d4acc8b3ac9758dec0298d1f">&#9670;&#160;</a></span>format() <span class="overload">[1/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -978,7 +984,7 @@ template&lt;StaticEncoding E&gt; </div>
 </div>
 </div>
 <a id="ade7912445229a66e93a69a9b07e73b69" name="ade7912445229a66e93a69a9b07e73b69"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ade7912445229a66e93a69a9b07e73b69">&#9670;&#160;</a></span>format() <span class="overload">[2/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ade7912445229a66e93a69a9b07e73b69">&#9670;&#160;</a></span>format() <span class="overload">[2/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1008,7 +1014,7 @@ template&lt;typename... Ts&gt; </div>
 </div>
 </div>
 <a id="ab628c8c55e2fd03bb9b7edb448be1935" name="ab628c8c55e2fd03bb9b7edb448be1935"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab628c8c55e2fd03bb9b7edb448be1935">&#9670;&#160;</a></span>format() <span class="overload">[3/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ab628c8c55e2fd03bb9b7edb448be1935">&#9670;&#160;</a></span>format() <span class="overload">[3/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1036,7 +1042,7 @@ template&lt;typename... Ts&gt; </div>
 </div>
 </div>
 <a id="a2a2623d501fcffb2e5b4f2cd00b94ca8" name="a2a2623d501fcffb2e5b4f2cd00b94ca8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2a2623d501fcffb2e5b4f2cd00b94ca8">&#9670;&#160;</a></span>format() <span class="overload">[4/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a2a2623d501fcffb2e5b4f2cd00b94ca8">&#9670;&#160;</a></span>format() <span class="overload">[4/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1048,6 +1054,80 @@ template&lt;typename... Ts&gt; </div>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structKarm_1_1Io_1_1TextWriter.html">TextWriter</a> &amp;&#160;</td>
           <td class="paramname"><em>writer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a>&#160;</td>
+          <td class="paramname"><em>format</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Ts &amp;&amp;...&#160;</td>
+          <td class="paramname"><em>ts</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a31d953f30e3d49e7855de7ef8db3f565" name="a31d953f30e3d49e7855de7ef8db3f565"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a31d953f30e3d49e7855de7ef8db3f565">&#9670;&#160;</a></span>format() <span class="overload">[5/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;StaticEncoding E = Utf8, Meta::Derive&lt; <a class="el" href="structKarm_1_1Io_1_1Writer.html">Io::Writer</a> &gt; W, typename... Ts&gt; <br />
+requires (not Meta::Derive&lt;W, <a class="el" href="structKarm_1_1Io_1_1TextWriter.html">Io::TextWriter</a>&gt;)</div>
+      <table class="memname">
+        <tr>
+          <td class="memname">export <a class="el" href="structKarm_1_1Res.html">Res</a> Karm::Io::format </td>
+          <td>(</td>
+          <td class="paramtype">W &amp;&#160;</td>
+          <td class="paramname"><em>w</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a>&#160;</td>
+          <td class="paramname"><em>format</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Ts &amp;&amp;...&#160;</td>
+          <td class="paramname"><em>ts</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a9ad515fe9bb478749e99db0e0e7b6ad2" name="a9ad515fe9bb478749e99db0e0e7b6ad2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ad515fe9bb478749e99db0e0e7b6ad2">&#9670;&#160;</a></span>formatln()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;StaticEncoding E = Utf8, Meta::Derive&lt; <a class="el" href="structKarm_1_1Io_1_1Writer.html">Io::Writer</a> &gt; W, typename... Ts&gt; <br />
+requires (not Meta::Derive&lt;W, <a class="el" href="structKarm_1_1Io_1_1TextWriter.html">Io::TextWriter</a>&gt;)</div>
+      <table class="memname">
+        <tr>
+          <td class="memname">export <a class="el" href="structKarm_1_1Res.html">Res</a> Karm::Io::formatln </td>
+          <td>(</td>
+          <td class="paramtype">W &amp;&#160;</td>
+          <td class="paramname"><em>w</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>

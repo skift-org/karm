@@ -97,7 +97,7 @@ var searchData=
   ['dtor_94',['dtor',['../structKarm_1_1Manual.html#aef685a4fd921770d62e5792d13045ab5',1,'Karm::Manual']]],
   ['dummy_5fclipboard_95',['DUMMY_CLIPBOARD',['../structKarm_1_1Ui_1_1TextModel.html#ae5e0e1806f2e0e00f843302ef1fca1b4',1,'Karm::Ui::TextModel']]],
   ['dup_96',['dup',['../structKarm_1_1Sys_1_1Fd.html#a8d9708fd64521d3713e208eb80f1f0b2',1,'Karm::Sys::Fd::dup()'],['../structKarm_1_1Sys_1_1BlobFd.html#aad33c42ae56684446f2fbcc344a16a13',1,'Karm::Sys::BlobFd::dup()'],['../structKarm_1_1Sys_1_1NullFd.html#ab0bf4e8dfaed40f5a9c8d8eaa36a9c7b',1,'Karm::Sys::NullFd::dup()'],['../structKarm_1_1Posix_1_1Fd.html#afc828363ad43696441419efffb603b75',1,'Karm::Posix::Fd::dup()']]],
-  ['duration_97',['Duration',['../structKarm_1_1Duration.html#afaa87ddac0725e1c093339643800a97a',1,'Karm::Duration']]],
-  ['duration_98',['duration',['../structKarm_1_1Av_1_1Audio.html#ab7efdbff30f74744d3b7bbdccc10a046',1,'Karm::Av::Audio::duration()'],['../structKarm_1_1Av_1_1Player.html#ab10fcfccbf64e5a35384b2af22d0d6ae',1,'Karm::Av::Player::duration()']]],
-  ['duration_99',['Duration',['../structKarm_1_1Duration.html#ade26209125e6d65271d0cc9a5e75c817',1,'Karm::Duration']]]
+  ['duration_97',['duration',['../structKarm_1_1Av_1_1Player.html#ab10fcfccbf64e5a35384b2af22d0d6ae',1,'Karm::Av::Player']]],
+  ['duration_98',['Duration',['../structKarm_1_1Duration.html#ade26209125e6d65271d0cc9a5e75c817',1,'Karm::Duration::Duration()'],['../structKarm_1_1Duration.html#afaa87ddac0725e1c093339643800a97a',1,'Karm::Duration::Duration(_TimeVal value)']]],
+  ['duration_99',['duration',['../structKarm_1_1Av_1_1Audio.html#ab7efdbff30f74744d3b7bbdccc10a046',1,'Karm::Av::Audio']]]
 ];

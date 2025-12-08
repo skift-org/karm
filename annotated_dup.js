@@ -335,7 +335,6 @@ var annotated_dup =
         [ "Sink", "structKarm_1_1Io_1_1Sink.html", "structKarm_1_1Io_1_1Sink" ],
         [ "StringFormatter", "structKarm_1_1Io_1_1StringFormatter.html", "structKarm_1_1Io_1_1StringFormatter" ],
         [ "TextEncoder", "structKarm_1_1Io_1_1TextEncoder.html", "structKarm_1_1Io_1_1TextEncoder" ],
-        [ "TextEncoderBase", "structKarm_1_1Io_1_1TextEncoderBase.html", "structKarm_1_1Io_1_1TextEncoderBase" ],
         [ "TextWriter", "structKarm_1_1Io_1_1TextWriter.html", "structKarm_1_1Io_1_1TextWriter" ],
         [ "Writer", "structKarm_1_1Io_1_1Writer.html", "structKarm_1_1Io_1_1Writer" ],
         [ "WriterSlice", "structKarm_1_1Io_1_1WriterSlice.html", "structKarm_1_1Io_1_1WriterSlice" ],

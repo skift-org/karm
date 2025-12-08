@@ -49,6 +49,8 @@ var fmt_8cpp =
     [ "format", "fmt_8cpp.html#ade7912445229a66e93a69a9b07e73b69", null ],
     [ "format", "fmt_8cpp.html#ab628c8c55e2fd03bb9b7edb448be1935", null ],
     [ "format", "fmt_8cpp.html#a2a2623d501fcffb2e5b4f2cd00b94ca8", null ],
+    [ "format", "fmt_8cpp.html#a31d953f30e3d49e7855de7ef8db3f565", null ],
+    [ "formatln", "fmt_8cpp.html#a9ad515fe9bb478749e99db0e0e7b6ad2", null ],
     [ "toStr", "fmt_8cpp.html#a54b28ce373fd9b12b8e5c6bad4b43c69", null ],
     [ "Core", "fmt_8cpp.html#af60e35d72364ff777a965d456af4dea3", null ],
     [ "module", "fmt_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6", null ]

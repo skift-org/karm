@@ -433,18 +433,9 @@ var hierarchy =
     [ "Karm::Ui::FlowStyle", "structKarm_1_1Ui_1_1FlowStyle.html", null ],
     [ "Karm::Io::Flusher", "structKarm_1_1Io_1_1Flusher.html", [
       [ "Karm::Io::BufferWriter", "structKarm_1_1Io_1_1BufferWriter.html", null ],
-      [ "Karm::Io::TextWriter", "structKarm_1_1Io_1_1TextWriter.html", [
-        [ "Karm::Io::TextEncoderBase< Utf8 >", "structKarm_1_1Io_1_1TextEncoderBase.html", null ],
-        [ "Karm::Io::TextEncoderBase< Sys::Encoding >", "structKarm_1_1Io_1_1TextEncoderBase.html", [
-          [ "Karm::Sys::Err", "structKarm_1_1Sys_1_1Err.html", null ],
-          [ "Karm::Sys::Out", "structKarm_1_1Sys_1_1Out.html", null ]
-        ] ],
-        [ "Karm::Io::Emit", "structKarm_1_1Io_1_1Emit.html", null ],
-        [ "Karm::Io::TextEncoderBase< E >", "structKarm_1_1Io_1_1TextEncoderBase.html", [
-          [ "Karm::Io::TextEncoder< E >", "structKarm_1_1Io_1_1TextEncoder.html", null ]
-        ] ]
-      ] ],
+      [ "Karm::Sys::Err", "structKarm_1_1Sys_1_1Err.html", null ],
       [ "Karm::Sys::MutMmap", "structKarm_1_1Sys_1_1MutMmap.html", null ],
+      [ "Karm::Sys::Out", "structKarm_1_1Sys_1_1Out.html", null ],
       [ "Karm::Sys::_Connection", null, [
         [ "Karm::Sys::Connection", "structKarm_1_1Sys_1_1Connection.html", [
           [ "Karm::Sys::TcpConnection", "structKarm_1_1Sys_1_1TcpConnection.html", null ]
@@ -978,6 +969,12 @@ var hierarchy =
     [ "Karm::Ui::TextAction", "structKarm_1_1Ui_1_1TextAction.html", null ],
     [ "Karm::Ui::TextModel", "structKarm_1_1Ui_1_1TextModel.html", null ],
     [ "Karm::Ui::TextStyles", "structKarm_1_1Ui_1_1TextStyles.html", null ],
+    [ "Karm::Io::TextWriter", "structKarm_1_1Io_1_1TextWriter.html", [
+      [ "Karm::Io::Emit", "structKarm_1_1Io_1_1Emit.html", null ],
+      [ "Karm::Io::TextEncoder< E >", "structKarm_1_1Io_1_1TextEncoder.html", null ],
+      [ "Karm::Sys::Err", "structKarm_1_1Sys_1_1Err.html", null ],
+      [ "Karm::Sys::Out", "structKarm_1_1Sys_1_1Out.html", null ]
+    ] ],
     [ "Karm::Vte::Theme", "structKarm_1_1Vte_1_1Theme.html", null ],
     [ "Karm::Time", "structKarm_1_1Time.html", null ],
     [ "Karm::Gfx::TintFilter", "structKarm_1_1Gfx_1_1TintFilter.html", null ],
@@ -1066,9 +1063,10 @@ var hierarchy =
       [ "Karm::Io::BufferWriter", "structKarm_1_1Io_1_1BufferWriter.html", null ],
       [ "Karm::Io::Count", "structKarm_1_1Io_1_1Count.html", null ],
       [ "Karm::Io::Sink", "structKarm_1_1Io_1_1Sink.html", null ],
-      [ "Karm::Io::TextWriter", "structKarm_1_1Io_1_1TextWriter.html", null ],
       [ "Karm::Io::WriterSlice< Writable >", "structKarm_1_1Io_1_1WriterSlice.html", null ],
+      [ "Karm::Sys::Err", "structKarm_1_1Sys_1_1Err.html", null ],
       [ "Karm::Sys::FileWriter", "structKarm_1_1Sys_1_1FileWriter.html", null ],
+      [ "Karm::Sys::Out", "structKarm_1_1Sys_1_1Out.html", null ],
       [ "Karm::Sys::_Connection", null, null ]
     ] ],
     [ "Karm::Pdf::XRef", "structKarm_1_1Pdf_1_1XRef.html", null ],
