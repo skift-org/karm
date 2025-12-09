@@ -25,25 +25,16 @@ export struct Transport {
 constexpr usize BUF_SIZE = 4096;
 
 struct ContentBody : Body {
-    Vec<u8> _resumes;
     usize _resumesPos = 0;
     Rc<Sys::TcpConnection> _conn;
     usize _contentLength;
 
-    ContentBody(Bytes resumes, Rc<Sys::TcpConnection> conn, usize contentLength)
-        : _resumes(resumes),
-          _conn(conn),
-          _contentLength(contentLength - resumes.len()) {
+    ContentBody(Rc<Sys::TcpConnection> conn, usize contentLength)
+        : _conn(conn),
+          _contentLength(contentLength) {
     }
 
     Async::Task<usize> readAsync(MutBytes buf) override {
-        if (_resumesPos < _resumes.len()) {
-            usize n = min(buf.len(), _resumes.len() - _resumesPos);
-            copy(sub(_resumes, _resumesPos, _resumesPos + n), buf);
-            _resumesPos += n;
-            co_return n;
-        }
-
         if (_contentLength == 0)
             co_return 0;
 
@@ -62,9 +53,8 @@ struct ChunkedBody : Body {
     usize _chunkRemaining = 0; // bytes left to read in current chunk
     bool _eof = false;         // reached terminating 0-chunk
 
-    ChunkedBody(Bytes resumes, Rc<Sys::TcpConnection> conn)
-        : _buf(resumes),
-          _conn(std::move(conn)) {
+    ChunkedBody(Rc<Sys::TcpConnection> conn)
+        : _conn(std::move(conn)) {
     }
 
     usize _available() const {
@@ -262,23 +252,21 @@ struct HttpTransport : Transport {
     }
 
     Async::Task<Rc<Response>> _recvResponseAsync(Rc<Sys::TcpConnection> conn) {
-        Array<u8, BUF_SIZE> buf = {};
-        Io::BufReader reader = sub(buf, 0, co_trya$(conn->readAsync(buf)));
-        auto response = co_try$(Response::read(reader));
+        auto response = co_trya$(Response::readAsync(*conn));
 
         if (auto contentLength = response.header.contentLength()) {
-            response.body = makeRc<ContentBody>(reader.bytes(), conn, contentLength.unwrap());
+            response.body = makeRc<ContentBody>(conn, contentLength.unwrap());
         } else if (auto transferEncoding = response.header.tryGet(Header::TRANSFER_ENCODING)) {
             // For now we only support plain "chunked".
             if (*transferEncoding == "chunked") {
-                response.body = makeRc<ChunkedBody>(reader.bytes(), conn);
+                response.body = makeRc<ChunkedBody>(conn);
             } else {
                 logWarn("Transfer-Encoding: {} not supported", *transferEncoding);
             }
         } else {
             // NOTE: When there is no content length, and no transfer encoding,
             //       we read until the server closes the socket.
-            response.body = makeRc<ContentBody>(reader.bytes(), conn, Limits<usize>::MAX);
+            response.body = makeRc<ContentBody>(conn, Limits<usize>::MAX);
         }
 
         co_return Ok(makeRc<Response>(std::move(response)));
@@ -305,22 +293,13 @@ export Rc<Transport> httpTransport() {
 // MARK: Pipe Transport --------------------------------------------------------
 
 struct PipeBody : Body {
-    Vec<u8> _resumes;
-    usize _resumesPos = 0;
     usize _contentLength;
 
-    PipeBody(Bytes resumes, usize contentLength = Limits<usize>::MAX)
-        : _resumes(resumes),
-          _contentLength(contentLength - resumes.len()) {
+    PipeBody(usize contentLength = Limits<usize>::MAX)
+        : _contentLength(contentLength) {
     }
 
     Async::Task<usize> readAsync(MutBytes buf) override {
-        if (_resumesPos < _resumes.len()) {
-            usize n = min(buf.len(), _resumes.len() - _resumesPos);
-            copy(sub(_resumes, _resumesPos, _resumesPos + n), buf);
-            _resumesPos += n;
-            co_return n;
-        }
 
         if (_contentLength == 0)
             co_return 0;
@@ -347,13 +326,11 @@ struct PipeTransport : Transport {
     }
 
     Async::Task<Rc<Response>> _recvResponse() {
-        Array<u8, BUF_SIZE> buf = {};
-        Io::BufReader reader = sub(buf, 0, co_try$(Sys::in().read(buf)));
-        auto response = co_try$(Response::read(reader));
+        auto response = co_trya$(Response::readAsync(Sys::in()));
         if (auto contentLength = response.header.contentLength()) {
-            response.body = makeRc<PipeBody>(reader.bytes(), contentLength.unwrap());
+            response.body = makeRc<PipeBody>(contentLength.unwrap());
         } else {
-            response.body = makeRc<PipeBody>(reader.bytes());
+            response.body = makeRc<PipeBody>();
         }
 
         co_return Ok(makeRc<Response>(std::move(response)));

@@ -1,6 +1,7 @@
 module;
 
 #include <karm-core/macros.h>
+
 #include "defs.h"
 
 export module Karm.Sys:chan;
@@ -9,10 +10,13 @@ import Karm.Core;
 
 import :_embed;
 import :fd;
+import :async;
 
 namespace Karm::Sys {
 
-export struct In : Io::Reader {
+export struct In :
+    Io::Reader,
+    Aio::Reader {
     Rc<Fd> _fd;
 
     In(Rc<Fd> fd)
@@ -20,6 +24,11 @@ export struct In : Io::Reader {
 
     Res<usize> read(MutBytes bytes) override {
         return _fd->read(bytes);
+    }
+
+    [[clang::coro_wrapper]]
+    Async::Task<usize> readAsync(MutBytes buf) override {
+        return globalSched().readAsync(_fd, buf);
     }
 
     Rc<Fd> fd() {

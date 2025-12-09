@@ -11,34 +11,34 @@ import :header;
 
 namespace Karm::Http {
 
+struct ResponseWriter : Aio::Writer {
+    Code code = OK;
+    Header header;
+
+    virtual Async::Task<> writeHeaderAsync(Code code) = 0;
+
+    Async::Task<> writeJsonAsync(Serde::Value const& value) {
+        auto string = co_try$(Json::unparse(value));
+        co_trya$(writeAsync(bytes(string)));
+        co_return Ok();
+    }
+
+    Async::Task<> writeStrAsync(Str str) {
+        co_trya$(writeAsync(bytes(str)));
+        co_return Ok();
+    }
+
+    Async::Task<> writeFileAsync(Ref::Url const& url) {
+        auto data = co_try$(Sys::readAllUtf8(url));
+        co_return co_await writeStrAsync(data);
+    }
+};
+
 export struct Response {
     Version version;
     Code code = OK;
     Header header;
     Opt<Rc<Body>> body;
-
-    struct Writer : Aio::Writer {
-        Code code = OK;
-        Header header;
-
-        virtual Async::Task<> writeHeaderAsync(Code code) = 0;
-
-        Async::Task<> writeJsonAsync(Serde::Value const& value) {
-            auto string = co_try$(Json::unparse(value));
-            co_trya$(writeAsync(bytes(string)));
-            co_return Ok();
-        }
-
-        Async::Task<> writeStrAsync(Str str) {
-            co_trya$(writeAsync(bytes(str)));
-            co_return Ok();
-        }
-
-        Async::Task<> writeFileAsync(Ref::Url const& url) {
-            auto data = co_try$(Sys::readAllUtf8(url));
-            co_return co_await writeStrAsync(data);
-        }
-    };
 
     static Res<Response> parse(Io::SScan& s) {
         Response res;
@@ -58,6 +58,23 @@ export struct Response {
         try$(res.header.parse(s));
 
         return Ok(res);
+    }
+
+    static Async::Task<Response> readAsync(Aio::Reader& r) {
+        Io::BufferWriter bw;
+        while (true) {
+            auto adaptedBw = Aio::adapt(bw);
+            auto [read, reachedDelim] = co_trya$(Aio::readLineAsync(r, adaptedBw, "\r\n"_bytes));
+
+            if (not reachedDelim)
+                co_return Error::invalidInput("input stream ended with incomplete http header");
+
+            if (read == 0)
+                break;
+        }
+
+        Io::SScan scan{bw.bytes().cast<char>()};
+        co_return parse(scan);
     }
 
     static Res<Response> read(Io::Reader& r) {

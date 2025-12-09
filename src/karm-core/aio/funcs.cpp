@@ -5,6 +5,7 @@ module;
 export module Karm.Core:aio.funcs;
 
 import :base.vec;
+import :base.ring;
 import :io.text;
 import :io.impls;
 import :aio.traits;
@@ -45,6 +46,39 @@ export Async::Task<String> readAllUtf8Async(AsyncReadable auto& reader) {
         co_try$(w.writeUnit(sub(buf, 0, read)));
     }
     co_return Ok(w.take());
+}
+
+export Async::Task<Tuple<usize, bool>> readLineAsync(AsyncReadable auto& reader, AsyncWritable auto& writer, Bytes delim) {
+    if (delim.len() > 16)
+        panic("delimiter string too large");
+
+    u8 b;
+    usize result = 0;
+    Ring<u8> lastBytes{delim.len()};
+
+    while (true) {
+        auto read = co_trya$(reader.readAsync({&b, 1}));
+
+        if (read == 0)
+            co_return Ok(Tuple{result, false});
+
+        result += read;
+
+        if (lastBytes.rem() == 0)
+            lastBytes.popFront();
+        lastBytes.pushBack(b);
+
+        auto written = co_trya$(writer.writeAsync({&b, 1}));
+        if (written != read)
+            co_return Error::writeZero();
+
+        if (lastBytes == delim) {
+            result -= delim.len();
+            break;
+        }
+    }
+
+    co_return Ok(Tuple<usize, bool>{result, true});
 }
 
 } // namespace Karm::Aio

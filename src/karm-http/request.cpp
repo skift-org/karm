@@ -61,20 +61,21 @@ export struct Request {
         return Ok(req);
     }
 
-    static Res<Request> read(Io::Reader& r) {
+    static Async::Task<Request> readAsync(Aio::Reader& r) {
         Io::BufferWriter bw;
         while (true) {
-            auto [read, reachedDelim] = try$(Io::readLine(r, bw, "\r\n"_bytes));
+            auto adaptedBw = Aio::adapt(bw);
+            auto [read, reachedDelim] = co_trya$(Aio::readLineAsync(r, adaptedBw, "\r\n"_bytes));
 
             if (not reachedDelim)
-                return Error::invalidInput("input stream ended with incomplete http header");
+                co_return Error::invalidInput("input stream ended with incomplete http header");
 
             if (read == 0)
                 break;
         }
 
         Io::SScan scan{bw.bytes().cast<char>()};
-        return parse(scan);
+        co_return parse(scan);
     }
 
     Res<> unparse(Io::TextWriter& w) const {

@@ -15,11 +15,11 @@ namespace Karm::Http {
 
 export struct Handler {
     virtual ~Handler() = default;
-    virtual Async::Task<> handleAsync(Rc<Request>, Rc<Response::Writer>) = 0;
+    virtual Async::Task<> handleAsync(Rc<Request>, Rc<ResponseWriter>) = 0;
 };
 
 template <typename F>
-concept HandlerFunc = requires(F f, Rc<Request> req, Rc<Response::Writer> resp) {
+concept HandlerFunc = requires(F f, Rc<Request> req, Rc<ResponseWriter> resp) {
     { f(req, resp) } -> Meta::Same<Async::Task<>>;
 };
 
@@ -31,7 +31,7 @@ Rc<Handler> makeHandler(F func) {
         FuncHandler(F func) : _func(std::move(func)) {}
 
         [[clang::coro_wrapper]]
-        Async::Task<> handleAsync(Rc<Request> req, Rc<Response::Writer> resp) override {
+        Async::Task<> handleAsync(Rc<Request> req, Rc<ResponseWriter> resp) override {
             return _func(req, resp);
         }
     };
@@ -45,6 +45,38 @@ export struct ServerProps {
 };
 
 export struct Server {
+    struct _ResponseWriter : Http::ResponseWriter {
+        Rc<Sys::TcpConnection> _conn;
+        bool _headerSent = false;
+
+        _ResponseWriter(Rc<Sys::TcpConnection> conn)
+            : _conn(conn) {}
+
+        Async::Task<> writeHeaderAsync(Code code) override {
+            Response resp;
+            resp.version = Version{1, 1};
+            resp.code = code;
+            resp.header = header;
+            // NOTE: Seems to be the average size of an HTTP header
+            Io::StringWriter sb{1024};
+            co_try$(resp.unparse(sb));
+            co_trya$(_conn->writeAsync(sb.bytes()));
+            _headerSent = true;
+            co_return Ok();
+        }
+
+        Async::Task<usize> writeAsync(Bytes buf) override {
+            if (not _headerSent) {
+                if (not header.has(Header::CONTENT_TYPE))
+                    header.put(Header::CONTENT_TYPE, Ref::sniffBytes(buf).str());
+                if (not header.has(Header::CONTENT_LENGTH))
+                    header.put(Header::CONTENT_LENGTH, Io::format("{}", buf.len()));
+                co_trya$(writeHeaderAsync(code));
+            }
+            co_return co_await _conn->writeAsync(buf);
+        }
+    };
+
     static Rc<Server> simple(Rc<Handler> handler, ServerProps const& props) {
         return makeRc<Server>(handler, props);
     }
@@ -53,57 +85,21 @@ export struct Server {
     ServerProps _props;
 
     Async::Task<Rc<Request>> _recvRequestAsync(Rc<Sys::TcpConnection> conn) {
-        Array<u8, BUF_SIZE> buf = {};
-        Io::BufReader reader = sub(
-            buf, 0, co_trya$(conn->readAsync(buf))
-        );
-
-        auto request = co_try$(Request::read(reader));
+        auto request = co_trya$(Request::readAsync(*conn));
         if (auto contentLength = request.header.contentLength()) {
-            request.body = makeRc<ContentBody>(reader.bytes(), conn, contentLength.unwrap());
+            request.body = makeRc<ContentBody>(conn, contentLength.unwrap());
         } else if (auto transferEncoding = request.header.tryGet(Header::TRANSFER_ENCODING)) {
             logWarn("Transfer-Encoding: {} not supported", transferEncoding);
         } else {
             // NOTE: When there is no content length, and no transfer encoding,
             //       we read until the client closes the socket.
-            request.body = makeRc<ContentBody>(reader.bytes(), conn, Limits<usize>::MAX);
+            request.body = makeRc<ContentBody>(conn, Limits<usize>::MAX);
         }
 
         co_return Ok(makeRc<Request>(std::move(request)));
     }
 
     Async::Task<> _handleConnectionAsync(Rc<Sys::TcpConnection> conn) {
-        struct ResponseWriter : Response::Writer {
-            Rc<Sys::TcpConnection> _conn;
-            bool _headerSent = false;
-
-            ResponseWriter(Rc<Sys::TcpConnection> conn)
-                : _conn(conn) {}
-
-            Async::Task<> writeHeaderAsync(Code code) override {
-                Response resp;
-                resp.version = Version{1, 1};
-                resp.code = code;
-                resp.header = header;
-                // NOTE: Seems to be the average size of an HTTP header
-                Io::StringWriter sb{1024};
-                co_try$(resp.unparse(sb));
-                co_trya$(_conn->writeAsync(sb.bytes()));
-                _headerSent = true;
-                co_return Ok();
-            }
-
-            Async::Task<usize> writeAsync(Bytes buf) override {
-                if (not _headerSent) {
-                    if (not header.has(Header::CONTENT_TYPE))
-                        header.put(Header::CONTENT_TYPE, Ref::sniffBytes(buf).str());
-                    if (not header.has(Header::CONTENT_LENGTH))
-                        header.put(Header::CONTENT_LENGTH, Io::format("{}", buf.len()));
-                    co_trya$(writeHeaderAsync(code));
-                }
-                co_return co_await _conn->writeAsync(buf);
-            }
-        };
 
         bool keepAlive = true;
 
@@ -118,7 +114,7 @@ export struct Server {
                 }
             }
 
-            auto resp = makeRc<ResponseWriter>(conn);
+            auto resp = makeRc<_ResponseWriter>(conn);
             resp->header.put(Header::SERVER, _props.name);
             if (not keepAlive) {
                 resp->header.put(Header::CONNECTION, "close"s);
