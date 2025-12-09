@@ -20,38 +20,44 @@ Res<String> parseStr(Io::SScan& s) {
     if (not s.skip('"'))
         return Error::invalidData("expected '\"'");
 
-    s.begin();
+    Io::StringWriter sw;
 
     while (not s.ended()) {
-        if (s.peek() == '"') {
-            auto str = s.end();
-            s.next();
-            return Ok(String{str});
+        if (s.skip('"')) {
+            return Ok(sw.take());
         }
 
         if (s.skip('\\')) {
             if (s.skip('"')) {
+                sw.append('"');
                 continue;
             }
             if (s.skip('\\')) {
+                sw.append('\\');
                 continue;
             }
             if (s.skip('/')) {
+                sw.append('/');
                 continue;
             }
             if (s.skip('b')) {
+                sw.append('\b');
                 continue;
             }
             if (s.skip('f')) {
+                sw.append('\f');
                 continue;
             }
             if (s.skip('n')) {
+                sw.append('\n');
                 continue;
             }
             if (s.skip('r')) {
+                sw.append('\r');
                 continue;
             }
             if (s.skip('t')) {
+                sw.append('\t');
                 continue;
             }
             if (s.skip('u')) {
@@ -61,10 +67,7 @@ Res<String> parseStr(Io::SScan& s) {
             }
         }
 
-        if (s.next())
-            continue;
-
-        return Error::invalidData("invalid string");
+        sw.append(s.next());
     }
 
     return Error::invalidData("expected '\"'");

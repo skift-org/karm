@@ -19,7 +19,7 @@ export struct Body : Aio::Reader {
                 : _file(std::move(file)) {}
 
             Async::Task<usize> readAsync(MutBytes buf) override {
-                co_return _file.read(buf);
+                co_return co_await _file.readAsync(buf);
             }
         };
 

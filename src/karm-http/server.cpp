@@ -100,9 +100,7 @@ export struct Server {
     }
 
     Async::Task<> _handleConnectionAsync(Rc<Sys::TcpConnection> conn) {
-
         bool keepAlive = true;
-
         while (keepAlive) {
             auto req = co_trya$(_recvRequestAsync(conn));
             logInfo("{} {} {}", req->method, req->url, req->version);

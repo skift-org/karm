@@ -48,6 +48,16 @@ export Async::Task<String> readAllUtf8Async(AsyncReadable auto& reader) {
     co_return Ok(w.take());
 }
 
+export Async::Task<> drainAsync(AsyncReadable auto& reader) {
+    Array<Utf8::Unit, 512> buf = {};
+    while (true) {
+        usize read = co_trya$(reader.readAsync(buf.mutBytes()));
+        if (read == 0)
+            break;
+    }
+    co_return Ok();
+}
+
 export Async::Task<Tuple<usize, bool>> readLineAsync(AsyncReadable auto& reader, AsyncWritable auto& writer, Bytes delim) {
     if (delim.len() > 16)
         panic("delimiter string too large");

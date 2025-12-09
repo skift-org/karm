@@ -11,7 +11,7 @@ import :header;
 
 namespace Karm::Http {
 
-struct ResponseWriter : Aio::Writer {
+export struct ResponseWriter : Aio::Writer {
     Code code = OK;
     Header header;
 
@@ -61,35 +61,14 @@ export struct Response {
     }
 
     static Async::Task<Response> readAsync(Aio::Reader& r) {
-        Io::BufferWriter bw;
-        while (true) {
-            auto adaptedBw = Aio::adapt(bw);
-            auto [read, reachedDelim] = co_trya$(Aio::readLineAsync(r, adaptedBw, "\r\n"_bytes));
-
-            if (not reachedDelim)
-                co_return Error::invalidInput("input stream ended with incomplete http header");
-
-            if (read == 0)
-                break;
-        }
-
-        Io::SScan scan{bw.bytes().cast<char>()};
+        auto headers = co_trya$(readHeadersAsync(r));
+        Io::SScan scan{bytes(headers).cast<char>()};
         co_return parse(scan);
     }
 
     static Res<Response> read(Io::Reader& r) {
-        Io::BufferWriter bw;
-        while (true) {
-            auto [read, reachedDelim] = try$(Io::readLine(r, bw, "\r\n"_bytes));
-
-            if (not reachedDelim)
-                return Error::invalidInput("input stream ended with incomplete http header");
-
-            if (read == 0)
-                break;
-        }
-
-        Io::SScan scan{bw.bytes().cast<char>()};
+        auto headers = try$(readHeaders(r));
+        Io::SScan scan{bytes(headers).cast<char>()};
         return parse(scan);
     }
 

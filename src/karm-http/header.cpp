@@ -9,6 +9,8 @@ import Karm.Ref;
 
 namespace Karm::Http {
 
+// MARK: Version ---------------------------------------------------------------
+
 export struct Version {
     u8 major;
     u8 minor;
@@ -32,6 +34,8 @@ export struct Version {
 
     auto operator<=>(Version const& other) const = default;
 };
+
+// MARK: Header ----------------------------------------------------------------
 
 export struct Header : Map<Symbol, String> {
     using Map::Map;
@@ -156,6 +160,39 @@ Symbol const Header::IF_MODIFIED_SINCE = "If-Modified-Since"_sym;
 Symbol const Header::DATE = "Date"_sym;
 Symbol const Header::SERVER = "Server"_sym;
 Symbol const Header::VIA = "Via"_sym;
+
+// MARK: Headers ---------------------------------------------------------------
+
+export Async::Task<Vec<u8>> readHeadersAsync(Aio::Reader& r) {
+    Io::BufferWriter bw;
+    while (true) {
+        auto adaptedBw = Aio::adapt(bw);
+        auto [read, reachedDelim] = co_trya$(Aio::readLineAsync(r, adaptedBw, "\r\n"_bytes));
+
+        if (not reachedDelim)
+            co_return Error::invalidInput("input stream ended with incomplete http header");
+
+        if (read == 0)
+            break;
+    }
+
+    co_return Ok(bw.take());
+}
+
+export Res<Vec<u8>> readHeaders(Io::Reader& r) {
+    Io::BufferWriter bw;
+    while (true) {
+        auto [read, reachedDelim] = try$(Io::readLine(r, bw, "\r\n"_bytes));
+
+        if (not reachedDelim)
+            return Error::invalidInput("input stream ended with incomplete http header");
+
+        if (read == 0)
+            break;
+    }
+
+    return Ok(bw.take());
+}
 
 } // namespace Karm::Http
 
