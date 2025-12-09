@@ -1,5 +1,7 @@
 var NAVTREEINDEX6 =
 {
+"jpeg_2decoder_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6":[3,0,0,14,3,2,7],
+"jpeg_2decoder_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5":[3,0,0,14,3,2,3],
 "jpeg_2decoder_8cpp.html#ade9c999f65d06abc86ce3cce78a704fc":[3,0,0,14,3,2,6],
 "jpeg_2encoder_8cpp.html":[3,0,0,14,3,3],
 "jpeg_2encoder_8cpp.html#a062e19c831932519c33a396b9b0f4a04":[3,0,0,14,3,3,4],
@@ -70,11 +72,13 @@ var NAVTREEINDEX6 =
 "karm-cli_2mod_8cpp.html#ae9c22628d1cefdb9b7dc5262029cb360":[3,0,0,3,1,29],
 "karm-cli_2mod_8cpp.html#afba8a146c3f657e003dee1c10e2f4e16":[3,0,0,3,1,23],
 "karm-core_2aio_2funcs_8cpp.html":[3,0,0,4,0,1],
-"karm-core_2aio_2funcs_8cpp.html#a364f01fa69b0f141af437861da8756f0":[3,0,0,4,0,1,2],
-"karm-core_2aio_2funcs_8cpp.html#a5dd0bbca58bafc24316f373f9642042a":[3,0,0,4,0,1,1],
+"karm-core_2aio_2funcs_8cpp.html#a364f01fa69b0f141af437861da8756f0":[3,0,0,4,0,1,3],
+"karm-core_2aio_2funcs_8cpp.html#a3cf7a103263470e35cb7086eba8a11a9":[3,0,0,4,0,1,4],
+"karm-core_2aio_2funcs_8cpp.html#a5dd0bbca58bafc24316f373f9642042a":[3,0,0,4,0,1,2],
 "karm-core_2aio_2funcs_8cpp.html#a70d5982fa3e9120bb23f978065161992":[3,0,0,4,0,1,0],
-"karm-core_2aio_2funcs_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6":[3,0,0,4,0,1,4],
-"karm-core_2aio_2funcs_8cpp.html#af60e35d72364ff777a965d456af4dea3":[3,0,0,4,0,1,3],
+"karm-core_2aio_2funcs_8cpp.html#a73c2a1510fe0ff054336fdc265ea1256":[3,0,0,4,0,1,1],
+"karm-core_2aio_2funcs_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6":[3,0,0,4,0,1,6],
+"karm-core_2aio_2funcs_8cpp.html#af60e35d72364ff777a965d456af4dea3":[3,0,0,4,0,1,5],
 "karm-core_2aio_2mod_8cpp.html":[3,0,0,4,0,2],
 "karm-core_2aio_2mod_8cpp.html#af60e35d72364ff777a965d456af4dea3":[3,0,0,4,0,2,0],
 "karm-core_2aio_2mod_8cpp.html#aff55674fa41a3a4ef62434c039b6c32d":[3,0,0,4,0,2,1],
@@ -144,10 +148,10 @@ var NAVTREEINDEX6 =
 "karm-core_2base_2time_8cpp.html#a5a1f756b28790a4e14ec53212aad14b7":[3,0,0,4,2,52,11],
 "karm-core_2base_2time_8cpp.html#a68b0d292848ebc470a5ea7a2d5dfd97d":[3,0,0,4,2,52,19],
 "karm-core_2base_2time_8cpp.html#a7c25caa13599c579275a0f3e8e688e5e":[3,0,0,4,2,52,18],
+"karm-core_2base_2time_8cpp.html#ad1ca222800e9d6c2527ea4190402e199":[3,0,0,4,2,52,17],
 "karm-core_2base_2time_8cpp.html#ad1ca222800e9d6c2527ea4190402e199":[3,0,0,4,2,52,14],
 "karm-core_2base_2time_8cpp.html#ad1ca222800e9d6c2527ea4190402e199":[3,0,0,4,2,52,15],
 "karm-core_2base_2time_8cpp.html#ad1ca222800e9d6c2527ea4190402e199":[3,0,0,4,2,52,16],
-"karm-core_2base_2time_8cpp.html#ad1ca222800e9d6c2527ea4190402e199":[3,0,0,4,2,52,17],
 "karm-core_2base_2time_8cpp.html#ad3c5eadab95ad811214b1c6a412dce64":[3,0,0,4,2,52,12],
 "karm-core_2base_2time_8cpp.html#ad3c5eadab95ad811214b1c6a412dce64":[3,0,0,4,2,52,13],
 "karm-core_2base_2time_8cpp.html#af60e35d72364ff777a965d456af4dea3":[3,0,0,4,2,52,20],
@@ -245,9 +249,5 @@ var NAVTREEINDEX6 =
 "karm-core_2json_2mod_8cpp.html#ac5948f842326ffd322178ef2f16c0ba2":[3,0,0,4,6,1,10],
 "karm-core_2json_2mod_8cpp.html#ad56f7ac512905f94b46aef15ee9305d9":[3,0,0,4,6,1,5],
 "karm-core_2json_2mod_8cpp.html#af60e35d72364ff777a965d456af4dea3":[3,0,0,4,6,1,11],
-"karm-core_2macros_8h.html":[3,0,0,4,11],
-"karm-core_2macros_8h.html#a022a4ac48aa34e9cd055ac22154c3d55":[3,0,0,4,11,6],
-"karm-core_2macros_8h.html#a076bd9e518620131d6ecb66844c61f26":[3,0,0,4,11,7],
-"karm-core_2macros_8h.html#a118dc910935bf5795d49a1f363613d0a":[3,0,0,4,11,3],
-"karm-core_2macros_8h.html#a1b0936415a643c88ce543099c10e0d7f":[3,0,0,4,11,10]
+"karm-core_2macros_8h.html":[3,0,0,4,11]
 };

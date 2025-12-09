@@ -217,6 +217,7 @@ var annotated_dup =
         [ "PipeTransport", "structKarm_1_1Http_1_1PipeTransport.html", "structKarm_1_1Http_1_1PipeTransport" ],
         [ "Request", "structKarm_1_1Http_1_1Request.html", "structKarm_1_1Http_1_1Request" ],
         [ "Response", "structKarm_1_1Http_1_1Response.html", "structKarm_1_1Http_1_1Response" ],
+        [ "ResponseWriter", "structKarm_1_1Http_1_1ResponseWriter.html", "structKarm_1_1Http_1_1ResponseWriter" ],
         [ "RoutePattern", "structKarm_1_1Http_1_1RoutePattern.html", "structKarm_1_1Http_1_1RoutePattern" ],
         [ "Router", "structKarm_1_1Http_1_1Router.html", "structKarm_1_1Http_1_1Router" ],
         [ "Server", "structKarm_1_1Http_1_1Server.html", "structKarm_1_1Http_1_1Server" ],

@@ -101,7 +101,7 @@ $(document).ready(function(){initNavTree('conceptKarm_1_1Http_1_1HandlerFunc.htm
 <div class="contents">
 <h2 class="groupheader">Concept definition</h2>
 <div class="fragment"><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> F&gt;</div>
-<div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="conceptKarm_1_1Http_1_1HandlerFunc.html">Karm::Http::HandlerFunc</a> =  <span class="keyword">requires</span>(F f, Rc&lt;Request&gt; req, Rc&lt;Response::Writer&gt; resp) {</div>
+<div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="conceptKarm_1_1Http_1_1HandlerFunc.html">Karm::Http::HandlerFunc</a> =  <span class="keyword">requires</span>(F f, Rc&lt;Request&gt; req, Rc&lt;ResponseWriter&gt; resp) {</div>
 <div class="line">    { f(req, resp) } -&gt; <a class="code hl_concept" href="conceptKarm_1_1Meta_1_1Same.html">Meta::Same&lt;Async::Task&lt;&gt;</a>&gt;;</div>
 <div class="line">}</div>
 <div class="ttc" id="aconceptKarm_1_1Http_1_1HandlerFunc_html"><div class="ttname"><a href="conceptKarm_1_1Http_1_1HandlerFunc.html">Karm::Http::HandlerFunc</a></div><div class="ttdef"><b>Definition:</b> server.cpp:22</div></div>

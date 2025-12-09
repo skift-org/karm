@@ -833,7 +833,9 @@ var hierarchy =
         [ "Karm::Http::ChunkedBody", "structKarm_1_1Http_1_1ChunkedBody.html", null ],
         [ "Karm::Http::ContentBody", "structKarm_1_1Http_1_1ContentBody.html", null ],
         [ "Karm::Http::PipeBody", "structKarm_1_1Http_1_1PipeBody.html", null ]
-      ] ]
+      ] ],
+      [ "Karm::Sys::In", "structKarm_1_1Sys_1_1In.html", null ],
+      [ "Karm::Sys::_Connection", null, null ]
     ] ],
     [ "Karm::Io::Reader", "structKarm_1_1Io_1_1Reader.html", [
       [ "Karm::Io::BufReader", "structKarm_1_1Io_1_1BufReader.html", null ],
@@ -1056,7 +1058,8 @@ var hierarchy =
     [ "Karm::Aio::Writer", "structKarm_1_1Aio_1_1Writer.html", [
       [ "Karm::Aio::Adapter< T >", "structKarm_1_1Aio_1_1Adapter.html", null ],
       [ "Karm::Aio::Pipe::Writer", "structKarm_1_1Aio_1_1Pipe_1_1Writer.html", null ],
-      [ "Karm::Http::Response::Writer", "structKarm_1_1Http_1_1Response_1_1Writer.html", null ]
+      [ "Karm::Http::ResponseWriter", "structKarm_1_1Http_1_1ResponseWriter.html", null ],
+      [ "Karm::Sys::_Connection", null, null ]
     ] ],
     [ "Karm::Io::Writer", "structKarm_1_1Io_1_1Writer.html", [
       [ "Karm::Io::BufWriter", "structKarm_1_1Io_1_1BufWriter.html", null ],

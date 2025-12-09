@@ -143,6 +143,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Response.html">Response</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1ResponseWriter.html">ResponseWriter</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1RoutePattern.html">RoutePattern</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Router.html">Router</a></td></tr>
@@ -217,6 +219,10 @@ Functions</h2></td></tr>
 <tr class="separator:a3b3e4c1f9ed1115a178e32b46c0bbaec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a85d5d3a532933caba9af5037207fd42c"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#a85d5d3a532933caba9af5037207fd42c">toStr</a> (<a class="el" href="namespaceKarm_1_1Http.html#ad68477145de564d2a910b9441365aa1a">Code</a> code)</td></tr>
 <tr class="separator:a85d5d3a532933caba9af5037207fd42c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab620dec5b8df493cef84292e7c3194df"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a>&lt; <a class="el" href="namespaceKarm.html#a1b428ca1be30466bf8f6acae574ee5c6">Vec</a>&lt; <a class="el" href="namespaceKarm.html#ac298594d3e426dcab0de4127070d0b33">u8</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#ab620dec5b8df493cef84292e7c3194df">readHeadersAsync</a> (<a class="el" href="structKarm_1_1Aio_1_1Reader.html">Aio::Reader</a> &amp;r)</td></tr>
+<tr class="separator:ab620dec5b8df493cef84292e7c3194df"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55a8bad43633ffd37aaae6d93a4c38cb"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="structKarm_1_1Res.html">Res</a>&lt; <a class="el" href="namespaceKarm.html#a1b428ca1be30466bf8f6acae574ee5c6">Vec</a>&lt; <a class="el" href="namespaceKarm.html#ac298594d3e426dcab0de4127070d0b33">u8</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#a55a8bad43633ffd37aaae6d93a4c38cb">readHeaders</a> (<a class="el" href="structKarm_1_1Io_1_1Reader.html">Io::Reader</a> &amp;r)</td></tr>
+<tr class="separator:a55a8bad43633ffd37aaae6d93a4c38cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a67c9f0343cc32ada30956766b7c011ae"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="structKarm_1_1Res.html">Res</a>&lt; <a class="el" href="namespaceKarm_1_1Http.html#a04c0f4a44a817c0a1e0018359b7a38c2">Method</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#a67c9f0343cc32ada30956766b7c011ae">parseMethod</a> (<a class="el" href="namespaceKarm_1_1Io.html#a6cee1ccb2229cb0d94e469d387a41c2a">Io::SScan</a> &amp;s)</td></tr>
 <tr class="separator:a67c9f0343cc32ada30956766b7c011ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6f9f37dfdb88da1656cbba3657156a25"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="namespaceKarm.html#ad13bfdef3971d180d820f6489f550505">Str</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Http.html#a6f9f37dfdb88da1656cbba3657156a25">toStr</a> (<a class="el" href="namespaceKarm_1_1Http.html#a04c0f4a44a817c0a1e0018359b7a38c2">Method</a> method)</td></tr>
@@ -704,6 +710,42 @@ template&lt;HandlerFunc F&gt; </div>
           <td></td>
           <td>)</td>
           <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a55a8bad43633ffd37aaae6d93a4c38cb" name="a55a8bad43633ffd37aaae6d93a4c38cb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a55a8bad43633ffd37aaae6d93a4c38cb">&#9670;&#160;</a></span>readHeaders()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">export <a class="el" href="structKarm_1_1Res.html">Res</a>&lt; <a class="el" href="namespaceKarm.html#a1b428ca1be30466bf8f6acae574ee5c6">Vec</a>&lt; <a class="el" href="namespaceKarm.html#ac298594d3e426dcab0de4127070d0b33">u8</a> &gt; &gt; Karm::Http::readHeaders </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structKarm_1_1Io_1_1Reader.html">Io::Reader</a> &amp;&#160;</td>
+          <td class="paramname"><em>r</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab620dec5b8df493cef84292e7c3194df" name="ab620dec5b8df493cef84292e7c3194df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab620dec5b8df493cef84292e7c3194df">&#9670;&#160;</a></span>readHeadersAsync()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">export <a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a>&lt; <a class="el" href="namespaceKarm.html#a1b428ca1be30466bf8f6acae574ee5c6">Vec</a>&lt; <a class="el" href="namespaceKarm.html#ac298594d3e426dcab0de4127070d0b33">u8</a> &gt; &gt; Karm::Http::readHeadersAsync </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structKarm_1_1Aio_1_1Reader.html">Aio::Reader</a> &amp;&#160;</td>
+          <td class="paramname"><em>r</em></td><td>)</td>
+          <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
