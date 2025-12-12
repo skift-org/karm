@@ -1,7 +1,5 @@
 var NAVTREEINDEX1 =
 {
-"bmp_2decoder_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6":[3,0,0,14,1,0,6],
-"bmp_2decoder_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5":[3,0,0,14,1,0,1],
 "bmp_2decoder_8cpp.html#ade9c999f65d06abc86ce3cce78a704fc":[3,0,0,14,1,0,4],
 "bmp_2encoder_8cpp.html":[3,0,0,14,1,1],
 "bmp_2encoder_8cpp.html#a14cfb0eb56095d680a48b6c05aadf884":[3,0,0,14,1,1,0],
@@ -249,5 +247,7 @@ var NAVTREEINDEX1 =
 "colors_8cpp.html#a1860a3da3b9ba4fde47ce3fbf282d551":[3,0,0,11,9,7],
 "colors_8cpp.html#a38fd2737a2ee267ddb89a1b7922859ff":[3,0,0,11,9,4],
 "colors_8cpp.html#a66ed15df3daa74dc74a3fe616fc20894":[3,0,0,11,9,5],
-"colors_8cpp.html#a6ab0d52416b581ac86d77ae59bf92fba":[3,0,0,11,9,6]
+"colors_8cpp.html#a6ab0d52416b581ac86d77ae59bf92fba":[3,0,0,11,9,6],
+"colors_8cpp.html#a7e29f78f67aec7cf3481873886fdca50":[3,0,0,11,9,0],
+"colors_8cpp.html#aa2a220798a6bf7e2f3d72693777dc8c0":[3,0,0,11,9,2]
 };

@@ -1,7 +1,5 @@
 var NAVTREEINDEX13 =
 {
-"namespaceKarm_1_1Debug.html#aff14c51edf3684bb064d428175659c70":[0,0,0,8,1],
-"namespaceKarm_1_1Debug.html#aff14c51edf3684bb064d428175659c70a5fb1f955b45e38e31789286a1790398d":[0,0,0,8,1,2],
 "namespaceKarm_1_1Debug.html#aff14c51edf3684bb064d428175659c70acc5eac6d4ce84ae96a802a5ecdd51977":[0,0,0,8,1,1],
 "namespaceKarm_1_1Debug.html#aff14c51edf3684bb064d428175659c70adc30ec20708ef7b0f641ef78b7880a15":[0,0,0,8,1,0],
 "namespaceKarm_1_1Font.html":[0,0,0,9],
@@ -249,5 +247,7 @@ var NAVTREEINDEX13 =
 "namespaceKarm_1_1Image_1_1Jpeg.html#ad2f74901c3a9849c3538195dffaba8c8":[0,0,0,17,2,20],
 "namespaceKarm_1_1Image_1_1Jpeg.html#aeac8e199c1f70350b7ec7520d7887629":[0,0,0,17,2,16],
 "namespaceKarm_1_1Image_1_1Jpeg.html#af17fc8b7d3a9db4c8117241fcfdf6d82":[0,0,0,17,2,24],
-"namespaceKarm_1_1Image_1_1Jpeg.html#af7022f5c263dd1247b0212ffec582808":[0,0,0,17,2,6]
+"namespaceKarm_1_1Image_1_1Jpeg.html#af7022f5c263dd1247b0212ffec582808":[0,0,0,17,2,6],
+"namespaceKarm_1_1Image_1_1Jpeg.html#af7022f5c263dd1247b0212ffec582808a02e2de402874f231ece305b3d87d51a3":[0,0,0,17,2,6,3],
+"namespaceKarm_1_1Image_1_1Jpeg.html#af7022f5c263dd1247b0212ffec582808a07d663582496f7855a9983d5bbb95d2c":[0,0,0,17,2,6,50]
 };
