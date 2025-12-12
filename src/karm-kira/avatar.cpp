@@ -7,34 +7,35 @@ import Mdi;
 
 namespace Karm::Kira {
 
-export Ui::Child avatar(String t) {
-    Ui::BoxStyle boxStyle = {
-        .borderRadii = 99,
-        .backgroundFill = Ui::GRAY800,
-        .foregroundFill = Ui::GRAY500
-    };
-
-    return Ui::labelLarge(t) |
-           Ui::center() |
-           Ui::pinSize(46) |
-           Ui::box(boxStyle);
-}
-
-export Ui::Child avatar(Gfx::Icon i) {
+export Ui::Child avatar(Union<None, String, Gfx::Icon, Rc<Gfx::Surface>> icon = NONE, usize size = 46) {
     Ui::BoxStyle boxStyle = {
         .borderRadii = 99,
         .backgroundFill = Ui::GRAY800,
         .foregroundFill = Ui::GRAY400
     };
 
-    return Ui::icon(i, 26) |
-           Ui::center() |
-           Ui::pinSize(46) |
-           Ui::box(boxStyle);
-}
+    auto innerSize = Math::ceili(size * 0.56);
 
-export Ui::Child avatar() {
-    return avatar(Mdi::ACCOUNT);
+    Ui::Child inner = icon.visit(Visitor{
+        [&](None) {
+            return Ui::icon(Mdi::ACCOUNT, innerSize);
+        },
+        [&](String s) {
+            return Ui::text(Ui::TextStyles::labelMedium().withSize(innerSize), s);
+        },
+        [&](Gfx::Icon i) {
+            return Ui::icon(i, Math::ceili(innerSize));
+        },
+        [](Rc<Gfx::Surface> s) {
+            return Ui::image(s, {999});
+        },
+    });
+
+    return inner |
+           Ui::center() |
+           Ui::pinSize(size) |
+           Ui::box(boxStyle) |
+           Ui::center();
 }
 
 } // namespace Karm::Kira
