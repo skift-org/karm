@@ -113,6 +113,24 @@ static Res<Method> _parseMethod(Io::SScan& s) {
     return Ok<Method>(name, try$(maybeRequest), try$(maybeResponse));
 }
 
+// method ::= "event" identifier payload? ";"
+static Res<Event> _parseEvent(Io::SScan& s) {
+    if (not s.skip("event"))
+        return Error::invalidData("expected method");
+    _eatWhitespace(s);
+
+    auto name = try$(_parseIdentifier(s));
+    _eatWhitespace(s);
+
+    auto maybePayload = _parseParameters(s);
+    _eatWhitespace(s);
+
+    if (s.ahead(";") and not maybePayload)
+        maybePayload = Ok(NONE);
+
+    return Ok<Event>(name, try$(maybePayload));
+}
+
 // interface ::= "interface" identifier "{" (method ";")+ "}"
 static Res<Interface> _parseInterface(Io::SScan& s) {
     if (not s.skip("interface"))
@@ -127,18 +145,24 @@ static Res<Interface> _parseInterface(Io::SScan& s) {
     _eatWhitespace(s);
 
     Vec<Method> methods;
+    Vec<Event> events;
     do {
         _eatWhitespace(s);
         if (s.ahead("}"))
             break;
-        methods.pushBack(try$(_parseMethod(s)));
+        if (s.ahead("method"))
+            methods.pushBack(try$(_parseMethod(s)));
+        else if (s.ahead("event"))
+            events.pushBack(try$(_parseEvent(s)));
+        else
+            return Error::invalidData("expected method or event");
     } while (not s.ended() and s.skip(";"));
 
     if (not s.skip("}"))
         return Error::invalidData("expected '}'");
     _eatWhitespace(s);
 
-    return Ok<Interface>(name, methods);
+    return Ok<Interface>(name, std::move(methods), std::move(events));
 }
 
 // module ::= "module" compound-identifier ";" interface*
@@ -154,6 +178,18 @@ export Res<Module> parseModule(Io::SScan& s) {
         return Error::invalidData("expected ';'");
     _eatWhitespace(s);
 
+    Vec<CompoundIdentifier> imports;
+    while (s.skip("import")) {
+        _eatWhitespace(s);
+
+        imports.pushBack(try$(_parseCompoundIdentifier(s)));
+        _eatWhitespace(s);
+
+        if (not s.skip(";"))
+            return Error::invalidData("expected ';'");
+        _eatWhitespace(s);
+    }
+
     Vec<Interface> interfaces;
 
     do {
@@ -161,7 +197,11 @@ export Res<Module> parseModule(Io::SScan& s) {
         _eatWhitespace(s);
     } while (not s.ended());
 
-    return Ok<Module>(name, interfaces);
+    return Ok<Module>(
+        name,
+        std::move(imports),
+        std::move(interfaces)
+    );
 }
 
 export Res<Module> parseModule(Str text) {

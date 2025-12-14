@@ -1,7 +1,11 @@
 module Strata.Echo;
 
+import Karm.Core;
+
 interface IEcho {
     method ping ( message : String<    boo    >           ) -> String   ;
-    method ping (    message : String           ) -> String   ;
-    method ping (   message : String   ) -> String                    ;
+    method ping1 (    message : String           ) -> String   ;
+    method ping2 (   message : String   ) -> String                    ;
+
+    event windowClosed (id : WindowId);
 }

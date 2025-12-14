@@ -41,21 +41,32 @@ struct Method {
     }
 };
 
+struct Event {
+    Identifier name;
+    Union<None, Type, Parameters> payload = NONE;
+
+    void repr(Io::Emit& e) const {
+        e("(event {} {})", name, payload);
+    }
+};
+
 struct Interface {
     Identifier name;
     Vec<Method> methods;
+    Vec<Event> events;
 
     void repr(Io::Emit& e) const {
-        e("(interface {} {})", name, methods);
+        e("(interface {} methods:{} events:{})", name, methods, events);
     }
 };
 
 struct Module {
     CompoundIdentifier name;
+    Vec<CompoundIdentifier> imports;
     Vec<Interface> interfaces;
 
     void repr(Io::Emit& e) const {
-        e("(module {} {})", name, interfaces);
+        e("(module {} imports:{} interfaces:{})", name, imports, interfaces);
     }
 };
 
