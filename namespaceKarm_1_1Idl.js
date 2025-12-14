@@ -1,5 +1,6 @@
 var namespaceKarm_1_1Idl =
 [
+    [ "Event", "structKarm_1_1Idl_1_1Event.html", "structKarm_1_1Idl_1_1Event" ],
     [ "Interface", "structKarm_1_1Idl_1_1Interface.html", "structKarm_1_1Idl_1_1Interface" ],
     [ "Method", "structKarm_1_1Idl_1_1Method.html", "structKarm_1_1Idl_1_1Method" ],
     [ "Module", "structKarm_1_1Idl_1_1Module.html", "structKarm_1_1Idl_1_1Module" ],

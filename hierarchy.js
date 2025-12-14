@@ -408,6 +408,7 @@ var hierarchy =
     [ "Karm::Pdf::XRef::Entry", "structKarm_1_1Pdf_1_1XRef_1_1Entry.html", null ],
     [ "Karm::Error", "structKarm_1_1Error.html", null ],
     [ "Karm::App::Event", "structKarm_1_1App_1_1Event.html", null ],
+    [ "Karm::Idl::Event", "structKarm_1_1Idl_1_1Event.html", null ],
     [ "Karm::Template::Expr", "structKarm_1_1Template_1_1Expr.html", [
       [ "Karm::Template::DotExpr", "structKarm_1_1Template_1_1DotExpr.html", null ],
       [ "Karm::Template::InfixExpr", "structKarm_1_1Template_1_1InfixExpr.html", null ],

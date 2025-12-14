@@ -1,5 +1,6 @@
 var NAVTREEINDEX15 =
 {
+"namespaceKarm_1_1Json_1_1Tests.html#a2ff13af02f5628c354ca1c38c823d909":[0,0,0,19,0,2],
 "namespaceKarm_1_1Json_1_1Tests.html#a6067e1e1de31c0f008f243b817fb2d33":[0,0,0,19,0,4],
 "namespaceKarm_1_1Json_1_1Tests.html#a7e035e48d5d6331722cccb4690555bbb":[0,0,0,19,0,5],
 "namespaceKarm_1_1Json_1_1Tests.html#a9ece1e38636dae08ed231b46a47bd2ee":[0,0,0,19,0,3],
@@ -248,6 +249,5 @@ var NAVTREEINDEX15 =
 "namespaceKarm_1_1Math.html#af33fc8920959531f577e86fbf176a9d9":[0,0,0,23,92],
 "namespaceKarm_1_1Math.html#af3b0471f878d46b0ab89f3c4d8a79127":[0,0,0,23,112],
 "namespaceKarm_1_1Math.html#af9fbf90de17c6c9f88327f5f1829dd1b":[0,0,0,23,124],
-"namespaceKarm_1_1Math.html#afa4a0a39c133b50e98259eefaa1d05b3":[0,0,0,23,39],
-"namespaceKarm_1_1Math.html#afab045bee6faaf2b1502b694e8cb7733":[0,0,0,23,47]
+"namespaceKarm_1_1Math.html#afa4a0a39c133b50e98259eefaa1d05b3":[0,0,0,23,39]
 };

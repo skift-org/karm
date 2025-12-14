@@ -229,6 +229,7 @@ var annotated_dup =
         [ "Bidi", "structKarm_1_1Icu_1_1Bidi.html", "structKarm_1_1Icu_1_1Bidi" ]
       ] ],
       [ "Idl", "namespaceKarm_1_1Idl.html", [
+        [ "Event", "structKarm_1_1Idl_1_1Event.html", "structKarm_1_1Idl_1_1Event" ],
         [ "Interface", "structKarm_1_1Idl_1_1Interface.html", "structKarm_1_1Idl_1_1Interface" ],
         [ "Method", "structKarm_1_1Idl_1_1Method.html", "structKarm_1_1Idl_1_1Method" ],
         [ "Module", "structKarm_1_1Idl_1_1Module.html", "structKarm_1_1Idl_1_1Module" ],

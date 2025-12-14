@@ -3,6 +3,7 @@ var ast_8cpp =
     [ "Karm::Idl::Type", "structKarm_1_1Idl_1_1Type.html", "structKarm_1_1Idl_1_1Type" ],
     [ "Karm::Idl::Parameter", "structKarm_1_1Idl_1_1Parameter.html", "structKarm_1_1Idl_1_1Parameter" ],
     [ "Karm::Idl::Method", "structKarm_1_1Idl_1_1Method.html", "structKarm_1_1Idl_1_1Method" ],
+    [ "Karm::Idl::Event", "structKarm_1_1Idl_1_1Event.html", "structKarm_1_1Idl_1_1Event" ],
     [ "Karm::Idl::Interface", "structKarm_1_1Idl_1_1Interface.html", "structKarm_1_1Idl_1_1Interface" ],
     [ "Karm::Idl::Module", "structKarm_1_1Idl_1_1Module.html", "structKarm_1_1Idl_1_1Module" ],
     [ "CompoundIdentifier", "ast_8cpp.html#a465f7deec7d10b92b326edc8399b6bac", null ],

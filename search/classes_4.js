@@ -13,6 +13,6 @@ var searchData=
   ['entry_10',['Entry',['../structKarm_1_1Fs_1_1Mbr_1_1Entry.html',1,'Karm::Fs::Mbr::Entry'],['../structKarm_1_1Pdf_1_1XRef_1_1Entry.html',1,'Karm::Pdf::XRef::Entry']]],
   ['err_11',['Err',['../structKarm_1_1Sys_1_1Err.html',1,'Karm::Sys']]],
   ['error_12',['Error',['../structKarm_1_1Error.html',1,'Karm']]],
-  ['event_13',['Event',['../structKarm_1_1App_1_1Event.html',1,'Karm::App']]],
+  ['event_13',['Event',['../structKarm_1_1App_1_1Event.html',1,'Karm::App::Event'],['../structKarm_1_1Idl_1_1Event.html',1,'Karm::Idl::Event']]],
   ['expr_14',['Expr',['../structKarm_1_1Math_1_1Expr.html',1,'Karm::Math::Expr'],['../structKarm_1_1Template_1_1Expr.html',1,'Karm::Template::Expr']]]
 ];
