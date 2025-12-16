@@ -2,9 +2,9 @@ module;
 
 #include <liburing.h>
 //
+#include <karm-core/macros.h>
 #include <karm-sys/posix/fd.h>
 #include <karm-sys/posix/utils.h>
-#include <karm-core/macros.h>
 
 module Karm.Sys;
 
@@ -70,7 +70,7 @@ struct UringSched : Sys::Sched {
     }
 
     [[clang::coro_wrapper]]
-    Async::Task<usize> readAsync(Rc<Fd> fd, MutBytes buf) override {
+    Async::Task<usize> readAsync(Rc<Fd> fd, MutBytes buf, Async::CancellationToken ct) override {
         struct Job : _Job {
             Rc<Posix::Fd> _fd;
             MutBytes _buf;
@@ -102,13 +102,14 @@ struct UringSched : Sys::Sched {
             }
         };
 
+        co_try$(ct.errorIfCanceled());
         auto job = makeRc<Job>(co_try$(Posix::toPosixFd(fd)), buf);
         submit(job);
         co_return co_await job->future();
     }
 
     [[clang::coro_wrapper]]
-    Async::Task<usize> writeAsync(Rc<Fd> fd, Bytes buf) override {
+    Async::Task<usize> writeAsync(Rc<Fd> fd, Bytes buf, Async::CancellationToken ct) override {
         struct Job : _Job {
             Rc<Posix::Fd> _fd;
             Bytes _buf;
@@ -144,13 +145,14 @@ struct UringSched : Sys::Sched {
             }
         };
 
+        co_try$(ct.errorIfCanceled());
         auto job = makeRc<Job>(co_try$(Posix::toPosixFd(fd)), buf);
         submit(job);
         co_return co_await job->future();
     }
 
     [[clang::coro_wrapper]]
-    Async::Task<> flushAsync(Rc<Fd> fd) override {
+    Async::Task<> flushAsync(Rc<Fd> fd, Async::CancellationToken ct) override {
         struct Job : _Job {
             Rc<Posix::Fd> _fd;
             Async::Promise<> _promise;
@@ -175,13 +177,14 @@ struct UringSched : Sys::Sched {
             }
         };
 
+        co_try$(ct.errorIfCanceled());
         auto job = makeRc<Job>(co_try$(Posix::toPosixFd(fd)));
         submit(job);
         co_return co_await job->future();
     }
 
     [[clang::coro_wrapper]]
-    Async::Task<_Accepted> acceptAsync(Rc<Fd> fd) override {
+    Async::Task<_Accepted> acceptAsync(Rc<Fd> fd, Async::CancellationToken ct) override {
         struct Job : _Job {
             Rc<Posix::Fd> _fd;
             sockaddr_in _addr{};
@@ -210,13 +213,14 @@ struct UringSched : Sys::Sched {
             }
         };
 
+        co_try$(ct.errorIfCanceled());
         auto job = makeRc<Job>(co_try$(Posix::toPosixFd(fd)));
         submit(job);
         co_return co_await job->future();
     }
 
     [[clang::coro_wrapper]]
-    Async::Task<_Sent> sendAsync(Rc<Fd> fd, Bytes buf, Slice<Handle> handles, SocketAddr addr) override {
+    Async::Task<_Sent> sendAsync(Rc<Fd> fd, Bytes buf, Slice<Handle> handles, SocketAddr addr, Async::CancellationToken ct) override {
         if (handles.len() > 0)
             notImplemented(); // TODO: Implement handle passing on POSIX
 
@@ -260,13 +264,14 @@ struct UringSched : Sys::Sched {
             }
         };
 
+        co_try$(ct.errorIfCanceled());
         auto job = makeRc<Job>(co_try$(Posix::toPosixFd(fd)), buf, addr);
         submit(job);
         co_return co_await job->future();
     }
 
     [[clang::coro_wrapper]]
-    Async::Task<_Received> recvAsync(Rc<Fd> fd, MutBytes buf, MutSlice<Handle>) override {
+    Async::Task<_Received> recvAsync(Rc<Fd> fd, MutBytes buf, MutSlice<Handle>, Async::CancellationToken ct) override {
         struct Job : _Job {
             Rc<Posix::Fd> _fd;
             MutBytes _buf;
@@ -304,13 +309,14 @@ struct UringSched : Sys::Sched {
             }
         };
 
+        co_try$(ct.errorIfCanceled());
         auto job = makeRc<Job>(co_try$(Posix::toPosixFd(fd)), buf);
         submit(job);
         co_return co_await job->future();
     }
 
     [[clang::coro_wrapper]]
-    Async::Task<> sleepAsync(Instant until) override {
+    Async::Task<> sleepAsync(Instant until, Async::CancellationToken ct) override {
         struct Job : _Job {
             Instant _until;
             Async::Promise<> _promise;
@@ -337,9 +343,10 @@ struct UringSched : Sys::Sched {
             }
         };
 
+        co_try$(ct.errorIfCanceled());
         auto job = makeRc<Job>(until);
         submit(job);
-        return Async::makeTask(job->future());
+        co_return co_await job->future();
     }
 
     bool _inWait = false;

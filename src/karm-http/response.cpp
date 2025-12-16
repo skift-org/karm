@@ -15,22 +15,22 @@ export struct ResponseWriter : Aio::Writer {
     Code code = OK;
     Header header;
 
-    virtual Async::Task<> writeHeaderAsync(Code code) = 0;
+    virtual Async::Task<> writeHeaderAsync(Code code, Async::CancellationToken ct) = 0;
 
-    Async::Task<> writeJsonAsync(Serde::Value const& value) {
+    Async::Task<> writeJsonAsync(Serde::Value const& value, Async::CancellationToken ct) {
         auto string = co_try$(Json::unparse(value));
-        co_trya$(writeAsync(bytes(string)));
+        co_trya$(writeAsync(bytes(string), ct));
         co_return Ok();
     }
 
-    Async::Task<> writeStrAsync(Str str) {
-        co_trya$(writeAsync(bytes(str)));
+    Async::Task<> writeStrAsync(Str str, Async::CancellationToken ct) {
+        co_trya$(writeAsync(bytes(str), ct));
         co_return Ok();
     }
 
-    Async::Task<> writeFileAsync(Ref::Url const& url) {
+    Async::Task<> writeFileAsync(Ref::Url const& url, Async::CancellationToken ct) {
         auto data = co_try$(Sys::readAllUtf8(url));
-        co_return co_await writeStrAsync(data);
+        co_return co_await writeStrAsync(data, ct);
     }
 };
 
@@ -60,8 +60,8 @@ export struct Response {
         return Ok(res);
     }
 
-    static Async::Task<Response> readAsync(Aio::Reader& r) {
-        auto headers = co_trya$(readHeadersAsync(r));
+    static Async::Task<Response> readAsync(Aio::Reader& r, Async::CancellationToken ct) {
+        auto headers = co_trya$(readHeadersAsync(r, ct));
         Io::SScan scan{bytes(headers).cast<char>()};
         co_return parse(scan);
     }

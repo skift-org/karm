@@ -12,10 +12,10 @@ namespace Karm::Test {
     static ::Karm::Test::Test var$(test){ID, var$(func)};                             \
     static ::Karm::Res<> var$(func)([[maybe_unused]] ::Karm::Test::Driver & _driver)
 
-#define testAsync$(ID)                                                                             \
-    static ::Karm::Async::Task<> var$(funcAsync)([[maybe_unused]] ::Karm::Test::Driver & _driver); \
-    static ::Karm::Test::Test var$(test){ID, var$(funcAsync)};                                     \
-    static ::Karm::Async::Task<> var$(funcAsync)([[maybe_unused]] ::Karm::Test::Driver & _driver)
+#define testAsync$(ID)                                                                                                                           \
+    static ::Karm::Async::Task<> var$(funcAsync)([[maybe_unused]] ::Karm::Test::Driver & _driver, [[maybe_unused]] Async::CancellationToken ct); \
+    static ::Karm::Test::Test var$(test){ID, var$(funcAsync)};                                                                                   \
+    static ::Karm::Async::Task<> var$(funcAsync)([[maybe_unused]] ::Karm::Test::Driver & _driver, [[maybe_unused]] Async::CancellationToken ct)
 
 #define __expect$(LHS, RHS, OP)                         \
     ({                                                  \

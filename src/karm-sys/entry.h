@@ -12,7 +12,7 @@ import Karm.Sys;
 
 #include <karm-core/macros.h>
 
-[[gnu::used]] Karm::Async::Task<> entryPointAsync(Karm::Sys::Context&);
+[[gnu::used]] Karm::Async::Task<> entryPointAsync(Karm::Sys::Context&, Karm::Async::CancellationToken ct);
 
 #if defined(__ck_sys_linux__) || defined(__ck_sys_darwin__)
 #    define EMBED_POSIX_MAIN_IMPL

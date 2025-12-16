@@ -25,7 +25,7 @@ struct Sin : Av::Stream {
     }
 };
 
-Async::Task<> entryPointAsync(Sys::Context&) {
+Async::Task<> entryPointAsync(Sys::Context&, Async::CancellationToken) {
     auto url = "bundle://karm-av/audio/free-software.wav"_url;
     auto device = co_try$(Av::Device::create());
     auto player = makeRc<Av::Player>();

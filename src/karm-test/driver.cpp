@@ -24,7 +24,7 @@ export struct RunOptions {
 };
 
 export struct Driver {
-    Async::Task<> runAllAsync(RunOptions options) {
+    Async::Task<> runAllAsync(RunOptions options, Async::CancellationToken ct) {
         usize passed = 0, failed = 0, skipped = 0;
 
         Sys::errln("Running {} tests...", Test::len());
@@ -43,7 +43,7 @@ export struct Driver {
                 Io::toNoCase(test->_name).unwrap()
             );
 
-            auto result = co_await test->runAsync(*this);
+            auto result = co_await test->runAsync(*this, ct);
 
             if (not result and result.none() == Error::SKIPPED) {
                 skipped++;

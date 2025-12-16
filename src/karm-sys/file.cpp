@@ -34,8 +34,9 @@ export struct _File :
         return _fd->flush();
     }
 
-    auto flushAsync(auto& sched = globalSched()) {
-        return sched.flushAsync(_fd);
+    [[clang::coro_wrapper]]
+    Async::Task<> flushAsync(Async::CancellationToken ct) {
+        return globalSched().flushAsync(_fd, ct);
     }
 
     Res<Stat> stat() {
@@ -58,8 +59,8 @@ export struct FileReader :
     }
 
     [[clang::coro_wrapper]]
-    Async::Task<usize> readAsync(MutBytes bytes, Sched& sched = globalSched()) {
-        return sched.readAsync(_fd, bytes);
+    Async::Task<usize> readAsync(MutBytes bytes, Async::CancellationToken ct) {
+        return globalSched().readAsync(_fd, bytes, ct);
     }
 
     Res<Ref::Mime> sniff(bool ignoreUrl = false) {
@@ -89,8 +90,8 @@ export struct FileWriter :
     }
 
     [[clang::coro_wrapper]]
-    Async::Task<usize> writeAsync(Bytes bytes, Sched& sched = globalSched()) {
-        return sched.writeAsync(_fd, bytes);
+    Async::Task<usize> writeAsync(Bytes bytes, Async::CancellationToken ct) {
+        return globalSched().writeAsync(_fd, bytes, ct);
     }
 };
 

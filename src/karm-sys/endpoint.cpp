@@ -34,9 +34,9 @@ Res<> rpcSend(IpcConnection& con, Port to, u64 seq, Args&&... args) {
     return Ok();
 }
 
-export Async::Task<Message> rpcRecvAsync(IpcConnection& con) {
+export Async::Task<Message> rpcRecvAsync(IpcConnection& con, Async::CancellationToken ct) {
     Message msg;
-    auto [bufLen, hndsLen] = co_trya$(con.recvAsync(msg._buf, msg._hnds));
+    auto [bufLen, hndsLen] = co_trya$(con.recvAsync(msg._buf, msg._hnds, ct));
     if (bufLen < sizeof(Header))
         co_return Error::invalidData("invalid message");
     msg._len = bufLen;
@@ -56,14 +56,19 @@ export struct Endpoint : Meta::Pinned {
     Map<u64, Async::_Promise<Message>> _pending{};
     Async::Queue<Message> _incoming{};
     u64 _seq = 1;
+    Rc<Async::Cancellation> _cancelation = makeRc<Async::Cancellation>();
 
     Endpoint(IpcConnection con) : _con(std::move(con)) {
         _globalEndpoint = this;
         // FIXME: Find a way to do proper cleanup
-        Async::detach(_receiverTask(*this), [](Res<> res) {
+        Async::detach(_receiverTask(*this, _cancelation), [](Res<> res) {
             logError("receiver task exited: {}", res);
             panic("receiver task exited");
         });
+    }
+
+    ~Endpoint() {
+        _cancelation->cancel();
     }
 
     static Endpoint adopt(Context& ctx) {
@@ -71,9 +76,9 @@ export struct Endpoint : Meta::Pinned {
         return {std::move(channel.con)};
     }
 
-    static Async::Task<> _receiverTask(Endpoint& self) {
+    static Async::Task<> _receiverTask(Endpoint& self, Async::CancellationToken ct) {
         while (true) {
-            Message msg = co_trya$(rpcRecvAsync(self._con));
+            Message msg = co_trya$(rpcRecvAsync(self._con, ct));
             auto header = msg._header;
 
             if (self._pending.has(header.seq)) {

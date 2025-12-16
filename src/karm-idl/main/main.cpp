@@ -4,7 +4,7 @@ import Karm.Idl;
 
 using namespace Karm;
 
-Async::Task<> entryPointAsync(Sys::Context&) {
+Async::Task<> entryPointAsync(Sys::Context&, Async::CancellationToken) {
     auto data = Sys::readAllUtf8("bundle://karm-idl/public/idl/echo.idl"_url).unwrap("could not read idl file");
     auto maybeModule = Idl::parseModule(data);
     if (not maybeModule)

@@ -15,12 +15,12 @@ namespace Karm::Http {
 
 export struct Handler {
     virtual ~Handler() = default;
-    virtual Async::Task<> handleAsync(Rc<Request>, Rc<ResponseWriter>) = 0;
+    virtual Async::Task<> handleAsync(Rc<Request>, Rc<ResponseWriter>, Async::CancellationToken ct) = 0;
 };
 
 template <typename F>
-concept HandlerFunc = requires(F f, Rc<Request> req, Rc<ResponseWriter> resp) {
-    { f(req, resp) } -> Meta::Same<Async::Task<>>;
+concept HandlerFunc = requires(F f, Rc<Request> req, Rc<ResponseWriter> resp, Async::CancellationToken ct) {
+    { f(req, resp, ct) } -> Meta::Same<Async::Task<>>;
 };
 
 template <HandlerFunc F>
@@ -31,8 +31,8 @@ Rc<Handler> makeHandler(F func) {
         FuncHandler(F func) : _func(std::move(func)) {}
 
         [[clang::coro_wrapper]]
-        Async::Task<> handleAsync(Rc<Request> req, Rc<ResponseWriter> resp) override {
-            return _func(req, resp);
+        Async::Task<> handleAsync(Rc<Request> req, Rc<ResponseWriter> resp, Async::CancellationToken ct) override {
+            return _func(req, resp, ct);
         }
     };
 
@@ -52,7 +52,7 @@ export struct Server {
         _ResponseWriter(Rc<Sys::TcpConnection> conn)
             : _conn(conn) {}
 
-        Async::Task<> writeHeaderAsync(Code code) override {
+        Async::Task<> writeHeaderAsync(Code code, Async::CancellationToken ct) override {
             Response resp;
             resp.version = Version{1, 1};
             resp.code = code;
@@ -60,20 +60,20 @@ export struct Server {
             // NOTE: Seems to be the average size of an HTTP header
             Io::StringWriter sb{1024};
             co_try$(resp.unparse(sb));
-            co_trya$(_conn->writeAsync(sb.bytes()));
+            co_trya$(_conn->writeAsync(sb.bytes(), ct));
             _headerSent = true;
             co_return Ok();
         }
 
-        Async::Task<usize> writeAsync(Bytes buf) override {
+        Async::Task<usize> writeAsync(Bytes buf, Async::CancellationToken ct) override {
             if (not _headerSent) {
                 if (not header.has(Header::CONTENT_TYPE))
                     header.put(Header::CONTENT_TYPE, Ref::sniffBytes(buf).str());
                 if (not header.has(Header::CONTENT_LENGTH))
                     header.put(Header::CONTENT_LENGTH, Io::format("{}", buf.len()));
-                co_trya$(writeHeaderAsync(code));
+                co_trya$(writeHeaderAsync(code, ct));
             }
-            co_return co_await _conn->writeAsync(buf);
+            co_return co_await _conn->writeAsync(buf, ct);
         }
     };
 
@@ -84,8 +84,8 @@ export struct Server {
     Rc<Handler> _handler;
     ServerProps _props;
 
-    Async::Task<Rc<Request>> _recvRequestAsync(Rc<Sys::TcpConnection> conn) {
-        auto request = co_trya$(Request::readAsync(*conn));
+    Async::Task<Rc<Request>> _recvRequestAsync(Rc<Sys::TcpConnection> conn, Async::CancellationToken ct) {
+        auto request = co_trya$(Request::readAsync(*conn, ct));
         if (auto contentLength = request.header.contentLength()) {
             request.body = makeRc<ContentBody>(conn, contentLength.unwrap());
         } else if (auto transferEncoding = request.header.tryGet(Header::TRANSFER_ENCODING)) {
@@ -99,10 +99,10 @@ export struct Server {
         co_return Ok(makeRc<Request>(std::move(request)));
     }
 
-    Async::Task<> _handleConnectionAsync(Rc<Sys::TcpConnection> conn) {
+    Async::Task<> _handleConnectionAsync(Rc<Sys::TcpConnection> conn, Async::CancellationToken ct) {
         bool keepAlive = true;
         while (keepAlive) {
-            auto req = co_trya$(_recvRequestAsync(conn));
+            auto req = co_trya$(_recvRequestAsync(conn, ct));
             logInfo("{} {} {}", req->method, req->url, req->version);
             if (auto connection = req->header.access(Header::CONNECTION)) {
                 if (eqCi(connection->str(), "close"s)) {
@@ -120,31 +120,31 @@ export struct Server {
                 resp->header.put(Header::CONNECTION, "keep-alive"s);
             }
 
-            co_trya$(_handler->handleAsync(req, resp));
+            co_trya$(_handler->handleAsync(req, resp, ct));
         }
         co_return Ok();
     }
 
-    Async::Task<> serveAsync() {
+    Async::Task<> serveAsync(Async::CancellationToken ct) {
         auto listener = co_try$(Sys::TcpListener::listen(_props.addr));
         logInfo("{#} listening on http://{}", _props.name, _props.addr);
         while (true) {
-            auto connection = makeRc<Sys::TcpConnection>(co_trya$(listener.acceptAsync()));
-            Async::detach(_handleConnectionAsync(connection));
+            auto connection = makeRc<Sys::TcpConnection>(co_trya$(listener.acceptAsync(ct)));
+            Async::detach(_handleConnectionAsync(connection, ct));
         }
     }
 };
 
 // MARK: Serverless ------------------------------------------------------------
 
-export Async::Task<> serveAsync(Rc<Handler> handler, ServerProps const& props = {}) {
+export Async::Task<> serveAsync(Rc<Handler> handler, Async::CancellationToken ct, ServerProps const& props = {}) {
     auto server = Server::simple(handler, props);
-    co_return co_await server->serveAsync();
+    co_return co_await server->serveAsync(ct);
 }
 
 export [[clang::coro_wrapper]]
-Async::Task<> serveAsync(HandlerFunc auto handler, ServerProps const& props = {}) {
-    return serveAsync(makeHandler(handler, props));
+Async::Task<> serveAsync(HandlerFunc auto handler, Async::CancellationToken ct, ServerProps const& props = {}) {
+    return serveAsync(makeHandler(handler), ct, props);
 }
 
 } // namespace Karm::Http

@@ -66,19 +66,19 @@ struct TlsConnection : Sys::_Connection {
     }
 
     [[clang::coro_wrapper]]
-    Async::Task<usize> readAsync(MutBytes buf) override {
-        return _conn.readAsync(buf);
+    Async::Task<usize> readAsync(MutBytes buf, Async::CancellationToken ct) override {
+        return _conn.readAsync(buf, ct);
     }
 
     [[clang::coro_wrapper]]
-    Async::Task<usize> writeAsync(Bytes buf) override {
-        return _conn.writeAsync(buf);
+    Async::Task<usize> writeAsync(Bytes buf, Async::CancellationToken ct) override {
+        return _conn.writeAsync(buf, ct);
     }
 
     [[clang::coro_wrapper]]
-    Async::Task<> flushAsync() override {
-        return _conn.flushAsync();
+    Async::Task<> flushAsync(Async::CancellationToken ct) override {
+        return _conn.flushAsync(ct);
     }
 };
 
-} // namespace Tls
+} // namespace Karm::Tls

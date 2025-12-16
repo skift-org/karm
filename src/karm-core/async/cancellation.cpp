@@ -42,6 +42,6 @@ export struct Cancellation : Meta::Pinned {
     }
 };
 
-export using Ct = Cancellation::Token;
+export using CancellationToken = Cancellation::Token;
 
 } // namespace Karm::Async

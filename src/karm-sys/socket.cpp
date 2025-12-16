@@ -22,7 +22,7 @@ export struct _Connection :
     Aio::Reader,
     Meta::NoCopy {
 
-    virtual Async::Task<> flushAsync() = 0;
+    virtual Async::Task<> flushAsync(Async::CancellationToken ct) = 0;
 };
 
 export struct Connection :
@@ -38,8 +38,8 @@ export struct Connection :
     }
 
     [[clang::coro_wrapper]]
-    Async::Task<usize> readAsync(MutBytes buf) override {
-        return globalSched().readAsync(_fd, buf);
+    Async::Task<usize> readAsync(MutBytes buf, Async::CancellationToken ct) override {
+        return globalSched().readAsync(_fd, buf, ct);
     }
 
     Res<usize> write(Bytes buf) override {
@@ -47,8 +47,8 @@ export struct Connection :
     }
 
     [[clang::coro_wrapper]]
-    Async::Task<usize> writeAsync(Bytes buf) override {
-        return globalSched().writeAsync(_fd, buf);
+    Async::Task<usize> writeAsync(Bytes buf, Async::CancellationToken ct) override {
+        return globalSched().writeAsync(_fd, buf, ct);
     }
 
     Res<> flush() override {
@@ -56,8 +56,8 @@ export struct Connection :
     }
 
     [[clang::coro_wrapper]]
-    Async::Task<> flushAsync() override {
-        return globalSched().flushAsync(_fd);
+    Async::Task<> flushAsync(Async::CancellationToken ct) override {
+        return globalSched().flushAsync(_fd, ct);
     }
 
     Rc<Fd> fd() { return _fd; }
@@ -77,8 +77,8 @@ struct _Listener :
         return Ok(C(std::move(fd), addr));
     }
 
-    Async::Task<C> acceptAsync() {
-        auto [fd, addr] = co_trya$(globalSched().acceptAsync(_fd));
+    Async::Task<C> acceptAsync(Async::CancellationToken ct) {
+        auto [fd, addr] = co_trya$(globalSched().acceptAsync(_fd, ct));
         co_return Ok(C(std::move(fd), addr));
     }
 
@@ -108,8 +108,8 @@ export struct UdpConnection :
     }
 
     [[clang::coro_wrapper]]
-    auto sendAsync(Bytes buf, SocketAddr addr) {
-        return globalSched().sendAsync(_fd, buf, {}, addr);
+    Async::Task<_Sent> sendAsync(Bytes buf, SocketAddr addr, Async::CancellationToken ct) {
+        return globalSched().sendAsync(_fd, buf, {}, addr, ct);
     }
 
     Res<Pair<usize, SocketAddr>> recv(MutBytes buf) {
@@ -118,8 +118,8 @@ export struct UdpConnection :
     }
 
     [[clang::coro_wrapper]]
-    auto recvAsync(MutBytes buf) {
-        return globalSched().recvAsync(_fd, buf, {});
+    Async::Task<_Received> recvAsync(MutBytes buf, Async::CancellationToken ct) {
+        return globalSched().recvAsync(_fd, buf, {}, ct);
     }
 };
 
@@ -187,13 +187,13 @@ export struct IpcConnection {
         return Ok<Pair<usize>>(nbytes, nhnds);
     }
 
-    Async::Task<> sendAsync(Bytes buf, Slice<Handle> hnds) {
-        co_trya$(globalSched().sendAsync(_fd, buf, hnds, Ip4::unspecified(0)));
+    Async::Task<> sendAsync(Bytes buf, Slice<Handle> hnds, Async::CancellationToken ct) {
+        co_trya$(globalSched().sendAsync(_fd, buf, hnds, Ip4::unspecified(0), ct));
         co_return Ok();
     }
 
-    Async::Task<Pair<usize>> recvAsync(MutBytes buf, MutSlice<Handle> hnds) {
-        auto [nbytes, nhnds, _] = co_trya$(globalSched().recvAsync(_fd, buf, hnds));
+    Async::Task<Pair<usize>> recvAsync(MutBytes buf, MutSlice<Handle> hnds, Async::CancellationToken ct) {
+        auto [nbytes, nhnds, _] = co_trya$(globalSched().recvAsync(_fd, buf, hnds, ct));
         co_return Ok<Pair<usize>>(nbytes, nhnds);
     }
 };
@@ -216,8 +216,8 @@ export struct IpcListener {
         return Ok(IpcConnection(std::move(fd), NONE));
     }
 
-    Async::Task<IpcConnection> acceptAsync() {
-        auto [fd, _] = co_trya$(globalSched().acceptAsync(_fd));
+    Async::Task<IpcConnection> acceptAsync(Async::CancellationToken ct) {
+        auto [fd, _] = co_trya$(globalSched().acceptAsync(_fd, ct));
         co_return Ok(IpcConnection(std::move(fd), NONE));
     }
 

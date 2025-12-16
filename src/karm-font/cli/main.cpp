@@ -55,7 +55,7 @@ static void _dumpName(Font::Ttf::Name const& name) {
     }
 }
 
-Async::Task<> entryPointAsync(Sys::Context& ctx) {
+Async::Task<> entryPointAsync(Sys::Context& ctx, Async::CancellationToken) {
     auto& args = useArgs(ctx);
 
     if (args.len() < 1)

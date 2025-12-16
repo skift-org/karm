@@ -521,18 +521,18 @@ struct SdlHost : Host {
         g.pop();
     }
 
-    Async::Task<> waitAsync(Instant ts) override {
+    Async::Task<> waitAsync(Instant ts, Async::CancellationToken ct) override {
         // HACK: Since we don't have a lot of control onto how SDL wait for
         //       events we can't integrate it properly with our event loop
-        //       To remedi this we will just cap how long we wait, this way
+        //       To remedy this we will just cap how long we wait, this way
         //       we can poll for event.
 
-        // NOTE: A better option would be to have SDL in a separeted thread
+        // NOTE: A better option would be to have SDL in a separated thread
         //       and do the communication over an inter-thread channel but
         //       but this would require to make the Framework thread safe
         auto delay = Duration::fromMSecs((usize)(FRAME_TIME * 1000));
         auto cappedWait = min(ts, Sys::instant() + delay);
-        co_trya$(Sys::globalSched().sleepAsync(cappedWait));
+        co_trya$(Sys::globalSched().sleepAsync(cappedWait, ct));
 
         SDL_Event e{};
         while (SDL_PollEvent(&e) != 0 and alive())
@@ -649,9 +649,9 @@ static Res<Rc<Host>> makeHost(Child root) {
     return Ok(host);
 }
 
-Async::Task<> runAsync(Sys::Context&, Child root) {
+Async::Task<> runAsync(Sys::Context&, Child root, Async::CancellationToken ct) {
     auto host = co_try$(makeHost(std::move(root)));
-    co_return co_await host->runAsync();
+    co_return co_await host->runAsync(ct);
 }
 
 } // namespace Karm::Ui::_Embed

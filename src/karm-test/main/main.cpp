@@ -5,7 +5,7 @@ import Karm.Test;
 
 using namespace Karm;
 
-Async::Task<> entryPointAsync(Sys::Context& ctx) {
+Async::Task<> entryPointAsync(Sys::Context& ctx, Async::CancellationToken ct) {
     auto globArg = Cli::option<Str>(
         'g',
         "glob"s,
@@ -27,14 +27,16 @@ Async::Task<> entryPointAsync(Sys::Context& ctx) {
                 globArg,
                 fastArg,
             },
-        }
-        },
+        }},
         [=](Sys::Context&) -> Async::Task<> {
             Test::Driver driver;
-            co_return co_await driver.runAllAsync({
-                .glob = globArg.value(),
-                .fast = fastArg.value(),
-            });
+            co_return co_await driver.runAllAsync(
+                {
+                    .glob = globArg.value(),
+                    .fast = fastArg.value(),
+                },
+                ct
+            );
         },
     };
 

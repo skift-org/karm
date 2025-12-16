@@ -10,8 +10,8 @@ Res<Ref::Mime> sniffFile(Ref::Url url) {
     return file.sniff(true);
 }
 
-Async::Task<> entryPointAsync(Sys::Context& c) {
-    auto& args = Sys::useArgs(c);
+Async::Task<> entryPointAsync(Sys::Context& ctx, Async::CancellationToken) {
+    auto& args = Sys::useArgs(ctx);
 
     for (usize i = 0; i < args.len(); i++) {
         auto url = Ref::parseUrlOrPath(args[i], co_try$(Sys::pwd()));

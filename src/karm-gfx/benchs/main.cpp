@@ -7,7 +7,7 @@ import Karm.Math;
 
 using namespace Karm;
 
-Async::Task<> entryPointAsync(Sys::Context&) {
+Async::Task<> entryPointAsync(Sys::Context&, Async::CancellationToken) {
     Vec<Duration> samples;
     auto surface = Gfx::Surface::alloc({1000, 1000});
 

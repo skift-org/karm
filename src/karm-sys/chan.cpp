@@ -27,8 +27,8 @@ export struct In :
     }
 
     [[clang::coro_wrapper]]
-    Async::Task<usize> readAsync(MutBytes buf) override {
-        return globalSched().readAsync(_fd, buf);
+    Async::Task<usize> readAsync(MutBytes buf, Async::CancellationToken ct) override {
+        return globalSched().readAsync(_fd, buf, ct);
     }
 
     Rc<Fd> fd() {

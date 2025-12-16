@@ -13,7 +13,10 @@ int main(int argc, char const** argv) {
 
     Karm::Sys::Context ctx;
     ctx.add<Karm::Sys::ArgsHook>(argc, argv);
-    Karm::Res<> code = Karm::Sys::run(entryPointAsync(ctx));
+    auto [cancellation, ct] = Karm::Async::Cancellation::create();
+    Karm::Res<> code = Karm::Sys::run(entryPointAsync(ctx, ct));
+    cancellation->cancel();
+
     if (not code) {
         Karm::Sys::errln("{}: {}", argv[0], code);
         return EXIT_FAILURE;

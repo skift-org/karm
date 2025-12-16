@@ -5,7 +5,7 @@ import Karm.Logger;
 
 namespace Karm::Sys::Tests {
 
-Async::Task<> sleepyBoy() {
+Async::Task<> sleepyBoy(Async::CancellationToken ct) {
 #ifdef __ck_sys_darwin__
     logInfo("skipping test on macOS");
     co_return Error::skipped();
@@ -13,7 +13,7 @@ Async::Task<> sleepyBoy() {
 
     auto duration = Duration::fromMSecs(100);
     auto start = Sys::instant();
-    co_trya$(globalSched().sleepAsync(start + duration));
+    co_trya$(globalSched().sleepAsync(start + duration, ct));
     auto end = Sys::instant();
 
     if (end - start < duration - Duration::fromMSecs(10))
@@ -26,7 +26,7 @@ Async::Task<> sleepyBoy() {
 }
 
 testAsync$("async-sleep") {
-    co_return co_await sleepyBoy();
+    co_return co_await sleepyBoy(ct);
 }
 
 } // namespace Karm::Sys::Tests

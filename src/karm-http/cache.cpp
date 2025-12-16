@@ -26,12 +26,12 @@ struct CacheTransport : Transport {
         return response;
     }
 
-    Async::Task<Rc<Response>> doAsync(Rc<Request> request) override {
+    Async::Task<Rc<Response>> doAsync(Rc<Request> request, Async::CancellationToken ct) override {
         if (request->method != GET)
-            co_return co_await _next->doAsync(request);
+            co_return co_await _next->doAsync(request, ct);
 
         if (not _cached.has(request->url)) {
-            auto serverResponse = co_trya$(_next->doAsync(request));
+            auto serverResponse = co_trya$(_next->doAsync(request, ct));
 
             if (serverResponse->code != OK)
                 co_return Ok(serverResponse);
@@ -40,7 +40,7 @@ struct CacheTransport : Transport {
                 co_return Ok(serverResponse);
 
             auto contentType = serverResponse->header.contentType();
-            auto data = co_trya$(Aio::readAllAsync(**serverResponse->body));
+            auto data = co_trya$(Aio::readAllAsync(**serverResponse->body, ct));
             auto blob = makeRc<Ref::Blob>(contentType.unwrapOr("application/octet-stream"_mime), std::move(data));
             _cached.put(request->url, blob);
 

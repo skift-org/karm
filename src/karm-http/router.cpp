@@ -192,21 +192,21 @@ export struct Router : Handler {
         route(RoutePattern::parse(DELETE, pattern), makeHandler(std::move(handlerFunc)));
     }
 
-    Async::Task<> _handle404Async(Rc<ResponseWriter> resp) {
+    Async::Task<> _handle404Async(Rc<ResponseWriter> resp, Async::CancellationToken ct) {
         resp->code = NOT_FOUND;
-        co_return co_await resp->writeStrAsync("Not Found"s);
+        co_return co_await resp->writeStrAsync("Not Found"s, ct);
     }
 
     [[clang::coro_wrapper]]
-    Async::Task<> handleAsync(Rc<Request> req, Rc<ResponseWriter> resp) override {
+    Async::Task<> handleAsync(Rc<Request> req, Rc<ResponseWriter> resp, Async::CancellationToken ct) override {
         for (auto& [pattern, handler] : _routes) {
             if (auto params = pattern.match(req->method, req->url)) {
                 req->routeParams = params.take();
-                return handler->handleAsync(req, resp);
+                return handler->handleAsync(req, resp, ct);
             }
         }
 
-        return _handle404Async(resp);
+        return _handle404Async(resp, ct);
     }
 };
 

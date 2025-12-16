@@ -12,7 +12,7 @@ struct Adapter : Reader, Writer {
     Adapter(T& inner)
         : _inner(inner) {}
 
-    Async::Task<usize> writeAsync(Bytes buf) override {
+    Async::Task<usize> writeAsync(Bytes buf, Async::CancellationToken) override {
         if constexpr (Io::Writable<T>) {
             co_return _inner.write(buf);
         } else {
@@ -20,7 +20,7 @@ struct Adapter : Reader, Writer {
         }
     }
 
-    Async::Task<usize> readAsync(MutBytes buf) override {
+    Async::Task<usize> readAsync(MutBytes buf, Async::CancellationToken) override {
         if constexpr (Io::Readable<T>) {
             co_return _inner.read(buf);
         } else {

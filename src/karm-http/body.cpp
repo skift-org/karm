@@ -18,8 +18,8 @@ export struct Body : Aio::Reader {
             FileBody(Sys::FileReader file)
                 : _file(std::move(file)) {}
 
-            Async::Task<usize> readAsync(MutBytes buf) override {
-                co_return co_await _file.readAsync(buf);
+            Async::Task<usize> readAsync(MutBytes buf, Async::CancellationToken ct) override {
+                co_return co_await _file.readAsync(buf, ct);
             }
         };
 
@@ -34,7 +34,7 @@ export struct Body : Aio::Reader {
             BufBody(Buf<u8> buf)
                 : _buf(std::move(buf)) {}
 
-            Async::Task<usize> readAsync(MutBytes buf) override {
+            Async::Task<usize> readAsync(MutBytes buf, [[maybe_unused]] Async::CancellationToken ct) override {
                 co_return _reader.read(buf);
             }
         };
@@ -50,7 +50,7 @@ export struct Body : Aio::Reader {
             BlobBody(Rc<Ref::Blob> blob)
                 : _blob(std::move(blob)) {}
 
-            Async::Task<usize> readAsync(MutBytes buf) override {
+            Async::Task<usize> readAsync(MutBytes buf, Async::CancellationToken) override {
                 co_return _reader.read(buf);
             }
         };
@@ -69,7 +69,7 @@ export struct Body : Aio::Reader {
 
     static Rc<Body> empty() {
         struct EmptyBody : Body {
-            Async::Task<usize> readAsync(MutBytes) override {
+            Async::Task<usize> readAsync(MutBytes, Async::CancellationToken) override {
                 co_return Ok(0);
             }
         };
@@ -77,8 +77,8 @@ export struct Body : Aio::Reader {
         return makeRc<EmptyBody>();
     }
 
-    Async::Task<Serde::Value> readJsonAsync() {
-        auto str = co_trya$(Aio::readAllUtf8Async(*this));
+    Async::Task<Serde::Value> readJsonAsync(Async::CancellationToken ct) {
+        auto str = co_trya$(Aio::readAllUtf8Async(*this, ct));
         co_return Json::parse(str);
     }
 };

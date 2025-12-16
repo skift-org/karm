@@ -61,8 +61,8 @@ export struct Request {
         return Ok(req);
     }
 
-    static Async::Task<Request> readAsync(Aio::Reader& r) {
-        auto headers = co_trya$(readHeadersAsync(r));
+    static Async::Task<Request> readAsync(Aio::Reader& r, Async::CancellationToken ct) {
+        auto headers = co_trya$(readHeadersAsync(r, ct));
         Io::SScan scan{bytes(headers).cast<char>()};
         co_return parse(scan);
     }
@@ -89,10 +89,10 @@ export struct Request {
         return Ok();
     }
 
-    Async::Task<Serde::Value> readJsonAsync() {
+    Async::Task<Serde::Value> readJsonAsync(Async::CancellationToken ct) {
         if (not body)
             co_return Error::invalidInput("request has no body");
-        co_return co_await body.unwrap()->readJsonAsync();
+        co_return co_await body.unwrap()->readJsonAsync(ct);
     }
 };
 

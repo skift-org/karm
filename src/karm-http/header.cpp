@@ -163,11 +163,11 @@ Symbol const Header::VIA = "Via"_sym;
 
 // MARK: Headers ---------------------------------------------------------------
 
-export Async::Task<Vec<u8>> readHeadersAsync(Aio::Reader& r) {
+export Async::Task<Vec<u8>> readHeadersAsync(Aio::Reader& r, Async::CancellationToken ct) {
     Io::BufferWriter bw;
     while (true) {
         auto adaptedBw = Aio::adapt(bw);
-        auto [read, reachedDelim] = co_trya$(Aio::readLineAsync(r, adaptedBw, "\r\n"_bytes));
+        auto [read, reachedDelim] = co_trya$(Aio::readLineAsync(r, adaptedBw, "\r\n"_bytes, ct));
 
         if (not reachedDelim)
             co_return Error::invalidInput("input stream ended with incomplete http header");
