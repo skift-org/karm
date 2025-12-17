@@ -69,6 +69,10 @@ var namespaceKarm_1_1Sys =
       [ "UPPER", "namespaceKarm_1_1Sys.html#a4bc4dd239ab723c5768e73b651e5c8d4a9e43f5291e6fcb2ad99c8e3f91acd179", null ],
       [ "PREFETCH", "namespaceKarm_1_1Sys.html#a4bc4dd239ab723c5768e73b651e5c8d4aa78a8d492349aa1aeef53ce4c89033c8", null ]
     ] ],
+    [ "Poll", "namespaceKarm_1_1Sys.html#aad7b81ecd1bce91320cb312487005700", [
+      [ "READABLE", "namespaceKarm_1_1Sys.html#aad7b81ecd1bce91320cb312487005700a54a2cbad9fc0becbe17a677e47df8fbd", null ],
+      [ "WRITEABLE", "namespaceKarm_1_1Sys.html#aad7b81ecd1bce91320cb312487005700ad5ce9a004d53ed20ccc420c46354962b", null ]
+    ] ],
     [ "Type", "namespaceKarm_1_1Sys.html#ac6f925bec39595b5427e8f145bd1a4cd", [
       [ "FILE", "namespaceKarm_1_1Sys.html#ac6f925bec39595b5427e8f145bd1a4cda9fc5887c030f7a3e19821ebec457e719", null ],
       [ "DIR", "namespaceKarm_1_1Sys.html#ac6f925bec39595b5427e8f145bd1a4cdac1561b120842fabe1310417083827590", null ],

@@ -134,6 +134,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a2866aab1e0e27bbe3c6e85ba4c77c935"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac7edab963528ac9c0fff2989a1c55bdc"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a>&lt; <a class="el" href="structKarm_1_1Tuple.html">_Received</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Sys_1_1Sched.html#ac7edab963528ac9c0fff2989a1c55bdc">recvAsync</a> (<a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Sys_1_1Fd.html">Fd</a> &gt;, <a class="el" href="namespaceKarm.html#aae9861e68f8d76cbdfb6427494441e55">MutBytes</a>, <a class="el" href="structKarm_1_1MutSlice.html">MutSlice</a>&lt; <a class="el" href="namespaceKarm_1_1Sys.html#ac70aea4ef2ec04bff824146a87754826">Handle</a> &gt;, <a class="el" href="namespaceKarm_1_1Async.html#af8612fed2b07c2e2cc2f97e4c5ec1a95">Async::CancellationToken</a> ct)=0</td></tr>
 <tr class="separator:ac7edab963528ac9c0fff2989a1c55bdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a454b1ff718c486df6bae9a032fbbe53c"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a>&lt; <a class="el" href="structKarm_1_1Flags.html">Flags</a>&lt; <a class="el" href="namespaceKarm_1_1Sys.html#aad7b81ecd1bce91320cb312487005700">Poll</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Sys_1_1Sched.html#a454b1ff718c486df6bae9a032fbbe53c">pollAsync</a> (<a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Sys_1_1Fd.html">Fd</a> &gt;, <a class="el" href="structKarm_1_1Flags.html">Flags</a>&lt; <a class="el" href="namespaceKarm_1_1Sys.html#aad7b81ecd1bce91320cb312487005700">Poll</a> &gt; events, <a class="el" href="namespaceKarm_1_1Async.html#af8612fed2b07c2e2cc2f97e4c5ec1a95">Async::CancellationToken</a> ct)=0</td></tr>
+<tr class="separator:a454b1ff718c486df6bae9a032fbbe53c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a436991916d8701d2488e4dc2ac6fb516"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Sys_1_1Sched.html#a436991916d8701d2488e4dc2ac6fb516">sleepAsync</a> (<a class="el" href="namespaceKarm.html#a7c25caa13599c579275a0f3e8e688e5e">Instant</a> until, <a class="el" href="namespaceKarm_1_1Async.html#af8612fed2b07c2e2cc2f97e4c5ec1a95">Async::CancellationToken</a> ct)=0</td></tr>
 <tr class="separator:a436991916d8701d2488e4dc2ac6fb516"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_structKarm_1_1Meta_1_1Pinned"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_structKarm_1_1Meta_1_1Pinned')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="structKarm_1_1Meta_1_1Pinned.html">Karm::Meta::Pinned</a></td></tr>
@@ -246,6 +248,48 @@ Public Member Functions</h2></td></tr>
           <td>(</td>
           <td class="paramtype"><a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Sys_1_1Fd.html">Fd</a> &gt;&#160;</td>
           <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespaceKarm_1_1Async.html#af8612fed2b07c2e2cc2f97e4c5ec1a95">Async::CancellationToken</a>&#160;</td>
+          <td class="paramname"><em>ct</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a454b1ff718c486df6bae9a032fbbe53c" name="a454b1ff718c486df6bae9a032fbbe53c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a454b1ff718c486df6bae9a032fbbe53c">&#9670;&#160;</a></span>pollAsync()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a>&lt; <a class="el" href="structKarm_1_1Flags.html">Flags</a>&lt; <a class="el" href="namespaceKarm_1_1Sys.html#aad7b81ecd1bce91320cb312487005700">Poll</a> &gt; &gt; Karm::Sys::Sched::pollAsync </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Sys_1_1Fd.html">Fd</a> &gt;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structKarm_1_1Flags.html">Flags</a>&lt; <a class="el" href="namespaceKarm_1_1Sys.html#aad7b81ecd1bce91320cb312487005700">Poll</a> &gt;&#160;</td>
+          <td class="paramname"><em>events</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>

@@ -4,6 +4,7 @@ var structKarm_1_1Sys_1_1Sched =
     [ "acceptAsync", "structKarm_1_1Sys_1_1Sched.html#aa8dcaf9b6b87738b608e87f7eef2d896", null ],
     [ "exited", "structKarm_1_1Sys_1_1Sched.html#a8dd7bdc3019c7d5aea2652b7e690b162", null ],
     [ "flushAsync", "structKarm_1_1Sys_1_1Sched.html#aeb40bc6000d03b0b8d9fa669bdef2265", null ],
+    [ "pollAsync", "structKarm_1_1Sys_1_1Sched.html#a454b1ff718c486df6bae9a032fbbe53c", null ],
     [ "quit", "structKarm_1_1Sys_1_1Sched.html#ab0b9f4df162cb2b7fb9a2bbe340ae47e", null ],
     [ "readAsync", "structKarm_1_1Sys_1_1Sched.html#a08a28e7a287f04597ba453ae20797b37", null ],
     [ "recvAsync", "structKarm_1_1Sys_1_1Sched.html#ac7edab963528ac9c0fff2989a1c55bdc", null ],
