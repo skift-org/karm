@@ -11,13 +11,13 @@ export struct Cancellation : Meta::Pinned {
 
         Token(Rc<Cancellation> c) : _c{c} {}
 
-        bool canceled() const {
-            return _c->canceled();
+        bool cancelled() const {
+            return _c->cancelled();
         }
 
         Res<> errorIfCanceled() const {
-            if (canceled())
-                return Error::interrupted("operation canceled");
+            if (cancelled())
+                return Error::interrupted("operation cancelled");
             return Ok();
         }
     };
@@ -27,18 +27,18 @@ export struct Cancellation : Meta::Pinned {
         return {cancellation, Token{cancellation}};
     }
 
-    bool _canceled = false;
+    bool _cancelled = false;
 
     void cancel() {
-        _canceled = true;
+        _cancelled = true;
     }
 
     void reset() {
-        _canceled = false;
+        _cancelled = false;
     }
 
-    bool canceled() const {
-        return _canceled;
+    bool cancelled() const {
+        return _cancelled;
     }
 };
 

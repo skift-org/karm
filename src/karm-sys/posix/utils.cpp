@@ -41,7 +41,7 @@ Error fromErrno(isize error) {
     case EBUSY:
         return Error::resourceBusy("device or resource busy");
     case ECANCELED:
-        return Error::interrupted("operation canceled");
+        return Error::interrupted("operation cancelled");
     case ECHILD:
         return Error::other("no child processes");
     case ECONNABORTED:

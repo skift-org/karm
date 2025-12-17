@@ -7,6 +7,11 @@ import :_embed;
 
 namespace Karm::Sys {
 
+export enum struct Poll {
+    READABLE = 1 << 0,
+    WRITEABLE = 1 << 1
+};
+
 export struct Sched :
     Meta::Pinned {
 
@@ -31,6 +36,8 @@ export struct Sched :
     virtual Async::Task<_Sent> sendAsync(Rc<Fd>, Bytes, Slice<Handle>, SocketAddr, Async::CancellationToken ct) = 0;
 
     virtual Async::Task<_Received> recvAsync(Rc<Fd>, MutBytes, MutSlice<Handle>, Async::CancellationToken ct) = 0;
+
+    virtual Async::Task<Flags<Poll>> pollAsync(Rc<Fd>, Flags<Poll> events, Async::CancellationToken ct) = 0;
 
     virtual Async::Task<> sleepAsync(Instant until, Async::CancellationToken ct) = 0;
 };
