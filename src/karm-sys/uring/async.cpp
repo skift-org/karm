@@ -1,6 +1,7 @@
 module;
 
 #include <liburing.h>
+#include <poll.h>
 //
 #include <karm-core/macros.h>
 #include <karm-sys/posix/fd.h>
@@ -311,6 +312,49 @@ struct UringSched : Sys::Sched {
 
         co_try$(ct.errorIfCanceled());
         auto job = makeRc<Job>(co_try$(Posix::toPosixFd(fd)), buf);
+        submit(job);
+        co_return co_await job->future();
+    }
+
+    Async::Task<Flags<Poll>> pollAsync(Rc<Fd> fd, Flags<Sys::Poll> events, Async::CancellationToken ct) override {
+        struct Job : _Job {
+            Rc<Posix::Fd> _fd;
+            Flags<Sys::Poll> _events;
+            Async::Promise<Flags<Sys::Poll>> _promise;
+
+            Job(Rc<Posix::Fd> fd, Flags<Sys::Poll> events)
+                : _fd(fd), _events(events) {}
+
+            void submit(io_uring_sqe* sqe) override {
+                unsigned pollMask = 0;
+                if (_events.has(Poll::READABLE))
+                    pollMask |= POLLIN;
+                if (_events.has(Poll::WRITEABLE))
+                    pollMask |= POLLOUT;
+                io_uring_prep_poll_add(sqe, _fd->_raw, pollMask);
+            }
+
+            void complete(io_uring_cqe* cqe) override {
+                auto res = cqe->res;
+                if (res < 0)
+                    _promise.resolve(Posix::fromErrno(-cqe->res));
+                else {
+                    Flags<Sys::Poll> events = {};
+                    if (cqe->res & POLLIN)
+                        events.set(Poll::READABLE);
+                    if (cqe->res & POLLOUT)
+                        events.set(Poll::READABLE);
+                    _promise.resolve(Ok(events));
+                }
+            }
+
+            auto future() {
+                return _promise.future();
+            }
+        };
+
+        co_try$(ct.errorIfCanceled());
+        auto job = makeRc<Job>(co_try$(Posix::toPosixFd(fd)), events);
         submit(job);
         co_return co_await job->future();
     }
