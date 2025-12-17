@@ -11,8 +11,8 @@ var searchData=
   ['f64_8',['f64',['../namespaceKarm.html#aaa50825017672262b5fd33f91f7d8ed9',1,'Karm']]],
   ['f64x2_9',['f64x2',['../namespaceKarm.html#a85721c881c979e9a89e3e0c69be4c4db',1,'Karm']]],
   ['f64x4_10',['f64x4',['../namespaceKarm.html#abb464c4a5648438fa6a53cca19d5be16',1,'Karm']]],
-  ['featurecount_11',['featureCount',['../structKarm_1_1Font_1_1Ttf_1_1FeatureList.html#a4456508dc60ae26cce9d36b195affd7a',1,'Karm::Font::Ttf::FeatureList']]],
-  ['featurecount_12',['FeatureCount',['../structKarm_1_1Font_1_1Ttf_1_1LangSys.html#a2b6e749642397ff0d57b69ec111527d8',1,'Karm::Font::Ttf::LangSys']]],
+  ['featurecount_11',['FeatureCount',['../structKarm_1_1Font_1_1Ttf_1_1LangSys.html#a2b6e749642397ff0d57b69ec111527d8',1,'Karm::Font::Ttf::LangSys']]],
+  ['featurecount_12',['featureCount',['../structKarm_1_1Font_1_1Ttf_1_1FeatureList.html#a4456508dc60ae26cce9d36b195affd7a',1,'Karm::Font::Ttf::FeatureList']]],
   ['featurelistoffset_13',['FeatureListOffset',['../structKarm_1_1Font_1_1Ttf_1_1Gsub.html#a544043cd986f6ee0087ff579ede04249',1,'Karm::Font::Ttf::Gsub::FeatureListOffset()'],['../structKarm_1_1Font_1_1Ttf_1_1Gpos.html#a57f211df5589651b655edb6e6d2223b5',1,'Karm::Font::Ttf::Gpos::FeatureListOffset()']]],
   ['featureparamsoffset_14',['FeatureParamsOffset',['../structKarm_1_1Font_1_1Ttf_1_1FeatureTable.html#aa6c495f2d9c882e240e04eaf07a9d02d',1,'Karm::Font::Ttf::FeatureTable']]],
   ['first_15',['First',['../namespaceKarm_1_1Meta.html#a40a4e6b4a8d914669d0e153719089579',1,'Karm::Meta']]],
@@ -21,6 +21,6 @@ var searchData=
   ['format_18',['Format',['../structKarm_1_1Font_1_1Ttf_1_1LookupSubtableBase.html#aa9c0e0852204f8e6613669f94e384bea',1,'Karm::Font::Ttf::LookupSubtableBase::Format()'],['../structKarm_1_1Font_1_1Ttf_1_1CoverageTable.html#a670f8b8ba0b2c53d90d03e29d067a46a',1,'Karm::Font::Ttf::CoverageTable::Format()']]],
   ['frange_19',['frange',['../namespaceKarm.html#a9f36cdb341d09a0e723b53f9aa63b105',1,'Karm']]],
   ['func_20',['Func',['../structKarm_1_1Test_1_1Test.html#a8d8a360627f8265537452e7bbec2f415',1,'Karm::Test::Test']]],
-  ['funcasync_21',['FuncAsync',['../structKarm_1_1Test_1_1Test.html#acf043781c8226200647c54a79167240c',1,'Karm::Test::Test']]],
+  ['funcasync_21',['FuncAsync',['../structKarm_1_1Test_1_1Test.html#a88b1b69b451bbb8e8cc774bb4dd7f1cc',1,'Karm::Test::Test']]],
   ['future_22',['Future',['../namespaceKarm_1_1Async.html#ac982df6cc775113df6d9844c5408dffd',1,'Karm::Async']]]
 ];

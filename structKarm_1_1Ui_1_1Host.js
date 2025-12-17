@@ -12,6 +12,6 @@ var structKarm_1_1Ui_1_1Host =
     [ "paint", "structKarm_1_1Ui_1_1Host.html#ad7fec59f71ffae2e602ea70e78153fce", null ],
     [ "paint", "structKarm_1_1Ui_1_1Host.html#ae59d227aaf3ec05385207f8c4d7ac4d4", null ],
     [ "pixels", "structKarm_1_1Ui_1_1Host.html#ae482ffdf5f4f03a50352ffb99188d227", null ],
-    [ "runAsync", "structKarm_1_1Ui_1_1Host.html#add6884cab1488975f57a0728bc72f394", null ],
-    [ "waitAsync", "structKarm_1_1Ui_1_1Host.html#a2e255017b3f731dd68715180650a7fc8", null ]
+    [ "runAsync", "structKarm_1_1Ui_1_1Host.html#ac4a8e550bbbfcd11255f929e575ed27f", null ],
+    [ "waitAsync", "structKarm_1_1Ui_1_1Host.html#a359665987d5054244803c2ae9db14d86", null ]
 ];

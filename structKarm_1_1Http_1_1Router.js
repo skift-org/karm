@@ -4,7 +4,7 @@ var structKarm_1_1Http_1_1Router =
     [ "delete_", "structKarm_1_1Http_1_1Router.html#abf554d7d881a5f7e10b853df34f51076", null ],
     [ "get", "structKarm_1_1Http_1_1Router.html#ae6dc3f6abed566c05a30bab1edca831b", null ],
     [ "get", "structKarm_1_1Http_1_1Router.html#a74c963496f364155a9daaaaf9c553a2d", null ],
-    [ "handleAsync", "structKarm_1_1Http_1_1Router.html#a43e62d7b8ea43d0f2cb2904a7351d679", null ],
+    [ "handleAsync", "structKarm_1_1Http_1_1Router.html#a4d517392fa0b953fd364c834e58c91f4", null ],
     [ "post", "structKarm_1_1Http_1_1Router.html#af4f7ac01094361e4154651e8d5ab9c9b", null ],
     [ "post", "structKarm_1_1Http_1_1Router.html#a0ef8437ea9d37c9674a1b92b3dc36b3a", null ],
     [ "put", "structKarm_1_1Http_1_1Router.html#acc4665c846b344d166a1ec075c889369", null ],

@@ -116,8 +116,8 @@ Inheritance diagram for Karm::Http::Handler:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a0b2aaa64cb615078a9c5b4d6e40c6352"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Handler.html#a0b2aaa64cb615078a9c5b4d6e40c6352">~Handler</a> ()=default</td></tr>
 <tr class="separator:a0b2aaa64cb615078a9c5b4d6e40c6352"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a203027d7edb0ddc9079b719252bd4e65"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Handler.html#a203027d7edb0ddc9079b719252bd4e65">handleAsync</a> (<a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Request.html">Request</a> &gt;, <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1ResponseWriter.html">ResponseWriter</a> &gt;)=0</td></tr>
-<tr class="separator:a203027d7edb0ddc9079b719252bd4e65"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a22087b0fdefdd5039b3924dc188fbeab"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Handler.html#a22087b0fdefdd5039b3924dc188fbeab">handleAsync</a> (<a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Request.html">Request</a> &gt;, <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1ResponseWriter.html">ResponseWriter</a> &gt;, <a class="el" href="namespaceKarm_1_1Async.html#af8612fed2b07c2e2cc2f97e4c5ec1a95">Async::CancellationToken</a> ct)=0</td></tr>
+<tr class="separator:a22087b0fdefdd5039b3924dc188fbeab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a0b2aaa64cb615078a9c5b4d6e40c6352" name="a0b2aaa64cb615078a9c5b4d6e40c6352"></a>
@@ -146,8 +146,8 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a203027d7edb0ddc9079b719252bd4e65" name="a203027d7edb0ddc9079b719252bd4e65"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a203027d7edb0ddc9079b719252bd4e65">&#9670;&#160;</a></span>handleAsync()</h2>
+<a id="a22087b0fdefdd5039b3924dc188fbeab" name="a22087b0fdefdd5039b3924dc188fbeab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a22087b0fdefdd5039b3924dc188fbeab">&#9670;&#160;</a></span>handleAsync()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -165,7 +165,13 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1ResponseWriter.html">ResponseWriter</a> &gt;&#160;</td>
-          <td class="paramname">&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespaceKarm_1_1Async.html#af8612fed2b07c2e2cc2f97e4c5ec1a95">Async::CancellationToken</a>&#160;</td>
+          <td class="paramname"><em>ct</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -180,7 +186,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="structKarm_1_1Http_1_1Router.html#a43e62d7b8ea43d0f2cb2904a7351d679">Karm::Http::Router</a>.</p>
+<p>Implemented in <a class="el" href="structKarm_1_1Http_1_1Router.html#a4d517392fa0b953fd364c834e58c91f4">Karm::Http::Router</a>.</p>
 
 </div>
 </div>

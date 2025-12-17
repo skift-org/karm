@@ -26,7 +26,7 @@ var namespaceKarm_1_1Async =
     [ "Operation", "conceptKarm_1_1Async_1_1Operation.html", null ],
     [ "Receiver", "conceptKarm_1_1Async_1_1Receiver.html", null ],
     [ "Sender", "conceptKarm_1_1Async_1_1Sender.html", null ],
-    [ "Ct", "namespaceKarm_1_1Async.html#a33545b8707ac3ad65228416b174b94f6", null ],
+    [ "CancellationToken", "namespaceKarm_1_1Async.html#af8612fed2b07c2e2cc2f97e4c5ec1a95", null ],
     [ "Future", "namespaceKarm_1_1Async.html#ac982df6cc775113df6d9844c5408dffd", null ],
     [ "OperationOf", "namespaceKarm_1_1Async.html#abf731c3505af4c13e4b44e5771681048", null ],
     [ "Promise", "namespaceKarm_1_1Async.html#ae1cd9687a512559d20397a39ddd6ef50", null ],

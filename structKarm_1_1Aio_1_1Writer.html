@@ -121,8 +121,8 @@ Inheritance diagram for Karm::Aio::Writer:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a826c4f11e2cb610d6437c421654febf1"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Aio_1_1Writer.html#a826c4f11e2cb610d6437c421654febf1">~Writer</a> ()=default</td></tr>
 <tr class="separator:a826c4f11e2cb610d6437c421654febf1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a06772121bef55bdf9e276e76d2c5d3a6"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a>&lt; <a class="el" href="namespaceKarm.html#a7826e564b525f4f5a2a0e63f961c2dbd">usize</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Aio_1_1Writer.html#a06772121bef55bdf9e276e76d2c5d3a6">writeAsync</a> (<a class="el" href="namespaceKarm.html#a3d0e6679f40bc938c4e7e9c543c3d6ea">Bytes</a> buf)=0</td></tr>
-<tr class="separator:a06772121bef55bdf9e276e76d2c5d3a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f28b67473f885c759f71cbf9e0558ae"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a>&lt; <a class="el" href="namespaceKarm.html#a7826e564b525f4f5a2a0e63f961c2dbd">usize</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Aio_1_1Writer.html#a0f28b67473f885c759f71cbf9e0558ae">writeAsync</a> (<a class="el" href="namespaceKarm.html#a3d0e6679f40bc938c4e7e9c543c3d6ea">Bytes</a> buf, <a class="el" href="namespaceKarm_1_1Async.html#af8612fed2b07c2e2cc2f97e4c5ec1a95">Async::CancellationToken</a> ct)=0</td></tr>
+<tr class="separator:a0f28b67473f885c759f71cbf9e0558ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a826c4f11e2cb610d6437c421654febf1" name="a826c4f11e2cb610d6437c421654febf1"></a>
@@ -151,8 +151,8 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a06772121bef55bdf9e276e76d2c5d3a6" name="a06772121bef55bdf9e276e76d2c5d3a6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a06772121bef55bdf9e276e76d2c5d3a6">&#9670;&#160;</a></span>writeAsync()</h2>
+<a id="a0f28b67473f885c759f71cbf9e0558ae" name="a0f28b67473f885c759f71cbf9e0558ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f28b67473f885c759f71cbf9e0558ae">&#9670;&#160;</a></span>writeAsync()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -164,8 +164,18 @@ Public Member Functions</h2></td></tr>
           <td class="memname">virtual <a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a>&lt; <a class="el" href="namespaceKarm.html#a7826e564b525f4f5a2a0e63f961c2dbd">usize</a> &gt; Karm::Aio::Writer::writeAsync </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="namespaceKarm.html#a3d0e6679f40bc938c4e7e9c543c3d6ea">Bytes</a>&#160;</td>
-          <td class="paramname"><em>buf</em></td><td>)</td>
+          <td class="paramname"><em>buf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="namespaceKarm_1_1Async.html#af8612fed2b07c2e2cc2f97e4c5ec1a95">Async::CancellationToken</a>&#160;</td>
+          <td class="paramname"><em>ct</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -175,7 +185,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="structKarm_1_1Aio_1_1Adapter.html#ad14b92a50c96bb0cb29d00f46e938801">Karm::Aio::Adapter&lt; T &gt;</a>, <a class="el" href="structKarm_1_1Sys_1_1Connection.html#a42e482bb7334cc8275ca85325d867c94">Karm::Sys::Connection</a>, and <a class="el" href="structKarm_1_1Tls_1_1TlsConnection.html#a8c3b7a11947684ac8c2d1cfa377621dc">Karm::Tls::TlsConnection</a>.</p>
+<p>Implemented in <a class="el" href="structKarm_1_1Sys_1_1Connection.html#afbbe6c737b97b1efdb42845896197c80">Karm::Sys::Connection</a>, <a class="el" href="structKarm_1_1Tls_1_1TlsConnection.html#a1b732f3b55f7c6b544dd2ac007fbda28">Karm::Tls::TlsConnection</a>, and <a class="el" href="structKarm_1_1Aio_1_1Adapter.html#a4a92cc35b065b5c765bb2daa3d6f2eb5">Karm::Aio::Adapter&lt; T &gt;</a>.</p>
 
 </div>
 </div>

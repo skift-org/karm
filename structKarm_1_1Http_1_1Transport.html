@@ -121,8 +121,8 @@ Inheritance diagram for Karm::Http::Transport:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a9d60084fd0265509b4cf74c60eb6a049"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Transport.html#a9d60084fd0265509b4cf74c60eb6a049">~Transport</a> ()=default</td></tr>
 <tr class="separator:a9d60084fd0265509b4cf74c60eb6a049"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4741cfcc2e7405b7f1d60b2b0d35fbcf"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a>&lt; <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Response.html">Response</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Transport.html#a4741cfcc2e7405b7f1d60b2b0d35fbcf">doAsync</a> (<a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Request.html">Request</a> &gt; request)=0</td></tr>
-<tr class="separator:a4741cfcc2e7405b7f1d60b2b0d35fbcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a066ecfb7d8373d48f3158fb5ef771f0b"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a>&lt; <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Response.html">Response</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Http_1_1Transport.html#a066ecfb7d8373d48f3158fb5ef771f0b">doAsync</a> (<a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Request.html">Request</a> &gt; request, <a class="el" href="namespaceKarm_1_1Async.html#af8612fed2b07c2e2cc2f97e4c5ec1a95">Async::CancellationToken</a> ct)=0</td></tr>
+<tr class="separator:a066ecfb7d8373d48f3158fb5ef771f0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a9d60084fd0265509b4cf74c60eb6a049" name="a9d60084fd0265509b4cf74c60eb6a049"></a>
@@ -151,8 +151,8 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a4741cfcc2e7405b7f1d60b2b0d35fbcf" name="a4741cfcc2e7405b7f1d60b2b0d35fbcf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4741cfcc2e7405b7f1d60b2b0d35fbcf">&#9670;&#160;</a></span>doAsync()</h2>
+<a id="a066ecfb7d8373d48f3158fb5ef771f0b" name="a066ecfb7d8373d48f3158fb5ef771f0b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a066ecfb7d8373d48f3158fb5ef771f0b">&#9670;&#160;</a></span>doAsync()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -164,8 +164,18 @@ Public Member Functions</h2></td></tr>
           <td class="memname">virtual <a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a>&lt; <a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Response.html">Response</a> &gt; &gt; Karm::Http::Transport::doAsync </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="namespaceKarm.html#afefaea8b0317b33b3fca90d44a521951">Rc</a>&lt; <a class="el" href="structKarm_1_1Http_1_1Request.html">Request</a> &gt;&#160;</td>
-          <td class="paramname"><em>request</em></td><td>)</td>
+          <td class="paramname"><em>request</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="namespaceKarm_1_1Async.html#af8612fed2b07c2e2cc2f97e4c5ec1a95">Async::CancellationToken</a>&#160;</td>
+          <td class="paramname"><em>ct</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -175,7 +185,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="structKarm_1_1Http_1_1CacheTransport.html#a68397379d0a892bf606fe74c5213f6af">Karm::Http::CacheTransport</a>, <a class="el" href="structKarm_1_1Http_1_1Client.html#a18349b6f3a03674680be833c069c79aa">Karm::Http::Client</a>, <a class="el" href="structKarm_1_1Http_1_1HttpTransport.html#a2d5d31e5068e6c93c77ec20312b4981c">Karm::Http::HttpTransport</a>, <a class="el" href="structKarm_1_1Http_1_1PipeTransport.html#a9aa8540750f5b9146e0b29154ca610df">Karm::Http::PipeTransport</a>, <a class="el" href="structKarm_1_1Http_1_1LocalTransport.html#a75676e420e7e2e476c86204b17496e19">Karm::Http::LocalTransport</a>, and <a class="el" href="structKarm_1_1Http_1_1MultiplexTransport.html#a7c9071c693e460226ef5e8357e999539">Karm::Http::MultiplexTransport</a>.</p>
+<p>Implemented in <a class="el" href="structKarm_1_1Http_1_1CacheTransport.html#ae75a30324c6916d6f7af7bc4bc673c73">Karm::Http::CacheTransport</a>, <a class="el" href="structKarm_1_1Http_1_1Client.html#a9f298894dea8b44addcc65026ca83d2b">Karm::Http::Client</a>, <a class="el" href="structKarm_1_1Http_1_1HttpTransport.html#a923dc887125497d9089a1f9621a05536">Karm::Http::HttpTransport</a>, <a class="el" href="structKarm_1_1Http_1_1PipeTransport.html#a669298055f07265bcf3b41279a1d5304">Karm::Http::PipeTransport</a>, <a class="el" href="structKarm_1_1Http_1_1LocalTransport.html#a8102b3f3948d190fd1c7a6643689f136">Karm::Http::LocalTransport</a>, and <a class="el" href="structKarm_1_1Http_1_1MultiplexTransport.html#a17c41071357a3a713c52292f236b07db">Karm::Http::MultiplexTransport</a>.</p>
 
 </div>
 </div>
