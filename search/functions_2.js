@@ -133,8 +133,8 @@ var searchData=
   ['copywithin_130',['copyWithin',['../namespaceKarm.html#a40421fcea66498b3589720e175ef1669',1,'Karm']]],
   ['cos_131',['cos',['../namespaceKarm_1_1Math.html#aed2fa133fc7ac971069228fce4eb69f8',1,'Karm::Math']]],
   ['cot_132',['cot',['../namespaceKarm_1_1Math.html#aab1492f0c62e7a099b4b0db4cb3b5569',1,'Karm::Math']]],
-  ['count_133',['Count',['../structKarm_1_1Io_1_1Count.html#a4888e569662e4d202d9786566062b22a',1,'Karm::Io::Count']]],
-  ['count_134',['count',['../structKarm_1_1Sys_1_1Sema.html#ad0caa0b15e3cae61496af6abc03f2313',1,'Karm::Sys::Sema']]],
+  ['count_133',['count',['../structKarm_1_1Sys_1_1Sema.html#ad0caa0b15e3cae61496af6abc03f2313',1,'Karm::Sys::Sema']]],
+  ['count_134',['Count',['../structKarm_1_1Io_1_1Count.html#a4888e569662e4d202d9786566062b22a',1,'Karm::Io::Count']]],
   ['cover_135',['cover',['../namespaceKarm_1_1Ui.html#ab674958739f81f737949ab38b58795bd',1,'Karm::Ui::cover(Child child)'],['../namespaceKarm_1_1Ui.html#a77ef14597b150e75a2bf0660a0357c32',1,'Karm::Ui::cover()'],['../unionKarm_1_1Math_1_1Rect.html#a6584d7638094483a858eacb505b2fd7c',1,'Karm::Math::Rect::cover()']]],
   ['coverageindex_136',['coverageIndex',['../structKarm_1_1Font_1_1Ttf_1_1CoverageTable.html#a5426a220262190bb92104e31c261c915',1,'Karm::Font::Ttf::CoverageTable']]],
   ['cow_137',['cow',['../structKarm_1_1Cow.html#af07739f17d64ff36df12c50ba7d95b2f',1,'Karm::Cow']]],
@@ -162,9 +162,9 @@ var searchData=
   ['cursor_159',['cursor',['../structKarm_1_1Sys_1_1MutMmap.html#a70c88d815b6bd31c2887fe64cb83942d',1,'Karm::Sys::MutMmap']]],
   ['cursor_160',['Cursor',['../structKarm_1_1Cursor.html#a81659280342f19e87d593d2b2d45c214',1,'Karm::Cursor::Cursor()=default'],['../structKarm_1_1Cursor.html#a597127d965dbd862755e1eae26b7d6a9',1,'Karm::Cursor::Cursor(None)'],['../structKarm_1_1Cursor.html#aec831d096a829fcdaaba9974e5629f83',1,'Karm::Cursor::Cursor(T const *ptr)'],['../structKarm_1_1Cursor.html#a3f5d42e1a62194562e24d5e34c9b1828',1,'Karm::Cursor::Cursor(T const *begin, T const *end)']]],
   ['cursor_161',['cursor',['../structKarm_1_1Sys_1_1Mmap.html#ad4e8475a413e49d8abbab6a64bd017cd',1,'Karm::Sys::Mmap']]],
-  ['curve_162',['Curve',['../unionKarm_1_1Math_1_1Curve.html#a2f0846ee19edfec8a871faf605d4dbb7',1,'Karm::Math::Curve']]],
-  ['curve_163',['curve',['../structKarm_1_1Pdf_1_1Canvas.html#a4e2d6afe005a71ccb23859fe49c2a106',1,'Karm::Pdf::Canvas::curve()'],['../structKarm_1_1Math_1_1Path.html#ac5a36cb66bdb78a2da72d8fd2fb492df',1,'Karm::Math::Path::curve()'],['../structKarm_1_1Gfx_1_1SvgCanvas.html#a60f55ed94ed829bb26238d8b48cb0678',1,'Karm::Gfx::SvgCanvas::curve()'],['../structKarm_1_1Gfx_1_1CpuCanvas.html#a77a62fdc38852e83b76c38922b4a6fa0',1,'Karm::Gfx::CpuCanvas::curve()'],['../structKarm_1_1Gfx_1_1Canvas.html#ab6f1a22ffa4c3cb21cf5d3b74bc77a5b',1,'Karm::Gfx::Canvas::curve()']]],
-  ['curve_164',['Curve',['../unionKarm_1_1Math_1_1Curve.html#aacb57b1e7d402944ec7fa43415b49378',1,'Karm::Math::Curve::Curve(Curve &amp;&amp;other)'],['../unionKarm_1_1Math_1_1Curve.html#a78f0c151bb6fa8a6ebc5e69516097fca',1,'Karm::Math::Curve::Curve(Vec2&lt; T &gt; a, Vec2&lt; T &gt; b, Vec2&lt; T &gt; c, Vec2&lt; T &gt; d)'],['../unionKarm_1_1Math_1_1Curve.html#a77bccffb08fdd8f50dbeee0f81a125d0',1,'Karm::Math::Curve::Curve()']]],
+  ['curve_162',['curve',['../structKarm_1_1Gfx_1_1SvgCanvas.html#a60f55ed94ed829bb26238d8b48cb0678',1,'Karm::Gfx::SvgCanvas']]],
+  ['curve_163',['Curve',['../unionKarm_1_1Math_1_1Curve.html#aacb57b1e7d402944ec7fa43415b49378',1,'Karm::Math::Curve::Curve(Curve &amp;&amp;other)'],['../unionKarm_1_1Math_1_1Curve.html#a2f0846ee19edfec8a871faf605d4dbb7',1,'Karm::Math::Curve::Curve(Curve const &amp;other)'],['../unionKarm_1_1Math_1_1Curve.html#a78f0c151bb6fa8a6ebc5e69516097fca',1,'Karm::Math::Curve::Curve(Vec2&lt; T &gt; a, Vec2&lt; T &gt; b, Vec2&lt; T &gt; c, Vec2&lt; T &gt; d)'],['../unionKarm_1_1Math_1_1Curve.html#a77bccffb08fdd8f50dbeee0f81a125d0',1,'Karm::Math::Curve::Curve()']]],
+  ['curve_164',['curve',['../structKarm_1_1Pdf_1_1Canvas.html#a4e2d6afe005a71ccb23859fe49c2a106',1,'Karm::Pdf::Canvas::curve()'],['../structKarm_1_1Math_1_1Path.html#ac5a36cb66bdb78a2da72d8fd2fb492df',1,'Karm::Math::Path::curve()'],['../structKarm_1_1Gfx_1_1CpuCanvas.html#a77a62fdc38852e83b76c38922b4a6fa0',1,'Karm::Gfx::CpuCanvas::curve()'],['../structKarm_1_1Gfx_1_1Canvas.html#ab6f1a22ffa4c3cb21cf5d3b74bc77a5b',1,'Karm::Gfx::Canvas::curve()']]],
   ['cut_165',['cut',['../structKarm_1_1Ui_1_1TextModel.html#ac0778205e6e4f56c047c8da9421066c9',1,'Karm::Ui::TextModel']]],
   ['cycle_166',['cycle',['../structKarm_1_1Iter.html#a0e6170c4a2289ad2627f52d2e7a49184',1,'Karm::Iter']]]
 ];

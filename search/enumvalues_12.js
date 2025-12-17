@@ -51,7 +51,7 @@ var searchData=
   ['srv_48',['SRV',['../namespaceKarm_1_1Net_1_1Dns.html#afdc41d84596321984a29bae536776a54ad24e82c02ddf0b15e22fe683d5a4beb9',1,'Karm::Net::Dns']]],
   ['stack_49',['STACK',['../namespaceKarm_1_1Sys.html#a4bc4dd239ab723c5768e73b651e5c8d4a0fac686d86aba414411b58f6bce53a76',1,'Karm::Sys']]],
   ['standard_50',['STANDARD',['../namespaceKarm_1_1Image_1_1Png.html#abe494cea78b20aa0dde49d330c13a36da94e94133f4bdc1794c6b647b8ea134d0',1,'Karm::Image::Png']]],
-  ['start_51',['START',['../namespaceKarm_1_1Kira.html#a43d3e6c943128cab8eac7d966bb39256ab078ffd28db767c502ac367053f6e0ac',1,'Karm::Kira::START()'],['../namespaceKarm_1_1Ui.html#a9866160976eeb8a2d05358039a4fd1f0ab078ffd28db767c502ac367053f6e0ac',1,'Karm::Ui::START()'],['../structKarm_1_1Ui_1_1DragEvent.html#a23598ce0635f89f0115303f8a9f9e93ea2984679006732279f3efd83f3cf3de43',1,'Karm::Ui::DragEvent::START()']]],
+  ['start_51',['START',['../namespaceKarm_1_1Kira.html#a43d3e6c943128cab8eac7d966bb39256ab078ffd28db767c502ac367053f6e0ac',1,'Karm::Kira::START()'],['../namespaceKarm_1_1Ui.html#a9866160976eeb8a2d05358039a4fd1f0ab078ffd28db767c502ac367053f6e0ac',1,'Karm::Ui::START()'],['../structKarm_1_1Ui_1_1DragEvent.html#aa0afcc592c5c79b945a51ce8fce6348da2984679006732279f3efd83f3cf3de43',1,'Karm::Ui::DragEvent::START()']]],
   ['status_52',['STATUS',['../namespaceKarm_1_1Net_1_1Dns.html#a47f8b09c32e5921ee31751a3046bd3faaf004bf6a721dbe97dd542a91f3c8bff7',1,'Karm::Net::Dns']]],
   ['steal_53',['STEAL',['../structKarm_1_1Ui_1_1FocusEvent.html#aaf00e241189e66030de18d59a9823a4aa3ce8ffaf900f47ef19b5db8674d1c749',1,'Karm::Ui::FocusEvent']]],
   ['sticky_54',['STICKY',['../namespaceKarm_1_1Regex.html#aeb80b5b3b27409e056039a96aef0bcfba27a5fc888f51915241ab4c1fa0ab8157',1,'Karm::Regex']]],

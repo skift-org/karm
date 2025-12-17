@@ -20,7 +20,7 @@ var searchData=
   ['cap_17',['CAP',['../structKarm_1_1Sys_1_1Message.html#a0fe91f715c6b51087b5b11a80c0f4639',1,'Karm::Sys::Message']]],
   ['capbound_18',['capbound',['../structKarm_1_1Gfx_1_1FontMeasure.html#a8db02302c7039dfaf1f2febccabea0f2',1,'Karm::Gfx::FontMeasure']]],
   ['captop_19',['captop',['../structKarm_1_1Gfx_1_1FontMetrics.html#a1e20c654b6df84132ec0e29169612bee',1,'Karm::Gfx::FontMetrics']]],
-  ['cases_20',['CASES',['../namespaceKarm_1_1Io_1_1Tests.html#af4d4f2836d98f45efd76fbf2ade0d035',1,'Karm::Io::Tests']]],
+  ['cases_20',['CASES',['../namespaceKarm_1_1Io_1_1Tests.html#a6b51f7bc8c8b0bcbcc486c8d63771da2',1,'Karm::Io::Tests']]],
   ['cb_21',['cb',['../structKarm_1_1Gfx_1_1YCbCr.html#ae29cc4d888c616917febab828e5a0ebe',1,'Karm::Gfx::YCbCr']]],
   ['cellrange_22',['cellRange',['../structKarm_1_1Gfx_1_1Prose_1_1Block.html#a8e393c2f75e485469c52876ef359f404',1,'Karm::Gfx::Prose::Block']]],
   ['cells_23',['cells',['../structKarm_1_1Vte_1_1Line.html#a80c7f7edbb4a70465f0d99ce9c694ad7',1,'Karm::Vte::Line']]],
