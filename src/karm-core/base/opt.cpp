@@ -21,15 +21,20 @@ template <typename T>
 struct _OptStore {
     struct _Empty {};
 
-    bool _present{false};
-
-    union {
+    union _Inner {
         _Empty _empty;
         T _value;
+
+        constexpr _Inner() : _empty{} {}
+
+        constexpr ~_Inner() {}
     };
 
+    bool _present{false};
+    _Inner _inner;
+
     always_inline constexpr _OptStore()
-        : _empty{} {}
+        : _inner{} {}
 
     always_inline constexpr ~_OptStore() {
         clear();
@@ -38,14 +43,14 @@ struct _OptStore {
     template <typename... Args>
     always_inline constexpr T& emplace(Args&&... args) {
         clear();
-        std::construct_at(&_value, std::forward<Args>(args)...);
+        std::construct_at(&_inner._value, std::forward<Args>(args)...);
         _present = true;
         return unwrap();
     }
 
     always_inline constexpr void clear() {
         if (_present) {
-            _value.~T();
+            _inner._value.~T();
             _present = false;
         }
     }
@@ -55,16 +60,16 @@ struct _OptStore {
     }
 
     always_inline constexpr T& unwrap() {
-        return _value;
+        return _inner._value;
     }
 
     always_inline constexpr T const& unwrap() const {
-        return _value;
+        return _inner._value;
     }
 
     [[clang::coro_wrapper]]
     always_inline constexpr T take() {
-        T v = std::move(_value);
+        T v = std::move(_inner._value);
         clear();
         return v;
     }
