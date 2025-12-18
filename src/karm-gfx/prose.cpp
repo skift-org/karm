@@ -252,7 +252,6 @@ export struct Prose : Meta::Pinned {
         _beginBlock();
     }
 
-
     void append(Rune rune) {
         if (any(_blocks) and (last(_blocks).newline() or last(_blocks).spaces() or last(_blocks).strut()))
             _beginBlock();
@@ -284,7 +283,7 @@ export struct Prose : Meta::Pinned {
             append(rune);
     }
 
-    void append(StrutCell&& strut)  {
+    void append(StrutCell&& strut) {
         if (_blocks.len() and not last(_blocks).empty())
             _beginBlock();
 
@@ -364,7 +363,7 @@ export struct Prose : Meta::Pinned {
 
     // MARK: Layout ------------------------------------------------------------
 
-    void _measureBlocks()  {
+    void _measureBlocks() {
         for (auto& block : _blocks) {
             auto adv = 0_au;
             bool first = true;

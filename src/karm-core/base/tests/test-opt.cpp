@@ -112,7 +112,6 @@ test$("bool-niche") {
     return Ok();
 }
 
-
 test$("opt-ref-default-constructor") {
     Opt<int&> opt{};
 

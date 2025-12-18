@@ -96,13 +96,17 @@ Res<> format(TextWriter& writer, Str format, Ts&&... ts) {
 }
 
 export template <StaticEncoding E = Utf8, Meta::Derive<Io::Writer> W, typename... Ts>
-Res<> format(W& w, Str format, Ts&&... ts) requires (not Meta::Derive<W, Io::TextWriter>) {
+Res<> format(W& w, Str format, Ts&&... ts)
+    requires(not Meta::Derive<W, Io::TextWriter>)
+{
     Io::TextEncoder<E> enc{w};
     return Io::format(enc, format, std::forward<Ts>(ts)...);
 }
 
 export template <StaticEncoding E = Utf8, Meta::Derive<Io::Writer> W, typename... Ts>
-Res<> formatln(W& w, Str format, Ts&&... ts) requires (not Meta::Derive<W, Io::TextWriter>) {
+Res<> formatln(W& w, Str format, Ts&&... ts)
+    requires(not Meta::Derive<W, Io::TextWriter>)
+{
     Io::TextEncoder<E> enc{w};
     try$(Io::format(enc, format, std::forward<Ts>(ts)...));
     return enc.writeRune('\n');

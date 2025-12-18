@@ -66,7 +66,6 @@ export Stroke stroke(auto... args) {
 
 // MARK: Stroke Generation -----------------------------------------------------
 
-
 static void _createArc(Math::Polyf& poly, Math::Vec2f center, Math::Vec2f start, Math::Vec2f end, f64 startAngle, f64 delta, f64 radius) {
     isize divs = 32; // FIXME: determine this procedurally
     f64 step = delta / divs;

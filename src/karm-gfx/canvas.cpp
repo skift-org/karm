@@ -190,7 +190,7 @@ export struct Canvas : Meta::NoCopy {
     virtual void stroke() = 0;
 
     // Change the current stroke style and stroke the current path.
-    virtual void stroke(Stroke style)  {
+    virtual void stroke(Stroke style) {
         strokeStyle(style);
         stroke();
     }
@@ -277,7 +277,7 @@ export struct Canvas : Meta::NoCopy {
     }
 
     // fill a path
-    virtual void fill(Math::Path const& p, FillRule rule = FillRule::NONZERO)  {
+    virtual void fill(Math::Path const& p, FillRule rule = FillRule::NONZERO) {
         beginPath();
         path(p);
         fill(rule);
@@ -348,7 +348,7 @@ export struct Canvas : Meta::NoCopy {
 
     // Blit the given pixels to the current pixels.
     // The source rectangle is the entire piels.
-    virtual void blit(Math::Recti dest, Pixels pixels)  {
+    virtual void blit(Math::Recti dest, Pixels pixels) {
         blit(pixels.bound(), dest, pixels);
     }
 

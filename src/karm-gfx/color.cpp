@@ -270,7 +270,6 @@ export Hsv rgbToHsv(Color color) {
     return {hue, saturation, value};
 }
 
-
 export Color hsvToRgb(Hsv hsv) {
     f64 h = hsv.hue;
     f64 s = hsv.saturation;

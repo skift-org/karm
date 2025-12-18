@@ -255,11 +255,11 @@ export struct Path {
 
         // 2) Compute cx', cy'
         f64 sa = Math::pow2(radii.x) * Math::pow2(radii.y) -
-                Math::pow2(radii.x) * Math::pow2(y1p) -
-                Math::pow2(radii.y) * Math::pow2(x1p);
+                 Math::pow2(radii.x) * Math::pow2(y1p) -
+                 Math::pow2(radii.y) * Math::pow2(x1p);
 
         f64 sb = Math::pow2(radii.x) * Math::pow2(y1p) +
-                Math::pow2(radii.y) * Math::pow2(x1p);
+                 Math::pow2(radii.y) * Math::pow2(x1p);
 
         if (sa < 0.0)
             sa = 0.0;
@@ -430,11 +430,11 @@ export struct Path {
         evalOp({HLINE_TO, {x, 0}, options});
     }
 
-    void vlineTo(f64 y, Flags<Option> options = {})  {
+    void vlineTo(f64 y, Flags<Option> options = {}) {
         evalOp({VLINE_TO, {0, y}, options});
     }
 
-    void cubicTo(Math::Vec2f cp1, Math::Vec2f cp2, Math::Vec2f p, Flags<Option> options = {})  {
+    void cubicTo(Math::Vec2f cp1, Math::Vec2f cp2, Math::Vec2f p, Flags<Option> options = {}) {
         evalOp({CUBIC_TO, cp1, cp2, p, options});
     }
 
@@ -545,7 +545,7 @@ export struct Path {
         }
     }
 
-    void path(Math::Path const& path)  {
+    void path(Math::Path const& path) {
         for (auto contour : path.iterContours()) {
             if (contour.len() == 0)
                 panic("it is not possible to have an empty contour at this point");
@@ -569,7 +569,7 @@ export struct Path {
 
     // MARK: Svg ---------------------------------------------------------------
 
-    Opt<Math::Vec2f> _nextVec2f(Io::SScan& s)  {
+    Opt<Math::Vec2f> _nextVec2f(Io::SScan& s) {
         return Math::Vec2f{
             try$(Io::atof(s)),
             try$(Io::atof(s)),

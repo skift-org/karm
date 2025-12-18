@@ -34,7 +34,7 @@ export struct Icon {
         g.pop();
     }
 
-    void stroke(Gfx::Canvas& g, Math::Vec2f pos, isize size) const  {
+    void stroke(Gfx::Canvas& g, Math::Vec2f pos, isize size) const {
         g.push();
         g.beginPath();
         g.origin(pos.cast<f64>());

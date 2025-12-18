@@ -79,7 +79,7 @@ struct Atomic {
         __atomic_store_n(&_val, desired, order);
     }
 
-    always_inline bool lockFree() const{
+    always_inline bool lockFree() const {
         return __atomic_is_lock_free(&_val);
     }
 };
