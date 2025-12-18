@@ -2,25 +2,45 @@ export module Karm.Core:async.cancellation;
 
 import :base.rc;
 import :base.res;
+import :base.list;
 
 namespace Karm::Async {
 
-export struct Cancellation : Meta::Pinned {
-    struct Token {
-        Rc<Cancellation> _c;
+export struct Cancellation;
 
-        Token(Rc<Cancellation> c) : _c{c} {}
+export struct CancellationToken {
+    Rc<Cancellation> _c;
 
-        bool cancelled() const {
-            return _c->cancelled();
-        }
+    CancellationToken(Rc<Cancellation> c) : _c{c} {}
 
-        Res<> errorIfCanceled() const {
-            if (cancelled())
-                return Error::interrupted("operation cancelled");
-            return Ok();
-        }
+    bool cancelled() const {
+        return _c->cancelled();
+    }
+
+    Res<> errorIfCanceled() const {
+        if (cancelled())
+            return Error::interrupted("operation cancelled");
+        return Ok();
+    }
+};
+
+export struct Cancellable {
+    Rc<Cancellation> _c;
+    LlItem<Cancellable> item;
+
+    Cancellable(Cancellation::Token _ct) : _c(_ct._c){
+        _c->_attach(this);
+    }
+
+    virtual void cancelled();
+
+    virtual ~Cancellable() {
+        _c->_detach(this);
     };
+};
+
+struct Cancellation : Meta::Pinned {
+
 
     static Tuple<Rc<Cancellation>, Token> create() {
         auto cancellation = makeRc<Cancellation>();
@@ -28,6 +48,7 @@ export struct Cancellation : Meta::Pinned {
     }
 
     bool _cancelled = false;
+    Ll<Cancellable> _cancellables;
 
     void cancel() {
         _cancelled = true;
@@ -40,8 +61,14 @@ export struct Cancellation : Meta::Pinned {
     bool cancelled() const {
         return _cancelled;
     }
-};
 
-export using CancellationToken = Cancellation::Token;
+    void _attach(Cancellable* cancellable) {
+        _cancellables.append(cancellable, nullptr);
+    }
+
+    void _detach(Cancellable* cancellable) {
+        _cancellables.detach(cancellable, nullptr);
+    }
+};
 
 } // namespace Karm::Async
