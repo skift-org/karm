@@ -181,7 +181,7 @@ var NAVTREEINDEX0 =
 "avatar_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5":[3,0,0,15,2,1],
 "avatar_8cpp.html#ae3a77a54ec8becc4a6fdc9a94a28333c":[3,0,0,15,2,3],
 "awaiter_8cpp.html":[3,0,0,4,1,1],
-"awaiter_8cpp.html#a5c523d458f6d7f7aa7adee21d847d0b2":[3,0,0,4,1,1,2],
+"awaiter_8cpp.html#a5ddb59b99fbc38e5fbe5572c4516705d":[3,0,0,4,1,1,2],
 "awaiter_8cpp.html#af60e35d72364ff777a965d456af4dea3":[3,0,0,4,1,1,3],
 "badge_8cpp.html":[3,0,0,15,3],
 "badge_8cpp.html#a2690d239df3270de8dc6c0cae7e9870a":[3,0,0,15,3,3],

@@ -1,6 +1,5 @@
 var NAVTREEINDEX51 =
 {
-"structKarm_1_1Serde_1_1Serializer_1_1Scope.html":[2,0,1,31,26,0],
 "structKarm_1_1Serde_1_1Serializer_1_1Scope.html#a019b5d9799a5a62252a88418eca814e0":[0,0,1,35,27,0,3],
 "structKarm_1_1Serde_1_1Serializer_1_1Scope.html#a019b5d9799a5a62252a88418eca814e0":[2,0,1,31,26,0,3],
 "structKarm_1_1Serde_1_1Serializer_1_1Scope.html#a045bc4f2befb04a430d58c19ffe508c6":[0,0,1,35,27,0,7],
@@ -249,5 +248,6 @@ var NAVTREEINDEX51 =
 "structKarm_1_1Sieve_1_1Item.html#a92445ae8a7da7bf8ea787fc4ecf0a1ae":[0,0,1,137,0,0],
 "structKarm_1_1Sieve_1_1Item.html#aacf37bfe00707332338ff71022f03fa9":[2,0,1,132,0,2],
 "structKarm_1_1Sieve_1_1Item.html#aacf37bfe00707332338ff71022f03fa9":[0,0,1,137,0,2],
-"structKarm_1_1Sieve_1_1Item.html#ac5d70ad76b1d12a4517007ca04afdc8e":[2,0,1,132,0,1]
+"structKarm_1_1Sieve_1_1Item.html#ac5d70ad76b1d12a4517007ca04afdc8e":[2,0,1,132,0,1],
+"structKarm_1_1Sieve_1_1Item.html#ac5d70ad76b1d12a4517007ca04afdc8e":[0,0,1,137,0,1]
 };

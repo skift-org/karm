@@ -1,6 +1,5 @@
 var NAVTREEINDEX33 =
 {
-"structKarm_1_1Gfx_1_1Icon.html#ae2937863f6d869ab9496b60a354e6b5e":[0,0,1,12,32,6],
 "structKarm_1_1Gfx_1_1LcdLayout.html":[0,0,1,12,33],
 "structKarm_1_1Gfx_1_1LcdLayout.html":[2,0,1,12,32],
 "structKarm_1_1Gfx_1_1LcdLayout.html#a29226a1f992237a18adea889cd999919":[2,0,1,12,32,2],
@@ -249,5 +248,6 @@ var NAVTREEINDEX33 =
 "structKarm_1_1Gfx_1_1SvgCanvas.html#a0729b20573f19e1562142cd8d8d3948d":[2,0,1,12,43,19],
 "structKarm_1_1Gfx_1_1SvgCanvas.html#a07a2618cc0dee688528164a9376fae19":[2,0,1,12,43,9],
 "structKarm_1_1Gfx_1_1SvgCanvas.html#a07a2618cc0dee688528164a9376fae19":[0,0,1,12,44,9],
-"structKarm_1_1Gfx_1_1SvgCanvas.html#a0800bb022105f41827ab3b30e1e425a2":[2,0,1,12,43,42]
+"structKarm_1_1Gfx_1_1SvgCanvas.html#a0800bb022105f41827ab3b30e1e425a2":[2,0,1,12,43,42],
+"structKarm_1_1Gfx_1_1SvgCanvas.html#a0800bb022105f41827ab3b30e1e425a2":[0,0,1,12,44,42]
 };

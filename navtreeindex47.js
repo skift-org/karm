@@ -1,6 +1,5 @@
 var NAVTREEINDEX47 =
 {
-"structKarm_1_1Pdf_1_1File.html#a2015745cd6e923f253293b8d6d48bac5":[0,0,1,28,3,4],
 "structKarm_1_1Pdf_1_1File.html#a8a5251af05575d48eaa00ce22c440cf9":[2,0,1,25,3,1],
 "structKarm_1_1Pdf_1_1File.html#a8a5251af05575d48eaa00ce22c440cf9":[0,0,1,28,3,1],
 "structKarm_1_1Pdf_1_1File.html#acde88e585f2910171037c63830e68f52":[0,0,1,28,3,2],
@@ -249,5 +248,6 @@ var NAVTREEINDEX47 =
 "structKarm_1_1Print_1_1TtfGlyphInfoAdapter.html#aba101d4f73c376eb270de485f0a5e40c":[2,0,1,27,12,4],
 "structKarm_1_1Print_1_1TtfGlyphInfoAdapter.html#aba1f2c7f534b03ebf0709f5ab9eec96c":[2,0,1,27,12,1],
 "structKarm_1_1Print_1_1TtfGlyphInfoAdapter.html#aba1f2c7f534b03ebf0709f5ab9eec96c":[0,0,1,30,12,1],
-"structKarm_1_1Print_1_1TtfGlyphInfoAdapter.html#acbea0941d44e00a0c69383911bf7e77c":[0,0,1,30,12,2]
+"structKarm_1_1Print_1_1TtfGlyphInfoAdapter.html#acbea0941d44e00a0c69383911bf7e77c":[0,0,1,30,12,2],
+"structKarm_1_1Print_1_1TtfGlyphInfoAdapter.html#acbea0941d44e00a0c69383911bf7e77c":[2,0,1,27,12,2]
 };

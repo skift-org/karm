@@ -1,6 +1,5 @@
 var NAVTREEINDEX58 =
 {
-"structKarm_1_1Ui_1_1Reducer.html#ab592b804ca89c61964ce42abd89df108":[2,0,1,37,46,12],
 "structKarm_1_1Ui_1_1Reducer.html#ab8e9f214188ff5308e231d85a13203e6":[2,0,1,37,46,3],
 "structKarm_1_1Ui_1_1Reducer.html#ab8e9f214188ff5308e231d85a13203e6":[0,0,1,42,47,3],
 "structKarm_1_1Ui_1_1Reducer.html#ac954de1a08d905986cd82f43d50a3999":[0,0,1,42,47,9],
@@ -249,5 +248,6 @@ var NAVTREEINDEX58 =
 "structKarm_1_1Ui_1_1TextModel.html#add80e4dd736181bb782d6ed4129dc703":[2,0,1,37,60,11],
 "structKarm_1_1Ui_1_1TextModel.html#ae88833b68292af79142116d91a070667":[0,0,1,42,61,10],
 "structKarm_1_1Ui_1_1TextModel.html#ae88833b68292af79142116d91a070667":[2,0,1,37,60,10],
-"structKarm_1_1Ui_1_1TextModel.html#ae8dcf77459180dace91c1d14db05780e":[2,0,1,37,60,35]
+"structKarm_1_1Ui_1_1TextModel.html#ae8dcf77459180dace91c1d14db05780e":[2,0,1,37,60,35],
+"structKarm_1_1Ui_1_1TextModel.html#ae8dcf77459180dace91c1d14db05780e":[0,0,1,42,61,35]
 };

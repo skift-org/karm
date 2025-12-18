@@ -1,6 +1,5 @@
 var NAVTREEINDEX62 =
 {
-"test-ring_8cpp.html#ab211f92a44c643b2e45e15dee2c59dcd":[3,0,0,4,2,2,11,0],
 "test-ring_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5":[3,0,0,4,2,2,11,1],
 "test-round_8cpp.html":[3,0,0,4,7,0,0],
 "test-round_8cpp.html#a01cfdf3202200e31784363d0a62317e3":[3,0,0,4,7,0,0,1],
@@ -249,5 +248,6 @@ var NAVTREEINDEX62 =
 "unionKarm_1_1Math_1_1Arc.html#a0ed4ebd75e4e36f67916f68e3a6c90c7":[2,0,1,20,1,23],
 "unionKarm_1_1Math_1_1Arc.html#a10d0f898e08753fbaff66a2c887a19f9":[2,0,1,20,1,2],
 "unionKarm_1_1Math_1_1Arc.html#a10d0f898e08753fbaff66a2c887a19f9":[0,0,1,23,2,2],
-"unionKarm_1_1Math_1_1Arc.html#a11d9d48e332c4074e40e057e9637c1f4":[2,0,1,20,1,1]
+"unionKarm_1_1Math_1_1Arc.html#a11d9d48e332c4074e40e057e9637c1f4":[2,0,1,20,1,1],
+"unionKarm_1_1Math_1_1Arc.html#a11d9d48e332c4074e40e057e9637c1f4":[0,0,1,23,2,1]
 };

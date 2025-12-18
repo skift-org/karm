@@ -1,6 +1,5 @@
 var NAVTREEINDEX45 =
 {
-"structKarm_1_1Month.html#abe46a5a9a0b3037fdec47421fc526beb":[2,0,1,103,7],
 "structKarm_1_1Month.html#ada0f54e173b7f16f98c12744b2f6a7e4":[0,0,1,108,6],
 "structKarm_1_1Month.html#ada0f54e173b7f16f98c12744b2f6a7e4":[2,0,1,103,6],
 "structKarm_1_1Month.html#adb8db1b36608df2fef465e15b9f7b3a3":[0,0,1,108,5],
@@ -249,5 +248,6 @@ var NAVTREEINDEX45 =
 "structKarm_1_1Niche_3_01Union_3_01Ts_8_8_8_01_4_01_4_1_1Content.html#abb05ab22a7250d587dbbe258bb7beb02":[0,0,1,121,0,1],
 "structKarm_1_1Niche_3_01Union_3_01Ts_8_8_8_01_4_01_4_1_1Content.html#adcc6b7cf307c9b2635e6592ce47cf623":[2,0,1,116,0,0],
 "structKarm_1_1Niche_3_01Union_3_01Ts_8_8_8_01_4_01_4_1_1Content.html#adcc6b7cf307c9b2635e6592ce47cf623":[0,0,1,121,0,0],
-"structKarm_1_1Niche_3_01ViewBuf_3_01T_01_4_01_4.html":[2,0,1,117]
+"structKarm_1_1Niche_3_01ViewBuf_3_01T_01_4_01_4.html":[2,0,1,117],
+"structKarm_1_1Niche_3_01ViewBuf_3_01T_01_4_01_4.html":[0,0,1,122]
 };

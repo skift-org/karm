@@ -40,7 +40,6 @@ var namespaceKarm_1_1Async =
     [ "detach", "namespaceKarm_1_1Async.html#a75d899ee637b3881519f868a1f04e8c9", null ],
     [ "detach", "namespaceKarm_1_1Async.html#a9fd2f8c96b4423e429e42bcab53b90bd", null ],
     [ "makeTask", "namespaceKarm_1_1Async.html#a1273e4ff1f8273445050403830da5ea8", null ],
-    [ "operator co_await", "namespaceKarm_1_1Async.html#a5c523d458f6d7f7aa7adee21d847d0b2", null ],
     [ "run", "namespaceKarm_1_1Async.html#a9c5ed5b879071713ee630efbbab99d8b", null ],
     [ "run", "namespaceKarm_1_1Async.html#a13f1166a03e80be2aeaaf9670fdb5425", null ],
     [ "INLINE", "namespaceKarm_1_1Async.html#a438ab719d87e589874ea4e060f59bca0", null ],

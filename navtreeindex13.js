@@ -1,6 +1,5 @@
 var NAVTREEINDEX13 =
 {
-"namespaceKarm_1_1Crypto.html#a2eff196e775244ac07d0e71964f9077a":[0,0,1,7,12],
 "namespaceKarm_1_1Crypto.html#a2fe9dcd6be444b8c94f1f124f853dd3d":[0,0,1,7,19],
 "namespaceKarm_1_1Crypto.html#a3eef2c76608f1a6a702301db9d4736e1":[0,0,1,7,16],
 "namespaceKarm_1_1Crypto.html#a483237c87b4551ccdc4f6a89bfd2d2c4":[0,0,1,7,7],
@@ -249,5 +248,6 @@ var NAVTREEINDEX13 =
 "namespaceKarm_1_1Image.html#ad0e4943668f57c80208164c22103e30a":[0,0,1,17,14],
 "namespaceKarm_1_1Image_1_1Bmp.html":[0,0,1,17,0],
 "namespaceKarm_1_1Image_1_1Bmp.html#a14cfb0eb56095d680a48b6c05aadf884":[0,0,1,17,0,1],
-"namespaceKarm_1_1Image_1_1Gif.html":[0,0,1,17,1]
+"namespaceKarm_1_1Image_1_1Gif.html":[0,0,1,17,1],
+"namespaceKarm_1_1Image_1_1Jpeg.html":[0,0,1,17,2]
 };

@@ -1,6 +1,5 @@
 var NAVTREEINDEX24 =
 {
-"structKarm_1_1Av_1_1Audio.html#ab7efdbff30f74744d3b7bbdccc10a046":[0,0,1,4,2,1],
 "structKarm_1_1Av_1_1Audio.html#ad17660c15f83e02d46a8f49a227e44e0":[2,0,1,4,2,4],
 "structKarm_1_1Av_1_1Audio.html#ad17660c15f83e02d46a8f49a227e44e0":[0,0,1,4,2,4],
 "structKarm_1_1Av_1_1Camera.html":[2,0,1,4,3],
@@ -249,5 +248,6 @@ var NAVTREEINDEX24 =
 "structKarm_1_1Box.html#ae4ecdd100234c6bf5e5ba76c3a8386f0":[2,0,1,45,13],
 "structKarm_1_1Box.html#af51e0d8ead4ed4142f314e368df81d18":[0,0,1,50,18],
 "structKarm_1_1Box.html#af51e0d8ead4ed4142f314e368df81d18":[2,0,1,45,18],
-"structKarm_1_1Box.html#af899930229930ef1dd25bdcf40879b34":[0,0,1,50,0]
+"structKarm_1_1Box.html#af899930229930ef1dd25bdcf40879b34":[0,0,1,50,0],
+"structKarm_1_1Box.html#af899930229930ef1dd25bdcf40879b34":[2,0,1,45,0]
 };

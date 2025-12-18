@@ -1,6 +1,5 @@
 var NAVTREEINDEX50 =
 {
-"structKarm_1_1Scene_1_1Node.html#ae8a63889a42c5712a51b36db7c1ff66f":[2,0,1,30,4,1],
 "structKarm_1_1Scene_1_1Opacity.html":[0,0,1,34,5],
 "structKarm_1_1Scene_1_1Opacity.html":[2,0,1,30,5],
 "structKarm_1_1Scene_1_1Opacity.html#a01958a4faa0f9214ec1af22f2e3cfafc":[0,0,1,34,5,2],
@@ -249,5 +248,6 @@ var NAVTREEINDEX50 =
 "structKarm_1_1Serde_1_1Serializer.html#ad939d964c87b0495ca3dd2ebcdcedff9":[2,0,1,31,26,2],
 "structKarm_1_1Serde_1_1Serializer.html#ae1e76f0cc2f029462ced8e8ca5b46b23":[0,0,1,35,27,10],
 "structKarm_1_1Serde_1_1Serializer.html#ae1e76f0cc2f029462ced8e8ca5b46b23":[2,0,1,31,26,10],
-"structKarm_1_1Serde_1_1Serializer_1_1Scope.html":[0,0,1,35,27,0]
+"structKarm_1_1Serde_1_1Serializer_1_1Scope.html":[0,0,1,35,27,0],
+"structKarm_1_1Serde_1_1Serializer_1_1Scope.html":[2,0,1,31,26,0]
 };

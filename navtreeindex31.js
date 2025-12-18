@@ -1,6 +1,5 @@
 var NAVTREEINDEX31 =
 {
-"structKarm_1_1Gfx_1_1Cap.html":[2,0,1,12,6],
 "structKarm_1_1Gfx_1_1Cap.html#a01a659e94fade1c7364f648ad84c939f":[0,0,1,12,7,1],
 "structKarm_1_1Gfx_1_1Cap.html#a01a659e94fade1c7364f648ad84c939f":[2,0,1,12,6,1],
 "structKarm_1_1Gfx_1_1Cap.html#aa092a81b387bc619354ef40f3c0b3e4a":[0,0,1,12,7,0],
@@ -249,5 +248,6 @@ var NAVTREEINDEX31 =
 "structKarm_1_1Gfx_1_1FontAttrs.html":[0,0,1,12,18],
 "structKarm_1_1Gfx_1_1FontAttrs.html#a0e40b7439de53dd58aebab99bf610c3f":[2,0,1,12,17,2],
 "structKarm_1_1Gfx_1_1FontAttrs.html#a0e40b7439de53dd58aebab99bf610c3f":[0,0,1,12,18,2],
-"structKarm_1_1Gfx_1_1FontAttrs.html#a17457fb165d9a17f985f87346942c24c":[2,0,1,12,17,3]
+"structKarm_1_1Gfx_1_1FontAttrs.html#a17457fb165d9a17f985f87346942c24c":[2,0,1,12,17,3],
+"structKarm_1_1Gfx_1_1FontAttrs.html#a17457fb165d9a17f985f87346942c24c":[0,0,1,12,18,3]
 };

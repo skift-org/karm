@@ -1,6 +1,5 @@
 var NAVTREEINDEX49 =
 {
-"structKarm_1_1Regex_1_1AssertionMatcher.html#a7a5ca2d9ef9f3cabcc3a837e1b55e8b6":[0,0,1,33,1,0],
 "structKarm_1_1Regex_1_1AssertionMatcher.html#ad22b801fba0545e32aca363b72333f5d":[0,0,1,33,1,2],
 "structKarm_1_1Regex_1_1AssertionMatcher.html#ad22b801fba0545e32aca363b72333f5d":[2,0,1,29,0,2],
 "structKarm_1_1Regex_1_1AtomMatcher.html":[0,0,1,33,2],
@@ -249,5 +248,6 @@ var NAVTREEINDEX49 =
 "structKarm_1_1Scene_1_1Node.html#aa6b220e5708da73f6a1b5eaa2d5bd799":[2,0,1,30,4,3],
 "structKarm_1_1Scene_1_1Node.html#ab7131b244c779db2f4a6964c5e0a107c":[2,0,1,30,4,0],
 "structKarm_1_1Scene_1_1Node.html#ab7131b244c779db2f4a6964c5e0a107c":[0,0,1,34,4,0],
-"structKarm_1_1Scene_1_1Node.html#ae8a63889a42c5712a51b36db7c1ff66f":[0,0,1,34,4,1]
+"structKarm_1_1Scene_1_1Node.html#ae8a63889a42c5712a51b36db7c1ff66f":[0,0,1,34,4,1],
+"structKarm_1_1Scene_1_1Node.html#ae8a63889a42c5712a51b36db7c1ff66f":[2,0,1,30,4,1]
 };

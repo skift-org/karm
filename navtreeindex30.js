@@ -1,6 +1,5 @@
 var NAVTREEINDEX30 =
 {
-"structKarm_1_1Gc_1_1Ref.html":[0,0,1,11,4],
 "structKarm_1_1Gc_1_1Ref.html#a07eb94411c944bccf89d806c8085b2d6":[2,0,1,11,4,8],
 "structKarm_1_1Gc_1_1Ref.html#a07eb94411c944bccf89d806c8085b2d6":[0,0,1,11,4,8],
 "structKarm_1_1Gc_1_1Ref.html#a124d4e053e307fb52e61ecdd620ac1c0":[0,0,1,11,4,5],
@@ -249,5 +248,6 @@ var NAVTREEINDEX30 =
 "structKarm_1_1Gfx_1_1Canvas.html#afa832ac01eaa2dfcb2d38da35b89340f":[2,0,1,12,5,25],
 "structKarm_1_1Gfx_1_1Canvas.html#afe2fdedc2eca6b8f21a71718b44539dd":[2,0,1,12,5,53],
 "structKarm_1_1Gfx_1_1Canvas.html#afe2fdedc2eca6b8f21a71718b44539dd":[0,0,1,12,6,53],
-"structKarm_1_1Gfx_1_1Cap.html":[0,0,1,12,7]
+"structKarm_1_1Gfx_1_1Cap.html":[0,0,1,12,7],
+"structKarm_1_1Gfx_1_1Cap.html":[2,0,1,12,6]
 };

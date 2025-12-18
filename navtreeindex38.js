@@ -1,6 +1,5 @@
 var NAVTREEINDEX38 =
 {
-"structKarm_1_1Io_1_1Emit.html#a6b30428244fee5732fb8af4d5ad4d95b":[0,0,1,18,15,2],
 "structKarm_1_1Io_1_1Emit.html#a7f26678ffb09389ad8875634f06d426e":[2,0,1,17,14,11],
 "structKarm_1_1Io_1_1Emit.html#a7f26678ffb09389ad8875634f06d426e":[0,0,1,18,15,11],
 "structKarm_1_1Io_1_1Emit.html#abe5e8b73efe1c1c8d94cb32410e6938c":[0,0,1,18,15,5],
@@ -249,5 +248,6 @@ var NAVTREEINDEX38 =
 "structKarm_1_1Io_1_1Formatter_3_01bool_01_4.html#ac9552cc69a4598d35632e49aa3fd94ef":[0,0,1,18,21,0],
 "structKarm_1_1Io_1_1Formatter_3_01char_01const_01_5_01_4.html":[2,0,1,17,23],
 "structKarm_1_1Io_1_1Formatter_3_01char_01const_01_5_01_4.html":[0,0,1,18,24],
-"structKarm_1_1Io_1_1Formatter_3_01char_01const_01_5_01_4.html#adcd8b487e3850250a651036cf40ea8f1":[0,0,1,18,24,0]
+"structKarm_1_1Io_1_1Formatter_3_01char_01const_01_5_01_4.html#adcd8b487e3850250a651036cf40ea8f1":[0,0,1,18,24,0],
+"structKarm_1_1Io_1_1Formatter_3_01char_01const_01_5_01_4.html#adcd8b487e3850250a651036cf40ea8f1":[2,0,1,17,23,0]
 };

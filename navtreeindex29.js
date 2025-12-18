@@ -1,6 +1,5 @@
 var NAVTREEINDEX29 =
 {
-"structKarm_1_1Font_1_1Ttf_1_1ScriptTable.html#a590f987df65c7a3759e2ecfa31aa4cb4":[0,0,1,9,1,28,3],
 "structKarm_1_1Font_1_1Ttf_1_1ScriptTable.html#a638c5a005cc44c56570c226195576fa2":[0,0,1,9,1,28,0],
 "structKarm_1_1Font_1_1Ttf_1_1ScriptTable.html#a638c5a005cc44c56570c226195576fa2":[2,0,1,9,0,28,0],
 "structKarm_1_1Font_1_1Ttf_1_1ScriptTable.html#aa67b387498e6aacf970441019dd323e4":[0,0,1,9,1,28,4],
@@ -249,5 +248,6 @@ var NAVTREEINDEX29 =
 "structKarm_1_1Gc_1_1Ptr.html#aff4e4937f84594b5b50ea423d43cfa64":[0,0,1,11,3,13],
 "structKarm_1_1Gc_1_1Ptr.html#aff59c2d40b331bc53b27b808ea9daa43":[0,0,1,11,3,5],
 "structKarm_1_1Gc_1_1Ptr.html#aff59c2d40b331bc53b27b808ea9daa43":[2,0,1,11,3,5],
-"structKarm_1_1Gc_1_1Ref.html":[2,0,1,11,4]
+"structKarm_1_1Gc_1_1Ref.html":[2,0,1,11,4],
+"structKarm_1_1Gc_1_1Ref.html":[0,0,1,11,4]
 };

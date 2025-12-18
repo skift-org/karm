@@ -1,6 +1,5 @@
 var NAVTREEINDEX48 =
 {
-"structKarm_1_1Print_1_1TtfGlyphInfoAdapter.html#acbea0941d44e00a0c69383911bf7e77c":[2,0,1,27,12,2],
 "structKarm_1_1Range.html":[0,0,1,128],
 "structKarm_1_1Range.html":[2,0,1,123],
 "structKarm_1_1Range.html#a0664c5dcf0eb57d3c91ae17ce7435217":[0,0,1,128,17],
@@ -249,5 +248,6 @@ var NAVTREEINDEX48 =
 "structKarm_1_1Regex_1_1AssertionMatcher.html":[2,0,1,29,0],
 "structKarm_1_1Regex_1_1AssertionMatcher.html#a3a92dfb49263954d27717eef3e16cda8":[2,0,1,29,0,1],
 "structKarm_1_1Regex_1_1AssertionMatcher.html#a3a92dfb49263954d27717eef3e16cda8":[0,0,1,33,1,1],
-"structKarm_1_1Regex_1_1AssertionMatcher.html#a7a5ca2d9ef9f3cabcc3a837e1b55e8b6":[2,0,1,29,0,0]
+"structKarm_1_1Regex_1_1AssertionMatcher.html#a7a5ca2d9ef9f3cabcc3a837e1b55e8b6":[2,0,1,29,0,0],
+"structKarm_1_1Regex_1_1AssertionMatcher.html#a7a5ca2d9ef9f3cabcc3a837e1b55e8b6":[0,0,1,33,1,0]
 };

@@ -1,6 +1,5 @@
 var NAVTREEINDEX57 =
 {
-"structKarm_1_1Ui_1_1GridStyle.html#a84eea78828846ee682c1d5a652fd1f8a":[2,0,1,37,28,2],
 "structKarm_1_1Ui_1_1GridStyle.html#ac343019f3c3adf40131731da5cd7d7a9":[0,0,1,42,29,4],
 "structKarm_1_1Ui_1_1GridStyle.html#ac343019f3c3adf40131731da5cd7d7a9":[2,0,1,37,28,4],
 "structKarm_1_1Ui_1_1GridStyle.html#adc6bc93a6a208d112685096cc40d2ebd":[0,0,1,42,29,0],
@@ -249,5 +248,6 @@ var NAVTREEINDEX57 =
 "structKarm_1_1Ui_1_1Reducer.html#a58b2313d75ddeae19d171c336873c4f7":[0,0,1,42,47,7],
 "structKarm_1_1Ui_1_1Reducer.html#a88379dd9cf91d41c3652d4b796ad7320":[0,0,1,42,47,1],
 "structKarm_1_1Ui_1_1Reducer.html#a88379dd9cf91d41c3652d4b796ad7320":[2,0,1,37,46,1],
-"structKarm_1_1Ui_1_1Reducer.html#ab592b804ca89c61964ce42abd89df108":[0,0,1,42,47,12]
+"structKarm_1_1Ui_1_1Reducer.html#ab592b804ca89c61964ce42abd89df108":[0,0,1,42,47,12],
+"structKarm_1_1Ui_1_1Reducer.html#ab592b804ca89c61964ce42abd89df108":[2,0,1,37,46,12]
 };
