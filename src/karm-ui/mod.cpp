@@ -1,6 +1,5 @@
 export module Karm.Ui;
 
-export import :_embed;
 export import :anim;
 export import :app;
 export import :atoms;
@@ -9,7 +8,6 @@ export import :dialog;
 export import :drag;
 export import :focus;
 export import :funcs;
-export import :host;
 export import :input;
 export import :intent;
 export import :layout;

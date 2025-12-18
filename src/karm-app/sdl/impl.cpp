@@ -44,7 +44,6 @@ struct SdlWindow : Window {
         if (not _sdlSurface)
             panic("Failed to get window surface");
         SDL_LockSurface(_sdlSurface);
-
         return {
             _sdlSurface->pixels,
             {_sdlSurface->w, _sdlSurface->h},
