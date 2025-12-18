@@ -13,9 +13,9 @@ int main(int argc, char const** argv) {
 
     Karm::Sys::Context ctx;
     ctx.add<Karm::Sys::ArgsHook>(argc, argv);
-    auto [cancellation, ct] = Karm::Async::Cancellation::create();
-    Karm::Res<> code = Karm::Sys::run(entryPointAsync(ctx, ct));
-    cancellation->cancel();
+    Karm::Async::Cancellation cancellation;
+    Karm::Res<> code = Karm::Sys::run(entryPointAsync(ctx, cancellation.token()));
+    cancellation.cancel();
 
     if (not code) {
         Karm::Sys::errln("{}: {}", argv[0], code);

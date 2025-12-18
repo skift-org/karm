@@ -1,36 +1,65 @@
+module;
+
+#include <karm-core/macros.h>
+
 export module Karm.Core:async.cancellation;
 
-import :base.rc;
+import :base.list;
 import :base.res;
 
 namespace Karm::Async {
 
-export struct Cancellation : Meta::Pinned {
-    struct Token {
-        Rc<Cancellation> _c;
+export struct Cancellation;
 
-        Token(Rc<Cancellation> c) : _c{c} {}
+export struct CancellationToken;
 
-        bool cancelled() const {
-            return _c->cancelled();
-        }
+export struct Cancellable : Meta::Pinned {
+    Cancellation* cancellation = nullptr;
+    LlItem<Cancellable> item = {};
 
-        Res<> errorIfCanceled() const {
-            if (cancelled())
-                return Error::interrupted("operation cancelled");
-            return Ok();
-        }
-    };
+    virtual ~Cancellable();
 
-    static Tuple<Rc<Cancellation>, Token> create() {
-        auto cancellation = makeRc<Cancellation>();
-        return {cancellation, Token{cancellation}};
+    Res<> attach(CancellationToken ct);
+    Res<> attach(Cancellation& ct);
+
+    virtual void cancel() = 0;
+};
+
+export struct CancellationToken {
+    Cancellation* cancellation;
+
+    explicit CancellationToken(Cancellation* c) : cancellation{c} {}
+
+    bool cancelled() const;
+
+    Res<> errorIfCanceled() const {
+        if (cancelled())
+            return Error::interrupted("operation cancelled");
+        return Ok();
     }
+};
 
+export struct Cancellation : Cancellable {
+    Ll<Cancellable> cancellables;
     bool _cancelled = false;
 
-    void cancel() {
+    ~Cancellation() {
+        while (cancellables.head()) {
+            auto* c = cancellables.detach(cancellables.head());
+            c->cancellation = nullptr;
+        }
+    }
+
+    void cancel() override {
+        if (_cancelled)
+            return;
         _cancelled = true;
+        Ll<Cancellable> pending = std::move(cancellables);
+        while (pending.head()) {
+            auto* c = pending.detach(pending.head());
+            c->cancellation = nullptr;
+            c->cancel();
+        }
     }
 
     void reset() {
@@ -40,8 +69,40 @@ export struct Cancellation : Meta::Pinned {
     bool cancelled() const {
         return _cancelled;
     }
+
+    CancellationToken token() lifetimebound {
+        return CancellationToken{this};
+    }
 };
 
-export using CancellationToken = Cancellation::Token;
+bool CancellationToken::cancelled() const {
+    return cancellation->cancelled();
+}
+
+Res<> Cancellable::attach(CancellationToken ct) {
+    if (not ct.cancellation)
+        return Ok();
+    return attach(*ct.cancellation);
+}
+
+Res<> Cancellable::attach(Cancellation& c) {
+
+    if (cancellation)
+        cancellation->cancellables.detach(this);
+
+    if (c.cancelled()) {
+        cancel();
+        return c.token().errorIfCanceled();
+    }
+
+    cancellation = &c;
+    c.cancellables.append(this, nullptr);
+    return Ok();
+}
+
+Cancellable::~Cancellable() {
+    if (cancellation)
+        cancellation->cancellables.detach(this);
+}
 
 } // namespace Karm::Async

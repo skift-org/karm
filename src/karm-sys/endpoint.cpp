@@ -56,19 +56,19 @@ export struct Endpoint : Meta::Pinned {
     Map<u64, Async::_Promise<Message>> _pending{};
     Async::Queue<Message> _incoming{};
     u64 _seq = 1;
-    Rc<Async::Cancellation> _cancelation = makeRc<Async::Cancellation>();
+    Async::Cancellation _cancelation;
 
     Endpoint(IpcConnection con) : _con(std::move(con)) {
         _globalEndpoint = this;
         // FIXME: Find a way to do proper cleanup
-        Async::detach(_receiverTask(*this, _cancelation), [](Res<> res) {
+        Async::detach(_receiverTask(*this, _cancelation.token()), [](Res<> res) {
             logError("receiver task exited: {}", res);
             panic("receiver task exited");
         });
     }
 
     ~Endpoint() {
-        _cancelation->cancel();
+        _cancelation.cancel();
     }
 
     static Endpoint adopt(Context& ctx) {
