@@ -58,9 +58,9 @@ struct [[nodiscard]] Awaiter :
     }
 };
 
-export template <Sender S>
-Awaiter<S> operator co_await(S s) {
-    return Awaiter<S>{std::move(s)};
-}
-
 } // namespace Karm::Async
+
+export template <Karm::Async::Sender S>
+Karm::Async::Awaiter<S> operator co_await(S s) {
+    return Karm::Async::Awaiter<S>{std::move(s)};
+}
