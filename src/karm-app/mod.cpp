@@ -5,3 +5,4 @@ export import :form_factor;
 export import :host;
 export import :inputs;
 export import :prefs;
+export import :application;

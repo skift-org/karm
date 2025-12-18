@@ -2,10 +2,12 @@
     "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
     "id": "karm-app",
     "type": "lib",
-    "description": "Application host",
+    "description": "Application lifecycle and window management.",
     "requires": [
         "karm-core",
         "karm-math",
-        "karm-app-impl"
+        "karm-gfx",
+        "karm-app-impl",
+        "karm-app-app-impl"
     ]
 }
