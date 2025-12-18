@@ -10,11 +10,13 @@ var namespaceKarm_1_1Async =
       [ "test$", "namespaceKarm_1_1Async_1_1Tests.html#ac73af1d03e35c4643abd58c085d88b52", null ],
       [ "test$", "namespaceKarm_1_1Async_1_1Tests.html#a33a5dc8627c0442a0624dbaa82c92892", null ],
       [ "test$", "namespaceKarm_1_1Async_1_1Tests.html#ac29dbeed4b8c5baa6d7e1b3d1462641f", null ],
-      [ "test$", "namespaceKarm_1_1Async_1_1Tests.html#ac42a984b8eb4e16ecee49ec6fc351b81", null ]
+      [ "test$", "namespaceKarm_1_1Async_1_1Tests.html#ac42a984b8eb4e16ecee49ec6fc351b81", null ],
+      [ "test$", "namespaceKarm_1_1Async_1_1Tests.html#aa7568e61b0b21c1b596b174f65ab26ba", null ]
     ] ],
     [ "Awaiter", "structKarm_1_1Async_1_1Awaiter.html", "structKarm_1_1Async_1_1Awaiter" ],
+    [ "Cancellable", "structKarm_1_1Async_1_1Cancellable.html", "structKarm_1_1Async_1_1Cancellable" ],
     [ "Cancellation", "structKarm_1_1Async_1_1Cancellation.html", "structKarm_1_1Async_1_1Cancellation" ],
-    [ "Context", "structKarm_1_1Async_1_1Context.html", "structKarm_1_1Async_1_1Context" ],
+    [ "CancellationToken", "structKarm_1_1Async_1_1CancellationToken.html", "structKarm_1_1Async_1_1CancellationToken" ],
     [ "Continuation", "structKarm_1_1Async_1_1Continuation.html", "structKarm_1_1Async_1_1Continuation" ],
     [ "Inline", "structKarm_1_1Async_1_1Inline.html", null ],
     [ "InlineOrLater", "structKarm_1_1Async_1_1InlineOrLater.html", "structKarm_1_1Async_1_1InlineOrLater" ],
@@ -26,7 +28,6 @@ var namespaceKarm_1_1Async =
     [ "Operation", "conceptKarm_1_1Async_1_1Operation.html", null ],
     [ "Receiver", "conceptKarm_1_1Async_1_1Receiver.html", null ],
     [ "Sender", "conceptKarm_1_1Async_1_1Sender.html", null ],
-    [ "CancellationToken", "namespaceKarm_1_1Async.html#af8612fed2b07c2e2cc2f97e4c5ec1a95", null ],
     [ "Future", "namespaceKarm_1_1Async.html#ac982df6cc775113df6d9844c5408dffd", null ],
     [ "OperationOf", "namespaceKarm_1_1Async.html#abf731c3505af4c13e4b44e5771681048", null ],
     [ "Promise", "namespaceKarm_1_1Async.html#ae1cd9687a512559d20397a39ddd6ef50", null ],

@@ -4,7 +4,6 @@ var dir_a5fd82bdfa4c030cf8b827d967b4bbc5 =
     [ "awaiter.cpp", "awaiter_8cpp.html", "awaiter_8cpp" ],
     [ "base.cpp", "karm-core_2async_2base_8cpp.html", "karm-core_2async_2base_8cpp" ],
     [ "cancellation.cpp", "cancellation_8cpp.html", "cancellation_8cpp" ],
-    [ "context.cpp", "karm-core_2async_2context_8cpp.html", "karm-core_2async_2context_8cpp" ],
     [ "mod.cpp", "karm-core_2async_2mod_8cpp.html", "karm-core_2async_2mod_8cpp" ],
     [ "one.cpp", "one_8cpp.html", "one_8cpp" ],
     [ "promise.cpp", "promise_8cpp.html", "promise_8cpp" ],

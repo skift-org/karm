@@ -179,7 +179,7 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Ui_1_1Grow.html">Grow</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Ui_1_1Host.html">Host</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Ui_1_1Handler.html">Handler</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Ui_1_1Icon.html">Icon</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -318,8 +318,8 @@ Functions</h2></td></tr>
 <tr class="separator:afcb3da28c54fa3c42173fb61386d8ac8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a314c0b6a2e903da75a286fd3d604f98a"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="namespaceKarm_1_1Ui.html#a83e5086d08101336278888d3ccaa50d6">Child</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Ui.html#a314c0b6a2e903da75a286fd3d604f98a">carousel</a> (<a class="el" href="namespaceKarm.html#a7826e564b525f4f5a2a0e63f961c2dbd">usize</a> selected, <a class="el" href="namespaceKarm_1_1Ui.html#a39ca68b51a3f5e9aa2c7357941c8eb5b">Children</a> children, <a class="el" href="structKarm_1_1Math_1_1Flow.html">Math::Flow</a> <a class="el" href="namespaceKarm_1_1Ui.html#ad2ea7ebbc52d519788c50620bf2def24">flow</a>)</td></tr>
 <tr class="separator:a314c0b6a2e903da75a286fd3d604f98a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afa51ad639bfa5392d96843d913353d83"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Ui.html#afa51ad639bfa5392d96843d913353d83">runAsync</a> (<a class="el" href="structKarm_1_1Sys_1_1Context.html">Sys::Context</a> &amp;ctx, <a class="el" href="namespaceKarm_1_1Ui.html#a83e5086d08101336278888d3ccaa50d6">Child</a> root, <a class="el" href="namespaceKarm_1_1Async.html#af8612fed2b07c2e2cc2f97e4c5ec1a95">Async::CancellationToken</a> ct)</td></tr>
-<tr class="separator:afa51ad639bfa5392d96843d913353d83"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a53d4a5dd3eafd054876b79743d4e0651"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Ui.html#a53d4a5dd3eafd054876b79743d4e0651">runAsync</a> (<a class="el" href="structKarm_1_1Sys_1_1Context.html">Sys::Context</a> &amp;, <a class="el" href="namespaceKarm_1_1Ui.html#a83e5086d08101336278888d3ccaa50d6">Child</a> root, <a class="el" href="structKarm_1_1Async_1_1CancellationToken.html">Async::CancellationToken</a> ct)</td></tr>
+<tr class="separator:a53d4a5dd3eafd054876b79743d4e0651"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5f0b198404d3df6ef444343a27778a3"><td class="memItemLeft" align="right" valign="top">export <a class="el" href="namespaceKarm_1_1Ui.html#a83e5086d08101336278888d3ccaa50d6">Child</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Ui.html#aa5f0b198404d3df6ef444343a27778a3">box</a> (<a class="el" href="structKarm_1_1Ui_1_1BoxStyle.html">BoxStyle</a> style, <a class="el" href="namespaceKarm_1_1Ui.html#a83e5086d08101336278888d3ccaa50d6">Child</a> inner)</td></tr>
 <tr class="separator:aa5f0b198404d3df6ef444343a27778a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a721fe7dec3b5b486bec079e878cd33e3"><td class="memItemLeft" align="right" valign="top">export auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Ui.html#a721fe7dec3b5b486bec079e878cd33e3">box</a> (<a class="el" href="structKarm_1_1Ui_1_1BoxStyle.html">BoxStyle</a> style)</td></tr>
@@ -652,6 +652,10 @@ Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
+<tr class="memitem:a0019be1f0cf0acb6816300ae86767cb3"><td class="memItemLeft" align="right" valign="top">export auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Ui.html#a0019be1f0cf0acb6816300ae86767cb3">FRAME_RATE</a> = 60</td></tr>
+<tr class="separator:a0019be1f0cf0acb6816300ae86767cb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a78833d1fc35381f7cc7ad18182a547e6"><td class="memItemLeft" align="right" valign="top">export auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Ui.html#a78833d1fc35381f7cc7ad18182a547e6">FRAME_TIME</a> = 1.0 / <a class="el" href="namespaceKarm_1_1Ui.html#a0019be1f0cf0acb6816300ae86767cb3">FRAME_RATE</a></td></tr>
+<tr class="separator:a78833d1fc35381f7cc7ad18182a547e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a000f10de0d227dc960418f88a373602d"><td class="memItemLeft" align="right" valign="top">export constexpr <a class="el" href="namespaceKarm.html#ad82b8e5abde741498d909649c69a5ba1">isize</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Ui.html#a000f10de0d227dc960418f88a373602d">SPACINGPX</a> = 1</td></tr>
 <tr class="separator:a000f10de0d227dc960418f88a373602d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f600e3c5f6565b051f8b1677da4ae5f"><td class="memItemLeft" align="right" valign="top">export constexpr <a class="el" href="namespaceKarm.html#ad82b8e5abde741498d909649c69a5ba1">isize</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Ui.html#a3f600e3c5f6565b051f8b1677da4ae5f">SPACING0</a> = 0</td></tr>
@@ -776,10 +780,6 @@ Variables</h2></td></tr>
 <tr class="separator:a7c0870c7ffd6d2c397569e32b4fcf2fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a134a0d37031b3ff30fce06ac73f2a134"><td class="memItemLeft" align="right" valign="top">export constexpr <a class="el" href="structKarm_1_1Gfx_1_1Color.html">Gfx::Color</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Ui.html#a134a0d37031b3ff30fce06ac73f2a134">ACCENT950</a> = <a class="el" href="namespaceKarm_1_1Ui.html#ab8ca4e70cff081c8277b77b584743c8a">ACCENTS</a>[10]</td></tr>
 <tr class="separator:a134a0d37031b3ff30fce06ac73f2a134"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0019be1f0cf0acb6816300ae86767cb3"><td class="memItemLeft" align="right" valign="top">export auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Ui.html#a0019be1f0cf0acb6816300ae86767cb3">FRAME_RATE</a> = 60</td></tr>
-<tr class="separator:a0019be1f0cf0acb6816300ae86767cb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a78833d1fc35381f7cc7ad18182a547e6"><td class="memItemLeft" align="right" valign="top">export auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Ui.html#a78833d1fc35381f7cc7ad18182a547e6">FRAME_TIME</a> = 1.0 / <a class="el" href="namespaceKarm_1_1Ui.html#a0019be1f0cf0acb6816300ae86767cb3">FRAME_RATE</a></td></tr>
-<tr class="separator:a78833d1fc35381f7cc7ad18182a547e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32e33d42aaf047d5ff8c52e00fd40e7d"><td class="memItemLeft" align="right" valign="top">export constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm_1_1Ui.html#a32e33d42aaf047d5ff8c52e00fd40e7d">UNCONSTRAINED</a> = -1</td></tr>
 <tr class="separator:a32e33d42aaf047d5ff8c52e00fd40e7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a75b792a6eac8b82f35647812285ceae4"><td class="memTemplParams" colspan="2">template&lt;typename... Ts&gt; </td></tr>
@@ -3888,8 +3888,8 @@ template&lt;typename <a class="el" href="structKarm_1_1Ui_1_1Model.html">Model</
 
 </div>
 </div>
-<a id="afa51ad639bfa5392d96843d913353d83" name="afa51ad639bfa5392d96843d913353d83"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afa51ad639bfa5392d96843d913353d83">&#9670;&#160;</a></span>runAsync()</h2>
+<a id="a53d4a5dd3eafd054876b79743d4e0651" name="a53d4a5dd3eafd054876b79743d4e0651"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a53d4a5dd3eafd054876b79743d4e0651">&#9670;&#160;</a></span>runAsync()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3898,7 +3898,7 @@ template&lt;typename <a class="el" href="structKarm_1_1Ui_1_1Model.html">Model</
           <td class="memname">export <a class="el" href="namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c">Async::Task</a> Karm::Ui::runAsync </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structKarm_1_1Sys_1_1Context.html">Sys::Context</a> &amp;&#160;</td>
-          <td class="paramname"><em>ctx</em>, </td>
+          <td class="paramname">, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -3909,7 +3909,7 @@ template&lt;typename <a class="el" href="structKarm_1_1Ui_1_1Model.html">Model</
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespaceKarm_1_1Async.html#af8612fed2b07c2e2cc2f97e4c5ec1a95">Async::CancellationToken</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="structKarm_1_1Async_1_1CancellationToken.html">Async::CancellationToken</a>&#160;</td>
           <td class="paramname"><em>ct</em>&#160;</td>
         </tr>
         <tr>

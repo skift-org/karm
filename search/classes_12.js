@@ -20,7 +20,7 @@ var searchData=
   ['tlsconnection_17',['TlsConnection',['../structKarm_1_1Tls_1_1TlsConnection.html',1,'Karm::Tls']]],
   ['toggle_18',['Toggle',['../structKarm_1_1Kira_1_1Toggle.html',1,'Karm::Kira']]],
   ['togglesidebar_19',['ToggleSidebar',['../structKarm_1_1Kira_1_1Scaffold_1_1ToggleSidebar.html',1,'Karm::Kira::Scaffold']]],
-  ['token_20',['Token',['../structKarm_1_1Async_1_1Cancellation_1_1Token.html',1,'Karm::Async::Cancellation::Token'],['../structKarm_1_1Cli_1_1Token.html',1,'Karm::Cli::Token']]],
+  ['token_20',['Token',['../structKarm_1_1Cli_1_1Token.html',1,'Karm::Cli']]],
   ['tokeninfos_21',['TokenInfos',['../structKarm_1_1Ml_1_1BpeVocab_1_1TokenInfos.html',1,'Karm::Ml::BpeVocab']]],
   ['trans2_22',['Trans2',['../unionKarm_1_1Math_1_1Trans2.html',1,'Karm::Math']]],
   ['transform_23',['Transform',['../structKarm_1_1Scene_1_1Transform.html',1,'Karm::Scene']]],

@@ -1,5 +1,6 @@
 var dir_a65ea3cd32a0f1a3625076dec9cdd855 =
 [
+    [ "main", "dir_cb210aa42036deac062b7340198dd776.html", "dir_cb210aa42036deac062b7340198dd776" ],
     [ "about-dialog.cpp", "about-dialog_8cpp.html", "about-dialog_8cpp" ],
     [ "avatar.cpp", "avatar_8cpp.html", "avatar_8cpp" ],
     [ "badge.cpp", "badge_8cpp.html", "badge_8cpp" ],

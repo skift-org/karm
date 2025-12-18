@@ -26,6 +26,7 @@ var hierarchy =
     [ "Karm::Io::Aligned< T >", "structKarm_1_1Io_1_1Aligned.html", null ],
     [ "Karm::Ui::Node::AnimateEvent", "structKarm_1_1Ui_1_1Node_1_1AnimateEvent.html", null ],
     [ "Karm::Net::Dns::Answer", "structKarm_1_1Net_1_1Dns_1_1Answer.html", null ],
+    [ "Karm::App::ApplicationProps", "structKarm_1_1App_1_1ApplicationProps.html", null ],
     [ "Karm::Math::Arc< T >", "unionKarm_1_1Math_1_1Arc.html", null ],
     [ "Karm::Array< T, N >", "structKarm_1_1Array.html", null ],
     [ "Karm::Array< BorderStyle, 4 >", "structKarm_1_1Array.html", null ],
@@ -118,6 +119,7 @@ var hierarchy =
     [ "Karm::Av::Camera", "structKarm_1_1Av_1_1Camera.html", null ],
     [ "Karm::Av::CameraFormat", "structKarm_1_1Av_1_1CameraFormat.html", null ],
     [ "Karm::Av::CameraInfo", "structKarm_1_1Av_1_1CameraInfo.html", null ],
+    [ "Karm::Async::CancellationToken", "structKarm_1_1Async_1_1CancellationToken.html", null ],
     [ "Karm::Gfx::Cap", "structKarm_1_1Gfx_1_1Cap.html", null ],
     [ "Karm::Io::Cased< T >", "structKarm_1_1Io_1_1Cased.html", null ],
     [ "Karm::Gc::Cell", "structKarm_1_1Gc_1_1Cell.html", null ],
@@ -147,7 +149,6 @@ var hierarchy =
       [ "Karm::Niche< Array< T, N > >::Content", "structKarm_1_1Niche_3_01Array_3_01T_00_01N_01_4_01_4_1_1Content.html", null ]
     ] ],
     [ "Karm::Niche< Union< Ts... > >::Content", "structKarm_1_1Niche_3_01Union_3_01Ts_8_8_8_01_4_01_4_1_1Content.html", null ],
-    [ "Karm::Async::Context", "structKarm_1_1Async_1_1Context.html", null ],
     [ "Karm::Async::Continuation< T >", "structKarm_1_1Async_1_1Continuation.html", null ],
     [ "Karm::Async::Continuation< S::Inner >", "structKarm_1_1Async_1_1Continuation.html", [
       [ "Karm::Async::Awaiter< S >", "structKarm_1_1Async_1_1Awaiter.html", null ]
@@ -234,7 +235,6 @@ var hierarchy =
         [ "Karm::Ui::LeafNode< StackLayout >", "structKarm_1_1Ui_1_1LeafNode.html", null ],
         [ "Karm::Ui::LeafNode< Text >", "structKarm_1_1Ui_1_1LeafNode.html", null ],
         [ "Karm::Ui::LeafNode< Viewport >", "structKarm_1_1Ui_1_1LeafNode.html", null ],
-        [ "Karm::Ui::Host", "structKarm_1_1Ui_1_1Host.html", null ],
         [ "Karm::Ui::LeafNode< Crtp >", "structKarm_1_1Ui_1_1LeafNode.html", [
           [ "Karm::Ui::GroupNode< Carousel >", "structKarm_1_1Ui_1_1GroupNode.html", [
             [ "Karm::Ui::Carousel", "structKarm_1_1Ui_1_1Carousel.html", null ]
@@ -532,6 +532,10 @@ var hierarchy =
     [ "Karm::Gfx::Greyscale8", "structKarm_1_1Gfx_1_1Greyscale8.html", null ],
     [ "Karm::Ui::GridStyle", "structKarm_1_1Ui_1_1GridStyle.html", null ],
     [ "Karm::Ui::GridUnit", "structKarm_1_1Ui_1_1GridUnit.html", null ],
+    [ "Karm::App::Handler", "structKarm_1_1App_1_1Handler.html", [
+      [ "Example::Handler", "structExample_1_1Handler.html", null ],
+      [ "Karm::Ui::Handler", "structKarm_1_1Ui_1_1Handler.html", null ]
+    ] ],
     [ "Karm::Http::Handler", "structKarm_1_1Http_1_1Handler.html", [
       [ "Karm::Http::Router", "structKarm_1_1Http_1_1Router.html", null ]
     ] ],
@@ -604,6 +608,7 @@ var hierarchy =
     [ "Karm::List< T >", "structKarm_1_1List.html", null ],
     [ "Karm::Async::State< T >::Listener", "structKarm_1_1Async_1_1State_1_1Listener.html", null ],
     [ "Karm::Ll< T, Item >", "structKarm_1_1Ll.html", null ],
+    [ "Karm::Ll< Karm::Async::Cancellable >", "structKarm_1_1Ll.html", null ],
     [ "Karm::Loc", "structKarm_1_1Loc.html", null ],
     [ "Karm::LockProtected< T, L >", "structKarm_1_1LockProtected.html", null ],
     [ "Karm::Image::Gif::Decoder::LogicalScreenDescriptor", "structKarm_1_1Image_1_1Gif_1_1Decoder_1_1LogicalScreenDescriptor.html", null ],
@@ -774,12 +779,17 @@ var hierarchy =
     [ "Karm::Print::PdfPage", "structKarm_1_1Print_1_1PdfPage.html", null ],
     [ "Karm::Sys::Pid", "structKarm_1_1Sys_1_1Pid.html", null ],
     [ "Karm::Meta::Pinned", "structKarm_1_1Meta_1_1Pinned.html", [
+      [ "Karm::LlItem< Karm::Async::Cancellable >", "structKarm_1_1LlItem.html", null ],
       [ "Karm::LlItem< Karm::Async::State::Listener >", "structKarm_1_1LlItem.html", null ],
       [ "Karm::LlItem< Karm::List::Item >", "structKarm_1_1LlItem.html", null ],
       [ "Karm::LlItem< Karm::Lru::Item >", "structKarm_1_1LlItem.html", null ],
       [ "Karm::LlItem< Karm::Sieve::Item >", "structKarm_1_1LlItem.html", null ],
+      [ "Karm::App::Application", "structKarm_1_1App_1_1Application.html", null ],
+      [ "Karm::App::Window", "structKarm_1_1App_1_1Window.html", null ],
       [ "Karm::Async::Awaiter< S >", "structKarm_1_1Async_1_1Awaiter.html", null ],
-      [ "Karm::Async::Cancellation", "structKarm_1_1Async_1_1Cancellation.html", null ],
+      [ "Karm::Async::Cancellable", "structKarm_1_1Async_1_1Cancellable.html", [
+        [ "Karm::Async::Cancellation", "structKarm_1_1Async_1_1Cancellation.html", null ]
+      ] ],
       [ "Karm::Cli::Command", "structKarm_1_1Cli_1_1Command.html", null ],
       [ "Karm::CriticalScope", "structKarm_1_1CriticalScope.html", null ],
       [ "Karm::Debug::Flag", "structKarm_1_1Debug_1_1Flag.html", null ],
@@ -983,7 +993,6 @@ var hierarchy =
     [ "Karm::Gfx::TintFilter", "structKarm_1_1Gfx_1_1TintFilter.html", null ],
     [ "Karm::Kira::TitlebarContent", "structKarm_1_1Kira_1_1TitlebarContent.html", null ],
     [ "Karm::Kira::Scaffold::ToggleSidebar", "structKarm_1_1Kira_1_1Scaffold_1_1ToggleSidebar.html", null ],
-    [ "Karm::Async::Cancellation::Token", "structKarm_1_1Async_1_1Cancellation_1_1Token.html", null ],
     [ "Karm::Cli::Token", "structKarm_1_1Cli_1_1Token.html", null ],
     [ "Karm::Ml::BpeVocab::TokenInfos", "structKarm_1_1Ml_1_1BpeVocab_1_1TokenInfos.html", null ],
     [ "Karm::Math::Trans2< T >", "unionKarm_1_1Math_1_1Trans2.html", null ],
@@ -1055,6 +1064,7 @@ var hierarchy =
     [ "Karm::ViewBuf< T >", "structKarm_1_1ViewBuf.html", null ],
     [ "Karm::Kv::Wal", "structKarm_1_1Kv_1_1Wal.html", null ],
     [ "Karm::Archive::Window", "structKarm_1_1Archive_1_1Window.html", null ],
+    [ "Karm::App::WindowProps", "structKarm_1_1App_1_1WindowProps.html", null ],
     [ "Karm::Wrap", "structKarm_1_1Wrap.html", null ],
     [ "Karm::Aio::Writer", "structKarm_1_1Aio_1_1Writer.html", [
       [ "Karm::Aio::Adapter< T >", "structKarm_1_1Aio_1_1Adapter.html", null ],

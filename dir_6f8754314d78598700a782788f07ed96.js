@@ -1,6 +1,6 @@
 var dir_6f8754314d78598700a782788f07ed96 =
 [
-    [ "sdl", "dir_7a6e1566b75c357aa2e25b5b2329f0c2.html", "dir_7a6e1566b75c357aa2e25b5b2329f0c2" ],
+    [ "main", "dir_9c05645c3382ce850bc0077dca385339.html", "dir_9c05645c3382ce850bc0077dca385339" ],
     [ "tests", "dir_675c3971a53728d37bbb50eb5a4748ca.html", "dir_675c3971a53728d37bbb50eb5a4748ca" ],
     [ "anim.cpp", "anim_8cpp.html", "anim_8cpp" ],
     [ "app.cpp", "app_8cpp.html", "app_8cpp" ],
@@ -10,7 +10,6 @@ var dir_6f8754314d78598700a782788f07ed96 =
     [ "drag.cpp", "drag_8cpp.html", "drag_8cpp" ],
     [ "focus.cpp", "focus_8cpp.html", "focus_8cpp" ],
     [ "funcs.cpp", "karm-ui_2funcs_8cpp.html", "karm-ui_2funcs_8cpp" ],
-    [ "host.cpp", "karm-ui_2host_8cpp.html", "karm-ui_2host_8cpp" ],
     [ "input.cpp", "karm-ui_2input_8cpp.html", "karm-ui_2input_8cpp" ],
     [ "intent.cpp", "intent_8cpp.html", "intent_8cpp" ],
     [ "layout.cpp", "layout_8cpp.html", "layout_8cpp" ],

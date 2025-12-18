@@ -1,7 +1,13 @@
 var namespaceKarm_1_1App =
 [
+    [ "Sdl", "namespaceKarm_1_1App_1_1Sdl.html", [
+      [ "fromSdlKeyboardEvent", "namespaceKarm_1_1App_1_1Sdl.html#a88ce76d9208e3f5eca55829bc3768091", null ]
+    ] ],
+    [ "Application", "structKarm_1_1App_1_1Application.html", "structKarm_1_1App_1_1Application" ],
+    [ "ApplicationProps", "structKarm_1_1App_1_1ApplicationProps.html", null ],
     [ "Dispatch", "structKarm_1_1App_1_1Dispatch.html", "structKarm_1_1App_1_1Dispatch" ],
     [ "Event", "structKarm_1_1App_1_1Event.html", "structKarm_1_1App_1_1Event" ],
+    [ "Handler", "structKarm_1_1App_1_1Handler.html", "structKarm_1_1App_1_1Handler" ],
     [ "Key", "structKarm_1_1App_1_1Key.html", "structKarm_1_1App_1_1Key" ],
     [ "KeyboardEvent", "structKarm_1_1App_1_1KeyboardEvent.html", "structKarm_1_1App_1_1KeyboardEvent" ],
     [ "MockPrefs", "structKarm_1_1App_1_1MockPrefs.html", "structKarm_1_1App_1_1MockPrefs" ],
@@ -13,6 +19,9 @@ var namespaceKarm_1_1App =
     [ "RequestMaximizeEvent", "structKarm_1_1App_1_1RequestMaximizeEvent.html", null ],
     [ "RequestMinimizeEvent", "structKarm_1_1App_1_1RequestMinimizeEvent.html", null ],
     [ "TypeEvent", "structKarm_1_1App_1_1TypeEvent.html", "structKarm_1_1App_1_1TypeEvent" ],
+    [ "Window", "structKarm_1_1App_1_1Window.html", "structKarm_1_1App_1_1Window" ],
+    [ "WindowProps", "structKarm_1_1App_1_1WindowProps.html", "structKarm_1_1App_1_1WindowProps" ],
+    [ "WindowId", "namespaceKarm_1_1App.html#a3984387366571ac2fd77fab2df6e129b", null ],
     [ "FormFactor", "namespaceKarm_1_1App.html#ae8b0398827181942904ae3adf1faf662", [
       [ "DESKTOP", "namespaceKarm_1_1App.html#ae8b0398827181942904ae3adf1faf662a835669054d277609644215a014523c42", null ],
       [ "MOBILE", "namespaceKarm_1_1App.html#ae8b0398827181942904ae3adf1faf662ad9e3110063ba107ab79340dceebc2d7b", null ],

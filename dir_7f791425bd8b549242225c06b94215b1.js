@@ -11,7 +11,7 @@ var dir_7f791425bd8b549242225c06b94215b1 =
     [ "async.cpp", "karm-sys_2async_8cpp.html", "karm-sys_2async_8cpp" ],
     [ "bundle.cpp", "bundle_8cpp.html", "bundle_8cpp" ],
     [ "chan.cpp", "chan_8cpp.html", "chan_8cpp" ],
-    [ "context.cpp", "karm-sys_2context_8cpp.html", "karm-sys_2context_8cpp" ],
+    [ "context.cpp", "context_8cpp.html", "context_8cpp" ],
     [ "defs.h", "defs_8h.html", "defs_8h" ],
     [ "dir.cpp", "dir_8cpp.html", "dir_8cpp" ],
     [ "endpoint.cpp", "endpoint_8cpp.html", "endpoint_8cpp" ],

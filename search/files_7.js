@@ -5,6 +5,6 @@ var searchData=
   ['header_2ecpp_2',['header.cpp',['../header_8cpp.html',1,'']]],
   ['heap_2ecpp_3',['heap.cpp',['../heap_8cpp.html',1,'']]],
   ['hex_2ecpp_4',['hex.cpp',['../hex_8cpp.html',1,'']]],
-  ['host_2ecpp_5',['host.cpp',['../karm-app_2host_8cpp.html',1,'(Global Namespace)'],['../karm-ui_2host_8cpp.html',1,'(Global Namespace)']]],
+  ['host_2ecpp_5',['host.cpp',['../host_8cpp.html',1,'']]],
   ['html_2ecpp_6',['html.cpp',['../html_8cpp.html',1,'']]]
 ];

@@ -1,5 +1,8 @@
 var annotated_dup =
 [
+    [ "Example", "namespaceExample.html", [
+      [ "Handler", "structExample_1_1Handler.html", "structExample_1_1Handler" ]
+    ] ],
     [ "Karm", "namespaceKarm.html", [
       [ "Aio", "namespaceKarm_1_1Aio.html", [
         [ "Adapter", "structKarm_1_1Aio_1_1Adapter.html", "structKarm_1_1Aio_1_1Adapter" ],
@@ -8,8 +11,11 @@ var annotated_dup =
         [ "Writer", "structKarm_1_1Aio_1_1Writer.html", "structKarm_1_1Aio_1_1Writer" ]
       ] ],
       [ "App", "namespaceKarm_1_1App.html", [
+        [ "Application", "structKarm_1_1App_1_1Application.html", "structKarm_1_1App_1_1Application" ],
+        [ "ApplicationProps", "structKarm_1_1App_1_1ApplicationProps.html", null ],
         [ "Dispatch", "structKarm_1_1App_1_1Dispatch.html", "structKarm_1_1App_1_1Dispatch" ],
         [ "Event", "structKarm_1_1App_1_1Event.html", "structKarm_1_1App_1_1Event" ],
+        [ "Handler", "structKarm_1_1App_1_1Handler.html", "structKarm_1_1App_1_1Handler" ],
         [ "Key", "structKarm_1_1App_1_1Key.html", "structKarm_1_1App_1_1Key" ],
         [ "KeyboardEvent", "structKarm_1_1App_1_1KeyboardEvent.html", "structKarm_1_1App_1_1KeyboardEvent" ],
         [ "MockPrefs", "structKarm_1_1App_1_1MockPrefs.html", "structKarm_1_1App_1_1MockPrefs" ],
@@ -20,7 +26,9 @@ var annotated_dup =
         [ "RequestExitEvent", "structKarm_1_1App_1_1RequestExitEvent.html", "structKarm_1_1App_1_1RequestExitEvent" ],
         [ "RequestMaximizeEvent", "structKarm_1_1App_1_1RequestMaximizeEvent.html", null ],
         [ "RequestMinimizeEvent", "structKarm_1_1App_1_1RequestMinimizeEvent.html", null ],
-        [ "TypeEvent", "structKarm_1_1App_1_1TypeEvent.html", "structKarm_1_1App_1_1TypeEvent" ]
+        [ "TypeEvent", "structKarm_1_1App_1_1TypeEvent.html", "structKarm_1_1App_1_1TypeEvent" ],
+        [ "Window", "structKarm_1_1App_1_1Window.html", "structKarm_1_1App_1_1Window" ],
+        [ "WindowProps", "structKarm_1_1App_1_1WindowProps.html", "structKarm_1_1App_1_1WindowProps" ]
       ] ],
       [ "Archive", "namespaceKarm_1_1Archive.html", [
         [ "Huff", "structKarm_1_1Archive_1_1Huff.html", "structKarm_1_1Archive_1_1Huff" ],
@@ -28,8 +36,9 @@ var annotated_dup =
       ] ],
       [ "Async", "namespaceKarm_1_1Async.html", [
         [ "Awaiter", "structKarm_1_1Async_1_1Awaiter.html", "structKarm_1_1Async_1_1Awaiter" ],
+        [ "Cancellable", "structKarm_1_1Async_1_1Cancellable.html", "structKarm_1_1Async_1_1Cancellable" ],
         [ "Cancellation", "structKarm_1_1Async_1_1Cancellation.html", "structKarm_1_1Async_1_1Cancellation" ],
-        [ "Context", "structKarm_1_1Async_1_1Context.html", "structKarm_1_1Async_1_1Context" ],
+        [ "CancellationToken", "structKarm_1_1Async_1_1CancellationToken.html", "structKarm_1_1Async_1_1CancellationToken" ],
         [ "Continuation", "structKarm_1_1Async_1_1Continuation.html", "structKarm_1_1Async_1_1Continuation" ],
         [ "Inline", "structKarm_1_1Async_1_1Inline.html", null ],
         [ "InlineOrLater", "structKarm_1_1Async_1_1InlineOrLater.html", "structKarm_1_1Async_1_1InlineOrLater" ],
@@ -640,7 +649,7 @@ var annotated_dup =
         [ "GridUnit", "structKarm_1_1Ui_1_1GridUnit.html", "structKarm_1_1Ui_1_1GridUnit" ],
         [ "GroupNode", "structKarm_1_1Ui_1_1GroupNode.html", "structKarm_1_1Ui_1_1GroupNode" ],
         [ "Grow", "structKarm_1_1Ui_1_1Grow.html", "structKarm_1_1Ui_1_1Grow" ],
-        [ "Host", "structKarm_1_1Ui_1_1Host.html", "structKarm_1_1Ui_1_1Host" ],
+        [ "Handler", "structKarm_1_1Ui_1_1Handler.html", "structKarm_1_1Ui_1_1Handler" ],
         [ "Icon", "structKarm_1_1Ui_1_1Icon.html", "structKarm_1_1Ui_1_1Icon" ],
         [ "Image", "structKarm_1_1Ui_1_1Image.html", "structKarm_1_1Ui_1_1Image" ],
         [ "Input", "structKarm_1_1Ui_1_1Input.html", "structKarm_1_1Ui_1_1Input" ],

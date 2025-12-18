@@ -101,12 +101,11 @@ $(document).ready(function(){initNavTree('conceptKarm_1_1Http_1_1HandlerFunc.htm
 <div class="contents">
 <h2 class="groupheader">Concept definition</h2>
 <div class="fragment"><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> F&gt;</div>
-<div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="conceptKarm_1_1Http_1_1HandlerFunc.html">Karm::Http::HandlerFunc</a> =  <span class="keyword">requires</span>(F f, Rc&lt;Request&gt; req, Rc&lt;ResponseWriter&gt; resp, <a class="code hl_typedef" href="namespaceKarm_1_1Async.html#af8612fed2b07c2e2cc2f97e4c5ec1a95">Async::CancellationToken</a> ct) {</div>
+<div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="conceptKarm_1_1Http_1_1HandlerFunc.html">Karm::Http::HandlerFunc</a> =  <span class="keyword">requires</span>(F f, Rc&lt;Request&gt; req, Rc&lt;ResponseWriter&gt; resp, Async::CancellationToken ct) {</div>
 <div class="line">    { f(req, resp, ct) } -&gt; <a class="code hl_concept" href="conceptKarm_1_1Meta_1_1Same.html">Meta::Same&lt;Async::Task&lt;&gt;</a>&gt;;</div>
 <div class="line">}</div>
 <div class="ttc" id="aconceptKarm_1_1Http_1_1HandlerFunc_html"><div class="ttname"><a href="conceptKarm_1_1Http_1_1HandlerFunc.html">Karm::Http::HandlerFunc</a></div><div class="ttdef"><b>Definition:</b> server.cpp:22</div></div>
 <div class="ttc" id="aconceptKarm_1_1Meta_1_1Same_html"><div class="ttname"><a href="conceptKarm_1_1Meta_1_1Same.html">Karm::Meta::Same</a></div><div class="ttdef"><b>Definition:</b> traits.cpp:134</div></div>
-<div class="ttc" id="anamespaceKarm_1_1Async_html_af8612fed2b07c2e2cc2f97e4c5ec1a95"><div class="ttname"><a href="namespaceKarm_1_1Async.html#af8612fed2b07c2e2cc2f97e4c5ec1a95">Karm::Async::CancellationToken</a></div><div class="ttdeci">Cancellation::Token CancellationToken</div><div class="ttdef"><b>Definition:</b> cancellation.cpp:45</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
