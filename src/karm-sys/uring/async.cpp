@@ -39,18 +39,30 @@ struct __kernel_timespec toKernelTimespec(Duration ts) {
     return kts;
 }
 
+static char CANCEL_TOKEN = 0xff;
+
 struct UringSched : Sys::Sched {
     static constexpr auto NCQES = 128;
 
-    struct _Job {
-        virtual ~_Job() = default;
+    struct _Job : Async::Cancellable {
+        UringSched& _uring;
+
+        _Job(UringSched& uring) : _uring(uring) {}
+
         virtual void submit(io_uring_sqe* sqe) = 0;
         virtual void complete(io_uring_cqe* cqe) = 0;
+
+        void cancel() override {
+            io_uring_sqe* sqe = io_uring_get_sqe(&_uring._ring);
+            if (not sqe) [[unlikely]]
+                panic("failed to get sqe");
+            io_uring_prep_cancel64(sqe, reinterpret_cast<usize>(this), 0);
+            sqe->user_data = reinterpret_cast<usize>(&CANCEL_TOKEN);
+            io_uring_submit(&_uring._ring);
+        }
     };
 
     io_uring _ring;
-    usize _id = 1;
-    Map<usize, Rc<_Job>> _jobs;
 
     UringSched(io_uring ring)
         : _ring(ring) {}
@@ -59,14 +71,13 @@ struct UringSched : Sys::Sched {
         io_uring_queue_exit(&_ring);
     }
 
-    void submit(Rc<_Job> job) {
-        auto id = _id++;
+    void submit(_Job& job, Async::CancellationToken ct) {
         auto* sqe = io_uring_get_sqe(&_ring);
         if (not sqe) [[unlikely]]
             panic("failed to get sqe");
-        _jobs.put(id, job);
-        job->submit(sqe);
-        sqe->user_data = id;
+        job.submit(sqe);
+        sqe->user_data = reinterpret_cast<usize>(&job);
+        (void)job.attach(ct);
         io_uring_submit(&_ring);
     }
 
@@ -77,8 +88,8 @@ struct UringSched : Sys::Sched {
             MutBytes _buf;
             Async::Promise<usize> _promise;
 
-            Job(Rc<Posix::Fd> fd, MutBytes buf)
-                : _fd(fd), _buf(buf) {}
+            Job(UringSched& uring, Rc<Posix::Fd> fd, MutBytes buf)
+                : _Job(uring), _fd(fd), _buf(buf) {}
 
             void submit(io_uring_sqe* sqe) override {
                 io_uring_prep_read(
@@ -104,9 +115,9 @@ struct UringSched : Sys::Sched {
         };
 
         co_try$(ct.errorIfCanceled());
-        auto job = makeRc<Job>(co_try$(Posix::toPosixFd(fd)), buf);
-        submit(job);
-        co_return co_await job->future();
+        Job job{*this, co_try$(Posix::toPosixFd(fd)), buf};
+        submit(job, ct);
+        co_return co_await job.future();
     }
 
     [[clang::coro_wrapper]]
@@ -116,8 +127,8 @@ struct UringSched : Sys::Sched {
             Bytes _buf;
             Async::Promise<usize> _promise;
 
-            Job(Rc<Posix::Fd> fd, Bytes buf)
-                : _fd(fd), _buf(buf) {}
+            Job(UringSched& uring, Rc<Posix::Fd> fd, Bytes buf)
+                : _Job(uring), _fd(fd), _buf(buf) {}
 
             void submit(io_uring_sqe* sqe) override {
                 io_uring_prep_write(
@@ -147,9 +158,9 @@ struct UringSched : Sys::Sched {
         };
 
         co_try$(ct.errorIfCanceled());
-        auto job = makeRc<Job>(co_try$(Posix::toPosixFd(fd)), buf);
-        submit(job);
-        co_return co_await job->future();
+        Job job{*this, co_try$(Posix::toPosixFd(fd)), buf};
+        submit(job, ct);
+        co_return co_await job.future();
     }
 
     [[clang::coro_wrapper]]
@@ -158,8 +169,8 @@ struct UringSched : Sys::Sched {
             Rc<Posix::Fd> _fd;
             Async::Promise<> _promise;
 
-            Job(Rc<Posix::Fd> fd)
-                : _fd(fd) {}
+            Job(UringSched& uring, Rc<Posix::Fd> fd)
+                : _Job(uring), _fd(fd) {}
 
             void submit(io_uring_sqe* sqe) override {
                 io_uring_prep_fsync(sqe, _fd->_raw, 0);
@@ -179,9 +190,9 @@ struct UringSched : Sys::Sched {
         };
 
         co_try$(ct.errorIfCanceled());
-        auto job = makeRc<Job>(co_try$(Posix::toPosixFd(fd)));
-        submit(job);
-        co_return co_await job->future();
+        Job job{*this, co_try$(Posix::toPosixFd(fd))};
+        submit(job, ct);
+        co_return co_await job.future();
     }
 
     [[clang::coro_wrapper]]
@@ -192,8 +203,8 @@ struct UringSched : Sys::Sched {
             unsigned _addrLen = sizeof(sockaddr_in);
             Async::Promise<_Accepted> _promise;
 
-            Job(Rc<Posix::Fd> fd)
-                : _fd(fd) {}
+            Job(UringSched& uring, Rc<Posix::Fd> fd)
+                : _Job(uring), _fd(fd) {}
 
             void submit(io_uring_sqe* sqe) override {
                 io_uring_prep_accept(sqe, _fd->_raw, (struct sockaddr*)&_addr, &_addrLen, 0);
@@ -215,9 +226,9 @@ struct UringSched : Sys::Sched {
         };
 
         co_try$(ct.errorIfCanceled());
-        auto job = makeRc<Job>(co_try$(Posix::toPosixFd(fd)));
-        submit(job);
-        co_return co_await job->future();
+        Job job{*this, co_try$(Posix::toPosixFd(fd))};
+        submit(job, ct);
+        co_return co_await job.future();
     }
 
     [[clang::coro_wrapper]]
@@ -233,8 +244,8 @@ struct UringSched : Sys::Sched {
             sockaddr_in _addr;
             Async::Promise<_Sent> _promise;
 
-            Job(Rc<Posix::Fd> fd, Bytes buf, SocketAddr addr)
-                : _fd(fd), _buf(buf), _addr(Posix::toSockAddr(addr)) {}
+            Job(UringSched& uring, Rc<Posix::Fd> fd, Bytes buf, SocketAddr addr)
+                : _Job(uring), _fd(fd), _buf(buf), _addr(Posix::toSockAddr(addr)) {}
 
             void submit(io_uring_sqe* sqe) override {
                 _iov.iov_base = const_cast<u8*>(_buf.begin());
@@ -266,9 +277,9 @@ struct UringSched : Sys::Sched {
         };
 
         co_try$(ct.errorIfCanceled());
-        auto job = makeRc<Job>(co_try$(Posix::toPosixFd(fd)), buf, addr);
-        submit(job);
-        co_return co_await job->future();
+        Job job{*this, co_try$(Posix::toPosixFd(fd)), buf, addr};
+        submit(job, ct);
+        co_return co_await job.future();
     }
 
     [[clang::coro_wrapper]]
@@ -281,8 +292,8 @@ struct UringSched : Sys::Sched {
             sockaddr_in _addr;
             Async::Promise<_Received> _promise;
 
-            Job(Rc<Posix::Fd> fd, MutBytes buf)
-                : _fd(fd), _buf(buf) {}
+            Job(UringSched& uring, Rc<Posix::Fd> fd, MutBytes buf)
+                : _Job(uring), _fd(fd), _buf(buf) {}
 
             void submit(io_uring_sqe* sqe) override {
                 _iov.iov_base = _buf.begin();
@@ -311,9 +322,9 @@ struct UringSched : Sys::Sched {
         };
 
         co_try$(ct.errorIfCanceled());
-        auto job = makeRc<Job>(co_try$(Posix::toPosixFd(fd)), buf);
-        submit(job);
-        co_return co_await job->future();
+        Job job{*this, co_try$(Posix::toPosixFd(fd)), buf};
+        submit(job, ct);
+        co_return co_await job.future();
     }
 
     Async::Task<Flags<Poll>> pollAsync(Rc<Fd> fd, Flags<Sys::Poll> events, Async::CancellationToken ct) override {
@@ -322,8 +333,8 @@ struct UringSched : Sys::Sched {
             Flags<Sys::Poll> _events;
             Async::Promise<Flags<Sys::Poll>> _promise;
 
-            Job(Rc<Posix::Fd> fd, Flags<Sys::Poll> events)
-                : _fd(fd), _events(events) {}
+            Job(UringSched& uring, Rc<Posix::Fd> fd, Flags<Sys::Poll> events)
+                : _Job(uring), _fd(fd), _events(events) {}
 
             void submit(io_uring_sqe* sqe) override {
                 unsigned pollMask = 0;
@@ -343,7 +354,7 @@ struct UringSched : Sys::Sched {
                     if (cqe->res & POLLIN)
                         events.set(Poll::READABLE);
                     if (cqe->res & POLLOUT)
-                        events.set(Poll::READABLE);
+                        events.set(Poll::WRITEABLE);
                     _promise.resolve(Ok(events));
                 }
             }
@@ -354,9 +365,9 @@ struct UringSched : Sys::Sched {
         };
 
         co_try$(ct.errorIfCanceled());
-        auto job = makeRc<Job>(co_try$(Posix::toPosixFd(fd)), events);
-        submit(job);
-        co_return co_await job->future();
+        Job job{*this, co_try$(Posix::toPosixFd(fd)), events};
+        submit(job, ct);
+        co_return co_await job.future();
     }
 
     [[clang::coro_wrapper]]
@@ -367,8 +378,8 @@ struct UringSched : Sys::Sched {
 
             struct __kernel_timespec _ts{};
 
-            Job(Instant until)
-                : _until(until) {}
+            Job(UringSched& uring, Instant until)
+                : _Job(uring), _until(until) {}
 
             void submit(io_uring_sqe* sqe) override {
                 _ts = toKernelTimespec(_until);
@@ -388,9 +399,9 @@ struct UringSched : Sys::Sched {
         };
 
         co_try$(ct.errorIfCanceled());
-        auto job = makeRc<Job>(until);
-        submit(job);
-        co_return co_await job->future();
+        Job job{*this, until};
+        submit(job, ct);
+        co_return co_await job.future();
     }
 
     bool _inWait = false;
@@ -416,11 +427,13 @@ struct UringSched : Sys::Sched {
         unsigned head;
         usize i = 0;
         io_uring_for_each_cqe(&_ring, head, cqe) {
-            auto id = cqe->user_data;
-            auto job = _jobs.get(id);
-            job->complete(cqe);
-            _jobs.del(id);
             ++i;
+            if (cqe->user_data == reinterpret_cast<usize>(&CANCEL_TOKEN)) {
+                continue;
+            }
+
+            auto* job = reinterpret_cast<_Job*>(cqe->user_data);
+            job->complete(cqe);
         }
 
         io_uring_cq_advance(&_ring, i);

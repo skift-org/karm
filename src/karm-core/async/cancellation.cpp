@@ -86,7 +86,6 @@ Res<> Cancellable::attach(CancellationToken ct) {
 }
 
 Res<> Cancellable::attach(Cancellation& c) {
-
     if (cancellation)
         cancellation->cancellables.detach(this);
 
