@@ -1,8 +1,10 @@
 var namespaceKarm_1_1Sys =
 [
     [ "Tests", "namespaceKarm_1_1Sys_1_1Tests.html", [
+      [ "bigSleptAsync", "namespaceKarm_1_1Sys_1_1Tests.html#af2bd9f072720d67c34590499f38086d9", null ],
       [ "sleepyBoy", "namespaceKarm_1_1Sys_1_1Tests.html#a2235c2b793244090d3135ebb9abf7ef6", null ],
       [ "test$", "namespaceKarm_1_1Sys_1_1Tests.html#ab16f6753d210dce642cbccd5931a429d", null ],
+      [ "testAsync$", "namespaceKarm_1_1Sys_1_1Tests.html#a02a20494a46557002cb641f1467608c2", null ],
       [ "testAsync$", "namespaceKarm_1_1Sys_1_1Tests.html#af7d4be09a6f1b8b774b37b5c8e962e09", null ]
     ] ],
     [ "ArgsHook", "structKarm_1_1Sys_1_1ArgsHook.html", "structKarm_1_1Sys_1_1ArgsHook" ],
