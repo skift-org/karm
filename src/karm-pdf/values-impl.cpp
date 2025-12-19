@@ -26,7 +26,7 @@ Res<> Array::write(Io::Writer& w) const {
 Res<> Dict::write(Io::Writer& w) const {
     try$(Io::format(w, "<<\n"));
     for (auto const& [k, v] : iterUnordered()) {
-        try$(Io::format(w, "/{} ", k));
+        try$(Io::format(w, "/{} ", k.str()));
         try$(v.write(w));
         try$(Io::format(w, "\n"));
     }
