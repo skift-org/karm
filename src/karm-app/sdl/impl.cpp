@@ -77,6 +77,7 @@ struct SdlApplication : Application {
 
         SDL_ShowWindow(sdlWindow);
         SDL_UpdateWindowSurface(sdlWindow);
+        SDL_StartTextInput(sdlWindow);
         auto window = makeRc<SdlWindow>(*this, sdlWindow);
         _windows.put(SDL_GetWindowID(sdlWindow), &*window);
         return Ok(window);
