@@ -20,4 +20,24 @@ test$("box-niche") {
     return Ok();
 }
 
+struct TestType {
+    bool deleted = false;
+};
+
+struct TestDeleter {
+    void operator()(TestType* p) const {
+        p->deleted = true;
+    };
+};
+
+test$("box-deleter") {
+    TestType test;
+    {
+        Box<TestType, TestDeleter> testBox(MOVE, &test);
+    }
+    expect$(test.deleted);
+
+    return Ok();
+}
+
 } // namespace Karm::Base::Tests

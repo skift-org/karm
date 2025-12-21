@@ -9,9 +9,22 @@ import :base.opt;
 
 namespace Karm {
 
-export template <typename T>
+template <typename T, typename U>
+concept DeleterFor = Meta::Callable<T, U*>;
+
+template <typename T>
+struct DeleteDeleter {
+    always_inline void operator()(T* p) const {
+        delete p;
+    };
+};
+
+static_assert(DeleterFor<DeleteDeleter<void>, void>);
+
+export template <typename T, DeleterFor<T> D = DeleteDeleter<T>>
 struct Box {
     T* _ptr{};
+    [[no_unique_address]] D _deleter{};
 
     constexpr Box() = delete;
 
@@ -33,7 +46,7 @@ struct Box {
 
     constexpr ~Box() {
         if (_ptr)
-            delete _ptr;
+            _deleter(_ptr);
         _ptr = nullptr;
     }
 
@@ -115,8 +128,8 @@ struct Box {
     }
 };
 
-export template <typename T>
-struct Niche<Box<T>> {
+export template <typename T, typename D>
+struct Niche<Box<T, D>> {
     struct Content {
         char const* ptr;
 
@@ -128,9 +141,9 @@ struct Niche<Box<T>> {
     };
 };
 
-export template <typename T, typename... Args>
+export template <typename T, typename D = DeleteDeleter<T>, typename... Args>
     requires Meta::Constructible<T, Args...>
-constexpr Box<T> makeBox(Args... args) {
+constexpr Box<T, D> makeBox(Args... args) {
     return {MOVE, new T(std::forward<Args>(args)...)};
 }
 
