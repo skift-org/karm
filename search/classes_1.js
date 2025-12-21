@@ -22,7 +22,7 @@ var searchData=
   ['body_19',['Body',['../structKarm_1_1Http_1_1Body.html',1,'Karm::Http']]],
   ['borders_20',['Borders',['../structKarm_1_1Gfx_1_1Borders.html',1,'Karm::Gfx']]],
   ['bound_21',['Bound',['../structKarm_1_1Ui_1_1Bound.html',1,'Karm::Ui']]],
-  ['box_22',['Box',['../structKarm_1_1Box.html',1,'Karm::Box&lt; T &gt;'],['../structKarm_1_1Scene_1_1Box.html',1,'Karm::Scene::Box'],['../structKarm_1_1Ui_1_1Box.html',1,'Karm::Ui::Box']]],
+  ['box_22',['Box',['../structKarm_1_1Box.html',1,'Karm::Box&lt; T, D &gt;'],['../structKarm_1_1Scene_1_1Box.html',1,'Karm::Scene::Box'],['../structKarm_1_1Ui_1_1Box.html',1,'Karm::Ui::Box']]],
   ['boxshadow_23',['BoxShadow',['../structKarm_1_1Gfx_1_1BoxShadow.html',1,'Karm::Gfx']]],
   ['boxstyle_24',['BoxStyle',['../structKarm_1_1Ui_1_1BoxStyle.html',1,'Karm::Ui']]],
   ['bpattern_25',['BPattern',['../structKarm_1_1Io_1_1BPattern.html',1,'Karm::Io']]],

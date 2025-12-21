@@ -99,6 +99,7 @@ $(document).ready(function(){initNavTree('karm-core_2base_2box_8cpp.html',''); i
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
+<a href="#concepts">Concepts</a> &#124;
 <a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">box.cpp File Reference</div></div>
@@ -108,11 +109,13 @@ $(document).ready(function(){initNavTree('karm-core_2base_2box_8cpp.html',''); i
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Box.html">Karm::Box&lt; T &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1DeleteDeleter.html">Karm::DeleteDeleter&lt; T &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Niche_3_01Box_3_01T_01_4_01_4.html">Karm::Niche&lt; Box&lt; T &gt; &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Box.html">Karm::Box&lt; T, D &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Niche_3_01Box_3_01T_01_4_01_4_1_1Content.html">Karm::Niche&lt; Box&lt; T &gt; &gt;::Content</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Niche_3_01Box_3_01T_00_01D_01_4_01_4.html">Karm::Niche&lt; Box&lt; T, D &gt; &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Niche_3_01Box_3_01T_00_01D_01_4_01_4_1_1Content.html">Karm::Niche&lt; Box&lt; T, D &gt; &gt;::Content</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
@@ -120,12 +123,17 @@ Namespaces</h2></td></tr>
 <tr class="memitem:namespaceKarm"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceKarm.html">Karm</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="concepts" name="concepts"></a>
+Concepts</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">concept &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="conceptKarm_1_1DeleterFor.html">Karm::DeleterFor</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a6379d4c95b134a9eefc65e9256fe1f91"><td class="memTemplParams" colspan="2">template&lt;typename T , typename... Args&gt; <br />
+<tr class="memitem:aa32af0dec9369d1619c4a6dba7cd77d4"><td class="memTemplParams" colspan="2">template&lt;typename T , typename D  = DeleteDeleter&lt;T&gt;, typename... Args&gt; <br />
 requires Meta::Constructible&lt;T, Args...&gt;</td></tr>
-<tr class="memitem:a6379d4c95b134a9eefc65e9256fe1f91"><td class="memTemplItemLeft" align="right" valign="top">export constexpr Box&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceKarm.html#a6379d4c95b134a9eefc65e9256fe1f91">Karm::makeBox</a> (Args... args)</td></tr>
-<tr class="separator:a6379d4c95b134a9eefc65e9256fe1f91"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa32af0dec9369d1619c4a6dba7cd77d4"><td class="memTemplItemLeft" align="right" valign="top">export constexpr Box&lt; T, D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceKarm.html#aa32af0dec9369d1619c4a6dba7cd77d4">Karm::makeBox</a> (Args... args)</td></tr>
+<tr class="separator:aa32af0dec9369d1619c4a6dba7cd77d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>

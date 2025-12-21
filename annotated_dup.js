@@ -73,6 +73,10 @@ var annotated_dup =
         [ "VideoStream", "structKarm_1_1Av_1_1VideoStream.html", "structKarm_1_1Av_1_1VideoStream" ]
       ] ],
       [ "Base", "namespaceKarm_1_1Base.html", [
+        [ "Tests", "namespaceKarm_1_1Base_1_1Tests.html", [
+          [ "TestDeleter", "structKarm_1_1Base_1_1Tests_1_1TestDeleter.html", "structKarm_1_1Base_1_1Tests_1_1TestDeleter" ],
+          [ "TestType", "structKarm_1_1Base_1_1Tests_1_1TestType.html", "structKarm_1_1Base_1_1Tests_1_1TestType" ]
+        ] ],
         [ "Foo", "structKarm_1_1Base_1_1Foo.html", "structKarm_1_1Base_1_1Foo" ]
       ] ],
       [ "Cli", "namespaceKarm_1_1Cli.html", [
@@ -711,6 +715,7 @@ var annotated_dup =
       [ "Day", "structKarm_1_1Day.html", "structKarm_1_1Day" ],
       [ "DayOfWeek", "structKarm_1_1DayOfWeek.html", "structKarm_1_1DayOfWeek" ],
       [ "Defer", "structKarm_1_1Defer.html", "structKarm_1_1Defer" ],
+      [ "DeleteDeleter", "structKarm_1_1DeleteDeleter.html", "structKarm_1_1DeleteDeleter" ],
       [ "Distinct", "structKarm_1_1Distinct.html", "structKarm_1_1Distinct" ],
       [ "Duration", "structKarm_1_1Duration.html", "structKarm_1_1Duration" ],
       [ "EAscii", "structKarm_1_1EAscii.html", "structKarm_1_1EAscii" ],
@@ -765,7 +770,7 @@ var annotated_dup =
       [ "Niche", "structKarm_1_1Niche.html", null ],
       [ "Niche< Array< T, N > >", "structKarm_1_1Niche_3_01Array_3_01T_00_01N_01_4_01_4.html", "structKarm_1_1Niche_3_01Array_3_01T_00_01N_01_4_01_4" ],
       [ "Niche< bool >", "structKarm_1_1Niche_3_01bool_01_4.html", "structKarm_1_1Niche_3_01bool_01_4" ],
-      [ "Niche< Box< T > >", "structKarm_1_1Niche_3_01Box_3_01T_01_4_01_4.html", "structKarm_1_1Niche_3_01Box_3_01T_01_4_01_4" ],
+      [ "Niche< Box< T, D > >", "structKarm_1_1Niche_3_01Box_3_01T_00_01D_01_4_01_4.html", "structKarm_1_1Niche_3_01Box_3_01T_00_01D_01_4_01_4" ],
       [ "Niche< Buf< T > >", "structKarm_1_1Niche_3_01Buf_3_01T_01_4_01_4.html", "structKarm_1_1Niche_3_01Buf_3_01T_01_4_01_4" ],
       [ "Niche< MutSlice< T > >", "structKarm_1_1Niche_3_01MutSlice_3_01T_01_4_01_4.html", "structKarm_1_1Niche_3_01MutSlice_3_01T_01_4_01_4" ],
       [ "Niche< Slice< T > >", "structKarm_1_1Niche_3_01Slice_3_01T_01_4_01_4.html", "structKarm_1_1Niche_3_01Slice_3_01T_01_4_01_4" ],

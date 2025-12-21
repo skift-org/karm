@@ -102,7 +102,7 @@ var hierarchy =
     [ "Karm::Gfx::Prose::Block", "structKarm_1_1Gfx_1_1Prose_1_1Block.html", null ],
     [ "Karm::Gfx::BlurFilter", "structKarm_1_1Gfx_1_1BlurFilter.html", null ],
     [ "Karm::Gfx::Borders", "structKarm_1_1Gfx_1_1Borders.html", null ],
-    [ "Karm::Box< T >", "structKarm_1_1Box.html", null ],
+    [ "Karm::Box< T, D >", "structKarm_1_1Box.html", null ],
     [ "Karm::Gfx::BoxShadow", "structKarm_1_1Gfx_1_1BoxShadow.html", null ],
     [ "Karm::Ui::BoxStyle", "structKarm_1_1Ui_1_1BoxStyle.html", null ],
     [ "Karm::Io::BPattern", "structKarm_1_1Io_1_1BPattern.html", null ],
@@ -138,7 +138,7 @@ var hierarchy =
     [ "Karm::Image::Jpeg::Decoder::Component", "structKarm_1_1Image_1_1Jpeg_1_1Decoder_1_1Component.html", null ],
     [ "Karm::Sys::CondVar", "structKarm_1_1Sys_1_1CondVar.html", null ],
     [ "Karm::Niche< bool >::Content", "structKarm_1_1Niche_3_01bool_01_4_1_1Content.html", null ],
-    [ "Karm::Niche< Box< T > >::Content", "structKarm_1_1Niche_3_01Box_3_01T_01_4_01_4_1_1Content.html", null ],
+    [ "Karm::Niche< Box< T, D > >::Content", "structKarm_1_1Niche_3_01Box_3_01T_00_01D_01_4_01_4_1_1Content.html", null ],
     [ "Karm::Niche< Buf< T > >::Content", "structKarm_1_1Niche_3_01Buf_3_01T_01_4_01_4_1_1Content.html", [
       [ "Karm::Niche< ViewBuf< T > >::Content", "structKarm_1_1Niche_3_01ViewBuf_3_01T_01_4_01_4_1_1Content.html", null ]
     ] ],
@@ -175,6 +175,7 @@ var hierarchy =
     [ "Karm::Image::Jpeg::Decoder", "structKarm_1_1Image_1_1Jpeg_1_1Decoder.html", null ],
     [ "Karm::Image::Png::Decoder", "structKarm_1_1Image_1_1Png_1_1Decoder.html", null ],
     [ "Karm::Image::Tga::Decoder", "structKarm_1_1Image_1_1Tga_1_1Decoder.html", null ],
+    [ "Karm::DeleteDeleter< T >", "structKarm_1_1DeleteDeleter.html", null ],
     [ "Karm::Serde::Deserializer", "structKarm_1_1Serde_1_1Deserializer.html", [
       [ "Karm::Serde::PackDeserializer", "structKarm_1_1Serde_1_1PackDeserializer.html", [
         [ "Karm::Sys::MessageDeserializer", "structKarm_1_1Sys_1_1MessageDeserializer.html", null ]
@@ -670,7 +671,7 @@ var hierarchy =
     [ "Karm::Niche< T >", "structKarm_1_1Niche.html", null ],
     [ "Karm::Niche< Array< T, N > >", "structKarm_1_1Niche_3_01Array_3_01T_00_01N_01_4_01_4.html", null ],
     [ "Karm::Niche< bool >", "structKarm_1_1Niche_3_01bool_01_4.html", null ],
-    [ "Karm::Niche< Box< T > >", "structKarm_1_1Niche_3_01Box_3_01T_01_4_01_4.html", null ],
+    [ "Karm::Niche< Box< T, D > >", "structKarm_1_1Niche_3_01Box_3_01T_00_01D_01_4_01_4.html", null ],
     [ "Karm::Niche< Buf< T > >", "structKarm_1_1Niche_3_01Buf_3_01T_01_4_01_4.html", null ],
     [ "Karm::Niche< MutSlice< T > >", "structKarm_1_1Niche_3_01MutSlice_3_01T_01_4_01_4.html", null ],
     [ "Karm::Niche< Slice< T > >", "structKarm_1_1Niche_3_01Slice_3_01T_01_4_01_4.html", null ],
@@ -979,6 +980,8 @@ var hierarchy =
     [ "Karm::Font::Ttf::Cmap::Table", "structKarm_1_1Font_1_1Ttf_1_1Cmap_1_1Table.html", null ],
     [ "Karm::Ml::Gguf::TensorInfos", "structKarm_1_1Ml_1_1Gguf_1_1TensorInfos.html", null ],
     [ "Karm::Vte::Terminal", "structKarm_1_1Vte_1_1Terminal.html", null ],
+    [ "Karm::Base::Tests::TestDeleter", "structKarm_1_1Base_1_1Tests_1_1TestDeleter.html", null ],
+    [ "Karm::Base::Tests::TestType", "structKarm_1_1Base_1_1Tests_1_1TestType.html", null ],
     [ "Karm::Ui::TextAction", "structKarm_1_1Ui_1_1TextAction.html", null ],
     [ "Karm::Ui::TextModel", "structKarm_1_1Ui_1_1TextModel.html", null ],
     [ "Karm::Ui::TextStyles", "structKarm_1_1Ui_1_1TextStyles.html", null ],

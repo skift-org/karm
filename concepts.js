@@ -83,6 +83,7 @@ var concepts =
       [ "Ui", "namespaceKarm_1_1Ui.html", [
         [ "Decorator", "conceptKarm_1_1Ui_1_1Decorator.html", null ]
       ] ],
+      [ "DeleterFor", "conceptKarm_1_1DeleterFor.html", null ],
       [ "CType", "conceptKarm_1_1CType.html", null ],
       [ "BoundedEnum", "conceptKarm_1_1BoundedEnum.html", null ],
       [ "AtLen", "conceptKarm_1_1AtLen.html", null ],

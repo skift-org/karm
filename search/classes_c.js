@@ -4,7 +4,7 @@ var searchData=
   ['niche_1',['Niche',['../structKarm_1_1Niche.html',1,'Karm']]],
   ['niche_3c_20array_3c_20t_2c_20n_20_3e_20_3e_2',['Niche&lt; Array&lt; T, N &gt; &gt;',['../structKarm_1_1Niche_3_01Array_3_01T_00_01N_01_4_01_4.html',1,'Karm']]],
   ['niche_3c_20bool_20_3e_3',['Niche&lt; bool &gt;',['../structKarm_1_1Niche_3_01bool_01_4.html',1,'Karm']]],
-  ['niche_3c_20box_3c_20t_20_3e_20_3e_4',['Niche&lt; Box&lt; T &gt; &gt;',['../structKarm_1_1Niche_3_01Box_3_01T_01_4_01_4.html',1,'Karm']]],
+  ['niche_3c_20box_3c_20t_2c_20d_20_3e_20_3e_4',['Niche&lt; Box&lt; T, D &gt; &gt;',['../structKarm_1_1Niche_3_01Box_3_01T_00_01D_01_4_01_4.html',1,'Karm']]],
   ['niche_3c_20buf_3c_20t_20_3e_20_3e_5',['Niche&lt; Buf&lt; T &gt; &gt;',['../structKarm_1_1Niche_3_01Buf_3_01T_01_4_01_4.html',1,'Karm']]],
   ['niche_3c_20mutslice_3c_20t_20_3e_20_3e_6',['Niche&lt; MutSlice&lt; T &gt; &gt;',['../structKarm_1_1Niche_3_01MutSlice_3_01T_01_4_01_4.html',1,'Karm']]],
   ['niche_3c_20slice_3c_20t_20_3e_20_3e_7',['Niche&lt; Slice&lt; T &gt; &gt;',['../structKarm_1_1Niche_3_01Slice_3_01T_01_4_01_4.html',1,'Karm']]],

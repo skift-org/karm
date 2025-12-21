@@ -3,7 +3,7 @@ var searchData=
   ['_7eapplication_0',['~Application',['../structKarm_1_1App_1_1Application.html#a168f6a623c7042066009247997155eb3',1,'Karm::App::Application']]],
   ['_7earc_1',['~Arc',['../unionKarm_1_1Math_1_1Arc.html#a07ee4a83b97bf5756dc79ed42648d076',1,'Karm::Math::Arc']]],
   ['_7earmeddefer_2',['~ArmedDefer',['../structKarm_1_1ArmedDefer.html#ac877dae39a6ad80d337bf32efd6f1e7f',1,'Karm::ArmedDefer']]],
-  ['_7ebox_3',['~Box',['../structKarm_1_1Box.html#a6fd502732b3d1c1e08f9fff84e37590e',1,'Karm::Box']]],
+  ['_7ebox_3',['~Box',['../structKarm_1_1Box.html#ad5fad5d3cc615f2423adac522ec5ec8d',1,'Karm::Box']]],
   ['_7ebuf_4',['~Buf',['../structKarm_1_1Buf.html#a2a27938b1f099d2cbb775919523c20a3',1,'Karm::Buf']]],
   ['_7ecamera_5',['~Camera',['../structKarm_1_1Av_1_1Camera.html#ada6f5eadfa8f393aae4d0169af6712bf',1,'Karm::Av::Camera']]],
   ['_7ecancellable_6',['~Cancellable',['../structKarm_1_1Async_1_1Cancellable.html#a7ef8ba92806b911ee7b13e74cd6126ed',1,'Karm::Async::Cancellable']]],

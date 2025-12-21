@@ -237,6 +237,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Defer.html">Defer</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1DeleteDeleter.html">DeleteDeleter</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Distinct.html">Distinct</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Duration.html">Duration</a></td></tr>
@@ -346,7 +348,7 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Niche_3_01bool_01_4.html">Niche&lt; bool &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Niche_3_01Box_3_01T_01_4_01_4.html">Niche&lt; Box&lt; T &gt; &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Niche_3_01Box_3_01T_00_01D_01_4_01_4.html">Niche&lt; Box&lt; T, D &gt; &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1Niche_3_01Buf_3_01T_01_4_01_4.html">Niche&lt; Buf&lt; T &gt; &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -426,6 +428,8 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="concepts" name="concepts"></a>
 Concepts</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">concept &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="conceptKarm_1_1DeleterFor.html">DeleterFor</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">concept &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="conceptKarm_1_1CType.html">CType</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">concept &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="conceptKarm_1_1BoundedEnum.html">BoundedEnum</a></td></tr>
@@ -751,10 +755,10 @@ requires (sizeof(T) &lt;= 16)</td></tr>
 requires (sizeof(T) == sizeof(U))</td></tr>
 <tr class="memitem:acd2db184c90b8e550e690493007ae975"><td class="memTemplItemLeft" align="right" valign="top">export <a class="el" href="karm-core_2macros_8h.html#ac620672df61cb1f3f6bf8901869b6be2">always_inline</a> T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceKarm.html#acd2db184c90b8e550e690493007ae975">unionCast</a> (U value)</td></tr>
 <tr class="separator:acd2db184c90b8e550e690493007ae975"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6379d4c95b134a9eefc65e9256fe1f91"><td class="memTemplParams" colspan="2">template&lt;typename T , typename... Args&gt; <br />
+<tr class="memitem:aa32af0dec9369d1619c4a6dba7cd77d4"><td class="memTemplParams" colspan="2">template&lt;typename T , typename D  = DeleteDeleter&lt;T&gt;, typename... Args&gt; <br />
 requires Meta::Constructible&lt;T, Args...&gt;</td></tr>
-<tr class="memitem:a6379d4c95b134a9eefc65e9256fe1f91"><td class="memTemplItemLeft" align="right" valign="top">export constexpr <a class="el" href="structKarm_1_1Box.html">Box</a>&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceKarm.html#a6379d4c95b134a9eefc65e9256fe1f91">makeBox</a> (Args... args)</td></tr>
-<tr class="separator:a6379d4c95b134a9eefc65e9256fe1f91"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa32af0dec9369d1619c4a6dba7cd77d4"><td class="memTemplItemLeft" align="right" valign="top">export constexpr <a class="el" href="structKarm_1_1Box.html">Box</a>&lt; T, D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceKarm.html#aa32af0dec9369d1619c4a6dba7cd77d4">makeBox</a> (Args... args)</td></tr>
+<tr class="separator:aa32af0dec9369d1619c4a6dba7cd77d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4bd6dcdff321946d924087391469151d"><td class="memTemplParams" colspan="2">template&lt;Meta::Integral T&gt; </td></tr>
 <tr class="memitem:a4bd6dcdff321946d924087391469151d"><td class="memTemplItemLeft" align="right" valign="top">export <a class="el" href="karm-core_2macros_8h.html#ac620672df61cb1f3f6bf8901869b6be2">always_inline</a> constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceKarm.html#a4bd6dcdff321946d924087391469151d">willAddOverflow</a> (T lhs, T rhs)</td></tr>
 <tr class="separator:a4bd6dcdff321946d924087391469151d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -6013,20 +6017,20 @@ template&lt;typename T , <a class="el" href="namespaceKarm.html#a7826e564b525f4f
 
 </div>
 </div>
-<a id="a6379d4c95b134a9eefc65e9256fe1f91" name="a6379d4c95b134a9eefc65e9256fe1f91"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6379d4c95b134a9eefc65e9256fe1f91">&#9670;&#160;</a></span>makeBox()</h2>
+<a id="aa32af0dec9369d1619c4a6dba7cd77d4" name="aa32af0dec9369d1619c4a6dba7cd77d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa32af0dec9369d1619c4a6dba7cd77d4">&#9670;&#160;</a></span>makeBox()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T , typename... Args&gt; <br />
+template&lt;typename T , typename D  = DeleteDeleter&lt;T&gt;, typename... Args&gt; <br />
 requires Meta::Constructible&lt;T, Args...&gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">export constexpr <a class="el" href="structKarm_1_1Box.html">Box</a>&lt; T &gt; Karm::makeBox </td>
+          <td class="memname">export constexpr <a class="el" href="structKarm_1_1Box.html">Box</a>&lt; T, D &gt; Karm::makeBox </td>
           <td>(</td>
           <td class="paramtype">Args...&#160;</td>
           <td class="paramname"><em>args</em></td><td>)</td>
