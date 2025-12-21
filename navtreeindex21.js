@@ -1,5 +1,6 @@
 var NAVTREEINDEX21 =
 {
+"rune_8cpp.html#a528f8e6429690f73b4e5da3692da6b3f":[3,0,0,4,2,43,11],
 "rune_8cpp.html#a559cc71d8bfd454957083f6b701483cd":[3,0,0,4,2,43,12],
 "rune_8cpp.html#a5cd5b84c011a6c3f28723632dec3e0dc":[3,0,0,4,2,43,18],
 "rune_8cpp.html#a7980476e527eaba11d5156d667e97fc4":[3,0,0,4,2,43,10],
@@ -248,6 +249,5 @@ var NAVTREEINDEX21 =
 "slice_8cpp.html#a6151be1679dd6ede27466507e3c86ae0":[3,0,0,4,2,48,51],
 "slice_8cpp.html#a61be88974ef16462d4ee7b511b171126":[3,0,0,4,2,48,35],
 "slice_8cpp.html#a6dea45173b58b6f289d3b1f78f8a8e79":[3,0,0,4,2,48,50],
-"slice_8cpp.html#a701fbc6c5af438f4965bd679181e2796":[3,0,0,4,2,48,44],
-"slice_8cpp.html#a7038a3ed0f20aba6b997e43a9306d884":[3,0,0,4,2,48,52]
+"slice_8cpp.html#a701fbc6c5af438f4965bd679181e2796":[3,0,0,4,2,48,44]
 };

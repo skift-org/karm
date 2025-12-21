@@ -1,5 +1,6 @@
 var NAVTREEINDEX9 =
 {
+"karm-scene_2box_8cpp.html#afca124844d1743677fb36a9992bd0cf5":[3,0,0,24,0,4],
 "karm-scene_2image_8cpp.html":[3,0,0,24,3],
 "karm-scene_2image_8cpp.html#a062e19c831932519c33a396b9b0f4a04":[3,0,0,24,3,3],
 "karm-scene_2image_8cpp.html#a7c0089b00689a79148a84c5b7fe95679":[3,0,0,24,3,2],
@@ -248,6 +249,5 @@ var NAVTREEINDEX9 =
 "layout_8cpp.html#a46b4b95c83a7cb6e86a3bc5a5f473a1d":[3,0,0,30,12,23],
 "layout_8cpp.html#a52c3ac2886beed6f62f5fc249d863395":[3,0,0,30,12,84],
 "layout_8cpp.html#a5e069333c0226bebaa7103d385ff7d6e":[3,0,0,30,12,59],
-"layout_8cpp.html#a5efec477b27e87b618a95a10e06724e5":[3,0,0,30,12,69],
-"layout_8cpp.html#a6253e151369df7fee1da6faf7d7d8e58":[3,0,0,30,12,74]
+"layout_8cpp.html#a5efec477b27e87b618a95a10e06724e5":[3,0,0,30,12,69]
 };
