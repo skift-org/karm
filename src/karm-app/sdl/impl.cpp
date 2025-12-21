@@ -5,9 +5,11 @@ module;
 
 module Karm.App;
 
-import :sdl.keys;
 import Karm.Core;
 import Karm.Gfx;
+import Karm.Sys;
+
+import :sdl.keys;
 
 namespace Karm::App::_Embed {
 
@@ -239,11 +241,25 @@ struct SdlApplication : Application {
     }
 
     Async::Task<> runAsync(Rc<Handler> handler, Async::CancellationToken ct) override {
+        Duration const frameDuration = Duration::fromMSecs(16);
+
+        Instant nextFrameTime = Sys::instant();
+
         while (not ct.cancelled() and not _exited) {
+            nextFrameTime = nextFrameTime + frameDuration;
+
             SDL_Event sdlEvent;
             while (SDL_PollEvent(&sdlEvent))
                 _translateEvent(handler, sdlEvent);
+
             handler->update();
+
+            co_trya$(Sys::globalSched().sleepAsync(nextFrameTime, ct));
+
+            Instant now = Sys::instant();
+            if (now > nextFrameTime + frameDuration) {
+                nextFrameTime = now;
+            }
         }
 
         co_return Ok();

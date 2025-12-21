@@ -28,6 +28,10 @@ export struct Cancellable : Meta::Pinned {
 export struct CancellationToken {
     Cancellation* cancellation;
 
+    static CancellationToken uninterruptible() {
+        return CancellationToken{nullptr};
+    }
+
     explicit CancellationToken(Cancellation* c) : cancellation{c} {}
 
     bool cancelled() const;
@@ -76,6 +80,8 @@ export struct Cancellation : Cancellable {
 };
 
 bool CancellationToken::cancelled() const {
+    if (not cancellation)
+        return false;
     return cancellation->cancelled();
 }
 
