@@ -1,5 +1,7 @@
 var NAVTREEINDEX21 =
 {
+"rune_8cpp.html":[3,0,0,4,2,43],
+"rune_8cpp.html#a394525318dfa69c1a1c60eadad8371eb":[3,0,0,4,2,43,24],
 "rune_8cpp.html#a41d3a393c64defa1140abdd6419296ed":[3,0,0,4,2,43,9],
 "rune_8cpp.html#a49e296cf59d67b88d9caf192af1d9951":[3,0,0,4,2,43,16],
 "rune_8cpp.html#a4ba1983cdbbcadf1ae0098f6d0ed4c13":[3,0,0,4,2,43,22],
@@ -119,13 +121,15 @@ var NAVTREEINDEX21 =
 "serde_8cpp.html#ad6f782e049e3e40cf59a3c027aab6f80":[3,0,0,4,10,3,25],
 "serde_8cpp.html#af60e35d72364ff777a965d456af4dea3":[3,0,0,4,10,3,26],
 "server_8cpp.html":[3,0,0,12,11],
-"server_8cpp.html#a09f8ee46f6f2c829e1b87e69abed7df3":[3,0,0,12,11,6],
-"server_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6":[3,0,0,12,11,10],
-"server_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5":[3,0,0,12,11,7],
+"server_8cpp.html#a15892f94c4d055294f3b534a6f275b49":[3,0,0,12,11,6],
+"server_8cpp.html#a18060828bfee331ef21e9239dec755a3":[3,0,0,12,11,5],
+"server_8cpp.html#a73288b16161b1575ff6030acc1da12ad":[3,0,0,12,11,7],
+"server_8cpp.html#a81cdc5d067a49179b1e3491aeec02825":[3,0,0,12,11,8],
+"server_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6":[3,0,0,12,11,12],
+"server_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5":[3,0,0,12,11,9],
 "server_8cpp.html#ad9a28bdf16d88435accf2a6f520a3269":[3,0,0,12,11,4],
-"server_8cpp.html#ade9c999f65d06abc86ce3cce78a704fc":[3,0,0,12,11,9],
-"server_8cpp.html#ae36a73f46168d0f3346cb4c634690cff":[3,0,0,12,11,5],
-"server_8cpp.html#ae4e6389ba964884ff5221427019b2efc":[3,0,0,12,11,8],
+"server_8cpp.html#ade9c999f65d06abc86ce3cce78a704fc":[3,0,0,12,11,11],
+"server_8cpp.html#ae4e6389ba964884ff5221427019b2efc":[3,0,0,12,11,10],
 "set_8cpp.html":[3,0,0,4,2,44],
 "set_8cpp.html#af60e35d72364ff777a965d456af4dea3":[3,0,0,4,2,44,2],
 "sha2_8cpp.html":[3,0,0,5,8],
@@ -245,9 +249,5 @@ var NAVTREEINDEX21 =
 "slice_8cpp.html#a3af8343e012dfb89d6cd28245f13cdd4":[3,0,0,4,2,48,45],
 "slice_8cpp.html#a3bdf6315e5ed232fc27f650ba669cc70":[3,0,0,4,2,48,14],
 "slice_8cpp.html#a3d0e6679f40bc938c4e7e9c543c3d6ea":[3,0,0,4,2,48,8],
-"slice_8cpp.html#a40421fcea66498b3589720e175ef1669":[3,0,0,4,2,48,19],
-"slice_8cpp.html#a514f32364734b8644a3106eb3aadc3f7":[3,0,0,4,2,48,34],
-"slice_8cpp.html#a51969a4de0ecb3b06fb13f13078ed298":[3,0,0,4,2,48,33],
-"slice_8cpp.html#a5cbc8ad3baee90d04d966961dcaf4965":[3,0,0,4,2,48,53],
-"slice_8cpp.html#a6151be1679dd6ede27466507e3c86ae0":[3,0,0,4,2,48,51]
+"slice_8cpp.html#a40421fcea66498b3589720e175ef1669":[3,0,0,4,2,48,19]
 };

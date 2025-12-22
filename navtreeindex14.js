@@ -1,5 +1,7 @@
 var NAVTREEINDEX14 =
 {
+"namespaceKarm_1_1Image.html#aba7011964091fa0d02edbe5cc75cd06f":[0,0,1,17,12],
+"namespaceKarm_1_1Image.html#ad0e4943668f57c80208164c22103e30a":[0,0,1,17,14],
 "namespaceKarm_1_1Image_1_1Bmp.html":[0,0,1,17,0],
 "namespaceKarm_1_1Image_1_1Bmp.html#a14cfb0eb56095d680a48b6c05aadf884":[0,0,1,17,0,1],
 "namespaceKarm_1_1Image_1_1Gif.html":[0,0,1,17,1],
@@ -247,7 +249,5 @@ var NAVTREEINDEX14 =
 "namespaceKarm_1_1Io_1_1Tests.html#a6ba757df793d376d23f8da659ce1a7beaf5aedf92178e1396cd4181962c8a9979":[0,0,1,18,0,0,1],
 "namespaceKarm_1_1Io_1_1Tests.html#a7721a821864fe0f0e4a88b8c4cf95a5f":[0,0,1,18,0,7],
 "namespaceKarm_1_1Io_1_1Tests.html#a77939c1843d5ad8b5ac46bfd233c1572":[0,0,1,18,0,12],
-"namespaceKarm_1_1Io_1_1Tests.html#a878456d49b220c79174e6bafe0d56bb1":[0,0,1,18,0,29],
-"namespaceKarm_1_1Io_1_1Tests.html#a9874c166d770fc156de8218c552e326f":[0,0,1,18,0,30],
-"namespaceKarm_1_1Io_1_1Tests.html#a9eae71a276ca97253f17856c4456a32a":[0,0,1,18,0,44]
+"namespaceKarm_1_1Io_1_1Tests.html#a878456d49b220c79174e6bafe0d56bb1":[0,0,1,18,0,29]
 };

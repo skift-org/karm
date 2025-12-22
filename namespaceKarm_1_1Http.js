@@ -69,8 +69,10 @@ var namespaceKarm_1_1Http =
     [ "putAsync", "namespaceKarm_1_1Http.html#a98dfa6279ab510d4a70ca84a13b65443", null ],
     [ "readHeaders", "namespaceKarm_1_1Http.html#a55a8bad43633ffd37aaae6d93a4c38cb", null ],
     [ "readHeadersAsync", "namespaceKarm_1_1Http.html#afea770760701bd063c86ae36e6c1efba", null ],
-    [ "serveAsync", "namespaceKarm_1_1Http.html#ae36a73f46168d0f3346cb4c634690cff", null ],
-    [ "serveAsync", "namespaceKarm_1_1Http.html#a09f8ee46f6f2c829e1b87e69abed7df3", null ],
+    [ "serveAsync", "namespaceKarm_1_1Http.html#a18060828bfee331ef21e9239dec755a3", null ],
+    [ "serveAsync", "namespaceKarm_1_1Http.html#a15892f94c4d055294f3b534a6f275b49", null ],
+    [ "serveAsync", "namespaceKarm_1_1Http.html#a73288b16161b1575ff6030acc1da12ad", null ],
+    [ "serveAsync", "namespaceKarm_1_1Http.html#a81cdc5d067a49179b1e3491aeec02825", null ],
     [ "toStr", "namespaceKarm_1_1Http.html#a85d5d3a532933caba9af5037207fd42c", null ],
     [ "toStr", "namespaceKarm_1_1Http.html#a6f9f37dfdb88da1656cbba3657156a25", null ],
     [ "BUF_SIZE", "namespaceKarm_1_1Http.html#a2e7f89820d6eb5e76cd4b1e6da25b4e6", null ]
