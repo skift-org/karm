@@ -137,14 +137,24 @@ export struct Server {
 
 // MARK: Serverless ------------------------------------------------------------
 
-export Async::Task<> serveAsync(Rc<Handler> handler, Async::CancellationToken ct, ServerProps const& props = {}) {
+export Async::Task<> serveAsync(Rc<Handler> handler, ServerProps props, Async::CancellationToken ct) {
     auto server = Server::simple(handler, props);
     co_return co_await server->serveAsync(ct);
 }
 
 export [[clang::coro_wrapper]]
-Async::Task<> serveAsync(HandlerFunc auto handler, Async::CancellationToken ct, ServerProps const& props = {}) {
-    return serveAsync(makeHandler(handler), ct, props);
+Async::Task<> serveAsync(Rc<Handler> handler, Async::CancellationToken ct) {
+    return serveAsync(handler, {}, ct);
+}
+
+export [[clang::coro_wrapper]]
+Async::Task<> serveAsync(HandlerFunc auto handler, ServerProps const& props, Async::CancellationToken ct) {
+    return serveAsync(makeHandler(handler), props, ct);
+}
+
+export [[clang::coro_wrapper]]
+Async::Task<> serveAsync(HandlerFunc auto handler, Async::CancellationToken ct) {
+    return serveAsync(makeHandler(handler), {}, ct);
 }
 
 } // namespace Karm::Http
