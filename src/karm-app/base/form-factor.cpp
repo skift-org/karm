@@ -1,4 +1,4 @@
-export module Karm.App:form_factor;
+export module Karm.App.Base:formFactor;
 
 namespace Karm::App {
 

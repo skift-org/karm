@@ -2,7 +2,7 @@ module;
 
 #include <karm-core/macros.h>
 
-export module Karm.App:inputs;
+export module Karm.App.Base:inputs;
 
 import Karm.Core;
 import Karm.Math;
@@ -90,7 +90,7 @@ export enum struct KeyMotion {
 export struct Key {
     enum struct Code {
 #define KEY(name, code) name = code,
-#include "defs/keys.inc"
+#include "../defs/keys.inc"
 
 #undef KEY
         _LEN,
@@ -108,7 +108,7 @@ export struct Key {
 #define KEY(name, code) \
     case Code::name:    \
         return #name;
-#include "defs/keys.inc"
+#include "../defs/keys.inc"
 
         default:
             unreachable();

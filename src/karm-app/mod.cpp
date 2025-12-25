@@ -1,8 +1,4 @@
 export module Karm.App;
-
-export import :event;
-export import :form_factor;
-export import :host;
-export import :inputs;
+export import Karm.App.Base;
 export import :prefs;
 export import :application;

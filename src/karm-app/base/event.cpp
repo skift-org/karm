@@ -1,4 +1,4 @@
-export module Karm.App:event;
+export module Karm.App.Base:event;
 
 import Karm.Core;
 

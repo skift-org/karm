@@ -11,18 +11,6 @@ import :box;
 
 namespace Karm::Ui {
 
-// MARK: Drag Event ------------------------------------------------------------
-
-export struct DragEvent {
-    enum {
-        START,
-        DRAG,
-        END
-    } type;
-
-    Math::Vec2i delta{};
-};
-
 // MARK: Dismisable ------------------------------------------------------------
 
 export enum struct DismisDir {
@@ -100,8 +88,8 @@ struct Dismisable :
     }
 
     void bubble(App::Event& e) override {
-        if (auto de = e.is<DragEvent>()) {
-            if (de->type == DragEvent::DRAG) {
+        if (auto de = e.is<App::DragEvent>()) {
+            if (de->type == App::DragEvent::DRAG) {
                 auto d = _drag.target() + de->delta;
 
                 d.x = clamp(
@@ -120,7 +108,7 @@ struct Dismisable :
                 e.accept();
             }
 
-            if (de->type == DragEvent::END) {
+            if (de->type == App::DragEvent::END) {
                 if ((bool)(_dir & DismisDir::HORIZONTAL)) {
                     if (Math::abs(_drag.targetX()) / (f64)bound().width > _threshold) {
                         _drag.animate(*this, {bound().width * (_drag.targetX() < 0.0 ? -1.0 : 1), 0}, 0.25, Math::Easing::cubicOut);
@@ -183,14 +171,14 @@ struct DragRegion : ProxyNode<DragRegion> {
 
         if (e->type == App::MouseEvent::PRESS) {
             _grabbed = true;
-            bubble<DragEvent>(*this, DragEvent::START);
+            bubble<App::DragEvent>(*this, App::DragEvent::START);
             event.accept();
         } else if (e->type == App::MouseEvent::RELEASE) {
             _grabbed = false;
-            bubble<DragEvent>(*this, DragEvent::END);
+            bubble<App::DragEvent>(*this, App::DragEvent::END);
             event.accept();
         } else if (e->type == App::MouseEvent::MOVE and _grabbed) {
-            bubble<DragEvent>(*this, DragEvent::DRAG, e->delta * _dir);
+            bubble<App::DragEvent>(*this, App::DragEvent::DRAG, e->delta * _dir);
             event.accept();
         }
     }

@@ -32,8 +32,8 @@ struct Resizable : Ui::ProxyNode<Resizable> {
     }
 
     void bubble(App::Event& e) override {
-        if (auto de = e.is<Ui::DragEvent>()) {
-            if (de->type == Ui::DragEvent::DRAG) {
+        if (auto de = e.is<App::DragEvent>()) {
+            if (de->type == App::DragEvent::DRAG) {
                 _size = _size + de->delta;
                 auto minSize = child().size({}, Ui::Hint::MIN);
                 _size = _size.max(minSize);

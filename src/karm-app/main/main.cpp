@@ -26,9 +26,9 @@ struct Handler : App::Handler {
 
 } // namespace Example
 
-Async::Task<> entryPointAsync(Sys::Context&, Async::CancellationToken ct) {
-    auto app = co_try$(App::Application::create());
-    auto win = co_try$(app->createWindow());
+Async::Task<> entryPointAsync(Sys::Context& ctx, Async::CancellationToken ct) {
+    auto app = co_trya$(App::Application::createAsync(ctx, {}, ct));
+    auto win = co_trya$(app->createWindowAsync({}, ct));
     auto handler = makeRc<Example::Handler>(win);
     co_return co_await app->runAsync(handler, ct);
 }

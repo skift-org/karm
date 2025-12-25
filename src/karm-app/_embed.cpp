@@ -1,6 +1,7 @@
 export module Karm.App:_embed;
 
 import Karm.Core;
+import Karm.Sys;
 
 namespace Karm::App {
 
@@ -13,6 +14,7 @@ export struct ApplicationProps;
 namespace Karm::App::_Embed {
 
 export Prefs& globalPrefs();
-export Res<Rc<Application>> createApp(ApplicationProps const& props);
+
+export Async::Task<Rc<Application>> createAppAsync(Sys::Context& ctx, ApplicationProps const& props, Async::CancellationToken ct);
 
 } // namespace Karm::App::_Embed

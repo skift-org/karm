@@ -54,6 +54,19 @@ struct SdlWindow : Window {
         };
     }
 
+    void drag(DragEvent e) override {
+        if (e.type == DragEvent::START) {
+            SDL_CaptureMouse(true);
+        } else if (e.type == DragEvent::END) {
+            SDL_CaptureMouse(false);
+        } else if (e.type == DragEvent::DRAG) {
+            Math::Vec2<i32> pos{};
+            SDL_GetWindowPosition(_sdlWindow, &pos.x, &pos.y);
+            pos = pos + e.delta.cast<i32>();
+            SDL_SetWindowPosition(_sdlWindow, pos.x, pos.y);
+        }
+    }
+
     void releaseSurface() override {
         SDL_UnlockSurface(_sdlSurface);
         SDL_UpdateWindowSurface(_sdlWindow);
@@ -69,7 +82,7 @@ struct SdlApplication : Application {
     explicit SdlApplication(ApplicationProps const& props)
         : _props(props) {}
 
-    Res<Rc<Window>> createWindow(WindowProps const& props) override {
+    Async::Task<Rc<Window>> createWindowAsync(WindowProps const& props, Async::CancellationToken) override {
         SDL_Window* sdlWindow = SDL_CreateWindow(
             props.title.buf(),
             props.size.x,
@@ -82,7 +95,8 @@ struct SdlApplication : Application {
         SDL_StartTextInput(sdlWindow);
         auto window = makeRc<SdlWindow>(*this, sdlWindow);
         _windows.put(SDL_GetWindowID(sdlWindow), &*window);
-        return Ok(window);
+        // SDL_SetWindowHitTest(sdlWindow, _hitTestCallback, &window.unwrap());
+        co_return Ok(window);
     }
 
     void detachWindow(SDL_WindowID id) {
@@ -270,9 +284,9 @@ SdlWindow::~SdlWindow() {
     _application.detachWindow(SDL_GetWindowID(_sdlWindow));
 }
 
-Res<Rc<Application>> createApp(ApplicationProps const& props) {
+Async::Task<Rc<Application>> createAppAsync(Sys::Context&, ApplicationProps const& props, Async::CancellationToken) {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
-    return Ok(makeRc<SdlApplication>(props));
+    co_return Ok(makeRc<SdlApplication>(props));
 }
 
 } // namespace Karm::App::_Embed

@@ -4,7 +4,8 @@ module;
 
 export module Karm.App:sdl.keys;
 
-import :inputs;
+import Karm.Core;
+import Karm.App.Base;
 
 namespace Karm::App::Sdl {
 

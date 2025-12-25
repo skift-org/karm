@@ -3,24 +3,18 @@ export module Karm.App:application;
 import Karm.Core;
 import Karm.Gfx;
 import Karm.Math;
+import Karm.Sys;
 
+import Karm.App.Base;
 import :_embed;
-import :event;
 
 namespace Karm::App {
 
 export using WindowId = Distinct<usize, struct WindowIdTag>;
 
 export struct WindowProps {
-    String title;
-    Math::Vec2i size;
-
-    static WindowProps simple() {
-        return {
-            .title = "Karm Application"s,
-            .size = {800, 600},
-        };
-    }
+    String title = "Karm Application"s;
+    Math::Vec2i size = {800, 600};
 };
 
 export struct Window : Meta::Pinned {
@@ -35,6 +29,8 @@ export struct Window : Meta::Pinned {
     virtual Gfx::MutPixels acquireSurface() = 0;
 
     virtual void releaseSurface() = 0;
+
+    virtual void drag(DragEvent) = 0;
 };
 
 export struct Handler {
@@ -60,11 +56,12 @@ export struct ApplicationProps {
 export struct Application : Meta::Pinned {
     virtual ~Application() = default;
 
-    static Res<Rc<Application>> create(ApplicationProps const& props = ApplicationProps::simple()) {
-        return _Embed::createApp(props);
+    [[clang::coro_wrapper]]
+    static Async::Task<Rc<Application>> createAsync(Sys::Context& ctx, ApplicationProps const& props, Async::CancellationToken ct) {
+        return _Embed::createAppAsync(ctx, props, ct);
     }
 
-    virtual Res<Rc<Window>> createWindow(WindowProps const& props = WindowProps::simple()) = 0;
+    virtual Async::Task<Rc<Window>> createWindowAsync(WindowProps const& props, Async::CancellationToken ct) = 0;
 
     virtual Async::Task<> runAsync(Rc<Handler> handler, Async::CancellationToken ct) = 0;
 };

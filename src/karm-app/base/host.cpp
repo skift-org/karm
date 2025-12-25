@@ -1,6 +1,7 @@
-export module Karm.App:host;
+export module Karm.App.Base:host;
 
 import Karm.Core;
+import Karm.Math;
 import :event;
 
 namespace Karm::App {
@@ -13,6 +14,16 @@ export struct RequestMinimizeEvent {
 };
 
 export struct RequestMaximizeEvent {
+};
+
+export struct DragEvent {
+    enum {
+        START,
+        DRAG,
+        END
+    } type;
+
+    Math::Vec2i delta{};
 };
 
 } // namespace Karm::App
