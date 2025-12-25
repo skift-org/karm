@@ -55,10 +55,11 @@ var searchData=
   ['proxynode_3c_20placed_20_3e_52',['ProxyNode&lt; Placed &gt;',['../structKarm_1_1Ui_1_1ProxyNode.html',1,'Karm::Ui']]],
   ['proxynode_3c_20popoverlayer_20_3e_53',['ProxyNode&lt; PopoverLayer &gt;',['../structKarm_1_1Ui_1_1ProxyNode.html',1,'Karm::Ui']]],
   ['proxynode_3c_20resizable_20_3e_54',['ProxyNode&lt; Resizable &gt;',['../structKarm_1_1Ui_1_1ProxyNode.html',1,'Karm::Ui']]],
-  ['proxynode_3c_20scalein_20_3e_55',['ProxyNode&lt; ScaleIn &gt;',['../structKarm_1_1Ui_1_1ProxyNode.html',1,'Karm::Ui']]],
-  ['proxynode_3c_20scroll_20_3e_56',['ProxyNode&lt; Scroll &gt;',['../structKarm_1_1Ui_1_1ProxyNode.html',1,'Karm::Ui']]],
-  ['proxynode_3c_20sizing_20_3e_57',['ProxyNode&lt; Sizing &gt;',['../structKarm_1_1Ui_1_1ProxyNode.html',1,'Karm::Ui']]],
-  ['proxynode_3c_20slidein_20_3e_58',['ProxyNode&lt; SlideIn &gt;',['../structKarm_1_1Ui_1_1ProxyNode.html',1,'Karm::Ui']]],
-  ['proxynode_3c_20slider_20_3e_59',['ProxyNode&lt; Slider &gt;',['../structKarm_1_1Ui_1_1ProxyNode.html',1,'Karm::Ui']]],
-  ['ptr_60',['Ptr',['../structKarm_1_1Gc_1_1Ptr.html',1,'Karm::Gc']]]
+  ['proxynode_3c_20rootnode_20_3e_55',['ProxyNode&lt; RootNode &gt;',['../structKarm_1_1Ui_1_1ProxyNode.html',1,'Karm::Ui']]],
+  ['proxynode_3c_20scalein_20_3e_56',['ProxyNode&lt; ScaleIn &gt;',['../structKarm_1_1Ui_1_1ProxyNode.html',1,'Karm::Ui']]],
+  ['proxynode_3c_20scroll_20_3e_57',['ProxyNode&lt; Scroll &gt;',['../structKarm_1_1Ui_1_1ProxyNode.html',1,'Karm::Ui']]],
+  ['proxynode_3c_20sizing_20_3e_58',['ProxyNode&lt; Sizing &gt;',['../structKarm_1_1Ui_1_1ProxyNode.html',1,'Karm::Ui']]],
+  ['proxynode_3c_20slidein_20_3e_59',['ProxyNode&lt; SlideIn &gt;',['../structKarm_1_1Ui_1_1ProxyNode.html',1,'Karm::Ui']]],
+  ['proxynode_3c_20slider_20_3e_60',['ProxyNode&lt; Slider &gt;',['../structKarm_1_1Ui_1_1ProxyNode.html',1,'Karm::Ui']]],
+  ['ptr_61',['Ptr',['../structKarm_1_1Gc_1_1Ptr.html',1,'Karm::Gc']]]
 ];

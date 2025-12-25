@@ -31,8 +31,9 @@ var searchData=
   ['responsewriter_28',['ResponseWriter',['../structKarm_1_1Http_1_1ResponseWriter.html',1,'Karm::Http']]],
   ['rgba8888_29',['Rgba8888',['../structKarm_1_1Gfx_1_1Rgba8888.html',1,'Karm::Gfx']]],
   ['ring_30',['Ring',['../structKarm_1_1Ring.html',1,'Karm']]],
-  ['routepattern_31',['RoutePattern',['../structKarm_1_1Http_1_1RoutePattern.html',1,'Karm::Http']]],
-  ['router_32',['Router',['../structKarm_1_1Http_1_1Router.html',1,'Karm::Http']]],
-  ['runoptions_33',['RunOptions',['../structKarm_1_1Test_1_1RunOptions.html',1,'Karm::Test']]],
-  ['rwlock_34',['RwLock',['../structKarm_1_1RwLock.html',1,'Karm']]]
+  ['rootnode_31',['RootNode',['../structKarm_1_1Ui_1_1RootNode.html',1,'Karm::Ui']]],
+  ['routepattern_32',['RoutePattern',['../structKarm_1_1Http_1_1RoutePattern.html',1,'Karm::Http']]],
+  ['router_33',['Router',['../structKarm_1_1Http_1_1Router.html',1,'Karm::Http']]],
+  ['runoptions_34',['RunOptions',['../structKarm_1_1Test_1_1RunOptions.html',1,'Karm::Test']]],
+  ['rwlock_35',['RwLock',['../structKarm_1_1RwLock.html',1,'Karm']]]
 ];

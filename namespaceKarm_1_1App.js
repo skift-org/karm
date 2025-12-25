@@ -6,6 +6,7 @@ var namespaceKarm_1_1App =
     [ "Application", "structKarm_1_1App_1_1Application.html", "structKarm_1_1App_1_1Application" ],
     [ "ApplicationProps", "structKarm_1_1App_1_1ApplicationProps.html", null ],
     [ "Dispatch", "structKarm_1_1App_1_1Dispatch.html", "structKarm_1_1App_1_1Dispatch" ],
+    [ "DragEvent", "structKarm_1_1App_1_1DragEvent.html", "structKarm_1_1App_1_1DragEvent" ],
     [ "Event", "structKarm_1_1App_1_1Event.html", "structKarm_1_1App_1_1Event" ],
     [ "Handler", "structKarm_1_1App_1_1Handler.html", "structKarm_1_1App_1_1Handler" ],
     [ "Key", "structKarm_1_1App_1_1Key.html", "structKarm_1_1App_1_1Key" ],

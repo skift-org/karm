@@ -227,6 +227,7 @@ var hierarchy =
         [ "Karm::Ui::LeafNode< Reducer< Model > >", "structKarm_1_1Ui_1_1LeafNode.html", [
           [ "Karm::Ui::Reducer< Model >", "structKarm_1_1Ui_1_1Reducer.html", null ]
         ] ],
+        [ "Karm::Ui::LeafNode< RootNode >", "structKarm_1_1Ui_1_1LeafNode.html", null ],
         [ "Karm::Ui::LeafNode< ScaleIn >", "structKarm_1_1Ui_1_1LeafNode.html", null ],
         [ "Karm::Ui::LeafNode< SceneCanvas >", "structKarm_1_1Ui_1_1LeafNode.html", null ],
         [ "Karm::Ui::LeafNode< Scroll >", "structKarm_1_1Ui_1_1LeafNode.html", null ],
@@ -301,6 +302,9 @@ var hierarchy =
           ] ],
           [ "Karm::Ui::ProxyNode< PopoverLayer >", "structKarm_1_1Ui_1_1ProxyNode.html", [
             [ "Karm::Ui::PopoverLayer", "structKarm_1_1Ui_1_1PopoverLayer.html", null ]
+          ] ],
+          [ "Karm::Ui::ProxyNode< RootNode >", "structKarm_1_1Ui_1_1ProxyNode.html", [
+            [ "Karm::Ui::RootNode", "structKarm_1_1Ui_1_1RootNode.html", null ]
           ] ],
           [ "Karm::Ui::ProxyNode< ScaleIn >", "structKarm_1_1Ui_1_1ProxyNode.html", [
             [ "Karm::Ui::ScaleIn", "structKarm_1_1Ui_1_1ScaleIn.html", null ]
@@ -396,7 +400,7 @@ var hierarchy =
     ] ],
     [ "Karm::Md::Document", "structKarm_1_1Md_1_1Document.html", null ],
     [ "Karm::Template::Document", "structKarm_1_1Template_1_1Document.html", null ],
-    [ "Karm::Ui::DragEvent", "structKarm_1_1Ui_1_1DragEvent.html", null ],
+    [ "Karm::App::DragEvent", "structKarm_1_1App_1_1DragEvent.html", null ],
     [ "Karm::Test::Driver", "structKarm_1_1Test_1_1Driver.html", null ],
     [ "Karm::Duration", "structKarm_1_1Duration.html", null ],
     [ "Karm::EAscii< Mapper >", "structKarm_1_1EAscii.html", null ],

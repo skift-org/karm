@@ -42,7 +42,7 @@ var inputs_8cpp =
       [ "X2", "inputs_8cpp.html#a6be91eb6569c46f6a8e9d7faee8e5b9aa54105bddbfe3f639d49cbe8f5182c958", null ]
     ] ],
     [ "match", "inputs_8cpp.html#ac5f954173dc6686031920b4a6694803e", null ],
-    [ "App", "inputs_8cpp.html#a13f54950fa9f83c0b98769ddc06c2c47", null ],
+    [ "Base", "inputs_8cpp.html#adf526eacf849ea7630f522459dd30127", null ],
     [ "Core", "inputs_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5", null ],
     [ "Math", "inputs_8cpp.html#a062e19c831932519c33a396b9b0f4a04", null ],
     [ "module", "inputs_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6", null ]

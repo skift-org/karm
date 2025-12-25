@@ -1,6 +1,5 @@
 var drag_8cpp =
 [
-    [ "Karm::Ui::DragEvent", "structKarm_1_1Ui_1_1DragEvent.html", "structKarm_1_1Ui_1_1DragEvent" ],
     [ "Karm::Ui::Dismisable", "structKarm_1_1Ui_1_1Dismisable.html", "structKarm_1_1Ui_1_1Dismisable" ],
     [ "Karm::Ui::DragRegion", "structKarm_1_1Ui_1_1DragRegion.html", "structKarm_1_1Ui_1_1DragRegion" ],
     [ "DismisDir", "drag_8cpp.html#a9a6f71ee5d5e1182df9c535312fa6089", [

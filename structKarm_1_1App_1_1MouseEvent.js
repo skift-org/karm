@@ -8,5 +8,5 @@ var structKarm_1_1App_1_1MouseEvent =
     [ "mods", "structKarm_1_1App_1_1MouseEvent.html#ad420e1872bf43c782fd278d847587d4e", null ],
     [ "pos", "structKarm_1_1App_1_1MouseEvent.html#ab8d9e62b0592c53266d18edb3fa1ecc2", null ],
     [ "scroll", "structKarm_1_1App_1_1MouseEvent.html#ab4814f94f4f94a3a3ae6c7db58eb2a11", null ],
-    [ "type", "structKarm_1_1App_1_1MouseEvent.html#af44515dd7b425bcb66f3dbce4c387e29", null ]
+    [ "type", "structKarm_1_1App_1_1MouseEvent.html#a81ad83e5d70518b46ec049e778a0459d", null ]
 ];

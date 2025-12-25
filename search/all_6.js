@@ -93,9 +93,9 @@ var searchData=
   ['groupnode_3c_20gridlayout_20_3e_90',['GroupNode&lt; GridLayout &gt;',['../structKarm_1_1Ui_1_1GroupNode.html',1,'Karm::Ui']]],
   ['groupnode_3c_20stacklayout_20_3e_91',['GroupNode&lt; StackLayout &gt;',['../structKarm_1_1Ui_1_1GroupNode.html',1,'Karm::Ui']]],
   ['grow_92',['grow',['../namespaceKarm_1_1Ui.html#a03139cd03b26f2de2c51ee6f817fdbf2',1,'Karm::Ui::grow(isize g)'],['../namespaceKarm_1_1Ui.html#aa5c4ffa2a9d9e3bb77792d2d3bc99d4f',1,'Karm::Ui::grow(Opt&lt; Child &gt; child)'],['../namespaceKarm_1_1Ui.html#aea86d01337e069d917afe34ec125dd51',1,'Karm::Ui::grow()'],['../namespaceKarm_1_1Ui.html#afbac994b33c98748b8ce45c80b407213',1,'Karm::Ui::grow(isize grow, Opt&lt; Child &gt; child)']]],
-  ['grow_93',['Grow',['../structKarm_1_1Ui_1_1Grow.html#a1ad544db6e02b2c3ec3eb5bcfbdc88f4',1,'Karm::Ui::Grow']]],
-  ['grow_94',['GROW',['../structKarm_1_1Ui_1_1GridUnit.html#a47d5a12625cc400f5c5e38c86b9e547e',1,'Karm::Ui::GridUnit']]],
+  ['grow_93',['GROW',['../structKarm_1_1Ui_1_1GridUnit.html#a47d5a12625cc400f5c5e38c86b9e547e',1,'Karm::Ui::GridUnit']]],
+  ['grow_94',['Grow',['../structKarm_1_1Ui_1_1Grow.html#a8b41abcc03a03667c2ca2546a414a149',1,'Karm::Ui::Grow::Grow(Child child)'],['../structKarm_1_1Ui_1_1Grow.html#a1ad544db6e02b2c3ec3eb5bcfbdc88f4',1,'Karm::Ui::Grow::Grow(isize grow, Child child)']]],
   ['grow_95',['grow',['../structKarm_1_1Math_1_1Radii.html#a9726f2713c4d7709b99d36423c88cb7c',1,'Karm::Math::Radii::grow()'],['../unionKarm_1_1Math_1_1Rect.html#aefe3ef017f09b3bb9e34ca670c3e4992',1,'Karm::Math::Rect::grow()'],['../structKarm_1_1Ui_1_1Grow.html#a49d75c301b8786cb15f163179b5dbb98',1,'Karm::Ui::Grow::grow()'],['../structKarm_1_1Ui_1_1GridUnit.html#a78803d9f248f579aa729038e1063fd93',1,'Karm::Ui::GridUnit::grow()']]],
-  ['grow_96',['Grow',['../structKarm_1_1Ui_1_1Grow.html#a8b41abcc03a03667c2ca2546a414a149',1,'Karm::Ui::Grow::Grow()'],['../structKarm_1_1Ui_1_1Grow.html',1,'Karm::Ui::Grow']]],
+  ['grow_96',['Grow',['../structKarm_1_1Ui_1_1Grow.html',1,'Karm::Ui']]],
   ['gsub_97',['Gsub',['../structKarm_1_1Font_1_1Ttf_1_1Gsub.html',1,'Karm::Font::Ttf']]]
 ];

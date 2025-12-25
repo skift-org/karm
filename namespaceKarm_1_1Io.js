@@ -49,7 +49,7 @@ var namespaceKarm_1_1Io =
       [ "testCase", "namespaceKarm_1_1Io_1_1Tests.html#a14e0bbeac77f05dac4519c8a53a83939", null ],
       [ "a", "namespaceKarm_1_1Io_1_1Tests.html#ad9f49ef44e5c7141d5578b71fa8cf3bd", null ],
       [ "c", "namespaceKarm_1_1Io_1_1Tests.html#adec843c3675e697d9179d1e80882f44a", null ],
-      [ "CASES", "namespaceKarm_1_1Io_1_1Tests.html#a6b51f7bc8c8b0bcbcc486c8d63771da2", null ],
+      [ "CASES", "namespaceKarm_1_1Io_1_1Tests.html#ade127061fc82ad1d08c00d0478c7406a", null ],
       [ "expected", "namespaceKarm_1_1Io_1_1Tests.html#af34cee679ecfa9ab048b8c16d7ecefad", null ],
       [ "input", "namespaceKarm_1_1Io_1_1Tests.html#aace60adff5d33a343b53ae42edd1206d", null ],
       [ "width", "namespaceKarm_1_1Io_1_1Tests.html#a9eae71a276ca97253f17856c4456a32a", null ]
