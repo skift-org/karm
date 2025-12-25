@@ -169,10 +169,8 @@ export struct Message {
         return _header.mid == Meta::idOf<T>();
     }
 
-    template <typename T, typename... Args>
-    static Res<Message> packReq(Port to, u64 seq, Args&&... args) {
-        T payload{std::forward<Args>(args)...};
-
+    template <typename T>
+    static Res<Message> packReq(Port to, u64 seq, T const& payload) {
         Message msg;
         msg._header = {
             seq,
@@ -194,10 +192,8 @@ export struct Message {
         return Ok(std::move(msg));
     }
 
-    template <typename T, typename... Args>
-    Res<Message> packResp(Args&&... args) {
-        typename T::Response payload{std::forward<Args>(args)...};
-
+    template <typename T>
+    Res<Message> packResp(T::Response const& payload) {
         Message resp;
         resp._header = {
             header().seq,

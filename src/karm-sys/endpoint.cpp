@@ -27,9 +27,9 @@ export ChannelHook& useChannel(Context& ctx) {
 
 // MARK: Primitive Operations --------------------------------------------------
 
-export template <typename T, typename... Args>
-Res<> rpcSend(IpcConnection& con, Port to, u64 seq, Args&&... args) {
-    Message msg = Message::packReq<T>(to, seq, std::forward<Args>(args)...).take();
+export template <typename T>
+Res<> rpcSend(IpcConnection& con, Port to, u64 seq, T const& payload) {
+    Message msg = Message::packReq<T>(to, seq, payload).take();
     try$(con.send(msg.bytes(), msg.handles()));
     return Ok();
 }
@@ -58,7 +58,7 @@ export struct Endpoint : Meta::Pinned {
     u64 _seq = 1;
     Async::Cancellation _cancelation;
 
-    Endpoint(IpcConnection con) : _con(std::move(con)) {
+    Endpoint(IpcConnection con) : _con(con) {
         _globalEndpoint = this;
         // FIXME: Find a way to do proper cleanup
         Async::detach(_receiverTask(*this, _cancelation.token()), [](Res<> res) {
@@ -73,7 +73,7 @@ export struct Endpoint : Meta::Pinned {
 
     static Endpoint adopt(Context& ctx) {
         auto& channel = useChannel(ctx);
-        return {std::move(channel.con)};
+        return {channel.con};
     }
 
     static Async::Task<> _receiverTask(Endpoint& self, Async::CancellationToken ct) {
@@ -90,13 +90,17 @@ export struct Endpoint : Meta::Pinned {
         }
     }
 
-    template <typename T, typename... Args>
-    Res<> send(Port port, Args&&... args) {
-        return rpcSend<T>(_con, port, _seq++, std::forward<Args>(args)...);
+    template <typename T>
+    Res<> send(Port port, T const& payload) {
+        return rpcSend<T>(_con, port, _seq++, payload);
     }
 
     Async::Task<Message> recvAsync() {
         co_return Ok(co_await _incoming.dequeueAsync());
+    }
+
+    Opt<Message> tryRecv() {
+        return _incoming.tryDequeue();
     }
 
     template <typename T>
@@ -107,14 +111,15 @@ export struct Endpoint : Meta::Pinned {
         return rpcSend<typename T::Response>(_con, header.from, header.seq, message.take());
     }
 
-    template <typename T, typename... Args>
-    Async::Task<typename T::Response> callAsync(Port port, Args&&... args) {
+    template <typename T>
+    Async::Task<typename T::Response> callAsync(Port port, T const& payload, Async::CancellationToken) {
+        // FIXME: Handle cancellation
         auto seq = _seq++;
         Async::_Promise<Message> promise;
         auto future = promise.future();
         _pending.put(seq, std::move(promise));
 
-        co_try$(rpcSend<T>(_con, port, seq, std::forward<Args>(args)...));
+        co_try$(rpcSend<T>(_con, port, seq, payload));
 
         Message msg = co_await future;
 
