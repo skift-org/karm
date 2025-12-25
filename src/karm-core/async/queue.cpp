@@ -85,7 +85,7 @@ struct Queue {
         return isEmpty(_buf);
     }
 
-    Opt<T> dequeue() {
+    Opt<T> tryDequeue() {
         if (empty())
             return NONE;
         return _buf.popFront();

@@ -44,7 +44,7 @@ test$("karm-queue-dequeue-enqueue") {
     expectEq$(res2, 69);
 
     expect$(not q.empty());
-    expectEq$(q.dequeue(), 96);
+    expectEq$(q.tryDequeue(), 96);
 
     return Ok();
 }

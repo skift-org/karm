@@ -20,6 +20,7 @@ export struct Cancellable : Meta::Pinned {
     virtual ~Cancellable();
 
     Res<> attach(CancellationToken ct);
+
     Res<> attach(Cancellation& ct);
 
     virtual void cancel() = 0;
@@ -32,7 +33,8 @@ export struct CancellationToken {
         return CancellationToken{nullptr};
     }
 
-    explicit CancellationToken(Cancellation* c) : cancellation{c} {}
+    explicit CancellationToken(Cancellation* c)
+        : cancellation{c} {}
 
     bool cancelled() const;
 
