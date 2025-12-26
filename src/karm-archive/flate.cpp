@@ -1,6 +1,7 @@
 module;
 
 #include <karm-core/macros.h>
+#include <zlib.h>
 
 export module Karm.Archive:flate;
 
@@ -229,6 +230,64 @@ export Res<> inflate(Io::BitReader& r, Io::Writer& out) {
         }
     }
 
+    return Ok();
+}
+
+static constexpr usize CHUNK_SIZE = 16384;
+
+export Res<> deflate(Io::Reader& r, Io::Writer& out) {
+    Array<u8, CHUNK_SIZE> buf_in;
+    Array<u8, CHUNK_SIZE> buf_out;
+
+    z_stream stream;
+    stream.zalloc = Z_NULL;
+    stream.zfree = Z_NULL;
+    stream.opaque = Z_NULL;
+
+    if (deflateInit(&stream, Z_DEFAULT_COMPRESSION) != Z_OK) {
+        return Error::other("failed to initialize zlib deflate");
+    }
+
+    int flush = Z_NO_FLUSH;
+    do {
+        auto read_or_error = r.read(buf_in);
+        if (!read_or_error) {
+            deflateEnd(&stream);
+            return read_or_error.error().take();
+        }
+
+        stream.avail_in = read_or_error.take();
+        stream.next_in = buf_in.buf();
+
+        // FIXME: Is this a correct way to check for EOF ?
+        flush = (stream.avail_in < CHUNK_SIZE) ? Z_FINISH : Z_NO_FLUSH;
+
+        do {
+            stream.avail_out = buf_out.len();
+            stream.next_out = buf_out.buf();
+
+            int ret = deflate(&stream, flush);
+
+            if (ret == Z_STREAM_ERROR) {
+                deflateEnd(&stream);
+                return Error::other("failed to deflate chunk");
+            }
+
+            usize have = CHUNK_SIZE - stream.avail_out;
+
+            auto written_or_error = out.write(Bytes{buf_out.buf(), have});
+            if (!written_or_error) {
+                deflateEnd(&stream);
+                return written_or_error.error().take();
+            }
+            if (written_or_error.take() != have) {
+                deflateEnd(&stream);
+                return Error::other("");
+            }
+        } while (stream.avail_out == 0);
+    } while (flush != Z_FINISH);
+
+    deflateEnd(&stream);
     return Ok();
 }
 

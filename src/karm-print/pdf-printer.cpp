@@ -19,11 +19,12 @@ export struct PdfPrinter : FilePrinter {
     Vec<PdfPage> _pages;
     Opt<Pdf::Canvas> _canvas;
     Pdf::FontManager fontManager;
+    Pdf::ImageManager imageManager;
     Vec<Pdf::GraphicalStateDict> graphicalStates;
 
     Gfx::Canvas& beginPage(PaperStock paper) override {
         auto& page = _pages.emplaceBack(paper);
-        _canvas = Pdf::Canvas{page.data, paper.size(), &fontManager, graphicalStates};
+        _canvas = Pdf::Canvas{page.data, paper.size(), &fontManager, &imageManager, graphicalStates};
 
         // Convert fron the karm-pdf internal units to PDF units (1/72 inch)
         _canvas->scale(72.0 / DPI);
@@ -82,6 +83,103 @@ export struct PdfPrinter : FilePrinter {
             );
         }
 
+        // Images
+        Pdf::Dict xObjectDict;
+        for (auto& [id, surface]: imageManager.mapping.iterUnordered()) {
+            auto getColorSpaceName = [](Gfx::Fmt fmt) -> Opt<Pdf::Name> {
+                return fmt.visit(Visitor{
+                    [](Gfx::Rgb888) -> Opt<Pdf::Name> {
+                        return "DeviceRGB"s;
+                    },
+                    [](Gfx::Greyscale8) -> Opt<Pdf::Name> {
+                        return "DeviceGray"s;
+                    },
+                    [](auto) -> Opt<Pdf::Name> {
+                        return NONE;
+                    }
+                });
+            };
+
+            auto getFilterName = [](Ref::Uti uti) -> Opt<Pdf::Name> {
+                switch (uti) {
+                case Gfx::ImageEncoding::DEFLATE:
+                    return "FlateDecode"s;
+                case Gfx::ImageEncoding::JPEG2000:
+                    return "JPXDecode"s;
+                case Gfx::ImageEncoding::JPEG:
+                    return "DCTDecode"s;
+                default:
+                    return NONE;
+                }
+            };
+
+            if (surface->mimeData()) {
+                auto& mimeData = *surface->mimeData();
+                if (mimeData.uti == Ref::Uti::PUBLIC_JPEG) {
+                }
+            }
+
+            auto colorSpaceName = getColorSpaceName(image->fmt());
+            if (!colorSpaceName) {
+                logWarn("skipping image with unsupported color space");
+                continue;
+            }
+
+            auto xObjectRef = alloc.alloc();
+
+            auto imageStreamParams =
+                Pdf::Dict{
+                                {"Type"s, Pdf::Name{"XObject"s}},
+                                {"Subtype"s, Pdf::Name{"Image"s}},
+                                {"Width"s, image->width()},
+                                {"Height"s, image->height()},
+                                {"ColorSpace"s, colorSpaceName.take()},
+                                {"BitsPerComponent"s,  image->fmt().bpc()},
+                                {"Length"s, static_cast<isize>(image->buf().size())}
+                    };
+
+            if (auto filterName = getFilterName(image->encoding())) {
+                imageStreamParams.put("Filter"s, filterName.take());
+            }
+
+            if (alphaMask) {
+                auto alphaMaskColorSpaceName = getColorSpaceName((*alphaMask)->fmt());
+                if (!alphaMaskColorSpaceName) {
+                    logWarn("skipping alpha mask with unsupported color space");
+                    continue;
+                }
+
+                auto smaskRef = alloc.alloc();
+
+                imageStreamParams.put("SMask"s, smaskRef);
+
+                file.add(smaskRef, Pdf::Stream{
+                    .dict = Pdf::Dict{
+                        {"Type"s, Pdf::Name{"XObject"s}},
+                        {"Subtype"s, Pdf::Name{"Image"s}},
+                        {"Width"s, (*alphaMask)->width()},
+                        {"Height"s, (*alphaMask)->height()},
+                        {"ColorSpace"s, Pdf::Name{"DeviceGray"s}},
+                        {"BitsPerComponent"s, (*alphaMask)->fmt().bpc()},
+                        {"Filter"s, Pdf::Name{"FlateDecode"s}},
+                        {"Length"s, static_cast<isize>((*alphaMask)->buf().size())}
+                    },
+                    .data = (*alphaMask)->buf()
+                });
+            }
+
+            // FIXME: Use move semantics
+            file.add(
+                xObjectRef,
+                Pdf::Stream{
+                    .dict = imageStreamParams,
+                    .data = image->buf()
+                }
+            );
+
+            xObjectDict.put(Pdf::Name{Io::format("Im{}", id)}, xObjectRef);
+        }
+
         // Page
         for (auto& p : _pages) {
             Pdf::Ref pageRef = alloc.alloc();
@@ -119,7 +217,9 @@ export struct PdfPrinter : FilePrinter {
                                 pageFontsDict,
                             },
                             {"ExtGState"s,
-                             graphicalStatesDict}
+                             graphicalStatesDict},
+                            {"XObject"s,
+                             xObjectDict},
                         },
                     }
                 }

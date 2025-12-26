@@ -456,6 +456,8 @@ export struct CpuCanvas : Canvas {
         });
     }
 
+    void blit(Math::Recti, Math::Recti, Rc<Surface>) override {}
+
     // MARK: Filter Operations -------------------------------------------------
 
     void apply(Filter filter) override {

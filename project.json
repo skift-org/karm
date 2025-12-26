@@ -53,6 +53,23 @@
             "names": [
                 "libseccomp"
             ]
+        },
+        "png": {
+            "description": "The official PNG reference library",
+            "names": [
+                "libpng"
+            ]
+        },
+        "jpeg": {
+            "names": [
+                "libjpeg"
+            ]
+        },
+        "zlib": {
+            "description": "A massively spiffy yet delicately unobtrusive compression library",
+            "names": [
+                "zlib"
+            ]
         }
     }
 }

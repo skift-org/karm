@@ -4,12 +4,42 @@ module;
 
 export module Karm.Gfx:buffer;
 
+import Karm.Logger;
 import Karm.Math;
 import Karm.Core;
+import Karm.Ref;
 
 import :color;
 
 namespace Karm::Gfx {
+
+export struct Rgb888 {
+    always_inline static Color load(void const* pixel) {
+        u8 const* p = static_cast<u8 const*>(pixel);
+        return Color::fromRgb(p[0], p[1], p[2]);
+    }
+
+    always_inline static void store(void* pixel, Color color) {
+        u8* p = static_cast<u8*>(pixel);
+        p[0] = color.red;
+        p[1] = color.green;
+        p[2] = color.blue;
+    }
+
+    always_inline static constexpr usize bpp() {
+        return 3;
+    }
+
+    always_inline static constexpr usize bpc() {
+        return 8;
+    }
+
+    always_inline static constexpr bool hasAlpha() {
+        return false;
+    }
+};
+
+export Rgb888 RGB888;
 
 export struct Rgba8888 {
     always_inline static Color load(void const* pixel) {
@@ -27,6 +57,14 @@ export struct Rgba8888 {
 
     always_inline static constexpr usize bpp() {
         return 4;
+    }
+
+    always_inline static constexpr usize bpc() {
+        return 8;
+    }
+
+    always_inline static constexpr bool hasAlpha() {
+        return true;
     }
 };
 
@@ -49,6 +87,14 @@ export struct Bgra8888 {
     always_inline static constexpr usize bpp() {
         return 4;
     }
+
+    always_inline static constexpr usize bpc() {
+        return 8;
+    }
+
+    always_inline static constexpr bool hasAlpha() {
+        return true;
+    }
 };
 
 export Bgra8888 BGRA8888;
@@ -67,11 +113,19 @@ export struct Greyscale8 {
     always_inline static constexpr usize bpp() {
         return 1;
     }
+
+    always_inline static constexpr usize bpc() {
+        return 8;
+    }
+
+    always_inline static constexpr bool hasAlpha() {
+        return false;
+    }
 };
 
 export Greyscale8 GREYSCALE8;
 
-using _Fmts = Union<Rgba8888, Bgra8888, Greyscale8>;
+using _Fmts = Union<Rgb888, Rgba8888, Bgra8888, Greyscale8>;
 
 export struct Fmt : _Fmts {
     using _Fmts::_Fmts;
@@ -91,6 +145,18 @@ export struct Fmt : _Fmts {
     always_inline constexpr usize bpp() const {
         return visit([&](auto f) {
             return f.bpp();
+        });
+    }
+
+    always_inline constexpr usize bpc() const {
+        return visit([&](auto f) {
+            return f.bpc();
+        });
+    }
+
+    always_inline constexpr bool hasAlpha() const {
+        return visit([&](auto f) {
+            return f.hasAlpha();
         });
     }
 };
@@ -263,18 +329,45 @@ export using MutPixels = _Pixels<true>;
 
 // MARK: Surface --------------------------------------------------------------
 
+export struct MimeData {
+    Ref::Uti uti;
+    Buf<u8> buf;
+};
+
+export using FillFunc = Func<Res<>(Opt<MimeData>, MutPixels)>;
+
+static usize _nextSurfaceId = 0;
+
 export struct Surface {
-    Buf<u8> _buf;
+    usize _id;
+    Opt<Buf<u8>> _buf;
     Math::Vec2i _size;
     usize _stride;
     Gfx::Fmt _fmt;
+    Opt<MimeData> _mimeData;
+    Opt<FillFunc> _fillFunc;
 
     static Rc<Surface> alloc(Math::Vec2i size, Gfx::Fmt fmt = Gfx::RGBA8888) {
         return makeRc<Surface>(
+            _nextSurfaceId++,
             Buf<u8>::init(size.x * size.y * fmt.bpp()),
             size,
             size.x * fmt.bpp(),
-            fmt
+            fmt,
+            NONE,
+            NONE
+        );
+    }
+
+    static Rc<Surface> allocLazy(FillFunc fillFunc, Opt<MimeData> mimeData, Math::Vec2i size, Gfx::Fmt fmt = Gfx::RGBA8888) {
+        return makeRc<Surface>(
+            _nextSurfaceId++,
+            NONE,
+            size,
+            size.x * fmt.bpp(),
+            fmt,
+            std::move(mimeData),
+            std::move(fillFunc)
         );
     }
 
@@ -284,20 +377,46 @@ export struct Surface {
         return img;
     }
 
-    always_inline operator Gfx::Pixels() const {
-        return pixels();
-    }
-
     always_inline operator Gfx::MutPixels() {
         return mutPixels();
     }
 
-    always_inline Gfx::Pixels pixels() const {
-        return {_buf.buf(), _size, _stride, _fmt};
+    always_inline Gfx::Pixels pixels() {
+        if (not _buf) {
+            _buf = Buf<u8>::init(_size.x * _size.y * _fmt.bpp());
+            auto fill_res = (*_fillFunc)(_mimeData.take(), {_buf->buf(), _size, _stride, _fmt});
+
+            // FIXME: Better fallback
+            if (fill_res.error()) {
+                logError("surface: {}", fill_res.error()->msg());
+                mutPixels().clear(Gfx::Color::fromHex(0xFF00FF));
+            }
+        }
+
+        return {_buf->buf(), _size, _stride, _fmt};
     }
 
     always_inline Gfx::MutPixels mutPixels() {
-        return {_buf.buf(), _size, _stride, _fmt};
+        if (not _buf) {
+            _buf = Buf<u8>::init(_size.x * _size.y * _fmt.bpp());
+            auto fill_res = (*_fillFunc)(_mimeData.take(), {_buf->buf(), _size, _stride, _fmt});
+
+            // FIXME: Better fallback
+            if (fill_res.error()) {
+                logError("surface: {}", fill_res.error()->msg());
+                mutPixels().clear(Gfx::Color::fromHex(0xFF00FF));
+            }
+        }
+
+        return {_buf->buf(), _size, _stride, _fmt};
+    }
+
+    always_inline usize id() const {
+        return _id;
+    }
+
+    always_inline Math::Vec2i size() const {
+        return _size;
     }
 
     always_inline isize width() const {
@@ -312,9 +431,65 @@ export struct Surface {
         return {0, 0, width(), height()};
     }
 
-    always_inline Gfx::Color sample(Math::Vec2f pos) const {
+    always_inline Gfx::Color sample(Math::Vec2f pos) {
         return pixels().sample(pos);
     }
+
+    always_inline Opt<MimeData> const& mimeData() {
+        return _mimeData;
+    }
+
+    // FIXME: Add caching
+    bool isOpaque() {
+        if (not _fmt.hasAlpha()) {
+            return true;
+        }
+
+        // FIXME: Check assembly to see if pixels() gets hoisted
+        for (isize y = 0; y < height(); y++) {
+            for (isize x = 0; x < width(); y++) {
+                Color color = pixels().loadUnsafe({x, y});
+
+                if (color.alpha < 255) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    static Rc<Surface> convert(Rc<Surface> surface, Fmt fmt) {
+        auto newSurface = alloc(surface->size(), fmt);
+        for (isize y = 0; y < surface->height(); y++) {
+            for (isize x = 0; x < surface->width(); y++) {
+                Color color = surface->pixels().loadUnsafe({x, y});
+                surface->mutPixels().storeUnsafe({x, y}, color);
+            }
+        }
+
+        return newSurface;
+    }
+
+    Opt<Rc<Surface>> extractAlpha() {
+        if (isOpaque()) {
+            return NONE;
+        }
+
+        auto newSurface = alloc(_size, GREYSCALE8);
+        for (isize y = 0; y < height(); y++) {
+            for (isize x = 0; x < width(); y++) {
+                u8 alpha = pixels().loadUnsafe({x, y}).alpha;
+
+                newSurface->mutPixels().storeUnsafe({x, y}, Color(alpha, alpha, alpha));
+            }
+        }
+
+        return newSurface;
+    }
+
+    template <typename T>
+    Rc<Surface> extract<T>
 };
 
 // MARK: Blitting --------------------------------------------------------------

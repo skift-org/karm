@@ -1,5 +1,6 @@
 export module Karm.Pdf:canvas;
 
+import Karm.Archive;
 import Karm.Core;
 import Karm.Debug;
 import Karm.Gfx;
@@ -23,6 +24,88 @@ export struct FontManager {
     }
 };
 
+export struct ImageManager {
+    Map<usize, Rc<Gfx::Surface>> mapping;
+
+    usize getImageId(Rc<Gfx::Surface> surface) {
+        if (auto storedSurface = mapping.tryGet(surface->id()))
+            return storedSurface->id();
+
+        auto id = surface.id();
+        mapping.put(id, surface);
+        return id;
+    }
+    //
+    //     if (surface->mimeData()) {
+    //         auto& mimeData = *surface->mimeData();
+    //
+    //         if (mimeData.uti == Ref::Uti::PUBLIC_JPEG) {
+    //             mapping.put(surface->id(), {Rc<Gfx::Surface>})
+    //         }
+    //     }
+    //
+    //     if (blob->encoding() == Gfx::ImageEncoding::JPEG and blob->fmt().is<Gfx::Rgb888>()) {
+    //         mapping.pushBack({id, blob, NONE});
+    //         return id;
+    //     }
+    //
+    //     panic("not implemented");
+    // }
+    //
+    // usize getImageId(Gfx::Pixels pixels) {
+    //     Vec<u8> rgbData(pixels.width() * pixels.height() * 3);
+    //
+    //     bool hasAlpha = pixels.fmt().hasAlpha();
+    //     for (isize y = 0; y < pixels.height() && !hasAlpha; y++) {
+    //         for (isize x = 0; x < pixels.width(); x++) {
+    //             auto color = pixels.loadUnsafe({x, y});
+    //             if (color.alpha < 255) {
+    //                 hasAlpha = true;
+    //                 break;
+    //             }
+    //         }
+    //     }
+    //
+    //     for (isize y = 0; y < pixels.height(); y++) {
+    //         for (isize x = 0; x < pixels.width(); x++) {
+    //             auto color = pixels.loadUnsafe({x, y});
+    //             rgbData.pushBack(color.red);
+    //             rgbData.pushBack(color.green);
+    //             rgbData.pushBack(color.blue);
+    //         }
+    //     }
+    //
+    //     auto reader = Io::BufReader(rgbData);
+    //     auto writer = Io::BufferWriter(rgbData.len());
+    //     Archive::deflate(reader, writer).unwrap();
+    //
+    //     Opt<Rc<Gfx::ImageBlob>> alphaMask = NONE;
+    //     if (hasAlpha) {
+    //         Vec<u8> alphaData(pixels.width() * pixels.height());
+    //
+    //         for (isize y = 0; y < pixels.height(); y++) {
+    //             for (isize x = 0; x < pixels.width(); x++) {
+    //                 auto color = pixels.loadUnsafe({x, y});
+    //                 alphaData.pushBack(color.alpha);
+    //             }
+    //         }
+    //
+    //         auto alphaReader = Io::BufReader(alphaData);
+    //         auto alphaWriter = Io::BufferWriter(alphaData.len());
+    //         Archive::deflate(alphaReader, alphaWriter).unwrap();
+    //
+    //         alphaMask = Gfx::ImageBlob::create(pixels.size(), Gfx::GREYSCALE8, alphaWriter.take(), Gfx::ImageEncoding::DEFLATE);
+    //     }
+    //
+    //     usize id = mapping.len() + 1;
+    //
+    //     // FIXME: Real constructor
+    //     mapping.pushBack({id, Gfx::ImageBlob::create(pixels.size(), Gfx::RGB888, writer.take(), Gfx::ImageEncoding::DEFLATE), alphaMask});
+    //
+    //     return id;
+    // }
+};
+
 // 8.4.5 Graphics state parameter dictionaries
 export struct GraphicalStateDict {
     f64 opacity;
@@ -34,10 +117,11 @@ export struct Canvas : Gfx::Canvas {
     Math::Vec2f _p{};
 
     MutCursor<FontManager> _fontManager;
+    MutCursor<ImageManager> _imageManager;
     Vec<GraphicalStateDict>& _graphicalStates;
 
-    Canvas(Io::Emit e, Math::Vec2f mediaBox, MutCursor<FontManager> fontManager, Vec<GraphicalStateDict>& graphicalStates)
-        : _e{e}, _mediaBox{mediaBox}, _fontManager{fontManager}, _graphicalStates(graphicalStates) {}
+    Canvas(Io::Emit e, Math::Vec2f mediaBox, MutCursor<FontManager> fontManager, MutCursor<ImageManager> imageManager, Vec<GraphicalStateDict>& graphicalStates)
+        : _e{e}, _mediaBox{mediaBox}, _fontManager{fontManager}, _imageManager{imageManager}, _graphicalStates(graphicalStates) {}
 
     Math::Vec2f _mapPoint(Math::Vec2f p, Flags<Math::Path::Option> options) {
         if (options & Math::Path::RELATIVE)
@@ -295,8 +379,28 @@ export struct Canvas : Gfx::Canvas {
 
     // MARK: Blit Operations ---------------------------------------------------
 
-    void blit(Math::Recti, Math::Recti, Gfx::Pixels) override {
-        logDebugIf(debugCanvas, "pdf: blit() operation not implemented");
+    void blit(Math::Recti src, Math::Recti dest, Rc<Gfx::Surface> surface) override {
+        (void)src;
+        logInfo("Blitting like a boss");
+
+        push();
+        _e.ln("{} 0 0 {} {} {} cm", dest.width, -dest.height, dest.x, dest.y + dest.height);
+
+        _e.ln("/Im{} Do", _imageManager->getImageId(surface->pixels()));
+
+        pop();
+    }
+
+    void blit(Math::Recti src, Math::Recti dest, Rc<Gfx::ImageBlob> blob) override {
+        (void)src;
+        logInfo("Blitting like a champ");
+
+        push();
+        _e.ln("{} 0 0 {} {} {} cm", dest.width, -dest.height, dest.x, dest.y + dest.height);
+
+        _e.ln("/Im{} Do", _imageManager->getImageId(blob));
+
+        pop();
     }
 
     // MARK: Filter Operations -------------------------------------------------

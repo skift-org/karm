@@ -6,6 +6,7 @@
     "requires": [
         "karm-math",
         "karm-core",
+        "karm-logger",
         "mdi"
     ],
     "subdirs": [

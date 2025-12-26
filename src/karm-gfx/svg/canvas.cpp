@@ -422,11 +422,11 @@ export struct SvgCanvas : Canvas {
 
     void plot(Math::Recti r, Color c) override { clear(r, c); }
 
-    void blit(Math::Recti, Math::Recti, Pixels) override {}
+    void blit(Math::Recti, Math::Recti, Rc<Surface>) override {}
 
-    void blit(Math::Recti, Pixels) override {}
+    void blit(Math::Recti, Rc<Surface>) override {}
 
-    void blit(Math::Vec2i, Pixels) override {}
+    void blit(Math::Vec2i, Rc<Surface>) override {}
 };
 
 } // namespace Karm::Gfx

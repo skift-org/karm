@@ -4,6 +4,7 @@
     "type": "lib",
     "description": "Compress and archive data",
     "requires": [
-        "karm-core"
+        "karm-core",
+        "zlib"
     ]
 }

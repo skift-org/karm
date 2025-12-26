@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+  "id": "impl-libjpeg",
+  "type": "lib",
+  "props": {
+    "cpp-excluded": true
+  },
+  "enableIf": {
+    "nih": [null, false]
+  },
+  "provides": [
+    "karm-image-jpeg-impl"
+  ]
+}
