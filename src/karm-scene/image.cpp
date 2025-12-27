@@ -10,11 +10,11 @@ namespace Karm::Scene {
 
 export struct Image : Node {
     Math::Rectf _bound;
-    Rc<Gfx::ImageBlob> _blob;
+    Rc<Gfx::Surface> _surface;
     Math::Radiif _radii;
 
-    Image(Math::Rectf bound, Rc<Gfx::ImageBlob> blob, Math::Radiif radii = {})
-        : _bound(bound), _blob(blob), _radii(radii) {
+    Image(Math::Rectf bound, Rc<Gfx::Surface> surface, Math::Radiif radii = {})
+        : _bound(bound), _surface(surface), _radii(radii) {
     }
 
     Math::Rectf bound() override {
@@ -29,7 +29,7 @@ export struct Image : Node {
         //     ctx.fillStyle(_surface->pixels());
         //     ctx.fill(bound(), _radii);
         // } else {
-        ctx.blit(_bound.cast<isize>(), _blob);
+        ctx.blit(_bound.cast<isize>(), _surface);
         // }
     }
 

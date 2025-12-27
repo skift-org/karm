@@ -4,7 +4,9 @@ module;
 
 export module Karm.Print:pdfPrinter;
 
+import Karm.Archive;
 import Karm.Pdf;
+
 import :filePrinter;
 import :pdfFonts;
 
@@ -100,80 +102,143 @@ export struct PdfPrinter : FilePrinter {
                 });
             };
 
-            auto getFilterName = [](Ref::Uti uti) -> Opt<Pdf::Name> {
-                switch (uti) {
-                case Gfx::ImageEncoding::DEFLATE:
-                    return "FlateDecode"s;
-                case Gfx::ImageEncoding::JPEG2000:
-                    return "JPXDecode"s;
-                case Gfx::ImageEncoding::JPEG:
-                    return "DCTDecode"s;
-                default:
-                    return NONE;
-                }
+            auto deflateBytes = [](Bytes bytes) -> Buf<u8> {
+                auto alphaReader = Io::BufReader(bytes);
+                auto alphaWriter = Io::BufferWriter(bytes.len());
+                Archive::deflate(alphaReader, alphaWriter).unwrap();
+                return alphaWriter.take();
             };
-
-            if (surface->mimeData()) {
-                auto& mimeData = *surface->mimeData();
-                if (mimeData.uti == Ref::Uti::PUBLIC_JPEG) {
-                }
-            }
-
-            auto colorSpaceName = getColorSpaceName(image->fmt());
-            if (!colorSpaceName) {
-                logWarn("skipping image with unsupported color space");
-                continue;
-            }
-
-            auto xObjectRef = alloc.alloc();
 
             auto imageStreamParams =
                 Pdf::Dict{
-                                {"Type"s, Pdf::Name{"XObject"s}},
-                                {"Subtype"s, Pdf::Name{"Image"s}},
-                                {"Width"s, image->width()},
-                                {"Height"s, image->height()},
-                                {"ColorSpace"s, colorSpaceName.take()},
-                                {"BitsPerComponent"s,  image->fmt().bpc()},
-                                {"Length"s, static_cast<isize>(image->buf().size())}
-                    };
+                                    {"Type"s, Pdf::Name{"XObject"s}},
+                                    {"Subtype"s, Pdf::Name{"Image"s}},
+                                    {"Width"s, surface->width()},
+                                    {"Height"s, surface->height()},
+                                    {"BitsPerComponent"s, surface->fmt().bpc()},
+                };
 
-            if (auto filterName = getFilterName(image->encoding())) {
+            struct PreparedImage {
+                Pdf::Name filterName;
+                Pdf::Name colorSpaceName;
+                Buf<u8> rawImage;
+                Opt<Buf<u8>> alphaMask;
+            };
+
+            auto prepareEmbeddableImage = [&]() -> Opt<PreparedImage> {
+                if (surface->mimeData()) {
+                    auto& mimeData = *surface->mimeData();
+
+                    auto colorSpaceName = try$(getColorSpaceName(surface->fmt()));
+
+                    if (mimeData.uti == Ref::Uti::PUBLIC_JPEG) {
+                        return PreparedImage{
+                            .filterName = "DCTDecode"s,
+                            .colorSpaceName = colorSpaceName,
+                            .rawImage = mimeData.buf,
+                            .alphaMask = NONE,
+                        };
+                    }
+                }
+
+                return NONE;
+            };
+
+            auto deflateFallback = [&]() -> PreparedImage {
+                auto imageSurface = surface;
+                Opt<Buf<u8>> alphaMask = NONE;
+
+                auto colorSpaceName = getColorSpaceName(surface->fmt());
+                if (!colorSpaceName) {
+                    colorSpaceName = "DeviceRGB"s,
+                    imageSurface = surface->convert(Gfx::RGB888);
+
+                    if (auto alpha = surface->extractAlpha()) {
+                        alphaMask = deflateBytes(*alpha);
+                    }
+                }
+
+                return PreparedImage{
+                    .filterName = "FlateDecode"s,
+                    .colorSpaceName = colorSpaceName.take(),
+                    .rawImage = deflateBytes(imageSurface->pixels().bytes()),
+                    .alphaMask = alphaMask,
+                };
+            };
+
+            Opt<Pdf::Name> filterName = NONE;
+            Opt<Buf<u8>> image = NONE;
+            Opt<Buf<u8>> alphaMask = NONE;
+            Opt<Pdf::Name> colorSpaceName = NONE;
+
+            if (surface->mimeData()) {
+                auto& mimeData = *surface->mimeData();
+                imageStreamParams.put("Length"s, static_cast<isize>(mimeData.buf.size()));
+
+                if (mimeData.uti == Ref::Uti::PUBLIC_JPEG) {
+                    filterName = "DCTDecode"s;
+                    image = mimeData.buf; // FIXME: Is it ok to move and leave the surface in an invalid state ?
+                    colorSpaceName = getColorSpaceName(surface->fmt());
+                }
+            }
+
+            if (not image or not colorSpaceName) {
+                auto imageSurface = surface;
+                // To here (decode fallback)
+                if (not surface->fmt().is<Gfx::Rgb888>() and not surface->fmt().is<Gfx::Greyscale8>()) {
+                    imageSurface = surface->convert(Gfx::RGB888);
+
+                    if (auto alpha = surface->extractAlpha()) {
+                        alphaMask = deflateBytes(*alpha);
+                    }
+                }
+
+                image = deflateBytes(imageSurface->pixels().bytes());
+                colorSpaceName = getColorSpaceName(imageSurface->fmt());
+            }
+
+            if (not image or not colorSpaceName) {
+                logError("skipping invalid image");
+                continue;
+            }
+
+            imageStreamParams.put("Length"s, image->len());
+            imageStreamParams.put("ColorSpace"s, colorSpaceName.take());
+
+            if (filterName) {
                 imageStreamParams.put("Filter"s, filterName.take());
             }
 
             if (alphaMask) {
-                auto alphaMaskColorSpaceName = getColorSpaceName((*alphaMask)->fmt());
-                if (!alphaMaskColorSpaceName) {
-                    logWarn("skipping alpha mask with unsupported color space");
-                    continue;
-                }
-
                 auto smaskRef = alloc.alloc();
 
                 imageStreamParams.put("SMask"s, smaskRef);
+
+                auto deflatedAlphaMask = deflateBytes(*alphaMask);
+                auto len = deflatedAlphaMask.len();
 
                 file.add(smaskRef, Pdf::Stream{
                     .dict = Pdf::Dict{
                         {"Type"s, Pdf::Name{"XObject"s}},
                         {"Subtype"s, Pdf::Name{"Image"s}},
-                        {"Width"s, (*alphaMask)->width()},
-                        {"Height"s, (*alphaMask)->height()},
+                        {"Width"s, surface->width()},
+                        {"Height"s, surface->height()},
                         {"ColorSpace"s, Pdf::Name{"DeviceGray"s}},
-                        {"BitsPerComponent"s, (*alphaMask)->fmt().bpc()},
+                        {"BitsPerComponent"s, Gfx::GREYSCALE8.bpc()},
                         {"Filter"s, Pdf::Name{"FlateDecode"s}},
-                        {"Length"s, static_cast<isize>((*alphaMask)->buf().size())}
+                        {"Length"s, len}
                     },
-                    .data = (*alphaMask)->buf()
+                    .data = std::move(deflatedAlphaMask)
                 });
             }
 
-            // FIXME: Use move semantics
+            auto xObjectRef = alloc.alloc();
+
             file.add(
                 xObjectRef,
                 Pdf::Stream{
                     .dict = imageStreamParams,
-                    .data = image->buf()
+                    .data = image.take(),
                 }
             );
 

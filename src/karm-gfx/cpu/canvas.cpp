@@ -447,16 +447,14 @@ export struct CpuCanvas : Canvas {
         }
     }
 
-    void blit(Math::Recti src, Math::Recti dest, Pixels pixels) override {
+    void blit(Math::Recti src, Math::Recti dest, Rc<Surface> surface) override {
         auto d = mutPixels();
         d.fmt().visit([&](auto dfmt) {
-            pixels.fmt().visit([&](auto pfmt) {
-                _blit(pixels, src, pfmt, d, dest, dfmt);
+            surface->pixels().fmt().visit([&](auto pfmt) {
+                _blit(surface->pixels(), src, pfmt, d, dest, dfmt);
             });
         });
     }
-
-    void blit(Math::Recti, Math::Recti, Rc<Surface>) override {}
 
     // MARK: Filter Operations -------------------------------------------------
 

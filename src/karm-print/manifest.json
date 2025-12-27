@@ -6,6 +6,7 @@
     "requires": [
         "karm-pdf",
         "karm-scene",
-        "karm-image"
+        "karm-image",
+        "karm-archive"
     ]
 }

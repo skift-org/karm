@@ -79,6 +79,7 @@ struct JpegDecoder : Decoder {
     }
 
     Res<> decode(Gfx::MutPixels pixels) override {
+        (void)pixels;
         return Error::notImplemented();
     }
 };

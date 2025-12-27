@@ -336,7 +336,9 @@ export struct MimeData {
 
 export using FillFunc = Func<Res<>(Opt<MimeData>, MutPixels)>;
 
-static usize _nextSurfaceId = 0;
+namespace {
+usize _nextSurfaceId = 0;
+} // namespace
 
 export struct Surface {
     usize _id;
@@ -384,11 +386,11 @@ export struct Surface {
     always_inline Gfx::Pixels pixels() {
         if (not _buf) {
             _buf = Buf<u8>::init(_size.x * _size.y * _fmt.bpp());
-            auto fill_res = (*_fillFunc)(_mimeData.take(), {_buf->buf(), _size, _stride, _fmt});
+            auto fillRes = (*_fillFunc)(_mimeData.take(), {_buf->buf(), _size, _stride, _fmt});
 
             // FIXME: Better fallback
-            if (fill_res.error()) {
-                logError("surface: {}", fill_res.error()->msg());
+            if (fillRes.error()) {
+                logError("surface: {}", fillRes.error()->msg());
                 mutPixels().clear(Gfx::Color::fromHex(0xFF00FF));
             }
         }
@@ -431,12 +433,16 @@ export struct Surface {
         return {0, 0, width(), height()};
     }
 
-    always_inline Gfx::Color sample(Math::Vec2f pos) {
-        return pixels().sample(pos);
+    always_inline Fmt fmt() const {
+        return _fmt;
     }
 
     always_inline Opt<MimeData> const& mimeData() {
         return _mimeData;
+    }
+
+    always_inline Gfx::Color sample(Math::Vec2f pos) {
+        return pixels().sample(pos);
     }
 
     // FIXME: Add caching
@@ -447,7 +453,7 @@ export struct Surface {
 
         // FIXME: Check assembly to see if pixels() gets hoisted
         for (isize y = 0; y < height(); y++) {
-            for (isize x = 0; x < width(); y++) {
+            for (isize x = 0; x < width(); x++) {
                 Color color = pixels().loadUnsafe({x, y});
 
                 if (color.alpha < 255) {
@@ -459,37 +465,34 @@ export struct Surface {
         return true;
     }
 
-    static Rc<Surface> convert(Rc<Surface> surface, Fmt fmt) {
-        auto newSurface = alloc(surface->size(), fmt);
-        for (isize y = 0; y < surface->height(); y++) {
-            for (isize x = 0; x < surface->width(); y++) {
-                Color color = surface->pixels().loadUnsafe({x, y});
-                surface->mutPixels().storeUnsafe({x, y}, color);
+    Rc<Surface> convert(Fmt fmt) {
+        auto newSurface = alloc(size(), fmt);
+        for (isize y = 0; y < height(); y++) {
+            for (isize x = 0; x < width(); x++) {
+                Color color = pixels().loadUnsafe({x, y});
+                mutPixels().storeUnsafe({x, y}, color);
             }
         }
 
         return newSurface;
     }
 
-    Opt<Rc<Surface>> extractAlpha() {
+    Opt<Buf<u8>> extractAlpha() {
         if (isOpaque()) {
             return NONE;
         }
 
-        auto newSurface = alloc(_size, GREYSCALE8);
-        for (isize y = 0; y < height(); y++) {
-            for (isize x = 0; x < width(); y++) {
-                u8 alpha = pixels().loadUnsafe({x, y}).alpha;
+        auto buf = Buf<u8>::init(width() * height());
 
-                newSurface->mutPixels().storeUnsafe({x, y}, Color(alpha, alpha, alpha));
+        usize i = 0;
+        for (isize y = 0; y < height(); y++) {
+            for (isize x = 0; x < width(); x++) {
+                buf[i++] = pixels().loadUnsafe({x, y}).alpha;
             }
         }
 
-        return newSurface;
+        return buf;
     }
-
-    template <typename T>
-    Rc<Surface> extract<T>
 };
 
 // MARK: Blitting --------------------------------------------------------------

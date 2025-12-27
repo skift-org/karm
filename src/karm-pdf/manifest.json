@@ -6,7 +6,6 @@
     "requires": [
         "karm-core",
         "karm-gfx",
-        "karm-debug",
-        "karm-archive"
+        "karm-debug"
     ]
 }
