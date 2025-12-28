@@ -6,7 +6,7 @@ import :event;
 
 namespace Karm::App {
 
-export struct RequestExitEvent {
+export struct RequestCloseEvent {
     Res<> res = Ok();
 };
 

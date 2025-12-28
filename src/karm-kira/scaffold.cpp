@@ -15,7 +15,6 @@ namespace Karm::Kira {
 export struct Scaffold : Meta::NoCopy {
     Gfx::Icon icon;
     String title;
-    TitlebarStyle titlebar = TitlebarStyle::DEFAULT;
 
     Opt<Ui::Slots> startTools = NONE;
     Opt<Ui::Slots> middleTools = NONE;
@@ -133,7 +132,7 @@ static Ui::Child _desktopScaffoldToolbar(Scaffold::State const& s, Scaffold cons
 
 static Ui::Child _desktopScaffoldHeader(Scaffold::State const& s, Scaffold const& scaffold) {
     return Ui::vflow(
-               titlebar(scaffold.icon, scaffold.title, scaffold.titlebar),
+               titlebar(scaffold.icon, scaffold.title),
                _desktopScaffoldToolbar(s, scaffold)
            ) |
            Ui::box({.backgroundFill = Ui::GRAY900}) |

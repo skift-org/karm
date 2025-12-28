@@ -3,17 +3,13 @@ export module Karm.Kira:titlebar;
 import Karm.App;
 import Karm.Ui;
 import Karm.Gfx;
+
 import Mdi;
 
 import :aboutDialog;
+import :contextMenu;
 
 namespace Karm::Kira {
-
-export enum struct TitlebarStyle {
-    DEFAULT,
-    FIXED,
-    DIALOG
-};
 
 export Ui::Child titlebarTitle(Gfx::Icon icon, String title, bool compact = false) {
     if (compact) {
@@ -34,23 +30,13 @@ export Ui::Child titlebarTitle(Gfx::Icon icon, String title, bool compact = fals
     );
 }
 
-export Ui::Child titlebarControls(TitlebarStyle style) {
+export Ui::Child titlebarClose() {
     return Ui::hflow(
         4,
         Ui::button(
-            Ui::bindBubble<App::RequestMinimizeEvent>(),
+            Ui::bindBubble<App::RequestCloseEvent>(),
             Ui::ButtonStyle::subtle(),
-            Mdi::MINUS
-        ) | Ui::cond(style == TitlebarStyle::DEFAULT),
-        Ui::button(
-            Ui::bindBubble<App::RequestMaximizeEvent>(),
-            Ui::ButtonStyle::subtle(),
-            Mdi::CROP_SQUARE
-        ) | Ui::cond(style == TitlebarStyle::DEFAULT),
-        Ui::button(
-            Ui::bindBubble<App::RequestExitEvent>(),
-            Ui::ButtonStyle::subtle(),
-            Mdi::CLOSE
+            Mdi::WINDOW_CLOSE
         )
     );
 }
@@ -68,22 +54,30 @@ export struct TitlebarContent {
                    end | Ui::insets({8, 0})
                ) |
                Ui::insets({0, 8}) |
+               contextMenu([] {
+                   return contextMenuContent({
+                       contextMenuItem(Ui::bindBubble<App::RequestMinimizeEvent>(), Mdi::WINDOW_MINIMIZE, "Minimize"),
+                       contextMenuItem(Ui::bindBubble<App::RequestMaximizeEvent>(), Mdi::WINDOW_MAXIMIZE, "Maximize"),
+                       separator(),
+                       contextMenuItem(Ui::bindBubble<App::RequestCloseEvent>(), Mdi::WINDOW_CLOSE, "Close"),
+                   });
+               }) |
                Ui::dragRegion();
     }
 };
 
-export Ui::Child titlebar(Gfx::Icon icon, String title, TitlebarStyle style = TitlebarStyle::DEFAULT) {
+export Ui::Child titlebar(Gfx::Icon icon, String title) {
     return TitlebarContent{
         .start = titlebarTitle(icon, title),
-        .end = titlebarControls(style)
+        .end = titlebarClose()
     };
 }
 
-export Ui::Child titlebar(Gfx::Icon icon, String title, Ui::Child middle, TitlebarStyle style = TitlebarStyle::DEFAULT) {
+export Ui::Child titlebar(Gfx::Icon icon, String title, Ui::Child middle) {
     return TitlebarContent{
         .start = titlebarTitle(icon, title),
         .middle = middle,
-        .end = titlebarControls(style),
+        .end = titlebarClose(),
     };
 }
 

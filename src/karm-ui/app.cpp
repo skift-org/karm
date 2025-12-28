@@ -50,14 +50,23 @@ struct RootNode : ProxyNode<RootNode> {
     }
 
     void bubble(App::Event& event) override {
-        if (auto e = event.is<Node::PaintEvent>()) {
+        if (auto e = event.is<PaintEvent>()) {
             event.accept();
-        } else if (auto e = event.is<Node::LayoutEvent>()) {
+        } else if (auto e = event.is<LayoutEvent>()) {
             event.accept();
-        } else if (auto e = event.is<Node::AnimateEvent>()) {
+        } else if (auto e = event.is<AnimateEvent>()) {
             event.accept();
         } else if (auto e = event.is<App::DragEvent>()) {
             _window->drag(*e);
+            event.accept();
+        } else if (auto e = event.is<App::RequestCloseEvent>()) {
+            _window->close();
+            event.accept();
+        } else if (auto e = event.is<App::RequestMaximizeEvent>()) {
+            _window->maximize();
+            event.accept();
+        } else if (auto e = event.is<App::RequestMinimizeEvent>()) {
+            _window->minimize();
             event.accept();
         }
 

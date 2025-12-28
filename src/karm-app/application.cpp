@@ -12,6 +12,17 @@ namespace Karm::App {
 
 export using WindowId = Distinct<usize, struct WindowIdTag>;
 
+export enum struct Direction : u8 {
+    EAST,
+    NORTH,
+    NORTH_EAST,
+    NORTH_WEST,
+    SOUTH,
+    SOUTH_EAST,
+    SOUTH_WEST,
+    WEST,
+};
+
 export struct WindowProps {
     String title = "Karm Application"s;
     Math::Vec2i size = {800, 600};
@@ -31,6 +42,14 @@ export struct Window : Meta::Pinned {
     virtual void releaseSurface() = 0;
 
     virtual void drag(DragEvent) = 0;
+
+    virtual void resize(Direction) = 0;
+
+    virtual void minimize() = 0;
+
+    virtual void maximize() = 0;
+
+    virtual void close() = 0;
 };
 
 export struct Handler {

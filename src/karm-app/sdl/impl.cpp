@@ -20,6 +20,7 @@ struct SdlWindow : Window {
     SDL_Window* _sdlWindow;
     SDL_Surface* _sdlSurface = nullptr;
     Math::Vec2i _lastMousePos = {};
+    bool _closed = false;
 
     explicit SdlWindow(SdlApplication& application, SDL_Window* sdlWindow)
         : _application(application), _sdlWindow(sdlWindow) {}
@@ -54,6 +55,11 @@ struct SdlWindow : Window {
         };
     }
 
+    void releaseSurface() override {
+        SDL_UnlockSurface(_sdlSurface);
+        SDL_UpdateWindowSurface(_sdlWindow);
+    }
+
     void drag(DragEvent e) override {
         if (e.type == DragEvent::START) {
             SDL_CaptureMouse(true);
@@ -67,9 +73,19 @@ struct SdlWindow : Window {
         }
     }
 
-    void releaseSurface() override {
-        SDL_UnlockSurface(_sdlSurface);
-        SDL_UpdateWindowSurface(_sdlWindow);
+    void resize(Direction) override {
+    }
+
+    void maximize() override {
+        SDL_MaximizeWindow(_sdlWindow);
+    }
+
+    void minimize() override {
+        SDL_MinimizeWindow(_sdlWindow);
+    }
+
+    void close() override {
+        _closed = true;
     }
 };
 
@@ -95,7 +111,6 @@ struct SdlApplication : Application {
         SDL_StartTextInput(sdlWindow);
         auto window = makeRc<SdlWindow>(*this, sdlWindow);
         _windows.put(SDL_GetWindowID(sdlWindow), &*window);
-        // SDL_SetWindowHitTest(sdlWindow, _hitTestCallback, &window.unwrap());
         co_return Ok(window);
     }
 
@@ -254,12 +269,19 @@ struct SdlApplication : Application {
         }
     }
 
+    bool exited() {
+        for (auto [id, window] : _windows.iterUnordered())
+            if (not window->_closed)
+                return _exited;
+        return true;
+    }
+
     Async::Task<> runAsync(Rc<Handler> handler, Async::CancellationToken ct) override {
         Duration const frameDuration = Duration::fromMSecs(16);
 
         Instant nextFrameTime = Sys::instant();
 
-        while (not ct.cancelled() and not _exited) {
+        while (not exited()) {
             nextFrameTime = nextFrameTime + frameDuration;
 
             SDL_Event sdlEvent;
