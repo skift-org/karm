@@ -193,6 +193,8 @@ var hierarchy =
         [ "Karm::Ui::LeafNode< Progress >", "structKarm_1_1Ui_1_1LeafNode.html", null ],
         [ "Karm::Ui::LeafNode< Radio >", "structKarm_1_1Ui_1_1LeafNode.html", null ],
         [ "Karm::Ui::LeafNode< Resizable >", "structKarm_1_1Ui_1_1LeafNode.html", null ],
+        [ "Karm::Ui::LeafNode< SelectionArea >", "structKarm_1_1Ui_1_1LeafNode.html", null ],
+        [ "Karm::Ui::LeafNode< SelectionItem >", "structKarm_1_1Ui_1_1LeafNode.html", null ],
         [ "Karm::Ui::LeafNode< Separator >", "structKarm_1_1Ui_1_1LeafNode.html", null ],
         [ "Karm::Ui::LeafNode< Slider >", "structKarm_1_1Ui_1_1LeafNode.html", null ],
         [ "Karm::Ui::LeafNode< Toggle >", "structKarm_1_1Ui_1_1LeafNode.html", null ],
@@ -255,6 +257,12 @@ var hierarchy =
           ] ],
           [ "Karm::Ui::ProxyNode< Resizable >", "structKarm_1_1Ui_1_1ProxyNode.html", [
             [ "Karm::Kira::Resizable", "structKarm_1_1Kira_1_1Resizable.html", null ]
+          ] ],
+          [ "Karm::Ui::ProxyNode< SelectionArea >", "structKarm_1_1Ui_1_1ProxyNode.html", [
+            [ "Karm::Kira::SelectionArea", "structKarm_1_1Kira_1_1SelectionArea.html", null ]
+          ] ],
+          [ "Karm::Ui::ProxyNode< SelectionItem >", "structKarm_1_1Ui_1_1ProxyNode.html", [
+            [ "Karm::Kira::SelectionItem", "structKarm_1_1Kira_1_1SelectionItem.html", null ]
           ] ],
           [ "Karm::Ui::ProxyNode< Align >", "structKarm_1_1Ui_1_1ProxyNode.html", [
             [ "Karm::Ui::Align", "structKarm_1_1Ui_1_1Align.html", null ]
@@ -901,6 +909,8 @@ var hierarchy =
       [ "Karm::Sys::_File", null, null ]
     ] ],
     [ "Karm::Http::RoutePattern::Segment", "structKarm_1_1Http_1_1RoutePattern_1_1Segment.html", null ],
+    [ "Karm::Kira::SelectionSet", "structKarm_1_1Kira_1_1SelectionSet.html", null ],
+    [ "Karm::Kira::SelectionUpdateEvent", "structKarm_1_1Kira_1_1SelectionUpdateEvent.html", null ],
     [ "Karm::Sys::Sema", "structKarm_1_1Sys_1_1Sema.html", null ],
     [ "Karm::Gfx::SepiaFilter", "structKarm_1_1Gfx_1_1SepiaFilter.html", null ],
     [ "Karm::Serde::Serde< T >", "structKarm_1_1Serde_1_1Serde.html", null ],

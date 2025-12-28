@@ -23,6 +23,7 @@ var dir_a65ea3cd32a0f1a3625076dec9cdd855 =
     [ "scaffold.cpp", "scaffold_8cpp.html", "scaffold_8cpp" ],
     [ "searchbar.cpp", "searchbar_8cpp.html", "searchbar_8cpp" ],
     [ "select.cpp", "select_8cpp.html", "select_8cpp" ],
+    [ "selection.cpp", "selection_8cpp.html", "selection_8cpp" ],
     [ "separator.cpp", "separator_8cpp.html", "separator_8cpp" ],
     [ "side-nav.cpp", "side-nav_8cpp.html", "side-nav_8cpp" ],
     [ "side-panel.cpp", "side-panel_8cpp.html", "side-panel_8cpp" ],

@@ -1,5 +1,7 @@
 var NAVTREEINDEX20 =
 {
+"pdf-fonts_8cpp.html":[3,0,0,22,6],
+"pdf-fonts_8cpp.html#a1c95e9ac9c3098a005cb2df847f63506":[3,0,0,22,6,3],
 "pdf-fonts_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6":[3,0,0,22,6,2],
 "pdf-fonts_8cpp.html#ae58bcd5e109f1ddc9417003c1e65b1a6":[3,0,0,22,6,4],
 "pdf-printer_8cpp.html":[3,0,0,22,7],
@@ -247,7 +249,5 @@ var NAVTREEINDEX20 =
 "row_8cpp.html#a83454f23b85047627e4256d3d754eedf":[3,0,0,15,19,19],
 "row_8cpp.html#a8dc9e2f6ee2e0d4da3a7c69069421cb1":[3,0,0,15,19,2],
 "row_8cpp.html#a917118c8afda280449cdf1aebad1a7f8":[3,0,0,15,19,20],
-"row_8cpp.html#a95a6bfe90e95aca81787c044bd57f1b7":[3,0,0,15,19,4],
-"row_8cpp.html#ab380ce1f71a1260bd5cb1972396485ff":[3,0,0,15,19,9],
-"row_8cpp.html#abbbb090375c8441590ff2c07aa6fa4e1":[3,0,0,15,19,12]
+"row_8cpp.html#a95a6bfe90e95aca81787c044bd57f1b7":[3,0,0,15,19,4]
 };

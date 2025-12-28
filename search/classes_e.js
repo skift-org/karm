@@ -58,8 +58,10 @@ var searchData=
   ['proxynode_3c_20rootnode_20_3e_55',['ProxyNode&lt; RootNode &gt;',['../structKarm_1_1Ui_1_1ProxyNode.html',1,'Karm::Ui']]],
   ['proxynode_3c_20scalein_20_3e_56',['ProxyNode&lt; ScaleIn &gt;',['../structKarm_1_1Ui_1_1ProxyNode.html',1,'Karm::Ui']]],
   ['proxynode_3c_20scroll_20_3e_57',['ProxyNode&lt; Scroll &gt;',['../structKarm_1_1Ui_1_1ProxyNode.html',1,'Karm::Ui']]],
-  ['proxynode_3c_20sizing_20_3e_58',['ProxyNode&lt; Sizing &gt;',['../structKarm_1_1Ui_1_1ProxyNode.html',1,'Karm::Ui']]],
-  ['proxynode_3c_20slidein_20_3e_59',['ProxyNode&lt; SlideIn &gt;',['../structKarm_1_1Ui_1_1ProxyNode.html',1,'Karm::Ui']]],
-  ['proxynode_3c_20slider_20_3e_60',['ProxyNode&lt; Slider &gt;',['../structKarm_1_1Ui_1_1ProxyNode.html',1,'Karm::Ui']]],
-  ['ptr_61',['Ptr',['../structKarm_1_1Gc_1_1Ptr.html',1,'Karm::Gc']]]
+  ['proxynode_3c_20selectionarea_20_3e_58',['ProxyNode&lt; SelectionArea &gt;',['../structKarm_1_1Ui_1_1ProxyNode.html',1,'Karm::Ui']]],
+  ['proxynode_3c_20selectionitem_20_3e_59',['ProxyNode&lt; SelectionItem &gt;',['../structKarm_1_1Ui_1_1ProxyNode.html',1,'Karm::Ui']]],
+  ['proxynode_3c_20sizing_20_3e_60',['ProxyNode&lt; Sizing &gt;',['../structKarm_1_1Ui_1_1ProxyNode.html',1,'Karm::Ui']]],
+  ['proxynode_3c_20slidein_20_3e_61',['ProxyNode&lt; SlideIn &gt;',['../structKarm_1_1Ui_1_1ProxyNode.html',1,'Karm::Ui']]],
+  ['proxynode_3c_20slider_20_3e_62',['ProxyNode&lt; Slider &gt;',['../structKarm_1_1Ui_1_1ProxyNode.html',1,'Karm::Ui']]],
+  ['ptr_63',['Ptr',['../structKarm_1_1Gc_1_1Ptr.html',1,'Karm::Gc']]]
 ];
