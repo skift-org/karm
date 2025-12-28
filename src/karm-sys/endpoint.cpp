@@ -58,7 +58,7 @@ export struct Endpoint : Meta::Pinned {
     u64 _seq = 1;
     Async::Cancellation _cancelation;
 
-    Endpoint(IpcConnection con) : _con(con) {
+    Endpoint(IpcConnection con) : _con(std::move(con)) {
         _globalEndpoint = this;
         // FIXME: Find a way to do proper cleanup
         Async::detach(_receiverTask(*this, _cancelation.token()), [](Res<> res) {
@@ -73,7 +73,7 @@ export struct Endpoint : Meta::Pinned {
 
     static Endpoint adopt(Context& ctx) {
         auto& channel = useChannel(ctx);
-        return {channel.con};
+        return {std::move(channel.con)};
     }
 
     static Async::Task<> _receiverTask(Endpoint& self, Async::CancellationToken ct) {
@@ -92,7 +92,7 @@ export struct Endpoint : Meta::Pinned {
 
     template <typename T>
     Res<> send(Port port, T const& payload) {
-        return rpcSend<T>(_con, port, _seq++, payload);
+        return rpcSend<T>(_con, port, -1, payload);
     }
 
     Async::Task<Message> recvAsync() {
@@ -104,11 +104,11 @@ export struct Endpoint : Meta::Pinned {
     }
 
     template <typename T>
-    Res<> resp(Message& msg, Res<typename T::Response> message) {
+    Res<> resp(Message& msg, Res<typename T::Response> payload) {
         auto header = msg._header;
-        if (not message)
-            return rpcSend<Error>(_con, header.from, header.seq, message.none());
-        return rpcSend<typename T::Response>(_con, header.from, header.seq, message.take());
+        if (not payload)
+            return rpcSend<Error>(_con, header.from, header.seq, payload.none());
+        return rpcSend<typename T::Response>(_con, header.from, header.seq, payload.take());
     }
 
     template <typename T>
@@ -126,8 +126,9 @@ export struct Endpoint : Meta::Pinned {
         if (msg.is<Error>())
             co_return co_try$(msg.unpack<Error>());
 
-        if (not msg.is<typename T::Response>())
+        if (not msg.is<typename T::Response>()) {
             co_return Error::invalidInput("unexpected response");
+        }
 
         co_return Ok(co_try$(msg.unpack<typename T::Response>()));
     }
