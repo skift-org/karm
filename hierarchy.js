@@ -883,7 +883,7 @@ var hierarchy =
     [ "Karm::Io::Repr< T >", "structKarm_1_1Io_1_1Repr.html", null ],
     [ "Karm::Io::Repr< T >", "structKarm_1_1Io_1_1Repr_3_01T_01_4.html", null ],
     [ "Karm::Http::Request", "structKarm_1_1Http_1_1Request.html", null ],
-    [ "Karm::App::RequestExitEvent", "structKarm_1_1App_1_1RequestExitEvent.html", null ],
+    [ "Karm::App::RequestCloseEvent", "structKarm_1_1App_1_1RequestCloseEvent.html", null ],
     [ "Karm::App::RequestMaximizeEvent", "structKarm_1_1App_1_1RequestMaximizeEvent.html", null ],
     [ "Karm::App::RequestMinimizeEvent", "structKarm_1_1App_1_1RequestMinimizeEvent.html", null ],
     [ "Karm::Res< V, E >", "structKarm_1_1Res.html", null ],

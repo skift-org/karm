@@ -10,7 +10,7 @@ var searchData=
   ['feature_7',['FEATURE',['../namespaceKarm_1_1Debug.html#aff14c51edf3684bb064d428175659c70acc5eac6d4ce84ae96a802a5ecdd51977',1,'Karm::Debug']]],
   ['file_8',['FILE',['../namespaceKarm_1_1Sys.html#ac6f925bec39595b5427e8f145bd1a4cda9fc5887c030f7a3e19821ebec457e719',1,'Karm::Sys']]],
   ['filter_9',['FILTER',['../namespaceKarm_1_1Http.html#a1d720f9dab0fdc754b2d6b9ae4efaae7ae75ab17a550f46adbbe891b819cf951d',1,'Karm::Http']]],
-  ['fixed_10',['FIXED',['../structKarm_1_1Ui_1_1GridUnit.html#a7ce3ae0c13e2a397e45c97fb12347e66',1,'Karm::Ui::GridUnit::FIXED()'],['../namespaceKarm_1_1Kira.html#a9673a81abbcfd6364aa8f5c05506c645ac6e6dc18b53b4c2681394b9d8aefcec7',1,'Karm::Kira::FIXED()']]],
+  ['fixed_10',['FIXED',['../structKarm_1_1Ui_1_1GridUnit.html#a7ce3ae0c13e2a397e45c97fb12347e66',1,'Karm::Ui::GridUnit']]],
   ['flag_11',['FLAG',['../structKarm_1_1Cli_1_1Token.html#a4c9fb0da0d8a646b925e07bacadc7aeea0f4d0db3668dd58cabb9eb409657eaa8',1,'Karm::Cli::Token']]],
   ['float32_12',['FLOAT32',['../namespaceKarm_1_1Ml_1_1Gguf.html#a5bbf19e28eca480c0956db66ad3bfe3aa967d280b5c16d95f2947647dd2ca6cc2',1,'Karm::Ml::Gguf']]],
   ['float64_13',['FLOAT64',['../namespaceKarm_1_1Ml_1_1Gguf.html#a5bbf19e28eca480c0956db66ad3bfe3aa139882c654db8a57f7c3092de1dd0b02',1,'Karm::Ml::Gguf']]],

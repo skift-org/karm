@@ -23,7 +23,7 @@ var searchData=
   ['repeat_20',['REPEAT',['../structKarm_1_1Font_1_1Ttf_1_1Glyf.html#aca2e9776f0e767d089d4d12641edf39f',1,'Karm::Font::Ttf::Glyf']]],
   ['replacement_21',['REPLACEMENT',['../namespaceKarm.html#a394525318dfa69c1a1c60eadad8371eb',1,'Karm']]],
   ['request_22',['request',['../structKarm_1_1Idl_1_1Method.html#a2e7568aac283981c29c975c55d6e157e',1,'Karm::Idl::Method']]],
-  ['res_23',['res',['../structKarm_1_1App_1_1RequestExitEvent.html#a7212d72ad7386e4933f6576d974f7d54',1,'Karm::App::RequestExitEvent']]],
+  ['res_23',['res',['../structKarm_1_1App_1_1RequestCloseEvent.html#a7d2bca59498f95144613d16b125f7bf6',1,'Karm::App::RequestCloseEvent']]],
   ['resolution_24',['resolution',['../structKarm_1_1Av_1_1CameraFormat.html#ae3c3dad7a05d3c3456a864929ee386a1',1,'Karm::Av::CameraFormat']]],
   ['response_25',['response',['../structKarm_1_1Idl_1_1Method.html#a846f2d6c130a6f201610c39aadf563e1',1,'Karm::Idl::Method']]],
   ['rgb_26',['RGB',['../namespaceKarm_1_1Gfx.html#aef034dfd771cb7ec994ba30f7a0bb9bb',1,'Karm::Gfx']]],

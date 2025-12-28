@@ -11,6 +11,5 @@ var structKarm_1_1Kira_1_1Scaffold =
     [ "sidebar", "structKarm_1_1Kira_1_1Scaffold.html#a729ab97ed9592cd1390c3af7f2542af6", null ],
     [ "size", "structKarm_1_1Kira_1_1Scaffold.html#aa90931cb8328ad03669cd8d8282deb6f", null ],
     [ "startTools", "structKarm_1_1Kira_1_1Scaffold.html#a48bbbd9f893c85136cc90355483a70f2", null ],
-    [ "title", "structKarm_1_1Kira_1_1Scaffold.html#a112ac624b9d78ddb2b69609d5ebc12d8", null ],
-    [ "titlebar", "structKarm_1_1Kira_1_1Scaffold.html#a7f722206dcff60d6987af0bb78e655fa", null ]
+    [ "title", "structKarm_1_1Kira_1_1Scaffold.html#a112ac624b9d78ddb2b69609d5ebc12d8", null ]
 ];

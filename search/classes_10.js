@@ -21,7 +21,7 @@ var searchData=
   ['repr_18',['Repr',['../structKarm_1_1Io_1_1Repr.html',1,'Karm::Io']]],
   ['repr_3c_20t_20_3e_19',['Repr&lt; T &gt;',['../structKarm_1_1Io_1_1Repr_3_01T_01_4.html',1,'Karm::Io']]],
   ['request_20',['Request',['../structKarm_1_1Http_1_1Request.html',1,'Karm::Http']]],
-  ['requestexitevent_21',['RequestExitEvent',['../structKarm_1_1App_1_1RequestExitEvent.html',1,'Karm::App']]],
+  ['requestcloseevent_21',['RequestCloseEvent',['../structKarm_1_1App_1_1RequestCloseEvent.html',1,'Karm::App']]],
   ['requestmaximizeevent_22',['RequestMaximizeEvent',['../structKarm_1_1App_1_1RequestMaximizeEvent.html',1,'Karm::App']]],
   ['requestminimizeevent_23',['RequestMinimizeEvent',['../structKarm_1_1App_1_1RequestMinimizeEvent.html',1,'Karm::App']]],
   ['res_24',['Res',['../structKarm_1_1Res.html',1,'Karm']]],

@@ -1,14 +1,9 @@
 var titlebar_8cpp =
 [
     [ "Karm::Kira::TitlebarContent", "structKarm_1_1Kira_1_1TitlebarContent.html", "structKarm_1_1Kira_1_1TitlebarContent" ],
-    [ "TitlebarStyle", "titlebar_8cpp.html#a9673a81abbcfd6364aa8f5c05506c645", [
-      [ "DEFAULT", "titlebar_8cpp.html#a9673a81abbcfd6364aa8f5c05506c645a5b39c8b553c821e7cddc6da64b5bd2ee", null ],
-      [ "FIXED", "titlebar_8cpp.html#a9673a81abbcfd6364aa8f5c05506c645ac6e6dc18b53b4c2681394b9d8aefcec7", null ],
-      [ "DIALOG", "titlebar_8cpp.html#a9673a81abbcfd6364aa8f5c05506c645a51a2fc9427485236e89ca31fc55d66e5", null ]
-    ] ],
-    [ "titlebar", "titlebar_8cpp.html#a6980e61f49f481e1cb9a8471172a4285", null ],
-    [ "titlebar", "titlebar_8cpp.html#a964df7002bb906436a72879b5ef03feb", null ],
-    [ "titlebarControls", "titlebar_8cpp.html#a93bb041080ad2eb33e0fd504d5eff673", null ],
+    [ "titlebar", "titlebar_8cpp.html#ab6013f1c15491f25960e52ed58b10a84", null ],
+    [ "titlebar", "titlebar_8cpp.html#a646a76a6d2aa0de42a14f72e6013fe03", null ],
+    [ "titlebarClose", "titlebar_8cpp.html#a4960ef209733145a4c7454aa0aef5d12", null ],
     [ "titlebarTitle", "titlebar_8cpp.html#ad53791ea4521dbfba4bc47c17a2101a6", null ],
     [ "App", "titlebar_8cpp.html#ab217fce9727b55e386bc7eab0ed28441", null ],
     [ "Gfx", "titlebar_8cpp.html#a7c0089b00689a79148a84c5b7fe95679", null ],

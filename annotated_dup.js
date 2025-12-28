@@ -24,7 +24,7 @@ var annotated_dup =
         [ "MouseEvent", "structKarm_1_1App_1_1MouseEvent.html", "structKarm_1_1App_1_1MouseEvent" ],
         [ "MouseLeaveEvent", "structKarm_1_1App_1_1MouseLeaveEvent.html", null ],
         [ "Prefs", "structKarm_1_1App_1_1Prefs.html", "structKarm_1_1App_1_1Prefs" ],
-        [ "RequestExitEvent", "structKarm_1_1App_1_1RequestExitEvent.html", "structKarm_1_1App_1_1RequestExitEvent" ],
+        [ "RequestCloseEvent", "structKarm_1_1App_1_1RequestCloseEvent.html", "structKarm_1_1App_1_1RequestCloseEvent" ],
         [ "RequestMaximizeEvent", "structKarm_1_1App_1_1RequestMaximizeEvent.html", null ],
         [ "RequestMinimizeEvent", "structKarm_1_1App_1_1RequestMinimizeEvent.html", null ],
         [ "TypeEvent", "structKarm_1_1App_1_1TypeEvent.html", "structKarm_1_1App_1_1TypeEvent" ],

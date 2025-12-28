@@ -38,11 +38,6 @@ var namespaceKarm_1_1Kira =
       [ "BOTTOM", "namespaceKarm_1_1Kira.html#a43d3e6c943128cab8eac7d966bb39256a1fabf63de5c96c78e2a40805bcdeb73b", null ],
       [ "END", "namespaceKarm_1_1Kira.html#a43d3e6c943128cab8eac7d966bb39256ab1a326c06d88bf042f73d70f50197905", null ]
     ] ],
-    [ "TitlebarStyle", "namespaceKarm_1_1Kira.html#a9673a81abbcfd6364aa8f5c05506c645", [
-      [ "DEFAULT", "namespaceKarm_1_1Kira.html#a9673a81abbcfd6364aa8f5c05506c645a5b39c8b553c821e7cddc6da64b5bd2ee", null ],
-      [ "FIXED", "namespaceKarm_1_1Kira.html#a9673a81abbcfd6364aa8f5c05506c645ac6e6dc18b53b4c2681394b9d8aefcec7", null ],
-      [ "DIALOG", "namespaceKarm_1_1Kira.html#a9673a81abbcfd6364aa8f5c05506c645a51a2fc9427485236e89ca31fc55d66e5", null ]
-    ] ],
     [ "aboutDialog", "namespaceKarm_1_1Kira.html#a57a4dc451360127f8da49c60725ed287", null ],
     [ "alertDialog", "namespaceKarm_1_1Kira.html#a31b88418e89eb8dda586b0fdb5ec9f2c", null ],
     [ "avatar", "namespaceKarm_1_1Kira.html#a5bacd0e42b30ee3d8650f10b204fbff5", null ],
@@ -137,9 +132,9 @@ var namespaceKarm_1_1Kira =
     [ "tabbarContent", "namespaceKarm_1_1Kira.html#ab636d42f7f701c4688bafa00a43b7cdb", null ],
     [ "tabbarItem", "namespaceKarm_1_1Kira.html#abfa05406630d7e7c1d5ea22aee758469", null ],
     [ "tabbarWrapper", "namespaceKarm_1_1Kira.html#a881d5241d95985f73d7dff4f26ee8cc5", null ],
-    [ "titlebar", "namespaceKarm_1_1Kira.html#a6980e61f49f481e1cb9a8471172a4285", null ],
-    [ "titlebar", "namespaceKarm_1_1Kira.html#a964df7002bb906436a72879b5ef03feb", null ],
-    [ "titlebarControls", "namespaceKarm_1_1Kira.html#a93bb041080ad2eb33e0fd504d5eff673", null ],
+    [ "titlebar", "namespaceKarm_1_1Kira.html#ab6013f1c15491f25960e52ed58b10a84", null ],
+    [ "titlebar", "namespaceKarm_1_1Kira.html#a646a76a6d2aa0de42a14f72e6013fe03", null ],
+    [ "titlebarClose", "namespaceKarm_1_1Kira.html#a4960ef209733145a4c7454aa0aef5d12", null ],
     [ "titlebarTitle", "namespaceKarm_1_1Kira.html#ad53791ea4521dbfba4bc47c17a2101a6", null ],
     [ "titleRow", "namespaceKarm_1_1Kira.html#abbbb090375c8441590ff2c07aa6fa4e1", null ],
     [ "toggle", "namespaceKarm_1_1Kira.html#af3249610b93f934a8b0706a47baeb5e7", null ],
