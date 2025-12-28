@@ -21,6 +21,7 @@ export import :row;
 export import :scaffold;
 export import :searchbar;
 export import :select;
+export import :selection;
 export import :separator;
 export import :sideNav;
 export import :sidePanel;
