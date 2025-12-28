@@ -150,7 +150,7 @@ export struct PdfPrinter : FilePrinter {
 
                 auto colorSpaceName = getColorSpaceName(surface->fmt());
                 if (!colorSpaceName) {
-                    colorSpaceName = "DeviceRGB"s,
+                    colorSpaceName = "DeviceRGB"s;
                     imageSurface = surface->convert(Gfx::RGB888);
 
                     if (auto alpha = surface->extractAlpha()) {
@@ -160,61 +160,28 @@ export struct PdfPrinter : FilePrinter {
 
                 return PreparedImage{
                     .filterName = "FlateDecode"s,
-                    .colorSpaceName = colorSpaceName.take(),
+                    .colorSpaceName = colorSpaceName.unwrap(),
                     .rawImage = deflateBytes(imageSurface->pixels().bytes()),
                     .alphaMask = alphaMask,
                 };
             };
 
-            Opt<Pdf::Name> filterName = NONE;
-            Opt<Buf<u8>> image = NONE;
-            Opt<Buf<u8>> alphaMask = NONE;
-            Opt<Pdf::Name> colorSpaceName = NONE;
+            auto preparedEmbeddableImage = prepareEmbeddableImage();
+            PreparedImage preparedImage = preparedEmbeddableImage.unwrapOrElse(deflateFallback);
 
-            if (surface->mimeData()) {
-                auto& mimeData = *surface->mimeData();
-                imageStreamParams.put("Length"s, static_cast<isize>(mimeData.buf.size()));
+            imageStreamParams.put("Length"s, preparedImage.rawImage.len());
+            imageStreamParams.put("ColorSpace"s, std::move(preparedImage.colorSpaceName));
 
-                if (mimeData.uti == Ref::Uti::PUBLIC_JPEG) {
-                    filterName = "DCTDecode"s;
-                    image = mimeData.buf; // FIXME: Is it ok to move and leave the surface in an invalid state ?
-                    colorSpaceName = getColorSpaceName(surface->fmt());
-                }
+            if (preparedImage.filterName) {
+                imageStreamParams.put("Filter"s, std::move(preparedImage.filterName));
             }
 
-            if (not image or not colorSpaceName) {
-                auto imageSurface = surface;
-                // To here (decode fallback)
-                if (not surface->fmt().is<Gfx::Rgb888>() and not surface->fmt().is<Gfx::Greyscale8>()) {
-                    imageSurface = surface->convert(Gfx::RGB888);
-
-                    if (auto alpha = surface->extractAlpha()) {
-                        alphaMask = deflateBytes(*alpha);
-                    }
-                }
-
-                image = deflateBytes(imageSurface->pixels().bytes());
-                colorSpaceName = getColorSpaceName(imageSurface->fmt());
-            }
-
-            if (not image or not colorSpaceName) {
-                logError("skipping invalid image");
-                continue;
-            }
-
-            imageStreamParams.put("Length"s, image->len());
-            imageStreamParams.put("ColorSpace"s, colorSpaceName.take());
-
-            if (filterName) {
-                imageStreamParams.put("Filter"s, filterName.take());
-            }
-
-            if (alphaMask) {
+            if (preparedImage.alphaMask) {
                 auto smaskRef = alloc.alloc();
 
                 imageStreamParams.put("SMask"s, smaskRef);
 
-                auto deflatedAlphaMask = deflateBytes(*alphaMask);
+                auto deflatedAlphaMask = deflateBytes(*preparedImage.alphaMask);
                 auto len = deflatedAlphaMask.len();
 
                 file.add(smaskRef, Pdf::Stream{
@@ -238,7 +205,7 @@ export struct PdfPrinter : FilePrinter {
                 xObjectRef,
                 Pdf::Stream{
                     .dict = imageStreamParams,
-                    .data = image.take(),
+                    .data = std::move(preparedImage.rawImage),
                 }
             );
 
