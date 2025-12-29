@@ -124,8 +124,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:afe67f49790e2e149cdd98a8432f3c177"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1284627f9d894f747b2ecbbaf7c31f6b"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespaceKarm_1_1Gfx.html#a06a73bd0d78227ce4f4dc8f840c55c70">Gfx::MutPixels</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1App_1_1Window.html#a1284627f9d894f747b2ecbbaf7c31f6b">acquireSurface</a> ()=0</td></tr>
 <tr class="separator:a1284627f9d894f747b2ecbbaf7c31f6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a152027e7e60fde1b86f596cf0bf1d4fd"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1App_1_1Window.html#a152027e7e60fde1b86f596cf0bf1d4fd">releaseSurface</a> ()=0</td></tr>
-<tr class="separator:a152027e7e60fde1b86f596cf0bf1d4fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5816bbdf58928fb6f19ced96f31031d3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1App_1_1Window.html#a5816bbdf58928fb6f19ced96f31031d3">releaseSurface</a> (<a class="el" href="namespaceKarm_1_1Math.html#abf00418779b75396e0a087af865d8061">Math::Recti</a> r)</td></tr>
+<tr class="separator:a5816bbdf58928fb6f19ced96f31031d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac6f563b57c98af14b93b228014371518"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1App_1_1Window.html#ac6f563b57c98af14b93b228014371518">releaseSurface</a> (<a class="el" href="structKarm_1_1Slice.html">Slice</a>&lt; <a class="el" href="namespaceKarm_1_1Math.html#abf00418779b75396e0a087af865d8061">Math::Recti</a> &gt; dirty)=0</td></tr>
+<tr class="separator:ac6f563b57c98af14b93b228014371518"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3535b27dce8e07f769808ee6bdfd3bfd"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1App_1_1Window.html#a3535b27dce8e07f769808ee6bdfd3bfd">drag</a> (<a class="el" href="structKarm_1_1App_1_1DragEvent.html">DragEvent</a>)=0</td></tr>
 <tr class="separator:a3535b27dce8e07f769808ee6bdfd3bfd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac2a18e5f610009365babc619c619193d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKarm_1_1App_1_1Window.html#ac2a18e5f610009365babc619c619193d">resize</a> (<a class="el" href="namespaceKarm_1_1App.html#ae2c6a9c29520d0b68d07f27200d68cb1">Direction</a>)=0</td></tr>
@@ -347,8 +349,34 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a152027e7e60fde1b86f596cf0bf1d4fd" name="a152027e7e60fde1b86f596cf0bf1d4fd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a152027e7e60fde1b86f596cf0bf1d4fd">&#9670;&#160;</a></span>releaseSurface()</h2>
+<a id="a5816bbdf58928fb6f19ced96f31031d3" name="a5816bbdf58928fb6f19ced96f31031d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5816bbdf58928fb6f19ced96f31031d3">&#9670;&#160;</a></span>releaseSurface() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Karm::App::Window::releaseSurface </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceKarm_1_1Math.html#abf00418779b75396e0a087af865d8061">Math::Recti</a>&#160;</td>
+          <td class="paramname"><em>r</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac6f563b57c98af14b93b228014371518" name="ac6f563b57c98af14b93b228014371518"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac6f563b57c98af14b93b228014371518">&#9670;&#160;</a></span>releaseSurface() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -359,7 +387,8 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">virtual void Karm::App::Window::releaseSurface </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype"><a class="el" href="structKarm_1_1Slice.html">Slice</a>&lt; <a class="el" href="namespaceKarm_1_1Math.html#abf00418779b75396e0a087af865d8061">Math::Recti</a> &gt;&#160;</td>
+          <td class="paramname"><em>dirty</em></td><td>)</td>
           <td></td>
         </tr>
       </table>

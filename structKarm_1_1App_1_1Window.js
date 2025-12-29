@@ -8,7 +8,8 @@ var structKarm_1_1App_1_1Window =
     [ "id", "structKarm_1_1App_1_1Window.html#a213c1ca51807ad1f4364d2145ca926ea", null ],
     [ "maximize", "structKarm_1_1App_1_1Window.html#a7f23ab00e2814346867e24e76e03cb30", null ],
     [ "minimize", "structKarm_1_1App_1_1Window.html#a425fd81c509040567384750aec29b552", null ],
-    [ "releaseSurface", "structKarm_1_1App_1_1Window.html#a152027e7e60fde1b86f596cf0bf1d4fd", null ],
+    [ "releaseSurface", "structKarm_1_1App_1_1Window.html#a5816bbdf58928fb6f19ced96f31031d3", null ],
+    [ "releaseSurface", "structKarm_1_1App_1_1Window.html#ac6f563b57c98af14b93b228014371518", null ],
     [ "resize", "structKarm_1_1App_1_1Window.html#ac2a18e5f610009365babc619c619193d", null ],
     [ "scaleFactor", "structKarm_1_1App_1_1Window.html#afe67f49790e2e149cdd98a8432f3c177", null ]
 ];
