@@ -55,9 +55,10 @@ struct SdlWindow : Window {
         };
     }
 
-    void releaseSurface() override {
-        SDL_UnlockSurface(_sdlSurface);
+    void releaseSurface(Slice<Math::Recti>) override {
         SDL_UpdateWindowSurface(_sdlWindow);
+        SDL_UnlockSurface(_sdlSurface);
+        _sdlSurface = nullptr;
     }
 
     void drag(DragEvent e) override {

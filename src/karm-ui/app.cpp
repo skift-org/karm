@@ -19,42 +19,63 @@ export auto FRAME_TIME = 1.0 / FRAME_RATE;
 
 struct RootNode : ProxyNode<RootNode> {
     Rc<App::Window> _window;
+    bool _shouldAnimate = true;
+    bool _shouldLayout = true;
+    Vec<Math::Recti> _dirty;
 
     RootNode(Child child, Rc<App::Window> window)
         : ProxyNode(child), _window(window) {}
 
-    void update() {
-        auto pixels = _window->acquireSurface();
-
-        auto e = App::makeEvent<Node::AnimateEvent>(FRAME_TIME);
-        child().event(*e);
-
-        child().layout(_window->bound().size());
-
-        Gfx::CpuCanvas g;
-        g.begin(pixels);
+    void paint(Gfx::Canvas& g, Math::Recti r) override {
         g.push();
-
-        g.clip(pixels.bound().cast<f64>());
-        g.clear(pixels.bound(), GRAY950);
-        g.fillStyle(GRAY50);
-
-        // NOTE: Since we are applying the scale factor,
-        // now we need to operate in the window logical space
         g.scale(_window->scaleFactor());
-        child().paint(g, _window->bound().size());
-
+        g.clip(r);
+        g.clear(GRAY950);
+        g.fillStyle(GRAY50);
+        child().paint(g, r);
         g.pop();
+    }
 
-        _window->releaseSurface();
+    void update() {
+        if (_shouldAnimate) {
+            _shouldAnimate = false;
+
+            auto e = App::makeEvent<AnimateEvent>(FRAME_TIME);
+            child().event(*e);
+        }
+
+        if (_shouldLayout) {
+            _shouldLayout = false;
+
+            child().layout(_window->bound().size());
+
+            _dirty.clear();
+            _dirty.pushBack(_window->bound().size());
+        }
+
+        auto pixels = _window->acquireSurface();
+        if (_dirty.len()) {
+            Gfx::CpuCanvas g;
+            g.begin(pixels);
+            for (auto& d : _dirty) {
+                paint(g, d);
+            }
+            g.end();
+        }
+
+        _window->releaseSurface(_dirty);
+        _dirty.clear();
     }
 
     void bubble(App::Event& event) override {
         if (auto e = event.is<PaintEvent>()) {
+            _dirty.pushBack(e->bound);
             event.accept();
         } else if (auto e = event.is<LayoutEvent>()) {
+            _shouldLayout = true;
             event.accept();
         } else if (auto e = event.is<AnimateEvent>()) {
+            _shouldAnimate = true;
             event.accept();
         } else if (auto e = event.is<App::DragEvent>()) {
             _window->drag(*e);

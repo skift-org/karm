@@ -39,7 +39,12 @@ export struct Window : Meta::Pinned {
 
     virtual Gfx::MutPixels acquireSurface() = 0;
 
-    virtual void releaseSurface() = 0;
+    void releaseSurface(Math::Recti r) {
+        Array dirty = {r};
+        releaseSurface(dirty);
+    }
+
+    virtual void releaseSurface(Slice<Math::Recti> dirty) = 0;
 
     virtual void drag(DragEvent) = 0;
 

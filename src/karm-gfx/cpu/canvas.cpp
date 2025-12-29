@@ -320,11 +320,24 @@ export struct CpuCanvas : Canvas {
         }
     }
 
-    void clip(Math::Rectf rect) override {
-        // FIXME: Properly handle offaxis rectangles
-        rect = current().trans.apply(rect.cast<f64>()).bound();
+    void clip(Math::Recti r) override {
+        if (current().trans.isIdentity()) {
+            current().clip = r.clipTo(current().clip);
+            return;
+        }
+        clip(r.cast<f64>());
+    }
 
-        current().clip = rect.cast<isize>().clipTo(current().clip);
+    void clip(Math::Rectf r) override {
+        if (current().trans.simple()) {
+            r = current().trans.apply(r).bound();
+            current().clip = r.cast<isize>().clipTo(current().clip);
+            return;
+        }
+
+        beginPath();
+        rect(r, {});
+        clip(FillRule::EVENODD);
     }
 
     void stroke(Math::Path const& path) override {
