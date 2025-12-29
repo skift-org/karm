@@ -61,6 +61,7 @@
             ]
         },
         "jpeg": {
+            "description": "A free library for JPEG image compression",
             "names": [
                 "libjpeg"
             ]
