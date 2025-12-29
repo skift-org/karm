@@ -466,11 +466,13 @@ export struct Surface {
     }
 
     Rc<Surface> convert(Fmt fmt) {
+        // Fast path if pixels have not been computed yet
+
         auto newSurface = alloc(size(), fmt);
         for (isize y = 0; y < height(); y++) {
             for (isize x = 0; x < width(); x++) {
                 Color color = pixels().loadUnsafe({x, y});
-                mutPixels().storeUnsafe({x, y}, color);
+                newSurface->mutPixels().storeUnsafe({x, y}, color);
             }
         }
 

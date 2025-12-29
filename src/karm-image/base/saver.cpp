@@ -36,8 +36,8 @@ export Res<> save(Gfx::Pixels pixels, Io::BEmit& e, Saver const& props = {}) {
         return Bmp::encode(pixels, e);
     } else if (props.format == Ref::Uti::PUBLIC_TGA) {
         return Tga::encode(pixels, e);
-    } else if (props.format == Ref::Uti::PUBLIC_JPEG) {
-        return Jpeg::encode(pixels, e);
+    // } else if (props.format == Ref::Uti::PUBLIC_JPEG) {
+    //     return Jpeg::encode(pixels, e);
     } else if (props.format == Ref::Uti::PUBLIC_QOI) {
         return Qoi::encode(pixels, e);
     } else {

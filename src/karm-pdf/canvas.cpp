@@ -310,8 +310,7 @@ export struct Canvas : Gfx::Canvas {
     // MARK: Blit Operations ---------------------------------------------------
 
     void blit(Math::Recti src, Math::Recti dest, Rc<Gfx::Surface> surface) override {
-        (void)src;
-        logInfo("Blitting like a boss");
+        (void)src; // FIXME
 
         push();
         _e.ln("{} 0 0 {} {} {} cm", dest.width, -dest.height, dest.x, dest.y + dest.height);

@@ -11,7 +11,13 @@ import Karm.Gfx;
 import Karm.Math;
 import Karm.Logger;
 
+import :png._embed;
+
 namespace Karm::Image::Png {
+
+export Res<Box<Decoder>> createPngDecoder(Bytes bytes) {
+    return _Embed::createPngDecoder(bytes);
+}
 
 static auto debugPng = Debug::Flag::debug("png", "Log PNG decoding"s);
 

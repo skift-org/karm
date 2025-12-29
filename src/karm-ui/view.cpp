@@ -391,7 +391,7 @@ struct Image : View<Image> {
             g.fillStyle(_surface->pixels());
             g.fill(bound(), *_radii);
         } else {
-            g.blit(bound(), *_surface);
+            g.blit(bound(), _surface);
         }
 
         g.pop();

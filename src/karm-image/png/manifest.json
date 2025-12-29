@@ -8,6 +8,8 @@
     },
     "requires": [
         "karm-gfx",
-        "karm-archive"
+        "karm-archive",
+        "karm-image-png-impl",
+        "png"
     ]
 }

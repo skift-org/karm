@@ -1,8 +1,10 @@
 module;
 
+// clang-format off
 #include <stdio.h>
 #include <jpeglib.h>
 #include <setjmp.h>
+// clang-format on
 
 module Karm.Image;
 
@@ -12,30 +14,27 @@ import Karm.Math;
 import :jpeg._embed;
 
 namespace Karm::Image::Jpeg::_Embed {
+
 struct ErrorManager {
     jpeg_error_mgr pub;
     jmp_buf setjmpBuffer;
 };
 
-static void errorExit(j_common_ptr cinfo) {
-    auto* err = (ErrorManager*)cinfo->err;
-    longjmp(err->setjmpBuffer, 1);
-}
-
-struct JpegDecoder : Decoder {
+struct LibJpegDecoder : Decoder {
     struct jpeg_decompress_struct _cinfo;
     ErrorManager _errorManager;
-    Metadata _metadata{};
+    Metadata _metadata;
 
     static Res<Box<Decoder>> init(Bytes slice) {
-        auto decoder = makeBox<JpegDecoder>();
+        auto decoder = makeBox<LibJpegDecoder>();
 
         decoder->_cinfo.err = jpeg_std_error(&decoder->_errorManager.pub);
-        decoder->_errorManager.pub.error_exit = errorExit;
+        decoder->_errorManager.pub.error_exit = [](j_common_ptr cinfo) {
+            auto* err = reinterpret_cast<ErrorManager*>(cinfo->err);
+            longjmp(err->setjmpBuffer, 1);
+        };
 
         if (setjmp(decoder->_errorManager.setjmpBuffer)) {
-            jpeg_destroy_decompress(&decoder->_cinfo);
-            // FIXME: Introduce library error
             return Error::other();
         }
 
@@ -60,8 +59,6 @@ struct JpegDecoder : Decoder {
             break;
         }
 
-        jpeg_destroy_decompress(&decoder->_cinfo);
-
         decoder->_metadata = Metadata{
             .size = Math::Vec2i{decoder->_cinfo.image_width, decoder->_cinfo.image_height},
             .fmt = fmt,
@@ -70,22 +67,38 @@ struct JpegDecoder : Decoder {
         return Ok(static_cast<Box<Decoder>>(std::move(decoder)));
     }
 
-    ~JpegDecoder() override {
+    ~LibJpegDecoder() override {
         jpeg_destroy_decompress(&_cinfo);
     }
 
-    Metadata const& metadata() override {
+    Metadata metadata() override {
         return _metadata;
     }
 
     Res<> decode(Gfx::MutPixels pixels) override {
-        (void)pixels;
-        return Error::notImplemented();
+        if (setjmp(_errorManager.setjmpBuffer)) {
+            return Error::other();
+        }
+
+        jpeg_start_decompress(&_cinfo);
+
+        auto rowStride = _cinfo.output_width * _cinfo.output_components;
+
+        if (pixels.stride() != rowStride || pixels.height() != _cinfo.output_height) {
+            return Error::invalidInput();
+        }
+
+        while (_cinfo.output_scanline < _cinfo.output_height) {
+            JSAMPROW row = pixels.mutBytes().buf() + _cinfo.output_scanline * pixels.stride();
+            jpeg_read_scanlines(&_cinfo, &row, 1);
+        }
+
+        return Ok();
     }
 };
 
 Res<Box<Decoder>> createJpegDecoder(Bytes slice) {
-    return JpegDecoder::init(slice);
+    return LibJpegDecoder::init(slice);
 }
 
 } // namespace Karm::Image::Jpeg::_Embed

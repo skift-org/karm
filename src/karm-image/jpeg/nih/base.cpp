@@ -2,7 +2,7 @@ module;
 
 #include <karm-core/macros.h>
 
-export module Karm.Image:jpeg.base;
+export module Karm.Image:jpeg.nih.base;
 
 import Karm.Core;
 import Karm.Gfx;

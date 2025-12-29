@@ -1,7 +1,7 @@
-export module Karm.Image:jpeg.tables;
+export module Karm.Image:jpeg.nih.tables;
 
 import Karm.Core;
-import :jpeg.base;
+import :jpeg.nih.base;
 
 namespace Karm::Image::Jpeg {
 

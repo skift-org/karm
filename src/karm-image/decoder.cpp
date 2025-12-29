@@ -17,7 +17,7 @@ export struct Decoder {
     static Res<Box<Decoder>> createFrom(Bytes buf, Ref::Uti format);
 
     virtual ~Decoder() = default;
-    virtual Metadata const& metadata() = 0;
+    virtual Metadata metadata() = 0;
     virtual Res<> decode(Gfx::MutPixels pixels) = 0;
 };
 

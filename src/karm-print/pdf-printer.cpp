@@ -181,8 +181,7 @@ export struct PdfPrinter : FilePrinter {
 
                 imageStreamParams.put("SMask"s, smaskRef);
 
-                auto deflatedAlphaMask = deflateBytes(*preparedImage.alphaMask);
-                auto len = deflatedAlphaMask.len();
+                auto len = preparedImage.alphaMask.unwrap().len();
 
                 file.add(smaskRef, Pdf::Stream{
                     .dict = Pdf::Dict{
@@ -195,7 +194,7 @@ export struct PdfPrinter : FilePrinter {
                         {"Filter"s, Pdf::Name{"FlateDecode"s}},
                         {"Length"s, len}
                     },
-                    .data = std::move(deflatedAlphaMask)
+                    .data = preparedImage.alphaMask.take()
                 });
             }
 

@@ -65,63 +65,6 @@ namespace Karm::Image {
 //
 // } // namespace
 
-export Res<Rc<Gfx::Surface>> load(Bytes bytes) {
-    (void)bytes;
-    // if (Bmp::Decoder::sniff(bytes)) {
-    //     return loadBmp(bytes);
-    // } else if (Qoi::Decoder::sniff(bytes)) {
-    //     return loadQoi(bytes);
-    // } else if (Png::Decoder::sniff(bytes)) {
-    //     return loadPng(bytes);
-    // // } else if (Jpeg::Decoder::sniff(bytes)) {
-    // //     return loadJpeg(bytes);
-    // } else if (Tga::Decoder::sniff(bytes)) {
-    //     return loadTga(bytes);
-    // } else if (Gif::Decoder::sniff(bytes)) {
-    //     return loadGif(bytes);
-    // } else {
-        return Error::invalidData("unknown image format");
-    // }
-}
-
-export Res<Rc<Gfx::Surface>> load(Ref::Url url) {
-    if (url.scheme == "data") {
-        auto blob = try$(url.blob);
-        return load(blob->data);
-    }
-    auto file = try$(Sys::File::open(url));
-    auto map = try$(Sys::mmap(file));
-    return load(map.bytes());
-}
-
-export Res<Rc<Gfx::Surface>> loadOrFallback(Ref::Url url) {
-    if (auto result = load(url); result)
-        return result;
-    return Ok(Gfx::Surface::fallback());
-}
-
-// export Res<Rc<Gfx::ImageBlob>> loadImageBlob(Bytes bytes) {
-//     // if (Png::Decoder::sniff(bytes)) {
-//     //     // auto png = try$(Png::Decoder::init(bytes));
-//     //     // auto blob = Gfx::ImageBlob{
-//     //     //     Gfx::ImageEncoding::PNG,
-//     //     //     Buf<u8>(bytes),
-//     //     //     {png.width(), png.height()}
-//     //     // };
-//     //     // return Ok(Gfx::ImageBlob::create({png.width(), png.height()}, png, bytes, Gfx::ImageEncoding::JPEG));
-//     //     // return Ok(blob);
-//     //     panic("not implemented");
-//     // } else if (Jpeg::Decoder::sniff(bytes)) {
-//     //     auto [size, fmt] = try$(Jpeg::readMetadata(bytes));
-//     //     return Ok(Gfx::ImageBlob::create(size, fmt, bytes, Gfx::ImageEncoding::JPEG));
-//     // } else {
-//     //     return Error::invalidData("unknown image format");
-//     // }
-//
-//     auto decoder = try$(Decoder::createFrom(bytes, Ref::Uti::PUBLIC_JPEG));
-//     return Ok(Gfx::ImageBlob::create(decoder->metadata().size, decoder->metadata().fmt.unwrap(), bytes, Gfx::ImageEncoding::JPEG));
-// }
-
 export Res<Rc<Gfx::Surface>> load(Bytes bytes, Ref::Uti format) {
     auto decoder = try$(Decoder::createFrom(bytes, format));
 
@@ -143,6 +86,26 @@ export Res<Rc<Gfx::Surface>> load(Bytes bytes, Ref::Uti format) {
     };
 
     return Ok(Gfx::Surface::allocLazy(std::move(decodeFunc), mimeData, size, fmt));
+}
+
+export Res<Rc<Gfx::Surface>> load(Bytes bytes) {
+    return load(bytes, try$(Ref::Uti::fromMime(Ref::sniffBytes(bytes))));
+}
+
+export Res<Rc<Gfx::Surface>> load(Ref::Url url) {
+    if (url.scheme == "data") {
+        auto blob = try$(url.blob);
+        return load(blob->data);
+    }
+    auto file = try$(Sys::File::open(url));
+    auto map = try$(Sys::mmap(file));
+    return load(map.bytes());
+}
+
+export Res<Rc<Gfx::Surface>> loadOrFallback(Ref::Url url) {
+    if (auto result = load(url); result)
+        return result;
+    return Ok(Gfx::Surface::fallback());
 }
 
 } // namespace Karm::Image
