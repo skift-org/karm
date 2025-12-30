@@ -2,6 +2,7 @@ module Karm.Image;
 
 import :jpeg.decoder;
 import :png.decoder;
+import :bmp.decoder;
 
 namespace Karm::Image {
 
@@ -10,6 +11,8 @@ Res<Box<Decoder>> Decoder::createFrom(Bytes buf, Ref::Uti format) {
         return Jpeg::createDecoder(buf);
     } else if (format == Ref::Uti::PUBLIC_PNG) {
         return Png::createPngDecoder(buf);
+    } else if (format == Ref::Uti::PUBLIC_BMP) {
+        return Bmp::createDecoder(buf);
     } else {
         // FIXME: Better error
         return Error::notImplemented("no decoder for this format");

@@ -9,6 +9,8 @@ import Karm.Gfx;
 import Karm.Math;
 import Karm.Logger;
 
+import :decoder;
+
 // BMP image decoder
 // References:
 //  - https://en.wikipedia.org/wiki/BMP_file_format
@@ -18,7 +20,7 @@ import Karm.Logger;
 
 namespace Karm::Image::Bmp {
 
-export struct Decoder {
+struct KarmDecoder : Decoder {
     // MARK: Loading -----------------------------------------------------------
 
     static bool sniff(Bytes slice) {
@@ -134,6 +136,15 @@ export struct Decoder {
         return Ok();
     }
 
+    // MARK: Metadata ----------------------------------------------------------
+
+    Metadata metadata() override {
+        return Metadata{
+            .size = {height(), width()},
+            .fmt = Gfx::RGBA8888
+        };
+    }
+
     // MARK: Pixels ------------------------------------------------------------
 
     Bytes _pixels;
@@ -146,7 +157,7 @@ export struct Decoder {
 
     // MARK: Decoding ----------------------------------------------------------
 
-    Res<> decode(Gfx::MutPixels pixels) {
+    Res<> decode(Gfx::MutPixels pixels) override {
         Io::BScan s{_pixels};
 
         for (isize y = 0; y < height(); ++y) {
@@ -240,5 +251,9 @@ export struct Decoder {
         e.deindent();
     }
 };
+
+export Res<Box<Decoder>> createDecoder(Bytes slice) {
+    return KarmDecoder::init(slice);
+}
 
 } // namespace Karm::Image::Bmp
