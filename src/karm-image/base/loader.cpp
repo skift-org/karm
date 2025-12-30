@@ -4,66 +4,12 @@ module;
 
 export module Karm.Image:base.loader;
 
-import Karm.Logger;
 import Karm.Ref;
 import Karm.Sys;
-//import Karm.Gfx;
 
-// import :bmp.decoder;
-// import :gif.decoder;
-// import :jpeg.decoder;
-// import :png.decoder;
-// import :qoi.decoder;
-// import :tga.decoder;
 import :decoder;
 
 namespace Karm::Image {
-
-// namespace {
-//
-// Res<Rc<Gfx::Surface>> loadBmp(Bytes bytes) {
-//     auto bmp = try$(Bmp::Decoder::init(bytes));
-//     auto img = Gfx::Surface::alloc({bmp.width(), bmp.height()});
-//     try$(bmp.decode(*img));
-//     return Ok(img);
-// }
-//
-// Res<Rc<Gfx::Surface>> loadQoi(Bytes bytes) {
-//     auto qoi = try$(Qoi::Decoder::init(bytes));
-//     auto img = Gfx::Surface::alloc({qoi.width(), qoi.height()});
-//     try$(qoi.decode(*img));
-//     return Ok(img);
-// }
-//
-// Res<Rc<Gfx::Surface>> loadPng(Bytes bytes) {
-//     auto png = try$(Png::Decoder::init(bytes));
-//     auto img = Gfx::Surface::alloc({png.width(), png.height()});
-//     try$(png.decode(*img));
-//     return Ok(img);
-// }
-//
-// // Res<Rc<Gfx::Surface>> loadJpeg(Bytes bytes) {
-// //     auto jpeg = try$(Jpeg::Decoder::init(bytes));
-// //     auto img = Gfx::Surface::alloc({jpeg.width(), jpeg.height()});
-// //     try$(jpeg.decode(*img));
-// //     return Ok(img);
-// // }
-//
-// Res<Rc<Gfx::Surface>> loadTga(Bytes bytes) {
-//     auto tga = try$(Tga::Decoder::init(bytes));
-//     auto img = Gfx::Surface::alloc({tga.width(), tga.height()});
-//     try$(tga.decode(*img));
-//     return Ok(img);
-// }
-//
-// Res<Rc<Gfx::Surface>> loadGif(Bytes bytes) {
-//     auto gif = try$(Gif::Decoder::init(bytes));
-//     auto img = Gfx::Surface::alloc({gif.width(), gif.height()});
-//     try$(gif.decode(*img));
-//     return Ok(img);
-// }
-//
-// } // namespace
 
 export Res<Rc<Gfx::Surface>> load(Bytes bytes, Ref::Uti format) {
     auto decoder = try$(Decoder::createFrom(bytes, format));
