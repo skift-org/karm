@@ -9,7 +9,9 @@ namespace Karm::Image {
 
 export struct Metadata {
     Math::Vec2i size;
-    Gfx::Fmt fmt;
+    Gfx::ColorSpace colorSpace;
+    u8 bitDepth;
+    bool invertedColors;
 };
 
 export struct Decoder {

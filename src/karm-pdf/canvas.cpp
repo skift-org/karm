@@ -24,14 +24,14 @@ export struct FontManager {
 };
 
 export struct ImageManager {
-    Map<usize, Rc<Gfx::Surface>> mapping;
+    Map<usize, Tuple<usize, Rc<Gfx::Surface>>> mapping;
 
     usize getImageId(Rc<Gfx::Surface> surface) {
-        if (auto storedSurface = mapping.tryGet(surface->id()))
-            return storedSurface->id();
+        if (auto entry = mapping.tryGet(surface.id()))
+            return entry.unwrap().v0;
 
-        auto id = surface.id();
-        mapping.put(id, surface);
+        auto id = mapping.len() + 1;
+        mapping.put(surface.id(), {id, surface});
         return id;
     }
 };

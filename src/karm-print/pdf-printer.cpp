@@ -87,7 +87,8 @@ export struct PdfPrinter : FilePrinter {
 
         // Images
         Pdf::Dict xObjectDict;
-        for (auto& [id, surface]: imageManager.mapping.iterUnordered()) {
+        for (auto& [_, value]: imageManager.mapping.iterUnordered()) {
+            auto [id, surface] = value;
             auto getColorSpaceName = [](Gfx::Fmt fmt) -> Opt<Pdf::Name> {
                 return fmt.visit(Visitor{
                     [](Gfx::Rgb888) -> Opt<Pdf::Name> {
@@ -100,6 +101,33 @@ export struct PdfPrinter : FilePrinter {
                         return NONE;
                     }
                 });
+            };
+
+            // lol
+            auto getColorSpaceName2 = [](Gfx::ColorSpace colorSpace) -> Opt<Pdf::Name> {
+                switch (colorSpace) {
+                case Gfx::ColorSpace::GRAY:
+                    return "DeviceGray"s;
+                case Gfx::ColorSpace::RGB:
+                    return "DeviceRGB"s;
+                case Gfx::ColorSpace::CMYK:
+                    return "DeviceCMYK"s;
+                default:
+                    return NONE;
+                }
+            };
+
+            auto getColorSpaceBpp = [](Gfx::ColorSpace colorSpace) -> Opt<usize> {
+                switch (colorSpace) {
+                case Gfx::ColorSpace::GRAY:
+                    return 1;
+                case Gfx::ColorSpace::RGB:
+                    return 3;
+                case Gfx::ColorSpace::CMYK:
+                    return 4;
+                default:
+                    return NONE;
+                }
             };
 
             auto deflateBytes = [](Bytes bytes) -> Buf<u8> {
@@ -121,6 +149,7 @@ export struct PdfPrinter : FilePrinter {
             struct PreparedImage {
                 Pdf::Name filterName;
                 Pdf::Name colorSpaceName;
+                usize bitsPerComponent;
                 Buf<u8> rawImage;
                 Opt<Buf<u8>> alphaMask;
             };
@@ -129,12 +158,25 @@ export struct PdfPrinter : FilePrinter {
                 if (surface->mimeData()) {
                     auto& mimeData = *surface->mimeData();
 
-                    auto colorSpaceName = try$(getColorSpaceName(surface->fmt()));
+                    auto colorSpaceName = try$(getColorSpaceName2(mimeData.colorSpace));
+
+                    if (mimeData.invertedColors) {
+                        auto bpp = getColorSpaceBpp(mimeData.colorSpace).unwrap();
+
+                        auto array = Pdf::Array(bpp * 2);
+                        for (usize i = 0; i < bpp; i++) {
+                            array.pushBack(1.0);
+                            array.pushBack(0.0);
+                        }
+
+                        imageStreamParams.put("Decode"s, std::move(array));
+                    }
 
                     if (mimeData.uti == Ref::Uti::PUBLIC_JPEG) {
                         return PreparedImage{
                             .filterName = "DCTDecode"s,
                             .colorSpaceName = colorSpaceName,
+                            .bitsPerComponent = mimeData.bitDepth,
                             .rawImage = mimeData.buf,
                             .alphaMask = NONE,
                         };
@@ -161,6 +203,7 @@ export struct PdfPrinter : FilePrinter {
                 return PreparedImage{
                     .filterName = "FlateDecode"s,
                     .colorSpaceName = colorSpaceName.unwrap(),
+                    .bitsPerComponent = surface->fmt().bpc(),
                     .rawImage = deflateBytes(imageSurface->pixels().bytes()),
                     .alphaMask = alphaMask,
                 };
@@ -171,6 +214,7 @@ export struct PdfPrinter : FilePrinter {
 
             imageStreamParams.put("Length"s, preparedImage.rawImage.len());
             imageStreamParams.put("ColorSpace"s, std::move(preparedImage.colorSpaceName));
+            imageStreamParams.put("BitsPerComponent"s, preparedImage.bitsPerComponent);
 
             if (preparedImage.filterName) {
                 imageStreamParams.put("Filter"s, std::move(preparedImage.filterName));

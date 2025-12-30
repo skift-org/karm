@@ -13,6 +13,14 @@ import :color;
 
 namespace Karm::Gfx {
 
+export enum struct ColorSpace {
+    GRAY,
+    GA,
+    RGB,
+    RGBA,
+    CMYK,
+};
+
 export struct Rgb888 {
     always_inline static Color load(void const* pixel) {
         u8 const* p = static_cast<u8 const*>(pixel);
@@ -166,6 +174,25 @@ using _Fmts = Union<Rgb888, Rgba8888, Bgra8888, Greyscale8, Ga88>;
 
 export struct Fmt : _Fmts {
     using _Fmts::_Fmts;
+
+    static Fmt forDecoding(ColorSpace colorSpace, u8 bitDepth) {
+        // Useful if we support depth larger than 8 at some point
+        (void)bitDepth;
+
+        switch (colorSpace) {
+        case ColorSpace::GRAY:
+            return GREYSCALE8;
+        case ColorSpace::GA:
+            return GA88;
+        case ColorSpace::RGBA:
+            return RGBA8888;
+        case ColorSpace::RGB:
+        case ColorSpace::CMYK:
+            return RGB888;
+        default:
+            return RGB888;
+        }
+    }
 
     always_inline Color load(void const* pixel) const {
         return visit([&](auto f) {
@@ -369,16 +396,14 @@ export using MutPixels = _Pixels<true>;
 export struct MimeData {
     Ref::Uti uti;
     Buf<u8> buf;
+    ColorSpace colorSpace;
+    u8 bitDepth;
+    bool invertedColors;
 };
 
 export using FillFunc = Func<Res<>(Opt<MimeData>, MutPixels)>;
 
-namespace {
-usize _nextSurfaceId = 0;
-} // namespace
-
 export struct Surface {
-    usize _id;
     Opt<Buf<u8>> _buf;
     Math::Vec2i _size;
     usize _stride;
@@ -388,7 +413,6 @@ export struct Surface {
 
     static Rc<Surface> alloc(Math::Vec2i size, Gfx::Fmt fmt = Gfx::RGBA8888) {
         return makeRc<Surface>(
-            _nextSurfaceId++,
             Buf<u8>::init(size.x * size.y * fmt.bpp()),
             size,
             size.x * fmt.bpp(),
@@ -400,7 +424,6 @@ export struct Surface {
 
     static Rc<Surface> allocLazy(FillFunc fillFunc, Opt<MimeData> mimeData, Math::Vec2i size, Gfx::Fmt fmt = Gfx::RGBA8888) {
         return makeRc<Surface>(
-            _nextSurfaceId++,
             NONE,
             size,
             size.x * fmt.bpp(),
@@ -448,10 +471,6 @@ export struct Surface {
         }
 
         return {_buf->buf(), _size, _stride, _fmt};
-    }
-
-    always_inline usize id() const {
-        return _id;
     }
 
     always_inline Math::Vec2i size() const {

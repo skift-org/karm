@@ -58,30 +58,28 @@ struct LibPngDecoder : Decoder {
 
         png_read_info(png, info);
 
-        if (png_get_valid(png, info, PNG_INFO_tRNS))
+        if (png_get_valid(png, info, PNG_INFO_tRNS)) {
             png_set_tRNS_to_alpha(png);
+        }
 
-        if (png_get_color_type(png, info) == PNG_COLOR_TYPE_PALETTE)
+        if (png_get_color_type(png, info) == PNG_COLOR_TYPE_PALETTE) {
             png_set_palette_to_rgb(png);
-
-        if (png_get_bit_depth(png, info) == 16) {
-            png_set_strip_16(png);
         }
 
         png_read_update_info(png, info);
 
-        auto resolveFormat = [&]() -> Res<Gfx::Fmt> {
+        auto resolveColorSpace = [&]() -> Res<Gfx::ColorSpace> {
             switch (png_get_color_type(png, info)) {
             case PNG_COLOR_TYPE_RGB:
-                return Ok(Gfx::RGB888);
+                return Ok(Gfx::ColorSpace::RGB);
             case PNG_COLOR_TYPE_RGBA:
-                return Ok(Gfx::RGBA8888);
+                return Ok(Gfx::ColorSpace::RGBA);
             case PNG_COLOR_TYPE_GRAY:
-                return Ok(Gfx::GREYSCALE8);
+                return Ok(Gfx::ColorSpace::GRAY);
             case PNG_COLOR_TYPE_GA:
-                return Ok(Gfx::GA88);
+                return Ok(Gfx::ColorSpace::GA);
             default:
-                return Error::invalidData("png: unknown color space");
+                return Error::invalidData("unknown color space");
             }
         };
 
@@ -90,7 +88,9 @@ struct LibPngDecoder : Decoder {
                 png_get_image_width(png, info),
                 png_get_image_height(png, info)
             },
-            .fmt = try$(resolveFormat()),
+            .colorSpace = try$(resolveColorSpace()),
+            .bitDepth = png_get_bit_depth(png, info),
+            .invertedColors = false
         };
 
         Box<Decoder> decoder = makeBox<LibPngDecoder>(png, info, metadata, std::move(reader));
@@ -106,13 +106,19 @@ struct LibPngDecoder : Decoder {
     }
 
     Res<> decode(Gfx::MutPixels pixels) override {
-        if (pixels.fmt() != metadata().fmt || pixels.size() != metadata().size) {
-            return Error::invalidInput("trying to decode image to incompatible surface");
+        if (pixels.size() != metadata().size) {
+            return Error::invalidInput("wrong number of output pixels");
         }
 
         if (setjmp(png_jmpbuf(_png))) {
             return Error::invalidData("png: failed to decode");
         }
+
+        if (png_get_bit_depth(_png, _info) == 16) {
+            png_set_strip_16(_png);
+        }
+
+        png_read_update_info(_png, _info);
 
         auto rows = Buf<unsigned char*>::init(pixels.height());
         for (isize y = 0; y < pixels.height(); y++) {

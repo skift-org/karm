@@ -4,6 +4,7 @@ module;
 #include <stdio.h>
 #include <jpeglib.h>
 #include <setjmp.h>
+#include <karm-core/macros.h>
 // clang-format on
 
 module Karm.Image;
@@ -30,7 +31,6 @@ struct LibJpegDecoder : Decoder {
           _errorManager(error_manager),
           _metadata(metadata) {}
 
-
     static Res<Box<Decoder>> init(Bytes slice) {
         struct jpeg_decompress_struct cinfo;
         ErrorManager errorManager;
@@ -49,21 +49,42 @@ struct LibJpegDecoder : Decoder {
 
         jpeg_mem_src(&cinfo, slice.buf(), slice.len());
 
+        // ICC marker
+        jpeg_save_markers(&cinfo, JPEG_APP0 + 2, 0xFFFF);
+
+        // Adobe marker
+        jpeg_save_markers(&cinfo, JPEG_APP0 + 14, 0xFFFF);
+
         if (jpeg_read_header(&cinfo, TRUE) != JPEG_HEADER_OK) {
             return Error::invalidData("jpeg header is invalid");
         }
 
-        Gfx::Fmt fmt = Gfx::RGB888;
-        cinfo.out_color_space = JCS_RGB;
+        auto resolveColorSpace = [&]() -> Res<Gfx::ColorSpace> {
+            switch (cinfo.jpeg_color_space) {
+            case JCS_RGB:
+            case JCS_YCbCr:
+                return Ok(Gfx::ColorSpace::RGB);
+            case JCS_CMYK:
+            case JCS_YCCK:
+                return Ok(Gfx::ColorSpace::CMYK);
+            case JCS_GRAYSCALE:
+                return Ok(Gfx::ColorSpace::GRAY);
+            default:
+                return Error::invalidData("unknown color space");
+            }
+        };
 
-        if (cinfo.jpeg_color_space == JCS_GRAYSCALE) {
-            fmt = Gfx::GREYSCALE8;
-            cinfo.out_color_space = JCS_GRAYSCALE;
-        }
+        auto colorSpace = try$(resolveColorSpace());
+
+        bool invertedColors = colorSpace == Gfx::ColorSpace::CMYK &&
+                              cinfo.saw_Adobe_marker &&
+                              cinfo.Adobe_transform != 1;
 
         auto metadata = Metadata{
             .size = Math::Vec2i{cinfo.image_width, cinfo.image_height},
-            .fmt = fmt,
+            .colorSpace = colorSpace,
+            .bitDepth = static_cast<u8>(cinfo.data_precision),
+            .invertedColors = invertedColors,
         };
 
         Box<Decoder> decoder = makeBox<LibJpegDecoder>(cinfo, errorManager, metadata);
@@ -79,9 +100,23 @@ struct LibJpegDecoder : Decoder {
     }
 
     Res<> decode(Gfx::MutPixels pixels) override {
-        if (pixels.fmt() != metadata().fmt || pixels.size() != metadata().size) {
-            return Error::invalidInput("incompatible output pixels");
+        if (pixels.size() != metadata().size) {
+            return Error::invalidInput("wrong number of output pixels");
         }
+
+        auto colorSpaceVisitor = Visitor{
+            [](Gfx::Greyscale8 const&) -> Res<J_COLOR_SPACE> {
+                return Ok(JCS_GRAYSCALE);
+            },
+            [](Gfx::Rgb888 const&) -> Res<J_COLOR_SPACE> {
+                return Ok(JCS_RGB);
+            },
+            [](auto const&) -> Res<J_COLOR_SPACE> {
+                return Error::invalidInput("unsupported color space");
+            }
+        };
+
+        _cinfo.out_color_space = try$(pixels.fmt().visit(colorSpaceVisitor));
 
         if (setjmp(_errorManager.setjmpBuffer)) {
             return Error::other();
@@ -93,7 +128,7 @@ struct LibJpegDecoder : Decoder {
             return Error::other("unexpected stride");
         }
 
-        if (pixels.stride() != _cinfo.output_height) {
+        if (pixels.height() != _cinfo.output_height) {
             return Error::other("unexpected height");
         }
 

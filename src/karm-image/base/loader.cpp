@@ -14,13 +14,16 @@ namespace Karm::Image {
 export Res<Rc<Gfx::Surface>> load(Bytes bytes, Ref::Uti format) {
     auto decoder = try$(Decoder::createFrom(bytes, format));
 
-    auto size = decoder->metadata().size;
-    auto fmt = decoder->metadata().fmt;
-
     auto mimeData = Gfx::MimeData{
         .uti = format,
         .buf = Buf<u8>(bytes),
+        .colorSpace = decoder->metadata().colorSpace,
+        .bitDepth = decoder->metadata().bitDepth,
+        .invertedColors = decoder->metadata().invertedColors,
     };
+
+    auto size = decoder->metadata().size;
+    auto fmt = Gfx::Fmt::forDecoding(mimeData.colorSpace, mimeData.bitDepth);
 
     Gfx::FillFunc decodeFunc = [](Opt<Gfx::MimeData> mimeData, Gfx::MutPixels pixels) -> Res<> {
         if (not mimeData) {

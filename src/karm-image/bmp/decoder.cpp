@@ -139,10 +139,7 @@ struct KarmDecoder : Decoder {
     // MARK: Metadata ----------------------------------------------------------
 
     Metadata metadata() override {
-        return Metadata{
-            .size = {height(), width()},
-            .fmt = Gfx::RGBA8888
-        };
+        panic("not implemented");
     }
 
     // MARK: Pixels ------------------------------------------------------------
