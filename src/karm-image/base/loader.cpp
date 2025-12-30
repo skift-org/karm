@@ -69,7 +69,7 @@ export Res<Rc<Gfx::Surface>> load(Bytes bytes, Ref::Uti format) {
     auto decoder = try$(Decoder::createFrom(bytes, format));
 
     auto size = decoder->metadata().size;
-    auto fmt = decoder->metadata().fmt.unwrap(); // FIXME: Add fallback
+    auto fmt = decoder->metadata().fmt;
 
     auto mimeData = Gfx::MimeData{
         .uti = format,

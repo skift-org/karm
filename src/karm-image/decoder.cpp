@@ -9,7 +9,7 @@ namespace Karm::Image {
 
 export struct Metadata {
     Math::Vec2i size;
-    Opt<Gfx::Fmt> fmt;
+    Gfx::Fmt fmt;
 };
 
 export struct Decoder {

@@ -25,46 +25,49 @@ struct LibJpegDecoder : Decoder {
     ErrorManager _errorManager;
     Metadata _metadata;
 
-    static Res<Box<Decoder>> init(Bytes slice) {
-        auto decoder = makeBox<LibJpegDecoder>();
+    LibJpegDecoder(const struct jpeg_decompress_struct& cinfo, ErrorManager const& error_manager, Metadata const& metadata)
+        : _cinfo(cinfo),
+          _errorManager(error_manager),
+          _metadata(metadata) {}
 
-        decoder->_cinfo.err = jpeg_std_error(&decoder->_errorManager.pub);
-        decoder->_errorManager.pub.error_exit = [](j_common_ptr cinfo) {
+
+    static Res<Box<Decoder>> init(Bytes slice) {
+        struct jpeg_decompress_struct cinfo;
+        ErrorManager errorManager;
+
+        cinfo.err = jpeg_std_error(&errorManager.pub);
+        errorManager.pub.error_exit = [](j_common_ptr cinfo) {
             auto* err = reinterpret_cast<ErrorManager*>(cinfo->err);
             longjmp(err->setjmpBuffer, 1);
         };
 
-        if (setjmp(decoder->_errorManager.setjmpBuffer)) {
+        if (setjmp(errorManager.setjmpBuffer)) {
             return Error::other();
         }
 
-        jpeg_create_decompress(&decoder->_cinfo);
+        jpeg_create_decompress(&cinfo);
 
-        jpeg_mem_src(&decoder->_cinfo, slice.buf(), slice.len());
+        jpeg_mem_src(&cinfo, slice.buf(), slice.len());
 
-        if (jpeg_read_header(&decoder->_cinfo, TRUE) != JPEG_HEADER_OK) {
+        if (jpeg_read_header(&cinfo, TRUE) != JPEG_HEADER_OK) {
             return Error::invalidData("jpeg header is invalid");
         }
-        // FIXME: Support CMYK
-        Opt<Gfx::Fmt> fmt;
-        switch (decoder->_cinfo.jpeg_color_space) {
-        case JCS_GRAYSCALE:
+
+        Gfx::Fmt fmt = Gfx::RGB888;
+        cinfo.out_color_space = JCS_RGB;
+
+        if (cinfo.jpeg_color_space == JCS_GRAYSCALE) {
             fmt = Gfx::GREYSCALE8;
-            break;
-        case JCS_YCbCr:
-        case JCS_RGB:
-            fmt = Gfx::RGB888;
-            break;
-        default:
-            break;
+            cinfo.out_color_space = JCS_GRAYSCALE;
         }
 
-        decoder->_metadata = Metadata{
-            .size = Math::Vec2i{decoder->_cinfo.image_width, decoder->_cinfo.image_height},
+        auto metadata = Metadata{
+            .size = Math::Vec2i{cinfo.image_width, cinfo.image_height},
             .fmt = fmt,
         };
 
-        return Ok(static_cast<Box<Decoder>>(std::move(decoder)));
+        Box<Decoder> decoder = makeBox<LibJpegDecoder>(cinfo, errorManager, metadata);
+        return Ok(std::move(decoder));
     }
 
     ~LibJpegDecoder() override {
@@ -76,16 +79,22 @@ struct LibJpegDecoder : Decoder {
     }
 
     Res<> decode(Gfx::MutPixels pixels) override {
+        if (pixels.fmt() != metadata().fmt || pixels.size() != metadata().size) {
+            return Error::invalidInput("incompatible output pixels");
+        }
+
         if (setjmp(_errorManager.setjmpBuffer)) {
             return Error::other();
         }
 
         jpeg_start_decompress(&_cinfo);
 
-        auto rowStride = _cinfo.output_width * _cinfo.output_components;
+        if (pixels.stride() != _cinfo.output_width * _cinfo.output_components) {
+            return Error::other("unexpected stride");
+        }
 
-        if (pixels.stride() != rowStride || pixels.height() != _cinfo.output_height) {
-            return Error::invalidInput();
+        if (pixels.stride() != _cinfo.output_height) {
+            return Error::other("unexpected height");
         }
 
         while (_cinfo.output_scanline < _cinfo.output_height) {

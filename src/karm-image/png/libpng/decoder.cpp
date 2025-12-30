@@ -1,9 +1,8 @@
 module;
 
-// clang-format off
 #include <libpng/png.h>
 #include <setjmp.h>
-// clang-format on
+#include <karm-core/macros.h>
 
 module Karm.Image;
 
@@ -18,29 +17,33 @@ struct LibPngDecoder : Decoder {
     png_structp _png;
     png_infop _info;
     Metadata _metadata;
-    Io::BufReader _reader;
+    Box<Io::Reader> _reader;
 
-    LibPngDecoder(Io::BufReader reader)
-        : _reader(reader) {}
+    LibPngDecoder(png_structp png, png_infop info, Metadata const& metadata, Box<Io::Reader>&& reader)
+        : _png(png),
+          _info(info),
+          _metadata(metadata),
+          _reader(std::move(reader)) {}
 
     static Res<Box<Decoder>> init(Bytes slice) {
-        auto decoder = makeBox<LibPngDecoder>(slice);
-
-        decoder->_png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
-        if (not decoder->_png) {
+        auto* png = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+        if (not png) {
             return Error::other(); // FIXME
         }
 
-        decoder->_info = png_create_info_struct(decoder->_png);
-        if (not decoder->_info) {
+        auto* info = png_create_info_struct(png);
+        if (not info) {
             return Error::other(); // FIXME
         }
 
-        if (setjmp(png_jmpbuf(decoder->_png))) {
+        if (setjmp(png_jmpbuf(png))) {
             return Error::other(); // FIXME
         }
 
-        png_set_read_fn(decoder->_png, &decoder->_reader, [](png_structp pngPtr, png_bytep outBytes, size_t byteCount) {
+        // dependency on this:
+        auto reader = makeBox<Io::BufReader>(slice);
+
+        png_set_read_fn(png, reader._ptr, [](png_structp pngPtr, png_bytep outBytes, size_t byteCount) {
             auto* reader = static_cast<Io::BufReader*>(png_get_io_ptr(pngPtr));
 
             auto bytesRead = reader->read(MutBytes{outBytes, byteCount});
@@ -53,34 +56,45 @@ struct LibPngDecoder : Decoder {
             }
         });
 
-        png_read_info(decoder->_png, decoder->_info);
+        png_read_info(png, info);
 
-        Opt<Gfx::Fmt> fmt = NONE;
-        if (png_get_bit_depth(decoder->_png, decoder->_info) == 8) {
-            switch (png_get_color_type(decoder->_png, decoder->_info)) {
-            case PNG_COLOR_TYPE_RGB:
-                fmt = Gfx::RGB888;
-                break;
-            case PNG_COLOR_TYPE_RGBA:
-                fmt = Gfx::RGBA8888;
-                break;
-            case PNG_COLOR_TYPE_GRAY:
-                fmt = Gfx::GREYSCALE8;
-                break;
-            default:
-                break;
-            }
+        if (png_get_valid(png, info, PNG_INFO_tRNS))
+            png_set_tRNS_to_alpha(png);
+
+        if (png_get_color_type(png, info) == PNG_COLOR_TYPE_PALETTE)
+            png_set_palette_to_rgb(png);
+
+        if (png_get_bit_depth(png, info) == 16) {
+            png_set_strip_16(png);
         }
 
-        decoder->_metadata = Metadata{
-            .size = {
-                png_get_image_width(decoder->_png, decoder->_info),
-                png_get_image_height(decoder->_png, decoder->_info)
-            },
-            .fmt = fmt
+        png_read_update_info(png, info);
+
+        auto resolveFormat = [&]() -> Res<Gfx::Fmt> {
+            switch (png_get_color_type(png, info)) {
+            case PNG_COLOR_TYPE_RGB:
+                return Ok(Gfx::RGB888);
+            case PNG_COLOR_TYPE_RGBA:
+                return Ok(Gfx::RGBA8888);
+            case PNG_COLOR_TYPE_GRAY:
+                return Ok(Gfx::GREYSCALE8);
+            case PNG_COLOR_TYPE_GA:
+                return Ok(Gfx::GA88);
+            default:
+                return Error::invalidData("png: unknown color space");
+            }
         };
 
-        return Ok(static_cast<Box<Decoder>>(std::move(decoder)));
+        auto metadata = Metadata{
+            .size = {
+                png_get_image_width(png, info),
+                png_get_image_height(png, info)
+            },
+            .fmt = try$(resolveFormat()),
+        };
+
+        Box<Decoder> decoder = makeBox<LibPngDecoder>(png, info, metadata, std::move(reader));
+        return Ok(std::move(decoder));
     }
 
     ~LibPngDecoder() override {
@@ -92,22 +106,20 @@ struct LibPngDecoder : Decoder {
     }
 
     Res<> decode(Gfx::MutPixels pixels) override {
+        if (pixels.fmt() != metadata().fmt || pixels.size() != metadata().size) {
+            return Error::invalidInput("trying to decode image to incompatible surface");
+        }
+
         if (setjmp(png_jmpbuf(_png))) {
-            return Error::other(); // FIXME
+            return Error::invalidData("png: failed to decode");
         }
 
-        // FIXME: Handle 16bit depth & other conversions
-        png_read_update_info(_png, _info);
-
-        auto rowStride = png_get_rowbytes(_png, _info);
-
-        if (pixels.stride() != rowStride || pixels.height() != _metadata.size.y) {
-            return Error::invalidInput();
-        }
-
+        auto rows = Buf<unsigned char*>::init(pixels.height());
         for (isize y = 0; y < pixels.height(); y++) {
-            png_read_row(_png, pixels.mutBytes().buf() + y * pixels.stride(), nullptr);
+            rows[y] = pixels.mutBytes().buf() + y * pixels.stride();
         }
+
+        png_read_image(_png, rows.buf());
 
         return Ok();
     }

@@ -37,6 +37,8 @@ export struct Rgb888 {
     always_inline static constexpr bool hasAlpha() {
         return false;
     }
+
+    always_inline bool operator==(Rgb888 const&) const = default;
 };
 
 export Rgb888 RGB888;
@@ -66,6 +68,8 @@ export struct Rgba8888 {
     always_inline static constexpr bool hasAlpha() {
         return true;
     }
+
+    always_inline bool operator==(Rgba8888 const&) const = default;
 };
 
 export Rgba8888 RGBA8888;
@@ -95,6 +99,8 @@ export struct Bgra8888 {
     always_inline static constexpr bool hasAlpha() {
         return true;
     }
+
+    always_inline bool operator==(Bgra8888 const&) const = default;
 };
 
 export Bgra8888 BGRA8888;
@@ -121,11 +127,42 @@ export struct Greyscale8 {
     always_inline static constexpr bool hasAlpha() {
         return false;
     }
+
+    always_inline bool operator==(Greyscale8 const&) const = default;
 };
 
 export Greyscale8 GREYSCALE8;
 
-using _Fmts = Union<Rgb888, Rgba8888, Bgra8888, Greyscale8>;
+export struct Ga88 {
+    always_inline static Color load(void const* pixel) {
+        u8 const* p = static_cast<u8 const*>(pixel);
+        return Color::fromRgba(p[0], p[0], p[0], p[1]);
+    }
+
+    always_inline static void store(void* pixel, Color color) {
+        u8* p = static_cast<u8*>(pixel);
+        p[0] = color.red;
+        p[1] = color.alpha;
+    }
+
+    always_inline static constexpr usize bpp() {
+        return 2;
+    }
+
+    always_inline static constexpr usize bpc() {
+        return 8;
+    }
+
+    always_inline static constexpr bool hasAlpha() {
+        return true;
+    }
+
+    always_inline bool operator==(Ga88 const&) const = default;
+};
+
+export Ga88 GA88;
+
+using _Fmts = Union<Rgb888, Rgba8888, Bgra8888, Greyscale8, Ga88>;
 
 export struct Fmt : _Fmts {
     using _Fmts::_Fmts;

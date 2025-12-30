@@ -29,19 +29,19 @@ struct KarmDecoder : Decoder {
                slice[1] == 0x4D;
     }
 
-    static Res<Decoder> init(Bytes slice) {
+    static Res<Box<Decoder>> init(Bytes slice) {
         if (not sniff(slice)) {
             return Error::invalidData("invalid signature");
         }
 
-        Decoder dec{};
+        auto dec = makeBox<KarmDecoder>();
         Io::BScan s{slice};
-        try$(dec._readHeader(s));
-        try$(dec._readInfoHeader(s));
-        try$(dec._readPalette(s));
-        try$(dec._readPixels(s));
+        try$(dec->_readHeader(s));
+        try$(dec->_readInfoHeader(s));
+        try$(dec->_readPalette(s));
+        try$(dec->_readPixels(s));
 
-        return Ok(dec);
+        return Ok(static_cast<Box<Decoder>>(std::move(dec)));
     }
 
     // MARK: Header ------------------------------------------------------------
