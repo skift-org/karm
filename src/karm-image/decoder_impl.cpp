@@ -10,7 +10,7 @@ Res<Box<Decoder>> Decoder::createFrom(Bytes buf, Ref::Uti format) {
     if (format == Ref::Uti::PUBLIC_JPEG) {
         return Jpeg::createDecoder(buf);
     } else if (format == Ref::Uti::PUBLIC_PNG) {
-        return Png::createPngDecoder(buf);
+        return Png::createDecoder(buf);
     } else if (format == Ref::Uti::PUBLIC_BMP) {
         return Bmp::createDecoder(buf);
     } else {

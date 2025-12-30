@@ -15,7 +15,7 @@ import :png._embed;
 
 namespace Karm::Image::Png {
 
-export Res<Box<Decoder>> createPngDecoder(Bytes bytes) {
+export Res<Box<Decoder>> createDecoder(Bytes bytes) {
     return _Embed::createPngDecoder(bytes);
 }
 
