@@ -25,12 +25,12 @@ export struct Image : Node {
         if (not r.colide(bound()))
             return;
 
-        // if (not _radii.zero()) {
-        //     ctx.fillStyle(_surface->pixels());
-        //     ctx.fill(bound(), _radii);
-        // } else {
-        ctx.blit(_bound.cast<isize>(), _surface);
-        // }
+        if (not _radii.zero()) {
+            ctx.fillStyle(_surface->pixels());
+            ctx.fill(bound(), _radii);
+        } else {
+            ctx.blit(_bound.cast<isize>(), _surface);
+        }
     }
 
     void repr(Io::Emit& e) const override {
