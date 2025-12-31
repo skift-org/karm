@@ -40,8 +40,9 @@ Res<> Stream::write(Io::Writer& w) const {
     return Io::format(w, "\nendstream\n");
 }
 
-Res<> Value::write(Io::Writer& w) const {
-    return visit(Visitor{
+template<bool TopLevel>
+Res<> BaseValue<TopLevel>::write(Io::Writer& w) const {
+    return this->visit(Visitor{
         [&](None) -> Res<> {
             return Io::format(w, "null");
         },

@@ -43,7 +43,8 @@ export struct Stream {
     Res<> write(Io::Writer& writer) const;
 };
 
-export using _Value = Union<
+export template<bool TopLevel>
+using _Value = Union<
     None,
     Ref,
     bool,
@@ -54,20 +55,29 @@ export using _Value = Union<
     Name,
     Array,
     Dict,
-    Stream>;
+    Meta::Cond<TopLevel, Stream, None>>;
 
-export struct Value : _Value {
-    using _Value::_Value;
+template<bool TopLevel>
+struct BaseValue : _Value<TopLevel> {
+    using _Value<TopLevel>::_Value;
 
     Res<> write(Io::Writer& writer) const;
 };
 
+struct Value : BaseValue<false> {
+    using BaseValue::BaseValue;
+};
+
+export struct TopLevelValue : BaseValue<true> {
+    using BaseValue::BaseValue;
+};
+
 export struct File {
     String header;
-    Map<Ref, Value> body;
+    Map<Ref, TopLevelValue> body;
     Dict trailer;
 
-    Ref add(Ref ref, Value value) {
+    Ref add(Ref ref, TopLevelValue value) {
         body.put(ref, std::move(value));
         return ref;
     }
