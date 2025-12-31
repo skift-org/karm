@@ -85,33 +85,59 @@ export struct PdfPrinter : FilePrinter {
             );
         }
 
+        auto deflateBytes = [](Bytes bytes) -> Buf<u8> {
+            auto alphaReader = Io::BufReader(bytes);
+            auto alphaWriter = Io::BufferWriter(bytes.len());
+            Archive::deflate(alphaReader, alphaWriter).unwrap();
+            return alphaWriter.take();
+        };
+
+        // FIXME: Directly embed the 316 bytes in a table somewhere
+        auto srgbIccFile = Sys::File::open("bundle://karm-image/srgb-v4.icc"_url).take();
+        auto srgbIccMap = Sys::mmap(srgbIccFile).take();
+        auto srgbIccCompressed = deflateBytes(srgbIccMap.bytes());
+
+        auto srgbColorSpaceStream = file.add(
+            alloc.alloc(),
+            Pdf::Stream{
+                .dict = Pdf::Dict{
+                    {"Length"s, srgbIccCompressed.len()},
+                    {"N"s, 3ul},
+                    {"Range"s, Pdf::Array{0.0, 1.0, 0.0, 1.0, 0.0, 1.0}},
+                    {"Filter"s, Pdf::Name{"FlateDecode"s}},
+                },
+                .data = std::move(srgbIccCompressed)
+            }
+        );
+
+        // FIXME: Only add on demand
+        auto srgbColorSpace = file.add(alloc.alloc(), Pdf::Array{Pdf::Name{"ICCBased"s}, srgbColorSpaceStream});
+
         // Images
         Pdf::Dict xObjectDict;
-        for (auto& [_, value]: imageManager.mapping.iterUnordered()) {
+        for (auto& [_, value] : imageManager.mapping.iterUnordered()) {
             auto [id, surface] = value;
-            auto getColorSpaceName = [](Gfx::Fmt fmt) -> Opt<Pdf::Name> {
-                return fmt.visit(Visitor{
-                    [](Gfx::Rgb888) -> Opt<Pdf::Name> {
-                        return "DeviceRGB"s;
-                    },
-                    [](Gfx::Greyscale8) -> Opt<Pdf::Name> {
-                        return "DeviceGray"s;
-                    },
-                    [](auto) -> Opt<Pdf::Name> {
-                        return NONE;
-                    }
-                });
+            auto getColorSpaceName = [&](Gfx::Fmt fmt) -> Opt<Pdf::Value> {
+                return fmt.visit(Visitor{[&](Gfx::Rgb888) -> Pdf::Ref {
+                                             return srgbColorSpace;
+                                         },
+                                         [](Gfx::Greyscale8) -> Pdf::Name {
+                                             return "DeviceGray"s;
+                                         },
+                                         [](auto) -> Opt<Pdf::Value> {
+                                             return NONE;
+                                         }});
             };
 
             // lol
-            auto getColorSpaceName2 = [](Gfx::ColorSpace colorSpace) -> Opt<Pdf::Name> {
+            auto resolveColorSpace = [&](Gfx::ColorSpace colorSpace) -> Opt<Pdf::Value> {
                 switch (colorSpace) {
                 case Gfx::ColorSpace::GRAY:
-                    return "DeviceGray"s;
+                    return Pdf::Name{"DeviceGray"s};
                 case Gfx::ColorSpace::RGB:
-                    return "DeviceRGB"s;
+                    return srgbColorSpace;
                 case Gfx::ColorSpace::CMYK:
-                    return "DeviceCMYK"s;
+                    return Pdf::Name{"DeviceCMYK"s};
                 default:
                     return NONE;
                 }
@@ -130,25 +156,17 @@ export struct PdfPrinter : FilePrinter {
                 }
             };
 
-            auto deflateBytes = [](Bytes bytes) -> Buf<u8> {
-                auto alphaReader = Io::BufReader(bytes);
-                auto alphaWriter = Io::BufferWriter(bytes.len());
-                Archive::deflate(alphaReader, alphaWriter).unwrap();
-                return alphaWriter.take();
+            auto imageStreamParams = Pdf::Dict{
+                {"Type"s, Pdf::Name{"XObject"s}},
+                {"Subtype"s, Pdf::Name{"Image"s}},
+                {"Width"s, surface->width()},
+                {"Height"s, surface->height()},
+                {"BitsPerComponent"s, surface->fmt().bpc()},
             };
-
-            auto imageStreamParams =
-                Pdf::Dict{
-                                    {"Type"s, Pdf::Name{"XObject"s}},
-                                    {"Subtype"s, Pdf::Name{"Image"s}},
-                                    {"Width"s, surface->width()},
-                                    {"Height"s, surface->height()},
-                                    {"BitsPerComponent"s, surface->fmt().bpc()},
-                };
 
             struct PreparedImage {
                 Pdf::Name filterName;
-                Pdf::Name colorSpaceName;
+                Pdf::Value colorSpace;
                 usize bitsPerComponent;
                 Buf<u8> rawImage;
                 Opt<Buf<u8>> alphaMask;
@@ -158,7 +176,7 @@ export struct PdfPrinter : FilePrinter {
                 if (surface->mimeData()) {
                     auto& mimeData = *surface->mimeData();
 
-                    auto colorSpaceName = try$(getColorSpaceName2(mimeData.colorSpace));
+                    auto colorSpaceName = try$(resolveColorSpace(mimeData.colorSpace));
 
                     if (mimeData.invertedColors) {
                         auto bpp = getColorSpaceBpp(mimeData.colorSpace).unwrap();
@@ -175,7 +193,7 @@ export struct PdfPrinter : FilePrinter {
                     if (mimeData.uti == Ref::Uti::PUBLIC_JPEG) {
                         return PreparedImage{
                             .filterName = "DCTDecode"s,
-                            .colorSpaceName = colorSpaceName,
+                            .colorSpace = colorSpaceName,
                             .bitsPerComponent = mimeData.bitDepth,
                             .rawImage = mimeData.buf,
                             .alphaMask = NONE,
@@ -190,9 +208,9 @@ export struct PdfPrinter : FilePrinter {
                 auto imageSurface = surface;
                 Opt<Buf<u8>> alphaMask = NONE;
 
-                auto colorSpaceName = getColorSpaceName(surface->fmt());
-                if (!colorSpaceName) {
-                    colorSpaceName = "DeviceRGB"s;
+                auto colorSpace = getColorSpaceName(surface->fmt());
+                if (!colorSpace) {
+                    colorSpace = srgbColorSpace;
                     imageSurface = surface->convert(Gfx::RGB888);
 
                     if (auto alpha = surface->extractAlpha()) {
@@ -202,7 +220,7 @@ export struct PdfPrinter : FilePrinter {
 
                 return PreparedImage{
                     .filterName = "FlateDecode"s,
-                    .colorSpaceName = colorSpaceName.unwrap(),
+                    .colorSpace = colorSpace.unwrap(),
                     .bitsPerComponent = surface->fmt().bpc(),
                     .rawImage = deflateBytes(imageSurface->pixels().bytes()),
                     .alphaMask = alphaMask,
@@ -213,7 +231,7 @@ export struct PdfPrinter : FilePrinter {
             PreparedImage preparedImage = preparedEmbeddableImage.unwrapOrElse(deflateFallback);
 
             imageStreamParams.put("Length"s, preparedImage.rawImage.len());
-            imageStreamParams.put("ColorSpace"s, std::move(preparedImage.colorSpaceName));
+            imageStreamParams.put("ColorSpace"s, std::move(preparedImage.colorSpace));
             imageStreamParams.put("BitsPerComponent"s, preparedImage.bitsPerComponent);
 
             if (preparedImage.filterName) {
@@ -227,19 +245,22 @@ export struct PdfPrinter : FilePrinter {
 
                 auto len = preparedImage.alphaMask.unwrap().len();
 
-                file.add(smaskRef, Pdf::Stream{
-                    .dict = Pdf::Dict{
-                        {"Type"s, Pdf::Name{"XObject"s}},
-                        {"Subtype"s, Pdf::Name{"Image"s}},
-                        {"Width"s, surface->width()},
-                        {"Height"s, surface->height()},
-                        {"ColorSpace"s, Pdf::Name{"DeviceGray"s}},
-                        {"BitsPerComponent"s, Gfx::GREYSCALE8.bpc()},
-                        {"Filter"s, Pdf::Name{"FlateDecode"s}},
-                        {"Length"s, len}
-                    },
-                    .data = preparedImage.alphaMask.take()
-                });
+                file.add(
+                    smaskRef,
+                    Pdf::Stream{
+                        .dict = Pdf::Dict{
+                            {"Type"s, Pdf::Name{"XObject"s}},
+                            {"Subtype"s, Pdf::Name{"Image"s}},
+                            {"Width"s, surface->width()},
+                            {"Height"s, surface->height()},
+                            {"ColorSpace"s, Pdf::Name{"DeviceGray"s}},
+                            {"BitsPerComponent"s, Gfx::GREYSCALE8.bpc()},
+                            {"Filter"s, Pdf::Name{"FlateDecode"s}},
+                            {"Length"s, len}
+                        },
+                        .data = preparedImage.alphaMask.take()
+                    }
+                );
             }
 
             auto xObjectRef = alloc.alloc();
