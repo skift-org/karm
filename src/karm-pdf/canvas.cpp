@@ -311,9 +311,11 @@ export struct Canvas : Gfx::Canvas {
 
     void blit(Math::Recti src, Math::Recti dest, Rc<Gfx::Surface> surface) override {
         (void)src; // FIXME
+        auto destf = dest.cast<f64>();
 
         push();
-        _e.ln("{} 0 0 {} {} {} cm", dest.width, -dest.height, dest.x, dest.y + dest.height);
+
+        transform({destf.width, 0, 0, -destf.height, destf.x, destf.y + dest.height});
 
         _e.ln("/Im{} Do", _imageManager->getImageId(surface));
 
