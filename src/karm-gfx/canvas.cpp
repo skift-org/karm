@@ -3,6 +3,7 @@ export module Karm.Gfx:canvas;
 import Karm.Core;
 import Karm.Math;
 
+import :drawlist;
 import :fill;
 import :filters;
 import :font;
@@ -22,87 +23,125 @@ export struct Canvas : Meta::NoCopy {
     Canvas(Canvas&&) = default;
     Canvas& operator=(Canvas&&) = default;
 
-    virtual ~Canvas() = default;
+    DrawList _draw_list{};
+
+    void _append(DrawCommand cmd) {
+        _draw_list.pushBack(std::move(cmd));
+    }
 
     // MARK: Context Operations ------------------------------------------------
 
     // Push the current context onto the stack.
-    virtual void push() = 0;
+    void push() {
+        _append(_Push{});
+    }
 
     // Pop the current context from the stack.
-    virtual void pop() = 0;
+    void pop() {
+        _append(_Pop{});
+    }
 
     // Set the current fill style.
-    virtual void fillStyle(Fill style) = 0;
+    void fillStyle(Fill style) {
+        _append(_FillStyle{.style = style});
+    }
 
     // Set the current stroke style.
-    virtual void strokeStyle(Stroke style) = 0;
+    void strokeStyle(Stroke style) {
+        _append(_StrokeStyle{.style = style});
+    }
 
     // Set the opacity of the current context.
-    virtual void opacity(f64 opacity) = 0;
+    void opacity(f64 opacity) {
+        _append(_Opacity{.opacity = opacity});
+    }
 
     // Set the origin of the current context.
-    virtual void origin(Math::Vec2f p) {
+    void origin(Math::Vec2f p) {
         translate(p);
     }
 
     // Transform subsequent drawing operations using the given matrix.
-    virtual void transform(Math::Trans2f trans) = 0;
+    void transform(Math::Trans2f trans) {
+        _append(_Transform{.trans = trans});
+    }
 
     // Translate subsequent drawing operations.
-    virtual void translate(Math::Vec2f pos) {
+    void translate(Math::Vec2f pos) {
         transform(Math::Trans2f::translate(pos));
     }
 
     // Scale subsequent drawing operations.
-    virtual void scale(Math::Vec2f pos) {
+    void scale(Math::Vec2f pos) {
         transform(Math::Trans2f::scale(pos));
     }
 
     // Rotate subsequent drawing operations.
-    virtual void rotate(f64 angle) {
+    void rotate(f64 angle) {
         transform(Math::Trans2f::rotate(angle));
     }
 
     // Skew subsequent drawing operations.
-    virtual void skew(Math::Vec2f pos) {
+    void skew(Math::Vec2f pos) {
         transform(Math::Trans2f::skew(pos));
     }
 
     // MARK: Path Operations ---------------------------------------------------
 
     // Begin a new path.
-    virtual void beginPath() = 0;
+    void beginPath() {
+        _append(_BeginPath{});
+    }
 
     // Close the current path. This will connect the last point to the first
-    virtual void closePath() = 0;
+    void closePath() {
+        _append(_ClosePath{});
+    }
 
     // Begin a new subpath at the given point.
-    virtual void moveTo(Math::Vec2f p, Flags<Math::Path::Option> options = {}) = 0;
+    void moveTo(Math::Vec2f p, Flags<Math::Path::Option> options = {}) {
+        _append(_MoveTo{.p = p, .options = options});
+    }
 
     // Add a line segment to the current path.
-    virtual void lineTo(Math::Vec2f p, Flags<Math::Path::Option> options = {}) = 0;
+    void lineTo(Math::Vec2f p, Flags<Math::Path::Option> options = {}) {
+        _append(_LineTo{.p = options, .options = options});
+    }
 
     // Add a horizontal line segment to the current path.
-    virtual void hlineTo(f64 x, Flags<Math::Path::Option> options = {}) = 0;
+    void hlineTo(f64 x, Flags<Math::Path::Option> options = {}) {
+        _append(_HLineTo{.x = x, .options = options});
+    }
 
     // Add a vertical line segment to the current path.
-    virtual void vlineTo(f64 y, Flags<Math::Path::Option> options = {}) = 0;
+    void vlineTo(f64 y, Flags<Math::Path::Option> options = {}) {
+        _append(_VLineTo{.y = y, .options = options});
+    }
 
     // Add a cubic Bezier curve to the current path.
-    virtual void cubicTo(Math::Vec2f cp1, Math::Vec2f cp2, Math::Vec2f p, Flags<Math::Path::Option> options = {}) = 0;
+    void cubicTo(Math::Vec2f cp1, Math::Vec2f cp2, Math::Vec2f p, Flags<Math::Path::Option> options = {}) {
+        _append(_CubicTo{.cp1 = cp1, .cp2 = cp2, .p = p, .options = options});
+    }
 
     // Add a quadratic Bezier curve to the current path.
-    virtual void quadTo(Math::Vec2f cp, Math::Vec2f p, Flags<Math::Path::Option> options = {}) = 0;
+    void quadTo(Math::Vec2f cp, Math::Vec2f p, Flags<Math::Path::Option> options = {}) {
+        _append(_QuadTo{.cp = cp, .p = p, .options = options});
+    };
 
     // Add an elliptical arc to the current path.
-    virtual void arcTo(Math::Vec2f radius, f64 angle, Math::Vec2f p, Flags<Math::Path::Option> options = {}) = 0;
+    void arcTo(Math::Vec2f radius, f64 angle, Math::Vec2f p, Flags<Math::Path::Option> options = {}) {
+        _append(_ArcTo{.radius = radius, .angle = angle, .p = p, .options = options});
+    }
 
     // Add a line segment to the current path.
-    virtual void line(Math::Edgef line) = 0;
+    void line(Math::Edgef line) {
+        _append(_Line{.line = line});
+    }
 
     // Add a curve to the current path.
-    virtual void curve(Math::Curvef curve) = 0;
+    void curve(Math::Curvef curve) {
+        _append(_Curve{.curve = curve});
+    }
 
     // Add a rectangle to the current path.
     virtual void rect(Math::Rectf rect, Math::Radiif radii = 0) {
@@ -169,13 +208,19 @@ export struct Canvas : Meta::NoCopy {
     }
 
     // Add an ellipse to the current path.
-    virtual void ellipse(Math::Ellipsef ellipse) = 0;
+    void ellipse(Math::Ellipsef ellipse) {
+        _append(_Ellipse{.ellipse = ellipse});
+    }
 
     // Add an arc to the current path.
-    virtual void arc(Math::Arcf arc) = 0;
+    void arc(Math::Arcf arc) {
+        _append(_Arc{.arc = arc});
+    }
 
     // Add a path to the current path.
-    virtual void path(Math::Path const& path) = 0;
+    void path(Rc<Math::Path> path) {
+        _append(_Path{.path = path});
+    }
 
     // Fill the current path with the given fill.
     virtual void fill(FillRule rule = FillRule::NONZERO) = 0;
