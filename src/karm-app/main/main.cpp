@@ -16,7 +16,7 @@ struct Handler : App::Handler {
     void update() override {
         auto s = win->acquireSurface();
         s.clear(Gfx::BLUE500);
-        win->releaseSurface();
+        win->releaseSurface(s.bound());
     }
 
     void handle(App::WindowId, App::Event& e) override {
