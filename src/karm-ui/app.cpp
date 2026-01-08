@@ -67,6 +67,16 @@ struct RootNode : ProxyNode<RootNode> {
         _dirty.clear();
     }
 
+    void event(App::Event& event) override {
+        if (auto e = event.is<App::ResizeEvent>()) {
+            _shouldLayout = true;
+            event.accept();
+        }
+
+        if (not event.accepted())
+            ProxyNode::event(event);
+    }
+
     void bubble(App::Event& event) override {
         if (auto e = event.is<PaintEvent>()) {
             _dirty.pushBack(e->bound);

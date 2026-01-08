@@ -16,6 +16,10 @@ export struct RequestMinimizeEvent {
 export struct RequestMaximizeEvent {
 };
 
+export struct ResizeEvent {
+    Math::Vec2i size;
+};
+
 export struct DragEvent {
     enum {
         START,

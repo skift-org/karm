@@ -38,6 +38,7 @@ export struct Scaffold : Meta::NoCopy {
             s.sidebarOpen = !s.sidebarOpen;
         }
 
+        s.isMobile = App::formFactor == App::FormFactor::MOBILE;
         return NONE;
     }
 
