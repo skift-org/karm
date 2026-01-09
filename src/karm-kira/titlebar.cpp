@@ -56,8 +56,12 @@ export struct TitlebarContent {
                Ui::insets({0, 8}) |
                contextMenu([] {
                    return contextMenuContent({
+                       contextMenuItem(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::NONE), Mdi::WINDOW_RESTORE, "Restore"),
+                       contextMenuItem(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::FULL), Mdi::WINDOW_MAXIMIZE, "Maximize"),
                        contextMenuItem(Ui::bindBubble<App::RequestMinimizeEvent>(), Mdi::WINDOW_MINIMIZE, "Minimize"),
-                       contextMenuItem(Ui::bindBubble<App::RequestMaximizeEvent>(), Mdi::WINDOW_MAXIMIZE, "Maximize"),
+                       separator(),
+                       contextMenuItem(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::LEFT), Mdi::DOCK_LEFT, "Snap Left"),
+                       contextMenuItem(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::RIGHT), Mdi::DOCK_RIGHT, "Snap Right"),
                        separator(),
                        contextMenuItem(Ui::bindBubble<App::RequestCloseEvent>(), Mdi::WINDOW_CLOSE, "Close"),
                    });

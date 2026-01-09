@@ -17,7 +17,6 @@ using Task = Opt<Async::_Task<Opt<A>>>;
 export template <typename S, typename A, Task<A> (*R)(S&, A) = [](S& s, A a) {
     return s.reduce(a);
 }>
-
 struct Model {
     using State = S;
     using Action = A;
@@ -130,6 +129,12 @@ struct Reducer :
                         Ui::bubble<Action>(*this, *a);
                 });
             }
+            e.accept();
+            _rebuild = true;
+            shouldLayout(*this);
+        } else if (e.is<App::FormfactorEvent>()) {
+            // FIXME: Probably the state should handle theses but for now
+            //        let's just rebuild for element that use App::formFactor
             e.accept();
             _rebuild = true;
             shouldLayout(*this);

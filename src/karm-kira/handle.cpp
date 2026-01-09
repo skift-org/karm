@@ -12,8 +12,7 @@ export Ui::Child handle() {
                .backgroundFill = Ui::GRAY50,
            }) |
            Ui::insets(12) |
-           Ui::center() |
-           Ui::minSize({Ui::UNCONSTRAINED, 48});
+           Ui::center();
 }
 
 export Ui::Child dragHandle() {

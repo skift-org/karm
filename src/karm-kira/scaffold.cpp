@@ -26,7 +26,6 @@ export struct Scaffold : Meta::NoCopy {
 
     struct State {
         bool sidebarOpen = false;
-        bool isMobile = false;
     };
 
     struct ToggleSidebar {};
@@ -38,7 +37,6 @@ export struct Scaffold : Meta::NoCopy {
             s.sidebarOpen = !s.sidebarOpen;
         }
 
-        s.isMobile = App::formFactor == App::FormFactor::MOBILE;
         return NONE;
     }
 
@@ -168,11 +166,10 @@ export Ui::Child scaffold(Scaffold scaffold) {
 
     Scaffold::State state{
         .sidebarOpen = not isMobile,
-        .isMobile = isMobile,
     };
 
     return Ui::reducer<Scaffold::Model>(state, [scaffold = std::move(scaffold)](Scaffold::State const& state) {
-        return state.isMobile
+        return App::formFactor == App::FormFactor::MOBILE
                    ? _mobileScaffold(state, scaffold)
                    : _desktopScaffold(state, scaffold);
     });

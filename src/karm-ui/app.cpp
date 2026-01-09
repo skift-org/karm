@@ -93,8 +93,8 @@ struct RootNode : ProxyNode<RootNode> {
         } else if (auto e = event.is<App::RequestCloseEvent>()) {
             _window->close();
             event.accept();
-        } else if (auto e = event.is<App::RequestMaximizeEvent>()) {
-            _window->maximize();
+        } else if (auto e = event.is<App::RequestSnapeEvent>()) {
+            _window->snap(e->snap);
             event.accept();
         } else if (auto e = event.is<App::RequestMinimizeEvent>()) {
             _window->minimize();

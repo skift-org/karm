@@ -6,11 +6,13 @@ import Karm.Math;
 import Karm.Sys;
 
 import Karm.App.Base;
+import Karm.Logger;
 import :_embed;
 
 namespace Karm::App {
 
 export using WindowId = Distinct<usize, struct WindowIdTag>;
+export constexpr WindowId GLOBAL = WindowId{Limits<usize>::MAX};
 
 export enum struct Direction : u8 {
     EAST,
@@ -46,13 +48,21 @@ export struct Window : Meta::Pinned {
 
     virtual void releaseSurface(Slice<Math::Recti> dirty) = 0;
 
-    virtual void drag(DragEvent) = 0;
+    virtual void drag(DragEvent) {
+        logWarn("Window::drag() not implemented");
+    }
 
-    virtual void resize(Direction) = 0;
+    virtual void resize(Direction) {
+        logWarn("Window::resize() not implemented");
+    }
 
-    virtual void minimize() = 0;
+    virtual void snap(Snap) {
+        logWarn("Window::snap() not implemented");
+    }
 
-    virtual void maximize() = 0;
+    virtual void minimize() {
+        logWarn("Window::minimize() not implemented");
+    }
 
     virtual void close() = 0;
 };

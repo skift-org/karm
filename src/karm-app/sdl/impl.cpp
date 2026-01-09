@@ -74,11 +74,12 @@ struct SdlWindow : Window {
         }
     }
 
-    void resize(Direction) override {
-    }
-
-    void maximize() override {
-        SDL_MaximizeWindow(_sdlWindow);
+    void snap(Snap snap) override {
+        if (snap == Snap::NONE) {
+            SDL_RestoreWindow(_sdlWindow);
+        } else {
+            SDL_MaximizeWindow(_sdlWindow);
+        }
     }
 
     void minimize() override {
