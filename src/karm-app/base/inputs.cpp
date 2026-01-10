@@ -121,10 +121,32 @@ export struct Key {
         return _code;
     }
 
+    bool operator==(Key const& other) const = default;
+
     auto operator<=>(Key const& other) const = default;
 
     auto operator<=>(Code const& other) const {
         return _code <=> other;
+    }
+
+    Opt<KeyMod> toMod() const {
+        if (_code == LSHIFT)
+            return KeyMod::LSHIFT;
+        if (_code == RSHIFT)
+            return KeyMod::RSHIFT;
+        if (_code == LCTRL)
+            return KeyMod::LCTRL;
+        if (_code == RCTRL)
+            return KeyMod::RCTRL;
+        if (_code == LALT)
+            return KeyMod::LALT;
+        if (_code == RALT)
+            return KeyMod::RALT;
+        if (_code == LSUPER)
+            return KeyMod::LSUPER;
+        if (_code == RSUPER)
+            return KeyMod::RSUPER;
+        return NONE;
     }
 };
 

@@ -58,6 +58,10 @@ struct Flags {
         return _value == 0;
     }
 
+    bool any(Flags other) const {
+        return _value & other;
+    }
+
     bool any() const {
         return _value != 0;
     }
