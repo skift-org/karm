@@ -1,6 +1,6 @@
 {
     "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
-    "id": "impl-posix.uring",
+    "id": "karm-sys.uring",
     "type": "lib",
     "props": {
         "cpp-excluded": true
@@ -18,6 +18,6 @@
         "uring"
     ],
     "provides": [
-        "karm-sys-async-impl"
+        "karm-sys.async"
     ]
 }

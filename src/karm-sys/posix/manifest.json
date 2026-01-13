@@ -1,6 +1,6 @@
 {
     "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
-    "id": "impl-posix",
+    "id": "karm-sys.posix",
     "type": "lib",
     "description": "Karm platform embedding layer for POSIX.",
     "enableIf": {
@@ -10,9 +10,9 @@
         ]
     },
     "requires": [
-        "karm-sys-async-impl"
+        "karm-sys.async"
     ],
     "provides": [
-        "karm-sys-impl"
+        "karm-sys.impl"
     ]
 }

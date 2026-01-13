@@ -6,6 +6,6 @@
         "sdl3"
     ],
     "provides": [
-        "karm-av-impl"
+        "karm-av.impl"
     ]
 }

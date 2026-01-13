@@ -1,6 +1,6 @@
 {
     "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
-    "id": "impl-posix.logger",
+    "id": "karm-logger.posix",
     "type": "lib",
     "props": {
         "cpp-excluded": true
@@ -12,6 +12,6 @@
         ]
     },
     "provides": [
-        "karm-logger-impl"
+        "karm-logger.impl"
     ]
 }

@@ -1,6 +1,6 @@
 {
     "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
-    "id": "impl-posix.urand",
+    "id": "karm-sys.urand",
     "type": "lib",
     "props": {
         "cpp-excluded": true
@@ -12,6 +12,6 @@
         ]
     },
     "provides": [
-        "karm-crypto-impl"
+        "karm-crypto.impl"
     ]
 }

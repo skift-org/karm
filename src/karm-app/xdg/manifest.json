@@ -1,6 +1,6 @@
 {
     "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
-    "id": "impl-posix.xdg",
+    "id": "karm-app.xdg",
     "type": "lib",
     "props": {
         "cpp-excluded": true
@@ -16,6 +16,6 @@
         "karm-core"
     ],
     "provides": [
-        "karm-app-impl"
+        "karm-app.prefs"
     ]
 }

@@ -20,6 +20,6 @@
     "requires": [
         "stdc-ansi",
         "stdcpp",
-        "karm-core-impl"
+        "karm-core.impl"
     ]
 }

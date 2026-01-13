@@ -1,6 +1,6 @@
 {
     "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
-    "id": "impl-posix.base",
+    "id": "karm-core.posix",
     "type": "lib",
     "props": {
         "cpp-excluded": true
@@ -13,6 +13,6 @@
     },
     "requires": [],
     "provides": [
-        "karm-core-impl"
+        "karm-core.impl"
     ]
 }

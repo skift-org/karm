@@ -9,7 +9,7 @@
         "karm-gfx",
         "karm-sys",
         "karm-app.base",
-        "karm-app-impl",
-        "karm-app-app-impl"
+        "karm-app.prefs",
+        "karm-app.app"
     ]
 }

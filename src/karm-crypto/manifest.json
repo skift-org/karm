@@ -6,6 +6,6 @@
     "requires": [
         "karm-core",
         "karm-math",
-        "karm-crypto-impl"
+        "karm-crypto.impl"
     ]
 }

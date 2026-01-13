@@ -1,6 +1,6 @@
 {
     "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
-    "id": "impl-posix.seccomp",
+    "id": "karm-sys.seccomp",
     "type": "lib",
     "props": {
         "cpp-excluded": true
@@ -14,6 +14,6 @@
         "seccomp"
     ],
     "provides": [
-        "karm-sys-sandbox-impl"
+        "karm-sys.sandbox"
     ]
 }

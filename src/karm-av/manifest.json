@@ -8,7 +8,7 @@
         "wav"
     ],
     "requires": [
-        "karm-av-impl",
+        "karm-av.impl",
         "karm-sys",
         "karm-debug",
         "karm-gfx"
