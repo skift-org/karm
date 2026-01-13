@@ -13,7 +13,8 @@
     },
     "requires": [
         "karm-sys",
-        "karm-core"
+        "karm-core",
+        "karm-app.app"
     ],
     "provides": [
         "karm-app.prefs"
