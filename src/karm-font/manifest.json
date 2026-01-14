@@ -7,7 +7,6 @@
         "ttf"
     ],
     "requires": [
-        "karm-app",
         "karm-gfx",
         "karm-sys",
         "karm-logger"
