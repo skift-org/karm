@@ -14,13 +14,17 @@ Async::Task<> bigSleptAsync(Rc<bool> pass, Async::CancellationToken ct) {
 
 testAsync$("async-cancellation") {
     Rc<bool> pass = makeRc<bool>(false);
+    bool finished = false;
     Async::Cancellation sleepCancel;
     co_try$(sleepCancel.attach(ct));
-    Async::detach(bigSleptAsync(pass, sleepCancel.token()));
+    Async::detach(bigSleptAsync(pass, sleepCancel.token()), [&] (auto&) {
+        finished = true;
+    });
     sleepCancel.cancel();
 
     // wait for the operation to get canceled
     co_trya$(Sys::globalSched().sleepAsync(Sys::instant() + Duration::fromMSecs(16), ct));
+    co_expect$(finished);
     co_expect$(pass.unwrap());
 
     co_return Ok();
