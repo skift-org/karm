@@ -36,6 +36,19 @@ export Res<String> readAllUtf8(Readable auto& reader) {
     return Ok(writer.take());
 }
 
+export Res<String> readLineUtf8(Readable auto& reader) {
+    StringWriter writer;
+    Array<Utf8::Unit, 1> buf;
+    while (true) {
+        auto read = try$(reader.read(buf.mutBytes()));
+        if (read == 0 or buf[0] == '\n') {
+            break;
+        }
+        try$(writer.writeUnit({buf.buf(), read}));
+    }
+    return Ok(writer.take());
+}
+
 // MARK: Write -----------------------------------------------------------------
 
 export Res<usize> pwrite(Writable auto& writer, Bytes bytes, Seek seek) {
