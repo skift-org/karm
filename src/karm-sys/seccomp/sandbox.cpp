@@ -2,9 +2,9 @@ module;
 
 #include <seccomp.h>
 
-#include "../posix/utils.h"
-
 module Karm.Sys;
+
+import Karm.Sys.Posix;
 
 namespace Karm::Sys::_Embed {
 

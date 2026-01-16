@@ -1,15 +1,15 @@
 module;
 
 #include <liburing.h>
+#include <netinet/in.h>
 #include <poll.h>
 //
 #include <karm-core/macros.h>
-#include <karm-sys/posix/fd.h>
-#include <karm-sys/posix/utils.h>
 
 module Karm.Sys;
 
 import Karm.Core;
+import Karm.Sys.Posix;
 
 namespace Karm::Sys::_Embed {
 
@@ -115,7 +115,7 @@ struct UringSched : Sys::Sched {
         };
 
         co_try$(ct.errorIfCanceled());
-        Job job{*this, co_try$(Posix::toPosixFd(fd)), buf};
+        Job job{*this, co_try$(Posix::ensurePosixFd(fd)), buf};
         submit(job, ct);
         co_return co_await job.future();
     }
@@ -158,7 +158,7 @@ struct UringSched : Sys::Sched {
         };
 
         co_try$(ct.errorIfCanceled());
-        Job job{*this, co_try$(Posix::toPosixFd(fd)), buf};
+        Job job{*this, co_try$(Posix::ensurePosixFd(fd)), buf};
         submit(job, ct);
         co_return co_await job.future();
     }
@@ -190,7 +190,7 @@ struct UringSched : Sys::Sched {
         };
 
         co_try$(ct.errorIfCanceled());
-        Job job{*this, co_try$(Posix::toPosixFd(fd))};
+        Job job{*this, co_try$(Posix::ensurePosixFd(fd))};
         submit(job, ct);
         co_return co_await job.future();
     }
@@ -226,7 +226,7 @@ struct UringSched : Sys::Sched {
         };
 
         co_try$(ct.errorIfCanceled());
-        Job job{*this, co_try$(Posix::toPosixFd(fd))};
+        Job job{*this, co_try$(Posix::ensurePosixFd(fd))};
         submit(job, ct);
         co_return co_await job.future();
     }
@@ -277,7 +277,7 @@ struct UringSched : Sys::Sched {
         };
 
         co_try$(ct.errorIfCanceled());
-        Job job{*this, co_try$(Posix::toPosixFd(fd)), buf, addr};
+        Job job{*this, co_try$(Posix::ensurePosixFd(fd)), buf, addr};
         submit(job, ct);
         co_return co_await job.future();
     }
@@ -322,7 +322,7 @@ struct UringSched : Sys::Sched {
         };
 
         co_try$(ct.errorIfCanceled());
-        Job job{*this, co_try$(Posix::toPosixFd(fd)), buf};
+        Job job{*this, co_try$(Posix::ensurePosixFd(fd)), buf};
         submit(job, ct);
         co_return co_await job.future();
     }
@@ -365,7 +365,7 @@ struct UringSched : Sys::Sched {
         };
 
         co_try$(ct.errorIfCanceled());
-        Job job{*this, co_try$(Posix::toPosixFd(fd)), events};
+        Job job{*this, co_try$(Posix::ensurePosixFd(fd)), events};
         submit(job, ct);
         co_return co_await job.future();
     }

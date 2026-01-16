@@ -1,10 +1,11 @@
 module;
 
 #include <fcntl.h>
-#include <karm-sys/posix/utils.h>
 #include <unistd.h>
 
 module Karm.Crypto;
+
+import Karm.Sys.Posix;
 
 namespace Karm::Crypto::_Embed {
 

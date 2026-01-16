@@ -2,11 +2,10 @@ module;
 
 #include <karm-core/macros.h>
 #include <stdlib.h>
-//
-#include "utils.h"
 
 module Karm.Sys;
 
+import Karm.Sys.Posix;
 import Karm.Ref;
 
 namespace Karm::Sys::_Embed {

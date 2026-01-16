@@ -21,17 +21,15 @@ module;
 //
 #include <karm-core/macros.h>
 
-#include "fd.h"
-#include "utils.h"
-
 module Karm.Sys;
 
 import Karm.Core;
 import Karm.Ref;
+import Karm.Sys.Posix;
 
 namespace Karm::Sys::_Embed {
 
-Res<Ref::Path> resolve(Ref::Url const& url) {
+static Res<Ref::Path> resolve(Ref::Url const& url) {
     Ref::Path resolved;
     if (url.scheme == "file") {
         resolved = url.path;
@@ -338,15 +336,15 @@ Res<Rc<Pid>> run(Command const& cmd) {
 
     int inFd = -1;
     if (cmd.in)
-        inFd = try$(Posix::toPosixFd(cmd.in.unwrap()))->_raw;
+        inFd = try$(Posix::ensurePosixFd(cmd.in.unwrap()))->_raw;
 
     int outFd = -1;
     if (cmd.out)
-        outFd = try$(Posix::toPosixFd(cmd.out.unwrap()))->_raw;
+        outFd = try$(Posix::ensurePosixFd(cmd.out.unwrap()))->_raw;
 
     int errFd = -1;
     if (cmd.err)
-        errFd = try$(Posix::toPosixFd(cmd.err.unwrap()))->_raw;
+        errFd = try$(Posix::ensurePosixFd(cmd.err.unwrap()))->_raw;
 
     pid_t pid = ::fork();
     if (pid < 0)
@@ -395,9 +393,9 @@ Res<Rc<Fd>> listenUdp(SocketAddr addr) {
     if (fd < 0)
         return Posix::fromLastErrno();
 
-    struct sockaddr_in addr_ = Posix::toSockAddr(addr);
+    sockaddr_in addr_ = Posix::toSockAddr(addr);
 
-    if (::bind(fd, (struct sockaddr*)&addr_, sizeof(addr_)) < 0)
+    if (::bind(fd, (sockaddr*)&addr_, sizeof(addr_)) < 0)
         return Posix::fromLastErrno();
 
     return Ok(makeRc<Posix::Fd>(fd));
@@ -408,8 +406,8 @@ Res<Rc<Fd>> connectTcp(SocketAddr addr) {
     if (fd < 0)
         return Posix::fromLastErrno();
 
-    struct sockaddr_in addr_ = Posix::toSockAddr(addr);
-    if (::connect(fd, (struct sockaddr*)&addr_, sizeof(addr_)) < 0)
+    sockaddr_in addr_ = Posix::toSockAddr(addr);
+    if (::connect(fd, (sockaddr*)&addr_, sizeof(addr_)) < 0)
         return Posix::fromLastErrno();
 
     return Ok(makeRc<Posix::Fd>(fd));
@@ -424,9 +422,9 @@ Res<Rc<Fd>> listenTcp(SocketAddr addr) {
     if (::setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
         return Posix::fromLastErrno();
 
-    struct sockaddr_in addr_ = Posix::toSockAddr(addr);
+    sockaddr_in addr_ = Posix::toSockAddr(addr);
 
-    if (::bind(fd, (struct sockaddr*)&addr_, sizeof(addr_)) < 0)
+    if (::bind(fd, (sockaddr*)&addr_, sizeof(addr_)) < 0)
         return Posix::fromLastErrno();
 
     if (::listen(fd, 128) < 0)
@@ -440,13 +438,13 @@ Res<Rc<Fd>> listenIpc(Ref::Url url) {
     if (fd < 0)
         return Posix::fromLastErrno();
 
-    struct sockaddr_un addr = {};
+    sockaddr_un addr = {};
     addr.sun_family = AF_UNIX;
     String path = try$(resolve(url)).str();
     auto sunPath = MutSlice(addr.sun_path, sizeof(addr.sun_path) - 1);
     copy(sub(path), sunPath);
 
-    if (::bind(fd, (struct sockaddr*)&addr, sizeof(addr)) < 0)
+    if (::bind(fd, (sockaddr*)&addr, sizeof(addr)) < 0)
         return Posix::fromLastErrno();
 
     if (::listen(fd, 128) < 0)
@@ -457,25 +455,25 @@ Res<Rc<Fd>> listenIpc(Ref::Url url) {
 
 // MARK: Time ------------------------------------------------------------------
 
-Duration fromTimeSpec(struct timespec const& ts) {
+Duration fromTimeSpec(timespec const& ts) {
     auto usecs = (u64)ts.tv_sec * 1000000 + (u64)ts.tv_nsec / 1000;
     return Duration::fromUSecs(usecs);
 }
 
 SystemTime now() {
-    struct timespec ts;
+    timespec ts;
     clock_gettime(CLOCK_REALTIME, &ts);
     return SystemTime::epoch() + fromTimeSpec(ts);
 }
 
 Instant instant() {
-    struct timespec ts;
+    timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
     return Instant::epoch() + fromTimeSpec(ts);
 }
 
 Duration uptime() {
-    struct timespec ts;
+    timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
     return fromTimeSpec(ts);
 }
@@ -547,7 +545,7 @@ usize pageSize() {
 // MARK: System Information ----------------------------------------------------
 
 Res<> populate(SysInfo& infos) {
-    struct utsname uts;
+    utsname uts;
     if (uname(&uts) < 0)
         return Posix::fromLastErrno();
 
@@ -591,7 +589,7 @@ Res<> populate(Vec<UserInfo>& infos) {
 // MARK: Process Managment -----------------------------------------------------
 
 Res<> sleep(Duration span) {
-    struct timespec ts;
+    timespec ts;
     ts.tv_sec = span.toSecs();
     ts.tv_nsec = (span.toUSecs() % 1000000) * 1000;
     if (nanosleep(&ts, nullptr) < 0)
@@ -626,7 +624,7 @@ Res<Ref::Url> pwd() {
 // MARK: Addr ------------------------------------------------------------------
 
 Async::Task<Vec<Ip>> ipLookupAsync(Str host) {
-    struct addrinfo hints = {};
+    addrinfo hints = {};
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
 
@@ -637,7 +635,7 @@ Async::Task<Vec<Ip>> ipLookupAsync(Str host) {
         co_return Ok(ips);
     }
 
-    struct addrinfo* res;
+    addrinfo* res;
     auto result = getaddrinfo(host.buf(), nullptr, &hints, &res);
     if (result != 0) {
         switch (result) {
@@ -664,10 +662,10 @@ Async::Task<Vec<Ip>> ipLookupAsync(Str host) {
 
     for (auto* p = res; p; p = p->ai_next) {
         if (p->ai_family == AF_INET) {
-            struct sockaddr_in* addr = (struct sockaddr_in*)p->ai_addr;
+            sockaddr_in* addr = (struct sockaddr_in*)p->ai_addr;
             ips.pushBack(Ip4::fromRaw(bswap(addr->sin_addr.s_addr)));
         } else if (p->ai_family == AF_INET6) {
-            struct sockaddr_in6* addr = (struct sockaddr_in6*)p->ai_addr;
+            sockaddr_in6* addr = (struct sockaddr_in6*)p->ai_addr;
             u128 raw = 0;
             u16 const* buf = (u16 const*)addr->sin6_addr.s6_addr;
             for (usize i = 0; i < 8; i++)

@@ -14,15 +14,4 @@ import Karm.Sys;
 
 [[gnu::used]] Karm::Async::Task<> entryPointAsync(Karm::Sys::Context&, Karm::Async::CancellationToken ct);
 
-#if defined(__ck_sys_linux__) || defined(__ck_sys_darwin__)
-#    define EMBED_POSIX_MAIN_IMPL
-#    include "posix/entry.h"
-#elif defined(__ck_sys_skift__)
-// Nothing to do, skift uses entryPoint by default
-#elif defined(__ck_sys_efi__)
-#    include <impl-efi/entry.h>
-#elif defined(__ck_sys_wasm__)
-#    include <impl-wasm/entry.h>
-#else
-#    error "Unknown system"
-#endif
+#include "__entry.h"
