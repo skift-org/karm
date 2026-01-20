@@ -14,9 +14,9 @@ import :meta.visit;
 import :base.distinct;
 import :base.flags;
 import :base.box;
+import :base.time;
 
 namespace Karm::Serde {
-
 export enum struct SizeHint {
     N8,
     N16,
@@ -116,9 +116,11 @@ export struct Serializer {
     struct Scope : Meta::NoCopy {
         Serializer* _ser = nullptr;
 
-        Scope(Serializer* ser) : _ser(ser) {}
+        Scope(Serializer* ser) : _ser(ser) {
+        }
 
-        Scope(Scope&& other) : _ser(std::exchange(other._ser, nullptr)) {}
+        Scope(Scope&& other) : _ser(std::exchange(other._ser, nullptr)) {
+        }
 
         Scope& operator=(Scope&& other) noexcept {
             std::swap(_ser, other._ser);
@@ -195,9 +197,11 @@ export struct Deserializer {
         Deserializer* _de;
         Type type;
 
-        Scope(Deserializer* de, Type type) : _de(de), type(type) {}
+        Scope(Deserializer* de, Type type) : _de(de), type(type) {
+        }
 
-        Scope(Scope&& other) : _de(std::exchange(other._de, nullptr)) {}
+        Scope(Scope&& other) : _de(std::exchange(other._de, nullptr)) {
+        }
 
         Scope& operator=(Scope&& other) noexcept {
             std::swap(_de, other._de);
@@ -458,7 +462,33 @@ struct Serde<Distinct<T, Tag>> {
 
     static Res<D> deserialize(Deserializer& de) {
         auto value = try$(::Karm::Serde::deserialize<T>(de));
-        return Ok(D{value});
+        return Ok<D>(value);
+    }
+};
+
+// TODO: Comeback to this and use typed unit
+export template <>
+struct Serde<SystemTime> {
+    static Res<> serialize(Serializer& ser, SystemTime const& v) {
+        return ::Karm::Serde::serialize(ser, v.val());
+    }
+
+    static Res<SystemTime> deserialize(Deserializer& de) {
+        auto value = try$(::Karm::Serde::deserialize<_TimeVal>(de));
+        return Ok<SystemTime>(value);
+    }
+};
+
+// TODO: Comeback to this and use typed unit
+export template <>
+struct Serde<Instant> {
+    static Res<> serialize(Serializer& ser, Instant const& v) {
+        return ::Karm::Serde::serialize(ser, v.val());
+    }
+
+    static Res<Instant> deserialize(Deserializer& de) {
+        auto value = try$(::Karm::Serde::deserialize<_TimeVal>(de));
+        return Ok<Instant>(value);
     }
 };
 
@@ -634,5 +664,4 @@ struct Serde<Box<T>> {
         return Ok(makeBox<T>(try$(de.deserialize<T>())));
     }
 };
-
 } // namespace Karm::Serde

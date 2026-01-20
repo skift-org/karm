@@ -16,6 +16,8 @@ export enum struct Type {
     FILE,
     DIR,
     OTHER,
+
+    _LEN
 };
 
 export struct Stat {
