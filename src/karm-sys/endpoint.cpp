@@ -95,8 +95,8 @@ export struct Endpoint : Meta::Pinned {
         return rpcSend<T>(_con, port, -1, payload);
     }
 
-    Async::Task<Message> recvAsync() {
-        co_return Ok(co_await _incoming.dequeueAsync());
+    Async::Task<Message> recvAsync(Async::CancellationToken ct) {
+        co_return Ok(co_await _incoming.dequeueAsync(ct));
     }
 
     Opt<Message> tryRecv() {

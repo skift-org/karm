@@ -1,6 +1,7 @@
 export module Karm.Core:async.queue;
 
 import :async.awaiter;
+import :async.cancellation;
 import :base.list;
 import :base.slice;
 import :base.vec;
@@ -77,7 +78,7 @@ struct Queue {
         }
     };
 
-    auto dequeueAsync() {
+    auto dequeueAsync(CancellationToken) {
         return _GetSender{this};
     }
 
