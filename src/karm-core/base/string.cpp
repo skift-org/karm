@@ -361,6 +361,22 @@ struct _StringBuilder {
 
 export using StringBuilder = _StringBuilder<Utf8>;
 
+export template <StaticEncoding E>
+_String<E> toLower(_Str<E> s) {
+    StringBuilder sb{s.len()};
+    for (auto r : iterRunes(s))
+        sb.append(toAsciiLower(r));
+    return sb.take();
+}
+
+export template <StaticEncoding E>
+_String<E> toUpper(_Str<E> s) {
+    StringBuilder sb{s.len()};
+    for (auto r : iterRunes(s))
+        sb.append(toUpper(r));
+    return sb.take();
+}
+
 } // namespace Karm
 
 #pragma clang diagnostic push

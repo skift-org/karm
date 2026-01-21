@@ -15,7 +15,7 @@ namespace Karm::Sys::_Embed {
 
 struct __kernel_timespec toKernelTimespec(Instant ts) {
     struct __kernel_timespec kts;
-    if (ts.isEndOfTime()) {c
+    if (ts.isEndOfTime()) {
         kts.tv_sec = LONG_MAX;
         kts.tv_nsec = 0;
         return kts;
