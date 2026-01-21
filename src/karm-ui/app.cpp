@@ -46,6 +46,7 @@ struct RootNode : ProxyNode<RootNode> {
 
         if (_shouldLayout) {
             _shouldLayout = false;
+            _shouldAnimate = true;
 
             child().layout(_window->bound().size());
 
