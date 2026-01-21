@@ -6,6 +6,7 @@ export module Karm.Sys:fd;
 
 import Karm.Core;
 import Karm.Ref;
+import Karm.Sys.Base;
 
 import :addr;
 import :message;

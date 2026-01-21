@@ -1,5 +1,6 @@
 export module Karm.Sys;
 
+export import Karm.Sys.Base;
 export import :_embed;
 export import :addr;
 export import :async;

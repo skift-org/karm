@@ -4,21 +4,13 @@ module;
 
 export module Karm.Sys:dir;
 
+import Karm.Sys.Base;
 import Karm.Core;
 import Karm.Ref;
 
 import :stat;
 
 namespace Karm::Sys {
-
-export struct DirEntry {
-    String name;
-    Type type;
-
-    bool hidden() const {
-        return name[0] == '.';
-    }
-};
 
 export struct Dir {
     Vec<DirEntry> _entries;
@@ -51,7 +43,7 @@ export struct Dir {
 
     auto const& entries() const { return _entries; }
 
-    auto const& path() const { return _url; }
+    auto const& url() const { return _url; }
 };
 
 } // namespace Karm::Sys

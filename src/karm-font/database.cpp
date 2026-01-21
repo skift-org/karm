@@ -211,7 +211,7 @@ export struct Database {
                 if (diren.type != Sys::Type::FILE)
                     continue;
 
-                auto fontUrl = dir.path() / diren.name;
+                auto fontUrl = dir.url() / diren.name;
                 if (fontUrl.path.suffix() != "ttf")
                     continue;
 

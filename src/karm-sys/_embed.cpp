@@ -2,6 +2,7 @@ export module Karm.Sys:_embed;
 
 import Karm.Core;
 import Karm.Ref;
+import Karm.Sys.Base;
 
 import :addr;
 import :types;
@@ -12,8 +13,6 @@ export struct Intent;
 export struct Fd;
 export struct Pid;
 export struct Sched;
-export struct DirEntry;
-export struct Stat;
 export struct SysInfo;
 export struct MemInfo;
 export struct CpuInfo;

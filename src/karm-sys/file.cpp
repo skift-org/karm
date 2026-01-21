@@ -12,55 +12,62 @@ import :fd;
 
 namespace Karm::Sys {
 
-export struct FileReader;
-export struct FileWriter;
-
-export struct _File :
+export struct File :
     Io::Seeker,
     Io::Flusher,
+    Io::Reader,
+    Aio::Writer,
+    Io::Writer,
+    Aio::Reader,
     Meta::NoCopy {
 
     Rc<Fd> _fd;
     Ref::Url _url;
 
-    _File(Rc<Fd> fd, Ref::Url url)
+    File(Rc<Fd> fd, Ref::Url url)
         : _fd(fd), _url(url) {}
 
-    Res<usize> seek(Io::Seek seek) override {
-        return _fd->seek(seek);
+    static Res<File> create(Ref::Url url) {
+        try$(ensureUnrestricted());
+        auto fd = try$(_Embed::createFile(url));
+        return Ok<File>(fd, url);
     }
 
-    Res<> flush() override {
-        return _fd->flush();
+    static Res<File> open(Ref::Url url) {
+        if (url.scheme == "data") {
+            auto fd = makeRc<BlobFd>(try$(url.blob));
+            return Ok<File>(fd, url);
+        }
+
+        if (url.scheme != "bundle")
+            try$(ensureUnrestricted());
+
+        auto fd = try$(_Embed::openFile(url));
+        return Ok<File>(fd, url);
     }
 
-    [[clang::coro_wrapper]]
-    Async::Task<> flushAsync(Async::CancellationToken ct) {
-        return globalSched().flushAsync(_fd, ct);
+    static Res<File> openOrCreate(Ref::Url url) {
+        try$(ensureUnrestricted());
+        auto fd = try$(_Embed::openOrCreateFile(url));
+        return Ok<File>(fd, url);
     }
-
-    Res<Stat> stat() {
-        return _fd->stat();
-    }
-
-    Rc<Fd> fd() {
-        return _fd;
-    }
-};
-
-export struct FileReader :
-    virtual _File,
-    Io::Reader {
-
-    using _File::_File;
 
     Res<usize> read(MutBytes bytes) override {
         return _fd->read(bytes);
     }
 
     [[clang::coro_wrapper]]
-    Async::Task<usize> readAsync(MutBytes bytes, Async::CancellationToken ct) {
+    Async::Task<usize> readAsync(MutBytes bytes, Async::CancellationToken ct) override {
         return globalSched().readAsync(_fd, bytes, ct);
+    }
+
+    Res<usize> write(Bytes bytes) override {
+        return _fd->write(bytes);
+    }
+
+    [[clang::coro_wrapper]]
+    Async::Task<usize> writeAsync(Bytes bytes, Async::CancellationToken ct) override {
+        return globalSched().writeAsync(_fd, bytes, ct);
     }
 
     Res<Ref::Mime> sniff(bool ignoreUrl = false) {
@@ -77,54 +84,30 @@ export struct FileReader :
         auto mime = try$(Ref::sniffReader(*this));
         return Ok(mime);
     }
-};
 
-export struct FileWriter :
-    virtual _File,
-    Io::Writer {
+    Res<usize> seek(Io::Seek seek) override {
+        return _fd->seek(seek);
+    }
 
-    using _File::_File;
-
-    Res<usize> write(Bytes bytes) override {
-        return _fd->write(bytes);
+    Res<> flush() override {
+        return _fd->flush();
     }
 
     [[clang::coro_wrapper]]
-    Async::Task<usize> writeAsync(Bytes bytes, Async::CancellationToken ct) {
-        return globalSched().writeAsync(_fd, bytes, ct);
-    }
-};
-
-export struct File :
-    FileReader,
-    FileWriter {
-
-    using FileReader::FileReader;
-    using FileWriter::FileWriter;
-
-    static Res<FileWriter> create(Ref::Url url) {
-        try$(ensureUnrestricted());
-        auto fd = try$(_Embed::createFile(url));
-        return Ok(FileWriter{fd, url});
+    Async::Task<> flushAsync(Async::CancellationToken ct) {
+        return globalSched().flushAsync(_fd, ct);
     }
 
-    static Res<FileReader> open(Ref::Url url) {
-        if (url.scheme == "data") {
-            auto fd = makeRc<BlobFd>(try$(url.blob));
-            return Ok(FileReader{fd, url});
-        }
-
-        if (url.scheme != "bundle")
-            try$(ensureUnrestricted());
-
-        auto fd = try$(_Embed::openFile(url));
-        return Ok(FileReader{fd, url});
+    Ref::Url url() const {
+        return _url;
     }
 
-    static Res<File> openOrCreate(Ref::Url url) {
-        try$(ensureUnrestricted());
-        auto fd = try$(_Embed::openOrCreateFile(url));
-        return Ok(File{fd, url});
+    Res<Stat> stat() {
+        return _fd->stat();
+    }
+
+    Rc<Fd> fd() {
+        return _fd;
     }
 };
 
