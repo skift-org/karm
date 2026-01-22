@@ -7,6 +7,30 @@ import :base.cursor;
 namespace Karm {
 
 namespace Io {
+
+/// Source location for tracking position in text.
+export struct Loc {
+    usize line = 1;   ///< 1-based line number
+    usize col = 1;    ///< 1-based column number
+    usize offset = 0; ///< 0-based byte offset
+
+    bool operator==(Loc const&) const = default;
+    auto operator<=>(Loc const&) const = default;
+};
+
+/// A span of source locations.
+export struct LocSpan {
+    Loc start;
+    Loc end;
+    Str text;
+
+    static LocSpan single(Loc loc, Str text = ""s) {
+        return LocSpan{loc, loc, text};
+    }
+
+    bool operator==(LocSpan const&) const = default;
+};
+
 export template <StaticEncoding E>
 struct _SScan;
 } // namespace Io
@@ -30,9 +54,15 @@ struct _SScan {
 
     Cursor<Unit> _cursor;
     Cursor<Unit> _begin;
+    Loc _loc;
 
     _SScan(_Str<E> str)
-        : _cursor(str) {}
+        : _cursor(str), _begin(), _loc() {}
+
+    /// Get the current source location.
+    Loc loc() const {
+        return _loc;
+    }
 
     /// Check if the scanner has reached the end of the input.
     /// This is equivalent to `rem() == 0`.
@@ -65,10 +95,12 @@ struct _SScan {
 
     /// Peek the next rune without advancing the cursor.
     Rune peek(usize count) {
-        auto save = _cursor;
+        auto saveCursor = _cursor;
+        auto saveLoc = _loc;
         next(count);
         auto r = peek();
-        _cursor = save;
+        _cursor = saveCursor;
+        _loc = saveLoc;
         return r;
     }
 
@@ -77,7 +109,17 @@ struct _SScan {
         if (ended())
             return '\0';
         Rune r;
-        return E::decodeUnit(r, _cursor) ? r : U'�';
+        if (E::decodeUnit(r, _cursor)) {
+            _loc.offset++;
+            if (r == '\n') {
+                _loc.line++;
+                _loc.col = 1;
+            } else {
+                _loc.col++;
+            }
+            return r;
+        }
+        return U'�';
     }
 
     /// Advance the cursor by `count` runes.

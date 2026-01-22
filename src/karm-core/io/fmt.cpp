@@ -442,6 +442,22 @@ struct Formatter<T> {
     }
 };
 
+// MARK: Format Locations ------------------------------------------------------
+
+export template <>
+struct Formatter<Loc> {
+    Res<> format(TextWriter& writer, Loc const& val) {
+        return Io::format(writer, "{}:{}", val.line, val.col);
+    }
+};
+
+export template <>
+struct Formatter<LocSpan> {
+    Res<> format(TextWriter& writer, LocSpan const& val) {
+        return Io::format(writer, "{}-{}", val.start, val.end);
+    }
+};
+
 // MARK: Format Pointers -------------------------------------------------------
 
 export template <typename T>

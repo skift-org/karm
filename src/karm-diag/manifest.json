@@ -1,0 +1,10 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "karm-diag",
+    "type": "lib",
+    "description": "Diagnostic rendering library with rustc-style output",
+    "requires": [
+        "karm-core",
+        "karm-tty"
+    ]
+}
