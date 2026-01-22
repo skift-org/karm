@@ -123,6 +123,22 @@ struct SdlApplication : Application {
     void _translateEvent(Rc<Handler> handler, SDL_Event const& sdlEvent) {
         switch (sdlEvent.type) {
 
+        case SDL_EVENT_WINDOW_RESIZED: {
+            auto* window = _windows.get(sdlEvent.window.windowID);
+            if (window) {
+                handler->handle<App::ResizeEvent>(
+                    WindowId{sdlEvent.window.windowID},
+                    App::ResizeEvent{
+                        .size = {
+                            sdlEvent.window.data1,
+                            sdlEvent.window.data2,
+                        },
+                    }
+                );
+            }
+            break;
+        }
+
         case SDL_EVENT_KEY_DOWN: {
             auto ev = Sdl::fromSdlKeyboardEvent(sdlEvent.key);
             ev.type = sdlEvent.key.repeat ? App::KeyboardEvent::REPEATE : App::KeyboardEvent::PRESS;
