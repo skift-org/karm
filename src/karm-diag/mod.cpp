@@ -6,6 +6,7 @@ export module Karm.Diag;
 
 import Karm.Core;
 import Karm.Tty;
+import Karm.Ref;
 
 using namespace Karm;
 
@@ -86,13 +87,34 @@ export struct Diagnostic {
     }
 };
 
+// MARK: Collector ------------------------------------------------------------
+
+export struct Collector {
+    Vec<Diagnostic> diags;
+    bool _ignore = false;
+
+    static Collector ignore() {
+        return {{}, true};
+    }
+
+    void emit(Diagnostic d) {
+        if (_ignore)
+            return;
+        diags.pushBack(std::move(d));
+    }
+
+    bool any() const {
+        return diags.len();
+    }
+};
+
 // MARK: Diagnostic Renderer ---------------------------------------------------
 
 export struct Renderer {
     Str _source;
-    Opt<Str> _filename;
+    Union<None, String, Ref::Url> _filename;
 
-    Renderer(Str source, Opt<Str> filename = NONE)
+    Renderer(Str source, Union<None, String, Ref::Url> filename = NONE)
         : _source(source), _filename(filename) {}
 
     static Tty::Style _levelStyle(Level level) {
@@ -197,8 +219,8 @@ export struct Renderer {
         e(" {}", styleBlue);
         _writeSpaces(e, lineNumWidth);
         e("--> {}", styleReset);
-        if (_filename) {
-            e("{}:", _filename.unwrap());
+        if (not _filename.is<None>()) {
+            e("{}:", _filename);
         }
         e("{}\n", firstLabel.span.start);
 
@@ -257,11 +279,6 @@ export struct Renderer {
             for (auto const* l : lineLabels) {
                 usize startCol = l->span.start.col;
                 usize endCol = l->span.end.col;
-
-                // Calculate the span length from text if provided, otherwise use end col
-                if (l->span.text.len() > 0) {
-                    endCol = startCol + l->span.text.len();
-                }
 
                 // Handle same-position spans (single character)
                 if (endCol <= startCol) {
@@ -334,10 +351,9 @@ export struct Renderer {
         (void)e.flush();
     }
 
-    String renderToString(Diagnostic const& diag) const {
-        Io::StringWriter sw;
-        render(sw, diag);
-        return sw.take();
+    void render(Io::TextWriter& writer, Collector const& collector) {
+        for (auto const& diag : collector.diags)
+            render(writer, diag);
     }
 };
 

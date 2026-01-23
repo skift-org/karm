@@ -22,10 +22,9 @@ export struct Loc {
 export struct LocSpan {
     Loc start;
     Loc end;
-    Str text;
 
-    static LocSpan single(Loc loc, Str text = ""s) {
-        return LocSpan{loc, loc, text};
+    static LocSpan single(Loc loc) {
+        return LocSpan{loc, loc};
     }
 
     bool operator==(LocSpan const&) const = default;

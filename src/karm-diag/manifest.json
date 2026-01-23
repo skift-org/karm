@@ -5,6 +5,7 @@
     "description": "Diagnostic rendering library with rustc-style output",
     "requires": [
         "karm-core",
-        "karm-tty"
+        "karm-tty",
+        "karm-ref"
     ]
 }
