@@ -106,6 +106,10 @@ export struct Collector {
     bool any() const {
         return diags.len();
     }
+
+    void clear() {
+        diags.clear();
+    }
 };
 
 // MARK: Diagnostic Renderer ---------------------------------------------------
@@ -344,6 +348,88 @@ export struct Renderer {
             e(" {}", styleBlue);
             _writeSpaces(e, lineNumWidth);
             e(" = {}help{}: {}{}\n", _levelStyle(Level::HELP),
+              styleReset, diag.help.unwrap(), styleReset);
+        }
+
+        e('\n');
+        (void)e.flush();
+    }
+
+    void render(Io::TextWriter& writer, Collector const& collector) {
+        for (auto const& diag : collector.diags)
+            render(writer, diag);
+    }
+};
+
+export struct SimpleRenderer {
+    Union<None, String, Ref::Url> _filename;
+
+    SimpleRenderer(Union<None, String, Ref::Url> filename = NONE)
+        : _filename(filename) {}
+
+    static Tty::Style _levelStyle(Level level) {
+        switch (level) {
+        case Level::ERROR:
+            return Tty::style(Tty::RED).bold();
+        case Level::WARNING:
+            return Tty::style(Tty::YELLOW).bold();
+        case Level::NOTE:
+            return Tty::style(Tty::CYAN).bold();
+        case Level::HELP:
+            return Tty::style(Tty::GREEN).bold();
+        default:
+            return Tty::reset();
+        }
+    }
+
+    static Str _levelName(Level level) {
+        switch (level) {
+        case Level::ERROR:
+            return "error"s;
+        case Level::WARNING:
+            return "warning"s;
+        case Level::NOTE:
+            return "note"s;
+        case Level::HELP:
+            return "help"s;
+        default:
+            return "unknown"s;
+        }
+    }
+
+    void render(Io::TextWriter& writer, Diagnostic const& diag) const {
+        Io::Emit e{writer};
+
+        auto styleReset = Tty::reset();
+        auto styleBold = Tty::Style{}.bold();
+        auto styleBlue = Tty::style(Tty::BLUE).bold();
+
+        e("{}{}", _levelStyle(diag.level), _levelName(diag.level));
+        if (diag.code.len() > 0) {
+            e("[{}]", diag.code);
+        }
+        e("{}: {}{}\n", styleReset, styleBold, diag.message);
+        e("{}", styleReset);
+
+        if (diag.labels.len() > 0) {
+            auto const& firstLabel = diag.labels[0];
+            e(" {}--> {}", styleBlue, styleReset);
+
+            if (not _filename.is<None>()) {
+                e("{}:", _filename);
+            }
+            e("{}\n", firstLabel.span.start);
+        }
+
+        for (auto const& note : diag.notes) {
+            e(" {}={}", styleBlue, styleReset);
+            e(" {}note{}: {}{}\n", _levelStyle(Level::NOTE),
+              styleReset, note, styleReset);
+        }
+
+        if (diag.help) {
+            e(" {}={}", styleBlue, styleReset);
+            e(" {}help{}: {}{}\n", _levelStyle(Level::HELP),
               styleReset, diag.help.unwrap(), styleReset);
         }
 
