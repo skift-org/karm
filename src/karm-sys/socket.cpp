@@ -172,7 +172,9 @@ export struct IpcConnection {
     static constexpr usize MAX_BUF_SIZE = 4096;
     static constexpr usize MAX_HND_SIZE = 16;
 
-    static Res<IpcConnection> connect(Ref::Url url);
+    Res<IpcConnection> connect(Ref::Url url) {
+        return Ok(IpcConnection{try$(_Embed::connectIpc(url)), url});
+    }
 
     IpcConnection(Rc<Sys::Fd> fd, Opt<Ref::Url> url)
         : _fd(std::move(fd)), _url(std::move(url)) {}

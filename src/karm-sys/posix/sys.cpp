@@ -433,6 +433,23 @@ Res<Rc<Fd>> listenTcp(SocketAddr addr) {
     return Ok(makeRc<Posix::Fd>(fd));
 }
 
+Res<Rc<Fd>> connectIpc(Ref::Url url) {
+    int fd = ::socket(AF_UNIX, SOCK_STREAM, 0);
+    if (fd < 0)
+        return Posix::fromLastErrno();
+
+    sockaddr_un addr = {};
+    addr.sun_family = AF_UNIX;
+    String path = try$(resolve(url)).str();
+    auto sunPath = MutSlice(addr.sun_path, sizeof(addr.sun_path) - 1);
+    copy(sub(path), sunPath);
+
+    if (::connect(fd, (sockaddr*)&addr, sizeof(addr)) < 0)
+        return Posix::fromLastErrno();
+
+    return Ok(makeRc<Posix::Fd>(fd));
+}
+
 Res<Rc<Fd>> listenIpc(Ref::Url url) {
     int fd = ::socket(AF_UNIX, SOCK_STREAM, 0);
     if (fd < 0)
