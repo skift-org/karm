@@ -10,9 +10,11 @@ namespace Karm::Vte {
 struct Viewport : Ui::View<Viewport> {
     Rc<Terminal> _terminal;
     Ui::ScrollListener _listen;
+    Ui::Send<Union<App::TypeEvent, App::KeyboardEvent>> _send;
+    bool _animate = false;
 
-    Viewport(Rc<Terminal> terminal)
-        : _terminal(terminal) {}
+    Viewport(Rc<Terminal> terminal, Ui::Send<Union<App::TypeEvent, App::KeyboardEvent>> send)
+        : _terminal(terminal), _send(send) {}
 
     void paint(Gfx::Canvas& g, Math::Recti) override {
         g.push();
@@ -22,8 +24,27 @@ struct Viewport : Ui::View<Viewport> {
         g.pop();
     }
 
-    void event(App::Event& e) override {
-        View::event(e);
+    void event(App::Event& event) override {
+        if (event.accepted())
+            return;
+        if (event.is<AnimateEvent>()) {
+            if (_animate) {
+                Ui::shouldRepaint(*this);
+                _animate = false;
+            }
+        } else if (auto e = event.is<App::MouseEvent>()) {
+            if (e->type == App::MouseEvent::SCROLL) {
+                _terminal->scroll(-e->scroll.y * 3);
+                Ui::shouldAnimate(*this);
+                _animate = true;
+                event.accept();
+            }
+        } else if (auto e = event.is<App::TypeEvent>()) {
+            _send(*this, *e);
+        } else if (auto e = event.is<App::KeyboardEvent>()) {
+            _send(*this, *e);
+        } else
+            View::event(event);
     }
 
     void layout(Math::Recti bound) override {
@@ -38,8 +59,8 @@ struct Viewport : Ui::View<Viewport> {
     }
 };
 
-export Ui::Child viewport(Rc<Terminal> terminal) {
-    return makeRc<Viewport>(terminal);
+export Ui::Child viewport(Rc<Terminal> terminal, Ui::Send<Union<App::TypeEvent, App::KeyboardEvent>> send) {
+    return makeRc<Viewport>(terminal, send);
 }
 
 } // namespace Karm::Vte

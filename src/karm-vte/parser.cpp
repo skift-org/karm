@@ -24,6 +24,8 @@ struct Parser {
         OSC_STRING,
         SOS_PM_APC_STRING,
         UTF8,
+
+        _LEN
     };
 
     enum struct Action {
@@ -45,6 +47,8 @@ struct Parser {
         COLLECT,
         IGNORE,
         PARAM,
+
+        _LEN,
     };
 
     static constexpr usize ON_ENTRY = -1;
@@ -139,7 +143,7 @@ struct Parser {
 
     Slice<usize> params() const { return _params; }
 
-    void injest(u8 b, auto& sink) {
+    void injest(u8 b, auto sink) {
         auto [action, toState] = _transition(_state, b);
 
         if (toState != State::NONE) {

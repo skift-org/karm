@@ -10,6 +10,7 @@ namespace Karm::Vte {
 struct Attrs {
     Gfx::Color fg;
     Gfx::Color bg;
+    bool bold = false;
 };
 
 struct Cell {
@@ -30,7 +31,7 @@ struct Line {
 };
 
 struct Buffer {
-    Math::Vec2u size;
+    Math::Vec2u size = {9999};
     Vec<Line> lines;
     Math::Vec2u cursor;
 
@@ -40,9 +41,24 @@ struct Buffer {
         return lines[at];
     }
 
+    auto width() const {
+        return size.width;
+    }
+
+    auto height() const {
+        return size.height;
+    }
+
     void append(Rune rune, Attrs attrs) {
         line(cursor.y).append(cursor.x, rune, attrs);
         cursor.x++;
+    }
+
+    void moveCursorRelative(Math::Vec2i off) {
+        isize newX = static_cast<isize>(cursor.x) + off.x;
+        isize newY = static_cast<isize>(cursor.y) + off.y;
+        cursor.x = clamp(newX, 0, static_cast<isize>(size.x) - 1);
+        cursor.y = clamp(newY, 0, static_cast<isize>(size.y) - 1);
     }
 
     void separator() {
@@ -52,6 +68,24 @@ struct Buffer {
     void newline() {
         cursor.x = 0;
         cursor.y++;
+    }
+
+    void backspace() {
+        if (cursor.x > 0) {
+            cursor.x--;
+        } else if (cursor.y > 0) {
+            cursor.y--;
+            cursor.x = size.x > 0 ? size.x - 1 : 0;
+        }
+    }
+
+    void clearAll() {
+        lines.clear();
+        cursor = {0, 0};
+    }
+
+    void clearAfterCursor() {
+        line(cursor.y).cells.resize(cursor.x);
     }
 };
 

@@ -2,6 +2,7 @@ export module Karm.Vte:terminal;
 
 import Karm.Font;
 import Karm.Ref;
+import Karm.Logger;
 import :buffer;
 import :parser;
 
@@ -148,6 +149,12 @@ export struct Theme {
         1.2,
     };
 
+    Gfx::Font boldFont = {
+        Font::loadFontfaceOrFallback("bundle://fonts-fira-code/fonts/FiraCode-Bold.ttf"_url).unwrap(),
+        16,
+        1.2,
+    };
+
     Metrics metrics() {
         auto metrics = font.metrics();
 
@@ -159,6 +166,12 @@ export struct Theme {
     }
 };
 
+Gfx::Color bright(Gfx::Color color) {
+    auto hsv = Gfx::rgbToHsv(color);
+    hsv.value = clamp(hsv.value + 0.4f, 0.0f, 1.0f);
+    return Gfx::hsvToRgb(hsv);
+}
+
 export struct Terminal {
     Theme _theme;
     Buffer _buffer;
@@ -169,6 +182,7 @@ export struct Terminal {
         .bg = Gfx::ALPHA,
     };
     Math::Vec2i _viewport;
+    isize _scrollTop = 0;
 
     Terminal(Theme theme) : _theme(theme), _metrics(theme.metrics()) {}
 
@@ -177,17 +191,24 @@ export struct Terminal {
         isize cellHeight = Math::ceil(_metrics.baseline + _metrics.descend);
         isize cellWidth = Math::ceil(_metrics.advance);
 
-        isize li = 0;
-        for (auto& l : _buffer.lines) {
-            isize ci = 0;
-            auto lineY = li * cellHeight;
+        isize visibleLines = _viewport.height / cellHeight;
+
+        for (isize i = _scrollTop; i < _scrollTop + visibleLines + 1; ++i) {
+            if (i >= (isize)_buffer.lines.len())
+                break;
+
+            auto& l = _buffer.lines[i];
+
+            auto lineY = (i - _scrollTop) * cellHeight;
+
             if (l.separator)
                 g.plot(Math::Edgei{0, lineY, _viewport.width, lineY}, Gfx::ZINC800);
 
+            isize ci = 0;
             for (auto& c : l.cells) {
                 Math::Recti cellBound = {
                     ci * cellWidth,
-                    li * cellHeight,
+                    lineY,
                     cellWidth,
                     cellHeight,
                 };
@@ -197,50 +218,151 @@ export struct Terminal {
 
                 Math::Vec2i baseline = cellBound.topStart() + Math::Vec2i{0, (isize)_metrics.baseline};
                 g.fillStyle(c.attrs.fg);
-                g.fill(
-                    _theme.font,
-                    _theme.font.glyph(c.rune),
-                    baseline.cast<f64>()
-                );
+                if (c.attrs.bold) {
+                    g.fill(
+                        _theme.boldFont,
+                        _theme.boldFont.glyph(c.rune),
+                        baseline.cast<f64>()
+                    );
+                } else {
+                    g.fill(
+                        _theme.font,
+                        _theme.font.glyph(c.rune),
+                        baseline.cast<f64>()
+                    );
+                }
                 ci++;
             }
-            li++;
         }
 
         g.pop();
 
-        Math::Recti cellBound = {
-            (isize)_buffer.cursor.x * cellWidth,
-            (isize)_buffer.cursor.y * cellHeight,
-            cellWidth,
-            cellHeight,
-        };
+        if (_buffer.cursor.y >= (usize)_scrollTop and _buffer.cursor.y < (usize)(_scrollTop + visibleLines)) {
+            Math::Recti cellBound = {
+                (isize)_buffer.cursor.x * cellWidth,
+                (isize)(_buffer.cursor.y - _scrollTop) * cellHeight,
+                cellWidth,
+                cellHeight,
+            };
 
-        g.push();
-        g.fillStyle(Gfx::BLUE);
-        g.fill(cellBound);
-        g.pop();
+            g.push();
+            g.fillStyle(Gfx::BLUE);
+            g.fill(cellBound);
+            g.pop();
+        }
     }
 
     void updateViewport(Math::Vec2i viewport) {
         _viewport = viewport;
     }
 
-    void write(Rune rune) {
-        if (rune == '\n') {
-            _buffer.newline();
-            return;
-        } else if (rune == '\t') {
-            _buffer.separator();
-        } else {
-            _buffer.append(rune, _attrs);
+    void scroll(isize delta) {
+        isize cellHeight = Math::ceil(_metrics.baseline + _metrics.descend);
+        isize visibleLines = _viewport.height / cellHeight;
+        isize totalLines = _buffer.lines.len();
+
+        _scrollTop = clamp(_scrollTop + delta, 0, max(0, totalLines - visibleLines));
+    }
+
+    void scrollToBottom() {
+        isize cellHeight = Math::ceil(_metrics.baseline + _metrics.descend);
+        isize visibleLines = _viewport.height / cellHeight;
+
+        if (_buffer.cursor.y >= (usize)(_scrollTop + visibleLines)) {
+            _scrollTop = _buffer.cursor.y - visibleLines + 1;
         }
     }
 
-    void write(Str data) {
-        for (auto r : iterRunes(data)) {
-            write(r);
+    void _handleCsi(u8 b, Slice<usize> params) {
+        usize n = params.len() > 0 ? params[0] : 0;
+        switch (b) {
+
+        case 'A':
+            _buffer.moveCursorRelative({0, -(isize)n});
+            break;
+
+        case 'B':
+            _buffer.moveCursorRelative({0, (isize)n});
+            break;
+
+        case 'C':
+            _buffer.moveCursorRelative({(isize)n, 0});
+            break;
+
+        case 'D':
+            _buffer.moveCursorRelative({-(isize)n, 0});
+            break;
+
+        case 'J':
+            if (n == 2) {
+                _buffer.clearAll();
+                _scrollTop = 0;
+            } else {
+                yap("unsupported CSI J {}", params);
+            }
+            break;
+
+        case 'K':
+            if (n == 0) {
+                _buffer.clearAfterCursor();
+            }
+            break;
+
+        case 'm':
+            if (params.len() == 0) {
+                _attrs = {
+                    .fg = Gfx::WHITE,
+                    .bg = Gfx::ALPHA,
+                    .bold = false
+                };
+            }
+            for (auto p : params) {
+                if (p == 0)
+                    _attrs = {
+                        .fg = Gfx::WHITE,
+                        .bg = Gfx::ALPHA,
+                        .bold = false
+                    };
+                else if (p == 1) {
+                    _attrs.bold = true;
+                } else if (p >= 30 && p <= 37) {
+                    _attrs.fg = ColorScheme::dark().colors[p - 30 + 8];
+                } else if (p >= 90 && p <= 97) {
+                    _attrs.fg = bright(ColorScheme::dark().colors[p - 90 + 8]);
+                } else if (p >= 40 && p <= 47) {
+                    _attrs.bg = ColorScheme::dark().colors[p - 40 + 8];
+                } else if (p >= 100 && p <= 107) {
+                    _attrs.bg = bright(ColorScheme::dark().colors[p - 100 + 8]);
+                } else {
+                    yap("unsupported CSI m {}", p);
+                }
+            }
+            break;
+
+        default:
+            logDebug("unsupported csi {:c} {}", b, params);
         }
+    }
+
+    void write(Bytes buf) {
+        for (auto& b : buf) {
+            _parser.injest(b, [&](Parser::Action act, u8 b) {
+                if (act == Parser::Action::PRINT) {
+                    // FIXME: Do utf-8 decoding
+                    _buffer.append(b, _attrs);
+                } else if (act == Parser::Action::EXECUTE) {
+                    if (b == '\n') {
+                        _buffer.newline();
+                    } else if (b == '\b') {
+                        _buffer.backspace();
+                    }
+                } else if (act == Parser::Action::CSI_DISPATCH) {
+                    _handleCsi(b, _parser.params());
+                }
+            });
+        }
+
+        scrollToBottom();
     }
 };
 
