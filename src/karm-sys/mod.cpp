@@ -20,6 +20,7 @@ export import :mutex;
 export import :pid;
 export import :pipe;
 export import :proc;
+export import :pty;
 export import :sandbox;
 export import :socket;
 export import :stat;

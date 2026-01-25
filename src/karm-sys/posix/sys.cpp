@@ -6,6 +6,7 @@ module;
 #include <fcntl.h>
 #include <netdb.h>
 #include <netinet/in.h>
+#include <pty.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <sys/mman.h>
@@ -312,7 +313,7 @@ struct PosixPid : Sys::Pid {
     }
 };
 
-Res<Rc<Pid>> run(Command const& cmd) {
+Res<Rc<Pid>> spawn(Command const& cmd) {
     if (not cmd.exe or cmd.exe.len() == 0)
         return Error::invalidInput("no executable provided");
 
@@ -384,6 +385,60 @@ Res<Rc<Pid>> run(Command const& cmd) {
 
     // Parent
     return Ok(makeRc<PosixPid>(pid));
+}
+
+Res<Tuple<Rc<Pid>, Rc<Fd>>> spawnPty(Command const& cmd) {
+    if (not cmd.exe or cmd.exe.len() == 0)
+        return Error::invalidInput("no executable provided");
+
+    auto buildArgv = [&](Vec<char*>& argv) {
+        argv.pushBack(const_cast<char*>(cmd.exe.buf())); // argv[0]
+        for (auto const& arg : cmd.args)
+            argv.pushBack(const_cast<char*>(arg.buf()));
+        argv.pushBack(nullptr);
+    };
+
+    auto buildEnvp = [&](Vec<String>& kvStore, Vec<char*>& envp) {
+        kvStore.clear();
+        envp.clear();
+        for (auto const& [key, val] : cmd.env.iterUnordered()) {
+            kvStore.pushBack(Io::format("{}={}", key, val));
+        }
+        for (auto& kv : kvStore)
+            envp.pushBack(const_cast<char*>(kv.buf()));
+        envp.pushBack(nullptr);
+    };
+
+    int pty = -1;
+    pid_t pid = ::forkpty(&pty, nullptr, nullptr, nullptr);
+    ArmedDefer deferClose = [&] {
+        if (pty != -1)
+            close(pty);
+    };
+    if (pid < 0)
+        return Posix::fromLastErrno();
+
+    if (pid == 0) {
+        Vec<char*> argv;
+        buildArgv(argv);
+
+        if (cmd.env.len()) {
+            Vec<String> kvStore;
+            Vec<char*> envp;
+            buildEnvp(kvStore, envp);
+            ::execve(cmd.exe.buf(), argv.buf(), envp.buf());
+        } else {
+            ::execvp(cmd.exe.buf(), argv.buf());
+        }
+
+        _exit(127); // exec failed
+    }
+
+    deferClose.disarm();
+    return Ok<Tuple<Rc<Pid>, Rc<Fd>>>(
+        makeRc<PosixPid>(pid),
+        makeRc<Posix::Fd>(pty)
+    );
 }
 
 // MARK: Sockets ---------------------------------------------------------------

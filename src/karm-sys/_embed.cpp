@@ -59,7 +59,9 @@ export Async::Task<> launchAsync(Intent intent);
 
 // MARK: Process ---------------------------------------------------------------
 
-export Res<Rc<Pid>> run(Command const&);
+export Res<Rc<Pid>> spawn(Command const&);
+
+export Res<Tuple<Rc<Pid>, Rc<Fd>>> spawnPty(Command const&);
 
 // MARK: Sockets ---------------------------------------------------------------
 

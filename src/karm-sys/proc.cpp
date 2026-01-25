@@ -8,6 +8,7 @@ import :_embed;
 import :time;
 import :pid;
 import :sandbox;
+import :pty;
 
 namespace Karm::Sys {
 
@@ -45,9 +46,14 @@ export struct Command {
     Map<String, String> env = {};
     Opt<Rc<Fd>> in = NONE, out = NONE, err = NONE;
 
-    Res<Process> run() {
-        auto pid = try$(_Embed::run(*this));
+    Res<Process> spawn() {
+        auto pid = try$(_Embed::spawn(*this));
         return Ok(pid);
+    }
+
+    Res<Tuple<Process, Pty>> spawnPty() {
+        auto [pid, fd] = try$(_Embed::spawnPty(*this));
+        return Ok<Tuple<Process, Pty>>(Process{pid}, Pty{fd});
     }
 };
 

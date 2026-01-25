@@ -15,10 +15,10 @@ namespace Karm::Sys {
 export struct File :
     Io::Seeker,
     Io::Flusher,
+    Aio::Reader,
     Io::Reader,
     Aio::Writer,
     Io::Writer,
-    Aio::Reader,
     Meta::NoCopy {
 
     Rc<Fd> _fd;
