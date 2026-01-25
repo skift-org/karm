@@ -145,13 +145,13 @@ export struct ColorScheme {
 export struct Theme {
     Gfx::Font font = {
         Font::loadFontfaceOrFallback("bundle://fonts-fira-code/fonts/FiraCode-Regular.ttf"_url).unwrap(),
-        16,
+        12,
         1.2,
     };
 
     Gfx::Font boldFont = {
         Font::loadFontfaceOrFallback("bundle://fonts-fira-code/fonts/FiraCode-Bold.ttf"_url).unwrap(),
-        16,
+        12,
         1.2,
     };
 
@@ -168,7 +168,7 @@ export struct Theme {
 
 Gfx::Color bright(Gfx::Color color) {
     auto hsv = Gfx::rgbToHsv(color);
-    hsv.value = clamp(hsv.value + 0.4f, 0.0f, 1.0f);
+    hsv.value = clamp(hsv.value + 0.2f, 0.0f, 1.0f);
     return Gfx::hsvToRgb(hsv);
 }
 
@@ -293,6 +293,18 @@ export struct Terminal {
             _buffer.moveCursorRelative({-(isize)n, 0});
             break;
 
+        case 'G':
+            if (params.len() == 1) {
+                _buffer.moveCursorToH(n - 1);
+            }
+            break;
+
+        case 'H':
+            if (params.len() == 2) {
+                _buffer.moveCursorTo({params[0] - 1, params[1] - 1});
+            }
+            break;
+
         case 'J':
             if (n == 2) {
                 _buffer.clearAll();
@@ -327,6 +339,10 @@ export struct Terminal {
                     _attrs.bold = true;
                 } else if (p >= 30 && p <= 37) {
                     _attrs.fg = ColorScheme::dark().colors[p - 30 + 8];
+                } else if (p == 39) {
+                    _attrs.fg = Gfx::WHITE;
+                } else if (p == 49) {
+                    _attrs.bg = Gfx::ALPHA;
                 } else if (p >= 90 && p <= 97) {
                     _attrs.fg = bright(ColorScheme::dark().colors[p - 90 + 8]);
                 } else if (p >= 40 && p <= 47) {

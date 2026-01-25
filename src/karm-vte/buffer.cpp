@@ -61,6 +61,15 @@ struct Buffer {
         cursor.y = clamp(newY, 0, static_cast<isize>(size.y) - 1);
     }
 
+    void moveCursorTo(Math::Vec2u pos) {
+        cursor.x = pos.x;
+        cursor.y = pos.y;
+    }
+
+    void moveCursorToH(usize col) {
+        cursor.x = col;
+    }
+
     void separator() {
         line(cursor.y).separator = true;
     }
