@@ -3,6 +3,9 @@
     "id": "karm-test",
     "type": "lib",
     "description": "Unit testing framework",
+    "props": {
+        "export-headers": "includes"
+    },
     "requires": [
         "karm-cli",
         "karm-tty"

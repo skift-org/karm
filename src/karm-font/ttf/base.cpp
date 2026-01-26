@@ -1,10 +1,10 @@
-#pragma once
+export module Karm.Font.Ttf:base;
 
 import Karm.Core;
 
 namespace Karm::Font::Ttf {
 
-struct Fixed {
+export struct Fixed {
     u32be value;
 
     f64 asF64() const {
@@ -12,7 +12,7 @@ struct Fixed {
     }
 };
 
-struct Version {
+export struct Version {
     u16be major;
     u16be minor;
 };

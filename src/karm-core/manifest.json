@@ -3,6 +3,9 @@
     "id": "karm-core",
     "type": "lib",
     "description": "The core of the Karm Framework",
+    "props": {
+        "export-headers": "includes"
+    },
     "subdirs": [
         "aio",
         "async",

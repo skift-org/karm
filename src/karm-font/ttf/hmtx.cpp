@@ -1,10 +1,10 @@
-#pragma once
+export module Karm.Font.Ttf:hmtx;
 
-#include "table-hhea.h"
+import :hhea;
 
 namespace Karm::Font::Ttf {
 
-struct Hmtx : Io::BChunk {
+export struct Hmtx : Io::BChunk {
     static constexpr Str SIG = "hmtx";
     static constexpr isize LONG_RECORD_SIZE = 4;
     static constexpr isize SHORT_RECORD_SIZE = 2;

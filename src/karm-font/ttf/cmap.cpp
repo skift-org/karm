@@ -1,4 +1,4 @@
-#pragma once
+export module Karm.Font.Ttf:cmap;
 
 import Karm.Core;
 import Karm.Gfx;
@@ -6,7 +6,7 @@ import Karm.Logger;
 
 namespace Karm::Font::Ttf {
 
-struct Cmap : Io::BChunk {
+export struct Cmap : Io::BChunk {
     static constexpr Str SIG = "cmap";
 
     struct Table {

@@ -20,7 +20,7 @@ module;
 #include <unistd.h>
 
 //
-#include <karm-core/macros.h>
+#include <karm/macros>
 
 module Karm.Sys;
 

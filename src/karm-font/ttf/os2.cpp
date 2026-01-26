@@ -1,12 +1,12 @@
-#pragma once
+export module Karm.Font.Ttf:os2;
 
 import Karm.Core;
 
-#include "base.h"
+import :base;
 
 namespace Karm::Font::Ttf {
 
-struct Os2 : Io::BChunk {
+export struct Os2 : Io::BChunk {
     static constexpr Str SIG = "OS/2";
 
     using WeightClass = Io::BField<u16be, 4>;

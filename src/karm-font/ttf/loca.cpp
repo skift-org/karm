@@ -1,12 +1,12 @@
-#pragma once
+export module Karm.Font.Ttf:loca;
 
 import Karm.Logger;
 
-#include "table-head.h"
+import :head;
 
 namespace Karm::Font::Ttf {
 
-struct Loca : Io::BChunk {
+export struct Loca : Io::BChunk {
     static constexpr Str SIG = "loca";
 
     usize glyfOffset(isize glyphId, Head const& head) const {

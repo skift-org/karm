@@ -1,10 +1,10 @@
-#pragma once
+export module Karm.Font.Ttf:maxp;
 
 import Karm.Core;
 
 namespace Karm::Font::Ttf {
 
-struct Maxp : Io::BChunk {
+export struct Maxp : Io::BChunk {
     static constexpr Str SIG = "maxp";
 
     u16 numGlyphs() const {

@@ -18,15 +18,15 @@
         },
         "cute-engineering/ce-libc": {
             "git": "https://codeberg.org/cute-engineering/ce-libc.git",
-            "tag": "v1.2.0"
+            "tag": "v1.3.0"
         },
         "cute-engineering/ce-libm": {
             "git": "https://codeberg.org/cute-engineering/ce-libm.git",
-            "tag": "v1.1.0"
+            "tag": "v1.2.0"
         },
         "cute-engineering/ce-stdcpp": {
             "git": "https://codeberg.org/cute-engineering/ce-stdcpp.git",
-            "tag": "v1.5.0"
+            "tag": "v1.6.0"
         },
         "cute-engineering/ce-targets": {
             "git": "https://codeberg.org/cute-engineering/ce-targets.git",
@@ -34,7 +34,7 @@
         },
         "cute-engineering/ce-bootfs": {
             "git": "https://codeberg.org/cute-engineering/ce-bootfs.git",
-            "tag": "v0.1.1"
+            "tag": "v0.2.0"
         },
         "sdl3": {
             "description": "A cross-platform development library designed to provide low level access to hardware",

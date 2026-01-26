@@ -1,10 +1,9 @@
-module;
-
-#include <karm-font/ttf/fontface.h>
-
 export module Karm.Print:pdfFonts;
 
+import Karm.Font.Ttf;
 import Karm.Pdf;
+import Karm.Core;
+import Karm.Gfx;
 
 namespace Karm::Print {
 

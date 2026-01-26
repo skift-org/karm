@@ -1,7 +1,7 @@
 module;
 
 #include <errno.h>
-#include <karm-core/macros.h>
+#include <karm/macros>
 #include <sys/epoll.h>
 #include <sys/timerfd.h>
 #include <unistd.h>

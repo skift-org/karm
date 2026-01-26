@@ -1,8 +1,11 @@
+module;
+
+#include <karm/macros>
+
 export module Karm.Fs:vfs;
 
 import Karm.Core;
 import :node;
-#include "karm-core/macros.h"
 
 namespace Karm::Fs {
 

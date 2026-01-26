@@ -4,7 +4,7 @@ module;
 #include <netinet/in.h>
 #include <poll.h>
 //
-#include <karm-core/macros.h>
+#include <karm/macros>
 
 module Karm.Sys;
 

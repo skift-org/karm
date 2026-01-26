@@ -1,12 +1,12 @@
-#pragma once
+export module Karm.Font.Ttf:post;
 
 import Karm.Core;
 
-#include "base.h"
+import :base;
 
 namespace Karm::Font::Ttf {
 
-struct Post : Io::BChunk {
+export struct Post : Io::BChunk {
     static constexpr Str SIG = "post";
 
     using ItalicAngle = Io::BField<Fixed, 4>;

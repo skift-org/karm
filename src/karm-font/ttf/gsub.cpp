@@ -1,10 +1,10 @@
-#pragma once
+export module Karm.Font.Ttf:gsub;
 
-#include "otlayout.h"
+import :opentype;
 
 namespace Karm::Font::Ttf {
 
-struct Gsub : Io::BChunk {
+export struct Gsub : Io::BChunk {
     static constexpr Str SIG = "GSUB";
 
     using ScriptListOffset = Io::BField<u16be, 4>;

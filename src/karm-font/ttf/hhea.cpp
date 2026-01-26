@@ -1,11 +1,11 @@
-#pragma once
+export module Karm.Font.Ttf:hhea;
 
 import Karm.Core;
 
 namespace Karm::Font::Ttf {
 
 // https://learn.microsoft.com/en-us/typography/opentype/spec/hhea
-struct Hhea : Io::BChunk {
+export struct Hhea : Io::BChunk {
     static constexpr Str SIG = "hhea";
 
     using Ascender = Io::BField<i16be, 4>;

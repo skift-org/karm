@@ -1,19 +1,22 @@
-#pragma once
+module;
+
+#include <karm/macros>
+
+export module Karm.Font.Ttf:glyf;
+
 
 import Karm.Core;
 import Karm.Gfx;
 import Karm.Math;
 import Karm.Logger;
 
-#include <karm-core/macros.h>
-
-#include "table-loca.h"
+import :loca;
 
 namespace Karm::Font::Ttf {
 
 static constexpr bool DEBUG_GLYF = false;
 
-struct Glyf : Io::BChunk {
+export struct Glyf : Io::BChunk {
     static constexpr Str SIG = "glyf";
 
     static constexpr u8 ON_CURVE_POINT = 0x01;

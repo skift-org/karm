@@ -2,7 +2,7 @@
 // License: MIT
 // Copyright (c) 2019 Mike Lankamp
 
-#include <karm-test/macros.h>
+#include <karm/test>
 
 import Karm.Core;
 import Karm.Math;

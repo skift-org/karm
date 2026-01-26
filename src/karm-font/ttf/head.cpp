@@ -1,10 +1,10 @@
-#pragma once
+export module Karm.Font.Ttf:head;
 
 import Karm.Core;
 
 namespace Karm::Font::Ttf {
 
-struct Head : Io::BChunk {
+export struct Head : Io::BChunk {
     static constexpr Str SIG = "head";
 
     u16 unitPerEm() const {

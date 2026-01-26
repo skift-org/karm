@@ -1,19 +1,23 @@
-#pragma once
+module;
+
+#include <karm/macros>
+
+export module Karm.Font.Ttf:parser;
 
 import Karm.Logger;
 
-#include "table-cmap.h"
-#include "table-glyf.h"
-#include "table-gpos.h"
-#include "table-gsub.h"
-#include "table-head.h"
-#include "table-hhea.h"
-#include "table-hmtx.h"
-#include "table-loca.h"
-#include "table-maxp.h"
-#include "table-name.h"
-#include "table-os2.h"
-#include "table-post.h"
+import :cmap;
+import :glyf;
+import :gpos;
+import :gsub;
+import :head;
+import :hhea;
+import :hmtx;
+import :loca;
+import :maxp;
+import :name;
+import :os2;
+import :post;
 
 // https://tchayen.github.io/posts/ttf-file-parsing
 // http://stevehanov.ca/blog/?id=143
@@ -27,7 +31,7 @@ namespace Karm::Font::Ttf {
 
 static bool DEBUG_PARSER = false;
 
-struct GlyphMetrics {
+export struct GlyphMetrics {
     f64 x;
     f64 y;
     f64 width;
@@ -36,14 +40,14 @@ struct GlyphMetrics {
     f64 advance;
 };
 
-struct Metrics {
+export struct Metrics {
     f64 ascend;
     f64 descend;
     f64 linegap;
     f64 maxWidth;
 };
 
-struct Parser {
+export struct Parser {
     Bytes _slice;
 
     Head _head;

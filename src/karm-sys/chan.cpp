@@ -1,8 +1,6 @@
 module;
 
-#include <karm-core/macros.h>
-
-#include "defs.h"
+#include <karm/macros>
 
 export module Karm.Sys:chan;
 
@@ -11,6 +9,7 @@ import Karm.Core;
 import :_embed;
 import :fd;
 import :async;
+import :defs;
 
 namespace Karm::Sys {
 

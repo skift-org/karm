@@ -1,10 +1,13 @@
+module;
+
+#include <karm/macros>
+
 export module Karm.Http:cache;
 
 import Karm.Core;
 import Karm.Ref;
 import Karm.Debug;
 import :transport;
-#include "karm-core/macros.h"
 
 namespace Karm::Http {
 

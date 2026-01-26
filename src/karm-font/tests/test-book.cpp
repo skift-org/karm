@@ -1,6 +1,6 @@
 module;
 
-#include <karm-test/macros.h>
+#include <karm/test>
 
 module Karm.Font;
 

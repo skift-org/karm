@@ -1,10 +1,10 @@
-#pragma once
+export module Karm.Font.Ttf:name;
 
 import Karm.Core;
 
 namespace Karm::Font::Ttf {
 
-struct Name : Io::BChunk {
+export struct Name : Io::BChunk {
     static constexpr Str SIG = "name";
 
     enum NameId : u16 {

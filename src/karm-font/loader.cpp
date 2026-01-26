@@ -1,13 +1,14 @@
 module;
 
-#include "ttf/fontface.h"
+#include <karm/macros>
 
 export module Karm.Font:loader;
 
 import Karm.Core;
-import Karm.Sys;
-import Karm.Ref;
+import Karm.Font.Ttf;
 import Karm.Gfx;
+import Karm.Ref;
+import Karm.Sys;
 
 namespace Karm::Font {
 

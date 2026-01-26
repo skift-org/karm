@@ -1,13 +1,17 @@
-#pragma once
+module;
+
+#include <karm/macros>
+
+export module Karm.Font.Ttf:gpos;
 
 import Karm.Math;
 import Karm.Logger;
 
-#include "otlayout.h"
+import :opentype;
 
 namespace Karm::Font::Ttf {
 
-enum struct GposLookupType : u16 {
+export enum struct GposLookupType : u16 {
     SINGLE_ADJUSTMENT = 1,
     PAIR_ADJUSTMENT = 2,
     CURSIVE_ATTACHMENT = 3,
@@ -20,7 +24,7 @@ enum struct GposLookupType : u16 {
 };
 
 // https://learn.microsoft.com/en-us/typography/opentype/spec/gpos
-struct Gpos : Io::BChunk {
+export struct Gpos : Io::BChunk {
     static constexpr Str SIG = "GPOS";
 
     using ScriptListOffset = Io::BField<u16be, 4>;

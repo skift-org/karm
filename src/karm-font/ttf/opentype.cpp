@@ -1,4 +1,8 @@
-#pragma once
+module;
+
+#include <karm/macros>
+
+export module Karm.Font.Ttf:opentype;
 
 import Karm.Core;
 import Karm.Logger;
@@ -6,7 +10,7 @@ import Karm.Logger;
 namespace Karm::Font::Ttf {
 
 // https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#language-system-table
-struct LangSys : Io::BChunk {
+export struct LangSys : Io::BChunk {
     using LookupOrderOffset = Io::BField<u16be, 0>;
     using ReqFeatureIndex = Io::BField<u16be, 2>;
     using FeatureCount = Io::BField<u16be, 4>;
@@ -26,7 +30,7 @@ struct LangSys : Io::BChunk {
 };
 
 // https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#script-list-table-and-script-record
-struct ScriptTable : Io::BChunk {
+export struct ScriptTable : Io::BChunk {
     using DefaultLangSysOffset = Io::BField<u16be, 0>;
     using LangSysCount = Io::BField<u16be, 2>;
 
@@ -54,7 +58,7 @@ struct ScriptTable : Io::BChunk {
 };
 
 // https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#script-list-table-and-script-record
-struct ScriptList : Io::BChunk {
+export struct ScriptList : Io::BChunk {
     using ScriptCount = Io::BField<u16be, 0>;
 
     usize len() const {
@@ -84,7 +88,7 @@ struct ScriptList : Io::BChunk {
 };
 
 // https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#feature-table
-struct FeatureTable : Io::BChunk {
+export struct FeatureTable : Io::BChunk {
     using FeatureParamsOffset = Io::BField<u16be, 0>;
     using LookupCount = Io::BField<u16be, 2>;
 
@@ -103,7 +107,7 @@ struct FeatureTable : Io::BChunk {
 };
 
 // https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#feature-list-table
-struct FeatureList : Io::BChunk {
+export struct FeatureList : Io::BChunk {
     using featureCount = Io::BField<u16be, 0>;
 
     usize len() const {
@@ -123,7 +127,7 @@ struct FeatureList : Io::BChunk {
 };
 
 // https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#coverage-table
-struct CoverageTable : Io::BChunk {
+export struct CoverageTable : Io::BChunk {
     using Format = Io::BField<u16be, 0>;
     using GlyphCount = Io::BField<u16be, 2>;
 
@@ -159,13 +163,13 @@ struct CoverageTable : Io::BChunk {
     }
 };
 
-struct LookupSubtableBase : Io::BChunk {
+export struct LookupSubtableBase : Io::BChunk {
     using Format = Io::BField<u16be, 0>;
 
     u16 format() const { return get<Format>(); }
 };
 
-struct ValueRecord {
+export struct ValueRecord {
     i16 xPlacement;
     i16 yPlacement;
     i16 xAdvance;
@@ -221,7 +225,7 @@ struct ValueRecord {
     }
 };
 
-struct GlyphPairAdjustment : LookupSubtableBase {
+export struct GlyphPairAdjustment : LookupSubtableBase {
     static constexpr int FORMAT = 1;
 
     Opt<Pair<ValueRecord>> adjustments(usize prev, usize curr) {
@@ -266,7 +270,7 @@ struct GlyphPairAdjustment : LookupSubtableBase {
 };
 
 // https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#class-definition-table
-struct ClassDef : Io::BChunk {
+export struct ClassDef : Io::BChunk {
     Opt<usize> classOf(usize glyphId) {
         auto s = begin();
         auto format = s.nextU16be();
@@ -297,7 +301,7 @@ struct ClassDef : Io::BChunk {
 };
 
 // https://learn.microsoft.com/en-us/typography/opentype/spec/gpos#pair-adjustment-positioning-format-2-class-pair-adjustment
-struct ClassPairAdjustment : LookupSubtableBase {
+export struct ClassPairAdjustment : LookupSubtableBase {
     static constexpr int FORMAT = 2;
 
     Opt<Pair<ValueRecord>> adjustments(usize prev, usize curr) {
@@ -333,12 +337,12 @@ struct ClassPairAdjustment : LookupSubtableBase {
     }
 };
 
-using LookupSubtable = Union<
+export using LookupSubtable = Union<
     GlyphPairAdjustment,
     ClassPairAdjustment>;
 
 // https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-table
-struct LookupTable : Io::BChunk {
+export struct LookupTable : Io::BChunk {
     using LookupType = Io::BField<u16be, 0>;
     using LookupFlag = Io::BField<u16be, 2>;
     using SubTableCount = Io::BField<u16be, 4>;
@@ -386,7 +390,7 @@ struct LookupTable : Io::BChunk {
 };
 
 // https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#lookup-list-table
-struct LookupList : Io::BChunk {
+export struct LookupList : Io::BChunk {
     using LookupCount = Io::BField<u16be, 0>;
 
     usize len() const { return get<LookupCount>(); }

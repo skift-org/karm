@@ -2,7 +2,7 @@ module;
 
 // https://github.com/Michaelangel007/crc32
 
-#include <karm-core/macros.h>
+#include <karm/macros>
 
 export module Karm.Crypto:crc32;
 

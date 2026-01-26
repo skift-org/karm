@@ -1,7 +1,7 @@
 module;
 
 #include <SDL3/SDL.h>
-#include <karm-core/macros.h>
+#include <karm/macros>
 
 module Karm.App;
 

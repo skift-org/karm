@@ -4,7 +4,7 @@
     "type": "lib",
     "description": "Karm platform embedding layer for POSIX.",
     "props": {
-        "cpp-root-include": true
+        "export-headers": "./includes"
     },
     "enableIf": {
         "sys": [

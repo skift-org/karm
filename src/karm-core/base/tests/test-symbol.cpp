@@ -1,6 +1,6 @@
 import Karm.Core;
 
-#include <karm-test/macros.h>
+#include <karm/test>
 
 namespace Karm::Tests {
 

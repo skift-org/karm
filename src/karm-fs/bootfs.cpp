@@ -1,7 +1,7 @@
 module;
 
 #include <ce-bootfs/bootfs.h>
-#include <karm-core/macros.h>
+#include <karm/macros>
 
 export module Karm.Fs:bootfs;
 

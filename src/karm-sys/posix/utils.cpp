@@ -5,7 +5,7 @@ module;
 #include <stdlib.h>
 #include <sys/stat.h>
 //
-#include <karm-core/macros.h>
+#include <karm/macros>
 
 export module Karm.Sys.Posix:utils;
 

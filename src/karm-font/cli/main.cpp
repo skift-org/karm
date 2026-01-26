@@ -1,7 +1,6 @@
-#include <karm-sys/entry.h>
+#include <karm/entry>
 
-#include "../ttf/fontface.h"
-
+import Karm.Font.Ttf;
 import Karm.Font;
 import Karm.Sys;
 
