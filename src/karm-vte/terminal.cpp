@@ -337,26 +337,26 @@ export struct Terminal {
                     };
                 else if (p == 1) {
                     _attrs.bold = true;
-                } else if (p >= 30 && p <= 37) {
+                } else if (p >= 30 and p <= 37) {
                     _attrs.fg = ColorScheme::dark().colors[p - 30 + 8];
                 } else if (p == 39) {
                     _attrs.fg = Gfx::WHITE;
                 } else if (p == 49) {
                     _attrs.bg = Gfx::ALPHA;
-                } else if (p >= 90 && p <= 97) {
+                } else if (p >= 90 and p <= 97) {
                     _attrs.fg = bright(ColorScheme::dark().colors[p - 90 + 8]);
-                } else if (p >= 40 && p <= 47) {
+                } else if (p >= 40 and p <= 47) {
                     _attrs.bg = ColorScheme::dark().colors[p - 40 + 8];
-                } else if (p >= 100 && p <= 107) {
+                } else if (p >= 100 and p <= 107) {
                     _attrs.bg = bright(ColorScheme::dark().colors[p - 100 + 8]);
                 } else {
-                    yap("unsupported CSI m {}", p);
+                    logWarn("unsupported csi m {}", p);
                 }
             }
             break;
 
         default:
-            logDebug("unsupported csi {:c} {}", b, params);
+            logWarn("unsupported csi {:c} {}", b, params);
         }
     }
 
