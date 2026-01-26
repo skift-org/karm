@@ -11,6 +11,7 @@ export module Karm.Sys.Posix:utils;
 
 import Karm.Core;
 import Karm.Sys;
+import Karm.Ref;
 
 namespace Karm::Posix {
 
@@ -298,6 +299,69 @@ export Res<Tuple<Str, RepoType>> repoRoot() {
 
 export void overrideRepo(Tuple<Str, RepoType> repo) {
     _repoOverride = repo;
+}
+
+export Res<Ref::Path> resolve(Ref::Url const& url) {
+    Ref::Path resolved;
+    if (url.scheme == "file") {
+        resolved = url.path;
+    } else if (url.scheme == "fd") {
+        if (url.path == "stdin"_path) {
+            resolved = "/dev/stdin"_path;
+        } else if (url.path == "stdout"_path) {
+            resolved = "/dev/stdout"_path;
+        } else if (url.path == "stderr"_path) {
+            resolved = "/dev/stderr"_path;
+        } else {
+            return Error::notFound("unknown fd");
+        }
+    } else if (url.scheme == "ipc") {
+        auto const* runtimeDir = getenv("XDG_RUNTIME_DIR");
+        if (not runtimeDir) {
+            runtimeDir = "/tmp/";
+            Sys::errln("XDG_RUNTIME_DIR not set, falling back on {}", runtimeDir);
+        }
+
+        auto path = url.path;
+        path.rooted = false;
+
+        resolved = Ref::Path::parse(runtimeDir).join(path);
+    } else if (url.scheme == "bundle") {
+        auto [repo, format] = try$(Posix::repoRoot());
+
+        auto path = url.path;
+        path.rooted = false;
+
+        if (format == Posix::RepoType::CUTEKIT) {
+            resolved = Ref::Path::parse(repo)
+                           .join(url.host.str())
+                           .join("__res__")
+                           .join(path);
+        } else if (format == Posix::RepoType::PREFIX) {
+            resolved = Ref::Path::parse(repo)
+                           .join("share")
+                           .join(url.host.str())
+                           .join(path);
+        } else {
+            return Error::notFound("unknown repo type");
+        }
+    } else if (url.scheme == "location") {
+        auto* maybeHome = getenv("HOME");
+        if (not maybeHome)
+            return Error::notFound("HOME not set");
+
+        auto path = url.path;
+        path.rooted = false;
+
+        if (url.host == "home")
+            resolved = Ref::Path::parse(maybeHome).join(path);
+        else
+            resolved = Ref::Path::parse(maybeHome).join(Io::toPascalCase(url.host.str()).unwrap()).join(path);
+    } else {
+        return Error::notFound("unknown url scheme");
+    }
+
+    return Ok(resolved);
 }
 
 } // namespace Karm::Posix

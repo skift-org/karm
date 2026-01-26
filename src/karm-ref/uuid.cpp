@@ -10,9 +10,9 @@ import Karm.Crypto;
 namespace Karm::Ref {
 
 export struct Uuid {
-    u32 a{};
-    u16 b{};
-    u16 c{};
+    u32be a{};
+    u16be b{};
+    u16be c{};
     Array<u8, 8> d{};
 
     static Res<Uuid> v4() {
@@ -20,6 +20,18 @@ export struct Uuid {
         auto bytes = uuid.mutBytes();
         try$(Crypto::entropy(bytes));
         bytes[6] = (bytes[6] & 0x0f) | 0x40;
+        bytes[8] = (bytes[8] & 0x3f) | 0x80;
+        return Ok(uuid);
+    }
+
+    static Res<Uuid> v7(SystemTime ts) {
+        Uuid uuid;
+        auto timestamp = ts.sinceEpoch().toMSecs();
+        uuid.a = (timestamp >> 16) & 0xffffffff;
+        uuid.b = timestamp & 0xffff;
+        auto bytes = uuid.mutBytes();
+        try$(Crypto::entropy(mutSub(bytes, 6, 16)));
+        bytes[6] = (bytes[6] & 0x0f) | 0x70;
         bytes[8] = (bytes[8] & 0x3f) | 0x80;
         return Ok(uuid);
     }
@@ -76,6 +88,7 @@ export struct Uuid {
         return parse(try$(Serde::deserialize<String>(de)));
     }
 };
+
 
 static_assert(sizeof(Uuid) == 16);
 

@@ -29,6 +29,8 @@ export struct Fd : Meta::NoCopy {
 
     virtual Res<usize> seek(Io::Seek) = 0;
 
+    virtual Res<> truncate(usize) = 0;
+
     virtual Res<> flush() = 0;
 
     virtual Res<Rc<Fd>> dup() = 0;
@@ -59,6 +61,10 @@ export struct BlobFd : Fd {
     }
 
     Res<usize> write(Bytes) override {
+        return Error::readOnlyFilesystem();
+    }
+
+    Res<> truncate(usize) override {
         return Error::readOnlyFilesystem();
     }
 
@@ -112,6 +118,10 @@ export struct NullFd : Fd {
     }
 
     Res<> flush() override {
+        return Ok();
+    }
+
+    Res<> truncate(usize) override {
         return Ok();
     }
 

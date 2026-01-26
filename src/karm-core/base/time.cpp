@@ -192,6 +192,10 @@ struct _Instant {
         return _value == END_OF_TIME;
     }
 
+    constexpr Duration sinceEpoch() {
+        return *this - epoch();
+    }
+
     constexpr _Instant& operator+=(Duration other) {
         *this = *this + other;
         return *this;

@@ -89,6 +89,10 @@ export struct File :
         return _fd->seek(seek);
     }
 
+    Res<> truncate(usize size) {
+        return _fd->truncate(size);
+    }
+
     Res<> flush() override {
         return _fd->flush();
     }

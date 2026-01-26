@@ -63,6 +63,12 @@ export struct Fd : Sys::Fd {
         return Ok(static_cast<usize>(offset));
     }
 
+    Res<> truncate(usize size) override {
+        if (ftruncate(_raw, size) < 0)
+            return fromLastErrno();
+        return Ok();
+    }
+
     Res<> flush() override {
         // NOTE: No-op
         return Ok();

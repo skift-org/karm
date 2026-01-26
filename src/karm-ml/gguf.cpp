@@ -209,7 +209,7 @@ export Res<> loadGguf(Ref::Url url) {
     auto file = try$(Sys::File::open(url));
     auto mmap = try$(Sys::mmap(file));
 
-    yap("mmap'ed model file of {}mib", mmap.bytes().len() / mib(1));
+    yap("mmap'ed model file of {}", DataSize{mmap.bytes().len()});
     Io::BScan s{mmap.bytes()};
     auto header = s.next<Header>();
 

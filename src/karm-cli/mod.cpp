@@ -144,6 +144,44 @@ struct ValueParser<isize> {
 };
 
 export template <>
+struct ValueParser<DataSize> {
+    static Res<> usage(Io::TextWriter& w) {
+        return w.writeStr("size"s);
+    }
+
+    static Res<DataSize> parse(Cursor<Token>& c) {
+        if (c.ended() or c->kind != Token::OPERAND)
+            return Error::other("missing value");
+
+        Io::SScan scan = c.next().value;
+
+        auto result = Io::atoi(scan);
+        if (not result)
+            return Error::other("expected integer");
+
+        auto s = scan.remStr();
+        auto val = result.unwrap();
+
+        if (s == "TiB" or s == "T")
+            return Ok(DataSize::fromTiB(val));
+
+        if (s == "GiB" or s == "G")
+            return Ok(DataSize::fromGiB(val));
+
+        if (s == "MiB" or s == "M")
+            return Ok(DataSize::fromMiB(val));
+
+        if (s == "KiB" or s == "K")
+            return Ok(DataSize::fromKiB(val));
+
+        if (s == "B" or s == "")
+            return Ok(DataSize(val));
+
+        return Error::invalidInput("unknown unit");
+    }
+};
+
+export template <>
 struct ValueParser<Str> {
     static Res<> usage(Io::TextWriter& w) {
         return w.writeStr("string"s);

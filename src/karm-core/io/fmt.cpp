@@ -16,6 +16,7 @@ import :base.vec;
 import :io.aton;
 import :io.sscan;
 import :io.text;
+import :base.size;
 
 namespace Karm::Io {
 
@@ -971,6 +972,21 @@ struct Formatter<Tuple<Ts...>> {
         }));
         try$(writer.writeRune('}'));
         return Ok();
+    }
+};
+
+export template <>
+struct Formatter<DataSize> {
+    Res<> format(TextWriter& writer, DataSize const& val) {
+        if (auto size = val.toTiB(); size > 0)
+            return Io::format(writer, "{}TiB", size);
+        if (auto size = val.toGiB(); size > 0)
+            return Io::format(writer, "{}GiB", size);
+        if (auto size = val.toMiB(); size > 0)
+            return Io::format(writer, "{}MiB", size);
+        if (auto size = val.toKiB(); size > 0)
+            return Io::format(writer, "{}KiB", size);
+        return Io::format(writer, "{}B", val.toB());
     }
 };
 

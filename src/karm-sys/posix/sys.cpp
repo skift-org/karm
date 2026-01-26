@@ -30,68 +30,7 @@ import Karm.Sys.Posix;
 
 namespace Karm::Sys::_Embed {
 
-static Res<Ref::Path> resolve(Ref::Url const& url) {
-    Ref::Path resolved;
-    if (url.scheme == "file") {
-        resolved = url.path;
-    } else if (url.scheme == "fd") {
-        if (url.path == "stdin"_path) {
-            resolved = "/dev/stdin"_path;
-        } else if (url.path == "stdout"_path) {
-            resolved = "/dev/stdout"_path;
-        } else if (url.path == "stderr"_path) {
-            resolved = "/dev/stderr"_path;
-        } else {
-            return Error::notFound("unknown fd");
-        }
-    } else if (url.scheme == "ipc") {
-        auto const* runtimeDir = getenv("XDG_RUNTIME_DIR");
-        if (not runtimeDir) {
-            runtimeDir = "/tmp/";
-            Sys::errln("XDG_RUNTIME_DIR not set, falling back on {}", runtimeDir);
-        }
 
-        auto path = url.path;
-        path.rooted = false;
-
-        resolved = Ref::Path::parse(runtimeDir).join(path);
-    } else if (url.scheme == "bundle") {
-        auto [repo, format] = try$(Posix::repoRoot());
-
-        auto path = url.path;
-        path.rooted = false;
-
-        if (format == Posix::RepoType::CUTEKIT) {
-            resolved = Ref::Path::parse(repo)
-                           .join(url.host.str())
-                           .join("__res__")
-                           .join(path);
-        } else if (format == Posix::RepoType::PREFIX) {
-            resolved = Ref::Path::parse(repo)
-                           .join("share")
-                           .join(url.host.str())
-                           .join(path);
-        } else {
-            return Error::notFound("unknown repo type");
-        }
-    } else if (url.scheme == "location") {
-        auto* maybeHome = getenv("HOME");
-        if (not maybeHome)
-            return Error::notFound("HOME not set");
-
-        auto path = url.path;
-        path.rooted = false;
-
-        if (url.host == "home")
-            resolved = Ref::Path::parse(maybeHome).join(path);
-        else
-            resolved = Ref::Path::parse(maybeHome).join(Io::toPascalCase(url.host.str()).unwrap()).join(path);
-    } else {
-        return Error::notFound("unknown url scheme");
-    }
-
-    return Ok(resolved);
-}
 
 // MARK: Fd --------------------------------------------------------------------
 
@@ -102,7 +41,7 @@ Res<Rc<Sys::Fd>> deserializeFd(Serde::Deserializer&) {
 // MARK: File I/O --------------------------------------------------------------
 
 Res<Rc<Fd>> openFile(Ref::Url const& url) {
-    String str = try$(resolve(url)).str();
+    String str = try$(Posix::resolve(url)).str();
 
     isize raw = ::open(str.buf(), O_RDONLY);
     if (raw < 0)
@@ -114,7 +53,7 @@ Res<Rc<Fd>> openFile(Ref::Url const& url) {
 }
 
 Res<Rc<Fd>> createFile(Ref::Url const& url) {
-    String str = try$(resolve(url)).str();
+    String str = try$(Posix::resolve(url)).str();
 
     auto raw = ::open(str.buf(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (raw < 0)
@@ -123,7 +62,7 @@ Res<Rc<Fd>> createFile(Ref::Url const& url) {
 }
 
 Res<Rc<Fd>> openOrCreateFile(Ref::Url const& url) {
-    String str = try$(resolve(url)).str();
+    String str = try$(Posix::resolve(url)).str();
 
     auto raw = ::open(str.buf(), O_RDWR | O_CREAT, 0644);
     if (raw < 0)
@@ -165,7 +104,7 @@ Res<Rc<Fd>> createErr() {
 }
 
 Res<Vec<DirEntry>> readDir(Ref::Url const& url) {
-    String str = try$(resolve(url)).str();
+    String str = try$(Posix::resolve(url)).str();
 
     DIR* dir = ::opendir(str.buf());
     if (not dir)
@@ -195,7 +134,7 @@ Res<Vec<DirEntry>> readDir(Ref::Url const& url) {
 }
 
 Res<> createDir(Ref::Url const& url) {
-    String str = try$(resolve(url)).str();
+    String str = try$(Posix::resolve(url)).str();
 
     if (::mkdir(str.buf(), 0755) < 0) {
         if (errno == EEXIST) {
@@ -208,7 +147,7 @@ Res<> createDir(Ref::Url const& url) {
 }
 
 Res<Vec<Sys::DirEntry>> readDirOrCreate(Ref::Url const& url) {
-    String str = try$(resolve(url)).str();
+    String str = try$(Posix::resolve(url)).str();
 
     DIR* dir = ::opendir(str.buf());
     Defer _{[&]() {
@@ -244,7 +183,7 @@ Res<Vec<Sys::DirEntry>> readDirOrCreate(Ref::Url const& url) {
 }
 
 Res<Stat> stat(Ref::Url const& url) {
-    String str = try$(resolve(url)).str();
+    String str = try$(Posix::resolve(url)).str();
     struct stat buf;
     if (::stat(str.buf(), &buf) < 0)
         return Posix::fromLastErrno();
@@ -259,7 +198,7 @@ Res<> launch(Intent intent) {
 
     auto [url, _] = intent.objects[0];
 
-    String str = try$(resolve(url)).str();
+    String str = try$(Posix::resolve(url)).str();
 
     int pid = fork();
     if (pid < 0)
@@ -495,7 +434,7 @@ Res<Rc<Fd>> connectIpc(Ref::Url url) {
 
     sockaddr_un addr = {};
     addr.sun_family = AF_UNIX;
-    String path = try$(resolve(url)).str();
+    String path = try$(Posix::resolve(url)).str();
     auto sunPath = MutSlice(addr.sun_path, sizeof(addr.sun_path) - 1);
     copy(sub(path), sunPath);
 
@@ -512,7 +451,7 @@ Res<Rc<Fd>> listenIpc(Ref::Url url) {
 
     sockaddr_un addr = {};
     addr.sun_family = AF_UNIX;
-    String path = try$(resolve(url)).str();
+    String path = try$(Posix::resolve(url)).str();
     auto sunPath = MutSlice(addr.sun_path, sizeof(addr.sun_path) - 1);
     copy(sub(path), sunPath);
 
