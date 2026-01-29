@@ -31,6 +31,7 @@ export import :base.lock;
 export import :base.lru;
 export import :base.manual;
 export import :base.map;
+export import :base.match;
 export import :base.niche;
 export import :base.ok;
 export import :base.opt;
