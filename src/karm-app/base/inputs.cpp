@@ -201,7 +201,7 @@ export struct MouseEvent {
     Math::Vec2f scroll{};
     Math::Vec2i delta{};
     Flags<MouseButton> buttons{};
-    KeyMod mods{};
+    Flags<KeyMod> mods{};
     MouseButton button{};
 
     bool pressed(Flags<MouseButton> button) const {

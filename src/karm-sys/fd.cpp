@@ -9,7 +9,6 @@ import Karm.Ref;
 import Karm.Sys.Base;
 
 import :addr;
-import :message;
 import :stat;
 import :types;
 

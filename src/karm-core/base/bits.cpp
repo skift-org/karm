@@ -31,7 +31,6 @@ export struct Bits {
 };
 
 export struct MutBits {
-
     u8* _buf{};
     usize _len{};
 

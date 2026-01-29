@@ -291,6 +291,14 @@ export struct Url {
 
         return Ok(targetUrl);
     }
+
+    Res<> serialize(Serde::Serializer& ser) const {
+        return ser.serializeString(str());
+    }
+
+    static Res<Url> deserialize(Serde::Deserializer& de) {
+        return Ok(parse(try$(de.deserializeString())));
+    }
 };
 
 export Url parseUrlOrPath(Str str, Opt<Url> baseUrl = NONE) {
