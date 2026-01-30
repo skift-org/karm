@@ -22,7 +22,7 @@
         },
         "cute-engineering/ce-libm": {
             "git": "https://codeberg.org/cute-engineering/ce-libm.git",
-            "tag": "v1.2.0"
+            "tag": "v1.2.1"
         },
         "cute-engineering/ce-stdcpp": {
             "git": "https://codeberg.org/cute-engineering/ce-stdcpp.git",
