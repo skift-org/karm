@@ -18,7 +18,7 @@
         },
         "cute-engineering/ce-libc": {
             "git": "https://codeberg.org/cute-engineering/ce-libc.git",
-            "tag": "v1.3.0"
+            "tag": "v1.3.1"
         },
         "cute-engineering/ce-libm": {
             "git": "https://codeberg.org/cute-engineering/ce-libm.git",
@@ -26,7 +26,7 @@
         },
         "cute-engineering/ce-stdcpp": {
             "git": "https://codeberg.org/cute-engineering/ce-stdcpp.git",
-            "tag": "v1.6.0"
+            "tag": "v1.6.1"
         },
         "cute-engineering/ce-targets": {
             "git": "https://codeberg.org/cute-engineering/ce-targets.git",
