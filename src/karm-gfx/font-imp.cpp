@@ -38,6 +38,8 @@ struct VgaFontface : Fontface {
     }
 
     Glyph glyph(Rune rune) override {
+        if (rune > 128)
+            rune = '?';
         One<Ibm437> one;
         encodeOne<Ibm437>(rune, one);
         return Glyph(one);

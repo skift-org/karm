@@ -199,6 +199,63 @@ export struct Database {
     }
 
     Res<> loadSystemFonts() {
+        (void)load("bundle://fonts-ahem/fonts/Ahem.ttf"_url);
+        (void)load("bundle://fonts-dancing-script/fonts/DancingScript-Bold.ttf"_url);
+        (void)load("bundle://fonts-dancing-script/fonts/DancingScript-Medium.ttf"_url);
+        (void)load("bundle://fonts-dancing-script/fonts/DancingScript-Regular.ttf"_url);
+        (void)load("bundle://fonts-dancing-script/fonts/DancingScript-SemiBold.ttf"_url);
+        (void)load("bundle://fonts-droid-sans/fonts/DroidSans-Bold.ttf"_url);
+        (void)load("bundle://fonts-droid-sans/fonts/DroidSans.ttf"_url);
+        (void)load("bundle://fonts-droid-serif/fonts/DroidSerif-Bold.ttf"_url);
+        (void)load("bundle://fonts-droid-serif/fonts/DroidSerif-BoldItalic.ttf"_url);
+        (void)load("bundle://fonts-droid-serif/fonts/DroidSerif-Italic.ttf"_url);
+        (void)load("bundle://fonts-droid-serif/fonts/DroidSerif-Regular.ttf"_url);
+        (void)load("bundle://fonts-excalibur/fonts/ExcaliburNouveau.ttf"_url);
+        (void)load("bundle://fonts-fira-code/fonts/FiraCode-Bold.ttf"_url);
+        (void)load("bundle://fonts-fira-code/fonts/FiraCode-Light.ttf"_url);
+        (void)load("bundle://fonts-fira-code/fonts/FiraCode-Medium.ttf"_url);
+        (void)load("bundle://fonts-fira-code/fonts/FiraCode-Regular.ttf"_url);
+        (void)load("bundle://fonts-fira-code/fonts/FiraCode-Retina.ttf"_url);
+        (void)load("bundle://fonts-fira-code/fonts/FiraCode-SemiBold.ttf"_url);
+        (void)load("bundle://fonts-inter/fonts/Inter-Black.ttf"_url);
+        (void)load("bundle://fonts-inter/fonts/Inter-BlackItalic.ttf"_url);
+        (void)load("bundle://fonts-inter/fonts/Inter-Bold.ttf"_url);
+        (void)load("bundle://fonts-inter/fonts/Inter-BoldItalic.ttf"_url);
+        (void)load("bundle://fonts-inter/fonts/Inter-ExtraBold.ttf"_url);
+        (void)load("bundle://fonts-inter/fonts/Inter-ExtraBoldItalic.ttf"_url);
+        (void)load("bundle://fonts-inter/fonts/Inter-ExtraLight.ttf"_url);
+        (void)load("bundle://fonts-inter/fonts/Inter-ExtraLightItalic.ttf"_url);
+        (void)load("bundle://fonts-inter/fonts/Inter-Italic.ttf"_url);
+        (void)load("bundle://fonts-inter/fonts/Inter-Light.ttf"_url);
+        (void)load("bundle://fonts-inter/fonts/Inter-LightItalic.ttf"_url);
+        (void)load("bundle://fonts-inter/fonts/Inter-Medium.ttf"_url);
+        (void)load("bundle://fonts-inter/fonts/Inter-MediumItalic.ttf"_url);
+        (void)load("bundle://fonts-inter/fonts/Inter-Regular.ttf"_url);
+        (void)load("bundle://fonts-inter/fonts/Inter-SemiBold.ttf"_url);
+        (void)load("bundle://fonts-inter/fonts/Inter-SemiBoldItalic.ttf"_url);
+        (void)load("bundle://fonts-inter/fonts/Inter-Thin.ttf"_url);
+        (void)load("bundle://fonts-inter/fonts/Inter-ThinItalic.ttf"_url);
+        (void)load("bundle://fonts-noto-misc/fonts/NotoColorEmoji-Regular.ttf"_url);
+        (void)load("bundle://fonts-noto-misc/fonts/NotoEmoji-Medium.ttf"_url);
+        (void)load("bundle://fonts-noto-misc/fonts/NotoSansMath-Regular.ttf"_url);
+        (void)load("bundle://fonts-noto-sans/fonts/NotoSans-Bold.ttf"_url);
+        (void)load("bundle://fonts-noto-sans/fonts/NotoSans-BoldItalic.ttf"_url);
+        (void)load("bundle://fonts-noto-sans/fonts/NotoSans-Italic.ttf"_url);
+        (void)load("bundle://fonts-noto-sans/fonts/NotoSans-Regular.ttf"_url);
+        (void)load("bundle://fonts-noto-serif/fonts/NotoSerif-Bold.ttf"_url);
+        (void)load("bundle://fonts-noto-serif/fonts/NotoSerif-BoldItalic.ttf"_url);
+        (void)load("bundle://fonts-noto-serif/fonts/NotoSerif-Italic.ttf"_url);
+        (void)load("bundle://fonts-noto-serif/fonts/NotoSerif-Regular.ttf"_url);
+        (void)load("bundle://fonts-open-sans/fonts/OpenSans-Bold.ttf"_url);
+        (void)load("bundle://fonts-open-sans/fonts/OpenSans-BoldItalic.ttf"_url);
+        (void)load("bundle://fonts-open-sans/fonts/OpenSans-Italic.ttf"_url);
+        (void)load("bundle://fonts-open-sans/fonts/OpenSans-Regular.ttf"_url);
+        (void)load("bundle://fonts-space-mono/fonts/SpaceMono-Bold.ttf"_url);
+        (void)load("bundle://fonts-space-mono/fonts/SpaceMono-BoldItalic.ttf"_url);
+        (void)load("bundle://fonts-space-mono/fonts/SpaceMono-Italic.ttf"_url);
+        (void)load("bundle://fonts-space-mono/fonts/SpaceMono-Regular.ttf"_url);
+
+        return Ok();
         auto bundles = try$(Sys::Bundle::installed());
         for (auto& bundle : bundles) {
             auto maybeDir = Sys::Dir::open(bundle.url() / "fonts");
@@ -215,6 +272,7 @@ export struct Database {
                 if (fontUrl.path.suffix() != "ttf")
                     continue;
 
+                logDebug("loading font: {}", fontUrl);
                 if (auto res = load(fontUrl); not res)
                     logWarn("could not load {}: {}", fontUrl, res);
             }
