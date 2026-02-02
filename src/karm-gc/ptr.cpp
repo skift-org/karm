@@ -111,6 +111,10 @@ struct Ptr {
     bool operator==(Ptr const& other) const {
         return _ptr == other._ptr;
     }
+
+    bool operator==(T const* other) const {
+        return _ptr == other;
+    }
 };
 
 export template <typename T>
