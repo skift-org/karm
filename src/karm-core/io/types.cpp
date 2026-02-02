@@ -6,7 +6,7 @@ import :base.size;
 
 namespace Karm::Io {
 
-export constexpr usize DEFAULT_BUFFER_SIZE = kib(8);
+export constexpr usize DEFAULT_BUFFER_SIZE = 8_KiB;
 
 export enum struct Whence {
     BEGIN,

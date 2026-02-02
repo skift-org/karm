@@ -26,7 +26,7 @@ export struct DataSize : Distinct<usize, struct _DataSizeTag> {
 
     constexpr usize toTiB() const { return toGiB() / 1024; }
 
-    operator usize () const { return _value; }
+    constexpr operator usize () const { return _value; }
 };
 
 } // namespace Karm
