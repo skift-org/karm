@@ -12,6 +12,7 @@ namespace Karm::Ref {
 struct _UuidTag;
 struct _GuidTag;
 
+// https://datatracker.ietf.org/doc/html/rfc9562
 template <typename Tag, typename U32, typename U16>
 struct _Uid {
     U32 a{};
@@ -46,19 +47,24 @@ struct _Uid {
 
     static Res<_Uid> parse(Io::SScan& s) {
         _Uid uid;
-        uid.a = try$(Io::atou(s, {.base = 16}));
+        uid.a = try$(Io::atou(s, {.base = 16}).okOr(Error::invalidInput("expected uid")));
         if (not s.skip("-"))
             return Error::invalidInput("expected uid");
 
-        uid.b = try$(Io::atou(s, {.base = 16}));
+        uid.b = try$(Io::atou(s, {.base = 16}).okOr(Error::invalidInput("expected uid")));
         if (not s.skip("-"))
             return Error::invalidInput("expected uid");
 
-        uid.c = try$(Io::atou(s, {.base = 16}));
+        uid.c = try$(Io::atou(s, {.base = 16}).okOr(Error::invalidInput("expected uid")));
         if (not s.skip("-"))
             return Error::invalidInput("expected uid");
 
-        try$(Crypto::hexDecode(s, uid.d));
+        try$(Crypto::hexDecode(s, mutSub(uid.d, 0, 2)));
+
+        if (not s.skip("-"))
+            return Error::invalidInput("expected uid");
+
+        try$(Crypto::hexDecode(s, mutSub(uid.d, 2, 8)));
         return Ok(uid);
     }
 
@@ -81,7 +87,9 @@ struct _Uid {
 
     void repr(Io::Emit& e) const {
         e("{:08x}-{:04x}-{:04x}-", a, b, c);
-        Crypto::hexEncode(d, e).unwrap();
+        Crypto::hexEncode(sub(d, 0, 2), e).unwrap();
+        e("-");
+        Crypto::hexEncode(sub(d, 2, 8), e).unwrap();
     }
 
     String unparsed() const {
@@ -100,8 +108,21 @@ struct _Uid {
 export using Uuid = _Uid<_UuidTag, u32be, u16be>;
 
 /// <b>FUCK MICROSLOP</b>
-export using Guid = _Uid<_UuidTag, u32le, u16le>;
+export using Guid = _Uid<_GuidTag, u32le, u16le>;
 
 static_assert(sizeof(Uuid) == 16);
+static_assert(sizeof(Guid) == 16);
 
 } // namespace Karm::Ref
+
+export Karm::Ref::Uuid operator""_uuid(char const* str, Karm::usize len) {
+    auto res = Karm::Ref::Uuid::parse({str, len});
+    if (not res.has())
+        Karm::debug(res.none().msg());
+    return res.unwrap("invalid UUID");
+}
+
+/// <b>FUCK MICROSLOP</b>
+export Karm::Ref::Guid operator""_guid(char const* str, Karm::usize len) {
+    return Karm::Ref::Guid::parse({str, len}).unwrap("invalid GUID");
+}
