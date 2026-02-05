@@ -16,7 +16,6 @@ struct VgaFontface : Fontface {
 
     static constexpr Array<u8, 1024> const DATA = {
 #include "defs/vga.inc"
-
     };
 
     FontMetrics metrics() override {

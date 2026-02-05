@@ -59,7 +59,7 @@ export constexpr usize base64EncodedLen(usize n) {
 }
 
 export Res<> base64Encode(Io::Reader& in, Io::Emit& e) {
-    Array<u8, 1024> inBuf;
+    Array<u8, Io::DEFAULT_BUFFER_SIZE> inBuf;
     Array<u8, 3> triple;
     usize tripleLen = 0;
 

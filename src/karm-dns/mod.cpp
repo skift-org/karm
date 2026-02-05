@@ -282,7 +282,7 @@ struct Client {
         try$(_conn.send(try$(Packet::encode(req)), _server));
 
         logDebug("waiting for dns response");
-        Array<u8, 4096> buf;
+        Array<u8, Io::DEFAULT_BUFFER_SIZE> buf;
         auto [len, addr] = try$(_conn.recv(buf));
 
         logDebug("received dns response from {}", addr);

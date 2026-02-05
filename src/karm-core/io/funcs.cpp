@@ -93,7 +93,7 @@ export Res<usize> copy(Readable auto& reader, MutBytes bytes) {
 }
 
 export Res<usize> copy(Readable auto& reader, Writable auto& writer) {
-    Array<u8, 4096> buffer;
+    Array<u8, Io::DEFAULT_BUFFER_SIZE> buffer;
     usize result = 0;
     while (true) {
         auto read = try$(reader.read(mutBytes(buffer)));
@@ -109,7 +109,7 @@ export Res<usize> copy(Readable auto& reader, Writable auto& writer) {
 }
 
 export Res<usize> copy(Readable auto& reader, Writable auto& writer, usize size) {
-    Array<u8, 4096> buf;
+    Array<u8, Io::DEFAULT_BUFFER_SIZE> buf;
     usize result = 0;
     while (size > 0) {
         auto read = try$(reader.read(mutSub(buf, 0, size)));

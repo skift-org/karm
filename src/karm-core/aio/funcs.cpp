@@ -14,7 +14,7 @@ import :aio.adapt;
 namespace Karm::Aio {
 
 export Async::Task<usize> copyAsync(AsyncReadable auto& reader, AsyncWritable auto& writer, Async::CancellationToken ct) {
-    Array<u8, 4096> buffer = {};
+    Array<u8, Io::DEFAULT_BUFFER_SIZE> buffer = {};
     usize result = 0;
     while (true) {
         auto read = co_trya$(reader.readAsync(mutBytes(buffer), ct));

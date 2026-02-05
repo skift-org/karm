@@ -22,8 +22,6 @@ export struct Transport {
 
 // MARK: Http Transport --------------------------------------------------------
 
-constexpr usize BUF_SIZE = 4096;
-
 struct ContentBody : Body {
     usize _resumesPos = 0;
     Rc<Sys::TcpConnection> _conn;
@@ -83,7 +81,7 @@ struct ChunkedBody : Body {
 
         _compact();
 
-        Array<u8, BUF_SIZE> tmp = {};
+        Array<u8, Io::DEFAULT_BUFFER_SIZE> tmp = {};
         usize n = co_trya$(_conn->readAsync(tmp, ct));
         if (n == 0) {
             // connection closed unexpectedly

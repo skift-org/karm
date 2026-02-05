@@ -58,7 +58,7 @@ export struct Server {
             resp.code = code;
             resp.header = header;
             // NOTE: Seems to be the average size of an HTTP header
-            Io::StringWriter sb{1024};
+            Io::StringWriter sb{Io::DEFAULT_BUFFER_SIZE};
             co_try$(resp.unparse(sb));
             co_trya$(_conn->writeAsync(sb.bytes(), ct));
             _headerSent = true;
