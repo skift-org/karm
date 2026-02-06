@@ -218,6 +218,10 @@ export struct BScan {
         _bitsLen = 0;
     }
 
+    always_inline constexpr void align(usize n) {
+        skip((n - (tell() % n)) % n);
+    }
+
     /// Read bits in most significant bit first order.
     always_inline constexpr u8 nextBitbe() {
         if (_bitsLen == 0) {

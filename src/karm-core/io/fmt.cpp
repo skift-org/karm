@@ -69,15 +69,30 @@ export Res<> _format(TextWriter& writer, Str format, _Args& args) {
         Rune c = scan.next();
 
         if (c == '{') {
+            if (scan.peek() == '{') {
+                scan.next();
+                try$(writer.writeRune('{'));
+                continue;
+            }
+
             scan.skip(':');
             scan.begin();
-            while (scan.peek() != '}') {
+            while (scan.peek() != '}' and not scan.ended()) {
                 scan.next();
             }
+            if (scan.ended())
+                return Error::invalidData("unmatched '{'");
             scan.next();
             SScan inner{scan.end()};
             try$(args.format(inner, writer, index));
             index++;
+        } else if (c == '}') {
+            if (scan.peek() == '}') {
+                scan.next();
+                try$(writer.writeRune('}'));
+                continue;
+            }
+            return Error::invalidData("unmatched '}'");
         } else {
             try$(writer.writeRune(c));
         }
