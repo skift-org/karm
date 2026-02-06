@@ -11,15 +11,14 @@ namespace Karm::Ref {
 
 // https://datatracker.ietf.org/doc/html/rfc9562
 template <typename U32, typename U16>
-struct _Uid {
+struct [[gnu::packed]] _Uid {
     U32 timeLow{};
     U16 timeMid{};
     U16 timeHighAndVersion{};
     u16be clkSeqAndVariant{};
     Array<u8, 6> node{};
 
-    static Res<_Uid> v4()
-    {
+    static Res<_Uid> v4() {
         _Uid uid;
         auto bytes = uid.mutBytes();
         try$(Crypto::entropy(bytes));
@@ -27,8 +26,7 @@ struct _Uid {
         return Ok(uid);
     }
 
-    static Res<_Uid> v7(SystemTime ts)
-    {
+    static Res<_Uid> v7(SystemTime ts) {
         _Uid uid;
         auto timestamp = ts.sinceEpoch().toMSecs();
         uid.timeLow = (timestamp >> 16) & 0xffffffff;
@@ -40,8 +38,8 @@ struct _Uid {
     }
 
     void _setVersionAndVariant(u8 version, u8 variant) {
-        timeHighAndVersion = (timeHighAndVersion & 0x0fffffff)  |(version & 0x0f) << 12;
-        clkSeqAndVariant = (clkSeqAndVariant & 0x3fffffff) | (variant & 0x03) << 14;
+        timeHighAndVersion = (timeHighAndVersion & 0x0fff) | (version & 0x0f) << 12;
+        clkSeqAndVariant = (clkSeqAndVariant & 0x3fff) | (variant & 0x03) << 14;
     }
 
     u8 version() const {
