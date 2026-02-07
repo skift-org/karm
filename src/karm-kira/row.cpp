@@ -68,6 +68,10 @@ export Ui::Child titleRow(String t) {
            Ui::insets({16, 12, 8, 12});
 }
 
+export Ui::Child labelRow(String t) {
+    return rowContent(Ui::labelMedium(t));
+}
+
 export Ui::Child pressableRow(Opt<Ui::Send<>> onPress, Opt<Ui::Child> leading, String title, Opt<String> subtitle, Opt<Ui::Child> trailing) {
     return button(
         std::move(onPress),
