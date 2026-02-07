@@ -301,13 +301,12 @@ export struct Url {
     }
 };
 
-export Url parseUrlOrPath(Str str, Opt<Url> baseUrl = NONE) {
+export Url parseUrlOrPath(Str str, Url baseUrl) {
     if (Url::isUrl(str))
         return Url::parse(str, baseUrl);
 
-    Url url = baseUrl.unwrapOr(Url::parse(""));
-    url.path = url.path.join(Path::parse(str));
-    return url;
+    baseUrl.path = baseUrl.path.join(Path::parse(str));
+    return baseUrl;
 }
 
 } // namespace Karm::Ref
