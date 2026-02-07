@@ -117,7 +117,7 @@ struct Slice {
 
     template <typename U>
     constexpr Slice<U> cast() const {
-        return Slice<U>{(U const*)_buf, _len};
+        return Slice<U>{(U*)_buf, _len * sizeof(T) / sizeof(U)};
     }
 
     constexpr explicit operator bool() const {
