@@ -5,28 +5,28 @@ import :base.distinct;
 
 namespace Karm {
 
-export struct DataSize : Distinct<usize, struct _DataSizeTag> {
+export struct DataSize : Distinct<u64, struct _DataSizeTag> {
     using Distinct::Distinct;
 
-    static constexpr DataSize fromKiB(usize v) { return DataSize{v * 1024}; }
+    static constexpr DataSize fromKiB(u64 v) { return DataSize{v * 1024}; }
 
-    static constexpr DataSize fromMiB(usize v) { return fromKiB(v * 1024); }
+    static constexpr DataSize fromMiB(u64 v) { return fromKiB(v * 1024); }
 
-    static constexpr DataSize fromGiB(usize v) { return fromMiB(v * 1024); }
+    static constexpr DataSize fromGiB(u64 v) { return fromMiB(v * 1024); }
 
-    static constexpr DataSize fromTiB(usize v) { return fromGiB(v * 1024); }
+    static constexpr DataSize fromTiB(u64 v) { return fromGiB(v * 1024); }
 
-    constexpr usize toB() const { return _value; }
+    constexpr u64 toB() const { return _value; }
 
-    constexpr usize toKiB() const { return _value / 1024; }
+    constexpr u64 toKiB() const { return _value / 1024; }
 
-    constexpr usize toMiB() const { return toKiB() / 1024; }
+    constexpr u64 toMiB() const { return toKiB() / 1024; }
 
-    constexpr usize toGiB() const { return toMiB() / 1024; }
+    constexpr u64 toGiB() const { return toMiB() / 1024; }
 
-    constexpr usize toTiB() const { return toGiB() / 1024; }
+    constexpr u64 toTiB() const { return toGiB() / 1024; }
 
-    constexpr operator usize () const { return _value; }
+    constexpr operator u64() const { return _value; }
 };
 
 } // namespace Karm
