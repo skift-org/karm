@@ -10,6 +10,7 @@ export struct BoxShadow {
     f64 blur;
     f64 spread;
     Math::Vec2i offset;
+    bool fillCenter = true;
 
     static BoxShadow elevated(f64 v, Gfx::Color fill = Gfx::BLACK) {
         return {
@@ -37,6 +38,11 @@ export struct BoxShadow {
 
     auto& withOffset(Math::Vec2i o) {
         offset = o;
+        return *this;
+    }
+
+    auto& withFillCenter(bool value) {
+        fillCenter = value;
         return *this;
     }
 
@@ -118,8 +124,10 @@ export struct BoxShadow {
         g.fillStyle(grad.withPoints({0, 0}, {1, 0}));
         g.fill(end);
 
-        g.fillStyle(fill);
-        g.fill(bound);
+        if (fillCenter) {
+            g.fillStyle(fill);
+            g.fill(bound);
+        }
     }
 };
 
