@@ -35,14 +35,7 @@ export struct FormfactorEvent {
     FormFactor formFactor;
 };
 
-export struct DragEvent {
-    enum {
-        START,
-        DRAG,
-        END
-    } type;
-
-    Math::Vec2i delta{};
+export struct DragStartEvent {
 };
 
 } // namespace Karm::App

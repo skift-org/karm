@@ -88,8 +88,8 @@ struct RootNode : ProxyNode<RootNode> {
         } else if (auto e = event.is<AnimateEvent>()) {
             _shouldAnimate = true;
             event.accept();
-        } else if (auto e = event.is<App::DragEvent>()) {
-            _window->drag(*e);
+        } else if (event.is<App::DragStartEvent>()) {
+            _window->drag();
             event.accept();
         } else if (auto e = event.is<App::RequestCloseEvent>()) {
             _window->close();

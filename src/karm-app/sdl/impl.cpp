@@ -23,7 +23,8 @@ struct SdlWindow : Window {
     bool _closed = false;
 
     explicit SdlWindow(SdlApplication& application, SDL_Window* sdlWindow)
-        : _application(application), _sdlWindow(sdlWindow) {}
+        : _application(application), _sdlWindow(sdlWindow) {
+    }
 
     ~SdlWindow();
 
@@ -61,17 +62,8 @@ struct SdlWindow : Window {
         _sdlSurface = nullptr;
     }
 
-    void drag(DragEvent e) override {
-        if (e.type == DragEvent::START) {
-            SDL_CaptureMouse(true);
-        } else if (e.type == DragEvent::END) {
-            SDL_CaptureMouse(false);
-        } else if (e.type == DragEvent::DRAG) {
-            Math::Vec2<i32> pos{};
-            SDL_GetWindowPosition(_sdlWindow, &pos.x, &pos.y);
-            pos = pos + e.delta.cast<i32>();
-            SDL_SetWindowPosition(_sdlWindow, pos.x, pos.y);
-        }
+    void drag() override {
+        // FIXME
     }
 
     void snap(Snap snap) override {

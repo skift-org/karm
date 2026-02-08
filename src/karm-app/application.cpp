@@ -48,7 +48,7 @@ export struct Window : Meta::Pinned {
 
     virtual void releaseSurface(Slice<Math::Recti> dirty) = 0;
 
-    virtual void drag(DragEvent) {
+    virtual void drag() {
         logWarn("Window::drag() not implemented");
     }
 

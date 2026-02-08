@@ -17,6 +17,7 @@ export enum struct ResizeHandle {
 struct Resizable : Ui::ProxyNode<Resizable> {
     Math::Vec2i _size;
     Opt<Ui::Send<Math::Vec2i>> _onChange;
+    bool _grabbed = false;
 
     Resizable(Ui::Child child, Math::Vec2i size, Opt<Ui::Send<Math::Vec2i>> onChange)
         : ProxyNode<Resizable>(child),
@@ -31,10 +32,18 @@ struct Resizable : Ui::ProxyNode<Resizable> {
         ProxyNode<Resizable>::reconcile(o);
     }
 
-    void bubble(App::Event& e) override {
-        if (auto de = e.is<App::DragEvent>()) {
-            if (de->type == App::DragEvent::DRAG) {
-                _size = _size + de->delta;
+    void event(App::Event& e) override {
+        ProxyNode::event(e);
+
+        if (e.accepted())
+            return;
+
+        if (auto it = e.is<App::MouseEvent>(); it and _grabbed) {
+            if (it->type == App::MouseEvent::RELEASE) {
+                _grabbed = false;
+                e.accept();
+            } else if (it->type == App::MouseEvent::MOVE) {
+                _size = _size + it->delta;
                 auto minSize = child().size({}, Ui::Hint::MIN);
                 _size = _size.max(minSize);
                 if (_onChange) {
@@ -45,8 +54,15 @@ struct Resizable : Ui::ProxyNode<Resizable> {
                 e.accept();
             }
         }
+    }
 
-        ProxyNode<Resizable>::bubble(e);
+    void bubble(App::Event& e) override {
+        if (auto de = e.is<App::DragStartEvent>()) {
+            _grabbed = true;
+            e.accept();
+        }
+
+        ProxyNode::bubble(e);
     }
 
     Math::Vec2i size(Math::Vec2i s, Ui::Hint hint) override {

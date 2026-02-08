@@ -33,6 +33,7 @@ struct Dismisable :
     Eased2f _drag{};
     Math::Vec2i _last{};
     bool _dismissed{};
+    bool _grabbed{};
 
     Dismisable(Send<> onDismis, Flags<DismisDir> dir, f64 threshold, Ui::Child child)
         : ProxyNode(child),
@@ -52,6 +53,44 @@ struct Dismisable :
         return _drag.value().cast<isize>();
     }
 
+    void dragMove(Math::Vec2f delta) {
+        auto d = _drag.target() + delta;
+
+        d.x = clamp(
+            d.x,
+            (bool)(_dir & DismisDir::LEFT) ? -bound().width : 0,
+            (bool)(_dir & DismisDir::RIGHT) ? bound().width : 0
+        );
+
+        d.y = clamp(
+            d.y,
+            (bool)(_dir & DismisDir::TOP) ? -bound().height : 0,
+            (bool)(_dir & DismisDir::DOWN) ? bound().height : 0
+        );
+
+        _drag.set(*this, d);
+    }
+
+    void dragEnded() {
+        _grabbed = false;
+        if ((bool)(_dir & DismisDir::HORIZONTAL)) {
+            if (Math::abs(_drag.targetX()) / (f64)bound().width > _threshold) {
+                _drag.animate(*this, {bound().width * (_drag.targetX() < 0.0 ? -1.0 : 1), 0}, 0.25, Math::Easing::cubicOut);
+                _dismissed = true;
+            } else {
+                _drag.animate(*this, {0, _drag.targetY()}, 0.25, Math::Easing::exponentialOut);
+            }
+        }
+        if ((bool)(_dir & DismisDir::VERTICAL)) {
+            if (Math::abs(_drag.targetY()) / (f64)bound().height > _threshold) {
+                _drag.animate(*this, {0, bound().height * (_drag.targetY() < 0.0 ? -1.0 : 1)}, 0.25, Math::Easing::cubicOut);
+                _dismissed = true;
+            } else {
+                _drag.animate(*this, {_drag.targetX(), 0}, 0.25, Math::Easing::exponentialOut);
+            }
+        }
+    }
+
     void paint(Gfx::Canvas& g, Math::Recti r) override {
         g.push();
 
@@ -64,10 +103,20 @@ struct Dismisable :
     }
 
     void event(App::Event& e) override {
-        if (auto me = e.is<App::MouseEvent>()) {
-            me->pos = me->pos - drag();
-            child().event(e);
-            me->pos = me->pos + drag();
+        if (auto it = e.is<App::MouseEvent>()) {
+            if (_grabbed) {
+                if (it->type == App::MouseEvent::RELEASE) {
+                    dragEnded();
+                    e.accept();
+                } else if (it->type == App::MouseEvent::MOVE) {
+                    dragMove(it->delta.cast<f64>());
+                    e.accept();
+                }
+            } else {
+                it->pos = it->pos - drag();
+                child().event(e);
+                it->pos = it->pos + drag();
+            }
         } else if (e.is<Node::AnimateEvent>() and _dismissed and _drag.reached()) {
             _onDismis(*this);
             _dismissed = false;
@@ -88,46 +137,9 @@ struct Dismisable :
     }
 
     void bubble(App::Event& e) override {
-        if (auto de = e.is<App::DragEvent>()) {
-            if (de->type == App::DragEvent::DRAG) {
-                auto d = _drag.target() + de->delta;
-
-                d.x = clamp(
-                    d.x,
-                    (bool)(_dir & DismisDir::LEFT) ? -bound().width : 0,
-                    (bool)(_dir & DismisDir::RIGHT) ? bound().width : 0
-                );
-
-                d.y = clamp(
-                    d.y,
-                    (bool)(_dir & DismisDir::TOP) ? -bound().height : 0,
-                    (bool)(_dir & DismisDir::DOWN) ? bound().height : 0
-                );
-
-                _drag.set(*this, d);
-                e.accept();
-            }
-
-            if (de->type == App::DragEvent::END) {
-                if ((bool)(_dir & DismisDir::HORIZONTAL)) {
-                    if (Math::abs(_drag.targetX()) / (f64)bound().width > _threshold) {
-                        _drag.animate(*this, {bound().width * (_drag.targetX() < 0.0 ? -1.0 : 1), 0}, 0.25, Math::Easing::cubicOut);
-                        _dismissed = true;
-                    } else {
-                        _drag.animate(*this, {0, _drag.targetY()}, 0.25, Math::Easing::exponentialOut);
-                    }
-                    e.accept();
-                }
-                if ((bool)(_dir & DismisDir::VERTICAL)) {
-                    if (Math::abs(_drag.targetY()) / (f64)bound().height > _threshold) {
-                        _drag.animate(*this, {0, bound().height * (_drag.targetY() < 0.0 ? -1.0 : 1)}, 0.25, Math::Easing::cubicOut);
-                        _dismissed = true;
-                    } else {
-                        _drag.animate(*this, {_drag.targetX(), 0}, 0.25, Math::Easing::exponentialOut);
-                    }
-                    e.accept();
-                }
-            }
+        if (auto de = e.is<App::DragStartEvent>()) {
+            _grabbed = true;
+            e.accept();
         }
 
         Ui::ProxyNode<Dismisable>::bubble(e);
@@ -147,7 +159,6 @@ export auto dismisable(Send<> onDismis, Flags<DismisDir> dir, f64 threshold) {
 // MARK: Drag Region -----------------------------------------------------------
 
 struct DragRegion : ProxyNode<DragRegion> {
-    bool _grabbed{};
     Math::Vec2i _dir;
 
     DragRegion(Child child, Math::Vec2i dir)
@@ -162,23 +173,8 @@ struct DragRegion : ProxyNode<DragRegion> {
         if (event.accepted())
             return;
 
-        auto e = event.is<App::MouseEvent>();
-        if (not e)
-            return;
-
-        if (not bound().contains(e->pos) and not _grabbed)
-            return;
-
-        if (e->type == App::MouseEvent::PRESS) {
-            _grabbed = true;
-            bubble<App::DragEvent>(*this, App::DragEvent::START);
-            event.accept();
-        } else if (e->type == App::MouseEvent::RELEASE) {
-            _grabbed = false;
-            bubble<App::DragEvent>(*this, App::DragEvent::END);
-            event.accept();
-        } else if (e->type == App::MouseEvent::MOVE and _grabbed) {
-            bubble<App::DragEvent>(*this, App::DragEvent::DRAG, e->delta * _dir);
+        if (auto it = event.is<App::MouseEvent>(); it and bound().contains(it->pos) and it->type == App::MouseEvent::PRESS) {
+            bubble<App::DragStartEvent>(*this);
             event.accept();
         }
     }

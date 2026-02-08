@@ -578,6 +578,7 @@ struct Slider : ProxyNode<Slider> {
     f64 _value = 0.0f;
     Send<f64> _onChange;
     Math::Recti _bound;
+    bool _grabbed = false;
 
     Slider(f64 value, Send<f64> onChange, Child child)
         : ProxyNode<Slider>(std::move(child)),
@@ -601,19 +602,33 @@ struct Slider : ProxyNode<Slider> {
         return _bound;
     }
 
-    void bubble(App::Event& e) override {
-        if (auto dv = e.is<App::DragEvent>()) {
-            if (dv->type == App::DragEvent::DRAG) {
+    void event(App::Event& e) override {
+        ProxyNode::event(e);
+
+        if (e.accepted())
+            return;
+
+        if (auto it = e.is<App::MouseEvent>(); it and _grabbed) {
+            if (it->type == App::MouseEvent::RELEASE) {
+                _grabbed = false;
+                e.accept();
+            } else if (it->type == App::MouseEvent::MOVE) {
                 auto max = bound().width - bound().height;
                 auto value = max * _value;
-                value = clamp(value + dv->delta.x, 0.0f, max);
+                value = clamp(value + it->delta.x, 0.0f, max);
                 _value = value / max;
                 _onChange(*this, _value);
+                e.accept();
             }
+        }
+    }
+
+    void bubble(App::Event& e) override {
+        if (e.is<App::DragStartEvent>()) {
+            _grabbed = true;
             e.accept();
         }
-
-        ProxyNode<Slider>::bubble(e);
+        ProxyNode::bubble(e);
     }
 };
 
