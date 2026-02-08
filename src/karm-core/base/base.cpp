@@ -112,6 +112,17 @@ always_inline constexpr T rotr(T x, usize n) {
     return (x >> n) | (x << (sizeof(x) * 8 - n));
 }
 
+export template <typename T>
+always_inline constexpr T reverseBits(T data) {
+    T res = 0;
+    for (usize i = 0; i < sizeof(T) * 8; ++i) {
+        res <<= 1;
+        res |= (data & 1);
+        data >>= 1;
+    }
+    return res;
+}
+
 // MARK: Signed -----------------------------------------------------------
 
 export using isize = __PTRDIFF_TYPE__;
