@@ -265,13 +265,11 @@ export auto vscroll() {
 
 // MARK: Clip ------------------------------------------------------------------
 
-struct Clip : ProxyNode<Clip> {
-    static constexpr isize SCROLL_BAR_WIDTH = 4;
-
+struct VhClip : ProxyNode<VhClip> {
     Math::Orien _orient{};
     Math::Recti _bound{};
 
-    Clip(Child child, Math::Orien orient)
+    VhClip(Child child, Math::Orien orient)
         : ProxyNode(child), _orient(orient) {}
 
     void paint(Gfx::Canvas& g, Math::Recti r) override {
@@ -314,8 +312,27 @@ struct Clip : ProxyNode<Clip> {
     }
 };
 
+struct Clip : ProxyNode<Clip> {
+    Clip(Child child)
+        : ProxyNode(child) {}
+
+    void
+    paint(Gfx::Canvas& g, Math::Recti r) override {
+        g.push();
+        g.clip(bound());
+        ProxyNode::paint(g, r);
+        g.pop();
+    }
+};
+
+export auto clip() {
+    return [](Child child) -> Child {
+        return makeRc<Clip>(child);
+    };
+}
+
 export Child vhclip(Child child) {
-    return makeRc<Clip>(child, Math::Orien::BOTH);
+    return makeRc<VhClip>(child, Math::Orien::BOTH);
 }
 
 export auto vhclip() {
@@ -325,7 +342,7 @@ export auto vhclip() {
 }
 
 export Child hclip(Child child) {
-    return makeRc<Clip>(child, Math::Orien::HORIZONTAL);
+    return makeRc<VhClip>(child, Math::Orien::HORIZONTAL);
 }
 
 export auto hclip() {
@@ -335,7 +352,7 @@ export auto hclip() {
 }
 
 export Child vclip(Child child) {
-    return makeRc<Clip>(child, Math::Orien::VERTICAL);
+    return makeRc<VhClip>(child, Math::Orien::VERTICAL);
 }
 
 export auto vclip() {
