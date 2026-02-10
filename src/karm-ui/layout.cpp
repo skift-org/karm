@@ -331,8 +331,16 @@ struct Sizing : ProxyNode<Sizing> {
             result.x = max(result.x, _min.x);
         }
 
+        if (_max.x != UNCONSTRAINED) {
+            result.x = min(result.x, _max.x);
+        }
+
         if (_min.y != UNCONSTRAINED) {
             result.y = max(result.y, _min.y);
+        }
+
+        if (_max.y != UNCONSTRAINED) {
+            result.y = min(result.y, _max.y);
         }
 
         return result;
