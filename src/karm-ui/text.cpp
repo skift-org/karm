@@ -58,9 +58,7 @@ export struct TextAction {
     TextAction(_Op op, Rune rune = 0) : op(op), rune(rune) {}
 
     static Opt<TextAction> fromEvent(App::Event& e) {
-        if (auto te = e.is<App::TypeEvent>()) {
-            return TextAction{TYPE, te->rune};
-        } else if (
+        if (
             auto ke = e.is<App::KeyboardEvent>();
             ke and (ke->type == App::KeyboardEvent::PRESS or ke->type == App::KeyboardEvent::REPEATE)
         ) {
@@ -136,6 +134,8 @@ export struct TextAction {
                 return BACKSPACE;
             else if (ke->key == App::Key::DELETE and optionalyShift)
                 return DELETE;
+            else if (ke->rune)
+                return TextAction{TYPE, ke->rune};
         }
 
         return NONE;
