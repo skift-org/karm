@@ -548,6 +548,8 @@ struct SimpleInput : View<SimpleInput> {
     void event(App::Event& e) override {
         _focus.event(*this, e);
         auto a = TextAction::fromEvent(e);
+        if (a and a->op == TextAction::NEWLINE and not _style.multiline)
+            a = NONE;
         if (a) {
             e.accept();
             _ensureModel().reduce(*a);
@@ -559,7 +561,7 @@ struct SimpleInput : View<SimpleInput> {
 
     void layout(Math::Recti bound) override {
         _ensureText().layout(Au{bound.width});
-        View<SimpleInput>::layout(bound);
+        View::layout(bound);
     }
 
     Math::Vec2i size(Math::Vec2i s, Hint) override {

@@ -10,10 +10,10 @@ namespace Karm::Vte {
 struct Viewport : Ui::View<Viewport> {
     Rc<Terminal> _terminal;
     Ui::ScrollListener _listen;
-    Ui::Send<Union<App::TypeEvent, App::KeyboardEvent>> _send;
+    Ui::Send<App::KeyboardEvent> _send;
     bool _animate = false;
 
-    Viewport(Rc<Terminal> terminal, Ui::Send<Union<App::TypeEvent, App::KeyboardEvent>> send)
+    Viewport(Rc<Terminal> terminal, Ui::Send<App::KeyboardEvent> send)
         : _terminal(terminal), _send(send) {}
 
     void paint(Gfx::Canvas& g, Math::Recti) override {
@@ -39,8 +39,6 @@ struct Viewport : Ui::View<Viewport> {
                 _animate = true;
                 event.accept();
             }
-        } else if (auto e = event.is<App::TypeEvent>()) {
-            _send(*this, *e);
         } else if (auto e = event.is<App::KeyboardEvent>()) {
             _send(*this, *e);
         } else
@@ -59,7 +57,7 @@ struct Viewport : Ui::View<Viewport> {
     }
 };
 
-export Ui::Child viewport(Rc<Terminal> terminal, Ui::Send<Union<App::TypeEvent, App::KeyboardEvent>> send) {
+export Ui::Child viewport(Rc<Terminal> terminal, Ui::Send<App::KeyboardEvent> send) {
     return makeRc<Viewport>(terminal, send);
 }
 

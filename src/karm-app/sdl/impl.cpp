@@ -146,9 +146,12 @@ struct SdlApplication : Application {
         }
 
         case SDL_EVENT_TEXT_INPUT: {
+            KeyboardEvent ev;
+            ev.type = KeyboardEvent::PRESS;
             Str text = sdlEvent.text.text;
             for (Rune r : iterRunes(text)) {
-                handler->handle<App::TypeEvent>(WindowId{sdlEvent.key.windowID}, r);
+                ev.rune = r;
+                handler->handle<App::KeyboardEvent>(WindowId{sdlEvent.key.windowID}, ev);
             }
             break;
         }

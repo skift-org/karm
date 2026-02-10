@@ -166,13 +166,8 @@ export struct KeyboardEvent {
     /// The scancode of the key that was pressed or released
     /// This value is independent of the current keyboard layout
     Key code;
-
     Flags<KeyMod> mods = {};
-};
-
-export struct TypeEvent {
-    Rune rune;
-    Flags<KeyMod> mods = {};
+    Rune rune = '\0';
 };
 
 // MARK: Mouse -----------------------------------------------------------------
