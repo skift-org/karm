@@ -98,12 +98,14 @@ struct Reducer :
             _child = _build(_state);
             (*_child)->attach(this);
         }
+
+        _rebuild = false;
+        event<Node::RebuiltEvent>(*this);
     }
 
     void ensureBuild() {
         if (_rebuild) {
             rebuild();
-            _rebuild = false;
         }
     }
 

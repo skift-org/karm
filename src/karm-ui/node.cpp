@@ -48,6 +48,9 @@ struct Node : App::Dispatch {
         f64 dt;
     };
 
+    struct RebuiltEvent {
+    };
+
     Key key() const {
         return _key;
     }
