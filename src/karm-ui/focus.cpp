@@ -44,17 +44,23 @@ export struct FocusListener {
     }
 };
 
+struct FocusableProps {
+    bool visual = true;
+    bool steal = false;
+};
+
 struct Focusable : ProxyNode<Focusable> {
     bool _focused = false;
+    FocusableProps _props;
 
-    Focusable(Ui::Child child)
-        : ProxyNode<Focusable>(std::move(child)) {
+    Focusable(Ui::Child child, FocusableProps props)
+        : ProxyNode<Focusable>(std::move(child)), _props(props) {
     }
 
     void paint(Gfx::Canvas& g, Math::Recti r) override {
         ProxyNode<Focusable>::paint(g, r);
 
-        if (_focused) {
+        if (_props.visual and _focused) {
             g.strokeStyle(Gfx::stroke(ACCENT500).withWidth(2).withAlign(Gfx::INSIDE_ALIGN));
             g.stroke(bound().cast<f64>(), 4);
         }
@@ -93,17 +99,23 @@ struct Focusable : ProxyNode<Focusable> {
         }
 
         if (_focused or passthrough)
-            ProxyNode<Focusable>::event(e);
+            ProxyNode::event(e);
+
+        if (e.is<RebuiltEvent>() and
+            _props.steal and
+            not _focused) {
+            _stealFocus();
+        }
     }
 };
 
-export Ui::Child focusable(Ui::Child child) {
-    return makeRc<Focusable>(std::move(child));
+export Ui::Child focusable(Ui::Child child, FocusableProps props = {}) {
+    return makeRc<Focusable>(std::move(child), props);
 }
 
-export auto focusable() {
-    return [](Ui::Child child) {
-        return focusable(std::move(child));
+export auto focusable(FocusableProps props = {}) {
+    return [props](Ui::Child child) {
+        return focusable(std::move(child), props);
     };
 }
 
