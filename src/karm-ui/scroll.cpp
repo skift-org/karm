@@ -12,6 +12,10 @@ namespace Karm::Ui {
 
 // MARK: Scroll ----------------------------------------------------------------
 
+export struct ScrollToEvent {
+    Math::Recti bound;
+};
+
 export struct ScrollListener {
     static constexpr isize SCROLL_BAR_WIDTH = 4;
 
@@ -64,6 +68,40 @@ export struct ScrollListener {
         } else {
             _animated = true;
         }
+    }
+
+    void scrollIntoView(Math::Recti rect) {
+        auto nextScroll = _targetScroll;
+
+        if (canHScroll()) {
+            isize containerStart = _containerBound.start();
+            isize containerEnd = _containerBound.end();
+
+            isize elementStart = rect.start() + (isize)nextScroll.x;
+            isize elementEnd = rect.end() + (isize)nextScroll.x;
+
+            if (elementStart < containerStart) {
+                nextScroll.x = (f64)(containerStart - rect.start());
+            } else if (elementEnd > containerEnd) {
+                nextScroll.x = (f64)(containerEnd - rect.end());
+            }
+        }
+
+        if (canVScroll()) {
+            isize containerTop = _containerBound.top();
+            isize containerBottom = _containerBound.bottom();
+
+            isize elementTop = rect.top() + (isize)nextScroll.y;
+            isize elementBottom = rect.bottom() + (isize)nextScroll.y;
+
+            if (elementTop < containerTop) {
+                nextScroll.y = (f64)(containerTop - rect.top());
+            } else if (elementBottom > containerBottom) {
+                nextScroll.y = (f64)(containerBottom - rect.bottom());
+            }
+        }
+
+        scroll(nextScroll.cast<isize>());
     }
 
     bool canHScroll() {
@@ -178,11 +216,11 @@ struct Scroll : ProxyNode<Scroll> {
         if (auto me = e.is<App::MouseEvent>(); me) {
             if (_listener.containerBound().contains(me->pos)) {
                 me->pos = me->pos - _listener.scroll().cast<isize>();
-                ProxyNode<Scroll>::event(e);
+                ProxyNode::event(e);
                 me->pos = me->pos + _listener.scroll().cast<isize>();
             }
         } else {
-            ProxyNode<Scroll>::event(e);
+            ProxyNode::event(e);
         }
 
         if (not e.accepted()) {
@@ -190,12 +228,15 @@ struct Scroll : ProxyNode<Scroll> {
         }
     }
 
-    void bubble(App::Event& e) override {
-        if (auto pe = e.is<Node::PaintEvent>()) {
-            pe->bound.xy = pe->bound.xy + _listener.scroll().cast<isize>();
-            pe->bound = pe->bound.clipTo(bound());
+    void bubble(App::Event& event) override {
+        if (auto e = event.is<Node::PaintEvent>()) {
+            e->bound.xy = e->bound.xy + _listener.scroll().cast<isize>();
+            e->bound = e->bound.clipTo(bound());
+        } else if (auto e = event.is<ScrollToEvent>()) {
+            _listener.scrollIntoView(e->bound);
+            event.accept();
         }
-        ProxyNode::bubble(e);
+        ProxyNode::bubble(event);
     }
 
     void layout(Math::Recti r) override {
@@ -260,6 +301,36 @@ export Child vscroll(Child child) {
 export auto vscroll() {
     return [](Child child) {
         return vscroll(child);
+    };
+}
+
+struct ScrollToMe : ProxyNode<ScrollToMe> {
+    Math::Insetsi _margin;
+    bool _activated = true;
+
+    explicit ScrollToMe(Child const& child, Math::Insetsi margin)
+        : ProxyNode(child), _margin(margin) {}
+
+    void event(App::Event& event) override {
+        if (event.is<RebuiltEvent>()) {
+            _activated = true;
+        }
+
+        ProxyNode::event(event);
+    }
+
+    void layout(Math::Recti r) override {
+        ProxyNode::layout(r);
+        if (_activated) {
+            bubble<ScrollToEvent>(*this, bound().grow(_margin));
+            _activated = false;
+        }
+    }
+};
+
+export auto scrollToMe(Math::Insetsi margin = {}) {
+    return [margin](Child child) -> Ui::Child {
+        return makeRc<ScrollToMe>(child, margin);
     };
 }
 
