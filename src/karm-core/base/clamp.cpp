@@ -39,6 +39,14 @@ export always_inline constexpr auto clamp(auto value, auto min, auto max) {
                : value;
 }
 
+/// Clamps an index to the range [0, length - 1].
+export template <typename T>
+always_inline constexpr T clampIndex(T value, T len) {
+    if (len == 0)
+        return 0;
+    return clamp(value, (T)0, len - 1);
+}
+
 /// Clamps a value to the range [0, 1].
 export always_inline constexpr auto clamp01(auto value) {
     return clamp(value, 0, 1);
