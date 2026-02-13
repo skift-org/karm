@@ -23,6 +23,15 @@ struct SelectionUpdateEvent {
     Math::Recti rect;
 };
 
+export void paintSelection(Gfx::Canvas& g, Math::Rectf selection) {
+    g.push();
+    g.fillStyle(Ui::ACCENT500.withOpacity(0.25));
+    g.fill(selection, 6);
+    g.strokeStyle({Ui::ACCENT500, 1, Gfx::INSIDE_ALIGN});
+    g.stroke(selection, 6);
+    g.pop();
+}
+
 struct SelectionArea : Ui::ProxyNode<SelectionArea> {
     Ui::MouseListener _listener;
     bool _selecting = false;
@@ -40,12 +49,7 @@ struct SelectionArea : Ui::ProxyNode<SelectionArea> {
         ProxyNode::paint(g, r);
 
         if (_selecting) {
-            g.push();
-            g.fillStyle(Ui::ACCENT500.withOpacity(0.25));
-            g.fill(selectionRect(), 6);
-            g.strokeStyle({Ui::ACCENT500, 1, Gfx::INSIDE_ALIGN});
-            g.stroke(selectionRect().cast<f64>(), 6);
-            g.pop();
+            paintSelection(g, selectionRect().cast<f64>());
         }
     }
 
