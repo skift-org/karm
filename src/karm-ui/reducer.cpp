@@ -117,8 +117,7 @@ struct Reducer :
     }
 
     void paint(Gfx::Canvas& g, Math::Recti r) override {
-        if (_rebuild)
-            panic("paint() called on React node before build");
+        ensureBuild();
         (*_child)->paint(g, r);
     }
 
