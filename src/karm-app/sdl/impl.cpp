@@ -13,6 +13,38 @@ import :sdl.keys;
 
 namespace Karm::App::_Embed {
 
+static Flags<App::KeyMod> currentMods() {
+    auto sdl = SDL_GetModState();
+    Flags<App::KeyMod> mods;
+
+    if (sdl & SDL_KMOD_LSHIFT)
+        mods |= App::KeyMod::LSHIFT;
+    if (sdl & SDL_KMOD_RSHIFT)
+        mods |= App::KeyMod::RSHIFT;
+    if (sdl & SDL_KMOD_LCTRL)
+        mods |= App::KeyMod::LCTRL;
+    if (sdl & SDL_KMOD_RCTRL)
+        mods |= App::KeyMod::RCTRL;
+    if (sdl & SDL_KMOD_LALT)
+        mods |= App::KeyMod::LALT;
+    if (sdl & SDL_KMOD_RALT)
+        mods |= App::KeyMod::RALT;
+    if (sdl & SDL_KMOD_LGUI)
+        mods |= App::KeyMod::LSUPER;
+    if (sdl & SDL_KMOD_RGUI)
+        mods |= App::KeyMod::RSUPER;
+    if (sdl & SDL_KMOD_NUM)
+        mods |= App::KeyMod::NUM;
+    if (sdl & SDL_KMOD_CAPS)
+        mods |= App::KeyMod::CAPS;
+    if (sdl & SDL_KMOD_MODE)
+        mods |= App::KeyMod::MODE;
+    if (sdl & SDL_KMOD_SCROLL)
+        mods |= App::KeyMod::SCROLL;
+
+    return mods;
+}
+
 struct SdlApplication;
 
 struct SdlWindow : Window {
@@ -181,6 +213,7 @@ struct SdlApplication : Application {
                     .pos = window->_lastMousePos,
                     .delta = screenPos.cast<isize>() - _lastScreenMousePos,
                     .buttons = buttons,
+                    .mods = currentMods(),
                 }
             );
 
@@ -213,6 +246,7 @@ struct SdlApplication : Application {
                     .type = App::MouseEvent::RELEASE,
                     .pos = window->_lastMousePos,
                     .buttons = buttons,
+                    .mods = currentMods(),
                     .button = button,
                 }
             );
@@ -245,6 +279,7 @@ struct SdlApplication : Application {
                     .type = App::MouseEvent::PRESS,
                     .pos = window->_lastMousePos,
                     .buttons = buttons,
+                    .mods = currentMods(),
                     .button = button,
                 }
             );
@@ -266,6 +301,7 @@ struct SdlApplication : Application {
                         -sdlEvent.wheel.x,
                         sdlEvent.wheel.y,
                     },
+                    .mods = currentMods(),
                 }
             );
 
