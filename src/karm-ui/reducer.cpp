@@ -23,24 +23,24 @@ struct Model {
     static constexpr auto reduce = R;
 
     template <typename X, typename... Args>
-    static Func<void(Node&)> bind(Args... args) {
+    static Send<> bind(Args... args) {
         return bindBubble<Action>(X{std::forward<Args>(args)...});
     }
 
     template <typename X>
-    static Func<void(Node&)> bind(X value) {
+    static Send<> bind(X value) {
         return bindBubble<Action>(value);
     }
 
     template <typename X, typename... Args>
-    static Opt<Func<void(Node&)>> bindIf(bool cond, Args... args) {
+    static Opt<Send<>> bindIf(bool cond, Args... args) {
         if (not cond)
             return NONE;
         return bindBubble<Action>(X{std::forward<Args>(args)...});
     }
 
     template <typename X>
-    static Opt<Func<void(Node&)>> bindIf(bool cond, X value) {
+    static Opt<Send<>> bindIf(bool cond, X value) {
         if (not cond)
             return NONE;
         return bindBubble<Action>(value);

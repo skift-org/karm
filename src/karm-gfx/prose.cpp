@@ -440,16 +440,13 @@ export struct Prose : Meta::Pinned {
         for (auto& line : _lines) {
             Au lineTop = currHeight;
 
-            Au maxAscent = 0_au;
-            Au maxDescend = 0_au;
+            Au maxAscent = fontAscent;
+            Au maxDescend = fontDescend;
             for (auto const& block : line.blocks()) {
                 if (block.strut()) {
                     Au baseline{block.strut()->baseline};
                     maxAscent = max(maxAscent, baseline);
                     maxDescend = max(maxDescend, block.strut()->size.y - baseline);
-                } else {
-                    maxAscent = max(maxAscent, fontAscent);
-                    maxDescend = max(maxDescend, fontDescend);
                 }
             }
 
@@ -593,6 +590,57 @@ export struct Prose : Meta::Pinned {
         auto& cell = block.cells()[ci];
 
         return {block.pos + cell.pos, cell.Yposition(line.baseline)};
+    }
+
+    // MARK: Hit Testing -------------------------------------------------------
+
+    usize hitTest(Vec2Au point) const {
+        if (isEmpty(_lines))
+            return 0;
+
+        Au fontAscent = Au{_lineHeight};
+
+        // Find the line containing the y coordinate
+        usize li = _lines.len() - 1;
+        for (usize i = 0; i + 1 < _lines.len(); i++) {
+            Au nextLineTop = _lines[i + 1].baseline - fontAscent;
+            if (point.y < nextLineTop) {
+                li = i;
+                break;
+            }
+        }
+
+        auto& line = _lines[li];
+
+        if (isEmpty(line.blocks()))
+            return line.runeRange.start;
+
+        // Find the block closest to the x coordinate
+        usize bi = 0;
+        for (usize i = 0; i < line.blocks().len(); i++) {
+            auto& block = line.blocks()[i];
+            if (point.x < block.pos + block.width) {
+                bi = i;
+                break;
+            }
+            bi = i;
+        }
+
+        auto& block = line.blocks()[bi];
+
+        if (isEmpty(block.cells()))
+            return block.runeRange.start;
+
+        // Find the cell closest to the x coordinate
+        for (auto& cell : block.cells()) {
+            Au cellMid = block.pos + cell.pos + cell.adv / 2_au;
+            if (point.x < cellMid)
+                return cell.runeRange.start;
+        }
+
+        // Past the last cell — return end of block
+        auto& lastCell = last(block.cells());
+        return lastCell.runeRange.end();
     }
 };
 
