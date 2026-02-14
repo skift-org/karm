@@ -525,43 +525,91 @@ constexpr None end(I&) {
 // MARK: ForEach ---------------------------------------------------------------
 
 template <typename F>
-struct _ForEach {
+struct ForEach {
     F f;
+
+    void operator|(auto&& iter) {
+        while (auto value = iter.next())
+            f(*value);
+    }
 };
 
 export template <typename F>
-void operator|(auto&& iter, _ForEach<F> forEach) {
-    while (auto value = iter.next())
-        forEach.f(*value);
-}
+ForEach(F) -> ForEach<F>;
+
+// MARK: First ------------------------------------------------------------------
+
+template <typename F>
+struct Find {
+    F f;
+
+    auto operator|(auto&& iter) {
+        while (auto value = iter.next())
+            if (f(*value))
+                return value;
+        return NONE;
+    }
+};
 
 export template <typename F>
-auto forEach(F f) {
-    return _ForEach<F>{f};
-}
+Find(F) -> Find<F>;
+
+// MARK: Any -------------------------------------------------------------------
+
+template <typename F>
+struct Any {
+    F f;
+
+    bool operator||(auto&& iter) {
+        while (auto value = iter.next())
+            if (f(*value))
+                return true;
+        return false;
+    }
+};
+
+template <typename F>
+Any(F) -> Any<F>;
 
 // MARK: Collect ---------------------------------------------------------------
 
 template <typename V>
-struct _Collect {
+struct Collect {
+    V operator|(auto&& iter) {
+        V v{};
+        while (auto value = iter.next())
+            v.pushBack(*value);
+        return v;
+    }
 };
 
-export template <typename V>
-V operator|(auto&& iter, _Collect<V>) {
-    V v{};
-    while (auto value = iter.next())
-        v.pushBack(*value);
-    return v;
+// MARK: Filter ----------------------------------------------------------------
+
+template <typename F>
+struct _Filter {
+    F f;
+};
+
+export template <typename F>
+auto operator|(auto&& iter, _Filter<F> filter) {
+    struct Iter {
+        decltype(iter) iter;
+        F f;
+
+        auto next() -> decltype(iter.next()) {
+            while (auto value = iter.next())
+                if (f(*value))
+                    return value;
+            return NONE;
+        }
+    };
+
+    return Iter{iter, filter.f};
 }
 
-export template <typename V>
-auto collect() {
-    return _Collect<V>{};
-}
-
-export auto collect() {
-    return forEach([](auto const&...) {
-    });
+export template <typename F>
+auto filter(F f) {
+    return _Filter<F>{f};
 }
 
 } // namespace Karm

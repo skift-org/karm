@@ -284,6 +284,8 @@ usize sizeOf(S const& slice) {
     return slice.len() * sizeof(typename S::Inner);
 }
 
+// MARK: Iter ------------------------------------------------------------------
+
 export template <Sliceable S>
 constexpr auto iter(S const& slice) {
     return Iter([&slice, i = 0uz] mutable -> typename S::Inner const* {
@@ -352,6 +354,28 @@ constexpr auto iterSplit(S const& slice, typename S::Inner const& sep) {
             end - start,
         };
     });
+}
+
+// MARK: Iter2 -----------------------------------------------------------------
+
+export template <Sliceable S>
+auto iter2(S const& slice) {
+    return Iter{[=, i = 0] mutable -> Opt<typename S::Inner const&> {
+        if (i >= slice.len()) {
+            return NONE;
+        }
+        return slice[i++];
+    }};
+}
+
+export template <MutSliceable S>
+auto mutIter2(S& slice) {
+    return Iter{[=, i = 0] mutable -> Opt<typename S::Inner&> {
+        if (i >= slice.len()) {
+            return NONE;
+        }
+        return slice[i++];
+    }};
 }
 
 export constexpr bool isEmpty(Sliceable auto const& slice) {
