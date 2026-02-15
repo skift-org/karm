@@ -39,6 +39,7 @@ export Ui::Child aboutDialog(String name) {
             ),
         }),
         dialogFooter({
+            Ui::grow(NONE),
             button([](auto& n) {
                 showDialog(n, licenseDialog());
             },

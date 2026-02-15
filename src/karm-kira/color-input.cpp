@@ -283,6 +283,7 @@ export Ui::Child colorPickerDialog() {
                 dialogTitleBar("Color Picker"s),
                 content | Ui::insets({8, 16}),
                 dialogFooter({
+                    Ui::grow(NONE),
                     dialogCancel(),
                     dialogAction(Ui::SINK<>, "Ok"s),
                 }),

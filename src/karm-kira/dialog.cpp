@@ -62,8 +62,6 @@ export Ui::Child dialogDescription(String text) {
 
 export Ui::Child dialogFooter(Ui::Children children) {
     auto isMobile = App::formFactor == App::FormFactor::MOBILE;
-    if (not isMobile)
-        children.pushFront(Ui::grow(NONE));
     return Ui::flow(
                {
                    isMobile ? Math::Flow::TOP_TO_BOTTOM : Math::Flow::LEFT_TO_RIGHT,
@@ -78,8 +76,8 @@ export Ui::Child dialogFooter(Ui::Children children) {
 export Ui::Child dialogAction(Opt<Ui::Send<>> onPress, String text) {
     return Ui::button(
                [onPress = std::move(onPress)](auto& n) {
-                   onPress(n);
-                   Ui::closeDialog(n);
+                    onPress(n);
+                    Ui::closeDialog(n);
                },
                Ui::ButtonStyle::primary(),
                text
@@ -101,6 +99,7 @@ export Ui::Child alertDialog(String title, String description) {
             dialogDescription(description),
         }),
         dialogFooter({
+            Ui::grow(NONE),
             dialogAction(Ui::SINK<>, "Ok"s),
         }),
     });
