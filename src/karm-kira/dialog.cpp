@@ -76,8 +76,8 @@ export Ui::Child dialogFooter(Ui::Children children) {
 export Ui::Child dialogAction(Opt<Ui::Send<>> onPress, String text) {
     return Ui::button(
                [onPress = std::move(onPress)](auto& n) {
-                    onPress(n);
-                    Ui::closeDialog(n);
+                   onPress(n);
+                   Ui::closeDialog(n);
                },
                Ui::ButtonStyle::primary(),
                text

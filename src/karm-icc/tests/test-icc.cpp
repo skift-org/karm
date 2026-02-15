@@ -31,5 +31,4 @@ test$("karm-icc-device-dependent") {
     return Ok();
 }
 
-
 } // namespace Karm::Icc::Tests

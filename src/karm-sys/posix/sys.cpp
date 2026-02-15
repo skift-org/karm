@@ -30,8 +30,6 @@ import Karm.Sys.Posix;
 
 namespace Karm::Sys::_Embed {
 
-
-
 // MARK: Fd --------------------------------------------------------------------
 
 Res<Rc<Sys::Fd>> deserializeFd(Serde::Deserializer&) {

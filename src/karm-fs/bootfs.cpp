@@ -11,8 +11,7 @@ import :vfs;
 
 namespace Karm::Fs {
 
-export Async::Task<Rc<Node>> mountBootfsAsync(Rc<Sys::Fd> fd)
-{
+export Async::Task<Rc<Node>> mountBootfsAsync(Rc<Sys::Fd> fd) {
     auto fsRoot = co_trya$(createAsync<VDir>());
     auto fsMmap = co_try$(Sys::mmap(fd));
 

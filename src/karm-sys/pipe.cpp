@@ -23,4 +23,3 @@ export struct Pipe {
 };
 
 } // namespace Karm::Sys
-

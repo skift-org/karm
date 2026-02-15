@@ -28,7 +28,7 @@ export struct Fontface : Gfx::Fontface {
 
     Fontface(Sys::Mmap&& mmap, Parser parser)
         : _mmap(std::move(mmap)),
-        _parser(std::move(parser)) {
+          _parser(std::move(parser)) {
         _unitPerEm = _parser.unitPerEm();
     }
 

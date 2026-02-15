@@ -4,7 +4,6 @@ module;
 
 export module Karm.Font.Ttf:glyf;
 
-
 import Karm.Core;
 import Karm.Gfx;
 import Karm.Math;

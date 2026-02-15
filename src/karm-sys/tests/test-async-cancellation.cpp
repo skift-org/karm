@@ -17,7 +17,7 @@ testAsync$("async-cancellation") {
     bool finished = false;
     Async::Cancellation sleepCancel;
     co_try$(sleepCancel.attach(ct));
-    Async::detach(bigSleptAsync(pass, sleepCancel.token()), [&] (auto&) {
+    Async::detach(bigSleptAsync(pass, sleepCancel.token()), [&](auto&) {
         finished = true;
     });
     sleepCancel.cancel();
