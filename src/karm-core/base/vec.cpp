@@ -75,6 +75,8 @@ struct _Vec {
 
     void removeRange(usize index, usize count) { _buf.removeRange(index, count); }
 
+    void removeRange(urange range) { _buf.removeRange(range.start, range.size); }
+
     void removeUnordered(usize index) {
         if (index >= len()) [[unlikely]]
             panic("removeUnordered: index out of bounds");
