@@ -73,6 +73,10 @@ union Vec2 {
         return {Karm::max(x, other.x), Karm::max(y, other.y)};
     }
 
+    constexpr Vec2 abs() const {
+        return {Math::abs(x), Math::abs(y)};
+    }
+
     constexpr T dot(Vec2 other) const {
         return x * other.x + y * other.y;
     }
