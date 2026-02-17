@@ -35,9 +35,8 @@ export Ui::Child tabbarItem(bool selected, Ui::Send<> onSelect, Ui::Child conten
 
     return Ui::box(
         {
-            .margin = {8, 0, 0, 0},
-            .padding = {0, 0, 8, 0},
-            .borderRadii = {4, 4, 0, 0},
+            .margin = {8, 0},
+            .borderRadii = 4,
             .backgroundFill = Ui::GRAY900,
         },
         content | Ui::bound()
