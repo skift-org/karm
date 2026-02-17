@@ -311,7 +311,7 @@ export struct CpuCanvas : Canvas {
         bool isSuitableForFastFill =
             radii.zero() and
             current().fill.is<Color>() and
-            current().trans.isIdentity();
+            current().trans.isAxisAligned();
 
         if (isSuitableForFastFill) {
             _fillRect(r, current().fill.unwrap<Color>());
@@ -329,7 +329,7 @@ export struct CpuCanvas : Canvas {
     }
 
     void clip(Math::Rectf r) override {
-        if (current().trans.simple()) {
+        if (current().trans.isAxisAligned()) {
             r = current().trans.apply(r).bound();
             current().clip = r.cast<isize>().clipTo(current().clip);
             return;

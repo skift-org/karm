@@ -88,7 +88,7 @@ union Trans2 {
     }
 
     bool rotated() const {
-        return xx * yy - xy * yx < 0;
+        return xy != 0 or yx != 0;
     }
 
     bool skewed() const {
@@ -103,8 +103,8 @@ union Trans2 {
         return ox != 0 or oy != 0;
     }
 
-    bool simple() const {
-        return not rotated() and not skewed();
+    bool isAxisAligned() const {
+        return Math::epsilonEq(xy, T{0.}) and Math::epsilonEq(yx, T{0.});
     }
 
     constexpr Trans2()
