@@ -121,6 +121,20 @@ union Vec2 {
         return sign * acos(r);
     }
 
+    constexpr Vec2 snapToDiagonal() const {
+        auto side = Karm::max(Math::abs(x), Math::abs(y));
+
+        f64 sx = x < 0 ? -1 : 1;
+        f64 sy = y < 0 ? -1 : 1;
+
+        if (Math::abs(x) < 1e-6)
+            sx = sy;
+        if (Math::abs(y) < 1e-6)
+            sy = sx;
+
+        return {sx * side, sy * side};
+    }
+
     constexpr T operator[](isize i) const {
         return _els[i];
     }
