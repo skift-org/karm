@@ -56,7 +56,7 @@ union Edge {
         return epsilonEq(start, end, epsilon);
     }
 
-    constexpr Vec<T> delta() const {
+    constexpr Vec2<T> delta() const {
         return {end.x - start.x, end.y - start.y};
     }
 
