@@ -8,138 +8,118 @@ import :fill;
 namespace Karm::Gfx {
 
 export struct CpuRast {
-    static constexpr auto AA = 3;
-    static constexpr auto UNIT = 1.0f / AA;
-    static constexpr auto HALF_UNIT = 1.0f / AA / 2.0;
-
-    struct Active {
-        f64 x;
-        isize sign;
-    };
-
     struct Frag {
         Math::Vec2i xy;
         Math::Vec2f uv;
         f64 a;
     };
 
-    Vec<Active> _active{};
-    Vec<irange> _ranges;
     Vec<f64> _scanline{};
 
-    void _appendRange(irange range) {
-        usize i = 0;
-        for (auto& r : _ranges) {
-            if (r.overlaps(range)) {
-                auto merged = r.merge(range);
-                _ranges.removeAt(i);
-                _appendRange(merged);
-                return;
-            }
+    void _accumulate(isize xOffset, isize width, Math::Vec2f p0, Math::Vec2f p1) {
+        f64 dy = p1.y - p0.y;
 
-            if (range.end() > r.start) {
-                _ranges.insert(i, range);
-                return;
-            }
+        if (Math::epsilonEq(dy, 0.0))
+            return;
 
-            i++;
+        f64 xMid = (p0.x + p1.x) / 2.0;
+        f64 xRel = xMid - Math::floori(xMid);
+        f64 area = dy * (1.0 - xRel);
+
+        isize idx = Math::floori(xMid) - xOffset;
+
+        if (idx < 0) {
+            _scanline[0] += dy;
+            return;
         }
 
-        _ranges.pushBack(range);
-    }
+        if (idx >= width)
+            return;
 
+        _scanline[idx] += area;
+        _scanline[idx + 1] += (dy - area);
+    }
     void fill(Math::Polyf& poly, Math::Recti clip, FillRule fillRule, auto cb) {
-        auto polyBound = poly.bound().grow(UNIT);
+        auto polyBound = poly.bound();
+
         auto clipBound = polyBound
                              .ceil()
                              .cast<isize>()
                              .clipTo(clip);
 
+        if (clipBound.width <= 0 or clipBound.height <= 0)
+            return;
+
         _scanline.resize(clipBound.width + 1);
 
         for (isize y = clipBound.top(); y < clipBound.bottom(); y++) {
             zeroFill<f64>(mutSub(_scanline, 0, clipBound.width + 1));
-            _ranges.clear();
 
-            for (f64 yy = y; yy < y + 1.0; yy += UNIT) {
-                _active.clear();
+            f64 yTop = y;
+            f64 yBot = y + 1.0;
 
-                for (auto& edge : poly) {
-                    auto sample = yy + HALF_UNIT;
-
-                    if (edge.bound().top() <= sample and sample < edge.bound().bottom()) {
-                        _active.pushBack({
-                            .x = edge.sx + (sample - edge.sy) / (edge.ey - edge.sy) * (edge.ex - edge.sx),
-                            .sign = edge.sy > edge.ey ? 1 : -1,
-                        });
-                    }
-                }
-
-                if (_active.len() == 0)
+            for (auto& edge : poly) {
+                if (edge.bound().bottom() <= yTop or edge.bound().top() >= yBot)
                     continue;
 
-                sort(_active, [](auto const& a, auto const& b) {
-                    return a.x <=> b.x;
-                });
+                auto d = edge.delta();
 
-                isize rule = 0;
-                for (usize i = 0; i + 1 < _active.len(); i++) {
-                    if (fillRule == FillRule::NONZERO) {
-                        rule += _active[i].sign;
-                        if (rule == 0)
-                            continue;
+                if (Math::epsilonEq(d.y, 0.0))
+                    continue;
+
+                f64 t0 = clamp01((yTop - edge.start.y) / d.y);
+                f64 t1 = clamp01((yBot - edge.start.y) / d.y);
+
+                if (t0 > t1)
+                    std::swap(t0, t1);
+
+                Math::Vec2f p0 = edge.start + d * t0;
+                Math::Vec2f p1 = edge.start + d * t1;
+
+                f64 xDir = (p1.x > p0.x) ? 1.0 : -1.0;
+                Math::Vec2f cursor = p0;
+
+                isize ixStart = Math::floori(p0.x);
+                isize ixEnd = Math::floori(p1.x);
+
+                if (ixStart == ixEnd) {
+                    _accumulate(clipBound.x, clipBound.width, cursor, p1);
+                } else {
+                    isize steps = Math::abs(ixEnd - ixStart);
+                    for (isize i = 0; i < steps; i++) {
+                        f64 nextX = (xDir > 0) ? Math::floor(cursor.x) + 1.0 : Math::ceil(cursor.x) - 1.0;
+
+                        f64 t = (nextX - cursor.x) / (p1.x - cursor.x);
+
+                        Math::Vec2f nextP = cursor + (p1 - cursor) * t;
+                        nextP.x = nextX;
+
+                        _accumulate(clipBound.x, clipBound.width, cursor, nextP);
+                        cursor = nextP;
                     }
-
-                    if (fillRule == FillRule::EVENODD) {
-                        rule++;
-                        if (rule % 2 == 0)
-                            continue;
-                    }
-
-                    // Clip the range to the clip rect
-                    // NOTE: The following looks a bit verbose but it's necessary to avoid
-                    //       floating point errors when converting to integer coordinates.
-                    f64 x1 = max(_active[i].x, clipBound.start());
-
-                    isize cx1 = max(Math::ceili(_active[i].x), clipBound.start());
-                    isize fx1 = max(Math::floori(_active[i].x), clipBound.start());
-
-                    f64 x2 = min(_active[i + 1].x, clipBound.end());
-                    isize cx2 = min(Math::ceili(_active[i + 1].x), clipBound.end());
-                    isize fx2 = min(Math::floori(_active[i + 1].x), clipBound.end());
-
-                    // Skip if the range is empty
-                    if (x1 >= x2)
-                        continue;
-
-                    _appendRange(irange::fromStartEnd(fx1, cx2));
-
-                    // Are x1 and x2 on the same pixel?
-                    if (fx1 == fx2) {
-                        _scanline[fx1 - clipBound.x] += (x2 - x1) * UNIT;
-                        continue;
-                    }
-
-                    // Compute the coverage for the first and last pixel
-                    _scanline[x1 - clipBound.x] += (cx1 - x1) * UNIT;
-                    _scanline[x2 - clipBound.x] += (x2 - fx2) * UNIT;
-
-                    // Fill the pixels in between
-                    for (isize x = cx1; x < fx2; x++)
-                        _scanline[x - clipBound.x] += UNIT;
+                    _accumulate(clipBound.x, clipBound.width, cursor, p1);
                 }
             }
 
-            for (auto r : _ranges) {
-                for (isize x = r.start; x < r.end(); x++) {
-                    auto xy = Math::Vec2i{x, y};
+            f64 accumulator = 0;
+            for (isize x = 0; x < clipBound.width; x++) {
+                accumulator += _scanline[x];
+                f64 coverage = accumulator;
+                if (fillRule == FillRule::NONZERO) {
+                    coverage = clamp01(Math::abs(coverage));
+                } else {
+                    f64 val = Math::abs(coverage);
+                    val = val - 2.0 * Math::floor(val / 2.0);
+                    if (val > 1.0)
+                        val = 2.0 - val;
+                    coverage = val;
+                }
 
-                    auto uv = Math::Vec2f{
-                        (x - polyBound.start()) / polyBound.width,
-                        (y - polyBound.top()) / polyBound.height,
-                    };
+                if (coverage > Limits<f64>::EPSILON) {
+                    Math::Vec2i pos = {clipBound.x + x, y};
+                    Math::Vec2f uv = (pos.cast<f64>() - polyBound.topStart()) / polyBound.size();
 
-                    cb(Frag{xy, uv, clamp01(_scanline[x - clipBound.x])});
+                    cb(Frag{pos, uv, coverage});
                 }
             }
         }
