@@ -217,6 +217,36 @@ struct Union {
     }
 };
 
+export void dispatch(auto visitor) {
+    visitor();
+}
+
+export template <typename V, typename T, typename... Ts>
+void dispatch(V visitor, T&& t, Ts&&... ts) {
+    if constexpr (
+        requires(T t) { t.visit(
+                            [](auto&&...) {
+                            }
+                        ); }
+    ) {
+        t.visit([&](auto&& val) {
+            dispatch(
+                [&](auto&&... args) {
+                    visitor(val, std::forward<decltype(args)>(args)...);
+                },
+                std::forward<Ts>(ts)...
+            );
+        });
+    } else {
+        dispatch(
+            [&](auto&&... args) {
+                visitor(t, std::forward<decltype(args)>(args)...);
+            },
+            std::forward<Ts>(ts)...
+        );
+    }
+}
+
 export template <typename... Ts>
 struct Visitor : Ts... {
     using Ts::operator()...;

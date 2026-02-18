@@ -409,14 +409,14 @@ struct [[nodiscard]] Opt {
         -> decltype(visitor(_store.unwrap())) {
         if (_store.has())
             return visitor(_store.unwrap());
-        return {};
+        return visitor(NONE);
     }
 
     always_inline constexpr auto visit(auto visitor) const
         -> decltype(visitor(_store.unwrap())) {
         if (_store.has())
             return visitor(_store.unwrap());
-        return {};
+        return visitor(NONE);
     }
 
     always_inline constexpr auto map(auto f) -> Opt<decltype(f(unwrap()))> {
@@ -509,5 +509,8 @@ struct [[nodiscard]] Opt {
         return hash(false);
     }
 };
+
+export template <typename T>
+Opt(T) -> Opt<T>;
 
 } // namespace Karm
