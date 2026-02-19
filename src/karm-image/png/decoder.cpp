@@ -13,6 +13,8 @@ import Karm.Logger;
 
 namespace Karm::Image::Png {
 
+using Karm::begin, Karm::end;
+
 static auto debugPng = Debug::Flag::debug("png", "Log PNG decoding"s);
 
 enum struct ColorType : u8 {
@@ -104,19 +106,25 @@ export struct Decoder {
             u32 crc32;
         };
 
-        return Iter{[s] mutable -> Opt<Chunk> {
-            if (s.ended())
-                return NONE;
+        struct Iter {
+            Io::BScan s;
 
-            Chunk c;
+            Opt<Chunk> next() {
+                if (s.ended())
+                    return NONE;
 
-            c.len = s.nextI32be();
-            c.sig = s.nextStr(4);
-            c.data = s.nextBytes(c.len);
-            c.crc32 = s.nextI32be();
+                Chunk c;
 
-            return c;
-        }};
+                c.len = s.nextI32be();
+                c.sig = s.nextStr(4);
+                c.data = s.nextBytes(c.len);
+                c.crc32 = s.nextI32be();
+
+                return c;
+            }
+        };
+
+        return Iter{s};
     }
 
     // MARK: Header ------------------------------------------------------------
@@ -301,12 +309,12 @@ export struct Decoder {
 
         Io::BScan s = data;
         Bytes prev = {};
-        for (usize scanline : range(height())) {
+        for (usize scanline : urange::zeroTo(height())) {
             Filter filter = static_cast<Filter>(s.nextU8be());
             auto filt = s.nextBytes(bytesPerScan);
             MutBytes curr = mutSub(res, bytesPerScan * scanline, bytesPerScan * scanline + bytesPerScan);
 
-            for (usize x : range(bytesPerScan))
+            for (usize x : urange::zeroTo(bytesPerScan))
                 _unfilter(
                     filter,
                     x,
@@ -325,7 +333,7 @@ export struct Decoder {
     // MARK: Decoding ----------------------------------------------------------
 
     Res<> _decodeScanline(Io::BScan& s, Gfx::MutPixels out, usize scanline) {
-        for (usize i : range(_width)) {
+        for (usize i : urange::zeroTo(_width)) {
             if (_colorType == ColorType::GREYSCALE or
                 _colorType == ColorType::GREYSCALE_ALPHA) {
                 auto g = s.nextU8be();
@@ -348,7 +356,7 @@ export struct Decoder {
 
     Res<> _decodeImage(Gfx::MutPixels out, Bytes unfiltered) {
         Io::BScan s = unfiltered;
-        for (usize const scanline : range(_height)) {
+        for (usize scanline : urange::zeroTo(_height)) {
             try$(_decodeScanline(s, out, scanline));
         }
         return Ok();

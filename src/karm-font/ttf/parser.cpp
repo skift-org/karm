@@ -165,20 +165,28 @@ export struct Parser {
             u32 length;
         };
 
-        return Iter{[scan, i = 0uz, numTables] mutable -> Opt<Table> {
-            if (i == numTables) {
-                return NONE;
+        struct Iter {
+            Io::BScan scan;
+            usize i;
+            usize numTables;
+
+            Opt<Table> next() {
+                if (i == numTables) {
+                    return NONE;
+                }
+
+                Table table{};
+                table.tag = scan.nextStr(4);
+                table.checkSum = scan.nextU32be();
+                table.offset = scan.nextU32be();
+                table.length = scan.nextU32be();
+
+                i++;
+                return table;
             }
+        };
 
-            Table table{};
-            table.tag = scan.nextStr(4);
-            table.checkSum = scan.nextU32be();
-            table.offset = scan.nextU32be();
-            table.length = scan.nextU32be();
-
-            i++;
-            return table;
-        }};
+        return Iter{scan, 0, numTables};
     }
 
     template <typename T>

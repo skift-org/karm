@@ -49,7 +49,7 @@ export Ui::Child select(Ui::Child value, Ui::Slots slots) {
             value | Ui::grow(),
             Ui::icon(Mdi::CHEVRON_DOWN)
         ) | Ui::insets({6, 12, 6, 16}) |
-            Ui::minSize({Ui::UNCONSTRAINED, 36})
+            Ui::minSize({Ui::UNCONSTRAINED, 32})
     );
 }
 

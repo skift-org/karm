@@ -22,11 +22,11 @@ struct Crc {
 
     static constexpr Array<Digest, 256> TABLE = [] {
         Array<Digest, 256> res = {};
-        for (auto d : range<usize>(256)) {
+        for (auto d : urange::zeroTo(256uz)) {
             Digest r = static_cast<Digest>(d);
 
             if constexpr (RefIn) {
-                for (usize _ : range(8)) {
+                for (usize _ : urange::zeroTo(8uz)) {
                     if (r & 1)
                         r = (r >> 1) ^ EffectivePoly;
                     else
@@ -34,7 +34,7 @@ struct Crc {
                 }
             } else {
                 r <<= (Width - 8);
-                for (usize _ : range(8)) {
+                for (usize _ : urange::zeroTo(8uz)) {
                     if (r & (Digest(1) << (Width - 1)))
                         r = (r << 1) ^ EffectivePoly;
                     else

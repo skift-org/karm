@@ -25,7 +25,7 @@ export Ui::Child searchbar(String text) {
                .borderWidth = 1,
                .borderFill = Ui::GRAY800,
            }) |
-           Ui::minSize({Ui::UNCONSTRAINED, 36}) |
+           Ui::minSize({Ui::UNCONSTRAINED, 32}) |
            Ui::focusable() |
            Ui::keyboardShortcut(App::Key::F, App::KeyMod::CTRL);
 }

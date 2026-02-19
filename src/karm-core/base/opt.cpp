@@ -373,19 +373,13 @@ struct [[nodiscard]] Opt {
         return _store.unwrap();
     }
 
-    always_inline constexpr Value const& unwrapOr(T const& other) const lifetimebound {
+    always_inline constexpr Value unwrapOr(Value other) const {
         if (_store.has())
             return _store.unwrap();
         return other;
     }
 
-    always_inline constexpr T unwrapOrDefault(T other) const lifetimebound {
-        if (_store.has())
-            return _store.unwrap();
-        return other;
-    }
-
-    always_inline constexpr T unwrapOrElse(auto f) const lifetimebound {
+    always_inline constexpr T unwrapOrElse(auto f) const {
         if (_store.has())
             return _store.unwrap();
         return f();

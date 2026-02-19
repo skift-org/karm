@@ -5,426 +5,75 @@ import :base.clamp;
 
 namespace Karm {
 
-export template <typename Next>
-struct Iter {
-    Next next;
-    using Item = decltype(next());
-    using Value = Meta::RemoveConstVolatileRef<decltype(*next())>;
-
-    constexpr Iter(Next next) : next(next) {}
-
-    constexpr auto map(auto f) {
-        auto n = [=, *this] mutable -> Opt<decltype(f(*Meta::declval<Item>()))> {
-            auto v = next();
-
-            if (not v) {
-                return NONE;
-            }
-
-            return f(*v);
-        };
-
-        return Iter<decltype(n)>{n};
-    }
-
-    constexpr auto mapi(auto f) {
-        auto n = [=, *this, index = 0uz] mutable -> Opt<decltype(f(*Meta::declval<Item>(), 1uz))> {
-            auto v = next();
-            index++;
-
-            if (not v) {
-                return NONE;
-            }
-
-            return f(*v, index - 1);
-        };
-
-        return Iter<decltype(n)>{n};
-    }
-
-    constexpr auto filter(auto f) {
-        auto n = [=, *this] mutable -> Item {
-            auto v = next();
-            if (not v) {
-                return NONE;
-            }
-
-            while (not f(*v)) {
-                v = next();
-                if (not v) {
-                    return NONE;
-                }
-            }
-
-            return v;
-        };
-
-        return Iter<decltype(n)>{n};
-    }
-
-    constexpr auto reduce(auto init, auto f) {
-        auto result = init;
-        forEach([&](auto v) {
-            result = f(result, v);
-        });
-        return result;
-    }
-
-    constexpr auto forEach(auto f) {
-        for (auto item = next(); item; item = next()) {
-            f(*item);
-        }
-    }
-
-    constexpr auto find(auto f) {
-        for (auto item = next(); item; item = next()) {
-            if (f(*item)) {
-                return *item;
-            }
-        }
-
-        return NONE;
-    }
-
-    constexpr usize len() {
-        usize result = 0;
-        forEach([&](auto) {
-            result++;
-        });
-        return result;
-    }
-
-    constexpr auto sum() {
-        return reduce(Value{}, [](auto& a, auto& b) {
-            return a + b;
-        });
-    }
-
-    constexpr bool any() {
-        return next() != NONE;
-    }
-
-    constexpr auto first() {
-        return next();
-    }
-
-    constexpr auto first(auto f) -> Item {
-        for (auto item = next(); item; item = next()) {
-            if (f(*item)) {
-                return item;
-            }
-        }
-
-        return NONE;
-    }
-
-    constexpr auto last() {
-        Item result = NONE;
-        for (auto item = next(); item; item = next()) {
-            result = item;
-        }
-        return result;
-    }
-
-    constexpr auto last(auto f) {
-        Item result = NONE;
-        for (auto item = next(); item; item = next()) {
-            if (f(*item)) {
-                result = item;
-            }
-        }
-        return result;
-    }
-
-    constexpr auto skip(usize n) {
-        for (usize i = 0; i < n; i++) {
-            (void)next();
-        }
-        return *this;
-    }
-
-    constexpr auto cycle(usize n) {
-        return Iter{[start = *this, curr = *this, i = 0, n] mutable {
-            auto v = curr.next();
-
-            if (not v and i < n) {
-                curr = start;
-                i++;
-                v = curr.next();
-            }
-
-            return v;
-        }};
-    }
-
-    constexpr auto take(usize n) {
-        return Iter{[=, *this] mutable {
-            if (n == 0) {
-                return NONE;
-            }
-
-            auto v = next();
-            n--;
-            return v;
-        }};
-    }
-
-    constexpr auto prepend(auto v) {
-        return Iter{
-            [=, *this, first = true] mutable -> Item {
-                if (first)
-                    return Item{v};
-
-                return next();
-            }
-        };
-    }
-
-    constexpr auto append(auto v) {
-        return Iter{
-            [=, *this, last = true] mutable -> Item {
-                auto result = next();
-
-                if (not result and last) {
-                    last = false;
-                    return Item{v};
-                }
-
-                return result;
-            }
-        };
-    }
-
-    constexpr auto at(usize n) {
-        return skip(n).first();
-    }
-
-    constexpr bool any(auto f) {
-        return find(f) != NONE;
-    }
-
-    constexpr bool all(auto f) {
-        for (auto item = next(); item; item = next()) {
-            if (not f(*item)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    constexpr auto min() {
-        Item result = NONE;
-
-        for (auto item = next(); item; item = next()) {
-            if (not result or (*item < *result)) {
-                result = item;
-            }
-        }
-
-        return result;
-    }
-
-    constexpr auto max() {
-        Item result = NONE;
-
-        for (auto item = next(); item; item = next()) {
-            if (not result or (*item > *result)) {
-                result = item;
-            }
-        }
-
-        return result;
-    }
-
-    constexpr auto avg() -> Item {
-        Item result = NONE;
-        usize count = 0;
-
-        for (auto item = next(); item; item = next()) {
-            if (not result) {
-                result = item;
-            } else {
-                result = *result + *item;
-            }
-            count++;
-        }
-
-        if (count == 0) {
-            return NONE;
-        }
-
-        return *result / count;
-    }
-
-    struct It {
-        Item curr;
-        Iter& iter;
-
-        constexpr auto& operator*() {
-            return *curr;
-        }
-
-        constexpr auto& operator++() {
-            curr = iter.next();
-            return *this;
-        }
-
-        constexpr bool operator!=(None) {
-            return curr != NONE;
-        }
-    };
-
-    constexpr It begin() {
-        return It{next(), *this};
-    }
-
-    constexpr None end() {
-        return NONE;
-    }
-
-    constexpr auto collect() {
-        forEach([&](auto const&...) {
-        });
-    }
-
-    template <typename C>
-    constexpr auto collect(C& c) {
-        forEach([&](auto v) {
-            c.pushBack(v);
-        });
-    }
-
-    template <typename C>
-    constexpr auto collect(C& c, auto f) {
-        forEach([&](auto v) {
-            c.pushBack(f(v));
-        });
-    }
-
-    template <typename C>
-    constexpr auto collect() {
-        C c;
-        collect(c);
-        return c;
-    }
-
-    template <typename C>
-    constexpr auto collect(auto f) {
-        C c;
-        collect(c, f);
-        return c;
-    }
-};
-
 export template <typename T>
-constexpr auto single(T value) {
-    return Iter<None>{[value, end = false] mutable {
-        if (end) {
-            return NONE;
-        }
-
-        end = true;
-        return value;
-    }};
-}
-
-export template <typename T>
-constexpr auto repeat(T value, usize count) {
-    return Iter{[value, count] mutable -> Opt<T> {
-        if (count == 0) {
-            return NONE;
-        }
-
-        count--;
-        return value;
-    }};
-}
-
-export template <typename T>
-constexpr auto range(T end) {
-    return Iter{[value = static_cast<T>(0), end] mutable -> Opt<T> {
-        if (value >= end)
-            return NONE;
-        return value++;
-    }};
-}
-
-export template <typename T>
-constexpr auto range(T start, T end) {
-    return Iter{[value = start, start, end] mutable -> Opt<T> {
-        if (value >= end) {
-            return NONE;
-        }
-
-        auto result = value;
-        if (start < end) {
-            value++;
-        } else {
-            value++;
-        }
-        return result;
-    }};
-}
-
-export template <typename T>
-constexpr auto range(T start, T end, T step) {
-    return Iter{[value = start, start, end, step] mutable -> Opt<T> {
-        if (value >= end) {
-            return NONE;
-        }
-
-        auto result = value;
-        if (start < end) {
-            value += step;
-        } else {
-            value -= step;
-        }
-        return result;
-    }};
-}
-
-export template <typename T>
-concept AtLen = requires(T t) {
-    t.len();
-    t.at(0);
-};
-
-export constexpr auto iter(AtLen auto& o) {
-    return range(o.len())
-        .map([&](auto i) mutable {
-            return o.at(i);
-        });
-}
-
-// MARK: Iter2 ----------------------------------------------------------------
-
-// NOTE: New iterator interface, that will replace the old one.
-// This is a work in progress and not all features are implemented yet.
-
-export template <typename T>
-concept Iter2Item = requires(T t) {
+concept IterItem = requires(T t) {
     *t;
     t == NONE;
     t != NONE;
 };
 
 export template <typename T>
-concept Iter2 = requires(T t) {
-    { t.next() } -> Iter2Item;
+concept Iter = requires(T t) {
+    { t.next() } -> IterItem;
 };
 
-// MARK: Generator -------------------------------------------------------------
+// MARK: Generators -----------------------------------------------------------
 
 export template <typename T>
-struct [[nodiscard, clang::coro_return_type, clang::coro_lifetimebound]] Generator {
+struct Single {
+    Opt<T> value;
+
+    constexpr Opt<T> next() {
+        return value.take();
+    }
+};
+
+export template <typename T>
+struct Repeat {
+    T value;
+    usize count;
+
+    constexpr T next() {
+        if (count == 0)
+            return NONE;
+        count--;
+        return value;
+    }
+};
+
+// NOTE: Range is already taken so we had to be creative with the name
+export template <typename T>
+struct Iota {
+    T start;
+    T end;
+    T step;
+
+    constexpr Iota(T start, T end, T step = 1)
+        : start(start), end(end), step(step) {}
+
+    constexpr Iota(T end)
+        : Iota(static_cast<T>(0), end) {}
+
+    constexpr T next() {
+        if (start >= end)
+            return NONE;
+        auto value = start;
+        start += step;
+        return value;
+    }
+};
+
+// MARK: Yield -------------------------------------------------------------
+
+export template <typename T>
+struct [[nodiscard, clang::coro_return_type, clang::coro_lifetimebound]] Yield {
     struct promise_type;
 
     struct promise_type {
         Opt<T> _value = NONE;
 
-        Generator get_return_object() {
-            return Generator(std::coroutine_handle<promise_type>::from_promise(*this));
+        Yield get_return_object() {
+            return Yield(std::coroutine_handle<promise_type>::from_promise(*this));
         }
 
         std::suspend_always initial_suspend() { return {}; }
@@ -447,22 +96,24 @@ struct [[nodiscard, clang::coro_return_type, clang::coro_lifetimebound]] Generat
     std::coroutine_handle<promise_type> _coro = nullptr;
     bool _full = false;
 
-    Generator(std::coroutine_handle<promise_type> coro)
+    Yield(std::coroutine_handle<promise_type> coro)
         : _coro(coro) {}
 
-    Generator(Generator const& other) = delete;
+    // Copy is deleted
+    Yield(Yield const& other) = delete;
 
-    Generator(Generator&& other)
+    // Move is allowed
+    Yield(Yield&& other)
         : _coro(std::exchange(other._coro, nullptr)) {}
 
-    Generator& operator=(Generator const& other) = delete;
+    Yield& operator=(Yield const& other) = delete;
 
-    Generator& operator=(Generator&& other) {
+    Yield& operator=(Yield&& other) {
         std::swap(_coro, other._coro);
         return *this;
     }
 
-    ~Generator() {
+    ~Yield() {
         if (_coro)
             _coro.destroy();
     }
@@ -488,11 +139,267 @@ struct [[nodiscard, clang::coro_return_type, clang::coro_lifetimebound]] Generat
     }
 };
 
-static_assert(Iter2<Generator<int>>);
+static_assert(Iter<Yield<int>>);
 
-// MARK: Iter ------------------------------------------------------------------
+// MARK: ForEach ---------------------------------------------------------------
 
-template <Iter2 I>
+export template <typename F>
+struct ForEach {
+    F f;
+
+    constexpr void pipe(auto&& iter) {
+        while (auto value = iter.next())
+            f(*value);
+    }
+};
+
+export template <typename F>
+ForEach(F) -> ForEach<F>;
+
+// MARK: ForEachi --------------------------------------------------------------
+
+export template <typename F>
+struct ForEachi {
+    F f;
+
+    constexpr void pipe(auto&& iter) {
+        usize index = 0;
+        while (auto value = iter.next())
+            f(*value, index++);
+    }
+};
+
+export template <typename F>
+ForEachi(F) -> ForEachi<F>;
+
+// MARK: First ------------------------------------------------------------------
+
+export template <typename F>
+struct Find {
+    F f;
+
+    constexpr auto pipe(auto&& iter) {
+        while (auto value = iter.next())
+            if (f(*value))
+                return value;
+        return decltype(iter.next()){NONE};
+    }
+};
+
+export template <typename F>
+Find(F) -> Find<F>;
+
+// MARK: FindLast --------------------------------------------------------------
+
+export template <typename F>
+struct FindLast {
+    F f;
+
+    constexpr auto pipe(auto&& iter) {
+        decltype(iter.next()) last = NONE;
+        while (auto value = iter.next())
+            if (f(*value))
+                last = value;
+        return last;
+    }
+};
+
+export template <typename F>
+FindLast(F) -> FindLast<F>;
+
+// MARK: Select ----------------------------------------------------------------
+
+export template <typename F>
+struct Select {
+    F f;
+
+    constexpr auto pipe(auto&& iter) {
+        // FIX: Remove reference to store by value (Decay)
+        using I = Meta::RemoveConstVolatileRef<decltype(iter)>;
+
+        struct Iter {
+            I iter; // Stored by value
+            F f;
+
+            auto next() -> Opt<decltype(f(*iter.next()))> {
+                while (auto value = iter.next())
+                    return f(*value);
+                return NONE;
+            }
+        };
+
+        // FIX: Forward the iterator into the struct
+        return Iter{std::forward<decltype(iter)>(iter), std::move(f)};
+    }
+};
+
+// MARK: Selecti -------------------------------------------------------------------
+
+export template <typename F>
+struct Selecti {
+    F f;
+
+    constexpr auto pipe(auto&& iter) {
+        using I = Meta::RemoveConstVolatileRef<decltype(iter)>;
+
+        struct Iter {
+            I iter;
+            F f;
+            usize index = 0;
+
+            auto next() -> Opt<decltype(f(*iter.next(), index))> {
+                while (auto value = iter.next())
+                    return f(*value, index++);
+                return NONE;
+            }
+        };
+
+        return Iter{std::forward<decltype(iter)>(iter), std::move(f)};
+    }
+};
+
+// MARK: Where ----------------------------------------------------------------
+
+export template <typename F>
+struct Where {
+    F f;
+
+    constexpr auto pipe(auto&& iter) {
+        using I = Meta::RemoveConstVolatileRef<decltype(iter)>;
+
+        struct Iter {
+            I iter;
+            F f;
+
+            auto next() -> decltype(iter.next()) {
+                while (auto value = iter.next())
+                    if (f(*value))
+                        return value;
+                return NONE;
+            }
+        };
+
+        return Iter{std::forward<decltype(iter)>(iter), std::move(f)};
+    }
+};
+
+// MARK: Any -------------------------------------------------------------------
+
+export template <typename F>
+struct Any {
+    F f;
+
+    constexpr bool pipe(auto&& iter) {
+        while (auto value = iter.next())
+            if (f(*value))
+                return true;
+        return false;
+    }
+};
+
+template <typename F>
+Any(F) -> Any<F>;
+
+// MARK: All -------------------------------------------------------------------
+
+export template <typename F>
+struct All {
+    F f;
+
+    constexpr bool pipe(auto&& iter) {
+        while (auto value = iter.next())
+            if (not f(*value))
+                return false;
+        return true;
+    }
+};
+
+template <typename F>
+All(F) -> All<F>;
+
+// MARK: Collect ---------------------------------------------------------------
+
+export template <typename V>
+struct Collect {
+    constexpr V pipe(auto&& iter) {
+        V v{};
+        while (auto value = iter.next())
+            v.pushBack(*value);
+        return v;
+    }
+};
+
+// MARK: Reduce ----------------------------------------------------------------
+
+export template <typename F>
+struct Reduce {
+    F f;
+
+    constexpr auto pipe(auto&& iter) {
+        auto first = iter.next();
+        if (not first)
+            return NONE;
+        auto acc = *first;
+        while (auto value = iter.next())
+            acc = f(std::move(acc), *value);
+        return acc;
+    }
+};
+
+// MARK: Sum -------------------------------------------------------------------
+
+export struct Sum {
+    constexpr auto pipe(auto&& iter) {
+        using T = Meta::RemoveConstVolatileRef<decltype(*iter.next())>;
+        T sum = static_cast<T>(0);
+        while (auto value = iter.next())
+            sum += *value;
+        return sum;
+    }
+};
+
+// MARK: Max -------------------------------------------------------------------
+
+export struct Max {
+    constexpr auto pipe(auto&& iter) {
+        using T = decltype(*iter.next());
+        Opt<T> max;
+        while (auto value = iter.next())
+            if (not max or *value > *max)
+                max = *value;
+        return max;
+    }
+};
+
+// MARK: Min -------------------------------------------------------------------
+
+export struct Min {
+    constexpr auto pipe(auto&& iter) {
+        using T = decltype(*iter.next());
+        Opt<T> min;
+        while (auto value = iter.next())
+            if (not min or *value < *min)
+                min = *value;
+        return min;
+    }
+};
+
+// MARK: Piping ----------------------------------------------------------------
+
+export template <typename T, typename I>
+concept IterPipe = requires(T t, I i) {
+    t.pipe(i);
+};
+
+export template <typename Iter, IterPipe<Iter> Pipe>
+auto operator|(Iter&& i, Pipe&& p) {
+    // FIX: Forward both the iterator and the pipe
+    return std::forward<Pipe>(p).pipe(std::forward<Iter>(i));
+}
+
+// MARK: begin/end -------------------------------------------------------------
+
+template <Iter I>
 struct It {
     using Item = decltype(Meta::declval<I>().next());
     Item curr;
@@ -512,104 +419,14 @@ struct It {
     }
 };
 
-export template <Iter2 I>
+export template <Iter I>
 constexpr It<I> begin(I& iter) {
     return {iter.next(), iter};
 }
 
-export template <Iter2 I>
+export template <Iter I>
 constexpr None end(I&) {
     return NONE;
-}
-
-// MARK: ForEach ---------------------------------------------------------------
-
-template <typename F>
-struct ForEach {
-    F f;
-
-    void operator|(auto&& iter) {
-        while (auto value = iter.next())
-            f(*value);
-    }
-};
-
-export template <typename F>
-ForEach(F) -> ForEach<F>;
-
-// MARK: First ------------------------------------------------------------------
-
-template <typename F>
-struct Find {
-    F f;
-
-    auto operator|(auto&& iter) {
-        while (auto value = iter.next())
-            if (f(*value))
-                return value;
-        return NONE;
-    }
-};
-
-export template <typename F>
-Find(F) -> Find<F>;
-
-// MARK: Any -------------------------------------------------------------------
-
-template <typename F>
-struct Any {
-    F f;
-
-    bool operator||(auto&& iter) {
-        while (auto value = iter.next())
-            if (f(*value))
-                return true;
-        return false;
-    }
-};
-
-template <typename F>
-Any(F) -> Any<F>;
-
-// MARK: Collect ---------------------------------------------------------------
-
-template <typename V>
-struct Collect {
-    V operator|(auto&& iter) {
-        V v{};
-        while (auto value = iter.next())
-            v.pushBack(*value);
-        return v;
-    }
-};
-
-// MARK: Filter ----------------------------------------------------------------
-
-template <typename F>
-struct _Filter {
-    F f;
-};
-
-export template <typename F>
-auto operator|(auto&& iter, _Filter<F> filter) {
-    struct Iter {
-        decltype(iter) iter;
-        F f;
-
-        auto next() -> decltype(iter.next()) {
-            while (auto value = iter.next())
-                if (f(*value))
-                    return value;
-            return NONE;
-        }
-    };
-
-    return Iter{iter, filter.f};
-}
-
-export template <typename F>
-auto filter(F f) {
-    return _Filter<F>{f};
 }
 
 } // namespace Karm

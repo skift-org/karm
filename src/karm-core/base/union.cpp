@@ -112,7 +112,7 @@ struct Union {
     }
 
     template <Meta::Contains<Ts...> T>
-    always_inline T const& unwrapOr(T const& fallback) const lifetimebound {
+    always_inline T unwrapOr(T fallback) const {
         if (_index != Meta::indexOf<T, Ts...>())
             return fallback;
 

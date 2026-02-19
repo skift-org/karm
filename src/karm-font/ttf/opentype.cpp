@@ -22,10 +22,9 @@ export struct LangSys : Io::BChunk {
 
     auto iterFeatures() const {
         auto s = begin().skip(6);
-        return range((usize)get<FeatureCount>())
-            .map([s](auto) mutable {
-                return s.nextU16be();
-            });
+        return urange::zeroTo((usize)get<FeatureCount>()) | Select([s](auto) mutable {
+                   return s.nextU16be();
+               });
     }
 };
 
@@ -53,7 +52,9 @@ export struct ScriptTable : Io::BChunk {
     }
 
     auto iter() const {
-        return Karm::iter(*this);
+        return urange::zeroTo(len()) | Select([this](auto i) {
+                   return at(i);
+               });
     }
 };
 
@@ -73,7 +74,9 @@ export struct ScriptList : Io::BChunk {
     }
 
     auto iter() const {
-        return Karm::iter(*this);
+        return urange::zeroTo(len()) | Select([this](auto i) {
+                   return at(i);
+               });
     }
 
     Res<ScriptTable> lookup(Str tag) {
@@ -99,10 +102,9 @@ export struct FeatureTable : Io::BChunk {
 
     auto iterLookups() const {
         auto s = begin().skip(4);
-        return range((usize)get<LookupCount>())
-            .map([s](auto) mutable {
-                return s.nextU16be();
-            });
+        return urange::zeroTo((usize)get<LookupCount>()) | Select([s](auto) mutable {
+                   return s.nextU16be();
+               });
     }
 };
 
@@ -122,7 +124,9 @@ export struct FeatureList : Io::BChunk {
     }
 
     auto iter() const {
-        return Karm::iter(*this);
+        return urange::zeroTo(len()) | Select([this](auto i) {
+                   return at(i);
+               });
     }
 };
 
@@ -139,7 +143,7 @@ export struct CoverageTable : Io::BChunk {
         auto s = begin().skip(4);
 
         if (format() == 1) {
-            for (auto i : range(len())) {
+            for (auto i : urange::zeroTo(len())) {
                 auto glyph = s.nextU16be();
                 if (glyph == glyphId) {
                     return i;
@@ -148,7 +152,7 @@ export struct CoverageTable : Io::BChunk {
         }
 
         if (format() == 2) {
-            for (auto i : range(len())) {
+            for (auto i : urange::zeroTo(len())) {
                 (void)i;
                 auto start = s.nextU16be();
                 auto end = s.nextU16be();
@@ -253,7 +257,7 @@ export struct GlyphPairAdjustment : LookupSubtableBase {
         auto pairSetTable = begin().skip(pairSetOffset);
         auto pairValueCount = pairSetTable.nextU16be();
 
-        for (usize i : range(pairValueCount)) {
+        for (usize i : urange::zeroTo(pairValueCount)) {
             (void)i;
             auto secondGlyph = pairSetTable.nextU16be();
             if (secondGlyph == curr) {
@@ -285,7 +289,7 @@ export struct ClassDef : Io::BChunk {
 
         if (format == 2) {
             auto classRangeCount = s.nextU16be();
-            for (usize i : range(classRangeCount)) {
+            for (usize i : urange::zeroTo(classRangeCount)) {
                 (void)i;
                 auto startGlyph = s.nextU16be();
                 auto endGlyph = s.nextU16be();
@@ -385,7 +389,9 @@ export struct LookupTable : Io::BChunk {
     usize len() const { return get<SubTableCount>(); }
 
     auto iter() const {
-        return Karm::iter(*this);
+        return urange::zeroTo(len()) | Select([this](auto i) {
+                   return at(i);
+               });
     }
 };
 
@@ -402,7 +408,9 @@ export struct LookupList : Io::BChunk {
     }
 
     auto iter() const {
-        return Karm::iter(*this);
+        return urange::zeroTo(len()) | Select([this](auto i) {
+                   return at(i);
+               });
     }
 };
 

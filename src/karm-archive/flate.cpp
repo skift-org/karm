@@ -155,7 +155,7 @@ Res<> inflateNoCompression(Io::BitReader& r, Window& out) {
     if ((nlen & 0xffff) != (~len & 0xffff))
         return Error::invalidData("invalid block len");
 
-    for (usize _ : range(len))
+    for (usize _ : urange::zeroTo(len))
         try$(out.emit(try$(r.readByte())));
 
     return Ok();
@@ -196,7 +196,7 @@ Res<> inflate(Io::BitReader& r, Window& out, Huff& lens, Huff& dists) {
             if (off == 0)
                 return Error::invalidData("zero distance");
 
-            for (usize _ : range(len)) {
+            for (usize _ : urange::zeroTo(len)) {
                 u8 b = try$(out.peek(off));
                 try$(out.emit(b));
             }

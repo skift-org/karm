@@ -345,26 +345,38 @@ struct List {
 
     template <typename Self>
     static auto _iter(Self* self) {
-        return Iter([curr = self->_ll.head()] mutable -> T* {
-            if (curr) {
-                auto& ret = curr->value;
-                curr = curr->item.next;
-                return &ret;
+        struct Iter {
+            Item* curr;
+
+            auto next() -> T* {
+                if (curr) {
+                    auto& ret = curr->value;
+                    curr = curr->item.next;
+                    return &ret;
+                }
+                return nullptr;
             }
-            return nullptr;
-        });
+        };
+
+        return Iter{self->_ll.head()};
     }
 
     template <typename Self>
     static auto _iterRev(Self* self) {
-        return Iter([curr = self->_ll.tail()] mutable -> T* {
-            if (curr) {
-                auto& ret = curr->value;
-                curr = curr->item.prev;
-                return &ret;
+        struct Iter {
+            Item* curr;
+
+            auto next() -> T* {
+                if (curr) {
+                    auto& ret = curr->value;
+                    curr = curr->item.prev;
+                    return &ret;
+                }
+                return nullptr;
             }
-            return nullptr;
-        });
+        };
+
+        return Iter{self->_ll.tail()};
     }
 
     constexpr auto iter() {

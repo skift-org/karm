@@ -310,7 +310,7 @@ export Ui::Child colorInput(Gfx::Color color, Ui::Send<Gfx::Color>) {
 
     return hflow(8, Math::Align::CENTER, colorPreview, hexPreview) |
            Ui::insets({6, 12, 6, 6}) |
-           Ui::minSize({Ui::UNCONSTRAINED, 36}) |
+           Ui::minSize({Ui::UNCONSTRAINED, 32}) |
            button(
                [](auto& n) {
                    Ui::showDialog(n, colorPickerDialog());

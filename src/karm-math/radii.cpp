@@ -76,9 +76,9 @@ struct Radii {
     bool zero() const
         requires(Meta::Equatable<T>)
     {
-        return iter(radii).all([](T radii) {
-            return radii == T{};
-        });
+        return iter(radii) | All([](T radii) {
+                   return Math::epsilonEq(radii, static_cast<T>(0));
+               });
     }
 
     T all() const {

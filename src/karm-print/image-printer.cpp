@@ -42,19 +42,19 @@ export struct ImagePrinter : FilePrinter {
             return _pages[0];
 
         isize finalHeight =
-            iter(_pages)
-                .map([](auto& page) {
-                    return page->height() + GAPS;
-                })
-                .sum();
+            iter(_pages) |
+            Select([](auto& page) {
+                return page->height() + GAPS;
+            }) |
+            Sum();
         finalHeight -= GAPS;
 
         isize finalWidth =
-            iter(_pages)
-                .map([](auto& page) {
-                    return page->width();
-                })
-                .max()
+            (iter(_pages) |
+             Select([](auto& page) {
+                 return page->width();
+             }) |
+             Max())
                 .unwrapOr(0);
 
         auto finalImageSize = Math::Vec2i{

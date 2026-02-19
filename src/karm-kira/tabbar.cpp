@@ -28,7 +28,7 @@ export Ui::Child tabbarItem(bool selected, Ui::Send<> onSelect, Ui::Child conten
                    onSelect,
                    Ui::ButtonStyle::subtle(),
                    content |
-                       Ui::minSize({Ui::UNCONSTRAINED, 36})
+                       Ui::minSize({Ui::UNCONSTRAINED, 32})
                ) |
                Ui::insets({8, 0});
     }

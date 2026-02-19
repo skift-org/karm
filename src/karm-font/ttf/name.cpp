@@ -4,6 +4,8 @@ import Karm.Core;
 
 namespace Karm::Font::Ttf {
 
+export using Karm::begin, Karm::end;
+
 export struct Name : Io::BChunk {
     static constexpr Str SIG = "name";
 
@@ -60,23 +62,31 @@ export struct Name : Io::BChunk {
         u16 count = s.nextU16be();
         s.skip(2); // stringOffset
 
-        return Iter{[s, i = 0uz, count] mutable -> Opt<Record> {
-            if (i == count)
-                return NONE;
-            i++;
+        struct Iter {
+            Io::BScan s;
+            usize count;
+            usize i = 0;
 
-            Record r;
-            r.platformId = s.nextU16be();
-            r.encodingId = s.nextU16be();
-            r.languageId = s.nextU16be();
-            auto nameId = s.nextU16be();
-            r.nameId = static_cast<NameId>(nameId);
+            Opt<Record> next() {
+                if (i == count)
+                    return NONE;
+                i++;
 
-            r.length = s.nextU16be();
-            r.offset = s.nextU16be();
+                Record r;
+                r.platformId = s.nextU16be();
+                r.encodingId = s.nextU16be();
+                r.languageId = s.nextU16be();
+                auto nameId = s.nextU16be();
+                r.nameId = static_cast<NameId>(nameId);
 
-            return r;
-        }};
+                r.length = s.nextU16be();
+                r.offset = s.nextU16be();
+
+                return r;
+            }
+        };
+
+        return Iter{s, count};
     }
 
     Record lookupRecord(NameId nameId) const {

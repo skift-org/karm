@@ -153,21 +153,30 @@ export struct Cmap : Io::BChunk {
         s.skip(2);
         usize numTables = s.nextU16be();
 
-        return Iter{[this, s, i = 0uz, numTables] mutable -> Opt<Table> {
-            if (i == numTables) {
-                return NONE;
+        struct Iter {
+            Cmap* cmap;
+            Io::BScan s;
+            usize i;
+            usize numTables;
+
+            Opt<Table> next() {
+                if (i == numTables) {
+                    return NONE;
+                }
+                i++;
+
+                Table t;
+                t.platformId = s.nextU16be();
+                t.encodingId = s.nextU16be();
+                u32 offset = s.nextU32be();
+                t.slice = sub(cmap->_slice, offset, cmap->_slice.len());
+                t.type = Io::BScan{t.slice}.nextU16be();
+
+                return t;
             }
-            i++;
+        };
 
-            Table t;
-            t.platformId = s.nextU16be();
-            t.encodingId = s.nextU16be();
-            u32 offset = s.nextU32be();
-            t.slice = sub(_slice, offset, _slice.len());
-            t.type = Io::BScan{t.slice}.nextU16be();
-
-            return t;
-        }};
+        return Iter{this, s, 0, numTables};
     }
 };
 

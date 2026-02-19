@@ -72,7 +72,7 @@ struct Decoder {
         auto audio = makeRc<Audio>(Av::Format{format.freq, format.channels}, c.data.len() / 2 / format.channels);
 
         for (auto sample : audio->frames().iter()) {
-            for (auto channel : range<usize>(format.channels)) {
+            for (auto channel : urange::zeroTo(format.channels)) {
                 sample.samples[channel] = s.nextI16le() / static_cast<f32>(Limits<i16>::MAX);
             }
         }

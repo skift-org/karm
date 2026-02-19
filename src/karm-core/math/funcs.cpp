@@ -29,7 +29,7 @@ export constexpr auto lerp(auto a, auto b, auto p) {
     return a + (b - a) * p;
 }
 
-export template <Meta::Float T>
+export template <typename T>
 constexpr bool epsilonEq(T lhs, T rhs, T epsilon = Limits<T>::EPSILON) {
     return abs(lhs - rhs) < epsilon;
 }

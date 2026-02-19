@@ -288,95 +288,108 @@ usize sizeOf(S const& slice) {
 
 export template <Sliceable S>
 constexpr auto iter(S const& slice) {
-    return Iter([&slice, i = 0uz] mutable -> typename S::Inner const* {
-        if (i >= slice.len()) {
-            return nullptr;
-        }
+    struct Iter {
+        S const& slice;
+        usize i;
 
-        return &slice.buf()[i++];
-    });
+        auto next() -> typename S::Inner const* {
+            if (i >= slice.len()) {
+                return nullptr;
+            }
+
+            return &slice.buf()[i++];
+        }
+    };
+
+    return Iter{slice, 0};
 }
 
 export template <Sliceable S>
 constexpr auto iterRev(S const& slice) {
-    return Iter([&slice, i = slice.len()] mutable -> typename S::Inner const* {
-        if (i == 0) {
-            return nullptr;
-        }
+    struct Iter {
+        S const& slice;
+        usize i;
 
-        return &slice.buf()[--i];
-    });
+        auto next() -> typename S::Inner const* {
+            if (i == 0) {
+                return nullptr;
+            }
+
+            return &slice.buf()[--i];
+        }
+    };
+
+    return Iter{slice, slice.len()};
 }
 
 export template <MutSliceable S>
 constexpr auto mutIter(S& slice) {
-    usize i = 0uz;
-    return Iter([&slice, i] mutable -> typename S::Inner* {
-        if (i >= slice.len()) {
-            return nullptr;
-        }
+    struct Iter {
+        S& slice;
+        usize i;
 
-        return &slice.buf()[i++];
-    });
+        auto next() -> typename S::Inner* {
+            if (i >= slice.len()) {
+                return nullptr;
+            }
+
+            return &slice.buf()[i++];
+        }
+    };
+
+    return Iter{slice, 0};
 }
 
 export template <MutSliceable S>
 constexpr auto mutIterRev(S& slice) {
-    usize i = slice.len();
-    return Iter([&slice, i] mutable -> typename S::Inner* {
-        if (i == 0) {
-            return nullptr;
-        }
+    struct Iter {
+        S& slice;
+        usize i;
 
-        return &slice.buf()[--i];
-    });
+        auto next() -> typename S::Inner* {
+            if (i == 0) {
+                return nullptr;
+            }
+
+            return &slice.buf()[--i];
+        }
+    };
+
+    return Iter{slice, slice.len()};
 }
 
 export template <Sliceable S>
 constexpr auto iterSplit(S const& slice, typename S::Inner const& sep) {
-    usize i = 0uz;
-    return Iter([&slice, sep, i] mutable -> Opt<Slice<typename S::Inner>> {
-        if (i >= slice.len())
-            return NONE;
+    struct Iter {
+        S const& slice;
+        typename S::Inner const& sep;
+        usize i;
 
-        usize start = i;
-        while (i < slice.len() and slice.buf()[i] != sep) {
-            i++;
+        auto next() -> Opt<Slice<typename S::Inner>> {
+            if (i >= slice.len())
+                return NONE;
+
+            usize start = i;
+            while (i < slice.len() and slice.buf()[i] != sep) {
+                i++;
+            }
+
+            usize end = i;
+            if (i < slice.len()) {
+                i++;
+            }
+
+            return Slice{
+                slice.buf() + start,
+                end - start,
+            };
         }
+    };
 
-        usize end = i;
-        if (i < slice.len()) {
-            i++;
-        }
-
-        return Slice{
-            slice.buf() + start,
-            end - start,
-        };
-    });
+    return Iter{slice, sep, 0};
 }
 
 // MARK: Iter2 -----------------------------------------------------------------
-
-export template <Sliceable S>
-auto iter2(S const& slice) {
-    return Iter{[=, i = 0] mutable -> Opt<typename S::Inner const&> {
-        if (i >= slice.len()) {
-            return NONE;
-        }
-        return slice[i++];
-    }};
-}
-
-export template <MutSliceable S>
-auto mutIter2(S& slice) {
-    return Iter{[=, i = 0] mutable -> Opt<typename S::Inner&> {
-        if (i >= slice.len()) {
-            return NONE;
-        }
-        return slice[i++];
-    }};
-}
 
 export constexpr bool isEmpty(Sliceable auto const& slice) {
     return slice.len() == 0;
@@ -384,22 +397,6 @@ export constexpr bool isEmpty(Sliceable auto const& slice) {
 
 export constexpr bool any(Sliceable auto const& slice) {
     return slice.len() > 0;
-}
-
-export constexpr auto const* begin(Sliceable auto const& slice) {
-    return slice.buf();
-}
-
-export constexpr auto const* end(Sliceable auto const& slice) {
-    return slice.buf() + slice.len();
-}
-
-export constexpr auto* begin(MutSliceable auto& slice) {
-    return slice.buf();
-}
-
-export constexpr auto* end(MutSliceable auto& slice) {
-    return slice.buf() + slice.len();
 }
 
 export constexpr auto const& first(Sliceable auto const& slice) {
@@ -547,7 +544,7 @@ always_inline constexpr Opt<usize> indexOf(T const& slice, Meta::Equatable<U> au
 }
 
 export template <Sliceable T, typename U = T::Inner>
-Generator<Slice<U>> split(T const& slice, Meta::Equatable<U> auto const delim) {
+Yield<Slice<U>> split(T const& slice, Meta::Equatable<U> auto const delim) {
     Slice<U> curr = sub(slice);
     while (curr) {
         auto end = indexOf(curr, delim);
@@ -745,6 +742,24 @@ always_inline Match endWith(T1 const& slice, T2 const& suffix) {
     return endWith(slice, suffix, [](U1 const& a, U2 const& b) {
         return a == b;
     });
+}
+
+// MARK: begin/end -------------------------------------------------------------
+
+export constexpr auto const* begin(Sliceable auto const& slice) {
+    return slice.buf();
+}
+
+export constexpr auto const* end(Sliceable auto const& slice) {
+    return slice.buf() + slice.len();
+}
+
+export constexpr auto* begin(MutSliceable auto& slice) {
+    return slice.buf();
+}
+
+export constexpr auto* end(MutSliceable auto& slice) {
+    return slice.buf() + slice.len();
 }
 
 #pragma clang unsafe_buffer_usage end

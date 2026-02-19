@@ -211,20 +211,27 @@ struct Set {
     }
 
     auto iter() const {
-        return Iter{[&, i = 0uz] mutable -> T const* {
-            if (i == _cap)
-                return nullptr;
+        struct Iter {
+            Set& self;
+            usize i = 0;
 
-            while (i < _cap and _slots[i].state != State::USED)
+            auto next() -> T const* {
+                if (i == self._cap)
+                    return nullptr;
+
+                while (i < self._cap and self._slots[i].state != State::USED)
+                    i++;
+
+                if (i == self._cap)
+                    return nullptr;
+
+                auto* res = &self._slots[i].unwrap();
                 i++;
+                return res;
+            }
+        };
 
-            if (i == _cap)
-                return nullptr;
-
-            auto* res = &_slots[i].unwrap();
-            i++;
-            return res;
-        }};
+        return Iter{*this};
     }
 
     usize len() const {

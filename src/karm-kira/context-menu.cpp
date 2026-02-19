@@ -77,7 +77,7 @@ export Ui::Child contextMenuItem(Opt<Ui::Send<>> onPress, Opt<Gfx::Icon> i, Str 
                Ui::text(t)
            ) |
            Ui::insets({6, 6, 6, 10}) |
-           Ui::minSize({Ui::UNCONSTRAINED, 36}) |
+           Ui::minSize({Ui::UNCONSTRAINED, 32}) |
            Ui::button(
                onPress ? [onPress = std::move(onPress)](auto& n) {
                    onPress(n);
@@ -97,7 +97,7 @@ export Ui::Child contextMenuCheck(Opt<Ui::Send<>> onPress, bool checked, Str t) 
                Ui::text(t)
            ) |
            Ui::insets({6, 6, 6, 10}) |
-           Ui::minSize({Ui::UNCONSTRAINED, 36}) |
+           Ui::minSize({Ui::UNCONSTRAINED, 32}) |
            Ui::button(
                [onPress = std::move(onPress)](auto& n) {
                    onPress(n);

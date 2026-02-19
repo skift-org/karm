@@ -23,7 +23,7 @@ export Ui::Child input(Gfx::Icon icon, String placeholder, String text, Ui::Send
                .borderWidth = 1,
                .borderFill = Ui::GRAY800,
            }) |
-           Ui::minSize({Ui::UNCONSTRAINED, 36}) |
+           Ui::minSize({Ui::UNCONSTRAINED, 32}) |
            Ui::focusable();
 }
 
@@ -42,7 +42,7 @@ export Ui::Child input(String placeholder, String text, Ui::Send<String> onChang
                .borderWidth = 1,
                .borderFill = Ui::GRAY800,
            }) |
-           Ui::minSize({Ui::UNCONSTRAINED, 36}) |
+           Ui::minSize({Ui::UNCONSTRAINED, 32}) |
            Ui::focusable();
 }
 

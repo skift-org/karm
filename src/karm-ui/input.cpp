@@ -324,24 +324,24 @@ export auto button(Opt<Send<>> onPress, ButtonStyle style) {
 
 export Child button(Opt<Send<>> onPress, ButtonStyle style, Str t) {
     return text(t) |
-           insets({6, 16}) |
+           insets({4, 14}) |
            center() |
-           minSize({UNCONSTRAINED, 36}) |
+           minSize({UNCONSTRAINED, 32}) |
            button(std::move(onPress), style);
 }
 
 export Child button(Opt<Send<>> onPress, ButtonStyle style, Gfx::Icon i) {
     return icon(i) |
-           insets(6) |
+           insets(4) |
            center() |
-           minSize({36, 36}) |
+           minSize({32, 32}) |
            button(std::move(onPress), style);
 }
 
 export Child button(Opt<Send<>> onPress, ButtonStyle style, Gfx::Icon i, Str t) {
     return hflow(8, Math::Align::CENTER, icon(i), text(t)) |
-           insets({6, 16, 6, 12}) |
-           minSize({UNCONSTRAINED, 36}) |
+           insets({4, 14, 4, 10}) |
+           minSize({UNCONSTRAINED, 32}) |
            button(std::move(onPress), style);
 }
 

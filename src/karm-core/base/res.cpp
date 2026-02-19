@@ -84,12 +84,6 @@ struct [[nodiscard]] Res {
         return other;
     }
 
-    always_inline constexpr Value unwrapOrDefault(Value other) const {
-        if (_inner.template is<Ok<V>>())
-            return _inner.template unwrap<Ok<V>>().unwrap();
-        return other;
-    }
-
     always_inline constexpr Value unwrapOrElse(auto f) const {
         if (_inner.template is<Ok<V>>())
             return _inner.template unwrap<Ok<V>>().unwrap();

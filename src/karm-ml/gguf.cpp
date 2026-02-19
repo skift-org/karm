@@ -87,7 +87,7 @@ Serde::Value _loadMetaDataArray(Io::BScan& s) {
     Serde::Array res;
     auto type = static_cast<ValueType>(s.nextU32le());
     auto len = s.nextU64le();
-    for (usize _ : range(len)) {
+    for (usize _ : urange::zeroTo(len)) {
         res.pushBack(_loadMetadataValue(s, type));
     }
     return res;
@@ -144,7 +144,7 @@ Res<Tuple<Str, Serde::Value>> _loadMetadataRecord(Io::BScan& s) {
 
 Res<Serde::Value> _loadMetadata(Io::BScan& s, usize len) {
     Serde::Object object;
-    for (usize _ : range(len)) {
+    for (usize _ : urange::zeroTo(len)) {
         auto [key, value] = try$(_loadMetadataRecord(s));
         object.put(key, std::move(value));
     }
@@ -163,7 +163,7 @@ Res<BpeVocab> _loadVocab(Serde::Value& metadata) {
 
     BpeVocab vocab;
 
-    for (auto i : range(tokens.len())) {
+    for (auto i : urange::zeroTo(tokens.len())) {
         vocab._infos.pushBack({
             .type = static_cast<BpeVocab::TokenInfos::Type>(types.get(i).asInt()),
             .text = tokens.get(i).asStr(),
@@ -188,7 +188,7 @@ TensorInfos _loadTensor(Io::BScan& s) {
     infos.name = _loadMetadataString(s);
     auto dimsLen = s.nextU32le();
     Vec<u64> dims;
-    for (usize _ : range(dimsLen)) {
+    for (usize _ : urange::zeroTo(dimsLen)) {
         infos.dims.pushBack(s.nextU64le());
     }
     infos.type = static_cast<Type>(s.nextU32le());
@@ -199,7 +199,7 @@ TensorInfos _loadTensor(Io::BScan& s) {
 
 Res<Vec<TensorInfos>> _loadTensors(Io::BScan& s, usize len) {
     Vec<TensorInfos> res;
-    for (usize _ : range(len))
+    for (usize _ : urange::zeroTo(len))
         res.pushBack(_loadTensor(s));
     return Ok(std::move(res));
 }
@@ -236,7 +236,7 @@ export Res<> loadGguf(Ref::Url url) {
     auto tensors = try$(_loadTensors(s, header.tensorCount));
     yap("loaded {} tensors", tensors.len());
 
-    for (u8 r : range(255)) {
+    for (u8 r : urange::zeroTo(255)) {
         yap("{} -> {}", r, BpeVocab::_u8ToUnicode(r));
     }
 

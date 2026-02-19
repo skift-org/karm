@@ -122,7 +122,7 @@ export Ui::Child slider(f64 value, Ui::Send<f64> onChange, Gfx::Icon icon, Str t
                .borderRadii = 6,
                .backgroundFill = Ui::GRAY900,
            }) |
-           Ui::maxSize({Ui::UNCONSTRAINED, 36});
+           Ui::maxSize({Ui::UNCONSTRAINED, 32});
 }
 
 export template <typename T>

@@ -227,15 +227,20 @@ export template <
     typename E = typename S::Encoding,
     typename U = typename E::Unit>
 auto iterRunes(S const& slice) {
-    Cursor<U> cursor(slice);
-    return Iter([cursor] mutable -> Opt<Rune> {
-        if (cursor.ended()) {
-            return NONE;
-        }
+    struct Iter {
+        Cursor<U> cursor;
 
-        Rune r;
-        return E::decodeUnit(r, cursor) ? Opt<Rune>(r) : Opt<Rune>(NONE);
-    });
+        always_inline constexpr Opt<Rune> next() {
+            if (cursor.ended()) {
+                return NONE;
+            }
+
+            Rune r;
+            return E::decodeUnit(r, cursor) ? Opt<Rune>(r) : Opt<Rune>(NONE);
+        }
+    };
+
+    return Iter{slice};
 }
 
 export template <StaticEncoding E>

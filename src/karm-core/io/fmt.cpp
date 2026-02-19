@@ -260,7 +260,7 @@ export struct NumberFormatter {
         if (s.skip('.')) {
             if (s.skip('0'))
                 trailingZeros = true;
-            precision = atoi(s).unwrapOrDefault(6);
+            precision = atoi(s).unwrapOr(6);
         }
 
         if (s.ended())

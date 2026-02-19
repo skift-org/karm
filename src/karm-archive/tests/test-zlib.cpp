@@ -88,7 +88,7 @@ test$("zlib-zeroes") {
 
     auto out = try$(zlibDecompress(input));
     expectEq$(out.len(), 256uz);
-    for (usize i : range(256)) {
+    for (usize i : urange::zeroTo(256)) {
         expectEq$(out[i], 0);
     }
 

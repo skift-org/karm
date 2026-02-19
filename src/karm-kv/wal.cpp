@@ -119,7 +119,7 @@ export struct Wal {
         return Ok();
     }
 
-    Generator<Record> iter() {
+    Yield<Record> iter() {
         // FIXME: Handle errors properly
         _file.seek(Io::Seek::fromBegin(sizeof(RawHeader))).unwrap("could not seek");
 

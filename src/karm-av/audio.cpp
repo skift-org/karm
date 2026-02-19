@@ -152,7 +152,7 @@ export usize resamples(Frames from, Frames to) {
         auto n = min(from.len(), to.len());
         if (inCh == outCh) {
             // 1:1 copy per channel
-            for (auto i : range(n)) {
+            for (auto i : urange::zeroTo(n)) {
                 auto fi = from[i].samples;
                 auto ti = to[i].samples;
                 for (usize c = 0; c < outCh; ++c)
@@ -160,7 +160,7 @@ export usize resamples(Frames from, Frames to) {
             }
         } else {
             // Mix to mono then fan out
-            for (auto i : range(n)) {
+            for (auto i : urange::zeroTo(n)) {
                 f32 m = from[i].mono();
                 to[i].mono(m);
             }

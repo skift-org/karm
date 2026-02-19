@@ -17,6 +17,8 @@ import :trans;
 
 namespace Karm::Math {
 
+export using Karm::begin, Karm::end;
+
 export struct Path {
     enum struct Code {
         NOP,
@@ -138,18 +140,25 @@ export struct Path {
     };
 
     auto iterContours() const {
-        return Iter([&, i = 0uz] mutable -> Opt<_Contour> {
-            if (i >= _contours.len()) {
-                return NONE;
+        struct Iter {
+            Path const& self;
+            usize i = 0;
+
+            Opt<_Contour> next() {
+                if (i >= self._contours.len()) {
+                    return NONE;
+                }
+
+                i++;
+
+                return _Contour{
+                    sub(self._verts, self._contours[i - 1].start, self._contours[i - 1].end),
+                    self._contours[i - 1].close,
+                };
             }
+        };
 
-            i++;
-
-            return _Contour{
-                sub(_verts, _contours[i - 1].start, _contours[i - 1].end),
-                _contours[i - 1].close,
-            };
-        });
+        return Iter{*this};
     }
 
     Opt<Math::Rectf> _bound;
