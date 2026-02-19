@@ -39,6 +39,7 @@ export struct CpuRast {
         _scanline[idx] += area;
         _scanline[idx + 1] += (dy - area);
     }
+
     void fill(Math::Polyf& poly, Math::Recti clip, FillRule fillRule, auto cb) {
         auto polyBound = poly.bound();
 

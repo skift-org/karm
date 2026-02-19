@@ -123,7 +123,7 @@ export struct CpuCanvas : Canvas {
 
                 auto* pixel = mutPixels().pixelUnsafe(frag.xy);
                 auto color = fill.sample(frag.uv);
-                color.alpha *= frag.a * (mask / 255.0) * opacity;
+                color.alpha = Math::roundi(color.alpha * frag.a * (mask / 255.0) * opacity);
                 auto c = format.load(pixel);
                 c = color.blendOver(c);
                 format.store(pixel, c);
@@ -132,7 +132,7 @@ export struct CpuCanvas : Canvas {
             _rast.fill(_poly, current().clip, fillRule, [&](CpuRast::Frag frag) {
                 auto* pixel = mutPixels().pixelUnsafe(frag.xy);
                 auto color = fill.sample(frag.uv);
-                color.alpha *= frag.a * opacity;
+                color.alpha = Math::roundi(color.alpha * frag.a * opacity);
                 auto c = format.load(pixel);
                 c = color.blendOver(c);
                 format.store(pixel, c);
@@ -155,7 +155,7 @@ export struct CpuCanvas : Canvas {
 
                     auto pixel = mutPixels().pixelUnsafe(frag.xy);
                     auto color = fill.sample(frag.uv);
-                    color.alpha *= frag.a * (mask / 255.0) * opacity;
+                    color.alpha = Math::roundi(color.alpha * frag.a * (mask / 255.0) * opacity);
                     auto c = format.load(pixel);
                     c = color.blendOverComponent(c, comp);
                     format.store(pixel, c);
@@ -164,7 +164,7 @@ export struct CpuCanvas : Canvas {
                 _rast.fill(_poly, current().clip, fillRule, [&](CpuRast::Frag frag) {
                     auto pixel = mutPixels().pixelUnsafe(frag.xy);
                     auto color = fill.sample(frag.uv);
-                    color.alpha *= frag.a * opacity;
+                    color.alpha = Math::roundi(color.alpha * frag.a * opacity);
                     auto c = format.load(pixel);
                     c = color.blendOverComponent(c, comp);
                     format.store(pixel, c);

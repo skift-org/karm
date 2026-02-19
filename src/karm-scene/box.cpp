@@ -33,8 +33,8 @@ export struct Box : Node {
             for (auto& background : _backgrounds) {
                 ctx.beginPath();
                 auto radii = _borders.radii.reduceOverlap(_bound.size());
-                ctx.rect(_bound, radii);
-                ctx.fill(background);
+                ctx.fillStyle(background);
+                ctx.fill(_bound, radii);
             }
         }
 
