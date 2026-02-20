@@ -15,6 +15,7 @@ export struct CpuRast {
     };
 
     Vec<f64> _scanline{};
+    Vec<isize> _activeEdges{};
 
     void _accumulate(isize xOffset, isize width, Math::Vec2f p0, Math::Vec2f p1) {
         f64 dy = p1.y - p0.y;
@@ -53,20 +54,34 @@ export struct CpuRast {
 
         _scanline.resize(clipBound.width + 1);
 
+        usize nextEdgeIdx = 0;
+        _activeEdges.clear();
+
         for (isize y = clipBound.top(); y < clipBound.bottom(); y++) {
             zeroFill<f64>(mutSub(_scanline, 0, clipBound.width + 1));
 
             f64 yTop = y;
             f64 yBot = y + 1.0;
 
-            for (auto& edge : poly) {
-                if (edge.bound().bottom() <= yTop or edge.bound().top() >= yBot)
+            while (nextEdgeIdx < poly.len() and poly[nextEdgeIdx].top() < yBot) {
+                _activeEdges.pushBack(nextEdgeIdx);
+                nextEdgeIdx++;
+            }
+
+            for (usize i = 0; i < _activeEdges.len();) {
+                auto& edge = poly[_activeEdges[i]];
+
+                if (edge.bound().bottom() <= yTop) {
+                    _activeEdges.removeUnordered(i);
                     continue;
+                }
 
                 auto d = edge.delta();
 
-                if (Math::epsilonEq(d.y, 0.0))
+                if (Math::epsilonEq(d.y, 0.0)) {
+                    i++;
                     continue;
+                }
 
                 f64 t0 = clamp01((yTop - edge.start.y) / d.y);
                 f64 t1 = clamp01((yBot - edge.start.y) / d.y);
@@ -87,7 +102,7 @@ export struct CpuRast {
                     _accumulate(clipBound.x, clipBound.width, cursor, p1);
                 } else {
                     isize steps = Math::abs(ixEnd - ixStart);
-                    for (isize i = 0; i < steps; i++) {
+                    for (isize step = 0; step < steps; step++) {
                         f64 nextX = (xDir > 0) ? Math::floor(cursor.x) + 1.0 : Math::ceil(cursor.x) - 1.0;
 
                         f64 t = (nextX - cursor.x) / (p1.x - cursor.x);
@@ -100,6 +115,8 @@ export struct CpuRast {
                     }
                     _accumulate(clipBound.x, clipBound.width, cursor, p1);
                 }
+
+                i++;
             }
 
             f64 accumulator = 0;

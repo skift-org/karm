@@ -234,6 +234,15 @@ export struct Canvas : Meta::NoCopy {
         fill();
     }
 
+    // Stroke a rectangle.
+    // NOTE: This is a convenience function for backends that have
+    //       optimized paths for integer coordinates.
+    virtual void stroke(Math::Recti r, Math::Radiif radii = 0) {
+        beginPath();
+        rect(r.cast<f64>(), radii);
+        stroke();
+    }
+
     // Fill a rectangle, with integer coordinates.
     // NOTE: This is a convenience function for backends that have
     //       optimized paths for integer coordinates.

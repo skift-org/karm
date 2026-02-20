@@ -251,6 +251,7 @@ export struct CpuCanvas : Canvas {
         _poly.clear();
         createSolid(_poly, _path);
         _poly.transform(current().trans);
+        _poly.sortForAet();
         _fill(current().fill, rule);
     }
 
@@ -258,6 +259,7 @@ export struct CpuCanvas : Canvas {
         _poly.clear();
         createStroke(_poly, _path, current().stroke);
         _poly.transform(current().trans);
+        _poly.sortForAet();
         _fill(current().stroke.fill);
     }
 

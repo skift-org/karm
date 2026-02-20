@@ -234,7 +234,12 @@ struct _Pixels {
     }
 
     always_inline Color sample(Math::Vec2f pos) const {
-        return load(Math::Vec2i(pos.x * width(), pos.y * height()));
+        return load(
+            Math::Vec2i(
+                Math::roundi(pos.x * width()),
+                Math::roundi(pos.y * height())
+            )
+        );
     }
 
     always_inline void clear(Color color)

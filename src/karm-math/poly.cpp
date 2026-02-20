@@ -70,6 +70,12 @@ struct Poly {
         e("(poly {})", _edges);
     }
 
+    [[gnu::flatten]] void sortForAet() {
+        sort(_edges, [](auto const& a, auto const& b) {
+            return a.top() <=> b.top();
+        });
+    }
+
     void transform(Trans2<T> const& trans) {
         _bound = NONE;
         for (auto& e : _edges) {
