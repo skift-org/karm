@@ -19,6 +19,7 @@ export struct ProseStyle {
     Opt<Color> color = NONE;
     bool wordwrap = true;
     bool multiline = false;
+    bool collapseEmptyLines = true;
 
     ProseStyle withSize(f64 size) const {
         ProseStyle style = *this;
@@ -129,7 +130,7 @@ export struct Prose : Meta::Pinned {
             return &prose->_struts[relatedStrutIndex.unwrap()];
         }
 
-        Au Yposition(Au dominantBaselineYPosition) const {
+        Au yPosition(Au dominantBaselineYPosition) const {
             if (relatedStrutIndex == NONE)
                 return dominantBaselineYPosition;
 
@@ -440,13 +441,22 @@ export struct Prose : Meta::Pinned {
         for (auto& line : _lines) {
             Au lineTop = currHeight;
 
-            Au maxAscent = fontAscent;
-            Au maxDescend = fontDescend;
+            Au maxAscent = 0_au;
+            Au maxDescend = 0_au;
+
+            if (not _style.collapseEmptyLines) {
+                maxAscent = fontAscent;
+                maxAscent = fontDescend;
+            }
+
             for (auto const& block : line.blocks()) {
                 if (block.strut()) {
                     Au baseline{block.strut()->baseline};
                     maxAscent = max(maxAscent, baseline);
                     maxDescend = max(maxDescend, block.strut()->size.y - baseline);
+                } else {
+                    maxAscent = max(maxAscent, fontAscent);
+                    maxDescend = max(maxDescend, fontDescend);
                 }
             }
 
@@ -584,12 +594,12 @@ export struct Prose : Meta::Pinned {
         if (ci >= block.cells().len()) {
             // Handle the case where the rune is the last of the text
             auto& cell = last(block.cells());
-            return {block.pos + cell.pos + cell.adv, cell.Yposition(line.baseline)};
+            return {block.pos + cell.pos + cell.adv, cell.yPosition(line.baseline)};
         }
 
         auto& cell = block.cells()[ci];
 
-        return {block.pos + cell.pos, cell.Yposition(line.baseline)};
+        return {block.pos + cell.pos, cell.yPosition(line.baseline)};
     }
 
     // MARK: Hit Testing -------------------------------------------------------

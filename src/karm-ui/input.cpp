@@ -445,6 +445,7 @@ struct Input : View<Input> {
 
     Gfx::Prose& _ensureText() {
         if (not _text) {
+            _style.collapseEmptyLines = false;
             _text = makeRc<Gfx::Prose>(_style);
             (*_text)->append(_model->runes());
         }
@@ -561,6 +562,7 @@ struct SimpleInput : View<SimpleInput> {
 
     Gfx::Prose& _ensureText() {
         if (not _prose) {
+            _style.collapseEmptyLines = false;
             _prose = makeRc<Gfx::Prose>(_style);
             (*_prose)->append(_ensureModel().runes());
         }
