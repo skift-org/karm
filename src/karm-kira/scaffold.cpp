@@ -186,7 +186,14 @@ export Ui::Child scaffold(Scaffold scaffold) {
 
 export auto scaffoldContent() {
     return [](Ui::Child child) {
-        return child | Ui::box({.borderRadii = 6, .backgroundFill = Ui::GRAY950});
+        return child |
+               Ui::bound() |
+               Ui::box({
+                   .borderRadii = 6,
+                   .borderWidth = 1,
+                   .borderFill = Ui::GRAY800,
+                   .backgroundFill = Ui::GRAY950,
+               });
     };
 }
 

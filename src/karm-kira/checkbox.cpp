@@ -44,8 +44,10 @@ struct Checkbox : Ui::View<Checkbox> {
 
             if (_mouseListener.isPress()) {
                 g.strokeStyle(Gfx::stroke(Ui::GRAY600).withWidth(1).withAlign(Gfx::INSIDE_ALIGN));
-                g.stroke(bound().cast<f64>(), 4);
+            } else {
+                g.strokeStyle(Gfx::stroke(Ui::GRAY500).withWidth(1).withAlign(Gfx::INSIDE_ALIGN));
             }
+            g.stroke(bound().cast<f64>(), 4);
         }
 
         g.pop();
