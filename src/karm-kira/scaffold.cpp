@@ -193,6 +193,7 @@ export auto scaffoldContent() {
                    .borderWidth = 1,
                    .borderFill = Ui::GRAY800,
                    .backgroundFill = Ui::GRAY950,
+                   .overflow = Ui::BoxOverflow::HIDDEN,
                });
     };
 }

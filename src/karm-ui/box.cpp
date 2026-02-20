@@ -86,6 +86,7 @@ export struct BoxStyle {
             g.fill(bound, borderRadii);
         }
 
+        g.push();
         if (overflow == BoxOverflow::HIDDEN) {
             g.beginPath();
             g.rect(bound.cast<f64>(), borderRadii);
@@ -94,6 +95,7 @@ export struct BoxStyle {
 
         g.fillStyle(foregroundFill);
         inner();
+        g.pop();
 
         if (borderWidth and borderFill) {
             g.strokeStyle(
