@@ -8,6 +8,7 @@ import Mdi;
 
 import :aboutDialog;
 import :contextMenu;
+import :separator;
 
 namespace Karm::Kira {
 

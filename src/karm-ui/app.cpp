@@ -30,7 +30,7 @@ struct RootNode : ProxyNode<RootNode> {
         g.push();
         g.scale(_window->scaleFactor());
         g.clip(r);
-        g.clear(GRAY950);
+        g.clear(GRAY900);
         g.fillStyle(GRAY50);
         child().paint(g, r);
         g.pop();

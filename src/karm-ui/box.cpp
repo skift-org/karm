@@ -8,6 +8,11 @@ import :atoms;
 
 namespace Karm::Ui {
 
+export enum struct BoxOverflow {
+    HIDDEN,
+    VISIBLE,
+};
+
 export struct BoxStyle {
     Math::Insetsi margin{};
     Math::Insetsi padding{};
@@ -19,6 +24,7 @@ export struct BoxStyle {
     Opt<Gfx::Fill> backgroundFill{};
     Gfx::Fill foregroundFill{GRAY50};
     Opt<Gfx::BoxShadow> shadowStyle{};
+    BoxOverflow overflow{BoxOverflow::VISIBLE};
 
     BoxStyle withMargin(Math::Insetsi margin) const {
         auto copy = *this;
@@ -80,6 +86,12 @@ export struct BoxStyle {
             g.fill(bound, borderRadii);
         }
 
+        if (overflow == BoxOverflow::HIDDEN) {
+            g.beginPath();
+            g.rect(bound.cast<f64>(), borderRadii);
+            g.clip();
+        }
+
         g.fillStyle(foregroundFill);
         inner();
 
@@ -89,7 +101,7 @@ export struct BoxStyle {
                     .withWidth(borderWidth)
                     .withAlign(Gfx::INSIDE_ALIGN)
             );
-            g.stroke(bound.cast<f64>(), borderRadii);
+            g.stroke(bound, borderRadii);
         }
 
         g.pop();

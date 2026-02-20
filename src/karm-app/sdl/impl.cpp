@@ -129,7 +129,7 @@ struct SdlApplication : Application {
             props.title.buf(),
             props.size.x,
             props.size.y,
-            SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WINDOW_RESIZABLE
+            SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WINDOW_RESIZABLE | SDL_WINDOW_BORDERLESS
         );
 
         SDL_ShowWindow(sdlWindow);

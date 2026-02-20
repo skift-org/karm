@@ -7,7 +7,7 @@ import Mdi;
 
 namespace Karm::Kira {
 
-export Ui::Child sidenav(Ui::Children children) {
+export Ui::Child sidenavContent(Ui::Children children) {
     return Ui::vflow(8, children) |
            Ui::insets(8) |
            Ui::vscroll() |
@@ -45,7 +45,7 @@ export Ui::Child sidenavItem(bool selected, Opt<Ui::Send<>> onPress, Ui::Child c
 
     buttonStyle.idleStyle = {
         .borderRadii = 4,
-        .backgroundFill = selected ? Ui::GRAY900 : Gfx::ALPHA,
+        .backgroundFill = selected ? Ui::GRAY700 : Gfx::ALPHA,
     };
 
     auto indicator = box(

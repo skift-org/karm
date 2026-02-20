@@ -8,7 +8,6 @@ import Karm.Math;
 
 import :titlebar;
 import :toolbar;
-import :separator;
 
 namespace Karm::Kira {
 
@@ -115,26 +114,37 @@ static Ui::Child _desktopScaffoldToolbar(Scaffold::State const& s, Scaffold cons
         tools.pushBack(
             hflow(4, scaffold.middleTools().unwrap()) | Ui::grow()
         );
-
-    else if (scaffold.endTools)
-        tools.pushBack(Ui::grow(NONE));
+    else {
+        tools.pushBack(Ui::labelMedium(scaffold.title) | Ui::center() | Ui::grow());
+    }
 
     if (scaffold.endTools)
         tools.pushBack(
             hflow(4, scaffold.endTools().unwrap())
         );
 
+    tools.pushBack(titlebarClose());
+
     if (tools.len())
         return toolbar(tools);
-    return separator();
+
+    return Ui::empty();
 }
 
 static Ui::Child _desktopScaffoldHeader(Scaffold::State const& s, Scaffold const& scaffold) {
-    return Ui::vflow(
-               titlebar(scaffold.icon, scaffold.title),
-               _desktopScaffoldToolbar(s, scaffold)
-           ) |
-           Ui::box({.backgroundFill = Ui::GRAY900}) |
+    return _desktopScaffoldToolbar(s, scaffold) |
+           contextMenu([] {
+               return contextMenuContent({
+                   contextMenuItem(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::NONE), Mdi::WINDOW_RESTORE, "Restore"),
+                   contextMenuItem(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::FULL), Mdi::WINDOW_MAXIMIZE, "Maximize"),
+                   contextMenuItem(Ui::bindBubble<App::RequestMinimizeEvent>(), Mdi::WINDOW_MINIMIZE, "Minimize"),
+                   separator(),
+                   contextMenuItem(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::LEFT), Mdi::DOCK_LEFT, "Snap Left"),
+                   contextMenuItem(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::RIGHT), Mdi::DOCK_RIGHT, "Snap Right"),
+                   separator(),
+                   contextMenuItem(Ui::bindBubble<App::RequestCloseEvent>(), Mdi::WINDOW_CLOSE, "Close"),
+               });
+           }) |
            Ui::dragRegion();
 }
 
@@ -146,13 +156,12 @@ static Ui::Child _desktopScaffold(Scaffold::State const& s, Scaffold const& scaf
         body.pushBack(
             hflow(
                 scaffold.sidebar().unwrap(),
-                separator(),
-                scaffold.body() | Ui::grow()
+                scaffold.body() | Ui::insets({0, 4, 4, 0}) | Ui::grow()
             ) |
             Ui::grow()
         );
     } else {
-        body.pushBack(scaffold.body() | Ui::grow());
+        body.pushBack(scaffold.body() | Ui::insets({0, 4, 4, 4}) | Ui::grow());
     }
 
     return Ui::vflow(body) |
@@ -173,6 +182,12 @@ export Ui::Child scaffold(Scaffold scaffold) {
                    ? _mobileScaffold(state, scaffold)
                    : _desktopScaffold(state, scaffold);
     });
+}
+
+export auto scaffoldContent() {
+    return [](Ui::Child child) {
+        return child | Ui::box({.borderRadii = 6, .backgroundFill = Ui::GRAY950});
+    };
 }
 
 } // namespace Karm::Kira
