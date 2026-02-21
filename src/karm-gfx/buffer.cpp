@@ -330,7 +330,15 @@ export [[gnu::flatten]] void blitUnsafe(MutPixels dst, Pixels src) {
 
     // HACK: fast path if the stride and fmt are the same
     if (dst.stride() == src.stride() and dst.fmt().index() == src.fmt().index()) {
-        std::memcpy(dst._buf, src._buf, src._stride * src.height() * sizeof(u8));
+        usize bytesPerRow = dst.width() * dst.fmt().bpp();
+
+        if (dst.stride() == bytesPerRow) {
+            std::memcpy(dst._buf, src._buf, dst.stride() * dst.height());
+        } else {
+            for (isize y = 0; y < dst.height(); y++)
+                std::memcpy(dst.pixelUnsafe({0, y}), src.pixelUnsafe({0, y}), bytesPerRow);
+        }
+
         return;
     }
 
