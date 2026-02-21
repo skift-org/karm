@@ -1,0 +1,25 @@
+var structKarm_1_1Box =
+[
+    [ "Box", "structKarm_1_1Box.html#a5155b310120641e02b75b636e2b02208", null ],
+    [ "Box", "structKarm_1_1Box.html#a41f5371e0441ba19e45ed56e2dce52ba", null ],
+    [ "Box", "structKarm_1_1Box.html#a9437f15250bc9c834bba751588796f95", null ],
+    [ "Box", "structKarm_1_1Box.html#aa5eff2a6a3d4cb52f93b59cd27e2a4c8", null ],
+    [ "Box", "structKarm_1_1Box.html#a60725291bddaf963652876146146eda7", null ],
+    [ "Box", "structKarm_1_1Box.html#a6e7b149ef43e8808ec093ec3f8c2c946", null ],
+    [ "~Box", "structKarm_1_1Box.html#ad5fad5d3cc615f2423adac522ec5ec8d", null ],
+    [ "hash", "structKarm_1_1Box.html#aa1874b76faefe958e5aa00dae0abf642", null ],
+    [ "operator T const &", "structKarm_1_1Box.html#ab93721dfa8b038bc78aa78cc2ed3a404", null ],
+    [ "operator T&", "structKarm_1_1Box.html#a719ad7d3608c4b54a306b41c988fd504", null ],
+    [ "operator*", "structKarm_1_1Box.html#ae726d79eb33026710952c12d2462727d", null ],
+    [ "operator*", "structKarm_1_1Box.html#a8763a2a2b9a626f8653383d51feeae9a", null ],
+    [ "operator->", "structKarm_1_1Box.html#ae5b0cf2849a792307a3a9b110f23420e", null ],
+    [ "operator->", "structKarm_1_1Box.html#a003dab16a6f51b36633f1c47fddba87e", null ],
+    [ "operator<=>", "structKarm_1_1Box.html#a60b42407e8727937fe92635e080fb693", null ],
+    [ "operator<=>", "structKarm_1_1Box.html#af26c69d039648e84f1d7f33e9d1be294", null ],
+    [ "operator=", "structKarm_1_1Box.html#a81790962aa9073c96b4f364994b608ae", null ],
+    [ "operator=", "structKarm_1_1Box.html#a794fd427615c673db357fa0d0a43436e", null ],
+    [ "operator==", "structKarm_1_1Box.html#a4a7c005ce28777a05a67e90f24c5aa49", null ],
+    [ "operator==", "structKarm_1_1Box.html#a3ae2695c502b0c97d8130670ec67622a", null ],
+    [ "unwrap", "structKarm_1_1Box.html#aafcf054fa87f059c78c3cad9eb64bbd7", null ],
+    [ "unwrap", "structKarm_1_1Box.html#a5f7d7790baa5c68357b9d3e2dac0815f", null ]
+];

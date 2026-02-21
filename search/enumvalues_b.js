@@ -1,0 +1,26 @@
+var searchData=
+[
+  ['l_0',['L',['../namespaceKarm_1_1Icu.html#a374f62108410f9c0065ef638d0b1fb63ad20caec3b48a1eef164cb4ca81ba2587',1,'Karm::Icu']]],
+  ['lab_1',['LAB',['../structKarm_1_1Icc_1_1ColorSpace.html#a5a039017d8c8cdb4a76f5471a6fe238baa18771cf7e181cdf9dad769d494bafef',1,'Karm::Icc::ColorSpace']]],
+  ['lalt_2',['LALT',['../namespaceKarm_1_1App.html#ad07c9914f5689fc3c0360845e694c5d1ac71417d2a3afe1a18b66cfa57a662df9',1,'Karm::App']]],
+  ['landscape_3',['LANDSCAPE',['../namespaceKarm_1_1Print.html#a00ff922e42aadf0ffe98cabb7189c60ba20287e25ffb71f92af9803e4c3a53928',1,'Karm::Print']]],
+  ['large_4',['LARGE',['../structKarm_1_1Math_1_1Path.html#afe1bee000a9c9486653d10231adda691a71726adf0ff60cd03eaf3c515883eeb8',1,'Karm::Math::Path']]],
+  ['lctrl_5',['LCTRL',['../namespaceKarm_1_1App.html#ad07c9914f5689fc3c0360845e694c5d1aa0ff1131b5e3e765b0b5151de87cb6b2',1,'Karm::App']]],
+  ['leave_6',['LEAVE',['../structKarm_1_1Ui_1_1FocusEvent.html#aaf00e241189e66030de18d59a9823a4aae0f9ef6d3025baf33497bafcca7ff781',1,'Karm::Ui::FocusEvent']]],
+  ['left_7',['LEFT',['../namespaceKarm_1_1App.html#ad0fbdc03944a19853ea7c865c0f31cb5a684d325a7303f52e64011467ff5c5758',1,'Karm::App::LEFT()'],['../namespaceKarm_1_1Ui.html#a9a6f71ee5d5e1182df9c535312fa6089a684d325a7303f52e64011467ff5c5758',1,'Karm::Ui::LEFT()'],['../namespaceKarm_1_1Gfx.html#ab80f5a5f98d03961e7203873c8610382a684d325a7303f52e64011467ff5c5758',1,'Karm::Gfx::LEFT()'],['../namespaceKarm_1_1Io.html#a425d6a2ac28c2a937fb0fe57285b6acda684d325a7303f52e64011467ff5c5758',1,'Karm::Io::LEFT()'],['../namespaceKarm_1_1App.html#a6be91eb6569c46f6a8e9d7faee8e5b9aa684d325a7303f52e64011467ff5c5758',1,'Karm::App::LEFT()']]],
+  ['left_5fto_5fright_8',['LEFT_TO_RIGHT',['../structKarm_1_1Math_1_1Flow.html#a3ba9c296d0eb2686b837d4f10e27243b',1,'Karm::Math::Flow']]],
+  ['license_9',['LICENSE',['../structKarm_1_1Font_1_1Ttf_1_1Name.html#a25cf0d819a233e5e96ba9399abf62d58ad54bb555495fe80ecad155581529b914',1,'Karm::Font::Ttf::Name']]],
+  ['license_5furl_10',['LICENSE_URL',['../structKarm_1_1Font_1_1Ttf_1_1Name.html#a25cf0d819a233e5e96ba9399abf62d58ad0f261eb46629a26c34817925de33f5a',1,'Karm::Font::Ttf::Name']]],
+  ['light_5fbackground_5fpalette_11',['LIGHT_BACKGROUND_PALETTE',['../structKarm_1_1Font_1_1Ttf_1_1Name.html#a25cf0d819a233e5e96ba9399abf62d58a5c0effdb3c8ac535934d3333186f1e28',1,'Karm::Font::Ttf::Name']]],
+  ['line_5fto_12',['LINE_TO',['../structKarm_1_1Math_1_1Path.html#a1a219937914ccedcf08cb1852aa8eca7a968d1951cdadef8af7975ef564ab77c0',1,'Karm::Math::Path']]],
+  ['linear_13',['LINEAR',['../structKarm_1_1Gfx_1_1Gradient.html#a37f713a9cc356fb99f7128137b3b15faa352183418704a69d7b8bd1896e9dd51b',1,'Karm::Gfx::Gradient']]],
+  ['lower_14',['LOWER',['../namespaceKarm_1_1Io.html#ab3289aef9c6dbeb8105ef83dc36c9672aa7c48ba367e019d004bfb0239b85f2b3',1,'Karm::Io::LOWER()'],['../namespaceKarm_1_1Sys.html#a4bc4dd239ab723c5768e73b651e5c8d4aa7c48ba367e019d004bfb0239b85f2b3',1,'Karm::Sys::LOWER()']]],
+  ['lower_5ffirst_15',['LOWER_FIRST',['../namespaceKarm_1_1Io.html#ab3289aef9c6dbeb8105ef83dc36c9672a4304761023a97228d366142af8555bbf',1,'Karm::Io']]],
+  ['lre_16',['LRE',['../namespaceKarm_1_1Icu.html#a374f62108410f9c0065ef638d0b1fb63af63da11e80f63cbf9212c9abf1bbf87f',1,'Karm::Icu']]],
+  ['lri_17',['LRI',['../namespaceKarm_1_1Icu.html#a374f62108410f9c0065ef638d0b1fb63a5685e2496899606bee07b7ff49d5d122',1,'Karm::Icu']]],
+  ['lro_18',['LRO',['../namespaceKarm_1_1Icu.html#a374f62108410f9c0065ef638d0b1fb63a0331b5c1f027f310c2d2fca91ad025e2',1,'Karm::Icu']]],
+  ['lshift_19',['LSHIFT',['../namespaceKarm_1_1App.html#ad07c9914f5689fc3c0360845e694c5d1adff23c74b1d8d80f33e8a894964c74d7',1,'Karm::App']]],
+  ['lsuper_20',['LSUPER',['../namespaceKarm_1_1App.html#ad07c9914f5689fc3c0360845e694c5d1a462acf6fa42f3b2a720f95dba2468678',1,'Karm::App']]],
+  ['luma_21',['LUMA',['../namespaceKarm_1_1Image_1_1Qoi.html#aacde60f0fc4bacd02d89f5cee6479d84a35d82fae1bc21eab896ab787f9a33520',1,'Karm::Image::Qoi']]],
+  ['luv_22',['LUV',['../structKarm_1_1Icc_1_1ColorSpace.html#a5a039017d8c8cdb4a76f5471a6fe238ba81a27f68fcd443aaeed68f8213a2e993',1,'Karm::Icc::ColorSpace']]]
+];

@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['n16_0',['N16',['../namespaceKarm_1_1Serde.html#a1a1b70b654ef349fd8186570ea7ca34ea4fa31c7791286530bc73b862a2edb62b',1,'Karm::Serde']]],
+  ['n32_1',['N32',['../namespaceKarm_1_1Serde.html#a1a1b70b654ef349fd8186570ea7ca34ead71d06768593fa82be8fd84d1f8a33c3',1,'Karm::Serde']]],
+  ['n64_2',['N64',['../namespaceKarm_1_1Serde.html#a1a1b70b654ef349fd8186570ea7ca34ea7ac2840a241d00a82aa085fa66622bd1',1,'Karm::Serde']]],
+  ['n8_3',['N8',['../namespaceKarm_1_1Serde.html#a1a1b70b654ef349fd8186570ea7ca34ea7364f2afc5ceeebe184b9c484b69fa95',1,'Karm::Serde']]],
+  ['negative_4',['NEGATIVE',['../namespaceKarm_1_1Math.html#a8f667787348a0be6c76249f9cb9cd835a50546bf973283065b6ccf09faf7a580a',1,'Karm::Math']]],
+  ['newline_5',['NEWLINE',['../structKarm_1_1Ui_1_1TextAction.html#a80c8c6b1bcf9ad27b73d5aaa56ed4ff3',1,'Karm::Ui::TextAction']]],
+  ['nextline_6',['NEXTLINE',['../structKarm_1_1Tty_1_1Cmd.html#abbb98825a0ae9609f03910a43aead3e5affd740559f0293d1b399c8c1e0d0611c',1,'Karm::Tty::Cmd']]],
+  ['nil_7',['NIL',['../structKarm_1_1Serde_1_1Type.html#a698e78d8e5325ed8a371eedee1546e0babc0b1e8b63f3f00318eee5aeabc14255',1,'Karm::Serde::Type::NIL()'],['../namespaceKarm_1_1Image_1_1Jpeg.html#af7022f5c263dd1247b0212ffec582808a51aa5c61670e15b0ab14a4f8e72ea9af',1,'Karm::Image::Jpeg::NIL()']]],
+  ['no_8',['NO',['../namespaceKarm_1_1Gfx.html#a9b45eafe0109eed17448005467f7f6daac2f3f489a00553e7a01d369c103c7251',1,'Karm::Gfx::NO()'],['../namespaceKarm_1_1Io.html#ab3289aef9c6dbeb8105ef83dc36c9672ac2f3f489a00553e7a01d369c103c7251',1,'Karm::Io::NO()'],['../namespaceKarm.html#afdc762aa1d829153c0f8804624ea8d2fac2f3f489a00553e7a01d369c103c7251',1,'Karm::NO()']]],
+  ['no_5fmatch_9',['NO_MATCH',['../namespaceKarm_1_1Gfx.html#a1535430f415c827187717e6cae14c482a94935cef4046d086a88dc70dae2086ca',1,'Karm::Gfx']]],
+  ['non_5fword_5fboundary_10',['NON_WORD_BOUNDARY',['../namespaceKarm_1_1Regex.html#a5d572325166b7e0ae5551367f61e7898aa70f58d67f1cc1822f7735e17b2006a4',1,'Karm::Regex']]],
+  ['none_11',['NONE',['../structKarm_1_1Vte_1_1Parser.html#a827442e86818796d0da962f6523f0495ab50339a10e1de285ac99d4c3990b8693',1,'Karm::Vte::Parser::NONE()'],['../structKarm_1_1Vte_1_1Parser.html#a8000025773c78bfb6cd52122eece607dab50339a10e1de285ac99d4c3990b8693',1,'Karm::Vte::Parser::NONE()'],['../structKarm_1_1Print_1_1Margins.html#aaf3757e041b97bcd03e8cefd031e1272ab50339a10e1de285ac99d4c3990b8693',1,'Karm::Print::Margins::NONE()'],['../namespaceKarm_1_1App.html#ad0fbdc03944a19853ea7c865c0f31cb5ab50339a10e1de285ac99d4c3990b8693',1,'Karm::App::NONE()'],['../namespaceKarm_1_1App.html#a6be91eb6569c46f6a8e9d7faee8e5b9aab50339a10e1de285ac99d4c3990b8693',1,'Karm::App::NONE()'],['../namespaceKarm_1_1Gfx.html#a65f2c46530a861de605f2103cb12a3a5ab50339a10e1de285ac99d4c3990b8693',1,'Karm::Gfx::NONE()'],['../namespaceKarm_1_1Image_1_1Png.html#af2a868aafe622078a15d268663739bc6ab50339a10e1de285ac99d4c3990b8693',1,'Karm::Image::Png::NONE()'],['../namespaceKarm_1_1Math.html#acbf7f4cd9e5b6475cb1df3eee1515623ab50339a10e1de285ac99d4c3990b8693',1,'Karm::Math::NONE()']]],
+  ['nonzero_12',['NONZERO',['../namespaceKarm_1_1Gfx.html#a73160514b37fa34caf7e34f1d3da6b29af215f3b40377be8fd6199db406216e35',1,'Karm::Gfx']]],
+  ['nop_13',['NOP',['../structKarm_1_1Math_1_1Path.html#a1a219937914ccedcf08cb1852aa8eca7a1a004f5abe2b334db21328be1ea6b593',1,'Karm::Math::Path']]],
+  ['normal_14',['NORMAL',['../structKarm_1_1Ml_1_1BpeVocab_1_1TokenInfos.html#a2086adb0179f7f6181702ba65d416e3da1e23852820b9154316c7c06e2b7ba051',1,'Karm::Ml::BpeVocab::TokenInfos::NORMAL()'],['../namespaceKarm_1_1Gfx.html#a1535430f415c827187717e6cae14c482a1e23852820b9154316c7c06e2b7ba051',1,'Karm::Gfx::NORMAL()']]],
+  ['north_15',['NORTH',['../namespaceKarm_1_1App.html#ae2c6a9c29520d0b68d07f27200d68cb1a2bf8f791695c70efa9c14e6f1c326403',1,'Karm::App']]],
+  ['north_5feast_16',['NORTH_EAST',['../namespaceKarm_1_1App.html#ae2c6a9c29520d0b68d07f27200d68cb1a9d1250c1be563879340211b990a1297c',1,'Karm::App']]],
+  ['north_5fwest_17',['NORTH_WEST',['../namespaceKarm_1_1App.html#ae2c6a9c29520d0b68d07f27200d68cb1aa284a013a2af9189373c41351330e0d3',1,'Karm::App']]],
+  ['not_18',['NOT',['../structKarm_1_1Template_1_1PrefixExpr.html#a1bf0eea673d3b311ce8c550bec0fbba6a10df3d67626099df882920ba6552f16d',1,'Karm::Template::PrefixExpr']]],
+  ['note_19',['NOTE',['../namespaceDiag.html#a2af2cc2997bdd1a11be34ac10c836beba10de4bc81f754b19b0d27246a0589c05',1,'Diag']]],
+  ['notify_20',['NOTIFY',['../namespaceKarm_1_1Net_1_1Dns.html#a47f8b09c32e5921ee31751a3046bd3faaee4247f7239178e46cbbfdc796c266ab',1,'Karm::Net::Dns']]],
+  ['ns_21',['NS',['../namespaceKarm_1_1Net_1_1Dns.html#afdc41d84596321984a29bae536776a54a51751dd95a1fba15fb4ae423a3cd477d',1,'Karm::Net::Dns']]],
+  ['nsm_22',['NSM',['../namespaceKarm_1_1Icu.html#a374f62108410f9c0065ef638d0b1fb63a93da7c7e6ceac9506ca5446b5edb236f',1,'Karm::Icu']]],
+  ['null_23',['NULL',['../namespaceKarm_1_1Image_1_1Png.html#a7209002b73a2930d992eae13f48574bfa6c3e226b4d4795d518ab341b0824ec29',1,'Karm::Image::Png']]],
+  ['num_24',['NUM',['../namespaceKarm_1_1App.html#ad07c9914f5689fc3c0360845e694c5d1a44119bf3bae5d40a8d0766b91c304aac',1,'Karm::App']]]
+];

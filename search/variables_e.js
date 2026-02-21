@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['o_0',['o',['../unionKarm_1_1Math_1_1Trans2.html#a9b7cb2da0ce7c60606ea908a609817fe',1,'Karm::Math::Trans2::o()'],['../structKarm_1_1Math_1_1Ray.html#ad97c4fc4439a7a6863eb175f9798e71e',1,'Karm::Math::Ray::o()']]],
+  ['objects_1',['objects',['../structKarm_1_1Sys_1_1Intent.html#ae700b094aed044233a387495b8a16929',1,'Karm::Sys::Intent']]],
+  ['offs_2',['offs',['../structKarm_1_1Image_1_1Jpeg_1_1Huff.html#ab196b51f1ca072cfb92f0ce3bacd8251',1,'Karm::Image::Jpeg::Huff']]],
+  ['offset_3',['offset',['../structKarm_1_1Sys_1_1MmapProps.html#a554df5043fe094e08f46603a4c415785',1,'Karm::Sys::MmapProps::offset()'],['../structKarm_1_1Pdf_1_1XRef_1_1Entry.html#a85fb7465d44a1ea7907ccdbfdbe6dda7',1,'Karm::Pdf::XRef::Entry::offset()'],['../structKarm_1_1Ml_1_1Gguf_1_1TensorInfos.html#a55fed53ece5feaebc06eb2b3eabbe00f',1,'Karm::Ml::Gguf::TensorInfos::offset()'],['../structKarm_1_1Gfx_1_1BoxShadow.html#aa54cefc5569f37143835c41373d470a4',1,'Karm::Gfx::BoxShadow::offset()'],['../structKarm_1_1Gfx_1_1Outline.html#a67f6120bd56c83fb000a7d29a95b8dbf',1,'Karm::Gfx::Outline::offset()'],['../structKarm_1_1Font_1_1Ttf_1_1Name_1_1Record.html#a1c92820246fd7c2a67a37c8637c7c385',1,'Karm::Font::Ttf::Name::Record::offset()'],['../structKarm_1_1Io_1_1Seek.html#afb108ff405e0509c6af50ed077bf5cb9',1,'Karm::Io::Seek::offset()'],['../structKarm_1_1Io_1_1Loc.html#a6db27d3073db62405ccac96d36646e4d',1,'Karm::Io::Loc::offset()'],['../structKarm_1_1Io_1_1BField.html#a4378da38115ad9fb50f96e31d05bd0aa',1,'Karm::Io::BField::offset()']]],
+  ['on_5fcurve_5fpoint_4',['ON_CURVE_POINT',['../structKarm_1_1Font_1_1Ttf_1_1Glyf.html#a4fd5316f8ded08ae7cb4eeb0838f8536',1,'Karm::Font::Ttf::Glyf']]],
+  ['on_5fentry_5',['ON_ENTRY',['../structKarm_1_1Vte_1_1Parser.html#a35e790833ac8c8f9c67130fbc84c4a78',1,'Karm::Vte::Parser']]],
+  ['on_5fexit_6',['ON_EXIT',['../structKarm_1_1Vte_1_1Parser.html#ae535e3fb057c2de4542a47ab09f292cc',1,'Karm::Vte::Parser']]],
+  ['one_7',['ONE',['../unionKarm_1_1Math_1_1Rect.html#a6b111c890fb3ffcd1a40d08ea9f9709a',1,'Karm::Math::Rect::ONE()'],['../unionKarm_1_1Math_1_1Vec2.html#ab401ec8987142dfdf2ac830f03188d9d',1,'Karm::Math::Vec2::ONE()']]],
+  ['op_8',['op',['../structKarm_1_1Ui_1_1TextAction.html#ab629c70d74c3f581a8e44e10483fd21d',1,'Karm::Ui::TextAction::op()'],['../structKarm_1_1Ui_1_1TextModel_1_1Record.html#a27ab08e665a1b3c5cf8f2ec10dc24b13',1,'Karm::Ui::TextModel::Record::op()']]],
+  ['opacity_9',['opacity',['../structKarm_1_1Pdf_1_1GraphicalStateDict.html#a5569e836c0b42a8ee8768b7eb35251da',1,'Karm::Pdf::GraphicalStateDict::opacity()'],['../structKarm_1_1Gfx_1_1SvgCanvas_1_1State.html#a95962190886c0535164f82595061d04c',1,'Karm::Gfx::SvgCanvas::State::opacity()'],['../structKarm_1_1Gfx_1_1CpuCanvas_1_1Scope.html#a4665c169f2f566bf2d8b9fa0fa0feaab',1,'Karm::Gfx::CpuCanvas::Scope::opacity()']]],
+  ['options_10',['options',['../structKarm_1_1Cli_1_1Section.html#a53c75fc9d197300e5adc09b8d7afc663',1,'Karm::Cli::Section::options()'],['../structKarm_1_1Fs_1_1FsTab.html#a59ffcbf100be573a950f52d83d1012c4',1,'Karm::Fs::FsTab::options()'],['../structKarm_1_1Math_1_1Path_1_1Op.html#a056a6ee5957abd1fb593738a49cf22ed',1,'Karm::Math::Path::Op::options()'],['../structKarm_1_1Sys_1_1MmapProps.html#a548b73512ed0981f40aaa95cb49f610d',1,'Karm::Sys::MmapProps::options()']]],
+  ['order_11',['order',['../structKarm_1_1Base_1_1Foo.html#af50d304c5e3753380a1afdfa379942d2',1,'Karm::Base::Foo']]],
+  ['ordering_12',['ordering',['../structKarm_1_1Print_1_1TrueTypeFontAdapter.html#a64e32ac1c373b66a88b2e4337761b1da',1,'Karm::Print::TrueTypeFontAdapter']]],
+  ['orientation_13',['orientation',['../structKarm_1_1Print_1_1Settings.html#aa04c4a9de0fb9fee3cf9321ae8eecdc4',1,'Karm::Print::Settings']]],
+  ['origin_14',['ORIGIN',['../structKarm_1_1Http_1_1Header.html#ac65c1edd864084dd64f0b7a4daac37b6',1,'Karm::Http::Header']]],
+  ['originx_15',['originX',['../structKarm_1_1Image_1_1Tga_1_1Header.html#a09b2fe6ea5b33def0417528401859795',1,'Karm::Image::Tga::Header']]],
+  ['originy_16',['originY',['../structKarm_1_1Image_1_1Tga_1_1Header.html#a6d9891345fd658b5e103a89c58ef0e33',1,'Karm::Image::Tga::Header']]],
+  ['out_17',['out',['../structKarm_1_1Sys_1_1Pipe.html#a8cad978376d0bc4b85f6c6cc19ac4600',1,'Karm::Sys::Pipe::out()'],['../structKarm_1_1Sys_1_1Command.html#a70c9cbee13a9d740a2ab72c242124afd',1,'Karm::Sys::Command::out()']]],
+  ['out_5fcap_18',['OUT_CAP',['../structKarm_1_1Image_1_1Jpeg_1_1BitWriter.html#a2ce56e6b98d55d1dbb5848681d94d708',1,'Karm::Image::Jpeg::BitWriter']]],
+  ['output_19',['output',['../structKarm_1_1Av_1_1Options.html#a30a2e44ce54b6ed61acced7094eadfbe',1,'Karm::Av::Options']]],
+  ['overflow_20',['overflow',['../structKarm_1_1Ui_1_1BoxStyle.html#ae825e59af8fb66b94439c14946db776b',1,'Karm::Ui::BoxStyle']]],
+  ['overlap_5fcompound_21',['OVERLAP_COMPOUND',['../structKarm_1_1Font_1_1Ttf_1_1Glyf.html#a1166cf64908453e79bee4015319c1f35',1,'Karm::Font::Ttf::Glyf']]],
+  ['overlay_5fsimple_22',['OVERLAY_SIMPLE',['../structKarm_1_1Font_1_1Ttf_1_1Glyf.html#a8633321a36f668bd1ab6a94d1c6705ad',1,'Karm::Font::Ttf::Glyf']]],
+  ['ox_23',['ox',['../unionKarm_1_1Math_1_1Trans2.html#ac8755f70f27226fdb339d03807868027',1,'Karm::Math::Trans2']]],
+  ['oy_24',['oy',['../unionKarm_1_1Math_1_1Trans2.html#a349ef2986f56b64a7efcdeac93b61ba3',1,'Karm::Math::Trans2']]]
+];

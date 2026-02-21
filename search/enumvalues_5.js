@@ -1,0 +1,23 @@
+var searchData=
+[
+  ['f16_0',['F16',['../namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1a56d8353718e6fdc78b8d69078a2cdb94',1,'Karm::Ml::Gguf']]],
+  ['f32_1',['F32',['../namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1a44ad4ef5a76e6aa6fb3e3fa079a54fda',1,'Karm::Ml::Gguf']]],
+  ['f64_2',['F64',['../namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1a1ad5f6f3069070ec4cbbdc94d5e61e0e',1,'Karm::Ml::Gguf']]],
+  ['family_3',['FAMILY',['../structKarm_1_1Font_1_1Ttf_1_1Name.html#a25cf0d819a233e5e96ba9399abf62d58a883c2dfa48467ef2ed5b8a08a2b7df0b',1,'Karm::Font::Ttf::Name']]],
+  ['fangsong_4',['FANGSONG',['../namespaceKarm_1_1Gfx.html#a22c0f6cfe7909d4ebec0d59ea8f7bfccac89a7f3fd2fbf4fbebd93cca95515d3d',1,'Karm::Gfx']]],
+  ['fantasy_5',['FANTASY',['../namespaceKarm_1_1Gfx.html#a22c0f6cfe7909d4ebec0d59ea8f7bfccaa53561bf0d3ab67102f9e8cb635d8c95',1,'Karm::Gfx']]],
+  ['fast_6',['FAST',['../namespaceKarm_1_1Math.html#a713625c1a586df921d2e3cc79e8a990babc639a3e2d8ecbfa97cd691276c7ba5b',1,'Karm::Math']]],
+  ['feature_7',['FEATURE',['../namespaceKarm_1_1Debug.html#aff14c51edf3684bb064d428175659c70acc5eac6d4ce84ae96a802a5ecdd51977',1,'Karm::Debug']]],
+  ['file_8',['FILE',['../namespaceKarm_1_1Sys.html#ac6f925bec39595b5427e8f145bd1a4cda9fc5887c030f7a3e19821ebec457e719',1,'Karm::Sys']]],
+  ['filter_9',['FILTER',['../namespaceKarm_1_1Http.html#a1d720f9dab0fdc754b2d6b9ae4efaae7ae75ab17a550f46adbbe891b819cf951d',1,'Karm::Http']]],
+  ['fixed_10',['FIXED',['../structKarm_1_1Ui_1_1GridUnit.html#a7ce3ae0c13e2a397e45c97fb12347e66',1,'Karm::Ui::GridUnit']]],
+  ['flag_11',['FLAG',['../structKarm_1_1Cli_1_1Token.html#a4c9fb0da0d8a646b925e07bacadc7aeea0f4d0db3668dd58cabb9eb409657eaa8',1,'Karm::Cli::Token']]],
+  ['float32_12',['FLOAT32',['../namespaceKarm_1_1Ml_1_1Gguf.html#a5bbf19e28eca480c0956db66ad3bfe3aa967d280b5c16d95f2947647dd2ca6cc2',1,'Karm::Ml::Gguf']]],
+  ['float64_13',['FLOAT64',['../namespaceKarm_1_1Ml_1_1Gguf.html#a5bbf19e28eca480c0956db66ad3bfe3aa139882c654db8a57f7c3092de1dd0b02',1,'Karm::Ml::Gguf']]],
+  ['foo_14',['FOO',['../namespaceKarm_1_1Base_1_1Tests.html#a4af3590bda072177cebe340c515c218ea901890a8e9c8cf6d5a1a542b229febff',1,'Karm::Base::Tests']]],
+  ['forward_15',['FORWARD',['../structKarm_1_1Tty_1_1Cmd.html#abbb98825a0ae9609f03910a43aead3e5a442aeb83011faad116cc1622747d8ba9',1,'Karm::Tty::Cmd']]],
+  ['free_16',['FREE',['../structKarm_1_1Set.html#ab1d1bf3b41a467bf9236c94f0a28561ca580a5ccb9e9eb0755d96e5869284517c',1,'Karm::Set']]],
+  ['fsi_17',['FSI',['../namespaceKarm_1_1Icu.html#a374f62108410f9c0065ef638d0b1fb63a261cc2c12883af9dfb7f63a21d52adba',1,'Karm::Icu']]],
+  ['full_18',['FULL',['../namespaceKarm_1_1App.html#ad0fbdc03944a19853ea7c865c0f31cb5aba7de5bc6888294e5884b024a4c894f1',1,'Karm::App']]],
+  ['full_5fname_19',['FULL_NAME',['../structKarm_1_1Font_1_1Ttf_1_1Name.html#a25cf0d819a233e5e96ba9399abf62d58a931c32a1d10692ea36bed39596e675fb',1,'Karm::Font::Ttf::Name']]]
+];
