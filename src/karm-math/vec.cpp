@@ -97,6 +97,10 @@ union Vec2 {
         return (*this - other).len();
     }
 
+    constexpr T distSq(Vec2 other) const {
+        return (*this - other).lenSq();
+    }
+
     constexpr Vec2 unit() const {
         return Vec2{x, y} / len();
     }
@@ -115,6 +119,10 @@ union Vec2 {
         return {-y, x};
     }
 
+    constexpr Vec2 normalInv() const {
+        return {y, -x};
+    }
+
     constexpr T angleWith(Vec2 other) const {
         auto r = unit().dot(other.unit());
         auto sign = (x * other.y < y * other.x) ? -1.0 : 1.0;
@@ -122,17 +130,38 @@ union Vec2 {
     }
 
     constexpr Vec2 snapToDiagonal() const {
-        auto side = Karm::max(Math::abs(x), Math::abs(y));
+        auto side = Karm::max(
+            Math::abs(x),
+            Math::abs(y)
+        );
 
-        f64 sx = x < 0 ? -1 : 1;
-        f64 sy = y < 0 ? -1 : 1;
+        T sx = x < 0 ? -1 : 1;
+        T sy = y < 0 ? -1 : 1;
 
-        if (Math::abs(x) < 1e-6)
+        if (Math::epsilonEq(x, (T)0))
             sx = sy;
-        if (Math::abs(y) < 1e-6)
+
+        if (Math::epsilonEq(y, (T)0))
             sy = sx;
 
         return {sx * side, sy * side};
+    }
+
+    Vec2 projectAlong(Vec2 direction, T distance) {
+        return *this + (direction * distance);
+    }
+
+    Vec2 rotateAround(Vec2 center, T r) {
+        T rs = sin(r);
+        T rc = cos(r);
+
+        T px = x - center.x;
+        T py = y - center.y;
+
+        return {
+            px * rc - py * rs + center.x,
+            px * rs + py * rc + center.y,
+        };
     }
 
     constexpr T operator[](isize i) const {
@@ -374,6 +403,10 @@ union Vec3 {
 
     constexpr T dist(Vec3 const& other) const {
         return (*this - other).len();
+    }
+
+    constexpr T distSq(Vec3 const& other) const {
+        return (*this - other).lenSq();
     }
 
     constexpr Vec3 unit() const {
