@@ -256,6 +256,30 @@ export Res<Serde::Value> parse(Str s) {
 
 // MARK: Unparse ---------------------------------------------------------------
 
+static void emitEscaped(Io::Emit& emit, Str s) {
+    for (auto c : iterRunes(s)) {
+        if (c == '"') {
+            emit("\\\"");
+        } else if (c == '\\') {
+            emit("\\\\");
+        } else if (c == '\b') {
+            emit("\\b");
+        } else if (c == '\f') {
+            emit("\\f");
+        } else if (c == '\n') {
+            emit("\\n");
+        } else if (c == '\r') {
+            emit("\\r");
+        } else if (c == '\t') {
+            emit("\\t");
+        } else if (c < 0x20 || c > 0x7E) {
+            emit("\\u{04X}", c);
+        } else {
+            emit(c);
+        }
+    }
+}
+
 export Res<> unparse(Io::Emit& emit, Serde::Value const& v) {
     return v.visit(
         Visitor{
@@ -285,7 +309,7 @@ export Res<> unparse(Io::Emit& emit, Serde::Value const& v) {
                     first = false;
 
                     emit('"');
-                    emit(kv.v0);
+                    emitEscaped(emit, kv.v0);
                     emit("\":");
                     try$(unparse(emit, kv.v1));
                 }
@@ -294,27 +318,7 @@ export Res<> unparse(Io::Emit& emit, Serde::Value const& v) {
             },
             [&](String const& s) -> Res<> {
                 emit('"');
-                for (auto c : iterRunes(s)) {
-                    if (c == '"') {
-                        emit("\\\"");
-                    } else if (c == '\\') {
-                        emit("\\\\");
-                    } else if (c == '\b') {
-                        emit("\\b");
-                    } else if (c == '\f') {
-                        emit("\\f");
-                    } else if (c == '\n') {
-                        emit("\\n");
-                    } else if (c == '\r') {
-                        emit("\\r");
-                    } else if (c == '\t') {
-                        emit("\\t");
-                    } else if (c < 0x20) {
-                        emit("\\u{x}", c);
-                    } else {
-                        emit(c);
-                    }
-                }
+                emitEscaped(emit, s);
                 emit('"');
                 return Ok();
             },
