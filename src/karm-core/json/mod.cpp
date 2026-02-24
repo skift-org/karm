@@ -61,7 +61,8 @@ Res<String> parseStr(Io::SScan& s) {
                 continue;
             }
             if (s.skip('u')) {
-                if (Io::atou(s, {.base = 16})) {
+                if (auto u = Io::atou(s, {.base = 16})) {
+                    sw.append(*u);
                     continue;
                 }
             }
