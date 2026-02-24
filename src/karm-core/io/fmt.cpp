@@ -224,6 +224,7 @@ struct Formatter<Aligned<T>> {
 export struct NumberFormatter {
     bool prefix = false;
     bool isChar = false;
+    bool uppercase = false;
     usize base = 10;
     usize width = 0;
     char fillChar = ' ';
@@ -283,11 +284,24 @@ export struct NumberFormatter {
             base = 16;
             break;
 
+        case 'X':
+            base = 16;
+            uppercase = true;
+            break;
+
         case 'p':
             prefix = true;
             base = 16;
             fillChar = '0';
             width = sizeof(usize) * 2;
+            break;
+
+        case 'P':
+            prefix = true;
+            base = 16;
+            fillChar = '0';
+            width = sizeof(usize) * 2;
+            uppercase = true;
             break;
 
         case 'c':
@@ -300,10 +314,10 @@ export struct NumberFormatter {
     }
 
     Res<> formatUnsigned(TextWriter& writer, usize val) {
-        auto digit = [](usize v) {
+        auto digit = [&](usize v) {
             if (v < 10)
                 return '0' + v;
-            return 'a' + (v - 10);
+            return (uppercase ? 'A' : 'a') + (v - 10);
         };
 
         InlineVec<char, 128> buf;
