@@ -14,6 +14,10 @@
 <br/>
 <br/>
 
+## Getting Started
+
+Follow the [Getting Started Guide](doc/getting-started.md) to set up your first Karm project and run a simple "Hello World" application.
+
 ## License
 
 <a href="https://www.gnu.org/licenses/lgpl-3.0.en.html">
