@@ -233,4 +233,72 @@ test$("opt-ref-operator-bool-and-clear") {
     return Ok();
 }
 
+test$("opt-ref-rebinding") {
+    int foo = 1;
+    Opt<int&> foor{foo};
+    int bar = 2;
+    foor = bar;
+
+    expectEq$(foo, 1);
+    expectEq$(bar, 2);
+    expectEq$(foor.unwrap(), 2);
+
+    return Ok();
+}
+
+test$("opt-ref-copy") {
+    int value = 42;
+    Opt<int&> opt{value};
+
+    Opt<int&> optCopy = opt;
+
+    expect$(optCopy.has());
+    expectEq$(optCopy.unwrap(), 42);
+    expectEq$(&optCopy.unwrap(), &value);
+
+    optCopy.unwrap() = 100;
+    expectEq$(value, 100);
+
+    return Ok();
+}
+
+test$("opt-ref-copy-const") {
+    int value = 42;
+    Opt<int&> opt{value};
+    Opt<int&> const optCopy = opt;
+
+    expect$(optCopy.has());
+    expectEq$(optCopy.unwrap(), 42);
+    expectEq$(&optCopy.unwrap(), &value);
+
+    optCopy.unwrap() = 100;
+    expectEq$(value, 100);
+
+    return Ok();
+}
+
+test$("opt-ref-move") {
+    int value = 42;
+    Opt<int&> opt{value};
+
+    Opt<int&> optMoved = std::move(opt);
+
+    expect$(optMoved.has());
+    expect$(not opt.has());
+    expectEq$(optMoved.unwrap(), 42);
+    expectEq$(&optMoved.unwrap(), &value);
+
+    optMoved.unwrap() = 100;
+    expectEq$(value, 100);
+
+    return Ok();
+}
+
+test$("opt-ref-move-const") {
+    int value = 42;
+    Opt<int&> opt{value};
+    Opt<int const&> optConst = opt;
+    return Ok();
+}
+
 } // namespace Karm::Base::Tests
