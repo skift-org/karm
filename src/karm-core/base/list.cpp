@@ -70,7 +70,7 @@ struct Ll {
 
     T* detach(T* value) {
         if (not value) [[unlikely]]
-            panic("value connot be null");
+            panic("cannot detache null");
 
         if (prev(value))
             next(prev(value)) = next(value);
@@ -94,7 +94,7 @@ struct Ll {
 
     T* append(T* value, T* after) {
         if (not value) [[unlikely]]
-            panic("value connot be null");
+            panic("cannot append null");
 
         if (value == after) [[unlikely]]
             panic("cannot append a node to itself");

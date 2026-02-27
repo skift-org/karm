@@ -282,7 +282,112 @@ usize sizeOf(S const& slice) {
     return slice.len() * sizeof(typename S::Inner);
 }
 
-// MARK: Iter ------------------------------------------------------------------
+// MARK: Iter: Slice -----------------------------------------------------------
+
+export template <typename T>
+constexpr auto iter(Slice<T> slice) {
+    struct Iter {
+        Slice<T> slice;
+        usize i;
+
+        auto next() -> T const* {
+            if (i >= slice.len()) {
+                return nullptr;
+            }
+
+            return &slice.buf()[i++];
+        }
+    };
+
+    return Iter{slice, 0};
+}
+
+export template <typename T>
+constexpr auto iterRev(Slice<T> slice) {
+    struct Iter {
+        Slice<T> slice;
+        usize i;
+
+        auto next() -> T const* {
+            if (i == 0) {
+                return nullptr;
+            }
+
+            return &slice.buf()[--i];
+        }
+    };
+
+    return Iter{slice, slice.len()};
+}
+
+export template <typename T>
+constexpr auto mutIter(MutSlice<T> slice) {
+    struct Iter {
+        MutSlice<T> slice;
+        usize i;
+
+        auto next() -> T* {
+            if (i >= slice.len()) {
+                return nullptr;
+            }
+
+            return &slice.buf()[i++];
+        }
+    };
+
+    return Iter{slice, 0};
+}
+
+export template <typename T>
+constexpr auto mutIterRev(MutSlice<T> slice) {
+    struct Iter {
+        MutSlice<T> slice;
+        usize i;
+
+        auto next() -> T* {
+            if (i == 0) {
+                return nullptr;
+            }
+
+            return &slice.buf()[--i];
+        }
+    };
+
+    return Iter{slice, slice.len()};
+}
+
+export template <typename T>
+constexpr auto iterSplit(Slice<T> slice, T const& sep) {
+    struct Iter {
+        Slice<T> slice;
+        T sep;
+        usize i;
+
+        auto next() -> Opt<Slice<T>> {
+            if (i >= slice.len())
+                return NONE;
+
+            usize start = i;
+            while (i < slice.len() and slice.buf()[i] != sep) {
+                i++;
+            }
+
+            usize end = i;
+            if (i < slice.len()) {
+                i++;
+            }
+
+            return Slice{
+                slice.buf() + start,
+                end - start,
+            };
+        }
+    };
+
+    return Iter{slice, sep, 0};
+}
+
+// MARK: Iter: Sliceable -------------------------------------------------------
 
 export template <Sliceable S>
 constexpr auto iter(S const& slice) {
