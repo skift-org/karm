@@ -202,25 +202,27 @@ export struct Utf16 {
     }
 
     always_inline static bool decodeUnit(Rune& result, DecodeInput<Unit> auto& in) {
-        Unit first = in.next();
-
-        if (unitLen(first) > in.rem()) {
+        if (in.rem() == 0) {
             result = U'�';
             return false;
         }
 
+        Unit first = in.next();
+
         if (first >= 0xd800 and first <= 0xdbff) {
-            if (in.rem() < 2) {
+            if (in.rem() == 0) {
+                result = U'�';
                 return false;
             }
 
             Unit second = in.next();
 
             if (second < 0xdc00 or second > 0xdfff) {
+                result = U'�';
                 return false;
             }
 
-            result = ((first - 0xd800) << 10) | (second - 0xdc00) + 0x10000;
+            result = 0x10000 + ((first - 0xd800) << 10) + (second - 0xdc00);
         } else {
             result = first;
         }
