@@ -268,6 +268,10 @@ bool eqCi(_Str<E> a, _Str<E> b) {
     return true;
 }
 
+export bool eqAsciiCi(Rune a, Rune b) {
+    return toAsciiLower(a) == toAsciiLower(b);
+}
+
 export template <StaticEncoding Target, StaticEncoding Source>
 _String<Target> transcode(_Str<Source> str) {
     usize len = transcodeLen<Source, Target>(str);
