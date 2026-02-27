@@ -68,4 +68,16 @@ test$("json-parse-bool") {
     return Ok();
 }
 
+test$("json-parse-escaped-unicode") {
+    auto val = "\"\\u0041\""_json;
+    expect$(val.isStr());
+    expectEq$(val.asStr(), "A");
+
+    val = "\"\\uD83E\\uDD21\""_json;
+    expect$(val.isStr());
+    expectEq$(val.asStr(), "🤡");
+
+    return Ok();
+}
+
 } // namespace Karm::Json::Tests

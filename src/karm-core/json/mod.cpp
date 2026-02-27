@@ -61,10 +61,39 @@ Res<String> parseStr(Io::SScan& s) {
                 continue;
             }
             if (s.skip('u')) {
-                if (auto u = Io::atou(s, {.base = 16})) {
-                    sw.append(*u);
-                    continue;
+                auto parseCodeUnit = [&]() -> Res<Utf16::Unit> {
+                    auto hex = s.token(Re::exactly(4, Re::xdigit()));
+                    if (not hex)
+                        return Error::invalidData();
+
+                    auto unit = Io::atou(hex, {.base = 16});
+                    if (not unit)
+                        return Error::invalidData("expected 4 hex digits after \\u");
+
+                    return Ok(*unit);
+                };
+
+                auto high = try$(parseCodeUnit());
+
+                Utf16::One units;
+                units.put(high);
+
+                if (Utf16::unitLen(high) == 2) {
+                    if (not s.skip('\\') or not s.skip('u'))
+                        return Error::invalidData("expected low surrogate");
+
+                    auto low = try$(parseCodeUnit());
+
+                    units.put(low);
                 }
+
+                Rune rune;
+                Cursor cursor{units.buf(), units.len()};
+                if (not Utf16::decodeUnit(rune, cursor))
+                    return Error::invalidData("invalid utf16");
+
+                sw.append(rune);
+                continue;
             }
         }
 
@@ -273,7 +302,14 @@ static void emitEscaped(Io::Emit& emit, Str s) {
         } else if (c == '\t') {
             emit("\\t");
         } else if (c < 0x20 || c > 0x7E) {
-            emit("\\u{04X}", c);
+            Utf16::One units;
+            Utf16::encodeUnit(c, units);
+
+            if (units.len() == 2) {
+                emit("\\u{04X}\\u{04X}", units[0], units[1]);
+            } else {
+                emit("\\u{04X}", units[0]);
+            }
         } else {
             emit(c);
         }
