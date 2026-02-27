@@ -49,6 +49,7 @@ struct HashTable {
     HashTable(HashTable const& other) {
         _cap = other._cap;
         _slots = new Slot[_cap];
+        _len = other._len;
         _dead = other._dead;
         for (usize i = 0; i < _cap; i++) {
             if (other._slots[i].state == State::USED) {
@@ -62,7 +63,9 @@ struct HashTable {
 
     HashTable(HashTable&& other)
         : _slots(std::exchange(other._slots, nullptr)),
-          _cap(std::exchange(other._cap, 0)) {
+          _cap(std::exchange(other._cap, 0)),
+          _len(std::exchange(other._len, 0)),
+          _dead(std::exchange(other._dead, 0)) {
     }
 
     ~HashTable() {

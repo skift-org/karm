@@ -34,11 +34,11 @@ test$("map-remove") {
     map.put(1, 100);
     expect$(map.contains(1));
 
-    expect$(map.remove(1));
+    expect$(static_cast<bool>(map.remove(1)));
     expect$(not map.contains(1));
     expectEq$(map.len(), 0uz);
 
-    expect$(not map.remove(999));
+    expect$(not static_cast<bool>(map.remove(999)));
 
     return Ok();
 }

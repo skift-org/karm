@@ -105,7 +105,9 @@ struct Map {
     }
 
     [[nodiscard]] V& lookupOrPutDefault(Meta::Equatable<K> auto const& key, V const& defaultValue = {}) lifetimebound {
-        return lookupOrPutDefault(key, defaultValue);
+        return lookupOrPut(key, [&]() {
+            return defaultValue;
+        });
     }
 
     [[nodiscard]] V& lookupOrPutDefault(Meta::Equatable<K> auto const& key, Meta::Convertible<V> auto&& defaultValue = V{}) lifetimebound {
