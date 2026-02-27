@@ -14,6 +14,11 @@ export struct Glyph {
 
     static Glyph const TOFU;
 
+    u64 hash() const {
+        return Karm::hash(index) +
+               Karm::hash(font);
+    }
+
     bool operator==(Glyph const& other) const = default;
 
     auto operator<=>(Glyph const& other) const = default;
@@ -244,6 +249,14 @@ export struct FontAttrs {
                stretch == FontStretch::NORMAL and
                style == FontStyle::NORMAL and
                monospace == Monospace::NO;
+    }
+
+    u64 hash() const {
+        return Karm::hash(family) +
+               Karm::hash(weight) +
+               Karm::hash(stretch) +
+               Karm::hash(style) +
+               Karm::hash(monospace);
     }
 
     bool operator==(FontAttrs const&) const = default;

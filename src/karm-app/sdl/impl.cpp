@@ -13,34 +13,34 @@ import :sdl.keys;
 
 namespace Karm::App::_Embed {
 
-static Flags<App::KeyMod> currentMods() {
+static Flags<KeyMod> currentMods() {
     auto sdl = SDL_GetModState();
-    Flags<App::KeyMod> mods;
+    Flags<KeyMod> mods;
 
     if (sdl & SDL_KMOD_LSHIFT)
-        mods |= App::KeyMod::LSHIFT;
+        mods |= KeyMod::LSHIFT;
     if (sdl & SDL_KMOD_RSHIFT)
-        mods |= App::KeyMod::RSHIFT;
+        mods |= KeyMod::RSHIFT;
     if (sdl & SDL_KMOD_LCTRL)
-        mods |= App::KeyMod::LCTRL;
+        mods |= KeyMod::LCTRL;
     if (sdl & SDL_KMOD_RCTRL)
-        mods |= App::KeyMod::RCTRL;
+        mods |= KeyMod::RCTRL;
     if (sdl & SDL_KMOD_LALT)
-        mods |= App::KeyMod::LALT;
+        mods |= KeyMod::LALT;
     if (sdl & SDL_KMOD_RALT)
-        mods |= App::KeyMod::RALT;
+        mods |= KeyMod::RALT;
     if (sdl & SDL_KMOD_LGUI)
-        mods |= App::KeyMod::LSUPER;
+        mods |= KeyMod::LSUPER;
     if (sdl & SDL_KMOD_RGUI)
-        mods |= App::KeyMod::RSUPER;
+        mods |= KeyMod::RSUPER;
     if (sdl & SDL_KMOD_NUM)
-        mods |= App::KeyMod::NUM;
+        mods |= KeyMod::NUM;
     if (sdl & SDL_KMOD_CAPS)
-        mods |= App::KeyMod::CAPS;
+        mods |= KeyMod::CAPS;
     if (sdl & SDL_KMOD_MODE)
-        mods |= App::KeyMod::MODE;
+        mods |= KeyMod::MODE;
     if (sdl & SDL_KMOD_SCROLL)
-        mods |= App::KeyMod::SCROLL;
+        mods |= KeyMod::SCROLL;
 
     return mods;
 }
@@ -141,39 +141,36 @@ struct SdlApplication : Application {
     }
 
     void detachWindow(SDL_WindowID id) {
-        _windows.del(id);
+        _windows.remove(id).unwrap("detaching invalid window id");
     }
 
     void _translateEvent(Rc<Handler> handler, SDL_Event const& sdlEvent) {
         switch (sdlEvent.type) {
 
         case SDL_EVENT_WINDOW_RESIZED: {
-            auto* window = _windows.get(sdlEvent.window.windowID);
-            if (window) {
-                handler->handle<App::ResizeEvent>(
-                    WindowId{sdlEvent.window.windowID},
-                    App::ResizeEvent{
-                        .size = {
-                            sdlEvent.window.data1,
-                            sdlEvent.window.data2,
-                        },
-                    }
-                );
-            }
+            handler->handle<ResizeEvent>(
+                WindowId{sdlEvent.window.windowID},
+                ResizeEvent{
+                    .size = {
+                        sdlEvent.window.data1,
+                        sdlEvent.window.data2,
+                    },
+                }
+            );
             break;
         }
 
         case SDL_EVENT_KEY_DOWN: {
             auto ev = Sdl::fromSdlKeyboardEvent(sdlEvent.key);
-            ev.type = sdlEvent.key.repeat ? App::KeyboardEvent::REPEATE : App::KeyboardEvent::PRESS;
-            handler->handle<App::KeyboardEvent>(WindowId{sdlEvent.key.windowID}, ev);
+            ev.type = sdlEvent.key.repeat ? KeyboardEvent::REPEATE : KeyboardEvent::PRESS;
+            handler->handle<KeyboardEvent>(WindowId{sdlEvent.key.windowID}, ev);
             break;
         }
 
         case SDL_EVENT_KEY_UP: {
             auto ev = Sdl::fromSdlKeyboardEvent(sdlEvent.key);
-            ev.type = App::KeyboardEvent::RELEASE;
-            handler->handle<App::KeyboardEvent>(WindowId{sdlEvent.key.windowID}, ev);
+            ev.type = KeyboardEvent::RELEASE;
+            handler->handle<KeyboardEvent>(WindowId{sdlEvent.key.windowID}, ev);
             break;
         }
 
@@ -183,7 +180,7 @@ struct SdlApplication : Application {
             Str text = sdlEvent.text.text;
             for (Rune r : iterRunes(text)) {
                 ev.rune = r;
-                handler->handle<App::KeyboardEvent>(WindowId{sdlEvent.key.windowID}, ev);
+                handler->handle<KeyboardEvent>(WindowId{sdlEvent.key.windowID}, ev);
             }
             break;
         }
@@ -191,25 +188,25 @@ struct SdlApplication : Application {
         case SDL_EVENT_MOUSE_MOTION: {
             if (sdlEvent.motion.which == SDL_TOUCH_MOUSEID)
                 return;
-            auto* window = _windows.get(sdlEvent.motion.windowID);
+            auto window = _windows.lookup(sdlEvent.motion.windowID).unwrapOr(nullptr);
 
             Math::Vec2<f32> screenPos = {};
             SDL_GetGlobalMouseState(&screenPos.x, &screenPos.y);
 
-            Flags<App::MouseButton> buttons;
-            buttons.set(App::MouseButton::LEFT, sdlEvent.motion.state & SDL_BUTTON_LMASK);
-            buttons.set(App::MouseButton::MIDDLE, sdlEvent.motion.state & SDL_BUTTON_MMASK);
-            buttons.set(App::MouseButton::RIGHT, sdlEvent.motion.state & SDL_BUTTON_RMASK);
+            Flags<MouseButton> buttons;
+            buttons.set(MouseButton::LEFT, sdlEvent.motion.state & SDL_BUTTON_LMASK);
+            buttons.set(MouseButton::MIDDLE, sdlEvent.motion.state & SDL_BUTTON_MMASK);
+            buttons.set(MouseButton::RIGHT, sdlEvent.motion.state & SDL_BUTTON_RMASK);
 
             window->_lastMousePos = {
                 static_cast<isize>(sdlEvent.motion.x),
                 static_cast<isize>(sdlEvent.motion.y),
             };
 
-            handler->handle<App::MouseEvent>(
+            handler->handle<MouseEvent>(
                 WindowId{sdlEvent.motion.windowID},
-                App::MouseEvent{
-                    .type = App::MouseEvent::MOVE,
+                MouseEvent{
+                    .type = MouseEvent::MOVE,
                     .pos = window->_lastMousePos,
                     .delta = screenPos.cast<isize>() - _lastScreenMousePos,
                     .buttons = buttons,
@@ -224,26 +221,26 @@ struct SdlApplication : Application {
         case SDL_EVENT_MOUSE_BUTTON_UP: {
             if (sdlEvent.motion.which == SDL_TOUCH_MOUSEID)
                 return;
-            auto* window = _windows.get(sdlEvent.motion.windowID);
+            auto* window = _windows.lookup(sdlEvent.motion.windowID).unwrapOr(nullptr);
 
-            Flags<App::MouseButton> buttons;
-            buttons.set(App::MouseButton::LEFT, sdlEvent.motion.state & SDL_BUTTON_LMASK);
-            buttons.set(App::MouseButton::MIDDLE, sdlEvent.motion.state & SDL_BUTTON_MMASK);
-            buttons.set(App::MouseButton::RIGHT, sdlEvent.motion.state & SDL_BUTTON_RMASK);
+            Flags<MouseButton> buttons;
+            buttons.set(MouseButton::LEFT, sdlEvent.motion.state & SDL_BUTTON_LMASK);
+            buttons.set(MouseButton::MIDDLE, sdlEvent.motion.state & SDL_BUTTON_MMASK);
+            buttons.set(MouseButton::RIGHT, sdlEvent.motion.state & SDL_BUTTON_RMASK);
 
-            App::MouseButton button = App::MouseButton::NONE;
+            MouseButton button = MouseButton::NONE;
             if (sdlEvent.button.button == SDL_BUTTON_LEFT) {
-                button = App::MouseButton::LEFT;
+                button = MouseButton::LEFT;
             } else if (sdlEvent.button.button == SDL_BUTTON_RIGHT) {
-                button = App::MouseButton::RIGHT;
+                button = MouseButton::RIGHT;
             } else if (sdlEvent.button.button == SDL_BUTTON_MIDDLE) {
-                button = App::MouseButton::MIDDLE;
+                button = MouseButton::MIDDLE;
             }
 
-            handler->handle<App::MouseEvent>(
+            handler->handle<MouseEvent>(
                 WindowId{sdlEvent.button.windowID},
-                App::MouseEvent{
-                    .type = App::MouseEvent::RELEASE,
+                MouseEvent{
+                    .type = MouseEvent::RELEASE,
                     .pos = window->_lastMousePos,
                     .buttons = buttons,
                     .mods = currentMods(),
@@ -256,27 +253,29 @@ struct SdlApplication : Application {
         case SDL_EVENT_MOUSE_BUTTON_DOWN: {
             if (sdlEvent.motion.which == SDL_TOUCH_MOUSEID)
                 return;
-            auto* window = _windows.get(sdlEvent.motion.windowID);
+            auto* window = _windows.lookup(sdlEvent.motion.windowID).unwrapOr(nullptr);
+            if (not window)
+                return;
 
-            Flags<App::MouseButton> buttons;
-            buttons.set(App::MouseButton::LEFT, sdlEvent.motion.state & SDL_BUTTON_LMASK);
-            buttons.set(App::MouseButton::MIDDLE, sdlEvent.motion.state & SDL_BUTTON_MMASK);
-            buttons.set(App::MouseButton::RIGHT, sdlEvent.motion.state & SDL_BUTTON_RMASK);
+            Flags<MouseButton> buttons;
+            buttons.set(MouseButton::LEFT, sdlEvent.motion.state & SDL_BUTTON_LMASK);
+            buttons.set(MouseButton::MIDDLE, sdlEvent.motion.state & SDL_BUTTON_MMASK);
+            buttons.set(MouseButton::RIGHT, sdlEvent.motion.state & SDL_BUTTON_RMASK);
 
-            App::MouseButton button = App::MouseButton::NONE;
+            MouseButton button = MouseButton::NONE;
             if (sdlEvent.button.button == SDL_BUTTON_LEFT) {
-                button = App::MouseButton::LEFT;
+                button = MouseButton::LEFT;
             } else if (sdlEvent.button.button == SDL_BUTTON_RIGHT) {
-                button = App::MouseButton::RIGHT;
+                button = MouseButton::RIGHT;
             } else if (sdlEvent.button.button == SDL_BUTTON_MIDDLE) {
-                button = App::MouseButton::MIDDLE;
+                button = MouseButton::MIDDLE;
             }
 
-            handler->handle<App::MouseEvent>(
+            handler->handle<MouseEvent>(
                 WindowId{sdlEvent.button.windowID},
 
-                App::MouseEvent{
-                    .type = App::MouseEvent::PRESS,
+                MouseEvent{
+                    .type = MouseEvent::PRESS,
                     .pos = window->_lastMousePos,
                     .buttons = buttons,
                     .mods = currentMods(),
@@ -289,13 +288,15 @@ struct SdlApplication : Application {
         case SDL_EVENT_MOUSE_WHEEL: {
             if (sdlEvent.wheel.which == SDL_TOUCH_MOUSEID)
                 return;
-            auto* window = _windows.get(sdlEvent.motion.windowID);
+            auto* window = _windows.lookup(sdlEvent.motion.windowID).unwrapOr(nullptr);
+            if (not window)
+                return;
 
-            handler->handle<App::MouseEvent>(
+            handler->handle<MouseEvent>(
                 WindowId{sdlEvent.wheel.windowID},
 
-                App::MouseEvent{
-                    .type = App::MouseEvent::SCROLL,
+                MouseEvent{
+                    .type = MouseEvent::SCROLL,
                     .pos = window->_lastMousePos,
                     .scroll = {
                         -sdlEvent.wheel.x,
@@ -319,7 +320,7 @@ struct SdlApplication : Application {
     }
 
     bool exited() {
-        for (auto [id, window] : _windows.iterUnordered())
+        for (auto const& [id, window] : _windows.iterItems())
             if (not window->_closed)
                 return _exited;
         return true;

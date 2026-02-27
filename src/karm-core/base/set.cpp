@@ -1,241 +1,165 @@
+module;
+
+#include <karm/macros>
+
 export module Karm.Core:base.set;
 
 import :meta.cvrp;
 import :base.clamp;
-import :base.hash;
+import :base.hashTable;
 import :base.iter;
-import :base.manual;
 
 namespace Karm {
 
 export template <typename T>
 struct Set {
-    enum State : u8 {
-        FREE,
-        USED,
-        DEAD,
+    using Items = HashTable<T>;
+    Items _items;
+
+    explicit Set(usize cap = 0) {
+        _items.ensure(cap);
     };
 
-    struct Slot {
-        State state = State::FREE;
-        Manual<T> value;
-
-        bool clear() {
-            if (state != State::USED)
-                return false;
-            state = State::DEAD;
-            value.dtor();
-            return true;
-        }
-
-        T& unwrap() {
-            if (state != State::USED)
-                panic("slot is free");
-            return value.unwrap();
-        }
-
-        T const& unwrap() const {
-            if (state != State::USED)
-                panic("slot is free");
-            return value.unwrap();
-        }
-
-        T take() {
-            if (state != State::USED)
-                panic("slot is free");
-            state = State::DEAD;
-            return value.take();
-        }
-
-        template <typename... Args>
-        bool put(Args&&... args) {
-            if (state == State::USED) {
-                unwrap() = T(std::forward<Args>(args)...);
-                return false;
-            }
-
-            value.ctor(std::forward<Args>(args)...);
-            state = State::USED;
-            return true;
-        }
-    };
-
-    Slot* _slots = nullptr;
-    usize _cap = 0;
-    usize _len = 0;
-
-    Set(usize cap = 0) : _cap(cap) {
-        if (cap)
-            _slots = new Slot[cap];
+    Set(std::initializer_list<T> items) {
+        _items.ensure(items.size());
+        for (auto& i : items)
+            add(i);
     }
 
-    Set(Set const& other) {
-        _cap = other._cap;
-        _len = other._len;
-        _slots = new Slot[_cap];
-        for (usize i = 0; i < _cap; i++) {
-            if (other._slots[i].state == State::USED) {
-                _slots[i].put(other._slots[i].unwrap());
-            } else {
-                _slots[i].state = other._slots[i].state;
-            }
-        }
+    void ensure(usize len) {
+        _items.ensure(len);
     }
 
-    Set(Set&& other)
-        : _slots(std::exchange(other._slots, nullptr)),
-          _cap(std::exchange(other._cap, 0)),
-          _len(std::exchange(other._len, 0)) {
-    }
-
-    ~Set() {
-        if (_slots) {
-            clear();
-            delete[] _slots;
-            _slots = nullptr;
-            _cap = 0;
-            _len = 0;
-        }
-    }
-
-    Set& operator=(Set const& other) {
-        *this = Set(other);
-        return *this;
-    }
-
-    Set& operator=(Set&& other) {
-        std::swap(_slots, other._slots);
-        std::swap(_cap, other._cap);
-        std::swap(_len, other._len);
-        return *this;
-    }
-
-    usize usage() const {
-        if (not _cap)
-            return 100;
-        return (_len * 100) / _cap;
-    }
-
-    void rehash(usize desired) {
-        if (desired <= _cap)
-            return;
-
-        if (not _slots) {
-            _slots = new Slot[desired];
-            for (usize i = 0; i < desired; i++)
-                _slots[i].state = State::FREE;
-            _cap = desired;
-            return;
-        }
-
-        auto* oldSlots = std::exchange(_slots, new Slot[desired]);
-        usize oldCap = std::exchange(_cap, desired);
-
-        for (usize i = 0; i < _cap; i++)
-            _slots[i].state = State::FREE;
-
-        for (usize i = 0; i < oldCap; i++) {
-            auto& old = oldSlots[i];
-            if (old.state != State::USED)
-                continue;
-            lookup(old.unwrap())->put(old.take());
-        }
-
-        delete[] oldSlots;
-    }
-
-    void ensureForInsert() {
-        if (usage() >= 60)
-            rehash(max(_len, _cap * 2, 16uz));
-    }
-
-    template <typename Self, Meta::Equatable<T> U>
-    auto lookup(this Self& self, U const& u) -> Meta::CopyConst<Self, Slot>* {
-        if (not self._slots)
-            return nullptr;
-
-        usize start = hash(u) % self._cap;
-        usize i = start;
-        Meta::CopyConst<Self, Slot>* deadSlot = nullptr;
-        while (self._slots[i].state != State::FREE) {
-            auto& s = self._slots[i];
-
-            if (s.state == State::USED and
-                s.unwrap() == u)
-                return &s;
-
-            if (s.state == State::DEAD and not deadSlot)
-                deadSlot = &s;
-
-            i = (i + 1) % self._cap;
-            if (i == start)
-                return nullptr;
-        }
-
-        if (deadSlot)
-            return deadSlot;
-
-        return &self._slots[i];
-    }
-
-    void put(T const& t) {
-        auto* slot = lookup(t);
-        if (not slot) {
-            ensureForInsert();
-            slot = lookup(t);
-        }
-        if (slot->put(t)) {
-            _len++;
-        }
-    }
-
-    bool has(T const& t) const {
-        if (auto it = lookup(t); it and it->state == State::USED)
+    bool contains(Meta::Equatable<T> auto const& key) const {
+        if (auto it = _items.lookup(key);
+            it and it->state == Items::USED)
             return true;
         return false;
     }
 
-    void del(T const& t) {
-        if (auto it = lookup(t); it and it->state == State::USED) {
-            if (it->clear())
-                _len--;
+    void add(Meta::Convertible<T> auto&& value = T{}) {
+        auto* slot = _items.lookup(value);
+        if (slot and slot->state == Items::USED) {
+            return;
         }
+        if (not slot) {
+            _items.ensureForInsert();
+            slot = _items.lookup(value);
+        }
+        _items.put(slot, std::forward<decltype(value)>(value));
+    }
+
+    void addFrom(Iterable auto const& from) {
+        for (auto v : from.iter())
+            add(v);
+    }
+
+    bool remove(Meta::Equatable<T> auto const& key) {
+        if (auto slot = _items.lookup(key);
+            slot and slot->state == Items::USED) {
+            _items.clear(slot);
+            return true;
+        }
+        return false;
     }
 
     void clear() {
-        for (usize i = 0; i < _cap; i++) {
-            if (_slots[i].state == State::USED)
-                _slots[i].clear();
+        _items.clear();
+    }
+
+    [[nodiscard]] Opt<T const&> lookup(Meta::Equatable<T> auto const& key) const lifetimebound {
+        if (auto it = _items.lookup(key); it and it->state == Items::USED)
+            return it->unwrap();
+        return NONE;
+    }
+
+    [[nodiscard]] T const& lookupOrAdd(Meta::Equatable<T> auto const& key, Meta::Callable<> auto&& build) lifetimebound {
+        auto* slot = _items.lookup(key);
+        if (slot and slot->state == Items::USED) {
+            return slot->unwrap();
         }
-        _len = 0;
+
+        if (not slot) {
+            _items.ensureForInsert();
+            slot = _items.lookup(key);
+        }
+
+        _items.put(slot, build());
+        return slot->unwrap();
     }
 
-    auto iter() const {
-        struct Iter {
-            Set& self;
-            usize i = 0;
-
-            auto next() -> T const* {
-                if (i == self._cap)
-                    return nullptr;
-
-                while (i < self._cap and self._slots[i].state != State::USED)
-                    i++;
-
-                if (i == self._cap)
-                    return nullptr;
-
-                auto* res = &self._slots[i].unwrap();
-                i++;
-                return res;
-            }
-        };
-
-        return Iter{*this};
+    [[nodiscard]] auto iter() const lifetimebound {
+        return _items.iterUsed() |
+               Select([](auto const& s) -> auto const& {
+                   return s.unwrap();
+               });
     }
 
-    usize len() const {
-        return _len;
+    [[nodiscard]] usize len() const {
+        return _items.len();
+    }
+
+    [[nodiscard]] u64 hash() const {
+        u64 res = 0;
+        for (auto const& v : iter()) {
+            res += Karm::hash(v);
+        }
+        return res;
+    }
+
+    Set operator-(Set const& other) const {
+        Set res;
+        for (auto& v : iter())
+            if (not other.contains(v))
+                res.add(v);
+        return res;
+    }
+
+    Set operator|(Set const& other) const {
+        Set res;
+        res.ensure(max(len(), other.len()));
+        res.addFrom(*this);
+        res.addFrom(other);
+        return res;
+    }
+
+    Set operator&(Set const& other) const {
+        Set res;
+        if (len() <= other.len()) {
+            for (auto& v : iter())
+                if (other.contains(v))
+                    res.add(v);
+        } else {
+            for (auto& v : other.iter())
+                if (contains(v))
+                    res.add(v);
+        }
+        return res;
+    }
+
+    Set operator^(Set const& other) const {
+        Set res;
+        for (auto& v : iter())
+            if (not other.contains(v))
+                res.add(v);
+        for (auto& v : other.iter())
+            if (not contains(v))
+                res.add(v);
+        return res;
+    }
+
+    bool operator==(Set const& other) const {
+        if (len() != other.len())
+            return false;
+        for (auto& v : iter()) {
+            if (not other.contains(v))
+                return false;
+        }
+        return true;
+    }
+
+    operator bool() const {
+        return len();
     }
 };
 

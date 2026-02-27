@@ -17,6 +17,16 @@ concept Iter = requires(T t) {
     { t.next() } -> IterItem;
 };
 
+export template <typename T>
+concept Iterable = requires(T t) {
+    t.iter();
+};
+
+export template <typename T>
+concept MutIterable = requires(T t) {
+    t.mutIter();
+};
+
 // MARK: Generators -----------------------------------------------------------
 
 export template <typename T>
@@ -409,7 +419,7 @@ struct It {
         return *curr;
     }
 
-    constexpr auto operator++() {
+    constexpr auto& operator++() {
         curr = iter.next();
         return *this;
     }

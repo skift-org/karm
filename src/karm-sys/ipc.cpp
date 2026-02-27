@@ -224,9 +224,8 @@ export struct IpcClient : Meta::NoCopy {
         void failAllPending(Error error) {
             IpcMessage const msg{};
             (void)msg.packReq<Error>(SEQ_EVENT, error);
-            for (auto& [seq, v] : pending.iterUnordered()) {
+            for (auto& v : pending.mutIterValue())
                 v.resolve(msg);
-            }
         }
     };
 
@@ -264,9 +263,9 @@ export struct IpcClient : Meta::NoCopy {
             auto& msg = res.unwrap();
             auto header = msg._header;
 
-            if (state->pending.has(header.seq)) {
-                auto promise = state->pending.take(header.seq);
-                promise.resolve(std::move(msg));
+            if (state->pending.contains(header.seq)) {
+                auto promise = state->pending.remove(header.seq);
+                promise->resolve(std::move(msg));
             } else if (header.seq == SEQ_EVENT) {
                 state->incoming.enqueue(std::move(msg));
             } else {

@@ -266,7 +266,7 @@ struct _Rc {
     }
 
     template <typename U>
-    constexpr Opt<_Rc<L, U>> cast() {
+    constexpr Opt<_Rc<L, U>> cast() const {
         if (not is<U>()) {
             return NONE;
         }

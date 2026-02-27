@@ -17,7 +17,7 @@ export struct MockPrefs : Prefs {
     Serde::Object _store;
 
     Async::Task<Serde::Value> loadAsync(String key, Serde::Value defaultValue = NONE) override {
-        auto item = _store.access(key);
+        auto item = _store.lookup(key);
         if (item)
             co_return *item;
         co_return defaultValue;

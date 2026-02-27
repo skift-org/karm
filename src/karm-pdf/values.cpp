@@ -16,6 +16,10 @@ export struct Ref {
 
     bool operator==(Ref const& other) const = default;
     auto operator<=>(Ref const& other) const = default;
+
+    u64 hash() const {
+        return Karm::hash(num) + Karm::hash(gen);
+    }
 };
 
 export struct Name : String {

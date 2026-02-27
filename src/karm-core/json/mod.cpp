@@ -302,16 +302,16 @@ export Res<> unparse(Io::Emit& emit, Serde::Value const& v) {
             [&](Serde::Object const& m) -> Res<> {
                 emit('{');
                 bool first = true;
-                for (auto const& kv : m.iterUnordered()) {
+                for (auto const& [k, v] : m.iterItems()) {
                     if (not first) {
                         emit(',');
                     }
                     first = false;
 
                     emit('"');
-                    emitEscaped(emit, kv.v0);
+                    emitEscaped(emit, k);
                     emit("\":");
-                    try$(unparse(emit, kv.v1));
+                    try$(unparse(emit, v));
                 }
                 emit('}');
                 return Ok();

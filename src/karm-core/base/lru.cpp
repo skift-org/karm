@@ -30,7 +30,7 @@ struct Lru {
     }
 
     Item* _lookup(K const& key) {
-        Opt<Item*> item = _map.tryGet(key);
+        Opt<Item*> item = _map.lookup(key);
         if (item.has()) {
             _ll.detach(*item);
             _ll.prepend(*item, _ll.head());
@@ -43,7 +43,7 @@ struct Lru {
         while (_ll.len() > _cap) {
             auto* item = _ll.tail();
             _ll.detach(item);
-            _map.removeFirst(item);
+            _map.removeValue(item);
             delete item;
         }
     }

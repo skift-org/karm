@@ -70,7 +70,7 @@ export struct Fontface : Gfx::Fontface {
     }
 
     Gfx::Glyph glyph(Rune rune) override {
-        auto glyph = _cachedEntries.tryGet(rune);
+        auto glyph = _cachedEntries.lookup(rune);
         if (glyph.has())
             return glyph.unwrap();
         auto g = _parser.glyph(rune);
@@ -79,7 +79,7 @@ export struct Fontface : Gfx::Fontface {
     }
 
     f64 advance(Gfx::Glyph glyph) override {
-        auto advance = _cachedAdvances.tryGet(glyph);
+        auto advance = _cachedAdvances.lookup(glyph);
         if (advance.has())
             return advance.unwrap();
         auto a = _parser.glyphMetrics(glyph).advance / _unitPerEm;
@@ -88,12 +88,12 @@ export struct Fontface : Gfx::Fontface {
     }
 
     f64 kern(Gfx::Glyph prev, Gfx::Glyph curr) override {
-        auto kern = _cachedKerns.tryGet({prev, curr});
+        auto kern = _cachedKerns.lookup(Tuple{prev, curr});
         if (kern.has())
             return kern.unwrap();
 
         auto k = _parser.glyphKern(prev, curr) / _unitPerEm;
-        _cachedKerns.put({prev, curr}, k);
+        _cachedKerns.put(Tuple{prev, curr}, k);
         return k;
     }
 

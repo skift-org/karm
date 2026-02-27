@@ -48,6 +48,9 @@ struct Tuple<> {
     constexpr U into() const {
         return U{};
     }
+
+    bool operator==(Tuple const&) const = default;
+    auto operator<=>(Tuple const&) const = default;
 };
 
 export template <typename _T0>
@@ -580,11 +583,31 @@ Tuple(T0, T1, T2, T3, T4, T5, T6, T7) -> Tuple<T0, T1, T2, T3, T4, T5, T6, T7>;
 
 export template <typename... Ts>
 constexpr u64 hash(Tuple<Ts...> const& v) {
-    auto res = hash(sizeof...(Ts));
-    v.apply([&](auto const& v) {
-        res = hash(res, v);
+    return v.apply([&](auto const&... v) {
+        return (hash(v) + ...);
     });
-    return res;
+}
+
+export template <typename... Ts, typename... Us>
+    requires(sizeof...(Ts) == sizeof...(Us))
+constexpr bool operator==(Tuple<Ts...> const& lhs, Tuple<Us...> const& rhs) {
+    auto const& [... lvs] = lhs;
+    auto const& [... rvs] = rhs;
+    return ((lvs == rvs) and ...);
+}
+
+export template <typename... Ts, typename... Us>
+    requires(sizeof...(Ts) == sizeof...(Us))
+constexpr auto operator<=>(Tuple<Ts...> const& lhs, Tuple<Us...> const& rhs) {
+    if constexpr (sizeof...(Ts) == 0) {
+        return std::strong_ordering::equal;
+    } else {
+        auto const& [... lvs] = lhs;
+        auto const& [... rvs] = rhs;
+        auto res = std::strong_ordering::equal;
+        ((res = (lvs <=> rvs), res != 0) or ...);
+        return res;
+    }
 }
 
 } // namespace Karm

@@ -264,7 +264,7 @@ Res<Rc<Pid>> spawn(Command const& cmd) {
     auto buildEnvp = [&](Vec<String>& kvStore, Vec<char*>& envp) {
         kvStore.clear();
         envp.clear();
-        for (auto const& [key, val] : cmd.env.iterUnordered()) {
+        for (auto const& [key, val] : cmd.env.iterItems()) {
             kvStore.pushBack(Io::format("{}={}", key, val));
         }
         for (auto& kv : kvStore)
@@ -338,7 +338,7 @@ Res<Tuple<Rc<Pid>, Rc<Fd>>> spawnPty(Command const& cmd) {
     auto buildEnvp = [&](Vec<String>& kvStore, Vec<char*>& envp) {
         kvStore.clear();
         envp.clear();
-        for (auto const& [key, val] : cmd.env.iterUnordered()) {
+        for (auto const& [key, val] : cmd.env.iterItems()) {
             kvStore.pushBack(Io::format("{}={}", key, val));
         }
         for (auto& kv : kvStore)

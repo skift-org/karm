@@ -35,7 +35,7 @@ export struct Client : Transport {
         if (debugClient or debugClientExtra) {
             Io::StringWriter sw;
             if (debugClientExtra) {
-                if (auto cache = resp->header.tryGet("X-Karm-Cache"_sym))
+                if (auto cache = resp->header.lookup("X-Karm-Cache"_sym))
                     co_try$(Io::format(sw, " ({})"s, cache));
             }
             logInfo("\"{} {}\" {} {}{}", request->method, request->url, toUnderlyingType(resp->code), resp->code, sw.take());

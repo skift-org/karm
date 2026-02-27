@@ -208,12 +208,9 @@ struct Union {
     }
 
     u64 hash() const {
-        return hash(
-            hash(_index),
-            visit([](auto const& v) {
-                return Karm::hash(v);
-            })
-        );
+        return visit([](auto const& v) {
+            return Karm::hash(v);
+        });
     }
 };
 

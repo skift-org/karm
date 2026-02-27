@@ -14,11 +14,11 @@ export struct FontManager {
     Map<Gfx::FontAttrs, Tuple<usize, Rc<Gfx::Fontface>>> mapping;
 
     usize getFontId(Rc<Gfx::Fontface> font) {
-        if (auto id = mapping.tryGet(font->attrs()))
+        if (auto id = mapping.lookup(font->attrs()))
             return id.unwrap().v0;
 
         auto id = mapping.len() + 1;
-        mapping.put(font->attrs(), {id, font});
+        mapping.put(font->attrs(), Tuple{id, font});
         return id;
     }
 };

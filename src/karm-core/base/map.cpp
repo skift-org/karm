@@ -1,166 +1,182 @@
+module;
+
+#include <karm/macros>
+
 export module Karm.Core:base.map;
 
 import :base.cursor;
 import :base.vec;
 import :base.tuple;
+import :base.hashTable;
 
 namespace Karm {
 
 export template <typename K, typename V>
-struct Map {
-    Vec<Pair<K, V>> _els{};
+struct KvPair {
+    K key;
+    V value;
 
-    Map() = default;
-
-    Map(std::initializer_list<Pair<K, V>> list)
-        : _els(list) {}
-
-    void put(K const& key, V value) {
-        for (auto& i : mutIter(_els)) {
-            if (i.v0 == key) {
-                i.v1 = std::move(value);
-                return;
-            }
-        }
-
-        _els.pushBack(Pair<K, V>{key, std::move(value)});
+    u64 hash() const {
+        return Karm::hash(key);
     }
 
-    bool has(K const& key) const {
-        for (auto& i : _els) {
-            if (i.v0 == key) {
-                return true;
-            }
-        }
+    bool operator==(Meta::Equatable<Meta::RemoveConstVolatileRef<K>> auto const& other) const {
+        return key == other;
+    }
+};
 
+export template <typename K, typename V>
+struct Map {
+    using Item = KvPair<K, V>;
+    using Items = HashTable<Item>;
+
+    Items _items;
+
+    Map(usize cap = 0) {
+        _items.ensure(cap);
+    };
+
+    Map(std::initializer_list<Item> items) {
+        _items.ensure(items.size());
+        for (auto& i : items)
+            put(i.key, i.value);
+    }
+
+    void ensure(usize len) {
+        _items.ensure(len);
+    }
+
+    [[nodiscard]] bool contains(Meta::Equatable<K> auto const& key) const {
+        if (auto it = _items.lookup(key); it and it->state == Items::USED)
+            return true;
         return false;
     }
 
-    V& get(K const& key) {
-        for (auto& i : _els) {
-            if (i.v0 == key) {
-                return i.v1;
-            }
+    void put(Meta::Equatable<K> auto const& key, Meta::Convertible<V> auto&& value) {
+        _items.ensureForInsert();
+        auto* slot = _items.lookup(key);
+        _items.put(slot, key, std::forward<decltype(value)>(value));
+    }
+
+    Opt<V> remove(Meta::Equatable<K> auto const& key) {
+        if (auto* slot = _items.lookup(key); slot and slot->state == Items::USED) {
+            V res = std::move(slot->unwrap().value);
+            _items.clear(slot);
+            return res;
         }
-
-        panic("key not found");
-    }
-
-    V const& get(K const& key) const {
-        for (auto& i : _els) {
-            if (i.v0 == key) {
-                return i.v1;
-            }
-        }
-
-        panic("key not found");
-    }
-
-    V& getOrDefault(K const& key, V const& defaultValue = {}) {
-        for (auto& i : _els) {
-            if (i.v0 == key) {
-                return i.v1;
-            }
-        }
-
-        _els.pushBack(Pair<K, V>{key, defaultValue});
-        return last(_els).v1;
-    }
-
-    MutCursor<V> access(K const& key) {
-        for (auto& i : _els)
-            if (i.v0 == key)
-                return &i.v1;
-        return {};
-    }
-
-    Cursor<V> access(K const& key) const {
-        for (auto& i : _els)
-            if (i.v0 == key)
-                return &i.v1;
-        return {};
-    }
-
-    V take(K const& key) {
-        for (usize i = 0; i < _els.len(); i++) {
-            if (_els[i].v0 == key) {
-                V value = std::move(_els[i].v1);
-                _els.removeAt(i);
-                return value;
-            }
-        }
-
-        panic("key not found");
-    }
-
-    Opt<V> tryGet(K const& key) const {
-        for (auto& i : _els) {
-            if (i.v0 == key) {
-                return i.v1;
-            }
-        }
-
         return NONE;
     }
 
-    bool del(K const& key) {
-        for (usize i = 0; i < _els.len(); i++) {
-            if (_els[i].v0 == key) {
-                _els.removeAt(i);
-                return true;
+    bool removeValue(Meta::Equatable<V> auto const& v) {
+        bool res = false;
+        for (auto& slot : _items.mutIterUsed()) {
+            if (slot.unwrap().value == v) {
+                _items.clear(&slot);
+                res = true;
             }
-        }
-
-        return false;
-    }
-
-    bool removeAll(V const& value) {
-        bool changed = false;
-
-        for (usize i = 1; i < _els.len() + 1; i++) {
-            if (_els[i - 1].v1 == value) {
-                _els.removeAt(i - 1);
-                changed = true;
-                i--;
-            }
-        }
-
-        return changed;
-    }
-
-    bool removeFirst(V const& value) {
-        for (usize i = 1; i < _els.len() + 1; i++) {
-            if (_els[i - 1].v1 == value) {
-                _els.removeAt(i - 1);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    auto iterUnordered() {
-        return Karm::mutIter(_els);
-    }
-
-    auto iterUnordered() const {
-        return Karm::iter(_els);
-    }
-
-    Vec<K> keys() const {
-        Vec<K> res;
-        for (auto& [k, _] : _els) {
-            res.pushBack(k);
         }
         return res;
     }
 
-    usize len() const {
-        return _els.len();
+    void clear() {
+        _items.clear();
     }
 
-    void clear() {
-        _els.clear();
+    [[nodiscard]] Opt<V const&> lookup(Meta::Equatable<K> auto const& key) const lifetimebound {
+        if (auto* slot = _items.lookup(key);
+            slot and slot->state == Items::USED)
+            return slot->unwrap().value;
+        return NONE;
+    }
+
+    [[nodiscard]] V& lookupOrPut(Meta::Equatable<K> auto const& key, Meta::Callable<> auto&& build) lifetimebound {
+        auto* slot = _items.lookup(key);
+        if (slot and slot->state == Items::USED) {
+            return slot->unwrap().value;
+        }
+
+        if (not slot) {
+            _items.ensureForInsert();
+            slot = _items.lookup(key);
+        }
+
+        _items.put(slot, key, build());
+        return slot->unwrap().value;
+    }
+
+    [[nodiscard]] V& lookupOrPutDefault(Meta::Equatable<K> auto const& key, V const& defaultValue = {}) lifetimebound {
+        return lookupOrPutDefault(key, defaultValue);
+    }
+
+    [[nodiscard]] V& lookupOrPutDefault(Meta::Equatable<K> auto const& key, Meta::Convertible<V> auto&& defaultValue = V{}) lifetimebound {
+        auto* slot = _items.lookup(key);
+        if (slot and slot->state == Items::USED) {
+            return slot->unwrap().value;
+        }
+
+        if (not slot) {
+            _items.ensureForInsert();
+            slot = _items.lookup(key);
+        }
+
+        _items.put(slot, key, std::forward<decltype(defaultValue)>(defaultValue));
+        return slot->unwrap().value;
+    }
+
+    [[nodiscard]] auto iter() const lifetimebound {
+        return _items.iterUsed() |
+               Select([](auto const& s) -> auto const& {
+                   return s.unwrap().key;
+               });
+    }
+
+    [[nodiscard]] auto mutIterValue() lifetimebound {
+        return _items.mutIterUsed() |
+               Select([](auto& s) -> auto& {
+                   return s.unwrap().value;
+               });
+    }
+
+    [[nodiscard]] auto iterValue() const lifetimebound {
+        return _items.iterUsed() |
+               Select([](auto const& s) -> auto const& {
+                   return s.unwrap().value;
+               });
+    }
+
+    [[nodiscard]] auto iterItems() const lifetimebound {
+        return _items.iterUsed() |
+               Select([](auto const& s) -> auto const& {
+                   return s.unwrap();
+               });
+    }
+
+    [[nodiscard]] usize len() const {
+        return _items.len();
+    }
+
+    [[nodiscard]] u64 hash() const {
+        u64 res = 0;
+        for (auto const& [k, v] : iterItems())
+            res += Karm::hash(k) + Karm::hash(v);
+        return res;
+    }
+
+    bool operator==(Map const& other) const {
+        if (len() != other.len())
+            return false;
+
+        for (auto const& [k, v] : iterItems()) {
+            auto it = other.lookup(k);
+            if (not it or it.unwrap() != v) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    operator bool() const {
+        return _items.len() != 0;
     }
 };
 

@@ -310,7 +310,7 @@ export struct Database {
     }
 
     Symbol _resolveGenericFamily(Symbol family) const {
-        return _genericFamily.tryGet(family).unwrapOr(family);
+        return _genericFamily.lookup(family).unwrapOr(family);
     }
 
     Opt<Rc<Gfx::Fontface>> queryExact(Symbol family, Query query = {}) const {

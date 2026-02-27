@@ -67,9 +67,9 @@ export struct Server {
 
         Async::Task<usize> writeAsync(Bytes buf, Async::CancellationToken ct) override {
             if (not _headerSent) {
-                if (not header.has(Header::CONTENT_TYPE))
+                if (not header.contains(Header::CONTENT_TYPE))
                     header.put(Header::CONTENT_TYPE, Ref::sniffBytes(buf).str());
-                if (not header.has(Header::CONTENT_LENGTH))
+                if (not header.contains(Header::CONTENT_LENGTH))
                     header.put(Header::CONTENT_LENGTH, Io::format("{}", buf.len()));
                 co_trya$(writeHeaderAsync(code, ct));
             }
@@ -88,7 +88,7 @@ export struct Server {
         auto request = co_trya$(Request::readAsync(*conn, ct));
         if (auto contentLength = request.header.contentLength()) {
             request.body = makeRc<ContentBody>(conn, contentLength.unwrap());
-        } else if (auto transferEncoding = request.header.tryGet(Header::TRANSFER_ENCODING)) {
+        } else if (auto transferEncoding = request.header.lookup(Header::TRANSFER_ENCODING)) {
             logWarn("Transfer-Encoding: {} not supported", transferEncoding);
         } else {
             // NOTE: When there is no content length, and no transfer encoding,
@@ -104,7 +104,7 @@ export struct Server {
         while (keepAlive) {
             auto req = co_trya$(_recvRequestAsync(conn, ct));
             logInfo("{} {} {}", req->method, req->url, req->version);
-            if (auto connection = req->header.access(Header::CONNECTION)) {
+            if (auto connection = req->header.lookup(Header::CONNECTION)) {
                 if (eqCi(connection->str(), "close"s)) {
                     keepAlive = false;
                 } else if (eqCi(connection->str(), "keep-alive"s)) {

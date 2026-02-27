@@ -46,7 +46,7 @@ export struct PdfPrinter : FilePrinter {
 
         // Fonts
         Map<usize, Pdf::Ref> fontManagerId2FontObjRef;
-        for (auto& [_, value] : fontManager.mapping._els) {
+        for (auto const& [_, value] : fontManager.mapping.iterItems()) {
             auto& [id, fontFace] = value;
 
             if (not fontFace.is<Font::Ttf::Fontface>()) {
@@ -87,7 +87,7 @@ export struct PdfPrinter : FilePrinter {
 
             // FIXME: adding all fonts for now on each page; later, we will need to filter by page
             Pdf::Dict pageFontsDict;
-            for (auto& [managerId, objRef] : fontManagerId2FontObjRef._els) {
+            for (auto const& [managerId, objRef] : fontManagerId2FontObjRef.iterItems()) {
                 auto formattedName = Io::format("F{}", managerId);
                 pageFontsDict.put(formattedName.str(), objRef);
             }
@@ -160,11 +160,6 @@ export struct PdfPrinter : FilePrinter {
             {"Size"s, file.body.len() + 1},
             {"Root"s, catalogRef},
         };
-
-        // Sorting object by their refs, so they are printed in order
-        sort(file.body._els, [](auto& a, auto& b) {
-            return a.v0.num <=> b.v0.num;
-        });
 
         return file;
     }

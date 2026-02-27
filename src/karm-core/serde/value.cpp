@@ -258,20 +258,20 @@ export struct Value {
     Value get(Str key) const {
         if (not isObject())
             return NONE;
-        return try$(asObject().tryGet(key));
+        return try$(asObject().lookup(key));
     }
 
     bool has(Str key) const {
         if (not isObject())
             return false;
-        return asObject().has(key);
+        return asObject().contains(key);
     }
 
     Value getOr(Str key, Value const& def) const {
         if (not isObject())
             return def;
         return asObject()
-            .tryGet(key)
+            .lookup(key)
             .unwrapOr(def);
     }
 

@@ -10,7 +10,7 @@ namespace Karm::Kira {
 
 struct SelectionSet {
     bool _all = false;
-    Set<Ui::Key> _keys = {};
+    Set<Ui::Key> _keys{};
 
     static SelectionSet all() {
         return {

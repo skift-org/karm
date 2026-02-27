@@ -59,6 +59,10 @@ struct _SymbolBuf {
         return Str(*this) == other;
     }
 
+    bool operator==(String const& other) const {
+        return Str(*this) == other;
+    }
+
     u64 hash() const {
         return Karm::hash(Str{*this});
     }
@@ -76,6 +80,10 @@ export struct Symbol {
 
     Str str() const {
         return Str(*_buf);
+    }
+
+    u64 hash() const {
+        return Karm::hash(str());
     }
 
     bool operator==(Symbol const& other) const {
@@ -101,16 +109,9 @@ static Set<Rc<_SymbolBuf>>& _symboleRegistry() {
 }
 
 Symbol Symbol::from(Str str) {
-    auto& registry = _symboleRegistry();
-    registry.ensureForInsert();
-    auto* slot = registry.lookup(str);
-    if (slot and slot->state == Set<Rc<_SymbolBuf>>::State::USED) {
-        return {slot->unwrap()};
-    }
-
-    auto buf = _SymbolBuf::from(str);
-    registry.put(buf);
-    return {buf};
+    return {_symboleRegistry().lookupOrAdd(str, [&] {
+        return _SymbolBuf::from(str);
+    })};
 }
 
 } // namespace Karm

@@ -21,8 +21,8 @@ test$("read-http-response-good-body") {
     expectEq$(response.version, expectedVersion);
 
     expectEq$(response.header.len(), 2u);
-    expectEq$(response.header.get(Header::SERVER), "Apache"s);
-    expectEq$(response.header.get(Header::CONTENT_LENGTH), "3"s);
+    expectEq$(response.header.lookup(Header::SERVER), "Apache"s);
+    expectEq$(response.header.lookup(Header::CONTENT_LENGTH), "3"s);
 
     return Ok();
 }
@@ -43,7 +43,7 @@ test$("read-http-response-body-content-length-mismatch") {
     expectEq$(response.version, expectedVersion);
 
     expectEq$(response.header.len(), 1u);
-    expectEq$(response.header.get(Header::CONTENT_LENGTH), "100"s);
+    expectEq$(response.header.lookup(Header::CONTENT_LENGTH), "100"s);
 
     return Ok();
 }

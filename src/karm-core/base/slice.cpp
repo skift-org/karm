@@ -56,17 +56,15 @@ constexpr bool operator==(T const& lhs, U const& rhs) {
     return true;
 }
 
-export template <Sliceable T>
-constexpr u64 hash(T const& v)
-    requires(not requires(T const t) {
-        { t.hash() } -> Meta::Same<u64>;
-    })
-{
-    u64 res = hash();
-    for (usize i = 0; i < v.len(); i++)
-        res = hash(res, v.buf()[i]);
-    return res;
-}
+template <Sliceable T>
+struct Hash<T> {
+    static constexpr u64 hash(T const& v) {
+        u64 res = Karm::hash(v.len());
+        for (usize i = 0; i < v.len(); i++)
+            res += Karm::hash(v.buf()[i]);
+        return res;
+    }
+};
 
 export template <typename T>
 struct Slice {

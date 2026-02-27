@@ -1,7 +1,6 @@
 export module Karm.Core:base.hash;
 
 import :meta.traits;
-
 import :base.base;
 
 namespace Karm {
@@ -16,40 +15,55 @@ export constexpr u64 fnv64(u8 const* buf, usize len) {
     return hash;
 }
 
-export constexpr u64 hash(Meta::Boolean auto const& v) {
-    return hash(v ? 0x1 : 0x0);
-}
-
-static_assert(Meta::Integral<char>);
-
-export constexpr u64 hash(Meta::Integral auto const& v) {
-    return fnv64(reinterpret_cast<u8 const*>(&v), sizeof(v));
-}
-
-export constexpr u64 hash(Meta::Float auto const& v) {
-    return fnv64(reinterpret_cast<u8 const*>(&v), sizeof(v));
-}
+template <typename T>
+struct Hash;
 
 export template <typename T>
-constexpr u64 hash(T const& t)
-    requires requires(T const t) {
-        { t.hash() } -> Meta::Same<u64>;
+constexpr u64 hash(T const& t) {
+    if constexpr (
+        requires(T const t) {
+            { t.hash() } -> Meta::Same<u64>;
+        }
+    ) {
+        return t.hash();
+    } else {
+        return Hash<T>::hash(t);
     }
-{
-    return t.hash();
 }
 
-export constexpr u64 hash(Meta::Enum auto const& v) {
-    return hash(toUnderlyingType(v));
-}
+export template <Meta::Boolean T>
+struct Hash<T> {
+    static constexpr u64 hash(T const& v) {
+        return fnv64(reinterpret_cast<u8 const*>(&v), sizeof(v));
+    }
+};
 
-export constexpr u64 hash() {
-    return 0xcbf29ce484222325;
-}
+export template <Meta::Integer T>
+struct Hash<T> {
+    static constexpr u64 hash(T const& v) {
+        return fnv64(reinterpret_cast<u8 const*>(&v), sizeof(v));
+    }
+};
 
-export template <typename T>
-constexpr u64 hash(u64 a, T const& v) {
-    return a ^ (hash(v) + 0x9e3779b97f4a7c15);
-}
+export template <Meta::Float T>
+struct Hash<T> {
+    static constexpr u64 hash(T const& v) {
+        return fnv64(reinterpret_cast<u8 const*>(&v), sizeof(v));
+    }
+};
+
+export template <Meta::Enum T>
+struct Hash<T> {
+    static constexpr u64 hash(T const& v) {
+        return fnv64(reinterpret_cast<u8 const*>(&v), sizeof(v));
+    }
+};
+
+export template <>
+struct Hash<None> {
+    static constexpr u64 hash(None const&) {
+        return Karm::hash(0x0);
+    }
+};
 
 } // namespace Karm

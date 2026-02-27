@@ -254,7 +254,7 @@ struct HttpTransport : Transport {
 
         if (auto contentLength = response.header.contentLength()) {
             response.body = makeRc<ContentBody>(conn, contentLength.unwrap());
-        } else if (auto transferEncoding = response.header.tryGet(Header::TRANSFER_ENCODING)) {
+        } else if (auto transferEncoding = response.header.lookup(Header::TRANSFER_ENCODING)) {
             // For now we only support plain "chunked".
             if (*transferEncoding == "chunked") {
                 response.body = makeRc<ChunkedBody>(conn);

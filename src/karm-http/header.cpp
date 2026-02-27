@@ -109,20 +109,20 @@ export struct Header : Map<Symbol, String> {
     }
 
     Res<> unparse(Io::TextWriter& w) const {
-        for (auto& [key, value] : iterUnordered()) {
+        for (auto const& [key, value] : iterItems()) {
             try$(Io::format(w, "{}: {}\r\n", key, value));
         }
         return Ok();
     }
 
     Opt<usize> contentLength() {
-        if (auto value = tryGet(CONTENT_LENGTH))
+        if (auto value = lookup(CONTENT_LENGTH))
             return Io::atou(value->str());
         return NONE;
     }
 
     Opt<Ref::Mime> contentType() {
-        if (auto value = tryGet(CONTENT_TYPE))
+        if (auto value = lookup(CONTENT_TYPE))
             return Ref::Mime{value->str()};
         return NONE;
     }

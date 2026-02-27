@@ -25,7 +25,7 @@ Res<> Array::write(Io::Writer& w) const {
 
 Res<> Dict::write(Io::Writer& w) const {
     try$(Io::format(w, "<<\n"));
-    for (auto const& [k, v] : iterUnordered()) {
+    for (auto const& [k, v] : iterItems()) {
         try$(Io::format(w, "/{} ", k.str()));
         try$(v.write(w));
         try$(Io::format(w, "\n"));
@@ -77,7 +77,7 @@ Res<> File::write(Io::Writer& writer) const {
 
     XRef xref;
 
-    for (auto const& [k, v] : body.iterUnordered()) {
+    for (auto const& [k, v] : body.iterItems()) {
         xref.add(try$(Io::tell(count)), k.gen);
         try$(Io::format(count, "{} {} obj\n", k.num, k.gen));
         try$(v.write(count));

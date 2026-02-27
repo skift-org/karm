@@ -11,6 +11,7 @@ import :base.try_;
 import :base.ok;
 import :meta.callable;
 import :meta.traits;
+import :base.hash;
 
 namespace Karm {
 
@@ -488,8 +489,8 @@ struct [[nodiscard]] Opt {
 
     u64 hash() const {
         if (has())
-            return hash(hash(true), unwrap());
-        return hash(false);
+            return Karm::hash(unwrap());
+        return Karm::hash(NONE);
     }
 };
 

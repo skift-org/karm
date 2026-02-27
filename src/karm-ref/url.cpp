@@ -27,6 +27,10 @@ export struct Blob {
 
     usize len() { return data.len(); }
 
+    u64 hash() const {
+        return Karm::hash(data);
+    }
+
     bool operator==(Blob const&) const = default;
 };
 
@@ -74,12 +78,12 @@ export struct Url {
     Path path;
     String query;
     String fragment;
-    Res<Rc<Blob>> blob = NONE;
+    Opt<Rc<Blob>> blob = NONE;
 
     static Url data(Mime mime, Bytes data) {
         Url url;
         url.scheme = "data"_sym;
-        url.blob = Ok(makeRc<Blob>(mime, data));
+        url.blob = makeRc<Blob>(mime, data);
         return url;
     }
 
@@ -115,7 +119,7 @@ export struct Url {
         }
 
         if (url.scheme == "data") {
-            url.blob = _parseData(s);
+            url.blob = _parseData(s).ok();
             return url;
         }
 
@@ -240,6 +244,17 @@ export struct Url {
     }
 
     bool operator==(Url const&) const = default;
+
+    u64 hash() const {
+        return Karm::hash(scheme) +
+               Karm::hash(userInfo) +
+               Karm::hash(host) +
+               Karm::hash(port) +
+               Karm::hash(path) +
+               Karm::hash(query) +
+               Karm::hash(fragment) +
+               Karm::hash(blob);
+    }
 
     bool isRelative() const {
         return not scheme;
