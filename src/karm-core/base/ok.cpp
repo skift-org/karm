@@ -86,6 +86,9 @@ struct Ok<T&> {
 };
 
 export template <typename T>
+Ok(T&) -> Ok<T&>;
+
+export template <typename T>
 Ok(T&&) -> Ok<Meta::RemoveConstVolatileRef<T>>;
 
 } // namespace Karm
