@@ -67,7 +67,7 @@ struct Map {
         _items.put(slot, key, std::forward<decltype(value)>(value));
     }
 
-    [[]] Opt<V> remove(Meta::Equatable<K> auto const& key) {
+    [[nodiscard]] Opt<V> remove(Meta::Equatable<K> auto const& key) {
         if (auto* slot = _items.lookup(key); slot and slot->state == Items::USED) {
             V res = std::move(slot->unwrap().value);
             _items.clear(slot);

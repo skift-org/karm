@@ -48,9 +48,14 @@ struct HashTable {
 
     HashTable(HashTable const& other) {
         _cap = other._cap;
-        _slots = new Slot[_cap];
+        _slots = nullptr;
         _len = other._len;
         _dead = other._dead;
+
+        if (_cap == 0)
+            return;
+
+        _slots = new Slot[_cap];
         for (usize i = 0; i < _cap; i++) {
             if (other._slots[i].state == State::USED) {
                 _slots[i]._manual.ctor(other._slots[i].unwrap());
@@ -143,7 +148,7 @@ struct HashTable {
 
     template <typename Self, Meta::Equatable<T> U>
     auto lookup(this Self& self, U const& u) -> Meta::CopyConst<Self, Slot>* {
-        if (not self._slots)
+        if (not self._slots or self._cap == 0)
             return nullptr;
 
         usize start = hash(u) % self._cap;
