@@ -16,7 +16,7 @@ struct Set {
     using Items = HashTable<T>;
     Items _items;
 
-    explicit Set(usize cap = 0) {
+    Set(usize cap = 0) {
         _items.ensure(cap);
     };
 

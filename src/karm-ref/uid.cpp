@@ -85,6 +85,10 @@ struct [[gnu::packed]] _Uid {
         return {reinterpret_cast<u8*>(this), sizeof(_Uid)};
     }
 
+    u64 hash() const {
+        return Karm::hash(bytes());
+    }
+
     bool operator==(_Uid const&) const = default;
 
     auto operator<=>(_Uid const&) const = default;

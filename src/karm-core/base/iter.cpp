@@ -182,7 +182,7 @@ struct ForEachi {
 export template <typename F>
 ForEachi(F) -> ForEachi<F>;
 
-// MARK: First ------------------------------------------------------------------
+// MARK: Find ------------------------------------------------------------------
 
 export template <typename F>
 struct Find {

@@ -117,8 +117,12 @@ export struct Key {
         return "INVALID";
     }
 
-    Code code() {
+    Code code() const {
         return _code;
+    }
+
+    u64 hash() const {
+        return Karm::hash(_code);
     }
 
     bool operator==(Key const& other) const = default;

@@ -23,7 +23,8 @@ export struct Store {
             if (r.type == Wal::PUT) {
                 db->_memdb.put(r.key, r.value);
             } else if (r.type == Wal::DEL) {
-                db->_memdb.del(r.key);
+                if (db->_memdb.remove(r.key))
+                    logWarn("could not replay del record because of missing key");
             }
         }
         return db;
@@ -37,7 +38,7 @@ export struct Store {
 
     Res<> del(Bytes key) {
         try$(_wal->record(Wal::DEL, key, {}));
-        _memdb.del(Blob::from(key));
+        try$(_memdb.remove(Blob::from(key)).okOr(Error::notFound()));
         return Ok();
     }
 };

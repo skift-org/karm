@@ -7,6 +7,7 @@ export module Karm.Core:base.map;
 import :base.cursor;
 import :base.vec;
 import :base.tuple;
+import :base.iter;
 import :base.hashTable;
 
 namespace Karm {
@@ -16,12 +17,20 @@ struct KvPair {
     K key;
     V value;
 
-    u64 hash() const {
+    constexpr u64 hash() const {
         return Karm::hash(key);
     }
 
-    bool operator==(Meta::Equatable<Meta::RemoveConstVolatileRef<K>> auto const& other) const {
+    constexpr bool operator==(Meta::Equatable<Meta::RemoveConstVolatileRef<K>> auto const& other) const {
         return key == other;
+    }
+
+    constexpr operator Tuple<K, V>() const& {
+        return {key, value};
+    }
+
+    constexpr operator Tuple<K, V>() && {
+        return {std::move(key), std::move(value)};
     }
 };
 
@@ -58,7 +67,7 @@ struct Map {
         _items.put(slot, key, std::forward<decltype(value)>(value));
     }
 
-    Opt<V> remove(Meta::Equatable<K> auto const& key) {
+    [[]] Opt<V> remove(Meta::Equatable<K> auto const& key) {
         if (auto* slot = _items.lookup(key); slot and slot->state == Items::USED) {
             V res = std::move(slot->unwrap().value);
             _items.clear(slot);
@@ -80,6 +89,13 @@ struct Map {
 
     void clear() {
         _items.clear();
+    }
+
+    [[nodiscard]] Opt<V&> lookup(Meta::Equatable<K> auto const& key) lifetimebound {
+        if (auto* slot = _items.lookup(key);
+            slot and slot->state == Items::USED)
+            return slot->unwrap().value;
+        return NONE;
     }
 
     [[nodiscard]] Opt<V const&> lookup(Meta::Equatable<K> auto const& key) const lifetimebound {
@@ -149,6 +165,13 @@ struct Map {
     [[nodiscard]] auto iterItems() const lifetimebound {
         return _items.iterUsed() |
                Select([](auto const& s) -> auto const& {
+                   return s.unwrap();
+               });
+    }
+
+    [[nodiscard]] auto iterMutItems() lifetimebound {
+        return _items.mutIterUsed() |
+               Select([](auto& s) -> auto& {
                    return s.unwrap();
                });
     }

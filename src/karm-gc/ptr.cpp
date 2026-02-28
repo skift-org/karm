@@ -112,6 +112,10 @@ struct Ptr {
         return _ptr == other._ptr;
     }
 
+    u64 hash() const {
+        return Karm::hash((usize)_ptr);
+    }
+
     bool operator==(T const* other) const {
         return _ptr == other;
     }

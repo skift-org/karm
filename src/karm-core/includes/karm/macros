@@ -17,7 +17,7 @@
 // MARK: Try -------------------------------------------------------------------
 
 #define __try$(EXPR, RET, AWAIT, FINAL) ({            \
-    auto __expr = AWAIT(EXPR);                        \
+    auto __expr = AWAIT(EXPR);                      \
     if (not static_cast<bool>(__expr)) [[unlikely]] { \
         RET __expr.none();                            \
         FINAL;                                        \
