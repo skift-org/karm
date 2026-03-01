@@ -7,11 +7,6 @@ import :meta.traits;
 
 namespace Karm {
 
-export template <Meta::Enum E, typename U = Meta::UnderlyingType<E>>
-constexpr U toUnderlyingType(E value) {
-    return static_cast<U>(value);
-};
-
 // HACK: Sometime they can be multiple enums in the same scope
 //       This allow the _LEN to not conflict
 #define FOREACH_ENUM_LEN(LEN) \

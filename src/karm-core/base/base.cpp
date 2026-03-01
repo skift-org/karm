@@ -5,8 +5,14 @@ module;
 export module Karm.Core:base.base;
 
 import :base.std;
+import :meta.traits;
 
 namespace Karm {
+
+export template <Meta::Enum E, typename U = Meta::UnderlyingType<E>>
+constexpr U toUnderlyingType(E value) {
+    return static_cast<U>(value);
+};
 
 // MARK: Unsigned --------------------------------------------------------------
 
@@ -29,18 +35,22 @@ inline u128 _bswap128(u128 value) {
 export template <typename T>
     requires(sizeof(T) <= 16)
 always_inline constexpr T bswap(T value) {
+    if constexpr (Meta::Enum<T>)
+        return static_cast<T>(bswap(toUnderlyingType(value)));
 #ifdef __SIZEOF_INT128__
-    if (sizeof(T) == 16)
+    else if constexpr (sizeof(T) == 16)
         return _bswap128(value);
 #endif
-    if (sizeof(T) == 8)
+    else if constexpr (sizeof(T) == 8)
         return __builtin_bswap64(value);
-    if (sizeof(T) == 4)
+    else if constexpr (sizeof(T) == 4)
         return __builtin_bswap32(value);
-    if (sizeof(T) == 2)
+    else if constexpr (sizeof(T) == 2)
         return __builtin_bswap16(value);
-    if (sizeof(T) == 1)
+    else if constexpr (sizeof(T) == 1)
         return value;
+    else
+        static_assert(false, "value could not be beswaped");
 }
 
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
