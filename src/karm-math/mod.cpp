@@ -8,7 +8,6 @@ export import :curve;
 export import :easing;
 export import :edge;
 export import :ellipse;
-export import :expr;
 export import :fixed;
 export import :flow;
 export import :insets;
