@@ -7,6 +7,7 @@ export module Karm.Core:io.funcs;
 import :base.ring;
 import :io.impls;
 import :io.text;
+import :base.vec;
 
 namespace Karm::Io {
 
@@ -125,6 +126,12 @@ export Res<usize> copy(Readable auto& reader, Writable auto& writer, usize size)
         size -= read;
     }
     return Ok(result);
+}
+
+export Res<Vec<u8>> readAll(Readable auto& reader) {
+    BufferWriter buf;
+    co_trya$(Io::copy(reader, buf));
+    co_return Ok(buf.take());
 }
 
 export Res<Tuple<usize, bool>> readLine(Readable auto& reader, Writable auto& writer, Bytes delim) {

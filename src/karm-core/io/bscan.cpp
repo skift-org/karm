@@ -428,7 +428,7 @@ export struct BChunk {
     }
 
     template <typename T>
-    always_inline constexpr typename T::Type get() const {
+    always_inline constexpr T::Type get() const {
         typename T::Type r{};
         begin()
             .skip(T::offset)
