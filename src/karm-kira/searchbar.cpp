@@ -22,8 +22,7 @@ export Ui::Child searchbar(String text) {
            Ui::box({
                .padding = {6, 12, 6, 12},
                .borderRadii = 4,
-               .borderWidth = 1,
-               .borderFill = Ui::GRAY700,
+               .backgroundFill = Ui::GRAY800,
            }) |
            Ui::minSize({Ui::UNCONSTRAINED, 32}) |
            Ui::focusable() |

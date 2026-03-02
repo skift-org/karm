@@ -190,8 +190,6 @@ export auto scaffoldContent() {
                Ui::bound() |
                Ui::box({
                    .borderRadii = 6,
-                   .borderWidth = 1,
-                   .borderFill = Ui::GRAY800,
                    .backgroundFill = Ui::GRAY950,
                    .overflow = Ui::BoxOverflow::HIDDEN,
                });
