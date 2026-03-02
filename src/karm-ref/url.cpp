@@ -25,7 +25,7 @@ export struct Blob {
     Mime type = "application/octet-stream"_mime;
     Vec<u8> data{};
 
-    usize len() { return data.len(); }
+    usize len() const { return data.len(); }
 
     u64 hash() const {
         return Karm::hash(data);
