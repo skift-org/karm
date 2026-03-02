@@ -338,6 +338,10 @@ export struct Value {
         return _store == other;
     }
 
+    u64 hash() const {
+        return _store.hash();
+    }
+
     operator bool() const {
         return asBool();
     }
