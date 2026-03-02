@@ -340,6 +340,12 @@ export Res<> unparse(Io::Emit& emit, Serde::Value const& v) {
     );
 }
 
+export Res<> unparse(Io::TextWriter& tw, Serde::Value const& v) {
+    Io::Emit emit{tw};
+    try$(unparse(emit, v));
+    return Ok();
+}
+
 export Res<String> unparse(Serde::Value const& v) {
     Io::StringWriter sw;
     Io::Emit emit{sw};
