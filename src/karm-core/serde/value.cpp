@@ -68,6 +68,10 @@ export struct Value {
     Value(Meta::Boolean auto const& b)
         : _store(b) {}
 
+    template<typename T>
+    Value(Opt<T> const& o)
+        : Value(o ? Value(*o) : Value()) {}
+
     Value& operator=(None) {
         _store = NONE;
         return *this;
