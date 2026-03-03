@@ -285,7 +285,7 @@ export Res<Serde::Value> parse(Str s) {
 
 // MARK: Unparse ---------------------------------------------------------------
 
-static void emitEscaped(Io::Emit& emit, Str s) {
+export void escape(Io::Emit& emit, Str s) {
     for (auto c : iterRunes(s)) {
         if (c == '"') {
             emit("\\\"");
@@ -345,7 +345,7 @@ export Res<> unparse(Io::Emit& emit, Serde::Value const& v) {
                     first = false;
 
                     emit('"');
-                    emitEscaped(emit, k);
+                    escape(emit, k);
                     emit("\":");
                     try$(unparse(emit, v));
                 }
@@ -354,7 +354,7 @@ export Res<> unparse(Io::Emit& emit, Serde::Value const& v) {
             },
             [&](String const& s) -> Res<> {
                 emit('"');
-                emitEscaped(emit, s);
+                escape(emit, s);
                 emit('"');
                 return Ok();
             },
