@@ -51,6 +51,9 @@ constexpr Array SUFFIXES2MIME = {
     Suffix2Mime{"rar", "application/vnd.rar"},
     Suffix2Mime{"xz", "application/x-xz"},
     Suffix2Mime{"webp", "image/webp"},
+
+    Suffix2Mime{"icc", "application/vnd.iccprofile"},
+    Suffix2Mime{"icm", "application/vnd.iccprofile"}
 };
 
 export Opt<Mime> sniffSuffix(Str suffix) {

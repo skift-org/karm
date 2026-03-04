@@ -1,6 +1,6 @@
 {
     "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
-    "id": "karm-av.main",
+    "id": "audio-play",
     "type": "exe",
     "requires": [
         "karm-av",

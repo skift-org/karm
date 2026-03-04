@@ -58,13 +58,13 @@ Async::Task<> entryPointAsync(Sys::Context& ctx, Async::CancellationToken) {
     auto& args = useArgs(ctx);
 
     if (args.len() < 1)
-        co_return Error::invalidInput("Usage: karm-font.cli <verb> <args...>");
+        co_return Error::invalidInput("Usage: ttf-dump <verb> <args...>");
 
     auto verb = args[0];
 
     if (verb == "dump-ttf") {
         if (args.len() != 2)
-            co_return Error::invalidInput("Usage: karm-font.cli dump-ttf <url>");
+            co_return Error::invalidInput("Usage: ttf-dump dump-ttf <url>");
 
         auto url = Ref::parseUrlOrPath(args[1], co_try$(Sys::pwd()));
         auto file = co_try$(Sys::File::open(url));
@@ -82,7 +82,7 @@ Async::Task<> entryPointAsync(Sys::Context& ctx, Async::CancellationToken) {
         co_return Ok();
     } else if (verb == "dump-attr") {
         if (args.len() != 2)
-            co_return Error::invalidInput("Usage: karm-font.cli dump-attr <url>");
+            co_return Error::invalidInput("Usage: ttf-dump dump-attr <url>");
 
         auto url = Ref::parseUrlOrPath(args[1], co_try$(Sys::pwd()));
         auto font = co_try$(Font::loadFontface(url));
