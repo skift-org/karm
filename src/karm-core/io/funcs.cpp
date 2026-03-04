@@ -5,9 +5,9 @@ module;
 export module Karm.Core:io.funcs;
 
 import :base.ring;
+import :base.vec;
 import :io.impls;
 import :io.text;
-import :base.vec;
 
 namespace Karm::Io {
 

@@ -42,7 +42,7 @@ export struct Dict : Map<Name, Value> {
 
 export struct Stream {
     Dict dict;
-    Buf<u8> data;
+    Vec<u8> data;
 
     Res<> write(Io::Writer& writer) const;
 };

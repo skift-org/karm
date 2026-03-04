@@ -269,7 +269,7 @@ export using MutPixels = _Pixels<true>;
 // MARK: Surface --------------------------------------------------------------
 
 export struct Surface {
-    Buf<u8> _buf;
+    Vec<u8> _buf;
     Math::Vec2i _size;
     usize _stride;
     Gfx::Fmt _fmt;

@@ -4,7 +4,7 @@ module;
 
 export module Karm.Core:io.impls;
 
-import :base.buf;
+import :base.vec;
 import :base.res;
 import :io.traits;
 import :io.types;
@@ -173,12 +173,12 @@ export struct BufWriter :
 };
 
 export struct BufferWriter : Writer, Flusher {
-    Buf<u8> _buf{};
+    Vec<u8> _buf{};
 
     BufferWriter(usize cap = 16) : _buf(cap) {}
 
     Res<usize> write(Bytes bytes) override {
-        _buf.insert(COPY, _buf.len(), bytes.buf(), bytes.len());
+        _buf.insertMany(_buf.len(), bytes);
         return Ok(bytes.len());
     }
 
@@ -191,12 +191,12 @@ export struct BufferWriter : Writer, Flusher {
         return Ok();
     }
 
-    Buf<u8> take() {
+    Vec<u8> take() {
         return std::move(_buf);
     }
 
     void clear() {
-        _buf.trunc(0);
+        _buf.clear();
     }
 };
 

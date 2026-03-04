@@ -86,8 +86,8 @@ export struct TtfGlyphInfoAdapter {
         return allWidths;
     }
 
-    Buf<u8> CIDToGIDMap() {
-        Buf<u8> buf;
+    Vec<u8> CIDToGIDMap() {
+        Vec<u8> buf;
         buf.ensure(CODESPACE * 2);
 
         u16 const BYTE_MASK = 255;

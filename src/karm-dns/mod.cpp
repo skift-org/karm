@@ -118,7 +118,7 @@ struct Answer {
     Type type;
     Class class_;
     Duration ttl;
-    Buf<u8> data;
+    Vec<u8> data;
 };
 
 Res<> encodeName(Io::BEmit& e, Str name) {
