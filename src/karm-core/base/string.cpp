@@ -272,10 +272,10 @@ export bool eqAsciiCi(Rune a, Rune b) {
     return toAsciiLower(a) == toAsciiLower(b);
 }
 
-export template <StaticEncoding Target, StaticEncoding Source>
+export template <StaticEncoding Target = Utf8, StaticEncoding Source>
 _String<Target> transcode(_Str<Source> str) {
     usize len = transcodeLen<Source, Target>(str);
-    typename Target::Unit* buf = new typename Target::Unit[len + 1];
+    typename Target::Unit* buf = new Target::Unit[len + 1];
     buf[len] = '\0';
 
     Cursor<typename Source::Unit> input = str;

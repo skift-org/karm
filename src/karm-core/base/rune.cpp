@@ -10,6 +10,7 @@ import :meta.traits;
 import :base.array;
 import :base.buf;
 import :base.cursor;
+import :base.endian;
 
 namespace Karm {
 
@@ -183,8 +184,9 @@ static_assert(StaticEncoding<Utf8>);
 
 // MARK: Utf16 -----------------------------------------------------------------
 
-export struct Utf16 {
-    using Unit = u16;
+export template <typename T>
+struct _Utf16 {
+    using Unit = T;
     using One = _Multiple<Unit, 2>;
 
     always_inline static constexpr usize unitLen(Unit first) {
@@ -207,7 +209,7 @@ export struct Utf16 {
             return false;
         }
 
-        Unit first = in.next();
+        u16 first = in.next();
 
         if (first >= 0xd800 and first <= 0xdbff) {
             if (in.rem() == 0) {
@@ -215,7 +217,7 @@ export struct Utf16 {
                 return false;
             }
 
-            Unit second = in.next();
+            u16 second = in.next();
 
             if (second < 0xdc00 or second > 0xdfff) {
                 result = U'�';
@@ -244,9 +246,17 @@ export struct Utf16 {
     }
 };
 
+export using Utf16 = _Utf16<u16>;
 export Utf16 UTF16;
-
 static_assert(StaticEncoding<Utf16>);
+
+export using Utf16be = _Utf16<u16be>;
+export Utf16be UTF16BE;
+static_assert(StaticEncoding<Utf16be>);
+
+export using Utf16le = _Utf16<u16le>;
+export Utf16le UTF16Le;
+static_assert(StaticEncoding<Utf16le>);
 
 // MARK: Utf32 -----------------------------------------------------------------
 
