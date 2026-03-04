@@ -369,9 +369,9 @@ export struct BScan {
         return s;
     }
 
-    always_inline constexpr Str nextCStr() {
+    always_inline constexpr Str nextCStr(usize len = Limits<usize>::MAX) {
         usize n = 0;
-        while (n < rem() and _cursor.buf()[n] != '\0') {
+        while (n < rem() and n < len and _cursor.buf()[n] != '\0') {
             n++;
         }
         auto res = nextStr(n);
