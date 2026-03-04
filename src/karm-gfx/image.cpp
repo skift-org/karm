@@ -9,7 +9,7 @@ namespace Karm::Gfx {
 
 export struct Image {
     struct Metadata {
-        Icc::ColorProfile colorProfile;
+        Rc<Icc::ColorProfile> colorProfile;
         Math::Vec2i size;
         u8 bitDepth;
         bool isInverted;

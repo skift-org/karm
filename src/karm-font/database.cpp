@@ -9,10 +9,13 @@ import Karm.Sys;
 import Karm.Core;
 import Karm.Ref;
 import Karm.Gfx;
+import Karm.Debug;
 
 import :loader;
 
 namespace Karm::Font {
+
+static auto debugDatabase = Debug::Flag::debug("font-database", "Log font database initialization and queries");
 
 export struct Query {
     Gfx::FontWeight weight = Gfx::FontWeight::REGULAR;
@@ -215,9 +218,9 @@ export struct Database {
                 if (fontUrl.path.suffix() != "ttf")
                     continue;
 
-                logDebug("loading font: {}", fontUrl);
+                logDebugIf(debugDatabase, "loading font: {}", fontUrl);
                 if (auto res = load(fontUrl); not res)
-                    logWarn("could not load {}: {}", fontUrl, res);
+                    logWarnIf(debugDatabase, "could not load {}: {}", fontUrl, res);
             }
         }
 

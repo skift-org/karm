@@ -1,0 +1,9 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "icc-view",
+    "type": "exe",
+    "requires": [
+        "karm-icc",
+        "karm-kira"
+    ]
+}
