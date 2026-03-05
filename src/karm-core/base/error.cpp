@@ -3,6 +3,8 @@ export module Karm.Core:base.error;
 import :base.cstr;
 import :base.panic;
 import :base.try_;
+import :base.string;
+import :base.union_;
 
 namespace Karm {
 
@@ -63,26 +65,31 @@ export struct [[nodiscard]] Error {
             _LEN,
     } _code;
 
-    char const* _msg = nullptr;
+    Union<Str, String> _msg = ""s;
 
     using enum Code;
 
-#define ITER(CODE, NAME) \
-    static constexpr Error NAME(char const* msg = "") { return Error(CODE, msg); }
+#define ITER(CODE, NAME)                                                   \
+    static constexpr Error NAME(Str msg = "") { return Error(CODE, msg); } \
+    static constexpr Error NAME(String msg) { return Error(CODE, msg); }
     FOREACH_ERROR(ITER)
 #undef ITER
 
-    constexpr Error() : _code(Code::OTHER), _msg("unknown error") {}
+    constexpr Error() : _code(Code::OTHER), _msg("unknown error"s) {}
 
-    constexpr Error(Code code, char const* msg) : _code(code), _msg(msg) {}
+    constexpr Error(Code code, Str msg) : _code(code), _msg(msg) {}
+
+    constexpr Error(Code code, String msg) : _code(code), _msg(msg) {}
 
     constexpr Code code() const { return _code; }
 
     constexpr Error none() const { return *this; }
 
-    constexpr char const* msg() const {
-        if (_msg != nullptr and std::strlen(_msg) > 0) {
-            return _msg;
+    constexpr Str msg() const {
+        if (_msg != ""s) {
+            return _msg.visit([](auto const& s) -> Str {
+                return s;
+            });
         }
 
         switch (_code) {

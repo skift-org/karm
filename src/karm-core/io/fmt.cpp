@@ -587,8 +587,7 @@ struct Formatter<Ok<T>> {
 export template <>
 struct Formatter<Error> {
     Res<> format(TextWriter& writer, Error const& val) {
-        Str msg = Str::fromNullterminated(val.msg());
-        try$(writer.writeStr(msg));
+        try$(writer.writeStr(val.msg()));
         return Ok();
     }
 };

@@ -17,6 +17,7 @@ import :base.box;
 import :base.time;
 
 namespace Karm::Serde {
+
 export enum struct SizeHint {
     N8,
     N16,
@@ -318,12 +319,15 @@ struct Serde<Error> {
     //       don't care about the message, but the user does though.
 
     static Res<> serialize(Serializer& ser, Error const& v) {
-        return ser.serialize(toUnderlyingType(v.code()));
+        try$(ser.serialize(toUnderlyingType(v.code())));
+        try$(ser.serialize<String>(v.msg()));
+        return Ok();
     }
 
     static Res<Error> deserialize(Deserializer& de) {
         auto code = static_cast<Error::Code>(try$(de.deserialize<Meta::UnderlyingType<Error::Code>>()));
-        return Ok(Error{code, nullptr});
+        auto str = try$(de.deserialize<String>());
+        return Ok(Error{code, std::move(str)});
     }
 };
 

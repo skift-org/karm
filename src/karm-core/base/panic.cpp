@@ -1,6 +1,7 @@
 export module Karm.Core:base.panic;
 
 import :base.base;
+import :base.cstr;
 
 namespace Karm {
 
@@ -9,7 +10,7 @@ export enum class PanicKind {
     PANIC,
 };
 
-using PanicHandler = void (*)(PanicKind kind, char const* msg);
+using PanicHandler = void (*)(PanicKind kind, char const* msg, usize len);
 
 static PanicHandler panicHandler = nullptr;
 
@@ -17,30 +18,38 @@ export void registerPanicHandler(PanicHandler handler) {
     panicHandler = handler;
 }
 
-void _panic(PanicKind kind, char const* msg) {
+void _panic(PanicKind kind, char const* msg, usize len) {
     if (panicHandler)
-        panicHandler(kind, msg);
+        panicHandler(kind, msg, len);
     else
         // Oh no! We don't have a panic handler!
         // Let's just crash the program.
         __builtin_trap();
 }
 
-export void debug(char const* msg) {
-    _panic(PanicKind::DEBUG, msg);
+export void debug(char const* msg, usize len) {
+    _panic(PanicKind::DEBUG, msg, len);
 }
 
-export [[noreturn]] void panic(char const* msg) {
-    _panic(PanicKind::PANIC, msg);
+export void debug(char const* msg) {
+    debug(msg, cstrLen(msg));
+}
+
+export [[noreturn]] void panic(char const* msg, usize len) {
+    _panic(PanicKind::PANIC, msg, len);
     __builtin_unreachable();
 }
 
+export [[noreturn]] void panic(char const* msg) {
+    panic(msg, cstrLen(msg));
+}
+
 export [[noreturn]] void notImplemented() {
-    panic("not implemented");
+    panic("not implemented", 15);
 }
 
 export [[noreturn]] void unreachable() {
-    panic("unreachable");
+    panic("unreachable", 11);
 }
 
 export void breakpoint() {

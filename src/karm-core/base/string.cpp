@@ -386,6 +386,14 @@ _String<E> toUpper(_Str<E> s) {
     return sb.take();
 }
 
+export [[noreturn]] void panic(Str msg) {
+    panic(msg.buf(), msg.len());
+}
+
+export void debug(Str msg) {
+    debug(msg.buf(), msg.len());
+}
+
 } // namespace Karm
 
 #pragma clang diagnostic push

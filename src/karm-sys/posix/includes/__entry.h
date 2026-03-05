@@ -6,7 +6,7 @@ import Karm.Sys;
 #define EXIT_FAILURE 1 /* Failing exit status.  */
 #define EXIT_SUCCESS 0 /* Successful exit status.  */
 
-void __panicHandler(Karm::PanicKind kind, char const* msg);
+void __panicHandler(Karm::PanicKind kind, char const* msg, Karm::usize len);
 
 int main(int argc, char const** argv) {
     Karm::registerPanicHandler(__panicHandler);
