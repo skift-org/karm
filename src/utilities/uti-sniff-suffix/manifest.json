@@ -1,8 +1,9 @@
 {
     "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
-    "id": "mime-sniff",
+    "id": "uti-sniff-suffix",
     "type": "exe",
     "requires": [
+        "karm-cli",
         "karm-ref",
         "karm-sys"
     ]

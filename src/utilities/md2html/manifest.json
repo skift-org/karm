@@ -1,0 +1,11 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "md2html",
+    "type": "exe",
+    "requires": [
+        "karm-cli",
+        "karm-md",
+        "karm-ref",
+        "karm-sys"
+    ]
+}

@@ -9,6 +9,12 @@ test$("karm-ref-uti-basic-properties") {
 
     expectEq$(text.name(), "public.text"_sym);
     expectEq$(text.description(), "Text Document"s);
+    expectEq$(text.suffixes().len(), 1uz);
+    expectEq$(text.suffixes()[0], "txt"s);
+    expectEq$(text.mimeTypes().len(), 1uz);
+    expectEq$(text.mimeTypes()[0].str(), "text/plain"s);
+    expectEq$(text.declaredConformances().len(), 1uz);
+    expectEq$(text.declaredConformances()[0], "public.data"_sym);
     expectEq$(text.primarySuffix().unwrap(), "txt"s);
     expectEq$(text.primaryMimeType().str(), "text/plain"s);
 
@@ -40,6 +46,20 @@ test$("karm-ref-uti-from-mime") {
     auto dynamicUti = Uti::fromMime("application/x-custom-type"_mime);
     expectEq$(dynamicUti.primaryMimeType().str(), "application/x-custom-type"s);
     expect$(dynamicUti.conformsTo("public.data"_uti));
+
+    return Ok();
+}
+
+test$("karm-ref-uti-from-uti-or-mime") {
+    auto nameUti = Uti::fromUtiOrMime("public.png");
+    expectEq$(nameUti.name(), "public.png"_sym);
+
+    auto mimeUti = Uti::fromUtiOrMime("image/png");
+    expectEq$(mimeUti.name(), "public.png"_sym);
+
+    auto dynamicMimeUti = Uti::fromUtiOrMime("application/x-custom-type");
+    expectEq$(dynamicMimeUti.primaryMimeType().str(), "application/x-custom-type"s);
+    expect$(dynamicMimeUti.conformsTo("public.data"_uti));
 
     return Ok();
 }

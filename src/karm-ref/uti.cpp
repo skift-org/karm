@@ -151,6 +151,13 @@ export struct Uti {
         return repository().lookupByMime(mime);
     }
 
+    static Uti fromUtiOrMime(Str str) {
+        if (contains(str, "/"s))
+            return fromMime(Mime{str});
+
+        return Uti{Symbol::from(str)};
+    }
+
     Uti(Symbol name) : _registration(repository().lookupByName(name)) {}
 
     Uti(Common common) : _registration(repository().lookup(common)) {}
@@ -161,6 +168,18 @@ export struct Uti {
 
     Str description() const {
         return _registration->description;
+    }
+
+    auto const& suffixes() const {
+        return _registration->suffixes;
+    }
+
+    auto const& mimeTypes() const {
+        return _registration->mimes;
+    }
+
+    auto const& declaredConformances() const {
+        return _registration->conformsTo;
     }
 
     Opt<Str> primarySuffix() const {

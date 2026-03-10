@@ -1,0 +1,42 @@
+#include <karm/entry>
+
+import Karm.Cli;
+import Karm.Ref;
+import Karm.Sys;
+
+using namespace Karm;
+
+Async::Task<> entryPointAsync(Sys::Context& ctx, Async::CancellationToken) {
+    auto urlArg = Cli::operand<Ref::Url>("url"s, "First URL or path to resolve by suffix"s);
+    auto restArg = Cli::extra("Additional URLs or paths to resolve by suffix"s);
+
+    Cli::Command cmd{
+        "uti-sniff-suffix"s,
+        "Resolve UTIs from the path suffix of one or more URLs."s,
+        {{
+            "Arguments"s,
+            {
+                urlArg,
+                restArg,
+            },
+        }},
+    };
+
+    co_trya$(cmd.execAsync(ctx));
+
+    if (cmd) {
+        auto dump = [](Ref::Url const& url) {
+            Sys::println("{}", Ref::Uti::fromSuffix(url.path.suffix()));
+        };
+
+        dump(urlArg.value());
+
+        auto pwd = co_try$(Sys::pwd());
+        for (auto const& arg : restArg.value()) {
+            auto url = Ref::parseUrlOrPath(arg, pwd);
+            dump(url);
+        }
+    }
+
+    co_return Ok();
+}

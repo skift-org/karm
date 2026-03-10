@@ -68,7 +68,7 @@ export struct Value {
     Value(Meta::Boolean auto const& b)
         : _store(b) {}
 
-    template<typename T>
+    template <typename T>
     Value(Opt<T> const& o)
         : Value(o ? Value(*o) : Value()) {}
 
