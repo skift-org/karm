@@ -70,12 +70,7 @@ export struct File :
         return globalSched().writeAsync(_fd, bytes, ct);
     }
 
-    Res<Ref::Mime> sniff(bool ignoreUrl = false) {
-        if (not ignoreUrl) {
-            if (auto mime = Ref::sniffSuffix(_url.path.suffix()))
-                return Ok(mime.take());
-        }
-
+    Res<Ref::Uti> sniff() {
         auto old = try$(Io::tell(*this));
         Defer _ = [&] {
             seek(Io::Seek::fromBegin(old)).unwrap();

@@ -5,19 +5,15 @@ import Karm.Ref;
 
 using namespace Karm;
 
-Res<Ref::Mime> sniffFile(Ref::Url url) {
-    auto file = try$(Sys::File::open(url));
-    return file.sniff(true);
-}
-
 Async::Task<> entryPointAsync(Sys::Context& ctx, Async::CancellationToken) {
     auto& args = Sys::useArgs(ctx);
 
     for (usize i = 0; i < args.len(); i++) {
         auto url = Ref::parseUrlOrPath(args[i], co_try$(Sys::pwd()));
+        auto file = co_try$(Sys::File::open(url));
         Sys::println("file: {}", url);
-        Sys::println("mime by sniffing url: {}", Ref::sniffSuffix(url.path.suffix()));
-        Sys::println("mime by sniffing content: {}", sniffFile(url));
+        Sys::println("mime by sniffing url: {}", Ref::Uti::fromSuffix(url.path.suffix()));
+        Sys::println("mime by sniffing content: {}", file.sniff());
     }
 
     co_return Ok();

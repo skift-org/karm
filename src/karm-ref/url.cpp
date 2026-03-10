@@ -9,6 +9,7 @@ import Karm.Core;
 import Karm.Crypto;
 
 import :mime;
+import :uti;
 import :path;
 
 namespace Karm::Ref {
@@ -22,7 +23,7 @@ auto const RE_COMPONENT =
 auto const RE_SCHEME = RE_COMPONENT & ':'_re;
 
 export struct Blob {
-    Mime type = "application/octet-stream"_mime;
+    Uti type = Uti::PUBLIC_DATA;
     Vec<u8> data{};
 
     usize len() const { return data.len(); }
@@ -83,7 +84,7 @@ export struct Url {
     static Url data(Mime mime, Bytes data) {
         Url url;
         url.scheme = "data"_sym;
-        url.blob = makeRc<Blob>(mime, data);
+        url.blob = makeRc<Blob>(Uti::fromMime(mime), data);
         return url;
     }
 
@@ -107,7 +108,7 @@ export struct Url {
             Io::TextEncoder enc{buf};
             try$(enc.writeStr(urlDecode(s).str()));
         }
-        return Ok(makeRc<Blob>(mime, buf.take()));
+        return Ok(makeRc<Blob>(Uti::fromMime(mime), buf.take()));
     }
 
     static Url parse(Io::SScan& s, Opt<Url> baseUrl = NONE) {

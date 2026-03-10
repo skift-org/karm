@@ -24,7 +24,7 @@ struct CacheTransport : Transport {
         response->version = request->version;
         response->code = OK;
         response->body = Body::from(blob);
-        response->header.put(Header::CONTENT_TYPE, blob->type.str());
+        response->header.put(Header::CONTENT_TYPE, blob->type.primaryMimeType().str());
 
         return response;
     }
@@ -45,9 +45,9 @@ struct CacheTransport : Transport {
         if (not serverResponse->body)
             co_return Ok(serverResponse);
 
-        auto contentType = serverResponse->header.contentType();
+        auto contentType = serverResponse->header.contentType().unwrapOr(Ref::Uti::PUBLIC_DATA);
         auto data = co_trya$(Aio::readAllAsync(**serverResponse->body, ct));
-        auto blob = makeRc<Ref::Blob>(contentType.unwrapOr("application/octet-stream"_mime), std::move(data));
+        auto blob = makeRc<Ref::Blob>(contentType, std::move(data));
         _cached.put(request->url, blob);
 
         auto response = _createResponse(request, blob);

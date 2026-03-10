@@ -365,7 +365,7 @@ struct LocalTransport : Transport {
     LocalTransport(Vec<String> allowed)
         : _policy(LocalTransportPolicy::FILTER), _allowed(allowed) {}
 
-    Res<Pair<Rc<Body>, Ref::Mime>> _load(Ref::Url url) {
+    Res<Tuple<Rc<Body>, Ref::Uti>> _load(Ref::Url url) {
         if (url.scheme == "data") {
             auto blob = try$(url.blob);
             auto body = Body::from(blob);
@@ -374,8 +374,8 @@ struct LocalTransport : Transport {
 
         if (try$(Sys::isFile(url))) {
             auto body = Body::from(try$(Sys::File::open(url)));
-            auto mime = Ref::sniffSuffix(url.path.suffix()).unwrapOr("application/octet-stream"_mime);
-            return Ok(Pair{body, mime});
+            auto uti = Ref::Uti::fromSuffix(url.path.suffix());
+            return Ok(Pair{body, uti});
         }
 
         auto dir = try$(Sys::Dir::open(url));
@@ -388,7 +388,10 @@ struct LocalTransport : Transport {
             e("<li><a href=\"{}\">{}</a></li>", url.join(diren.name), diren.name);
         }
         e("</ul></body></html>");
-        return Ok(Pair{Body::from(sw.take()), "text/html"_mime});
+        return Ok(Tuple<Rc<Body>, Ref::Uti>{
+            Body::from(sw.take()),
+            Ref::Uti::PUBLIC_HTML,
+        });
     }
 
     Async::Task<> _saveAsync(Ref::Url url, Rc<Body> body, Async::CancellationToken ct) {
@@ -413,9 +416,9 @@ struct LocalTransport : Transport {
             co_trya$(_saveAsync(request->url, *it, ct));
 
         if (request->method == GET or request->method == POST) {
-            auto [body, mime] = co_try$(_load(request->url));
+            auto [body, type] = co_try$(_load(request->url));
             response->body = body;
-            response->header.put(Header::CONTENT_TYPE, mime.str());
+            response->header.put(Header::CONTENT_TYPE, type.primaryMimeType().str());
         }
 
         co_return Ok(response);

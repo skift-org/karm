@@ -115,15 +115,15 @@ export struct Header : Map<Symbol, String> {
         return Ok();
     }
 
-    Opt<usize> contentLength() {
+    Opt<usize> contentLength() const {
         if (auto value = lookup(CONTENT_LENGTH))
             return Io::atou(value->str());
         return NONE;
     }
 
-    Opt<Ref::Mime> contentType() {
+    Opt<Ref::Uti> contentType() const {
         if (auto value = lookup(CONTENT_TYPE))
-            return Ref::Mime{value->str()};
+            return Ref::Uti::fromMime(Ref::Mime{value->str()});
         return NONE;
     }
 };

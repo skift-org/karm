@@ -233,7 +233,7 @@ struct ValueParser<Ref::Uti> {
         if (c.ended() or c->kind != Token::OPERAND)
             return Error::other("expected uti");
 
-        return Ok(Ref::Uti{c.next().value});
+        return Ok(Ref::Uti{Symbol::from(c.next().value)});
     }
 };
 

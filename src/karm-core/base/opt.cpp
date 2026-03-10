@@ -367,7 +367,7 @@ struct [[nodiscard]] Opt {
         return other;
     }
 
-    always_inline constexpr T unwrapOrElse(auto f) const {
+    always_inline constexpr auto unwrapOrElse(auto f) const -> decltype(f()) {
         if (_store.has())
             return _store.unwrap();
         return f();
