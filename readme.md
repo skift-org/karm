@@ -3,11 +3,11 @@
 <p align="center">
     <img src="doc/assets/logo.svg" width="200"s>
 </p>
+
 <p align="center">
     A batteries included framework for modern cross-platform C++ applications
 </p>
 <br/>
-
 
 ![](doc/assets/capture.png)
 
@@ -15,6 +15,7 @@
 <br/>
 
 ## Getting Started
+[![status-badge](https://ci.codeberg.org/api/badges/16014/status.svg)](https://ci.codeberg.org/repos/16014)
 
 Follow the [Getting Started Guide](doc/getting-started.md) to set up your first Karm project and run a simple "Hello World" application.
 
