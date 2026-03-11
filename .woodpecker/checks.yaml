@@ -1,0 +1,17 @@
+when:
+  - event: pull_request
+  - event: push
+    branch: main
+
+steps:
+  - name: Build & Test
+    image: ubuntu
+    commands:
+      - apt-get update
+      - apt-get install -y --no-install-recommends build-essential git ninja-build ccache jq libseccomp-dev liburing-dev curl wget lsb-release software-properties-common gnupg pkg-config
+      - bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)" llvm 21 all
+      - export PATH=/usr/lib/llvm-21/bin:$PATH
+      - curl -LsSf https://astral.sh/uv/install.sh | sh
+      - export PATH="$HOME/.local/bin:$PATH"
+      - uv tool install cutekit@0.11.0
+      - ck test --props:async=epoll

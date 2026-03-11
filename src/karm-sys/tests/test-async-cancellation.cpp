@@ -13,6 +13,11 @@ Async::Task<> bigSleptAsync(Rc<bool> pass, Async::CancellationToken ct) {
 }
 
 testAsync$("async-cancellation") {
+#ifdef __ck_async_epoll__
+    logInfo("skipping test on epoll");
+    co_return Error::skipped();
+#endif
+
     Rc<bool> pass = makeRc<bool>(false);
     bool finished = false;
     Async::Cancellation sleepCancel;

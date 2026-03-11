@@ -3,15 +3,14 @@ module;
 #include <errno.h>
 #include <karm/macros>
 #include <sys/epoll.h>
+#include <sys/stat.h>
 #include <sys/timerfd.h>
 #include <unistd.h>
-
-#include "../posix/fd.h"
-#include "../posix/utils.h"
 
 module Karm.Sys;
 
 import Karm.Core;
+import Karm.Sys.Posix;
 
 namespace Karm::Sys::_Embed {
 
@@ -28,7 +27,7 @@ struct EpollSched : Sys::Sched {
     }
 
     [[clang::coro_wrapper]]
-    Async::Task<u32> waitFor(epoll_event ev, int fd) {
+    Async::Task<u32> waitForAsync(epoll_event ev, int fd) {
         usize id = _id++;
         auto promise = Async::Promise<u32>();
         auto future = promise.future();
@@ -66,43 +65,43 @@ struct EpollSched : Sys::Sched {
     }
 
     Async::Task<usize> readAsync(Rc<Fd> fd, MutBytes buf, Async::CancellationToken ct) override {
-        int rawFd = co_try$(Posix::toPosixFd(fd))->_raw;
-        co_trya$(waitFor({.events = EPOLLIN | EPOLLET, .data = {}}, rawFd));
+        int rawFd = co_try$(Posix::ensurePosixFd(fd))->_raw;
+        co_trya$(waitForAsync({.events = EPOLLIN | EPOLLET, .data = {}}, rawFd));
         co_try$(ct.errorIfCanceled());
         co_return Ok(co_try$(fd->read(buf)));
     }
 
     Async::Task<usize> writeAsync(Rc<Fd> fd, Bytes buf, Async::CancellationToken ct) override {
-        int rawFd = co_try$(Posix::toPosixFd(fd))->_raw;
-        co_trya$(waitFor({.events = EPOLLOUT | EPOLLET, .data = {}}, rawFd));
+        int rawFd = co_try$(Posix::ensurePosixFd(fd))->_raw;
+        co_trya$(waitForAsync({.events = EPOLLOUT | EPOLLET, .data = {}}, rawFd));
         co_try$(ct.errorIfCanceled());
         co_return Ok(co_try$(fd->write(buf)));
     }
 
     Async::Task<> flushAsync(Rc<Fd> fd, Async::CancellationToken ct) override {
-        int rawFd = co_try$(Posix::toPosixFd(fd))->_raw;
-        co_trya$(waitFor({.events = EPOLLOUT | EPOLLET, .data = {}}, rawFd));
+        int rawFd = co_try$(Posix::ensurePosixFd(fd))->_raw;
+        co_trya$(waitForAsync({.events = EPOLLOUT | EPOLLET, .data = {}}, rawFd));
         co_try$(ct.errorIfCanceled());
         co_return Ok(co_try$(fd->flush()));
     }
 
     Async::Task<_Accepted> acceptAsync(Rc<Fd> fd, Async::CancellationToken ct) override {
-        int rawFd = co_try$(Posix::toPosixFd(fd))->_raw;
-        co_trya$(waitFor({.events = EPOLLIN | EPOLLET, .data = {}}, rawFd));
+        int rawFd = co_try$(Posix::ensurePosixFd(fd))->_raw;
+        co_trya$(waitForAsync({.events = EPOLLIN | EPOLLET, .data = {}}, rawFd));
         co_try$(ct.errorIfCanceled());
         co_return Ok(co_try$(fd->accept()));
     }
 
     Async::Task<_Sent> sendAsync(Rc<Fd> fd, Bytes buf, Slice<Handle> handles, SocketAddr addr, Async::CancellationToken ct) override {
-        int rawFd = co_try$(Posix::toPosixFd(fd))->_raw;
-        co_trya$(waitFor({.events = EPOLLOUT | EPOLLET, .data = {}}, rawFd));
+        int rawFd = co_try$(Posix::ensurePosixFd(fd))->_raw;
+        co_trya$(waitForAsync({.events = EPOLLOUT | EPOLLET, .data = {}}, rawFd));
         co_try$(ct.errorIfCanceled());
         co_return Ok(co_try$(fd->send(buf, handles, addr)));
     }
 
     Async::Task<_Received> recvAsync(Rc<Fd> fd, MutBytes buf, MutSlice<Handle> hnds, Async::CancellationToken ct) override {
-        int rawFd = co_try$(Posix::toPosixFd(fd))->_raw;
-        co_trya$(waitFor({.events = EPOLLIN | EPOLLET, .data = {}}, rawFd));
+        int rawFd = co_try$(Posix::ensurePosixFd(fd))->_raw;
+        co_trya$(waitForAsync({.events = EPOLLIN | EPOLLET, .data = {}}, rawFd));
         co_try$(ct.errorIfCanceled());
         co_return Ok(co_try$(fd->recv(buf, hnds)));
     }
@@ -114,10 +113,10 @@ struct EpollSched : Sys::Sched {
         if (events.has(Poll::WRITEABLE))
             pollMask |= EPOLLOUT;
 
-        int rawFd = co_try$(Posix::toPosixFd(fd))->_raw;
+        int rawFd = co_try$(Posix::ensurePosixFd(fd))->_raw;
 
         co_try$(ct.errorIfCanceled());
-        auto res = co_trya$(waitFor({.events = pollMask | EPOLLET, .data = {}}, rawFd));
+        auto res = co_trya$(waitForAsync({.events = pollMask | EPOLLET, .data = {}}, rawFd));
 
         events = {};
         if (res & EPOLLIN)
@@ -146,7 +145,7 @@ struct EpollSched : Sys::Sched {
             co_return Posix::fromLastErrno();
 
         co_try$(ct.errorIfCanceled());
-        co_trya$(waitFor({.events = EPOLLIN, .data = {}}, timeFd));
+        co_trya$(waitForAsync({.events = EPOLLIN, .data = {}}, timeFd));
 
         co_return Ok();
     }
@@ -168,7 +167,7 @@ struct EpollSched : Sys::Sched {
             return Ok();
 
         usize id = ev.data.u64;
-        auto promise = _promises.take(id);
+        auto promise = _promises.remove(id).take();
         promise.resolve(Ok(ev.events));
         return Ok();
     }
