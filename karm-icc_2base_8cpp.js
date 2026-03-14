@@ -1,0 +1,28 @@
+var karm_icc_2base_8cpp =
+[
+    [ "Karm::Icc::DateTimeNumber", "structKarm_1_1Icc_1_1DateTimeNumber.html", "structKarm_1_1Icc_1_1DateTimeNumber" ],
+    [ "Karm::Icc::XYZNumber", "structKarm_1_1Icc_1_1XYZNumber.html", "structKarm_1_1Icc_1_1XYZNumber" ],
+    [ "Karm::Icc::ColorSpace", "structKarm_1_1Icc_1_1ColorSpace.html", "structKarm_1_1Icc_1_1ColorSpace" ],
+    [ "Karm::Icc::ProfileVersion", "structKarm_1_1Icc_1_1ProfileVersion.html", "structKarm_1_1Icc_1_1ProfileVersion" ],
+    [ "Karm::Icc::ProfileClass", "structKarm_1_1Icc_1_1ProfileClass.html", "structKarm_1_1Icc_1_1ProfileClass" ],
+    [ "Karm::Icc::ProfileHeader", "structKarm_1_1Icc_1_1ProfileHeader.html", "structKarm_1_1Icc_1_1ProfileHeader" ],
+    [ "Karm::Icc::TagTableEntry", "structKarm_1_1Icc_1_1TagTableEntry.html", "structKarm_1_1Icc_1_1TagTableEntry" ],
+    [ "Karm::Icc::MultiLocalizedUnicodeType", "structKarm_1_1Icc_1_1MultiLocalizedUnicodeType.html", "structKarm_1_1Icc_1_1MultiLocalizedUnicodeType" ],
+    [ "Karm::Icc::MultiLocalizedUnicodeType::Header", "structKarm_1_1Icc_1_1MultiLocalizedUnicodeType_1_1Header.html", "structKarm_1_1Icc_1_1MultiLocalizedUnicodeType_1_1Header" ],
+    [ "Karm::Icc::MultiLocalizedUnicodeType::Record", "structKarm_1_1Icc_1_1MultiLocalizedUnicodeType_1_1Record.html", "structKarm_1_1Icc_1_1MultiLocalizedUnicodeType_1_1Record" ],
+    [ "Karm::Icc::TextType", "structKarm_1_1Icc_1_1TextType.html", "structKarm_1_1Icc_1_1TextType" ],
+    [ "Karm::Icc::UnknowType", "structKarm_1_1Icc_1_1UnknowType.html", "structKarm_1_1Icc_1_1UnknowType" ],
+    [ "Karm::Icc::Tag", "structKarm_1_1Icc_1_1Tag.html", "structKarm_1_1Icc_1_1Tag" ],
+    [ "Karm::Icc::Parser", "structKarm_1_1Icc_1_1Parser.html", "structKarm_1_1Icc_1_1Parser" ],
+    [ "COLORSPACE", "karm-icc_2base_8cpp.html#a5cf41921050a207e54e2bc230e24e76d", null ],
+    [ "COLORSPACE", "karm-icc_2base_8cpp.html#a5cf41921050a207e54e2bc230e24e76d", null ],
+    [ "PROFILE_CLASS", "karm-icc_2base_8cpp.html#ad5495aeb28809e83ecb2b92c7a2a5684", null ],
+    [ "s15Fixed16be", "karm-icc_2base_8cpp.html#ab1faf3f29a31fcf58f91ed0ea2cfe235", null ],
+    [ "TagType", "karm-icc_2base_8cpp.html#a32f5f9b58875468218098d327ed5caf8", null ],
+    [ "fromBcd", "karm-icc_2base_8cpp.html#a0816783f1f18c400039017ce537c4263", null ],
+    [ "tagTypeFrom", "karm-icc_2base_8cpp.html#a133ada0bde523afa566adec6b638b6a3", null ],
+    [ "tagTypeMatch", "karm-icc_2base_8cpp.html#a078dda6314f55225daf72c5c504f98a2", null ],
+    [ "Core", "karm-icc_2base_8cpp.html#abedc7e19652ef6fd2984ea9cb3d62db5", null ],
+    [ "Icc", "karm-icc_2base_8cpp.html#acb2845b97509accc219d409381a75a9a", null ],
+    [ "module", "karm-icc_2base_8cpp.html#a96e5f0eca87c2426370e0897ac7b8ca6", null ]
+];

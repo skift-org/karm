@@ -1,0 +1,48 @@
+var namespaceKarm_1_1Async =
+[
+    [ "Tests", "namespaceKarm_1_1Async_1_1Tests.html", [
+      [ "taskOuter", "namespaceKarm_1_1Async_1_1Tests.html#aea908c44ad80e6af9bfd5eb00c045659", null ],
+      [ "taskValue", "namespaceKarm_1_1Async_1_1Tests.html#a28a7e1b1a39284e05d62d9479dbb8816", null ],
+      [ "test$", "namespaceKarm_1_1Async_1_1Tests.html#a04a303f56cb75fb185d3f129edc8653c", null ],
+      [ "test$", "namespaceKarm_1_1Async_1_1Tests.html#a2373d4164b45231493462fc75e729fb3", null ],
+      [ "test$", "namespaceKarm_1_1Async_1_1Tests.html#a577b9d54280f7f2e3ef7ed12c3ea41a9", null ],
+      [ "test$", "namespaceKarm_1_1Async_1_1Tests.html#a1a8d1abc4c161c5a7f15a1ca75eb908a", null ],
+      [ "test$", "namespaceKarm_1_1Async_1_1Tests.html#ac73af1d03e35c4643abd58c085d88b52", null ],
+      [ "test$", "namespaceKarm_1_1Async_1_1Tests.html#a33a5dc8627c0442a0624dbaa82c92892", null ],
+      [ "test$", "namespaceKarm_1_1Async_1_1Tests.html#ac29dbeed4b8c5baa6d7e1b3d1462641f", null ],
+      [ "test$", "namespaceKarm_1_1Async_1_1Tests.html#ac42a984b8eb4e16ecee49ec6fc351b81", null ],
+      [ "test$", "namespaceKarm_1_1Async_1_1Tests.html#aa7568e61b0b21c1b596b174f65ab26ba", null ]
+    ] ],
+    [ "Awaiter", "structKarm_1_1Async_1_1Awaiter.html", "structKarm_1_1Async_1_1Awaiter" ],
+    [ "Cancellable", "structKarm_1_1Async_1_1Cancellable.html", "structKarm_1_1Async_1_1Cancellable" ],
+    [ "Cancellation", "structKarm_1_1Async_1_1Cancellation.html", "structKarm_1_1Async_1_1Cancellation" ],
+    [ "CancellationToken", "structKarm_1_1Async_1_1CancellationToken.html", "structKarm_1_1Async_1_1CancellationToken" ],
+    [ "Continuation", "structKarm_1_1Async_1_1Continuation.html", "structKarm_1_1Async_1_1Continuation" ],
+    [ "Inline", "structKarm_1_1Async_1_1Inline.html", null ],
+    [ "InlineOrLater", "structKarm_1_1Async_1_1InlineOrLater.html", "structKarm_1_1Async_1_1InlineOrLater" ],
+    [ "Later", "structKarm_1_1Async_1_1Later.html", null ],
+    [ "Null", "structKarm_1_1Async_1_1Null.html", "structKarm_1_1Async_1_1Null" ],
+    [ "One", "structKarm_1_1Async_1_1One.html", "structKarm_1_1Async_1_1One" ],
+    [ "Queue", "structKarm_1_1Async_1_1Queue.html", "structKarm_1_1Async_1_1Queue" ],
+    [ "State", "structKarm_1_1Async_1_1State.html", "structKarm_1_1Async_1_1State" ],
+    [ "Operation", "conceptKarm_1_1Async_1_1Operation.html", null ],
+    [ "Receiver", "conceptKarm_1_1Async_1_1Receiver.html", null ],
+    [ "Sender", "conceptKarm_1_1Async_1_1Sender.html", null ],
+    [ "Future", "namespaceKarm_1_1Async.html#ac982df6cc775113df6d9844c5408dffd", null ],
+    [ "OperationOf", "namespaceKarm_1_1Async.html#abf731c3505af4c13e4b44e5771681048", null ],
+    [ "Promise", "namespaceKarm_1_1Async.html#ae1cd9687a512559d20397a39ddd6ef50", null ],
+    [ "Task", "namespaceKarm_1_1Async.html#a0bb115608504b3a0b41fac822338c63c", null ],
+    [ "Cfp", "namespaceKarm_1_1Async.html#a979dbfb9df43c8f4b720c43338696a40", [
+      [ "INDETERMINATE", "namespaceKarm_1_1Async.html#a979dbfb9df43c8f4b720c43338696a40a717bb676b27571e4f5392a911194842a", null ],
+      [ "PAST_START", "namespaceKarm_1_1Async.html#a979dbfb9df43c8f4b720c43338696a40a69e29e951a6108ff1df10069c790dc52", null ],
+      [ "PAST_SUSPEND", "namespaceKarm_1_1Async.html#a979dbfb9df43c8f4b720c43338696a40a0ebe1fc8e46860bab41eff4806f6764e", null ]
+    ] ],
+    [ "detach", "namespaceKarm_1_1Async.html#a75d899ee637b3881519f868a1f04e8c9", null ],
+    [ "detach", "namespaceKarm_1_1Async.html#a9fd2f8c96b4423e429e42bcab53b90bd", null ],
+    [ "join", "namespaceKarm_1_1Async.html#aa05d0135637017ec18d7d937723955f1", null ],
+    [ "makeTask", "namespaceKarm_1_1Async.html#a1273e4ff1f8273445050403830da5ea8", null ],
+    [ "run", "namespaceKarm_1_1Async.html#a9c5ed5b879071713ee630efbbab99d8b", null ],
+    [ "run", "namespaceKarm_1_1Async.html#a13f1166a03e80be2aeaaf9670fdb5425", null ],
+    [ "INLINE", "namespaceKarm_1_1Async.html#a438ab719d87e589874ea4e060f59bca0", null ],
+    [ "LATER", "namespaceKarm_1_1Async.html#a5bafa08d6e3b6db781005727dcdb388d", null ]
+];

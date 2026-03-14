@@ -1,0 +1,20 @@
+var searchData=
+[
+  ['q2_5fk_0',['Q2_K',['../namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1ae9a13185686539dcc9be4be36d58fb35',1,'Karm::Ml::Gguf']]],
+  ['q3_5fk_1',['Q3_K',['../namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1af17227466a3a75c603590c97ff0b1d18',1,'Karm::Ml::Gguf']]],
+  ['q4_5f0_2',['Q4_0',['../namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1a0319ba7945fc5786466efbacad79aadb',1,'Karm::Ml::Gguf']]],
+  ['q4_5f1_3',['Q4_1',['../namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1ab17dfc9b9b5ce4b2aa0b658b4e3b0d72',1,'Karm::Ml::Gguf']]],
+  ['q4_5f2_4',['Q4_2',['../namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1a5c88a632016b735caca1d23292603459',1,'Karm::Ml::Gguf']]],
+  ['q4_5f3_5',['Q4_3',['../namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1a64b80571197f559f2c15e74a518960f6',1,'Karm::Ml::Gguf']]],
+  ['q4_5fk_6',['Q4_K',['../namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1a17c30ffb0c4d70d05d7859a87d43e66f',1,'Karm::Ml::Gguf']]],
+  ['q5_5f0_7',['Q5_0',['../namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1acde6db007799f565857599b9830a6c2b',1,'Karm::Ml::Gguf']]],
+  ['q5_5f1_8',['Q5_1',['../namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1a73d3aa0494690b259220a85295554de2',1,'Karm::Ml::Gguf']]],
+  ['q5_5fk_9',['Q5_K',['../namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1a2b3307eb7a3523a00833aac6301dd3ca',1,'Karm::Ml::Gguf']]],
+  ['q6_5fk_10',['Q6_K',['../namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1a81a680ad169c16cb082a6f8eab8685db',1,'Karm::Ml::Gguf']]],
+  ['q8_5f0_11',['Q8_0',['../namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1a7d752b3cc49838890790999912af5a83',1,'Karm::Ml::Gguf']]],
+  ['q8_5f1_12',['Q8_1',['../namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1ac71547376963e5bf8860ef349e7b2a86',1,'Karm::Ml::Gguf']]],
+  ['q8_5fk_13',['Q8_K',['../namespaceKarm_1_1Ml_1_1Gguf.html#a6d8227d26b6d08018b69b980afe099c1a1aa99bd964246d92c0b4cba322ad58ea',1,'Karm::Ml::Gguf']]],
+  ['qr_14',['QR',['../namespaceKarm_1_1Net_1_1Dns.html#a5b29a61d9e1103219191df20672ef443abdfd766dff351674e26661e3f7e23929',1,'Karm::Net::Dns']]],
+  ['quad_5fto_15',['QUAD_TO',['../structKarm_1_1Math_1_1Path.html#a1a219937914ccedcf08cb1852aa8eca7ab4266aecf14213c1788b034ed1897695',1,'Karm::Math::Path']]],
+  ['query_16',['QUERY',['../namespaceKarm_1_1Net_1_1Dns.html#a47f8b09c32e5921ee31751a3046bd3faafb7f9126c3a27d76b4748d3b608c7f87',1,'Karm::Net::Dns']]]
+];
