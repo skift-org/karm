@@ -5,7 +5,7 @@ import Karm.Logger;
 
 namespace Karm::Sys::Tests {
 
-Async::Task<> sleepyBoy(Async::CancellationToken ct) {
+static Async::Task<> sleepyBoy(Async::CancellationToken ct) {
 #ifdef __ck_sys_darwin__
     logInfo("skipping test on macOS");
     co_return Error::skipped();

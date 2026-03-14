@@ -404,16 +404,7 @@ struct UringSched : Sys::Sched {
         co_return co_await job.future();
     }
 
-    bool _inWait = false;
-
     Res<> wait(Instant until) override {
-        if (_inWait)
-            panic("nested wait");
-        _inWait = true;
-        Defer _{[&] {
-            _inWait = false;
-        }};
-
         Instant now = Sys::instant();
 
         Duration delta = Duration::zero();
