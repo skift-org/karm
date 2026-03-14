@@ -48,6 +48,9 @@ test$("pack-unpack-primitives") {
     Vec<u8> bytes{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     try$(packUnpack(bytes));
 
+    Vec<String> strings{"1"s, "2"s, "3"s, "4"s, "5"s, "6"s, "7"s, "8"s, "9"s, "10"s};
+    try$(packUnpack(strings));
+
     Tuple<int, float, String> tuple{1, 0.99, "wow"s};
     try$(packUnpack(tuple));
 

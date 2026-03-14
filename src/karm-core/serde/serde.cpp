@@ -197,15 +197,21 @@ export struct Deserializer {
     struct Scope {
         Deserializer* _de;
         Type type;
+        usize _consumed = 0;
 
         Scope(Deserializer* de, Type type) : _de(de), type(type) {
         }
 
-        Scope(Scope&& other) : _de(std::exchange(other._de, nullptr)) {
+        Scope(Scope&& other)
+            : _de(std::exchange(other._de, nullptr)),
+              type(std::move(other.type)),
+              _consumed(std::exchange(other._consumed, 0)) {
         }
 
         Scope& operator=(Scope&& other) noexcept {
             std::swap(_de, other._de);
+            std::swap(type, other.type);
+            std::swap(_consumed, other._consumed);
             return *this;
         }
 
@@ -214,6 +220,8 @@ export struct Deserializer {
         }
 
         Res<bool> ended() const {
+            if (type.len)
+                return Ok(_consumed >= type.len.unwrap());
             return _de->endedUnit();
         }
 
@@ -232,11 +240,13 @@ export struct Deserializer {
 
         template <typename T>
         Res<Tuple<Type, T>> deserializeUnit(Type type) {
+            ++_consumed;
             return _de->deserializeUnit<T>(type);
         }
 
         template <typename T>
         Res<T> deserialize() {
+            ++_consumed;
             return _de->deserialize<T>();
         }
     };
@@ -566,7 +576,7 @@ struct Serde<Vec<T>> {
     static Res<Vec<T>> deserialize(Deserializer& de) {
         auto scope = try$(de.beginScope({Type::VEC}));
         Vec<T> res;
-        while (not scope.ended()) {
+        while (not try$(scope.ended())) {
             res.pushBack(try$(scope.deserialize<T>()));
         }
         try$(scope.end());
@@ -592,7 +602,7 @@ struct Serde<Map<String, T>> {
     static Res<Map<String, T>> deserialize(Deserializer& de) {
         auto scope = try$(de.beginScope({.kind = Type::MAP}));
         Map<String, T> res;
-        while (not scope.ended()) {
+        while (not try$(scope.ended())) {
             auto [type, value] = try$(scope.deserializeUnit<T>({
                 .kind = Type::MAP_ITEM,
             }));
