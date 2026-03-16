@@ -53,4 +53,16 @@ test$("rc-niche") {
     return Ok();
 }
 
+test$("rc-same-instance") {
+    auto a = makeRc(1);
+    auto b = makeRc(1);
+    auto c = a;
+
+    expect$(a.sameInstance(c));
+    expect$(not a.sameInstance(b));
+    expect$(not c.sameInstance(b));
+
+    return Ok();
+}
+
 } // namespace Karm::Base::Tests

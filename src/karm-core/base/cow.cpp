@@ -36,7 +36,7 @@ struct Cow {
     }
 
     bool sameInstance(Cow const& other) const {
-        return &_inner == &other._inner;
+        return _inner.sameInstance(other._inner);
     }
 };
 

@@ -160,6 +160,10 @@ struct _Rc {
         return *this;
     }
 
+    constexpr bool sameInstance(_Rc const& other) const {
+        return &unwrap() == &other.unwrap();
+    }
+
     // MARK: Operators ---------------------------------------------------------
 
     constexpr T const* operator->() const lifetimebound {
@@ -376,6 +380,11 @@ constexpr Rc<T> makeRc(Args&&... args)
 }
 
 export template <typename T>
+constexpr Rc<T> makeRc(T&& value) {
+    return {MOVE, new Cell<NoLock, T>(std::forward<T>(value))};
+}
+
+export template <typename T>
 using Arc = _Rc<Lock, T>;
 
 export template <typename T>
@@ -386,6 +395,11 @@ constexpr Arc<T> makeArc(Args&&... args)
     requires Meta::Constructible<T, Args...>
 {
     return {MOVE, new Cell<Lock, T>(std::forward<Args>(args)...)};
+}
+
+export template <typename T>
+constexpr Arc<T> makeArc(T&& value) {
+    return {MOVE, new Cell<Lock, T>(std::forward<T>(value))};
 }
 
 export template <typename L, typename T>
