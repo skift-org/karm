@@ -58,11 +58,10 @@ constexpr bool operator==(T const& lhs, U const& rhs) {
 
 template <Sliceable T>
 struct Hash<T> {
-    static constexpr u64 hash(T const& v) {
-        u64 res = Karm::hash(v.len());
+    static constexpr void hash(Hasher& h, T const& v) {
+        Karm::hash(h, v.len());
         for (usize i = 0; i < v.len(); i++)
-            res += Karm::hash(v.buf()[i]);
-        return res;
+            Karm::hash(h, v.buf()[i]);
     }
 };
 

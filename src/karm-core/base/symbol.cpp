@@ -63,8 +63,8 @@ struct _SymbolBuf {
         return Str(*this) == other;
     }
 
-    u64 hash() const {
-        return Karm::hash(Str{*this});
+    void hash(Hasher& h) const {
+        Karm::hash(h, Str{*this});
     }
 };
 
@@ -82,8 +82,8 @@ export struct Symbol {
         return Str(*_buf);
     }
 
-    u64 hash() const {
-        return Karm::hash(str());
+    void hash(Hasher& h) const {
+        Karm::hash(h, str());
     }
 
     bool operator==(Symbol const& other) const {

@@ -487,10 +487,11 @@ struct [[nodiscard]] Opt {
         return std::partial_ordering::unordered;
     }
 
-    u64 hash() const {
+    void hash(Hasher& h) const {
         if (has())
-            return Karm::hash(unwrap());
-        return Karm::hash(NONE);
+            Karm::hash(h, unwrap());
+        else
+            Karm::hash(h, NONE);
     }
 };
 

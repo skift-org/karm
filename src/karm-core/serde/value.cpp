@@ -342,8 +342,8 @@ export struct Value {
         return _store == other;
     }
 
-    u64 hash() const {
-        return _store.hash();
+    void hash(Hasher& h) const {
+        _store.hash(h);
     }
 
     operator bool() const {

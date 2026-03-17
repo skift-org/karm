@@ -30,8 +30,8 @@ struct [[gnu::packed]] Be {
         return toBe(_value);
     }
 
-    always_inline u64 hash() const {
-        return Karm::hash(value());
+    always_inline void hash(Hasher& h) const {
+        Karm::hash(h, value());
     }
 };
 
@@ -57,8 +57,8 @@ struct [[gnu::packed]] Le {
         return toLe(_value);
     }
 
-    always_inline u64 hash() const {
-        return Karm::hash(value());
+    always_inline void hash(Hasher& h) const {
+        Karm::hash(h, value());
     }
 };
 

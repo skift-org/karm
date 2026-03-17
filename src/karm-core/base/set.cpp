@@ -99,12 +99,14 @@ struct Set {
         return _items.len();
     }
 
-    [[nodiscard]] u64 hash() const {
-        u64 res = 0;
+    void hash(Hasher& h) const {
+        u64 sum = 0;
         for (auto const& v : iter()) {
-            res += Karm::hash(v);
+            // NOTE: This will use the default hasher instead of the one given to us
+            //       because we cannot easily instantiate a hasher of the same type.
+            sum += Karm::hash(v);
         }
-        return res;
+        Karm::hash(h, sum);
     }
 
     Set operator-(Set const& other) const {

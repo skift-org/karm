@@ -582,9 +582,9 @@ export template <typename T0, typename T1, typename T2, typename T3, typename T4
 Tuple(T0, T1, T2, T3, T4, T5, T6, T7) -> Tuple<T0, T1, T2, T3, T4, T5, T6, T7>;
 
 export template <typename... Ts>
-constexpr u64 hash(Tuple<Ts...> const& v) {
-    return v.apply([&](auto const&... v) {
-        return (hash(v) + ...);
+constexpr void hash(Hasher& h, Tuple<Ts...> const& v) {
+    v.apply([&](auto const&... v) {
+        (hash(h, v), ...);
     });
 }
 

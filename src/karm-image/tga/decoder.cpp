@@ -179,9 +179,7 @@ export struct Decoder {
             _header.imageType == UNC_TC or
             _header.imageType == UNC_GS) {
             try$(decodeUncompress(s, pixels));
-        } else if (_header.imageType == RLE_CM or
-                   _header.imageType == RLE_TC or
-                   _header.imageType == RLE_GS) {
+        } else if (_header.imageType == RLE_CM or _header.imageType == RLE_TC or _header.imageType == RLE_GS) {
             try$(decodeRle(s, pixels));
         } else {
             return Error::invalidData("unsupported TGA image type");

@@ -64,8 +64,7 @@ export struct MouseListener {
                     state = PRESS;
                     event.accept();
 
-                } else if (e->type == App::MouseEvent::RELEASE and
-                           e->button == App::MouseButton::LEFT) {
+                } else if (e->type == App::MouseEvent::RELEASE and e->button == App::MouseButton::LEFT) {
                     if (state == PRESS) {
                         state = HOVER;
                         result = true;
@@ -490,8 +489,7 @@ struct Input : View<Input> {
                 auto pos = _ensureText().hitTest({Au{local.x}, Au{local.y}});
                 _onChange(*this, TextAction::selectTo(pos));
                 e.accept();
-            } else if (me->type == App::MouseEvent::RELEASE and
-                       me->button == App::MouseButton::LEFT) {
+            } else if (me->type == App::MouseEvent::RELEASE and me->button == App::MouseButton::LEFT) {
                 _mouseDown = false;
             }
             return;
@@ -609,8 +607,7 @@ struct SimpleInput : View<SimpleInput> {
                 _ensureModel().setSelectionEnd(pos);
                 shouldRepaint(*this);
                 e.accept();
-            } else if (me->type == App::MouseEvent::RELEASE and
-                       me->button == App::MouseButton::LEFT) {
+            } else if (me->type == App::MouseEvent::RELEASE and me->button == App::MouseButton::LEFT) {
                 _mouseDown = false;
             }
             return;

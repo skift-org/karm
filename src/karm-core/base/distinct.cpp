@@ -135,8 +135,8 @@ struct Distinct {
         return *this;
     }
 
-    always_inline u64 hash() const {
-        return Karm::hash(_value);
+    always_inline void hash(Hasher& h) const {
+        Karm::hash(h, _value);
     }
 };
 

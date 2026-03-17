@@ -56,8 +56,8 @@ export struct MutBlob {
 
     Blob slice(urange slice) const;
 
-    u64 hash() const {
-        return Karm::hash(bytes());
+    void hash(Hasher& h) const {
+        Karm::hash(h, bytes());
     }
 
     bool operator==(MutBlob const& other) const {
@@ -102,8 +102,8 @@ export struct Blob {
         };
     }
 
-    u64 hash() const {
-        return Karm::hash(bytes());
+    void hash(Hasher& h) const {
+        Karm::hash(h, bytes());
     }
 
     bool operator==(Blob const& other) const {

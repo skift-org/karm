@@ -164,9 +164,9 @@ export struct Path {
         return _segs.len();
     }
 
-    u64 hash() const {
-        return Karm::hash(rooted) +
-               Karm::hash(_segs);
+    void hash(Hasher& h) const {
+        Karm::hash(h, rooted);
+        Karm::hash(h, _segs);
     }
 
     bool operator==(Path const&) const = default;

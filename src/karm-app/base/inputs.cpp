@@ -121,8 +121,8 @@ export struct Key {
         return _code;
     }
 
-    u64 hash() const {
-        return Karm::hash(_code);
+    void hash(Hasher& h) const {
+        Karm::hash(h, _code);
     }
 
     bool operator==(Key const& other) const = default;

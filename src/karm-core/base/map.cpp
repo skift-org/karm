@@ -17,8 +17,8 @@ struct KvPair {
     K key;
     V value;
 
-    constexpr u64 hash() const {
-        return Karm::hash(key);
+    constexpr void hash(Hasher& h) const {
+        Karm::hash(h, key);
     }
 
     constexpr bool operator==(Meta::Equatable<Meta::RemoveConstVolatileRef<K>> auto const& other) const {
@@ -186,11 +186,11 @@ struct Map {
         return _items.len();
     }
 
-    [[nodiscard]] u64 hash() const {
-        u64 res = 0;
+    void hash(Hasher& h) const {
+        u64 sum = 0;
         for (auto const& [k, v] : iterItems())
-            res += Karm::hash(k) + Karm::hash(v);
-        return res;
+            sum += Karm::hash(k) + Karm::hash(v);
+        Karm::hash(h, sum);
     }
 
     bool operator==(Map const& other) const {

@@ -28,8 +28,8 @@ export struct Blob {
 
     usize len() const { return data.len(); }
 
-    u64 hash() const {
-        return Karm::hash(data);
+    void hash(Hasher& h) const {
+        Karm::hash(h, data);
     }
 
     bool operator==(Blob const&) const = default;
@@ -246,15 +246,15 @@ export struct Url {
 
     bool operator==(Url const&) const = default;
 
-    u64 hash() const {
-        return Karm::hash(scheme) +
-               Karm::hash(userInfo) +
-               Karm::hash(host) +
-               Karm::hash(port) +
-               Karm::hash(path) +
-               Karm::hash(query) +
-               Karm::hash(fragment) +
-               Karm::hash(blob);
+    void hash(Hasher& h) const {
+        Karm::hash(h, scheme);
+        Karm::hash(h, userInfo);
+        Karm::hash(h, host);
+        Karm::hash(h, port);
+        Karm::hash(h, path);
+        Karm::hash(h, query);
+        Karm::hash(h, fragment);
+        Karm::hash(h, blob);
     }
 
     bool isRelative() const {

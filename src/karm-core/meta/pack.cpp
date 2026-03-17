@@ -11,7 +11,7 @@ import :meta.traits;
 
 namespace Karm::Meta {
 
-// FIXME: clang 22.1.1 seems to struggle with pack expeensions in concepts. 
+// FIXME: clang 22.1.1 seems to struggle with pack expeensions in concepts.
 // Once this get fixed the Contains concept should be simplified to:
 // export template <typename T, typename... Ts>
 // concept Contains = (Same<T, Ts> or ...);

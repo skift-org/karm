@@ -265,8 +265,8 @@ struct _Rc {
         return _cell->id();
     }
 
-    u64 hash() const {
-        return Karm::hash(unwrap());
+    void hash(Hasher& h) const {
+        Karm::hash(h, unwrap());
     }
 
     template <typename U>

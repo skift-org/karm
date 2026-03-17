@@ -218,9 +218,9 @@ struct Union {
         return false;
     }
 
-    u64 hash() const {
-        return visit([](auto const& v) {
-            return Karm::hash(v);
+    void hash(Hasher& h) const {
+        visit([&](auto const& v) {
+            Karm::hash(h, v);
         });
     }
 };

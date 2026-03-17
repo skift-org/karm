@@ -123,8 +123,8 @@ struct Box {
         return *_ptr;
     }
 
-    constexpr u64 hash() const {
-        return hash(unwrap());
+    constexpr void hash(Hasher& h) const {
+        Karm::hash(h, unwrap());
     }
 };
 

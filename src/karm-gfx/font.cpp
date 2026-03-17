@@ -14,9 +14,9 @@ export struct Glyph {
 
     static Glyph const TOFU;
 
-    u64 hash() const {
-        return Karm::hash(index) +
-               Karm::hash(font);
+    void hash(Hasher& h) const {
+        Karm::hash(h, index);
+        Karm::hash(h, font);
     }
 
     bool operator==(Glyph const& other) const = default;
@@ -251,12 +251,12 @@ export struct FontAttrs {
                monospace == Monospace::NO;
     }
 
-    u64 hash() const {
-        return Karm::hash(family) +
-               Karm::hash(weight) +
-               Karm::hash(stretch) +
-               Karm::hash(style) +
-               Karm::hash(monospace);
+    void hash(Hasher& h) const {
+        Karm::hash(h, family);
+        Karm::hash(h, weight);
+        Karm::hash(h, stretch);
+        Karm::hash(h, style);
+        Karm::hash(h, monospace);
     }
 
     bool operator==(FontAttrs const&) const = default;

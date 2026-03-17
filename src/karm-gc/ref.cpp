@@ -52,8 +52,8 @@ struct Ref {
         return _ptr == other._ptr;
     }
 
-    u64 hash() const {
-        return Karm::hash((usize)_ptr);
+    void hash(Hasher& h) const {
+        Karm::hash(h, (usize)_ptr);
     }
 };
 
