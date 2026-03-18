@@ -7,6 +7,10 @@ import :uid;
 
 namespace Karm::Ref {
 
+/// Represents a Uniform Type Identifier (UTI).
+/// UTIs provide a unified, hierarchical way to identify data formats, files,
+/// and item types, abstracting away disjoint concepts like file extensions and MIME types.
+// https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/understanding_utis/understand_utis_intro/understand_utis_intro.html
 export struct Uti {
     enum struct Common {
         PUBLIC_INTENT,
@@ -69,13 +73,24 @@ export struct Uti {
 
     using enum Common;
 
+    // https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/understanding_utis/understand_utis_declare/understand_utis_declare.html
     struct Registration {
+        /// The unique, reverse-DNS style identifier for this UTI (e.g., "public.png").
         Symbol name;
+
+        /// A human-readable description of the type (e.g., "Portable Network Graphics image").
         String description = ""s;
+
+        /// A list of file extensions (without the dot) associated with this type (e.g., "png").
         Vec<String> suffixes = {};
+
+        /// A list of standard MIME types associated with this type (e.g., "image/png").
         Vec<Mime> mimes = {};
+
+        /// A list of parent UTIs this type inherits from (e.g., "public.png" conforms to "public.image").
         Vec<Symbol> conformsTo = {};
-        Opt<u64> _rank = NONE;
+
+        Opt<u64> _specificity = NONE;
     };
 
     struct Repository {
@@ -208,15 +223,15 @@ export struct Uti {
         return false;
     }
 
-    u64 rank() const {
-        if (_registration->_rank)
-            return _registration->_rank.unwrap();
+    u64 specificity() const {
+        if (_registration->_specificity)
+            return _registration->_specificity.unwrap();
         u64 best = 0;
         for (auto& c : _registration->conformsTo) {
-            auto rank = Uti{c}.rank() + 1;
-            best = max(best, rank);
+            auto specificity = Uti{c}.specificity() + 1;
+            best = max(best, specificity);
         }
-        _registration->_rank = best;
+        _registration->_specificity = best;
         return best;
     }
 
