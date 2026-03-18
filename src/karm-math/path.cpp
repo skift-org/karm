@@ -557,7 +557,7 @@ export struct Path {
     void path(Math::Path const& path) {
         for (auto contour : path.iterContours()) {
             if (contour.len() == 0)
-                panic("it is not possible to have an empty contour at this point");
+                continue;
 
             moveTo(first(contour));
             for (auto v : next(contour, 1)) {

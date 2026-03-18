@@ -9,13 +9,13 @@ import Mdi;
 
 namespace Karm::Kira {
 
-export Ui::Child searchbar(String text) {
+export Ui::Child searchbar(String text, Ui::Send<String> onChange = Ui::SINK<String>) {
     return Ui::hflow(
                8,
                Math::Align::VCENTER | Math::Align::START,
                Ui::stack(
                    text ? Ui::empty() : Ui::labelMedium(Ui::GRAY600, "Search…"),
-                   Ui::input(Ui::TextStyles::labelMedium(), text, Ui::SINK<String>)
+                   Ui::input(Ui::TextStyles::labelMedium(), text, onChange)
                ) | Ui::grow(),
                Ui::icon(Mdi::MAGNIFY)
            ) |
