@@ -135,6 +135,26 @@ void Uti::Repository::registerCommonUti() {
         }
     );
     addRegistration(
+        PUBLIC_CSV,
+        {
+            .name = "public.csv"_sym,
+            .description = "Comma-Separated Values"s,
+            .suffixes = {"csv"s},
+            .mimes = {"text/csv"_mime},
+            .conformsTo = {"public.text"_sym},
+        }
+    );
+    addRegistration(
+        PUBLIC_YAML,
+        {
+            .name = "public.yaml"_sym,
+            .description = "YAML Configuration File"s,
+            .suffixes = {"yml"s, "yaml"s},
+            .mimes = {"application/x-yaml"_mime, "text/yaml"_mime},
+            .conformsTo = {"public.text"_sym},
+        }
+    );
+    addRegistration(
         PUBLIC_MARKDOWN,
         {
             .name = "public.markdown"_sym,
@@ -275,6 +295,16 @@ void Uti::Repository::registerCommonUti() {
         }
     );
     addRegistration(
+        PUBLIC_POSTSCRIPT,
+        {
+            .name = "com.adobe.postscript"_sym,
+            .description = "PostScript Document"s,
+            .suffixes = {"ps"s, "eps"s},
+            .mimes = {"application/postscript"_mime},
+            .conformsTo = {"public.data"_sym},
+        }
+    );
+    addRegistration(
         PUBLIC_FONT,
         {
             .name = "public.font"_sym,
@@ -329,6 +359,16 @@ void Uti::Repository::registerCommonUti() {
             .description = "Embedded OpenType Font"s,
             .suffixes = {"eot"s},
             .mimes = {"application/vnd.ms-fontobject"_mime},
+            .conformsTo = {"public.font"_sym},
+        }
+    );
+    addRegistration(
+        PUBLIC_TTC,
+        {
+            .name = "public.ttc"_sym,
+            .description = "TrueType Font Collection"s,
+            .suffixes = {"ttc"s},
+            .mimes = {"font/collection"_mime},
             .conformsTo = {"public.font"_sym},
         }
     );
@@ -484,7 +524,7 @@ void Uti::Repository::registerCommonUti() {
             .name = "public.rar"_sym,
             .description = "Rar Archive"s,
             .suffixes = {"rar"s},
-            .mimes = {"application/vnd.rar"_mime},
+            .mimes = {"application/vnd.rar"_mime, "application/x-rar-compressed"_mime},
             .conformsTo = {"public.archive"_sym},
         }
     );

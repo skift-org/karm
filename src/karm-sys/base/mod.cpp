@@ -1,12 +1,13 @@
 export module Karm.Sys.Base;
 
 import Karm.Core;
+import Karm.Ref;
 
 namespace Karm::Sys {
 
 export enum struct Type {
-    FILE,
     DIR,
+    FILE,
     OTHER,
 
     _LEN
@@ -31,6 +32,17 @@ export struct DirEntry {
     bool hidden() const {
         return name[0] == '.';
     }
+
+    Ref::Uti uti() const {
+        if (type == Type::DIR)
+            return Ref::Uti::PUBLIC_DIRECTORY;
+        else if (type == Type::FILE)
+            return Ref::Uti::fromSuffix(Ref::suffixOf(name));
+        else
+            return Ref::Uti::PUBLIC_ITEM;
+    }
+
+    bool operator==(DirEntry const&) const = default;
 };
 
 } // namespace Karm::Sys

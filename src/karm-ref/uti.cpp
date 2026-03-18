@@ -27,10 +27,12 @@ export struct Uti {
         PUBLIC_GIF,
         PUBLIC_QOI,
         PUBLIC_WEBP,
+        PUBLIC_POSTSCRIPT,
         PUBLIC_FONT,
         PUBLIC_TTF,
         PUBLIC_OTF,
         PUBLIC_EOT,
+        PUBLIC_TTC,
         PUBLIC_WOFF,
         PUBLIC_WOFF2,
         PUBLIC_PDF,
@@ -40,6 +42,8 @@ export struct Uti {
         PUBLIC_JAVASCRIPT,
         PUBLIC_JSON,
         PUBLIC_TOML,
+        PUBLIC_CSV,
+        PUBLIC_YAML,
         PUBLIC_MARKDOWN,
         PUBLIC_XML,
         PUBLIC_SVG,
@@ -71,6 +75,7 @@ export struct Uti {
         Vec<String> suffixes = {};
         Vec<Mime> mimes = {};
         Vec<Symbol> conformsTo = {};
+        Opt<u64> _rank = NONE;
     };
 
     struct Repository {
@@ -141,14 +146,14 @@ export struct Uti {
         return repository;
     }
 
-    Rc<Registration> _registration;
+    mutable Rc<Registration> _registration;
 
     static Uti fromSuffix(Str suffix) {
         return repository().lookupBySuffix(suffix);
     }
 
     static Uti fromMime(Mime mime) {
-        return repository().lookupByMime(mime);
+        return repository().lookupByMime(mime.essence());
     }
 
     static Uti fromUtiOrMime(Str str) {
@@ -201,6 +206,18 @@ export struct Uti {
             if (Uti{c}.conformsTo(uti.name()))
                 return true;
         return false;
+    }
+
+    u64 rank() const {
+        if (_registration->_rank)
+            return _registration->_rank.unwrap();
+        u64 best = 0;
+        for (auto& c : _registration->conformsTo) {
+            auto rank = Uti{c}.rank() + 1;
+            best = max(best, rank);
+        }
+        _registration->_rank = best;
+        return best;
     }
 
     u64 hash() const {

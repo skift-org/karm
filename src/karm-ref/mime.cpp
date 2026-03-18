@@ -29,9 +29,15 @@ export struct Mime {
         return s.end();
     }
 
+    Mime essence() const {
+        Io::SScan s(_buf.str());
+        s.begin();
+        s.skip(Re::until(';'_re));
+        return Mime(s.end());
+    }
+
     bool is(Mime const& other) const {
-        return type() == other.type() and
-               subtype() == other.subtype();
+        return essence() == other.essence();
     }
 
     Str str() const {

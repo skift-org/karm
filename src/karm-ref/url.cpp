@@ -308,6 +308,14 @@ export struct Url {
         return Ok(targetUrl);
     }
 
+    Ref::Url origin() {
+        auto copy = *this;
+        copy.path = "/"_path;
+        copy.query = ""s;
+        copy.fragment = ""s;
+        return copy;
+    }
+
     Res<> serialize(Serde::Serializer& ser) const {
         return ser.serializeString(str());
     }
