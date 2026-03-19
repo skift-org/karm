@@ -18,13 +18,11 @@ namespace Karm::Print {
 Res<Rc<FilePrinter>> FilePrinter::create(Ref::Uti uti, FilePrinterProps props) {
     if (uti == Ref::Uti::PUBLIC_PDF) {
         return Ok(makeRc<PdfPrinter>());
-    } else if (uti == Ref::Uti::PUBLIC_BMP or
-               uti == Ref::Uti::PUBLIC_TGA or
-               uti == Ref::Uti::PUBLIC_QOI) {
+    } else if (uti.conformsTo(Ref::Uti::PUBLIC_IMAGE)) {
         return Ok(makeRc<ImagePrinter>(props.density, Image::Saver{uti}));
+    } else {
+        return Error::invalidData(Io::format("cannot create printer producing '{}'", uti.mimeTypes()));
     }
-
-    return Error::invalidData("cannot create printer");
 }
 
 Res<> FilePrinter::save(Ref::Url url) {
