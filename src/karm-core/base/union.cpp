@@ -165,6 +165,17 @@ struct Union {
         return (T const*)_buf;
     }
 
+    template <typename T>
+    Opt<T> subset() const {
+        return visit([]<typename U>(U const& v) -> Opt<T> {
+            if constexpr (Meta::Constructible<T, U>) {
+                return T{v};
+            } else {
+                return NONE;
+            }
+        });
+    }
+
     always_inline usize index() const { return _index; }
 
     always_inline bool valid() const { return _index < sizeof...(Ts); }
