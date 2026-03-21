@@ -211,9 +211,12 @@ export using MutBytes = MutSlice<u8>;
 
 export template <Sliceable S, typename T = typename S::Inner>
 constexpr Slice<T> sub(S const& slice, usize start, usize end) {
+    start = min(start, slice.len());
+    end = clamp(end, start, slice.len());
+
     return {
         slice.buf() + start,
-        clamp(end, start, slice.len()) - start,
+        end - start,
     };
 }
 
@@ -237,9 +240,12 @@ Slice<T> next(S const& slice, usize start = 1) {
 
 export template <MutSliceable S, typename T = typename S::Inner>
 MutSlice<T> mutSub(S& slice, usize start, usize end) {
+    start = min(start, slice.len());
+    end = clamp(end, start, slice.len());
+
     return {
         slice.buf() + start,
-        clamp(end, start, slice.len()) - start,
+        end - start,
     };
 }
 
@@ -539,13 +545,11 @@ constexpr usize move(MutSlice<T> src, MutSlice<T> dest) {
 
 export template <typename T>
 constexpr usize copy(Slice<T> src, MutSlice<T> dest) {
-    usize copied = 0;
-
-    for (usize i = 0; i < min(src.len(), dest.len()); i++) {
+    usize copied = min(src.len(), dest.len());
+    if (copied == 0)
+        return 0;
+    for (usize i = 0; i < copied; i++)
         dest[i] = src[i];
-        copied++;
-    }
-
     return copied;
 }
 

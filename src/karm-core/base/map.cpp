@@ -120,7 +120,13 @@ struct Map {
         return slot->unwrap().value;
     }
 
-    [[nodiscard]] V& lookupOrPutDefault(Meta::Equatable<K> auto const& key, V const& defaultValue = {}) lifetimebound {
+    [[nodiscard]] V& lookupOrPutDefault(Meta::Equatable<K> auto const& key) lifetimebound {
+        return lookupOrPut(key, [&]() {
+            return V{};
+        });
+    }
+
+    [[nodiscard]] V& lookupOrPutDefault(Meta::Equatable<K> auto const& key, V const& defaultValue) lifetimebound {
         return lookupOrPut(key, [&]() {
             return defaultValue;
         });

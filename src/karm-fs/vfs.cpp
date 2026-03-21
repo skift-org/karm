@@ -32,7 +32,7 @@ export struct VFileMmap : Node {
     Async::Task<usize> readAsync(MutBytes buf, usize offset) override {
         auto read = copy(
             sub(
-                _mmap.bytes(),
+                sub(_mmap.bytes(), 0, _len),
                 offset, offset + buf.len()
             ),
             buf
