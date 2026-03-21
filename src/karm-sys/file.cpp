@@ -29,7 +29,7 @@ export struct File :
 
     static Res<File> create(Ref::Url url) {
         try$(ensureUnrestricted());
-        auto fd = try$(_Embed::createFile(url));
+        auto fd = try$(_Embed::createFile(url).wrapErr("could not create {}"_f(url)));
         return Ok<File>(fd, url);
     }
 
@@ -41,14 +41,13 @@ export struct File :
 
         if (url.scheme != "bundle")
             try$(ensureUnrestricted());
-
-        auto fd = try$(_Embed::openFile(url));
+        auto fd = try$(_Embed::openFile(url).wrapErr("could not open {}"_f(url)));
         return Ok<File>(fd, url);
     }
 
     static Res<File> openOrCreate(Ref::Url url) {
         try$(ensureUnrestricted());
-        auto fd = try$(_Embed::openOrCreateFile(url));
+        auto fd = try$(_Embed::openOrCreateFile(url).wrapErr("could not open or create {}"_f(url)));
         return Ok<File>(fd, url);
     }
 

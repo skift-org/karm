@@ -5,6 +5,7 @@ import :base.panic;
 import :base.try_;
 import :base.string;
 import :base.union_;
+import :base.box;
 
 namespace Karm {
 
@@ -57,15 +58,15 @@ namespace Karm {
     ERROR(OTHER, other)
 
 export struct [[nodiscard]] Error {
-    enum struct Code {
+    enum struct Code : u8 {
 #define ITER(NAME, _) NAME,
         FOREACH_ERROR(ITER)
 #undef ITER
 
             _LEN,
     } _code;
-
-    Union<Str, String> _msg = ""s;
+    Union<Str, String> _msg;
+    Opt<Box<Error>> _cause;
 
     using enum Code;
 
@@ -75,15 +76,44 @@ export struct [[nodiscard]] Error {
     FOREACH_ERROR(ITER)
 #undef ITER
 
-    constexpr Error() : _code(Code::OTHER), _msg("unknown error"s) {}
+    constexpr Error() : _code(OTHER), _msg("unknown error"s) {}
 
     constexpr Error(Code code, Str msg) : _code(code), _msg(msg) {}
 
     constexpr Error(Code code, String msg) : _code(code), _msg(msg) {}
 
+    constexpr Error(Code code, Union<Str, String> msg, Error cause)
+        : _code(code), _msg(msg), _cause(makeBox(std::move(cause))) {}
+
     constexpr Code code() const { return _code; }
 
     constexpr Error none() const { return *this; }
+
+    constexpr Opt<Error const&> cause() const {
+        if (not _cause.has())
+            return NONE;
+        return _cause.unwrap().unwrap();
+    }
+
+    Error wrap(Union<Str, String> msg) {
+        return wrap(_code, msg);
+    }
+
+    Error wrap(Code code, Union<Str, String> msg) {
+        return {
+            code,
+            msg,
+            std::move(*this)
+        };
+    }
+
+    Error wrap(Error err) {
+        return {
+            err._code,
+            std::move(err._msg),
+            std::move(*this)
+        };
+    }
 
     constexpr Str msg() const {
         if (_msg != ""s) {

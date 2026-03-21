@@ -588,6 +588,10 @@ export template <>
 struct Formatter<Error> {
     Res<> format(TextWriter& writer, Error const& val) {
         try$(writer.writeStr(val.msg()));
+        if (val.cause()) {
+            try$(writer.writeStr(": "s));
+            try$(format(writer, val.cause().unwrap()));
+        }
         return Ok();
     }
 };
@@ -1018,4 +1022,17 @@ struct Formatter<DataSize> {
     }
 };
 
+export struct FStr {
+    Str _fmt;
+
+    template <typename... Ts>
+    String operator()(Ts&&... ts) const {
+        return format(_fmt, std::forward<Ts>(ts)...);
+    }
+};
+
 } // namespace Karm::Io
+
+export constexpr Karm::Io::FStr operator""_f(char const* buf, Karm::usize len) {
+    return {Karm::Str{buf, len}};
+}

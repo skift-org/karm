@@ -147,4 +147,9 @@ constexpr Box<T, D> makeBox(Args... args) {
     return {MOVE, new T(std::forward<Args>(args)...)};
 }
 
+export template <typename T, typename D = DeleteDeleter<T>>
+constexpr Box<T, D> makeBox(T&& value) {
+    return {MOVE, new T(std::forward<T>(value))};
+}
+
 } // namespace Karm

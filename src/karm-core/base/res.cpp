@@ -97,7 +97,7 @@ struct [[nodiscard]] Res {
         return _inner.template unwrap<Ok<V>>().take();
     }
 
-    template <typename U>
+    template <typename U = E>
     always_inline constexpr Res<V, U> mapErr(auto f) {
         if (_inner.template is<Ok<V>>())
             return _inner.template unwrap<Ok<V>>();
@@ -109,6 +109,13 @@ struct [[nodiscard]] Res {
         if (_inner.template is<Ok<V>>())
             return _inner.template unwrap<Ok<V>>();
         return U{};
+    }
+
+    template <typename... Args>
+    always_inline constexpr Res<V, E> wrapErr(Args&&... args) {
+        if (_inner.template is<Ok<V>>())
+            return _inner.template unwrap<Ok<V>>();
+        return _inner.template unwrap<E>().wrap(std::forward<Args>(args)...);
     }
 
     template <typename U>
