@@ -93,6 +93,10 @@ export struct Node {
     virtual Async::Task<> syncAsync() {
         co_return Ok();
     }
+
+    virtual Res<Rc<Sys::Fd>> underlying() {
+        return Error::unsupported();
+    }
 };
 
 export template <typename T, typename... Args>

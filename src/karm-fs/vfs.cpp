@@ -17,9 +17,10 @@ export struct VFile : Node {
 export struct VFileMmap : Node {
     Sys::Mmap _mmap;
     usize _len;
+    Opt<Rc<Sys::Fd>> _fd;
 
-    VFileMmap(Sys::Mmap mmap, usize len)
-        : _mmap(std::move(mmap)), _len(len) {}
+    VFileMmap(Sys::Mmap mmap, usize len, Opt<Rc<Sys::Fd>> fd = NONE)
+        : _mmap(std::move(mmap)), _len(len), _fd(fd) {}
 
     Async::Task<Sys::Stat> statAsync() override {
         auto stat = co_trya$(Node::statAsync());
@@ -37,6 +38,10 @@ export struct VFileMmap : Node {
             buf
         );
         co_return Ok(read);
+    }
+
+    Res<Rc<Sys::Fd>> underlying() override {
+        return _fd.okOr(Error::unsupported("no underlying fd"));
     }
 };
 

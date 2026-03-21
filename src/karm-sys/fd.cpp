@@ -43,6 +43,11 @@ export struct Fd : Meta::NoCopy {
 
     virtual Res<_Received> recv(MutBytes, MutSlice<Handle>) = 0;
 
+    virtual Res<Rc<Fd>> slice(urange range) {
+        (void)range;
+        return Error::unsupported();
+    }
+
     virtual Res<> serialize(Serde::Serializer&) const {
         return Error::notImplemented();
     };
