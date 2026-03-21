@@ -59,7 +59,7 @@ struct Flags {
     }
 
     bool any(Flags other) const {
-        return _value & other;
+        return _value & other._value;
     }
 
     bool any() const {
@@ -70,7 +70,7 @@ struct Flags {
         return _value;
     }
 
-    operator bool() const {
+    explicit operator bool() const {
         return _value != 0;
     }
 

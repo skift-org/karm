@@ -29,11 +29,7 @@ export Res<Rc<Fd>> deserializeFd(Serde::Deserializer&);
 
 // MARK: File I/O --------------------------------------------------------------
 
-export Res<Rc<Fd>> openFile(Ref::Url const& url);
-
-export Res<Rc<Fd>> createFile(Ref::Url const& url);
-
-export Res<Rc<Fd>> openOrCreateFile(Ref::Url const& url);
+export Res<Rc<Fd>> openFile(Ref::Url const& url, Flags<OpenOption> options);
 
 export Res<Pair<Rc<Fd>, Rc<Fd>>> createPipe();
 

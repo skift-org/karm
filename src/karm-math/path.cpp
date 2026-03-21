@@ -278,8 +278,8 @@ export struct Path {
         if (sb > 0.0)
             s = Math::sqrt(sa / sb);
 
-        bool fa = options & LARGE;
-        bool fs = options & SWEEP;
+        bool fa = options.any(LARGE);
+        bool fs = options.any(SWEEP);
 
         if (fa == fs) {
             s = -s;

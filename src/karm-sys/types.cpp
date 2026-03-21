@@ -19,6 +19,15 @@ export enum struct MmapOption : u64 {
     PREFETCH = 1 << 7,
 };
 
+export enum struct OpenOption : u64 {
+    READ = 1 << 0,
+    WRITE = 1 << 1,
+    APPEND = 1 << 2 | WRITE,
+    TRUNCATE = 1 << 3 | WRITE,
+    CREATE = 1 << 4,
+    CREATE_NEW = 1 << 5 | CREATE
+};
+
 export struct MmapProps {
     Flags<MmapOption> options = {};
     usize vaddr = 0;

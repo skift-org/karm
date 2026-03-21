@@ -204,7 +204,7 @@ export struct MouseEvent {
     MouseButton button{};
 
     bool pressed(Flags<MouseButton> button) const {
-        return buttons & button;
+        return button.any(buttons);
     }
 
     bool released(MouseButton button) const {

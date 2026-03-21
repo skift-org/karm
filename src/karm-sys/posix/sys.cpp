@@ -38,31 +38,34 @@ Res<Rc<Sys::Fd>> deserializeFd(Serde::Deserializer&) {
 
 // MARK: File I/O --------------------------------------------------------------
 
-Res<Rc<Fd>> openFile(Ref::Url const& url) {
+Res<Rc<Fd>> openFile(Ref::Url const& url, Flags<OpenOption> options) {
+
+    i32 flags = 0;
+    if (options.has({OpenOption::READ, OpenOption::WRITE}))
+        flags |= O_RDWR;
+    else if (options.has({OpenOption::READ}))
+        flags |= O_RDONLY;
+    else if (options.has({OpenOption::WRITE}))
+        flags |= O_WRONLY;
+    else
+        return Error::invalidInput("file must be open in either a readable or writable mode");
+
+    if (options.has({OpenOption::CREATE}))
+        flags |= O_CREAT;
+
+    if (options.has(OpenOption::CREATE_NEW))
+        flags |= O_EXCL;
+
+    if (options.has(OpenOption::APPEND))
+        flags |= O_APPEND;
+
+    if (options.has(OpenOption::TRUNCATE))
+        flags |= O_TRUNC;
+
+
     String str = try$(Posix::resolve(url)).str();
 
-    isize raw = ::open(str.buf(), O_RDONLY);
-    if (raw < 0)
-        return Posix::fromLastErrno();
-    auto fd = makeRc<Posix::Fd>(raw);
-    if (try$(fd->stat()).type == Type::DIR)
-        return Error::isADirectory();
-    return Ok(fd);
-}
-
-Res<Rc<Fd>> createFile(Ref::Url const& url) {
-    String str = try$(Posix::resolve(url)).str();
-
-    auto raw = ::open(str.buf(), O_WRONLY | O_CREAT | O_TRUNC, 0644);
-    if (raw < 0)
-        return Posix::fromLastErrno();
-    return Ok(makeRc<Posix::Fd>(raw));
-}
-
-Res<Rc<Fd>> openOrCreateFile(Ref::Url const& url) {
-    String str = try$(Posix::resolve(url)).str();
-
-    auto raw = ::open(str.buf(), O_RDWR | O_CREAT, 0644);
+    isize raw = ::open(str.buf(), flags);
     if (raw < 0)
         return Posix::fromLastErrno();
     auto fd = makeRc<Posix::Fd>(raw);

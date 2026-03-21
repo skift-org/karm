@@ -28,26 +28,43 @@ export struct File :
         : _fd(fd), _url(url) {}
 
     static Res<File> create(Ref::Url url) {
-        try$(ensureUnrestricted());
-        auto fd = try$(_Embed::createFile(url).wrapErr("could not create {}"_f(url)));
-        return Ok<File>(fd, url);
+        return openWith(url, {OpenOption::CREATE_NEW, OpenOption::WRITE});
     }
 
     static Res<File> open(Ref::Url url) {
+        return openWith(url, {OpenOption::READ});
+    }
+
+    static Res<File> openOrCreate(Ref::Url url) {
+        return openWith(url, {OpenOption::CREATE, OpenOption::WRITE, OpenOption::READ});
+    }
+
+    static Res<File> openWith(Ref::Url url, Flags<OpenOption> options) {
         if (url.scheme == "data") {
+            if (options.any({OpenOption::WRITE, OpenOption::CREATE}))
+                return Error::invalidInput("cannot write in data URL.");
             auto fd = makeRc<BlobFd>(try$(url.blob));
             return Ok<File>(fd, url);
         }
 
+        if (url.scheme == "bundle" and options.any({OpenOption::WRITE, OpenOption::CREATE}))
+            return Error::invalidInput("cannot write in bundle.");
+
         if (url.scheme != "bundle")
             try$(ensureUnrestricted());
-        auto fd = try$(_Embed::openFile(url).wrapErr("could not open {}"_f(url)));
-        return Ok<File>(fd, url);
-    }
 
-    static Res<File> openOrCreate(Ref::Url url) {
-        try$(ensureUnrestricted());
-        auto fd = try$(_Embed::openOrCreateFile(url).wrapErr("could not open or create {}"_f(url)));
+        Str action =
+            options.has({OpenOption::CREATE_NEW})
+                ? "create"s
+            : options.has({OpenOption::CREATE})
+                ? "open or create"s
+                : "open"s;
+
+        auto fd = try$(
+            _Embed::openFile(url, options)
+                .wrapErr("could not {} {}"_f(action, url))
+        );
+
         return Ok<File>(fd, url);
     }
 
