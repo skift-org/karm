@@ -395,7 +395,7 @@ struct LocalTransport : Transport {
     }
 
     Async::Task<> _saveAsync(Ref::Url url, Rc<Body> body, Async::CancellationToken ct) {
-        auto file = co_try$(Sys::File::create(url));
+        auto file = co_try$(Sys::File::openWith(url, {Sys::OpenOption::CREATE, Sys::OpenOption::WRITE, Sys::OpenOption::READ, Sys::OpenOption::TRUNCATE}));
         co_trya$(Aio::copyAsync(*body, file, ct));
         co_return Ok();
     }
@@ -408,20 +408,23 @@ struct LocalTransport : Transport {
         }
 
         auto response = makeRc<Response>();
-        response->code = OK;
 
-        if (auto it = request->body;
-            it and (request->method == PUT or
-                    request->method == POST))
-            co_trya$(_saveAsync(request->url, *it, ct));
-
-        if (request->method == GET or request->method == POST) {
+        if (request->method == GET) {
             auto [body, type] = co_try$(_load(request->url));
+            response->code = OK;
             response->body = body;
             response->header.put(Header::CONTENT_TYPE, type.primaryMimeType().str());
+            co_return Ok(response);
+        } else if (request->method == PUT) {
+            if (not request->body)
+                co_return Error::invalidInput("PUT request requires a body");
+            co_trya$(_saveAsync(request->url, *request->body, ct));
+            response->code = OK;
+            co_return Ok(response);
+        } else {
+            response->code = METHOD_NOT_ALLOWED;
+            co_return Ok(response);
         }
-
-        co_return Ok(response);
     }
 };
 
