@@ -6,6 +6,7 @@ export import :base.array;
 export import :base.atomic;
 export import :base.base;
 export import :base.bits;
+export import :base.bloom;
 export import :base.box;
 export import :base.buf;
 export import :base.checked;
