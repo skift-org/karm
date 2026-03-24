@@ -65,7 +65,7 @@ Res<Rc<Fd>> openFile(Ref::Url const& url, Flags<OpenOption> options) {
 
     String str = try$(Posix::resolve(url)).str();
 
-    isize raw = ::open(str.buf(), flags);
+    isize raw = ::open(str.buf(), flags, 0666);
     if (raw < 0)
         return Posix::fromLastErrno();
     auto fd = makeRc<Posix::Fd>(raw);
