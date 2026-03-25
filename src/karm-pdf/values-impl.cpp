@@ -101,7 +101,8 @@ Res<> XRef::write(Io::Writer& w) const {
     for (usize i = 0; i < entries.len(); ++i) {
         auto const& entry = entries[i];
         if (entry.used) {
-            try$(Io::format(w, "{:010} {:05} n\n", entry.offset, entry.gen));
+            // NOTE: Line in the xref table should be exactly 20 bytes long including the new-line marker.
+            try$(Io::format(w, "{:010} {:05} n \n", entry.offset, entry.gen));
         }
     }
     return Ok();
