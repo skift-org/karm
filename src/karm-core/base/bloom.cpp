@@ -17,6 +17,7 @@ struct Bloom {
     Vec<u8> _buf;
     usize _k;
 
+#ifndef __ck_freestanding__
     static Bloom optimal(usize expectedItems, f64 targetErrorRate) {
         f64 m = -(static_cast<f64>(expectedItems) * Math::log(targetErrorRate)) / (Math::LOG2 * Math::LOG2);
         usize k = Math::roundi(m / static_cast<f64>(expectedItems) * Math::LOG2);
@@ -25,6 +26,7 @@ struct Bloom {
         usize bytes = Math::roundi(Math::ceil(m / 8.0));
         return Bloom(bytes, k);
     }
+#endif
 
     Bloom(usize size = 16_KiB, usize k = 2) : _k(k) {
         _buf.resize(size);
@@ -71,5 +73,6 @@ struct Bloom {
         zeroFill(mutBytes(_buf));
     }
 };
+
 
 } // namespace Karm
