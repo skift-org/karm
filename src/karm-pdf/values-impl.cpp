@@ -78,7 +78,7 @@ Res<> File::write(Io::Writer& writer) const {
     XRef xref;
 
     for (auto const& [k, v] : body.iterItems()) {
-        xref.add(try$(Io::tell(count)), k.gen);
+        xref.add(k.num, try$(Io::tell(count)), k.gen);
         try$(Io::format(count, "{} {} obj\n", k.num, k.gen));
         try$(v.write(count));
         try$(Io::format(count, "\nendobj\n"));
@@ -97,10 +97,15 @@ Res<> File::write(Io::Writer& writer) const {
 }
 
 Res<> XRef::write(Io::Writer& w) const {
-    try$(Io::format(w, "1 {}\n", entries.len()));
+    try$(Io::format(w, "0 {}\n", entries.len()));
+
     for (usize i = 0; i < entries.len(); ++i) {
         auto const& entry = entries[i];
-        if (entry.used) {
+
+        if (i == 0 || not entry.used) {
+            u16 gen = (i == 0) ? 65535 : entry.gen;
+            try$(Io::format(w, "{:010} {:05} f \n", 0, gen));
+        } else {
             // NOTE: Line in the xref table should be exactly 20 bytes long including the new-line marker.
             try$(Io::format(w, "{:010} {:05} n \n", entry.offset, entry.gen));
         }

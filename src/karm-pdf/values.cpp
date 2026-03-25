@@ -82,15 +82,19 @@ export struct File {
 
 export struct XRef {
     struct Entry {
-        usize offset;
-        usize gen;
-        bool used;
+        usize offset = 0;
+        usize gen = 0;
+        bool used = false;
     };
 
     Vec<Entry> entries;
 
-    void add(usize offset, usize gen) {
-        entries.pushBack({offset, gen, true});
+    void add(usize num, usize offset, usize gen) {
+        if (num >= entries.len()) {
+            entries.resize(num + 1);
+        }
+
+        entries[num] = {offset, gen, true};
     }
 
     Res<> write(Io::Writer& writer) const;
