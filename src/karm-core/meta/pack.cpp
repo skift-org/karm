@@ -67,7 +67,7 @@ struct _Any {
         requires(not Meta::Same<decltype(func.template operator()<T>()), void>)
     {
         auto test = func.template operator()<T>();
-        test or ((test = func.template operator()<Ts>()) or ...);
+        (void)(test or ((test = func.template operator()<Ts>()) or ...));
         return test;
     }
 
