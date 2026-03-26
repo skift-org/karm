@@ -9,7 +9,7 @@ import :pdfFonts;
 namespace Karm::Print {
 
 struct PdfPage {
-    PaperStock paper;
+    Math::Vec2f size;
     Io::StringWriter data;
 };
 
@@ -19,17 +19,17 @@ export struct PdfPrinter : FilePrinter {
     Pdf::FontManager fontManager;
     Vec<Pdf::GraphicalStateDict> graphicalStates;
 
-    Gfx::Canvas& beginPage(PaperStock paper) override {
-        auto& page = _pages.emplaceBack(paper);
-        _canvas = Pdf::Canvas{page.data, paper.size(), &fontManager, graphicalStates};
+    Gfx::Canvas& beginPage(Math::Vec2f size) override {
+        auto& page = _pages.emplaceBack(size);
+        _canvas = Pdf::Canvas{page.data, size, &fontManager, graphicalStates};
 
         // Convert fron the karm-pdf internal units to PDF units (1/72 inch)
-        _canvas->scale(72.0 / DPI);
+        _canvas->scale(72.0 / DPI.cast<f64>());
 
         // NOTE: PDF has the coordinate system origin at the bottom left corner.
         //       But we want to have it at the top left corner.
         _canvas->transform(
-            {1, 0, 0, -1, 0, paper.height}
+            {1, 0, 0, -1, 0, size.height}
         );
 
         return *_canvas;
@@ -102,8 +102,8 @@ export struct PdfPrinter : FilePrinter {
                          usize{0},
                          usize{0},
                          // Convert fron the karm-pdf internal units to PDF units (1/72 inch)
-                         p.paper.width * (72.0 / DPI),
-                         p.paper.height * (72.0 / DPI),
+                         p.size.width * (72.0 / DPI.cast<f64>()),
+                         p.size.height * (72.0 / DPI.cast<f64>()),
                      }},
                     {
                         "Contents"s,

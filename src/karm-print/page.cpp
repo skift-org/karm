@@ -8,23 +8,23 @@ import :printer;
 namespace Karm::Print {
 
 export struct Page {
-    PaperStock _paper;
+    Math::Vec2f _size;
     Rc<Scene::Node> _content;
 
-    Page(PaperStock paper, Opt<Rc<Scene::Node>> content = NONE)
-        : _paper(paper), _content(content ? content.take() : makeRc<Scene::Stack>()) {}
+    Page(Math::Vec2f paper, Opt<Rc<Scene::Node>> content = NONE)
+        : _size(paper), _content(content ? content.take() : makeRc<Scene::Stack>()) {}
 
     Rc<Scene::Node> content() const {
-        return makeRc<Scene::Viewbox>(_content, _paper.size());
+        return makeRc<Scene::Viewbox>(_content, _size);
     }
 
     void print(Printer& doc, Scene::PaintOptions o = {.showBackgroundGraphics = false}) {
-        auto& canvas = doc.beginPage(_paper);
-        content()->paint(canvas, _paper.size(), o);
+        auto& canvas = doc.beginPage(_size);
+        content()->paint(canvas, _size, o);
     }
 
     void repr(Io::Emit& e) const {
-        e("(page paper:{} root:{})", _paper, content());
+        e("(page size:{} root:{})", _size, content());
     }
 };
 

@@ -20,8 +20,8 @@ export struct ImagePrinter : FilePrinter {
         : _density(density),
           _saver(saver) {}
 
-    Gfx::Canvas& beginPage(PaperStock paper) override {
-        _pages.emplaceBack(Gfx::Surface::alloc(paper.size().cast<isize>() * _density, Gfx::RGBA8888));
+    Gfx::Canvas& beginPage(Math::Vec2f size) override {
+        _pages.emplaceBack(Gfx::Surface::alloc(size.cast<isize>() * _density, Gfx::RGBA8888));
 
         if (_canvas)
             _canvas->end();
