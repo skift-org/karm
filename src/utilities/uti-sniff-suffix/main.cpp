@@ -6,7 +6,7 @@ import Karm.Sys;
 
 using namespace Karm;
 
-Async::Task<> entryPointAsync(Sys::Context& ctx, Async::CancellationToken) {
+Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
     auto urlArg = Cli::operand<Ref::Url>("url"s, "First URL or path to resolve by suffix"s);
     auto restArg = Cli::extra("Additional URLs or paths to resolve by suffix"s);
 
@@ -22,7 +22,7 @@ Async::Task<> entryPointAsync(Sys::Context& ctx, Async::CancellationToken) {
         }},
     };
 
-    co_trya$(cmd.execAsync(ctx));
+    co_trya$(cmd.execAsync(env));
 
     if (cmd) {
         auto dump = [](Ref::Url const& url) {
@@ -31,9 +31,8 @@ Async::Task<> entryPointAsync(Sys::Context& ctx, Async::CancellationToken) {
 
         dump(urlArg.value());
 
-        auto pwd = co_try$(Sys::pwd());
         for (auto const& arg : restArg.value()) {
-            auto url = Ref::parseUrlOrPath(arg, pwd);
+            auto url = Ref::parseUrlOrPath(arg, env.cwd());
             dump(url);
         }
     }

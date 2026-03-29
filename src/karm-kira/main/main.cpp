@@ -6,9 +6,9 @@ import Karm.Kira;
 
 using namespace Karm;
 
-Async::Task<> entryPointAsync(Sys::Context& ctx, Async::CancellationToken ct) {
+Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken ct) {
     co_return co_await Ui::runAsync(
-        ctx,
+        env,
         Kr::scaffold({
             .icon = Mdi::DUCK,
             .title = "Kira Application"s,

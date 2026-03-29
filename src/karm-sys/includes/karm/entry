@@ -12,6 +12,6 @@ import Karm.Sys;
 
 #include <karm/macros>
 
-[[gnu::used]] Karm::Async::Task<> entryPointAsync(Karm::Sys::Context&, Karm::Async::CancellationToken ct);
+[[gnu::used]] Karm::Async::Task<> entryPointAsync(Karm::Sys::Env&, Karm::Async::CancellationToken ct);
 
 #include "__entry.h"

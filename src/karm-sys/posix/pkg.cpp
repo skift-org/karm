@@ -14,9 +14,9 @@ Res<Vec<String>> installedBundles() {
     auto [repo, format] = try$(Posix::repoRoot());
     Ref::Url repoRoot;
     if (format == Posix::RepoType::CUTEKIT) {
-        repoRoot = Ref::parseUrlOrPath(repo, try$(Sys::pwd()));
+        repoRoot = Ref::parseUrlOrPath(repo, globalEnv().cwd());
     } else if (format == Posix::RepoType::PREFIX) {
-        repoRoot = Ref::parseUrlOrPath(repo, try$(Sys::pwd()))
+        repoRoot = Ref::parseUrlOrPath(repo, globalEnv().cwd())
                        .join("share");
     } else {
         return Error::notFound("unknown repo type");

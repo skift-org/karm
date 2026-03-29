@@ -257,10 +257,10 @@ Ui::Child app(Vec<ProfileItem> profiles) {
     });
 }
 
-Async::Task<> entryPointAsync(Sys::Context& ctx, Async::CancellationToken ct) {
+Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken ct) {
     auto profiles = co_try$(loadAll());
     co_return co_await Ui::runAsync(
-        ctx,
+        env,
         app(std::move(profiles)),
         ct
     );

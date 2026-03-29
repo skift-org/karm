@@ -7,7 +7,7 @@ import Karm.Sys;
 
 using namespace Karm;
 
-Async::Task<> entryPointAsync(Sys::Context& ctx, Async::CancellationToken) {
+Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
     auto urlArg = Cli::operand<Ref::Url>("url"s, "Markdown document to convert to HTML"s);
 
     Cli::Command cmd{
@@ -21,7 +21,7 @@ Async::Task<> entryPointAsync(Sys::Context& ctx, Async::CancellationToken) {
         }},
     };
 
-    co_trya$(cmd.execAsync(ctx));
+    co_trya$(cmd.execAsync(env));
 
     if (cmd) {
         auto markdown = co_try$(Sys::readAllUtf8(urlArg.value()));

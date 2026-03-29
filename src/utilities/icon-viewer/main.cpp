@@ -130,7 +130,7 @@ Ui::Child app(Vec<IconMetadata> icons) {
     });
 }
 
-Async::Task<> entryPointAsync(Sys::Context& ctx, Async::CancellationToken ct) {
+Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken ct) {
     auto data = co_try$(Sys::readAllUtf8("bundle://mdi/icons.json"_url));
     auto icons = co_try$(Json::parse(data));
 
@@ -142,7 +142,7 @@ Async::Task<> entryPointAsync(Sys::Context& ctx, Async::CancellationToken ct) {
         });
     }
     co_return co_await Ui::runAsync(
-        ctx,
+        env,
         app(std::move(metadatas)),
         ct
     );

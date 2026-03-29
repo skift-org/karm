@@ -111,8 +111,6 @@ export Res<> sleepUntil(Instant);
 
 export Res<> exit(i32);
 
-export Res<Ref::Url> pwd();
-
 // MARK: Sandboxing ------------------------------------------------------------
 
 export Res<> hardenSandbox();

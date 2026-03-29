@@ -261,7 +261,7 @@ struct ValueParser<Ref::Url> {
         if (c.ended() or c->kind != Token::OPERAND)
             return Error::other("expected url");
 
-        return Ok(Ref::parseUrlOrPath(c.next().value, try$(Sys::pwd())));
+        return Ok(Ref::parseUrlOrPath(c.next().value, Sys::globalEnv().cwd()));
     }
 };
 
@@ -460,12 +460,11 @@ export struct Section {
 };
 
 export struct Command : Meta::Pinned {
-    using Callback = Func<Async::Task<>(Sys::Context&)>;
+    using Callback = Func<Async::Task<>(Sys::Env&)>;
 
     String _longName;
     String _description = ""s;
     Vec<Section> _sections;
-    Opt<Callback> _callbackAsync;
 
     Vec<Rc<Command>> _commands;
     Command* _parent = nullptr;
@@ -492,13 +491,11 @@ export struct Command : Meta::Pinned {
     Command(
         String longName,
         String description = ""s,
-        Vec<Section> sections = {},
-        Opt<Callback> callbackAsync = NONE
+        Vec<Section> sections = {}
     )
         : _longName(std::move(longName)),
           _description(std::move(description)),
-          _sections(std::move(sections)),
-          _callbackAsync(std::move(callbackAsync)) {
+          _sections(std::move(sections)) {
 
         _sections.pushFront({
             .title = "Common Options"s,
@@ -521,14 +518,12 @@ export struct Command : Meta::Pinned {
     Command& subCommand(
         String longName,
         String description = ""s,
-        Vec<Section> sections = {},
-        Opt<Callback> callbackAsync = NONE
+        Vec<Section> sections = {}
     ) {
         auto cmd = makeRc<Command>(
             longName,
             description,
-            sections,
-            std::move(callbackAsync)
+            sections
         );
         cmd->_parent = this;
         _commands.pushBack(cmd);
@@ -681,21 +676,21 @@ export struct Command : Meta::Pinned {
         return Ok();
     }
 
-    Async::Task<> execAsync(Sys::Context& ctx) {
-        auto args = Sys::useArgs(ctx);
+    Async::Task<> execAsync(Sys::Env& env) {
+        auto& args = env.args();
         Vec<Token> tokens;
         for (usize i = 0; i < args.len(); ++i)
             tokenize(args[i], tokens);
-        co_return co_await execAsync(ctx, tokens);
+        co_return co_await execAsync(tokens);
     }
 
-    Async::Task<> execAsync(Sys::Context& ctx, Slice<Str> args) {
+    Async::Task<> execAsync(Slice<Str> args) {
         Vec<Token> tokens;
         tokenize(args, tokens);
-        co_return co_await execAsync(ctx, tokens);
+        co_return co_await execAsync(tokens);
     }
 
-    Async::Task<> execAsync(Sys::Context& ctx, Cursor<Token> c) {
+    Async::Task<> execAsync(Cursor<Token> c) {
         co_try$(_parseParams(c));
 
         if (_help.value()) {
@@ -722,8 +717,6 @@ export struct Command : Meta::Pinned {
         }
 
         _invoked = true;
-        if (_callbackAsync)
-            co_trya$(_callbackAsync.unwrap()(ctx));
 
         if (Karm::any(_commands) and c.ended()) {
             co_try$(_showUsage(Sys::out()));
@@ -743,7 +736,7 @@ export struct Command : Meta::Pinned {
             for (auto& cmd : _commands) {
                 if (value != cmd->_longName)
                     continue;
-                co_return co_await cmd->execAsync(ctx, c);
+                co_return co_await cmd->execAsync(c);
             }
 
             co_return Error::invalidInput("unknown subcommand");

@@ -73,7 +73,7 @@ import Karm.Sys;
 
 using namespace Karm;
 
-Async::Task<> entryPointAsync(Sys::Context&, Async::CancellationToken) {
+Async::Task<> entryPointAsync(Sys::Env&, Async::CancellationToken) {
     Sys::println("Hello, world!");
     co_return Ok();
 }

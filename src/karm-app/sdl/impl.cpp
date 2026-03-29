@@ -356,7 +356,7 @@ SdlWindow::~SdlWindow() {
     _application.detachWindow(SDL_GetWindowID(_sdlWindow));
 }
 
-Async::Task<Rc<Application>> createAppAsync(Sys::Context&, ApplicationProps const& props, Async::CancellationToken) {
+Async::Task<Rc<Application>> createAppAsync(Sys::Env&, ApplicationProps const& props, Async::CancellationToken) {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
     co_return Ok(makeRc<SdlApplication>(props));
 }

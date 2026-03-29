@@ -62,7 +62,6 @@ Res<Rc<Fd>> openFile(Ref::Url const& url, Flags<OpenOption> options) {
     if (options.has(OpenOption::TRUNCATE))
         flags |= O_TRUNC;
 
-
     String str = try$(Posix::resolve(url)).str();
 
     isize raw = ::open(str.buf(), flags, 0666);
@@ -616,21 +615,6 @@ Res<> sleepUntil(Instant) {
 Res<> exit(i32 res) {
     ::exit(res);
     return Error::other("reached the afterlife");
-}
-
-Res<Ref::Url> pwd() {
-    auto buf = Buf<char>::init(256);
-    while (true) {
-        if (::getcwd(buf.buf(), buf.len()) != NULL)
-            break;
-
-        if (errno != ERANGE)
-            return Posix::fromLastErrno();
-
-        buf.resize(buf.len() * 2);
-    }
-
-    return Ok(Ref::parseUrlOrPath(Str::fromNullterminated(buf.buf()), "file:"_url));
 }
 
 // MARK: Addr ------------------------------------------------------------------

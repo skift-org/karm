@@ -123,8 +123,8 @@ struct Handler : App::Handler {
     }
 };
 
-export Async::Task<> runAsync(Sys::Context& ctx, Child child, Async::CancellationToken ct) {
-    auto app = co_trya$(App::Application::createAsync(ctx, {}, ct));
+export Async::Task<> runAsync(Sys::Env& env, Child child, Async::CancellationToken ct) {
+    auto app = co_trya$(App::Application::createAsync(env, {}, ct));
     auto size = child->size({1024, 720}, Hint::MIN);
     auto win = co_trya$(app->createWindowAsync(
         {

@@ -5,7 +5,7 @@ import Karm.Test;
 
 using namespace Karm;
 
-Async::Task<> entryPointAsync(Sys::Context& ctx, Async::CancellationToken ct) {
+Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken ct) {
     auto globArg = Cli::option<Str>(
         'g',
         "glob"s,
@@ -21,24 +21,29 @@ Async::Task<> entryPointAsync(Sys::Context& ctx, Async::CancellationToken ct) {
     Cli::Command cmd{
         "karm-test"s,
         "Run the Karm test suite"s,
-        {{
-            "Test Options"s,
+        {
             {
-                globArg,
-                fastArg,
-            },
-        }},
-        [=](Sys::Context&) -> Async::Task<> {
-            Test::Driver driver;
-            co_return co_await driver.runAllAsync(
+                "Test Options"s,
                 {
-                    .glob = globArg.value(),
-                    .fast = fastArg.value(),
+                    globArg,
+                    fastArg,
                 },
-                ct
-            );
+            },
         },
     };
 
-    co_return co_await cmd.execAsync(ctx);
+    co_trya$(cmd.execAsync(env));
+    if (cmd) {
+        Test::Driver driver;
+        co_trya$(driver.runAllAsync(
+            {
+                .glob = globArg.value(),
+                .fast = fastArg.value(),
+            },
+            ct
+        ));
+    }
+
+    co_return Ok();
+    ;
 }

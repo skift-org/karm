@@ -15,6 +15,6 @@ namespace Karm::App::_Embed {
 
 export Prefs& globalPrefs();
 
-export Async::Task<Rc<Application>> createAppAsync(Sys::Context& ctx, ApplicationProps const& props, Async::CancellationToken ct);
+export Async::Task<Rc<Application>> createAppAsync(Sys::Env& env, ApplicationProps const& props, Async::CancellationToken ct);
 
 } // namespace Karm::App::_Embed

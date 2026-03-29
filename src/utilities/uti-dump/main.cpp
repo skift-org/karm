@@ -24,7 +24,7 @@ static void _dumpRegistration(Ref::Uti uti) {
     Sys::println("conforms to: {}", uti.declaredConformances());
 }
 
-Async::Task<> entryPointAsync(Sys::Context& ctx, Async::CancellationToken) {
+Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
     auto queryArg = Cli::operand<Str>("query"s, "UTI name, suffix, or MIME type to inspect"s);
 
     Cli::Command cmd{
@@ -38,7 +38,7 @@ Async::Task<> entryPointAsync(Sys::Context& ctx, Async::CancellationToken) {
         }},
     };
 
-    co_trya$(cmd.execAsync(ctx));
+    co_trya$(cmd.execAsync(env));
 
     if (cmd) {
         auto query = queryArg.value();

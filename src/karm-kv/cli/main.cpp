@@ -5,7 +5,7 @@ import Karm.Ref;
 
 using namespace Karm;
 
-Async::Task<> entryPointAsync(Sys::Context&, Async::CancellationToken) {
+Async::Task<> entryPointAsync(Sys::Env&, Async::CancellationToken) {
     auto wal = co_try$(Kv::Wal::open("file:./db.wal"_url));
     auto store = Kv::Store::open(wal);
 

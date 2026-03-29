@@ -6,13 +6,13 @@ import Karm.Sys;
 
 using namespace Karm;
 
-Async::Task<> entryPointAsync(Sys::Context& ctx, Async::CancellationToken) {
-    auto& args = useArgs(ctx);
+Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
+    auto& args = env.args();
 
     if (args.len() < 1)
         co_return Error::invalidInput("Usage: icc-dump <file>");
 
-    auto url = Ref::parseUrlOrPath(args[0], co_try$(Sys::pwd()));
+    auto url = Ref::parseUrlOrPath(args[0], env.cwd());
     auto file = co_try$(Sys::File::open(url));
     auto buf = co_try$(Io::readAll(file));
 

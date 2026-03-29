@@ -5,7 +5,7 @@ import Karm.Ref;
 
 using namespace Karm;
 
-Async::Task<> entryPointAsync(Sys::Context&, Async::CancellationToken) {
+Async::Task<> entryPointAsync(Sys::Env&, Async::CancellationToken) {
     auto file = co_trya$(Fs::Image::openOrCreateAsync("file:disk.raw"_url));
     co_trya$(file->truncateAsync(DataSize::fromMiB(512)));
     auto mbr = co_trya$(Fs::Mbr::formatAsync(file));
