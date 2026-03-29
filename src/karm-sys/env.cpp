@@ -32,7 +32,7 @@ export struct Envp : Vars {
     }
 
     Yield<Pair<Str>> iter() const override {
-        for (char const* const* e = _envp; e != nullptr; e++) {
+        for (char const* const* e = _envp; *e != nullptr; e++) {
             auto env = Str::fromNullterminated(*e);
             auto index = indexOf(env, '=');
 
@@ -43,7 +43,7 @@ export struct Envp : Vars {
 
             co_yield Pair<Str>{
                 sub(env, 0, index.unwrap()),
-                sub(env, index.unwrap(), env.len())
+                sub(env, index.unwrap() + 1, env.len())
             };
         }
     }
