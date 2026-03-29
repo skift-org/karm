@@ -37,7 +37,7 @@ export struct Envp : Vars {
             auto index = indexOf(env, '=');
 
             if (not index.has()) {
-                co_yield Pair<Str>{env, Str::fromNullterminated("")};
+                co_yield Pair<Str>{env, ""s};
                 continue;
             }
 
