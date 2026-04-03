@@ -174,17 +174,17 @@ struct Radii {
         _e("(radii {} {} {} {} {} {} {} {})", a, b, c, d, e, f, g, h);
     }
 
-    constexpr auto map(auto f) const {
-        using U = decltype(f(a));
+    constexpr auto map(auto func) const {
+        using U = decltype(func(a));
         return Radii<U>{
-            f(a),
-            f(b),
-            f(c),
-            f(d),
-            f(e),
-            f(f),
-            f(g),
-            f(h),
+            func(a),
+            func(b),
+            func(c),
+            func(d),
+            func(e),
+            func(f),
+            func(g),
+            func(h),
         };
     }
 };
