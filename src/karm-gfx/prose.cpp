@@ -490,7 +490,7 @@ export struct Prose : Meta::Pinned {
 
             case TextAlign::CENTER:
                 for (auto& block : line.blocks())
-                    block.pos += free / 2_au;
+                    block.pos += free / 2;
                 break;
 
             case TextAlign::RIGHT:
@@ -643,7 +643,7 @@ export struct Prose : Meta::Pinned {
 
         // Find the cell closest to the x coordinate
         for (auto& cell : block.cells()) {
-            Au cellMid = block.pos + cell.pos + cell.adv / 2_au;
+            Au cellMid = block.pos + cell.pos + cell.adv / 2;
             if (point.x < cellMid)
                 return cell.runeRange.start;
         }

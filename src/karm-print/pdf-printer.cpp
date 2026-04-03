@@ -24,7 +24,7 @@ export struct PdfPrinter : FilePrinter {
         _canvas = Pdf::Canvas{page.data, size, &fontManager, graphicalStates};
 
         // Convert fron the karm-pdf internal units to PDF units (1/72 inch)
-        _canvas->scale(72.0 / DPI.cast<f64>());
+        _canvas->scale(72.0 / DPI);
 
         // NOTE: PDF has the coordinate system origin at the bottom left corner.
         //       But we want to have it at the top left corner.
@@ -102,8 +102,8 @@ export struct PdfPrinter : FilePrinter {
                          usize{0},
                          usize{0},
                          // Convert fron the karm-pdf internal units to PDF units (1/72 inch)
-                         p.size.width * (72.0 / DPI.cast<f64>()),
-                         p.size.height * (72.0 / DPI.cast<f64>()),
+                         p.size.width * (72.0 / DPI),
+                         p.size.height * (72.0 / DPI),
                      }},
                     {
                         "Contents"s,
