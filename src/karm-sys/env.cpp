@@ -1,5 +1,7 @@
 module;
 
+#include <karm/macros>
+
 export module Karm.Sys:env;
 
 import Karm.Core;
@@ -9,8 +11,21 @@ namespace Karm::Sys {
 
 export struct Vars {
     virtual ~Vars() = default;
+
     virtual Opt<Str> get(Str key) const = 0;
-    virtual bool has(Str arg) const = 0;
+
+    Opt<isize> geti(Str key) const {
+        auto value = try$(get(key));
+        return Io::atoi(value);
+    }
+
+    Opt<usize> getu(Str key) const {
+        auto value = try$(get(key));
+        return Io::atou(value);
+    }
+
+    virtual bool has(Str key) const = 0;
+
     virtual Yield<Pair<Str>> iter() const = 0;
 };
 
