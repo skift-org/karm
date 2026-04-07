@@ -13,6 +13,14 @@ import :meta.pack;
 namespace Karm {
 
 export template <typename... Ts>
+struct Visitor : Ts... {
+    using Ts::operator()...;
+};
+
+export template <typename... Ts>
+Visitor(Ts...) -> Visitor<Ts...>;
+
+export template <typename... Ts>
 struct Union {
     static_assert(sizeof...(Ts) <= 255, "Union can only hold up to 255 types");
 
@@ -139,12 +147,12 @@ struct Union {
         return std::move(*reinterpret_cast<T*>(_buf));
     }
 
-    always_inline auto visit(auto visitor) {
-        return Meta::indexCast<Ts...>(_index, _buf, visitor);
+    always_inline auto visit(auto&&... visitors) {
+        return Meta::indexCast<Ts...>(_index, _buf, Visitor{std::forward<decltype(visitors)>(visitors)...});
     }
 
-    always_inline auto visit(auto visitor) const {
-        return Meta::indexCast<Ts...>(_index, _buf, visitor);
+    always_inline auto visit(auto&&... visitors) const {
+        return Meta::indexCast<Ts...>(_index, _buf, Visitor{std::forward<decltype(visitors)>(visitors)...});
     }
 
     always_inline static auto any(auto visitor) {
@@ -254,14 +262,6 @@ void dispatch(V visitor, T&& t, Ts&&... ts) {
         );
     }
 }
-
-export template <typename... Ts>
-struct Visitor : Ts... {
-    using Ts::operator()...;
-};
-
-export template <typename... Ts>
-Visitor(Ts...) -> Visitor<Ts...>;
 
 template <typename T, typename... Ts>
 struct _FlattenUnion {
