@@ -165,6 +165,9 @@ using Vec = _Vec<Buf<T>>;
 export template <typename T, usize N>
 using InlineVec = _Vec<InlineBuf<T, N>>;
 
+export template <typename T, usize N>
+using SmallVec = _Vec<SmallBuf<T, N>>;
+
 export template <Nicheable T>
 struct Niche<_Vec<T>> {
     struct Content : Niche<T>::Content {};

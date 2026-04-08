@@ -18,9 +18,9 @@ export template <typename T>
 struct Buf {
     using Inner = T;
 
-    Manual<T>* _buf{};
     usize _cap{};
     usize _len{};
+    Manual<T>* _buf{};
 
     static Buf init(usize len, T fill = {}) {
         Buf buf;
@@ -297,8 +297,8 @@ export template <typename T, usize N>
 struct InlineBuf {
     using Inner = T;
 
-    Array<Manual<T>, N> _buf = {};
     usize _len = {};
+    Array<Manual<T>, N> _buf = {};
 
     constexpr InlineBuf() = default;
 
@@ -434,6 +434,16 @@ struct InlineBuf {
         _len += count;
     }
 
+    void replace(usize index, T&& value) {
+        if (index >= _len) {
+            insert(index, std::move(value));
+            return;
+        }
+
+        _buf[index].dtor();
+        _buf[index].ctor(std::move(value));
+    }
+
     T removeAt(usize index) {
         T tmp = _buf[index].take();
         for (usize i = index; i < _len - 1; i++) {
@@ -441,6 +451,24 @@ struct InlineBuf {
         }
         _len--;
         return tmp;
+    }
+
+    void removeRange(usize index, usize count) {
+        if (index > _len) [[unlikely]]
+            panic("index out of bounds");
+
+        if (index + count > _len) [[unlikely]]
+            panic("index + count out of bounds");
+
+        for (usize i = index; i < index + count; i++) {
+            _buf[i].dtor();
+        }
+
+        for (usize i = index; i < _len - count; i++) {
+            _buf[i].ctor(_buf[i + count].take());
+        }
+
+        _len -= count;
     }
 
     void resize(usize newLen, T fill = {}) {
@@ -482,6 +510,224 @@ struct InlineBuf {
 
     usize cap() const {
         return N;
+    }
+};
+
+export template <typename T, usize N>
+union SmallBuf {
+    using Inner = T;
+
+    InlineBuf<T, N> _inline;
+    Buf<T> _heap;
+
+    SmallBuf() : _inline() {}
+
+    SmallBuf(usize cap) {
+        if (cap > N) {
+            new (&_heap) Buf<T>(cap);
+        } else {
+            new (&_inline) InlineBuf<T, N>();
+        }
+    }
+
+    SmallBuf(std::initializer_list<T> other) {
+        if (other.size() > N) {
+            new (&_heap) Buf<T>(other);
+        } else {
+            new (&_inline) InlineBuf<T, N>(other);
+        }
+    }
+
+    SmallBuf(Sliceable<T> auto const& other) {
+        if (other.len() > N) {
+            new (&_heap) Buf<T>(other);
+        } else {
+            new (&_inline) InlineBuf<T, N>(other);
+        }
+    }
+
+    SmallBuf(SmallBuf const& other) {
+        if (other.spilled()) {
+            new (&_heap) Buf<T>(other._heap);
+        } else {
+            new (&_inline) InlineBuf<T, N>(other._inline);
+        }
+    }
+
+    SmallBuf(SmallBuf&& other) {
+        if (other.spilled()) {
+            new (&_heap) Buf<T>(std::move(other._heap));
+        } else {
+            new (&_inline) InlineBuf<T, N>(std::move(other._inline));
+        }
+    }
+
+    ~SmallBuf() {
+        if (spilled())
+            _heap.~Buf();
+        else
+            _inline.~InlineBuf();
+    }
+
+    SmallBuf& operator=(SmallBuf const& other) {
+        if (this == &other)
+            return *this;
+
+        this->~SmallBuf();
+        if (other.spilled()) {
+            new (&_heap) Buf<T>(other._heap);
+        } else {
+            new (&_inline) InlineBuf<T, N>(other._inline);
+        }
+        return *this;
+    }
+
+    SmallBuf& operator=(SmallBuf&& other) {
+        if (this == &other)
+            return *this;
+
+        this->~SmallBuf();
+        if (other.spilled()) {
+            new (&_heap) Buf<T>(std::move(other._heap));
+        } else {
+            new (&_inline) InlineBuf<T, N>(std::move(other._inline));
+        }
+        return *this;
+    }
+
+    bool spilled() const {
+        return _heap._cap > N;
+    }
+
+    void spill() {
+        if (spilled())
+            return;
+
+        Buf<T> newBuf{};
+        newBuf.ensure(N * 2);
+
+        for (usize i = 0; i < _inline.len(); i++) {
+            newBuf.emplace(i, std::move(_inline[i]));
+        }
+
+        _inline.~InlineBuf();
+        new (&_heap) Buf<T>(std::move(newBuf));
+    }
+
+    constexpr T& operator[](usize i) lifetimebound {
+        return spilled() ? _heap[i] : _inline[i];
+    }
+
+    constexpr T const& operator[](usize i) const lifetimebound {
+        return spilled() ? _heap[i] : _inline[i];
+    }
+
+    void ensure(usize cap) {
+        if (spilled()) {
+            _heap.ensure(cap);
+        } else if (cap > N) {
+            spill();
+            _heap.ensure(cap);
+        }
+    }
+
+    void fit() {
+        if (spilled())
+            _heap.fit();
+    }
+
+    template <typename... Args>
+    void emplace(usize index, Args&&... args) {
+        ensure(len() + 1);
+        if (spilled()) {
+            _heap.emplace(index, std::forward<Args>(args)...);
+        } else {
+            _inline.emplace(index, std::forward<Args>(args)...);
+        }
+    }
+
+    void insert(usize index, T&& value) {
+        ensure(len() + 1);
+        if (spilled()) {
+            _heap.insert(index, std::move(value));
+        } else {
+            _inline.insert(index, std::move(value));
+        }
+    }
+
+    void replace(usize index, T&& value) {
+        if (spilled()) {
+            _heap.replace(index, std::move(value));
+        } else {
+            _inline.replace(index, std::move(value));
+        }
+    }
+
+    void insert(Copy, usize index, T const* first, usize count) {
+        ensure(len() + count);
+        if (spilled()) {
+            _heap.insert(Copy{}, index, first, count);
+        } else {
+            _inline.insert(Copy{}, index, first, count);
+        }
+    }
+
+    void insert(Move, usize index, T* first, usize count) {
+        ensure(len() + count);
+        if (spilled()) {
+            _heap.insert(Move{}, index, first, count);
+        } else {
+            _inline.insert(Move{}, index, first, count);
+        }
+    }
+
+    T removeAt(usize index) {
+        return spilled() ? _heap.removeAt(index) : _inline.removeAt(index);
+    }
+
+    void removeRange(usize index, usize count) {
+        if (spilled()) {
+            _heap.removeRange(index, count);
+        } else {
+            _inline.removeRange(index, count);
+        }
+    }
+
+    void resize(usize newLen, T fill = {}) {
+        ensure(newLen);
+        if (spilled()) {
+            _heap.resize(newLen, fill);
+        } else {
+            _inline.resize(newLen, fill);
+        }
+    }
+
+    void trunc(usize newLen) {
+        if (spilled()) {
+            _heap.trunc(newLen);
+        } else {
+            _inline.trunc(newLen);
+        }
+    }
+
+    T* buf() lifetimebound {
+        return spilled() ? _heap.buf() : _inline.buf();
+    }
+
+    T const* buf() const lifetimebound {
+        return spilled() ? _heap.buf() : _inline.buf();
+    }
+
+    usize len() const {
+        return spilled() ? _heap.len() : _inline.len();
+    }
+
+    usize cap() const {
+        return spilled() ? _heap.cap() : _inline.cap();
+    }
+
+    usize size() const {
+        return len() * sizeof(T);
     }
 };
 
