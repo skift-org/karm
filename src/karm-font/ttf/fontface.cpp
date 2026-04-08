@@ -16,9 +16,9 @@ namespace Karm::Font::Ttf {
 export struct Fontface : Gfx::Fontface {
     Sys::Mmap _mmap;
     Parser _parser;
-    Map<Rune, Gfx::Glyph> _cachedEntries;
-    Map<Gfx::Glyph, f64> _cachedAdvances;
-    Map<Pair<Gfx::Glyph>, f64> _cachedKerns;
+    mutable Map<Rune, Gfx::Glyph> _cachedEntries;
+    mutable Map<Gfx::Glyph, f64> _cachedAdvances;
+    mutable Map<Pair<Gfx::Glyph>, f64> _cachedKerns;
     f64 _unitPerEm = 0;
 
     static Res<Rc<Fontface>> load(Sys::Mmap&& mmap) {
@@ -32,7 +32,7 @@ export struct Fontface : Gfx::Fontface {
         _unitPerEm = _parser.unitPerEm();
     }
 
-    Gfx::FontMetrics metrics() override {
+    Gfx::FontMetrics metrics() const override {
         auto m = _parser.metrics();
         auto xHeight = _parser.glyphMetrics(glyph('x')).y;
         return {
@@ -69,7 +69,7 @@ export struct Fontface : Gfx::Fontface {
         return attrs;
     }
 
-    Gfx::Glyph glyph(Rune rune) override {
+    Gfx::Glyph glyph(Rune rune) const override {
         auto glyph = _cachedEntries.lookup(rune);
         if (glyph.has())
             return glyph.unwrap();
@@ -78,7 +78,7 @@ export struct Fontface : Gfx::Fontface {
         return g;
     }
 
-    f64 advance(Gfx::Glyph glyph) override {
+    f64 advance(Gfx::Glyph glyph) const override {
         auto advance = _cachedAdvances.lookup(glyph);
         if (advance.has())
             return advance.unwrap();
@@ -87,7 +87,7 @@ export struct Fontface : Gfx::Fontface {
         return a;
     }
 
-    f64 kern(Gfx::Glyph prev, Gfx::Glyph curr) override {
+    f64 kern(Gfx::Glyph prev, Gfx::Glyph curr) const override {
         auto kern = _cachedKerns.lookup(Tuple{prev, curr});
         if (kern.has())
             return kern.unwrap();

@@ -18,7 +18,7 @@ struct VgaFontface : Fontface {
 #include "defs/vga.inc"
     };
 
-    FontMetrics metrics() override {
+    FontMetrics metrics() const override {
         return {
             .ascend = 12 / UNIT_PER_EM,
             .captop = 10 / UNIT_PER_EM,
@@ -36,7 +36,7 @@ struct VgaFontface : Fontface {
         };
     }
 
-    Glyph glyph(Rune rune) override {
+    Glyph glyph(Rune rune) const override {
         if (rune > 128)
             rune = '?';
         One<Ibm437> one;
@@ -44,11 +44,11 @@ struct VgaFontface : Fontface {
         return Glyph(one);
     }
 
-    f64 advance(Glyph) override {
+    f64 advance(Glyph) const override {
         return WIDTH / UNIT_PER_EM;
     }
 
-    f64 kern(Glyph, Glyph) override {
+    f64 kern(Glyph, Glyph) const override {
         return 0;
     }
 
@@ -86,7 +86,7 @@ void FontFamily::contour(Canvas& g, Glyph glyph) const {
 
 // MARK: Font ------------------------------------------------------------------
 
-void Font::contour(Canvas& g, Glyph glyph) {
+void Font::contour(Canvas& g, Glyph glyph) const {
     g.scale(fontsize);
     fontface->contour(g, glyph);
 }
