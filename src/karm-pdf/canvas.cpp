@@ -295,8 +295,37 @@ export struct Canvas : Gfx::Canvas {
 
     // MARK: Blit Operations ---------------------------------------------------
 
-    void blit(Math::Recti, Math::Recti, Gfx::Pixels) override {
-        logDebugIf(debugCanvas, "pdf: blit() operation not implemented");
+    void blit(Math::Recti src, Math::Recti dest, Gfx::Pixels pixels) override {
+        auto destf = dest.cast<f64>();
+
+        auto clippedPixels = pixels.clip(src);
+
+        push();
+        transform(Math::Trans2f{destf.width, 0, 0, -destf.height, destf.x, destf.y + destf.height});
+
+        _e.ln("BI");
+
+        _e.indented([&] {
+            _e.ln("/Width {}", clippedPixels.width());
+            _e.ln("/Height {}", clippedPixels.height());
+            _e.ln("/ColorSpace /DeviceRGB");
+            _e.ln("/BitsPerComponent 8");
+            _e.ln("/Filter [/ASCIIHexDecode]");
+        });
+
+        _e.ln("ID");
+
+        for (isize y = 0; y < clippedPixels.height(); y++) {
+            for (isize x = 0; x < clippedPixels.width(); x++) {
+                auto color = clippedPixels.load({x, y});
+                _e("{:02X}{:02X}{:02X}", color.red, color.green, color.blue);
+            }
+        }
+        _e.ln(">");
+
+        _e.ln("EI");
+
+        pop();
     }
 
     // MARK: Filter Operations -------------------------------------------------
