@@ -37,9 +37,9 @@ struct Buf {
     }
 
     Buf(Move, T* buf, usize len)
-        : _buf(reinterpret_cast<Manual<T>*>(buf)),
-          _cap(len),
-          _len(len) {
+        : _cap(len),
+          _len(len),
+          _buf(reinterpret_cast<Manual<T>*>(buf)) {
     }
 
     Buf(std::initializer_list<T> other) {
