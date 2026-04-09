@@ -171,20 +171,19 @@ export struct Canvas : Gfx::Canvas {
 
     void fill(Gfx::Prose& prose) override {
         push();
+
+        if (prose._style.color) {
+            fillStyle(*prose._style.color);
+        }
+
         _e.ln("BT");
+
+        f64 fontSize = prose._style.font.fontSize();
         _e.ln(
             "/F{} {} Tf",
             _fontManager->getFontId(prose._style.font.fontface),
-            prose._style.font.fontSize()
+            fontSize
         );
-
-        if (prose._style.color)
-            fillStyle(*prose._style.color);
-
-        _e.ln("1 0 0 -1 0 {} Tm", prose._lineHeight * prose._lines.len());
-
-        // TODO: this is needed since we are inverting the vertical axis in the PDF coordinate space
-        reverse(mutSub(prose._lines));
 
         for (usize i = 0; i < prose._lines.len(); ++i) {
             auto const& line = prose._lines[i];
@@ -194,26 +193,35 @@ export struct Canvas : Gfx::Canvas {
 
             auto alignedStart = first(line.blocks()).pos.cast<f64>();
             _e.ln("{} {} Td"s, alignedStart, i == 0 ? 0 : prose._lineHeight);
+            auto lineStartPos = first(line.blocks()).pos.cast<f64>();
+            auto lineBaseline = line.baseline.cast<f64>();
 
-            auto prevEndPos = alignedStart;
+            _e.ln("1 0 0 -1 {} {} Tm", lineStartPos, lineBaseline);
+
+            auto prevEndPos = lineStartPos;
 
             _e("[<");
             for (auto& block : line.blocks()) {
                 for (auto& cell : block.cells()) {
                     if (cell.strut())
                         continue;
+
                     auto glyphAdvance = prose._style.font.advance(cell.glyph);
                     auto nextEndPosWithoutKern = prevEndPos + glyphAdvance;
                     auto nextDesiredEndPos = (block.pos + cell.pos + cell.adv).cast<f64>();
 
-                    auto kern = nextEndPosWithoutKern - nextDesiredEndPos;
-                    if (not Math::epsilonEq<f64>(kern, 0, 0.01))
-                        _e(">{}<", kern);
+                    auto kernDiff = nextEndPosWithoutKern - nextDesiredEndPos;
+
+                    if (not Math::epsilonEq<f64>(kernDiff, 0, 0.01)) {
+                        f64 pdfKern = kernDiff * (1000.0 / fontSize);
+                        _e(">{}<", pdfKern);
+                    }
 
                     for (auto rune : cell.runes()) {
                         _e("{04x}", rune);
                     }
-                    prevEndPos = prevEndPos + glyphAdvance - kern;
+
+                    prevEndPos = prevEndPos + glyphAdvance - kernDiff;
                 }
             }
             _e(">] TJ"s);
