@@ -65,14 +65,23 @@ export struct Canvas : Gfx::Canvas {
     void fillStyle(Gfx::Fill fill) override {
         auto color = fill.unwrap<Gfx::Color>();
 
-        if (color.alpha == 255) {
-            _e.ln("{:.3} {:.3} {:.3} rg", color.red / 255.0, color.green / 255.0, color.blue / 255.0);
-            return;
+        _e.ln("{:.3} {:.3} {:.3} rg", color.red / 255.0, color.green / 255.0, color.blue / 255.0);
+
+        f64 targetOpacity = color.alpha / 255.0;
+
+        usize gsIndex = _graphicalStates.len();
+        for (usize i = 0; i < _graphicalStates.len(); ++i) {
+            if (Math::epsilonEq(_graphicalStates[i].opacity, targetOpacity, 0.001)) {
+                gsIndex = i;
+                break;
+            }
         }
 
-        _e.ln("/GS{} gs", _graphicalStates.len());
-        _e.ln("{:.3} {:.3} {:.3} rg", color.red / 255.0, color.green / 255.0, color.blue / 255.0);
-        _graphicalStates.pushBack(GraphicalStateDict{color.alpha / 255.0});
+        if (gsIndex == _graphicalStates.len()) {
+            _graphicalStates.pushBack(GraphicalStateDict{targetOpacity});
+        }
+
+        _e.ln("/GS{} gs", gsIndex);
     }
 
     void strokeStyle(Gfx::Stroke) override {
@@ -191,8 +200,6 @@ export struct Canvas : Gfx::Canvas {
             if (not line.blocks())
                 continue;
 
-            auto alignedStart = first(line.blocks()).pos.cast<f64>();
-            _e.ln("{} {} Td"s, alignedStart, i == 0 ? 0 : prose._lineHeight);
             auto lineStartPos = first(line.blocks()).pos.cast<f64>();
             auto lineBaseline = line.baseline.cast<f64>();
 
