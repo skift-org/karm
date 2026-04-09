@@ -292,6 +292,23 @@ struct Buf {
     }
 };
 
+export template <typename T>
+struct Niche<Buf<T>> {
+    struct Content {
+        usize _cap;
+        usize _len;
+        char const* ptr;
+
+        always_inline constexpr Content() : ptr(NICHE_PTR) {}
+
+        always_inline constexpr bool has() const {
+            return ptr != NICHE_PTR;
+        }
+    };
+};
+
+static_assert(offsetof(Buf<int>, _buf) == offsetof(Niche<Buf<int>>::Content, ptr));
+
 /// A buffer that uses inline storage, great for small buffers.
 export template <typename T, usize N>
 struct InlineBuf {
@@ -736,14 +753,14 @@ export template <typename T>
 struct ViewBuf {
     using Inner = T;
 
-    Manual<T>* _buf{};
     usize _cap{};
     usize _len{};
+    Manual<T>* _buf{};
 
     ViewBuf() = default;
 
     ViewBuf(Manual<T>* buf, usize cap)
-        : _buf(buf), _cap(cap) {
+        : _cap(cap), _buf(buf) {
     }
 
     ViewBuf(ViewBuf const& other) {
@@ -934,26 +951,13 @@ struct ViewBuf {
     }
 };
 
-#pragma clang unsafe_buffer_usage end
-
-export template <typename T>
-struct Niche<Buf<T>> {
-    struct Content {
-        char const* ptr;
-        usize _cap;
-        usize _len;
-
-        always_inline constexpr Content() : ptr(NICHE_PTR) {}
-
-        always_inline constexpr bool has() const {
-            return ptr != NICHE_PTR;
-        }
-    };
-};
-
 export template <typename T>
 struct Niche<ViewBuf<T>> {
     struct Content : Niche<Buf<T>>::Content {};
 };
+
+static_assert(offsetof(ViewBuf<int>, _buf) == offsetof(Niche<ViewBuf<int>>::Content, ptr));
+
+#pragma clang unsafe_buffer_usage end
 
 } // namespace Karm
