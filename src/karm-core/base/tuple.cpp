@@ -54,8 +54,7 @@ struct Tuple<> {
     auto operator<=>(Tuple const&) const = default;
 
     operator bool() const {
-        auto const& [... els] = *this;
-        return (els and ...);
+        return false;
     }
 };
 
@@ -347,7 +346,7 @@ struct Tuple<_T0, _T1, _T2, _T3, _T4> {
     }
 
     bool operator==(Tuple const&) const = default;
- auto operator<=>(Tuple const&) const = default;
+    auto operator<=>(Tuple const&) const = default;
 
     operator bool() const {
         auto const& [... els] = *this;
