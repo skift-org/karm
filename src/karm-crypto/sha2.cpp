@@ -74,203 +74,279 @@ static constexpr Array<u64, 80> SHA512_K = {
     0x5fcb6fab3ad6faec, 0x6c44198c4a475817
 };
 
-void _sha256ComputeBlock(Array<u32, 8>& state, u8 const* buf) {
-    Array<u32, 64> w;
+struct Sha256State {
+    static constexpr usize BLOCK_SIZE = 64;
 
-    for (usize idx = 0; idx < 16; idx++) {
-        w[idx] = toBe(reinterpret_cast<u32 const*>(buf)[idx]);
+    Array<u32, 8> _state;
+    Array<u8, BLOCK_SIZE> _buf{};
+    usize _bufLen = 0;
+    u64 _totalLen = 0;
+
+    constexpr Sha256State(Array<u32, 8> const& init) : _state(init) {}
+
+    constexpr void _computeBlock(u8 const* buf) {
+        Array<u32, 64> w{};
+
+        for (usize idx = 0; idx < 16; idx++) {
+            w[idx] = toBe(reinterpret_cast<u32 const*>(buf)[idx]);
+        }
+
+        for (usize idx = 16; idx < 64; idx++) {
+            u32 s0 = rotr(w[idx - 15], 7) ^ rotr(w[idx - 15], 18) ^ (w[idx - 15] >> 3);
+            u32 s1 = rotr(w[idx - 2], 17) ^ rotr(w[idx - 2], 19) ^ (w[idx - 2] >> 10);
+            w[idx] = w[idx - 16] + s0 + w[idx - 7] + s1;
+        }
+
+        u32 a = _state[0];
+        u32 b = _state[1];
+        u32 c = _state[2];
+        u32 d = _state[3];
+        u32 e = _state[4];
+        u32 f = _state[5];
+        u32 g = _state[6];
+        u32 h = _state[7];
+
+        for (usize idx = 0; idx < 64; idx++) {
+            u32 s1 = rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25);
+            u32 ch = (e & f) ^ ((~e) & g);
+            u32 tmp1 = h + s1 + ch + SHA256_K[idx] + w[idx];
+            u32 s0 = rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22);
+            u32 tmp2 = s0 + ((a & b) ^ (a & c) ^ (b & c));
+
+            h = g;
+            g = f;
+            f = e;
+            e = d + tmp1;
+            d = c;
+            c = b;
+            b = a;
+            a = tmp1 + tmp2;
+        }
+
+        _state[0] += a;
+        _state[1] += b;
+        _state[2] += c;
+        _state[3] += d;
+        _state[4] += e;
+        _state[5] += f;
+        _state[6] += g;
+        _state[7] += h;
     }
 
-    for (usize idx = 16; idx < 64; idx++) {
-        u32 s0 = rotr(w[idx - 15], 7) ^ rotr(w[idx - 15], 18) ^ (w[idx - 15] >> 3);
-        u32 s1 = rotr(w[idx - 2], 17) ^ rotr(w[idx - 2], 19) ^ (w[idx - 2] >> 10);
-        w[idx] = w[idx - 16] + s0 + w[idx - 7] + s1;
-    }
-
-    u32 a = state[0];
-    u32 b = state[1];
-    u32 c = state[2];
-    u32 d = state[3];
-    u32 e = state[4];
-    u32 f = state[5];
-    u32 g = state[6];
-    u32 h = state[7];
-
-    for (usize idx = 0; idx < 64; idx++) {
-        u32 s1 = rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25);
-        u32 ch = (e & f) ^ ((~e) & g);
-        u32 tmp1 = h + s1 + ch + SHA256_K[idx] + w[idx];
-        u32 s0 = rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22);
-        u32 tmp2 = s0 + ((a & b) ^ (a & c) ^ (b & c));
-
-        h = g;
-        g = f;
-        f = e;
-        e = d + tmp1;
-        d = c;
-        c = b;
-        b = a;
-        a = tmp1 + tmp2;
-    }
-
-    state[0] += a;
-    state[1] += b;
-    state[2] += c;
-    state[3] += d;
-    state[4] += e;
-    state[5] += f;
-    state[6] += g;
-    state[7] += h;
-}
-
-Array<u32, 8> _sha256Internal(Array<u32, 8> const& init, Bytes bytes) {
-    Array<u32, 8> state = init;
-    auto [buf, len] = bytes;
-    u64 padlen = len << 3;
-
-    for (; len >= 64; len -= 64, buf += 64) {
-        _sha256ComputeBlock(state, buf);
-    }
-
-    Array<u8, 64> padding{};
-
-    for (usize idx = 0; idx < len; idx++) {
-        padding[idx] = buf[idx];
-    }
-    padding[len] = 0x80;
-
-    if (len >= 56) {
-        _sha256ComputeBlock(state, padding.buf());
-        for (usize idx = 0; idx < padding.len(); idx++) {
-            padding[idx] = 0;
+    constexpr void update(u8 byte) {
+        _buf[_bufLen++] = byte;
+        if (_bufLen == 64) {
+            _computeBlock(_buf.buf());
+            _bufLen = 0;
+            _totalLen += 64;
         }
     }
 
-    padding[56] = padlen >> 56;
-    padding[57] = padlen >> 48;
-    padding[58] = padlen >> 40;
-    padding[59] = padlen >> 32;
-    padding[60] = padlen >> 24;
-    padding[61] = padlen >> 16;
-    padding[62] = padlen >> 8;
-    padding[63] = padlen;
-
-    _sha256ComputeBlock(state, padding.buf());
-
-    for (usize idx = 0; idx < state.len(); idx++) {
-        state[idx] = toBe(state[idx]);
-    }
-
-    return state;
-}
-
-export Array<u8, SHA256_BYTES> sha256(Bytes bytes) {
-    return Array<u8, SHA256_BYTES>::from(_sha256Internal(SHA256_INITIAL, bytes).bytes());
-}
-
-export Array<u8, SHA224_BYTES> sha224(Bytes bytes) {
-    auto state = _sha256Internal(SHA224_INITIAL, bytes);
-
-    return Array<u8, SHA224_BYTES>::from(state.bytes());
-}
-
-void _sha512ComputeBlock(Array<u64, 8>& state, u8 const* buf) {
-    Array<u64, 80> w{};
-
-    for (usize idx = 0; idx < 16; idx++) {
-        w[idx] = toBe(reinterpret_cast<u64 const*>(buf)[idx]);
-    }
-
-    for (usize idx = 16; idx < 80; idx++) {
-        u64 s0 = rotr(w[idx - 15], 1) ^ rotr(w[idx - 15], 8) ^ (w[idx - 15] >> 7);
-        u64 s1 = rotr(w[idx - 2], 19) ^ rotr(w[idx - 2], 61) ^ (w[idx - 2] >> 6);
-        w[idx] = w[idx - 16] + s0 + w[idx - 7] + s1;
-    }
-
-    u64 a = state[0];
-    u64 b = state[1];
-    u64 c = state[2];
-    u64 d = state[3];
-    u64 e = state[4];
-    u64 f = state[5];
-    u64 g = state[6];
-    u64 h = state[7];
-
-    for (usize idx = 0; idx < 80; idx++) {
-        u64 s1 = rotr(e, 14) ^ rotr(e, 18) ^ rotr(e, 41);
-        u64 ch = (e & f) ^ ((~e) & g);
-        u64 tmp1 = h + s1 + ch + SHA512_K[idx] + w[idx];
-        u64 s0 = rotr(a, 28) ^ rotr(a, 34) ^ rotr(a, 39);
-        u64 tmp2 = s0 + ((a & b) ^ (a & c) ^ (b & c));
-
-        h = g;
-        g = f;
-        f = e;
-        e = d + tmp1;
-        d = c;
-        c = b;
-        b = a;
-        a = tmp1 + tmp2;
-    }
-
-    state[0] += a;
-    state[1] += b;
-    state[2] += c;
-    state[3] += d;
-    state[4] += e;
-    state[5] += f;
-    state[6] += g;
-    state[7] += h;
-}
-
-Array<u64, 8> _sha512Internal(Array<u64, 8> const& init, Bytes bytes) {
-    Array<u64, 8> state = init;
-    auto [buf, len] = bytes;
-    u64 padlen = len << 3;
-
-    for (; len >= 128; len -= 128, buf += 128) {
-        _sha512ComputeBlock(state, buf);
-    }
-
-    Array<u8, 128> padding{};
-
-    for (usize idx = 0; idx < len; idx++) {
-        padding[idx] = buf[idx];
-    }
-    padding[len] = 0x80;
-
-    if (len >= 112) {
-        _sha512ComputeBlock(state, padding.buf());
-        for (usize idx = 0; idx < padding.len(); idx++) {
-            padding[idx] = 0;
+    constexpr void update(Bytes bytes) {
+        auto [buf, len] = bytes;
+        for (usize i = 0; i < len; ++i) {
+            update(buf[i]);
         }
     }
 
-    padding[120] = padlen >> 56;
-    padding[121] = padlen >> 48;
-    padding[122] = padlen >> 40;
-    padding[123] = padlen >> 32;
-    padding[124] = padlen >> 24;
-    padding[125] = padlen >> 16;
-    padding[126] = padlen >> 8;
-    padding[127] = padlen;
+    constexpr void finalize() {
+        _totalLen += _bufLen;
+        u64 padlen = _totalLen << 3;
 
-    _sha512ComputeBlock(state, padding.buf());
+        _buf[_bufLen++] = 0x80;
 
-    for (usize idx = 0; idx < state.len(); idx++) {
-        state[idx] = toBe(state[idx]);
+        if (_bufLen > 56) {
+            while (_bufLen < 64) {
+                _buf[_bufLen++] = 0;
+            }
+            _computeBlock(_buf.buf());
+            _bufLen = 0;
+        }
+
+        while (_bufLen < 56) {
+            _buf[_bufLen++] = 0;
+        }
+
+        _buf[56] = padlen >> 56;
+        _buf[57] = padlen >> 48;
+        _buf[58] = padlen >> 40;
+        _buf[59] = padlen >> 32;
+        _buf[60] = padlen >> 24;
+        _buf[61] = padlen >> 16;
+        _buf[62] = padlen >> 8;
+        _buf[63] = padlen;
+
+        _computeBlock(_buf.buf());
+
+        for (usize idx = 0; idx < _state.len(); idx++) {
+            _state[idx] = toBe(_state[idx]);
+        }
     }
-    return state;
+};
+
+struct Sha512State {
+    static constexpr usize BLOCK_SIZE = 128;
+    Array<u64, 8> _state;
+    Array<u8, BLOCK_SIZE> _buf{};
+    usize _bufLen = 0;
+    u64 _totalLen = 0;
+
+    constexpr Sha512State(Array<u64, 8> const& init) : _state(init) {}
+
+    constexpr void _computeBlock(u8 const* buf) {
+        Array<u64, 80> w{};
+
+        for (usize idx = 0; idx < 16; idx++) {
+            w[idx] = toBe(reinterpret_cast<u64 const*>(buf)[idx]);
+        }
+
+        for (usize idx = 16; idx < 80; idx++) {
+            u64 s0 = rotr(w[idx - 15], 1) ^ rotr(w[idx - 15], 8) ^ (w[idx - 15] >> 7);
+            u64 s1 = rotr(w[idx - 2], 19) ^ rotr(w[idx - 2], 61) ^ (w[idx - 2] >> 6);
+            w[idx] = w[idx - 16] + s0 + w[idx - 7] + s1;
+        }
+
+        u64 a = _state[0];
+        u64 b = _state[1];
+        u64 c = _state[2];
+        u64 d = _state[3];
+        u64 e = _state[4];
+        u64 f = _state[5];
+        u64 g = _state[6];
+        u64 h = _state[7];
+
+        for (usize idx = 0; idx < 80; idx++) {
+            u64 s1 = rotr(e, 14) ^ rotr(e, 18) ^ rotr(e, 41);
+            u64 ch = (e & f) ^ ((~e) & g);
+            u64 tmp1 = h + s1 + ch + SHA512_K[idx] + w[idx];
+            u64 s0 = rotr(a, 28) ^ rotr(a, 34) ^ rotr(a, 39);
+            u64 tmp2 = s0 + ((a & b) ^ (a & c) ^ (b & c));
+
+            h = g;
+            g = f;
+            f = e;
+            e = d + tmp1;
+            d = c;
+            c = b;
+            b = a;
+            a = tmp1 + tmp2;
+        }
+
+        _state[0] += a;
+        _state[1] += b;
+        _state[2] += c;
+        _state[3] += d;
+        _state[4] += e;
+        _state[5] += f;
+        _state[6] += g;
+        _state[7] += h;
+    }
+
+    constexpr void update(u8 byte) {
+        _buf[_bufLen++] = byte;
+        if (_bufLen == 128) {
+            _computeBlock(_buf.buf());
+            _bufLen = 0;
+            _totalLen += 128;
+        }
+    }
+
+    constexpr void update(Bytes bytes) {
+        auto [buf, len] = bytes;
+        for (usize i = 0; i < len; ++i) {
+            update(buf[i]);
+        }
+    }
+
+    constexpr void finalize() {
+        _totalLen += _bufLen;
+        u64 padlen = _totalLen << 3;
+
+        _buf[_bufLen++] = 0x80;
+
+        if (_bufLen > 112) {
+            while (_bufLen < 128) {
+                _buf[_bufLen++] = 0;
+            }
+            _computeBlock(_buf.buf());
+            _bufLen = 0;
+        }
+
+        while (_bufLen < 120) {
+            _buf[_bufLen++] = 0;
+        }
+
+        _buf[120] = padlen >> 56;
+        _buf[121] = padlen >> 48;
+        _buf[122] = padlen >> 40;
+        _buf[123] = padlen >> 32;
+        _buf[124] = padlen >> 24;
+        _buf[125] = padlen >> 16;
+        _buf[126] = padlen >> 8;
+        _buf[127] = padlen;
+
+        _computeBlock(_buf.buf());
+
+        for (usize idx = 0; idx < _state.len(); idx++) {
+            _state[idx] = toBe(_state[idx]);
+        }
+    }
+};
+
+// ==============================================================================
+// No macros needed: C++20 allows passing the array references directly
+// ==============================================================================
+
+export template <typename State, usize DIGEST_SIZE, auto const& INITIAL>
+struct Sha {
+    using Digest = Array<u8, DIGEST_SIZE>;
+    static constexpr auto BLOCK_SIZE = State::BLOCK_SIZE;
+
+    State _state{INITIAL};
+
+    constexpr Sha() = default;
+
+    constexpr void update(u8 byte) {
+        _state.update(byte);
+    }
+
+    constexpr void update(Bytes bytes) {
+        _state.update(bytes);
+    }
+
+    constexpr Digest digest() {
+        _state.finalize();
+        return Digest::from(_state._state.bytes());
+    }
+};
+
+export using Sha224 = Sha<Sha256State, SHA224_BYTES, SHA224_INITIAL>;
+export using Sha256 = Sha<Sha256State, SHA256_BYTES, SHA256_INITIAL>;
+export using Sha384 = Sha<Sha512State, SHA384_BYTES, SHA384_INITIAL>;
+export using Sha512 = Sha<Sha512State, SHA512_BYTES, SHA512_INITIAL>;
+
+export constexpr Sha224::Digest sha224(Bytes bytes) {
+    Sha224 sha;
+    sha.update(bytes);
+    return sha.digest();
 }
 
-export Array<u8, SHA512_BYTES> sha512(Bytes bytes) {
-    return Array<u8, SHA512_BYTES>::from(_sha512Internal(SHA512_INITIAL, bytes).bytes());
+export constexpr Sha256::Digest sha256(Bytes bytes) {
+    Sha256 sha;
+    sha.update(bytes);
+    return sha.digest();
 }
 
-export Array<u8, SHA384_BYTES> sha384(Bytes bytes) {
-    auto state = _sha512Internal(SHA384_INITIAL, bytes);
+export constexpr Sha384::Digest sha384(Bytes bytes) {
+    Sha384 sha;
+    sha.update(bytes);
+    return sha.digest();
+}
 
-    return Array<u8, SHA384_BYTES>::from(state.bytes());
+export constexpr Sha512::Digest sha512(Bytes bytes) {
+    Sha512 sha;
+    sha.update(bytes);
+    return sha.digest();
 }
 
 } // namespace Karm::Crypto

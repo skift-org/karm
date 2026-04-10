@@ -5,4 +5,5 @@ export import :base64;
 export import :crc;
 export import :entropy;
 export import :hex;
+export import :hmac;
 export import :sha2;
