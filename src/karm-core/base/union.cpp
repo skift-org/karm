@@ -226,6 +226,12 @@ struct Union {
         return false;
     }
 
+    explicit operator bool() const {
+        return visit([](auto const& v) {
+            return static_cast<bool>(v);
+        });
+    }
+
     void hash(Meta::Derive<Hasher> auto& h) const {
         visit([&](auto const& v) {
             Karm::hash(h, v);
