@@ -182,22 +182,22 @@ struct ForEachi {
 export template <typename F>
 ForEachi(F) -> ForEachi<F>;
 
-// MARK: Find ------------------------------------------------------------------
+// MARK: FindFirst -------------------------------------------------------------
 
 export template <typename F>
-struct Find {
+struct FindFirst {
     F f;
 
-    constexpr auto pipe(auto&& iter) {
+    constexpr auto pipe(auto&& iter) -> Opt<decltype(*iter.next())> {
         while (auto value = iter.next())
             if (f(*value))
                 return value;
-        return decltype(iter.next()){NONE};
+        return NONE;
     }
 };
 
 export template <typename F>
-Find(F) -> Find<F>;
+FindFirst(F) -> FindFirst<F>;
 
 // MARK: FindLast --------------------------------------------------------------
 
