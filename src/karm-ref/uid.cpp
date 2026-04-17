@@ -85,7 +85,7 @@ struct [[gnu::packed]] _Uid {
         return {reinterpret_cast<u8*>(this), sizeof(_Uid)};
     }
 
-    void hash(Hasher& h) const {
+    void hash(Meta::Derive<Hasher> auto& h) const {
         Karm::hash(h, bytes());
     }
 

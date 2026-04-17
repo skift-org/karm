@@ -14,7 +14,7 @@ export struct Glyph {
 
     static Glyph const TOFU;
 
-    void hash(Hasher& h) const {
+    void hash(Meta::Derive<Hasher> auto& h) const {
         Karm::hash(h, index);
         Karm::hash(h, font);
     }
@@ -251,7 +251,7 @@ export struct FontAttrs {
                monospace == Monospace::NO;
     }
 
-    void hash(Hasher& h) const {
+    void hash(Meta::Derive<Hasher> auto& h) const {
         Karm::hash(h, family);
         Karm::hash(h, weight);
         Karm::hash(h, stretch);

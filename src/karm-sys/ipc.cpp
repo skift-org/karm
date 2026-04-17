@@ -96,7 +96,7 @@ export struct IpcHeader {
     }
 };
 
-static_assert(Meta::TrivialyCopyable<IpcHeader>);
+static_assert(Meta::TriviallyCopyable<IpcHeader>);
 
 export struct IpcMessage {
     static constexpr usize CAP = 4096;

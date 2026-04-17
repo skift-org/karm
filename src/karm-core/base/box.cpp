@@ -123,7 +123,7 @@ struct Box {
         return *_ptr;
     }
 
-    constexpr void hash(Hasher& h) const {
+    constexpr void hash(Meta::Derive<Hasher> auto& h) const {
         Karm::hash(h, unwrap());
     }
 };

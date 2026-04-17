@@ -30,7 +30,7 @@ struct [[gnu::packed]] Be {
         return toBe(_value);
     }
 
-    always_inline void hash(Hasher& h) const {
+    always_inline void hash(Meta::Derive<Hasher> auto& h) const {
         Karm::hash(h, value());
     }
 };
@@ -57,7 +57,7 @@ struct [[gnu::packed]] Le {
         return toLe(_value);
     }
 
-    always_inline void hash(Hasher& h) const {
+    always_inline void hash(Meta::Derive<Hasher> auto& h) const {
         Karm::hash(h, value());
     }
 };

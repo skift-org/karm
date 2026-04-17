@@ -56,7 +56,7 @@ export struct MutBlob {
 
     Blob slice(urange slice) const;
 
-    void hash(Hasher& h) const {
+    void hash(Meta::Derive<Hasher> auto& h) const {
         Karm::hash(h, bytes());
     }
 
@@ -102,7 +102,7 @@ export struct Blob {
         };
     }
 
-    void hash(Hasher& h) const {
+    void hash(Meta::Derive<Hasher> auto& h) const {
         Karm::hash(h, bytes());
     }
 

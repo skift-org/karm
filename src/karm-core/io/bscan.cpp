@@ -443,7 +443,7 @@ export struct BEmit {
     always_inline constexpr BEmit(Io::Writer& writer)
         : _writer(writer) {}
 
-    template <Meta::TrivialyCopyable T>
+    template <Meta::TriviallyCopyable T>
     always_inline constexpr void writeFrom(T const& v) {
         (void)_writer.write(Bytes{(u8 const*)&v, sizeof(v)});
     }

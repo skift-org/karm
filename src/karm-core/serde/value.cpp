@@ -342,7 +342,7 @@ export struct Value {
         return _store == other;
     }
 
-    void hash(Hasher& h) const {
+    void hash(Meta::Derive<Hasher> auto& h) const {
         _store.hash(h);
     }
 

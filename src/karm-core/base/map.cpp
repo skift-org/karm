@@ -17,7 +17,7 @@ struct KvPair {
     K key;
     V value;
 
-    constexpr void hash(Hasher& h) const {
+    constexpr void hash(Meta::Derive<Hasher> auto& h) const {
         Karm::hash(h, key);
     }
 
@@ -186,7 +186,7 @@ struct Map {
         return _items.len();
     }
 
-    void hash(Hasher& h) const {
+    void hash(Meta::Derive<Hasher> auto& h) const {
         u64 sum = 0;
         for (auto const& [k, v] : iterItems())
             sum += Karm::hash(k) + Karm::hash(v);

@@ -28,7 +28,7 @@ export struct Blob {
 
     usize len() const { return data.len(); }
 
-    void hash(Hasher& h) const {
+    void hash(Meta::Derive<Hasher> auto& h) const {
         Karm::hash(h, data);
     }
 
@@ -246,7 +246,7 @@ export struct Url {
 
     bool operator==(Url const&) const = default;
 
-    void hash(Hasher& h) const {
+    void hash(Meta::Derive<Hasher> auto& h) const {
         Karm::hash(h, scheme);
         Karm::hash(h, userInfo);
         Karm::hash(h, host);

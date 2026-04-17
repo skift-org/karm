@@ -33,7 +33,7 @@ template <typename T>
 struct Hash;
 
 export template <typename T>
-constexpr void hash(Hasher& hasher, T const& t) {
+constexpr void hash(Meta::Derive<Hasher> auto& hasher, T const& t) {
     if constexpr (
         requires(Hasher& hasher, T const t) {
             { t.hash(hasher) };
@@ -54,35 +54,35 @@ constexpr u64 hash(T const& t) {
 
 export template <Meta::Boolean T>
 struct Hash<T> {
-    static constexpr void hash(Hasher& hasher, T const& v) {
+    static constexpr void hash(Meta::Derive<Hasher> auto& hasher, T const& v) {
         hasher.add(reinterpret_cast<u8 const*>(&v), sizeof(v));
     }
 };
 
 export template <Meta::Integer T>
 struct Hash<T> {
-    static constexpr void hash(Hasher& hasher, T const& v) {
+    static constexpr void hash(Meta::Derive<Hasher> auto& hasher, T const& v) {
         hasher.add(reinterpret_cast<u8 const*>(&v), sizeof(v));
     }
 };
 
 export template <Meta::Float T>
 struct Hash<T> {
-    static constexpr void hash(Hasher& hasher, T const& v) {
+    static constexpr void hash(Meta::Derive<Hasher> auto& hasher, T const& v) {
         hasher.add(reinterpret_cast<u8 const*>(&v), sizeof(v));
     }
 };
 
 export template <Meta::Enum T>
 struct Hash<T> {
-    static constexpr void hash(Hasher& hasher, T const& v) {
+    static constexpr void hash(Meta::Derive<Hasher> auto& hasher, T const& v) {
         hasher.add(reinterpret_cast<u8 const*>(&v), sizeof(v));
     }
 };
 
 export template <>
 struct Hash<None> {
-    static constexpr void hash(Hasher& hasher, None const&) {
+    static constexpr void hash(Meta::Derive<Hasher> auto& hasher, None const&) {
         Karm::hash(hasher, 0x0);
     }
 };

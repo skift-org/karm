@@ -63,7 +63,7 @@ struct _SymbolBuf {
         return Str(*this) == other;
     }
 
-    void hash(Hasher& h) const {
+    void hash(Meta::Derive<Hasher> auto& h) const {
         Karm::hash(h, Str{*this});
     }
 };
@@ -82,7 +82,7 @@ export struct Symbol {
         return Str(*_buf);
     }
 
-    void hash(Hasher& h) const {
+    void hash(Meta::Derive<Hasher> auto& h) const {
         Karm::hash(h, str());
     }
 

@@ -135,7 +135,7 @@ struct Distinct {
         return *this;
     }
 
-    always_inline void hash(Hasher& h) const {
+    always_inline void hash(Meta::Derive<Hasher> auto& h) const {
         Karm::hash(h, _value);
     }
 };

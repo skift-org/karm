@@ -226,7 +226,7 @@ struct Union {
         return false;
     }
 
-    void hash(Hasher& h) const {
+    void hash(Meta::Derive<Hasher> auto& h) const {
         visit([&](auto const& v) {
             Karm::hash(h, v);
         });

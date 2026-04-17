@@ -164,7 +164,7 @@ export struct Path {
         return _segs.len();
     }
 
-    void hash(Hasher& h) const {
+    void hash(Meta::Derive<Hasher> auto& h) const {
         Karm::hash(h, rooted);
         Karm::hash(h, _segs);
     }

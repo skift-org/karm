@@ -52,7 +52,7 @@ struct Ref {
         return _ptr == other._ptr;
     }
 
-    void hash(Hasher& h) const {
+    void hash(Meta::Derive<Hasher> auto& h) const {
         Karm::hash(h, (usize)_ptr);
     }
 };

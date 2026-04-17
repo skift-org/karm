@@ -80,7 +80,10 @@ export template <typename T>
 concept Pod = Trivial<T> and StandardLayout<T>;
 
 export template <typename T>
-concept TrivialyCopyable = __is_trivially_copyable(T);
+concept TriviallyCopyable = __is_trivially_copyable(T);
+
+export template <typename T>
+concept UniqueObjectRepresentations = __has_unique_object_representations(T);
 
 export template <typename T>
 concept Aggregate = __is_aggregate(T);

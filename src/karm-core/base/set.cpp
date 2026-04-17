@@ -99,7 +99,7 @@ struct Set {
         return _items.len();
     }
 
-    void hash(Hasher& h) const {
+    void hash(Meta::Derive<Hasher> auto& h) const {
         u64 sum = 0;
         for (auto const& v : iter()) {
             // NOTE: This will use the default hasher instead of the one given to us

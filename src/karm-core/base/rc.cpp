@@ -265,7 +265,7 @@ struct _Rc {
         return _cell->id();
     }
 
-    void hash(Hasher& h) const {
+    void hash(Meta::Derive<Hasher> auto& h) const {
         Karm::hash(h, unwrap());
     }
 

@@ -58,10 +58,18 @@ constexpr bool operator==(T const& lhs, U const& rhs) {
 
 template <Sliceable T>
 struct Hash<T> {
-    static constexpr void hash(Hasher& h, T const& v) {
+    static constexpr void hash(Meta::Derive<Hasher> auto& h, T const& v) {
+        // Common: always hash the length first
         Karm::hash(h, v.len());
-        for (usize i = 0; i < v.len(); i++)
-            Karm::hash(h, v.buf()[i]);
+        using InnerType = typename T::Inner;
+
+        if constexpr (Meta::UniqueObjectRepresentations<InnerType>) {
+            h.add(reinterpret_cast<u8 const*>(v.buf()), v.len() * sizeof(InnerType));
+        } else {
+            for (usize i = 0; i < v.len(); i++) {
+                Karm::hash(h, v.buf()[i]);
+            }
+        }
     }
 };
 

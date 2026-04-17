@@ -487,7 +487,7 @@ struct [[nodiscard]] Opt {
         return std::partial_ordering::unordered;
     }
 
-    void hash(Hasher& h) const {
+    void hash(Meta::Derive<Hasher> auto& h) const {
         if (has())
             Karm::hash(h, unwrap());
         else

@@ -121,7 +121,7 @@ export struct Key {
         return _code;
     }
 
-    void hash(Hasher& h) const {
+    void hash(Meta::Derive<Hasher> auto& h) const {
         Karm::hash(h, _code);
     }
 

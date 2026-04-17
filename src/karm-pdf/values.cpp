@@ -17,7 +17,7 @@ export struct Ref {
     bool operator==(Ref const& other) const = default;
     auto operator<=>(Ref const& other) const = default;
 
-    void hash(Hasher& h) const {
+    void hash(Meta::Derive<Hasher> auto& h) const {
         Karm::hash(h, num);
         Karm::hash(h, gen);
     }
