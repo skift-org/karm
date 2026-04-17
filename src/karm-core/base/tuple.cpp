@@ -52,10 +52,6 @@ struct Tuple<> {
     bool operator==(Tuple const&) const = default;
 
     auto operator<=>(Tuple const&) const = default;
-
-    operator bool() const {
-        return false;
-    }
 };
 
 export template <typename _T0>
@@ -92,11 +88,6 @@ struct Tuple<_T0> {
     bool operator==(Tuple const&) const = default;
 
     auto operator<=>(Tuple const&) const = default;
-
-    operator bool() const {
-        auto const& [... els] = *this;
-        return (els and ...);
-    }
 };
 
 export template <typename T0>
@@ -144,11 +135,6 @@ struct Tuple<_T0, _T1> {
     bool operator==(Tuple const&) const = default;
 
     auto operator<=>(Tuple const&) const = default;
-
-    operator bool() const {
-        auto const& [... els] = *this;
-        return (els and ...);
-    }
 };
 
 export template <typename T0, typename T1>
@@ -204,11 +190,6 @@ struct Tuple<_T0, _T1, _T2> {
     bool operator==(Tuple const&) const = default;
 
     auto operator<=>(Tuple const&) const = default;
-
-    operator bool() const {
-        auto const& [... els] = *this;
-        return (els and ...);
-    }
 };
 
 export template <typename T0, typename T1, typename T2>
@@ -272,11 +253,6 @@ struct Tuple<_T0, _T1, _T2, _T3> {
     bool operator==(Tuple const&) const = default;
 
     auto operator<=>(Tuple const&) const = default;
-
-    operator bool() const {
-        auto const& [... els] = *this;
-        return (els and ...);
-    }
 };
 
 export template <typename T0, typename T1, typename T2, typename T3>
@@ -347,11 +323,6 @@ struct Tuple<_T0, _T1, _T2, _T3, _T4> {
 
     bool operator==(Tuple const&) const = default;
     auto operator<=>(Tuple const&) const = default;
-
-    operator bool() const {
-        auto const& [... els] = *this;
-        return (els and ...);
-    }
 };
 
 export template <typename T0, typename T1, typename T2, typename T3, typename T4>
@@ -431,11 +402,6 @@ struct Tuple<_T0, _T1, _T2, _T3, _T4, _T5> {
     bool operator==(Tuple const&) const = default;
 
     auto operator<=>(Tuple const&) const = default;
-
-    operator bool() const {
-        auto const& [... els] = *this;
-        return (els and ...);
-    }
 };
 
 export template <typename T0, typename T1, typename T2, typename T3, typename T4, typename T5>
@@ -523,11 +489,6 @@ struct Tuple<_T0, _T1, _T2, _T3, _T4, _T5, _T6> {
     bool operator==(Tuple const&) const = default;
 
     auto operator<=>(Tuple const&) const = default;
-
-    operator bool() const {
-        auto const& [... els] = *this;
-        return (els and ...);
-    }
 };
 
 export template <typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6>
@@ -623,11 +584,6 @@ struct Tuple<_T0, _T1, _T2, _T3, _T4, _T5, _T6, _T7> {
     bool operator==(Tuple const&) const = default;
 
     auto operator<=>(Tuple const&) const = default;
-
-    operator bool() const {
-        auto const& [... els] = *this;
-        return (els and ...);
-    }
 };
 
 export template <typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7>
