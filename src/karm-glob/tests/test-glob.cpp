@@ -1,6 +1,6 @@
 #include <karm/test>
 
-import Karm.Core;
+import Karm.Glob;
 
 namespace Karm::Glob::Tests {
 

@@ -4,6 +4,7 @@ import Karm.Core;
 import Karm.Sys;
 import Karm.Logger;
 import Karm.Tty;
+import Karm.Glob;
 
 import :test;
 

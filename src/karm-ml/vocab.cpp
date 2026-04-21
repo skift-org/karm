@@ -2,6 +2,7 @@ export module Karm.Ml:vocab;
 
 import Karm.Logger;
 import Karm.Core;
+import Karm.Regex;
 
 namespace Karm::Ml {
 

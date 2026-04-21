@@ -1,6 +1,7 @@
 export module Karm.Debug;
 
 import Karm.Core;
+import Karm.Glob;
 
 namespace Karm::Debug {
 

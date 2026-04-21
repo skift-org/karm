@@ -1,5 +1,6 @@
 #include <karm/test>
-import Karm.Core;
+
+import Karm.Regex;
 
 namespace Karm::Regex::Tests {
 

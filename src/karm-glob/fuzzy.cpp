@@ -1,10 +1,6 @@
-module;
+export module Karm.Glob:fuzzy;
 
-export module Karm.Core:glob.fuzzy;
-
-import :base.vec;
-import :base.ctype;
-import :base.string;
+import Karm.Core;
 
 namespace Karm::Glob {
 

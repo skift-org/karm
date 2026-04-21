@@ -3,6 +3,7 @@
     "id": "karm-debug",
     "type": "lib",
     "requires": [
-        "karm-core"
+        "karm-core",
+        "karm-glob"
     ]
 }

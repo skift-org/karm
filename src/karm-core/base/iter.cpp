@@ -191,7 +191,7 @@ struct FindFirst {
     constexpr auto pipe(auto&& iter) -> Opt<decltype(*iter.next())> {
         while (auto value = iter.next())
             if (f(*value))
-                return value;
+                return *value;
         return NONE;
     }
 };

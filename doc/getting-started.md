@@ -62,7 +62,20 @@ ck init --kind=component hello-world
 touch src/hello-world/main.cpp
 ```
 
-## 6. Write the "Hello World" Code
+## 6. Add Karm as a Dependency to Your Component
+
+Open the **`components/hello-world/manifest.json`** file and add `karm-sys` to the `"requires"` block:
+
+```json
+{
+    // ... existing configuration ...
+    "requires": [
+        "karm-sys"
+    ]
+}
+```
+
+## 7. Write the "Hello World" Code
 
 Open the **`src/hello-world/main.cpp`** file you just created and paste the following Karm framework code into it:
 
@@ -79,7 +92,7 @@ Async::Task<> entryPointAsync(Sys::Env&, Async::CancellationToken) {
 }
 ```
 
-## 7. Build and Run
+## 8. Build and Run
 
 Finally, use Cutekit to compile and run your new component:
 

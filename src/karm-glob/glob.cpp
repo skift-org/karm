@@ -1,7 +1,6 @@
-export module Karm.Core:glob.glob;
+export module Karm.Glob:glob;
 
-import :io.expr;
-import :io.sscan;
+import Karm.Core;
 
 namespace Karm::Glob {
 

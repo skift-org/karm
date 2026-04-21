@@ -4,6 +4,8 @@ module;
 
 export module Karm.Http:router;
 
+import Karm.Glob;
+
 import :server;
 import :response;
 import :request;

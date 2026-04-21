@@ -2,14 +2,9 @@ module;
 
 #include <karm/macros>
 
-export module Karm.Core:regex;
+export module Karm.Regex;
 
-import :base.flags;
-import :base.rc;
-import :base.res;
-import :io.emit;
-import :io.expr;
-import :io.sscan;
+import Karm.Core;
 
 namespace Karm::Regex {
 
