@@ -11,6 +11,7 @@ We avoid using raw pointers at all costs. The following decision tree should hel
 **Legend**
 
 - `T&` - [Basic C++ reference type](https://en.cppreference.com/w/cpp/language/reference). Provides a way to refer to an existing object without taking ownership.
+- `Opt<T&>` - An optional reference type that can either hold a reference to an object or be empty (null). Useful for cases where a reference may not always be available.
 - `Slice<T>` - Represents a view over a contiguous sequence of elements (e.g., arrays or vectors). It does not own the elements but allows safe, bounds-checked access.
 - `Cursor<T>` - A pointer-like structure for iterating through elements with additional context or state information (e.g., current position in a stream).
 - `T` - The base type. Ownership and reference semantics are determined by the context in which it is used (e.g., passed by value or reference).
