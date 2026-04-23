@@ -654,6 +654,10 @@ export struct Prose : Meta::Pinned {
         auto& lastCell = last(block.cells());
         return lastCell.runeRange.end();
     }
+
+    void repr(Io::Emit& e) const {
+        e("(prose)");
+    }
 };
 
 } // namespace Karm::Gfx
