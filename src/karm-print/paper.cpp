@@ -54,23 +54,6 @@ export struct PaperStock {
     }
 };
 
-export struct PaperFormat {
-    PaperStock stock;
-    Orientation orientation;
-
-    Vec2Au size() const {
-        return stock.size(orientation);
-    }
-
-    f64 aspect() const {
-        return stock.aspect(orientation);
-    }
-
-    void repr(Io::Emit& e) const {
-        e("(paper-format {} {})", stock, orientation);
-    }
-};
-
 export struct PaperSeries {
     Str name;
     Slice<PaperStock const> stocks;
@@ -215,12 +198,20 @@ export struct Margins {
 };
 
 export struct Settings {
-    Vec2Au size = Print::A4.size(Orientation::PORTRAIT);
+    PaperStock stock = A4;
+    Orientation orientation = Orientation::PORTRAIT;
     Margins margins = Margins::DEFAULT;
-
     f64 scale = 1.;
     bool headerFooter = true;
     bool backgroundGraphics = true;
+
+    Vec2Au pageSize() const {
+        return stock.size(orientation);
+    }
+
+    f64 pageAspectRatio() const {
+        return stock.aspect(orientation);
+    }
 };
 
 } // namespace Karm::Print
