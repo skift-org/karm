@@ -26,7 +26,7 @@ struct [[nodiscard]] Res {
 
     template <typename U>
     always_inline constexpr Res(Ok<U> ok)
-        : _inner(Ok<V>{ok.unwrap()}) {}
+        : _inner(Ok<V>{ok.take()}) {}
 
     always_inline constexpr Res(E err)
         : _inner(err) {}
