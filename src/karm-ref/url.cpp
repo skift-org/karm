@@ -343,6 +343,10 @@ export Karm::Ref::Url operator/(Karm::Ref::Url const& url, Karm::Str path) {
     return url.join(path);
 }
 
+export Karm::Ref::Url operator/(Karm::Ref::Url const& url, Karm::String const& path) {
+    return url.join(path.str());
+}
+
 export Karm::Ref::Url operator/(Karm::Ref::Url const& url, Karm::Ref::Path const& path) {
     return url.join(path);
 }
