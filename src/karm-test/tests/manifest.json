@@ -3,9 +3,6 @@
     "id": "karm-tests.tests",
     "description": "Yo dawg, I heard you like tests, so I put tests in your tests so you can test while you test.",
     "type": "lib",
-    "props": {
-        "cpp-excluded": true
-    },
     "requires": [
         "karm-test"
     ],

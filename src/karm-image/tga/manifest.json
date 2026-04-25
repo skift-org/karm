@@ -3,9 +3,6 @@
     "id": "karm-image.tga",
     "type": "lib",
     "description": "TGA image decoding and encoding",
-    "props": {
-        "cpp-excluded": true
-    },
     "requires": [
         "karm-gfx"
     ]
