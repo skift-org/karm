@@ -4,6 +4,7 @@ import Karm.Ml;
 import Karm.Ref;
 
 using namespace Karm;
+using namespace Karm::Ref::Literals;
 
 Async::Task<> entryPointAsync(Sys::Env&, Async::CancellationToken) {
     co_try$(Ml::Gguf::loadGguf("bundle://karm-ml/smollm2-360m-instruct-q8_0.gguf"_url));

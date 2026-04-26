@@ -1,7 +1,11 @@
 #include <karm/test>
+
 import Karm.Core;
 
-namespace Karm::Io::Tests {
+using namespace Karm::Literals;
+using namespace Karm::Re::Literals;
+
+namespace Karm::Re::Tests {
 
 test$("expr-either") {
     expect$(Re::match('a'_re | 'b'_re, ""s) == Match::NO);

@@ -13,6 +13,9 @@ import Karm.Debug;
 
 import :loader;
 
+using namespace Karm::Literals;
+using namespace Karm::Ref::Literals;
+
 namespace Karm::Font {
 
 static auto debugDatabase = Debug::Flag::debug("font-database", "Log font database initialization and queries");

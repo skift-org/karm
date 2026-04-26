@@ -8,6 +8,8 @@ import Karm.Core;
 import Karm.Ui;
 import Karm.Gfx;
 
+using namespace Karm::Literals;
+
 namespace Karm::Kira {
 
 export enum struct BadgeStyle {

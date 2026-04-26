@@ -6,6 +6,9 @@ import Karm.Logger;
 import :buffer;
 import :parser;
 
+using namespace Karm::Literals;
+using namespace Karm::Ref::Literals;
+
 namespace Karm::Vte {
 
 struct Metrics {

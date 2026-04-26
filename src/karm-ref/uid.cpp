@@ -121,6 +121,8 @@ static_assert(sizeof(Guid) == 16);
 
 } // namespace Karm::Ref
 
+namespace Karm::Ref::Literals {
+
 export Karm::Ref::Uuid operator""_uuid(char const* str, Karm::usize len) {
     auto res = Karm::Ref::Uuid::parse({str, len});
     if (not res.has())
@@ -132,3 +134,5 @@ export Karm::Ref::Uuid operator""_uuid(char const* str, Karm::usize len) {
 export Karm::Ref::Guid operator""_guid(char const* str, Karm::usize len) {
     return Karm::Ref::Guid::parse({str, len}).unwrap("invalid GUID");
 }
+
+} // namespace Karm::Ref::Literals

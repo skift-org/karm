@@ -2,6 +2,8 @@ export module Karm.Font.Ttf:name;
 
 import Karm.Core;
 
+using namespace Karm::Literals;
+
 namespace Karm::Font::Ttf {
 
 export using Karm::begin, Karm::end;

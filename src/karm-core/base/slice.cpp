@@ -880,9 +880,13 @@ export constexpr auto* end(MutSliceable auto& slice) {
 
 } // namespace Karm
 
+namespace Karm::Literals {
+
 export constexpr Karm::Bytes operator""_bytes(char const* buf, Karm::usize len) {
     return Karm::Bytes{
         reinterpret_cast<Karm::u8 const*>(buf),
         len,
     };
 }
+
+} // namespace Karm::Literals

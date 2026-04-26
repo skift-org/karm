@@ -31,6 +31,8 @@ export struct DataSize : Distinct<u64, struct _DataSizeTag> {
 
 } // namespace Karm
 
+namespace Karm::Literals {
+
 export constexpr Karm::DataSize operator""_B(unsigned long long val) {
     return Karm::DataSize{val};
 }
@@ -50,3 +52,5 @@ export constexpr Karm::DataSize operator""_GiB(unsigned long long val) {
 export constexpr Karm::DataSize operator""_TiB(unsigned long long val) {
     return Karm::DataSize::fromGiB(val);
 }
+
+} // namespace Karm::Literals

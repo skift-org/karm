@@ -3,6 +3,9 @@
 import Karm.Http;
 import Karm.Ref;
 
+using namespace Karm::Literals;
+using namespace Karm::Ref::Literals;
+
 namespace Karm::Http::Tests {
 
 test$("parse-unparse-http-request-no-header") {

@@ -9,6 +9,8 @@ import Karm.App.Base;
 import Karm.Logger;
 import :_embed;
 
+using namespace Karm::Literals;
+
 namespace Karm::App {
 
 export using WindowId = Distinct<usize, struct WindowIdTag>;

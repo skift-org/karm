@@ -6,6 +6,8 @@ export module Karm.Icc:base;
 
 import Karm.Core;
 
+using namespace Karm::Literals;
+
 namespace Karm::Icc {
 
 export using Karm::begin, Karm::end;

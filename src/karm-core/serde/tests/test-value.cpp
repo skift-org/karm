@@ -2,6 +2,8 @@
 
 import Karm.Core;
 
+using namespace Karm::Literals;
+
 namespace Karm::Serde::Tests {
 
 test$("json-value-null") {

@@ -116,6 +116,8 @@ Symbol Symbol::from(Str str) {
 
 } // namespace Karm
 
+namespace Karm::Literals {
+
 export constexpr Karm::Symbol operator""_sym(char const* buf, Karm::usize len) {
     return Karm::Symbol::from({buf, len});
 }
@@ -123,3 +125,5 @@ export constexpr Karm::Symbol operator""_sym(char const* buf, Karm::usize len) {
 export constexpr Karm::Symbol operator""_sym(char const* buf) {
     return Karm::Symbol::from(buf);
 }
+
+} // namespace Karm::Literals

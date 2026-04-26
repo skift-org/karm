@@ -10,6 +10,8 @@ import Karm.Ui;
 import Karm.Gfx;
 import Karm.Math;
 
+using namespace Karm::Literals;
+
 namespace Karm::Print {
 
 // MARK: Model -----------------------------------------------------------------

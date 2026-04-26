@@ -4,6 +4,8 @@ import Karm.Logger;
 
 import :base;
 
+using namespace Karm::Literals;
+
 namespace Karm::Md {
 
 String _htmlEscape(Str str) {

@@ -10,6 +10,8 @@ import :io.emit;
 import :io.expr;
 import :io.funcs;
 
+using namespace Karm::Re::Literals;
+
 namespace Karm::Json {
 
 // MARK: Parse -----------------------------------------------------------------
@@ -391,6 +393,10 @@ export Res<String> unparse(Serde::Value const& v) {
 
 } // namespace Karm::Json
 
+namespace Karm::Json::Literals {
+
 export auto operator""_json(char const* str, Karm::usize len) {
     return Karm::Json::parse({str, len}).unwrap();
 }
+
+} // namespace Karm::Json::Literals

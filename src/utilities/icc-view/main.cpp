@@ -7,6 +7,7 @@ import Karm.Icc;
 import Karm.Logger;
 
 using namespace Karm;
+using namespace Karm::Literals;
 
 struct ProfileItem {
     String name;

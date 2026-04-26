@@ -4,6 +4,8 @@ import Karm.Core;
 import Karm.Math;
 import Karm.Logger;
 
+using namespace Karm::Literals;
+
 namespace Karm::Gfx {
 
 export struct Canvas;

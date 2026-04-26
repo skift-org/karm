@@ -5,6 +5,9 @@ import Karm.Core;
 import :mime;
 import :uid;
 
+using namespace Karm::Literals;
+using namespace Karm::Ref::Literals;
+
 namespace Karm::Ref {
 
 /// Represents a Uniform Type Identifier (UTI).
@@ -254,6 +257,10 @@ export struct Uti {
 
 } // namespace Karm::Ref
 
+namespace Karm::Ref::Literals {
+
 export auto operator""_uti(char const* str, Karm::usize len) {
     return Karm::Ref::Uti(Karm::Symbol::from(Karm::Str{str, len}));
 }
+
+} // namespace Karm::Ref::Literals

@@ -686,6 +686,8 @@ export struct BigFrac {
 
 } // namespace Karm::Math
 
+namespace Karm::Math::Literals {
+
 export Karm::Math::UBig operator""_ubig(unsigned long long value) {
     return Karm::Math::UBig{static_cast<Karm::usize>(value)};
 }
@@ -703,3 +705,5 @@ export Karm::Math::BigFrac operator""_bigfrac(unsigned long long value) {
 // export Karm::Math::BigFrac operator""_bigfrac(long double value) {
 //     return Karm::Math::BigFrac{static_cast<Karm::f64>(value)};
 // }
+
+} // namespace Karm::Math::Literals

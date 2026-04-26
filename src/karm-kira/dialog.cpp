@@ -7,6 +7,8 @@ import Karm.Gfx;
 import Karm.Math;
 import Mdi;
 
+using namespace Karm::Literals;
+
 namespace Karm::Kira {
 
 export Ui::Child dialogContent(Ui::Children children) {

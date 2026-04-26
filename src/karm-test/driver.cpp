@@ -8,6 +8,8 @@ import Karm.Glob;
 
 import :test;
 
+using namespace Karm::Literals;
+
 namespace Karm::Test {
 
 namespace {

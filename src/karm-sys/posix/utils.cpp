@@ -13,6 +13,9 @@ import Karm.Core;
 import Karm.Sys;
 import Karm.Ref;
 
+using namespace Karm::Literals;
+using namespace Karm::Ref::Literals;
+
 namespace Karm::Posix {
 
 export Error fromErrno(isize error) {

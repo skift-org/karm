@@ -5,6 +5,7 @@ import Karm.Ref;
 import Karm.Sys;
 
 using namespace Karm;
+using namespace Karm::Literals;
 
 static void _dumpRegistration(Ref::Uti uti) {
     Sys::println("name: {}", uti.name());

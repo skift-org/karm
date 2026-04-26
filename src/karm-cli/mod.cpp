@@ -9,6 +9,9 @@ import Karm.Debug;
 import Karm.Sys;
 import Karm.Ref;
 
+using namespace Karm::Literals;
+using namespace Karm::Re::Literals;
+
 namespace Karm::Cli {
 
 // MARK: Tokenizer -------------------------------------------------------------

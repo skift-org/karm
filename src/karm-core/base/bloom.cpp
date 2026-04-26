@@ -7,6 +7,8 @@ import :base.size;
 import :base.range;
 import :math.funcs;
 
+using namespace Karm::Literals;
+
 namespace Karm {
 
 export template <typename T>
@@ -73,6 +75,5 @@ struct Bloom {
         zeroFill(mutBytes(_buf));
     }
 };
-
 
 } // namespace Karm

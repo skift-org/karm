@@ -6,6 +6,8 @@ export module Karm.Tty:style;
 
 import Karm.Core;
 
+using namespace Karm::Literals;
+
 namespace Karm::Tty {
 
 export enum Color {

@@ -10,6 +10,8 @@ import Karm.Logger;
 
 import :flate;
 
+using namespace Karm::Literals;
+
 namespace Karm::Archive {
 
 static auto debugZlib = Debug::Flag::debug("zlib", "Log zlib decompression"s);

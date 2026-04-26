@@ -2,6 +2,8 @@
 
 import Karm.Ref;
 
+using namespace Karm::Ref::Literals;
+
 namespace Karm::Ref::Tests {
 
 test$("karm-ref-uuid-parse") {

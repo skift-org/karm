@@ -8,6 +8,8 @@ import Karm.Ref;
 
 import :_embed;
 
+using namespace Karm::Literals;
+
 namespace Karm::Sys {
 
 export struct Bundle {

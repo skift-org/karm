@@ -185,10 +185,6 @@ export struct Path {
 
 } // namespace Karm::Ref
 
-export auto operator""_path(char const* str, Karm::usize len) {
-    return Karm::Ref::Path::parse({str, len});
-}
-
 export auto operator/(Karm::Ref::Path const& path, Karm::Ref::Path const& other) {
     return path.join(other);
 }
@@ -203,3 +199,11 @@ struct Karm::Io::Formatter<Karm::Ref::Path> {
         return path.unparse(writer);
     }
 };
+
+namespace Karm::Ref::Literals {
+
+export auto operator""_path(char const* str, Karm::usize len) {
+    return Karm::Ref::Path::parse({str, len});
+}
+
+} // namespace Karm::Ref::Literals

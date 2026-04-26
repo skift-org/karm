@@ -2,6 +2,8 @@ import Karm.Core;
 
 #include <karm/test>
 
+using namespace Karm::Literals;
+
 namespace Karm::Base::Tests {
 
 test$("string-default-constructed-inline") {

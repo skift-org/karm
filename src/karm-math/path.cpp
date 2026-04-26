@@ -15,6 +15,8 @@ import :rect;
 import :vec;
 import :trans;
 
+using namespace Karm::Re::Literals;
+
 namespace Karm::Math {
 
 export using Karm::begin, Karm::end;

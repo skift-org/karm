@@ -1033,6 +1033,10 @@ export struct FStr {
 
 } // namespace Karm::Io
 
+namespace Karm::Fmt::Literals {
+
 export constexpr Karm::Io::FStr operator""_f(char const* buf, Karm::usize len) {
     return {Karm::Str{buf, len}};
 }
+
+} // namespace Karm::Fmt::Literals

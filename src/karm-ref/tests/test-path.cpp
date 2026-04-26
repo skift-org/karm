@@ -2,6 +2,9 @@
 
 import Karm.Ref;
 
+using namespace Karm::Literals;
+using namespace Karm::Ref::Literals;
+
 namespace Karm::Ref::Tests {
 
 test$("karm-ref-path-up-down") {

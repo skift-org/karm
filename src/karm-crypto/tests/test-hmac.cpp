@@ -2,6 +2,8 @@
 
 import Karm.Crypto;
 
+using namespace Karm::Literals;
+
 namespace Karm::Crypto::Tests {
 
 test$("crypto-hmac") {

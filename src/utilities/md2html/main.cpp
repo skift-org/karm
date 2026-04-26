@@ -6,6 +6,7 @@ import Karm.Ref;
 import Karm.Sys;
 
 using namespace Karm;
+using namespace Karm::Literals;
 
 Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
     auto urlArg = Cli::operand<Ref::Url>("url"s, "Markdown document to convert to HTML"s);

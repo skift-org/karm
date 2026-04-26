@@ -6,6 +6,8 @@ export module Karm.Crypto:hex;
 
 import Karm.Core;
 
+using namespace Karm::Literals;
+
 namespace Karm::Crypto {
 
 export Res<> hexEncode(Bytes bytes, Io::TextWriter& out) {

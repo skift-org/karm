@@ -322,6 +322,8 @@ export constexpr Expr auto optSeparator(Expr auto expr) {
 
 } // namespace Karm::Re
 
+namespace Karm::Re::Literals {
+
 export constexpr Karm::Re::Expr auto operator""_re(char const* str, Karm::usize len) {
     return Karm::Re::word(Karm::Str{str, len});
 }
@@ -329,3 +331,5 @@ export constexpr Karm::Re::Expr auto operator""_re(char const* str, Karm::usize 
 export constexpr Karm::Re::Expr auto operator""_re(char c) {
     return Karm::Re::single(c);
 }
+
+} // namespace Karm::Re::Literals

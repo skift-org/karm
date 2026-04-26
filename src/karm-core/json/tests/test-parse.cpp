@@ -1,5 +1,8 @@
 #include <karm/test>
+
 import Karm.Core;
+
+using namespace Karm::Json::Literals;
 
 namespace Karm::Json::Tests {
 

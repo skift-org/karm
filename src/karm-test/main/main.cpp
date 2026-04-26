@@ -4,6 +4,7 @@ import Karm.Cli;
 import Karm.Test;
 
 using namespace Karm;
+using namespace Karm::Literals;
 
 Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken ct) {
     auto globArg = Cli::option<Str>(

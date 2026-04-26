@@ -11,6 +11,8 @@ import Karm.Gfx;
 import Karm.Math;
 import Karm.Logger;
 
+using namespace Karm::Literals;
+
 namespace Karm::Image::Png {
 
 using Karm::begin, Karm::end;

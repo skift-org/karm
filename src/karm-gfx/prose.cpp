@@ -5,6 +5,8 @@ import Karm.Math;
 import :color;
 import :font;
 
+using namespace Karm::Math::Literals;
+
 namespace Karm::Gfx {
 
 export enum struct TextAlign {

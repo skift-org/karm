@@ -5,6 +5,8 @@ import Karm.Gfx;
 import Karm.Math;
 import Karm.Core;
 
+using namespace Karm::Literals;
+
 namespace Karm::Kira {
 
 export Ui::Child errorPageTitle(Gfx::Icon icon, String text) {

@@ -127,42 +127,6 @@ export struct Duration {
     bool operator==(Duration const& other) const = default;
 };
 
-export Duration operator""_us(unsigned long long value) {
-    return Duration::fromUSecs(value);
-}
-
-export Duration operator""_ms(unsigned long long value) {
-    return Duration::fromMSecs(value);
-}
-
-export Duration operator""_s(unsigned long long value) {
-    return Duration::fromSecs(value);
-}
-
-export Duration operator""_m(unsigned long long value) {
-    return Duration::fromMinutes(value);
-}
-
-export Duration operator""_h(unsigned long long value) {
-    return Duration::fromHours(value);
-}
-
-export Duration operator""_d(unsigned long long value) {
-    return Duration::fromDays(value);
-}
-
-export Duration operator""_w(unsigned long long value) {
-    return Duration::fromWeeks(value);
-}
-
-export Duration operator""_M(unsigned long long value) {
-    return Duration::fromMonths(value);
-}
-
-export Duration operator""_y(unsigned long long value) {
-    return Duration::fromYears(value);
-}
-
 export struct MonotonicClock {
     static constexpr bool monotonic = true;
 };
@@ -546,3 +510,43 @@ export struct DateTime {
 };
 
 } // namespace Karm
+
+namespace Karm::Literals {
+
+export Duration operator""_us(unsigned long long value) {
+    return Duration::fromUSecs(value);
+}
+
+export Duration operator""_ms(unsigned long long value) {
+    return Duration::fromMSecs(value);
+}
+
+export Duration operator""_s(unsigned long long value) {
+    return Duration::fromSecs(value);
+}
+
+export Duration operator""_m(unsigned long long value) {
+    return Duration::fromMinutes(value);
+}
+
+export Duration operator""_h(unsigned long long value) {
+    return Duration::fromHours(value);
+}
+
+export Duration operator""_d(unsigned long long value) {
+    return Duration::fromDays(value);
+}
+
+export Duration operator""_w(unsigned long long value) {
+    return Duration::fromWeeks(value);
+}
+
+export Duration operator""_M(unsigned long long value) {
+    return Duration::fromMonths(value);
+}
+
+export Duration operator""_y(unsigned long long value) {
+    return Duration::fromYears(value);
+}
+
+} // namespace Karm::Literals

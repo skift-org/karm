@@ -2,6 +2,9 @@
 
 import Karm.Regex;
 
+using namespace Karm::Literals;
+using namespace Karm::Regex::Literals;
+
 namespace Karm::Regex::Tests {
 
 test$("regex-atom") {

@@ -2,6 +2,8 @@ import Karm.Core;
 
 #include <karm/test>
 
+using namespace Karm::Literals;
+
 namespace Karm::Tests {
 
 test$("symbol-equality") {

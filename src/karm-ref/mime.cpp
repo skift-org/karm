@@ -2,6 +2,8 @@ export module Karm.Ref:mime;
 
 import Karm.Core;
 
+using namespace Karm::Re::Literals;
+
 namespace Karm::Ref {
 
 export struct Mime {
@@ -53,6 +55,10 @@ export struct Mime {
 
 } // namespace Karm::Ref
 
+namespace Karm::Ref::Literals {
+
 export auto operator""_mime(char const* buf, Karm::usize len) {
     return Karm::Ref::Mime(Karm::Str{buf, len});
 }
+
+} // namespace Karm::Ref::Literals

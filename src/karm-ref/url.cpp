@@ -335,10 +335,6 @@ export Url parseUrlOrPath(Str str, Url baseUrl) {
 
 } // namespace Karm::Ref
 
-export Karm::Ref::Url operator""_url(char const* str, Karm::usize len) {
-    return Karm::Ref::Url::parse({str, len});
-}
-
 export Karm::Ref::Url operator/(Karm::Ref::Url const& url, Karm::Str path) {
     return url.join(path);
 }
@@ -357,3 +353,11 @@ struct Karm::Io::Formatter<Karm::Ref::Url> {
         return url.unparse(writer);
     }
 };
+
+namespace Karm::Ref::Literals {
+
+export Karm::Ref::Url operator""_url(char const* str, Karm::usize len) {
+    return Karm::Ref::Url::parse({str, len});
+}
+
+} // namespace Karm::Ref::Literals

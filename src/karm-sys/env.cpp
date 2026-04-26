@@ -7,6 +7,8 @@ export module Karm.Sys:env;
 import Karm.Core;
 import Karm.Ref;
 
+using namespace Karm::Literals;
+
 namespace Karm::Sys {
 
 export struct Vars {

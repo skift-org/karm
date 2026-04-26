@@ -5,6 +5,8 @@ import Karm.Pdf;
 import Karm.Core;
 import Karm.Gfx;
 
+using namespace Karm::Literals;
+
 namespace Karm::Print {
 
 export struct TtfGlyphInfoAdapter {

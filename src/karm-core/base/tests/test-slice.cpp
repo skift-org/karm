@@ -1,5 +1,7 @@
 #include <karm/test>
 
+using namespace Karm::Literals;
+
 namespace Karm::Base {
 
 auto needle(isize value) {

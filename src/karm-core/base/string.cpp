@@ -396,6 +396,8 @@ export void debug(Str msg) {
 
 } // namespace Karm
 
+namespace Karm::Literals {
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wuser-defined-literals"
 
@@ -412,3 +414,5 @@ export constexpr Karm::_Str<Karm::Utf16> operator""_s16(char16_t const* buf, Kar
 }
 
 #pragma clang diagnostic pop
+
+} // namespace Karm::Literals

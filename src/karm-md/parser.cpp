@@ -4,6 +4,8 @@ import Karm.Core;
 
 import :base;
 
+using namespace Karm::Re::Literals;
+
 namespace Karm::Md {
 
 void _eatWhitespace(Io::SScan& s) {

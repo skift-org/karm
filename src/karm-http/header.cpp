@@ -7,6 +7,9 @@ export module Karm.Http:header;
 import Karm.Core;
 import Karm.Ref;
 
+using namespace Karm::Literals;
+using namespace Karm::Re::Literals;
+
 namespace Karm::Http {
 
 // MARK: Version ---------------------------------------------------------------

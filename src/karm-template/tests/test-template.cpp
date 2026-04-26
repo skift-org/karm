@@ -3,6 +3,8 @@
 import Karm.Core;
 import Karm.Template;
 
+using namespace Karm::Literals;
+
 namespace Karm::Template::Tests {
 
 test$("template-eval") {

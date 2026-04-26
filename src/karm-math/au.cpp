@@ -137,6 +137,8 @@ export using RadiiAu = Math::Radii<Au>;
 
 } // namespace Karm
 
+namespace Karm::Math::Literals {
+
 export constexpr Karm::Au operator""_au(unsigned long long val) {
     return Karm::Au{val};
 }
@@ -144,3 +146,5 @@ export constexpr Karm::Au operator""_au(unsigned long long val) {
 export constexpr Karm::Au operator""_au(long double val) {
     return Karm::Au{val};
 }
+
+} // namespace Karm::Math::Literals

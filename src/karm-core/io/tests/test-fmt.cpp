@@ -3,6 +3,8 @@
 import Karm.Core;
 import Karm.Logger;
 
+using namespace Karm::Literals;
+
 namespace Karm::Io::Tests {
 
 template <typename T>

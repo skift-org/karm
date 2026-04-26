@@ -6,6 +6,8 @@ export module Karm.Sys:pipe;
 
 import :file;
 
+using namespace Karm::Ref::Literals;
+
 namespace Karm::Sys {
 
 export struct Pipe {

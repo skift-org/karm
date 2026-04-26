@@ -385,6 +385,10 @@ export struct Regex {
 
 } // namespace Karm::Regex
 
+namespace Karm::Regex::Literals {
+
 export constexpr Karm::Regex::Regex operator""_regex(char const* str, Karm::usize len) {
     return Karm::Regex::Regex::from(Karm::Str{str, len});
 }
+
+} // namespace Karm::Regex::Literals

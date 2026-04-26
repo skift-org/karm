@@ -10,6 +10,8 @@ import Karm.Math;
 
 import :node;
 
+using namespace Karm::Ref::Literals;
+
 namespace Karm::Ui {
 
 // MARK: Base ------------------------------------------------------------------

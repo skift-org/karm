@@ -6,6 +6,8 @@ export module Karm.Idl:parser;
 
 import :ast;
 
+using namespace Karm::Re::Literals;
+
 namespace Karm::Idl {
 
 static void _eatWhitespace(Io::SScan& s) {

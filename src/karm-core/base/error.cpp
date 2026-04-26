@@ -7,6 +7,8 @@ import :base.string;
 import :base.union_;
 import :base.box;
 
+using namespace Karm::Literals;
+
 namespace Karm {
 
 #define FOREACH_ERROR(ERROR)                                  \

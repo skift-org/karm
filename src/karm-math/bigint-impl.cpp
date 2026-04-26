@@ -2,6 +2,8 @@ module Karm.Math;
 
 import Karm.Core;
 
+using namespace Karm::Math::Literals;
+
 namespace Karm::Math {
 
 // MARK: Unsigned Big Integer --------------------------------------------------

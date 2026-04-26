@@ -10,6 +10,9 @@ import Karm.Ref;
 import :async;
 import :fd;
 
+using namespace Karm::Literals;
+using namespace Karm::Fmt::Literals;
+
 namespace Karm::Sys {
 
 export struct File :

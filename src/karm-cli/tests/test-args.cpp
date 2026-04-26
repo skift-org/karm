@@ -3,6 +3,8 @@
 import Karm.Cli;
 import Karm.Sys;
 
+using namespace Karm::Literals;
+
 namespace Karm::Cli::Tests {
 
 test$("karm-cli-args-tokenizer") {

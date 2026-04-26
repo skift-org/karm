@@ -8,9 +8,9 @@ import Karm.Core;
 import Karm.Tty;
 import Karm.Ref;
 
-using namespace Karm;
+using namespace Karm::Literals;
 
-namespace Diag {
+namespace Karm::Diag {
 
 // MARK: Diagnostic Level ------------------------------------------------------
 
@@ -443,4 +443,4 @@ export struct SimpleRenderer {
     }
 };
 
-} // namespace Diag
+} // namespace Karm::Diag

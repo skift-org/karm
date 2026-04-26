@@ -6,6 +6,8 @@ import Karm.Gfx;
 import Karm.Math;
 import Karm.Logger;
 
+using namespace Karm::Literals;
+
 namespace Karm::Pdf {
 
 static auto debugCanvas = Debug::Flag::debug("pdf-canvas", "Log PDF canvas failures");

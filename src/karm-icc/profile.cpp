@@ -10,6 +10,8 @@ import Karm.Ref;
 
 import :base;
 
+using namespace Karm::Ref::Literals;
+
 namespace Karm::Icc {
 
 export struct ColorProfile {

@@ -2,6 +2,8 @@
 
 import Karm.Http;
 
+using namespace Karm::Literals;
+
 namespace Karm::Http::Tests {
 
 test$("read-http-response-good-body") {

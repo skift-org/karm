@@ -3,6 +3,8 @@ export module Karm.Image:bmp.encoder;
 import Karm.Core;
 import Karm.Gfx;
 
+using namespace Karm::Literals;
+
 namespace Karm::Image::Bmp {
 
 namespace {

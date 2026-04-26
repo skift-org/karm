@@ -6,6 +6,8 @@ export module Karm.Template;
 
 import Karm.Core;
 
+using namespace Karm::Re::Literals;
+
 namespace Karm::Template {
 
 struct Expr {
