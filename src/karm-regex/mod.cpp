@@ -62,21 +62,23 @@ struct EitherMatcher : Matcher {
 };
 
 struct ChainMatcher : Matcher {
-    Rc<Matcher> _lhs;
-    Rc<Matcher> _rhs;
+    Vec<Rc<Matcher>> _matchers;
 
-    ChainMatcher(Rc<Matcher> lhs, Rc<Matcher> rhs)
-        : _lhs(lhs), _rhs(rhs) {}
+    ChainMatcher(Vec<Rc<Matcher>> matchers)
+        : _matchers(matchers) {}
 
     Opt<Match> match(Str input, usize curr) const override {
-        auto lhsMatch = _lhs->match(input, curr);
-        if (not lhsMatch)
-            return NONE;
-        return _rhs->match(input, lhsMatch->end);
+        Opt<Match> match = Match{curr};
+        for (auto& m : _matchers) {
+            match = m->match(input, match->end);
+            if (not match)
+                return NONE;
+        }
+        return match;
     }
 
     void repr(Io::Emit& e) const override {
-        e("(chain {} {})", _lhs, _rhs);
+        e("(chain {})", _matchers);
     }
 };
 
@@ -224,6 +226,8 @@ static auto RE_SYNTAX_CHARACTER =
 static auto RE_PATTERN_CHARACTER =
     Re::negate(RE_SYNTAX_CHARACTER);
 
+static Res<Rc<Matcher>> _parseTerm(Io::SScan& s);
+
 static Res<Quantifier> _parseQuantifier(Io::SScan& s) {
     if (s.skip("*"))
         return Ok(Quantifier{0, NONE});
@@ -259,13 +263,25 @@ static Res<Rc<Matcher>> _parseAtomEscape(Io::SScan& s) {
     }
 }
 
-static Res<Rc<Matcher>> _parseAtom(Io::SScan& s) {
+static Res<Rc<Matcher>> _parseGroupe(Io::SScan& s) {
+    Vec<Rc<Matcher>> matchers;
+    while (not s.ahead(")"))
+        matchers.pushBack(try$(_parseTerm(s)));
+    if (not s.skip(")"))
+        return Error::invalidData("expected closing )");
+    return Ok(makeRc<ChainMatcher>(std::move(matchers)));
+}
+
+static Res<Rc<Matcher>>
+_parseAtom(Io::SScan& s) {
     if (auto chr = s.token(RE_PATTERN_CHARACTER)) {
         return Ok(makeRc<AtomMatcher>(chr));
     } else if (s.skip(".")) {
         return Ok(makeRc<DotMatcher>());
     } else if (s.skip("\\")) {
         return _parseAtomEscape(s);
+    } else if (s.skip("(")) {
+        return _parseGroupe(s);
     } else {
         return Error::invalidData("expected atom");
     }
@@ -303,10 +319,11 @@ static Res<Rc<Matcher>> _parseAlternative(Io::SScan& s) {
     if (not lhs)
         return Ok(makeRc<NopMatcher>());
 
+    Vec<Rc<Matcher>> matchers{*lhs};
     while (auto rhs = _parseTerm(s).ok())
-        lhs = makeRc<ChainMatcher>(lhs.take(), rhs.take());
+        matchers.pushBack(rhs.take());
 
-    return Ok(lhs.take());
+    return Ok(makeRc<ChainMatcher>(std::move(matchers)));
 }
 
 static Res<Rc<Matcher>> _parseDisjunction(Io::SScan& s) {

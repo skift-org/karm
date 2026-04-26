@@ -30,4 +30,14 @@ test$("regex-disjunction") {
     return Ok();
 }
 
+test$("regex-group") {
+    auto re = "(ab)+"_regex;
+    expect$(re.wholeMatch("ab") != NONE);
+    expect$(re.wholeMatch("abababababab") != NONE);
+    expectNot$(re.wholeMatch("abababababa") != NONE);
+    expectNot$(re.contains(""));
+
+    return Ok();
+}
+
 } // namespace Karm::Regex::Tests
