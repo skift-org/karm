@@ -28,21 +28,7 @@ export struct Au {
     constexpr Au() = default;
 
     template <Meta::Float F>
-    explicit constexpr Au(F px) {
-        if (isNan(px)) {
-            _val = 0;
-            return;
-        }
-
-        f64 val = static_cast<f64>(px) * _UNIT_PER_PX;
-
-        if (val > static_cast<f64>(_MAX))
-            _val = _MAX;
-        else if (val < static_cast<f64>(_MIN))
-            _val = _MIN;
-        else
-            _val = static_cast<i32>(val);
-    }
+    explicit constexpr Au(F px) : Au(fromFloatNearest(px)) {}
 
     template <Meta::Integral I>
     explicit constexpr Au(I px) : Au(static_cast<f64>(px)) {}
@@ -55,7 +41,7 @@ export struct Au {
 
     template <Meta::Float F>
     always_inline static constexpr Au fromFloatNearest(F px) {
-        if (isNan(px))
+        if (Math::isNan(px))
             return Au{};
 
         f64 val = static_cast<f64>(px) * _UNIT_PER_PX;
@@ -66,6 +52,36 @@ export struct Au {
             return fromRaw(_MIN);
 
         return fromRaw(Math::roundi(val));
+    }
+
+    template <Meta::Float F>
+    always_inline static constexpr Au fromFloatFloor(F px) {
+        if (Math::isNan(px))
+            return Au{};
+
+        f64 val = static_cast<f64>(px) * _UNIT_PER_PX;
+
+        if (val > static_cast<f64>(_MAX))
+            return fromRaw(_MAX);
+        if (val < static_cast<f64>(_MIN))
+            return fromRaw(_MIN);
+
+        return fromRaw(Math::floori(val));
+    }
+
+    template <Meta::Float F>
+    always_inline static constexpr Au fromFloatCeil(F px) {
+        if (Math::isNan(px))
+            return Au{};
+
+        f64 val = static_cast<f64>(px) * _UNIT_PER_PX;
+
+        if (val > static_cast<f64>(_MAX))
+            return fromRaw(_MAX);
+        if (val < static_cast<f64>(_MIN))
+            return fromRaw(_MIN);
+
+        return fromRaw(Math::ceili(val));
     }
 
     always_inline constexpr bool operator==(Au const& other) const = default;
