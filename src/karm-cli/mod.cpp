@@ -33,7 +33,7 @@ export struct Token {
     Str value = "";
 
     Token(Str value)
-        : Token(Kind::OPERAND, value) {}
+        : Token(OPERAND, value) {}
 
     Token(Kind kind, Str value)
         : kind(kind), value(value) {}
@@ -42,12 +42,12 @@ export struct Token {
         : kind(kind) {}
 
     Token(Rune flag)
-        : kind(Kind::FLAG), flag(flag) {}
+        : kind(FLAG), flag(flag) {}
 
     bool operator==(Token const& other) const = default;
 
     void repr(Io::Emit& e) const {
-        if (kind == Kind::FLAG)
+        if (kind == FLAG)
             e("(token {} {#c})", kind, flag);
         else
             e("(token {} {#})", kind, value);
@@ -596,9 +596,7 @@ export struct Command : Meta::Pinned {
                 Io::Emit e{w};
                 e.indent();
                 if (sec.prolog) {
-                    e("{}", sec.prolog);
-                    try$(e.flush());
-                    try$(w.writeRune('\n'));
+                    e("{}\n", sec.prolog);
                 }
 
                 if (sec.options) {
@@ -612,14 +610,13 @@ export struct Command : Meta::Pinned {
 
                         try$(format(w, "--{} - {}\n", opt->longName, opt->description));
                     }
-                    try$(w.writeRune('\n'));
                 }
 
-                if (sec.epilog) {
-                    e("{}", sec.epilog);
-                    try$(e.flush());
-                    try$(w.writeRune('\n'));
-                }
+                if (sec.epilog)
+                    e("{}\n", sec.epilog);
+
+                try$(e.flush());
+                try$(w.writeRune('\n'));
             }
         }
 
