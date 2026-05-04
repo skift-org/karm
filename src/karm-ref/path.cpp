@@ -87,6 +87,26 @@ export struct Path {
         return last(_segs);
     }
 
+    Str stem() const {
+        auto base = basename();
+        if (not base)
+            return "";
+        auto dotIndex = lastIndexOf(base, '.');
+        if (not dotIndex)
+            return base;
+        return sub(base, 0, *dotIndex);
+    }
+
+    Str suffix() const {
+        auto base = basename();
+        if (not base)
+            return "";
+        auto dotIndex = lastIndexOf(base, '.');
+        if (not dotIndex)
+            return "";
+        return next(base, *dotIndex + 1);
+    }
+
     Path join(Path const& other) const {
         if (other.rooted)
             return other;
@@ -172,15 +192,6 @@ export struct Path {
     bool operator==(Path const&) const = default;
 
     auto operator<=>(Path const&) const = default;
-
-    Str suffix() const {
-        if (not _segs.len())
-            return "";
-        auto dotIndex = lastIndexOf(last(_segs), '.');
-        if (not dotIndex.has())
-            return "";
-        return next(last(_segs), *dotIndex + 1);
-    }
 };
 
 } // namespace Karm::Ref
