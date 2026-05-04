@@ -318,10 +318,10 @@ export struct Canvas : Meta::NoCopy {
                     if (cell.span and cell.span.unwrap()->color) {
                         push();
                         fillStyle(*cell.span.unwrap()->color);
-                        fill(prose._style.font, cell.glyph, Vec2Au{block.pos + cell.pos, line.baseline}.cast<f64>());
+                        fill(prose._style.font, cell.glyph, Math::Vec2Au{block.pos + cell.pos, line.baseline}.cast<f64>());
                         pop();
                     } else {
-                        fill(prose._style.font, cell.glyph, Vec2Au{block.pos + cell.pos, line.baseline}.cast<f64>());
+                        fill(prose._style.font, cell.glyph, Math::Vec2Au{block.pos + cell.pos, line.baseline}.cast<f64>());
                     }
                 }
             }

@@ -4,6 +4,7 @@ import Karm.Core;
 
 import :insets;
 import :vec;
+import :au;
 
 namespace Karm::Math {
 
@@ -191,5 +192,6 @@ struct Radii {
 
 export using Radiii = Radii<i64>;
 export using Radiif = Radii<f64>;
+export using RadiiAu = Radii<Au>;
 
 } // namespace Karm::Math

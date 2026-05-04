@@ -5,6 +5,7 @@ module;
 export module Karm.Math:vec;
 
 import Karm.Core;
+import :au;
 
 namespace Karm::Math {
 
@@ -780,6 +781,8 @@ export using Vec4i = Vec4<isize>;
 export using Vec4u = Vec4<usize>;
 
 export using Vec4f = Vec4<f64>;
+
+export using Vec2Au = Vec2<Au>;
 
 export template <typename T>
 bool epsilonEq(Vec4<T> const& lhs, Vec4<T> const& rhs, T epsilon) {

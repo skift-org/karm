@@ -7,6 +7,7 @@ export module Karm.Math:rect;
 import Karm.Core;
 import :insets;
 import :vec;
+import :au;
 
 namespace Karm::Math {
 
@@ -363,5 +364,7 @@ Rect<T> const Rect<T>::MAX = {Limits<T>::MAX, Limits<T>::MAX};
 export using Recti = Rect<isize>;
 
 export using Rectf = Rect<f64>;
+
+export using RectAu = Rect<Au>;
 
 } // namespace Karm::Math

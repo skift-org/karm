@@ -8,8 +8,8 @@ namespace Karm::Print {
 export constexpr f64 DPI = 96.0;
 export constexpr f64 MM_PER_INCH = 25.4;
 
-export constexpr Au mmToAu(f64 mm) {
-    return Au{mm * (DPI / MM_PER_INCH)};
+export constexpr Math::Au mmToAu(f64 mm) {
+    return Math::Au{mm * (DPI / MM_PER_INCH)};
 }
 
 export enum struct Orientation {
@@ -19,17 +19,17 @@ export enum struct Orientation {
     _LEN,
 };
 
-export Orientation orientationFromSize(Vec2Au size) {
+export Orientation orientationFromSize(Math::Vec2Au size) {
     return (size.height >= size.width) ? Orientation::PORTRAIT : Orientation::LANDSCAPE;
 }
 
 export struct PaperStock {
     // Size in CSS pixels at 96 DPI
     Str name;
-    Au minorAxis;
-    Au majorAxis;
+    Math::Au minorAxis;
+    Math::Au majorAxis;
 
-    PaperStock static custom(Au minorAxis, Au majorAxis) {
+    PaperStock static custom(Math::Au minorAxis, Math::Au majorAxis) {
         return PaperStock{
             .name = "Custom",
             .minorAxis = minorAxis,
@@ -37,7 +37,7 @@ export struct PaperStock {
         };
     }
 
-    Vec2Au size(Orientation orientation) const {
+    Math::Vec2Au size(Orientation orientation) const {
         if (orientation == Orientation::PORTRAIT) {
             return {minorAxis, majorAxis};
         } else {
@@ -161,7 +161,7 @@ export constexpr Array SERIES = {
     ENVELOPE_SERIES,
 };
 
-export Res<PaperStock> findPaperStock(Str name) {
+export Res<PaperStock> lookupStockByName(Str name) {
     for (auto const& series : SERIES) {
         for (auto const& stock : series.stocks) {
             if (eqCi(stock.name, name))
@@ -184,13 +184,13 @@ export struct Margins {
     };
     using enum Named;
     Named named;
-    InsetsAu custom = mmToAu(20.0);
+    Math::InsetsAu custom = mmToAu(20.0);
 
     Margins(Named named)
         : named(named) {}
 
-    Margins(InsetsAu custom)
-        : named(Named::CUSTOM), custom(custom) {}
+    Margins(Math::InsetsAu custom)
+        : named(CUSTOM), custom(custom) {}
 
     bool operator==(Named named) const {
         return this->named == named;
@@ -209,7 +209,7 @@ export struct Settings {
     bool headerFooter = true;
     bool backgroundGraphics = true;
 
-    Vec2Au pageSize() const {
+    Math::Vec2Au pageSize() const {
         return stock.size(orientation);
     }
 

@@ -4,14 +4,10 @@ module;
 
 export module Karm.Math:au;
 
+import Karm.Core;
 import :fixed;
-import :insets;
-import :radii;
-import :rect;
 
-// NOTE: Not in the Karm::Math namespace because it's pretty commonly used
-//       and typing Math::Au is a bit too much.
-namespace Karm {
+namespace Karm::Math {
 
 // Au (aka Application Unit, Atomic Unit, Absurd Unit, Almighty Unit, Annoying Unit, Autistic Unit, Awesome Unit, Anarcho-Unit, Avocado Unit, Adorable Unit, etc...) is the fundamental
 // unit of measurement in Karm.
@@ -19,7 +15,7 @@ namespace Karm {
 //  - https://docs.rs/app_units/latest/app_units/
 //  - https://bugzilla.mozilla.org/show_bug.cgi?id=177805
 export struct Au {
-    static constexpr f64 _UNIT_PER_PX = 60.0;
+    static constexpr i32 _DENO = 60.0;
     static constexpr i32 _MAX = (1 << 30) - 1;
     static constexpr i32 _MIN = -_MAX;
 
@@ -27,11 +23,9 @@ export struct Au {
 
     constexpr Au() = default;
 
-    template <Meta::Float F>
-    explicit constexpr Au(F px) : Au(fromFloatNearest(px)) {}
+    explicit constexpr Au(Meta::Float auto value) : Au(fromFloatNearest(value)) {}
 
-    template <Meta::Integral I>
-    explicit constexpr Au(I px) : Au(static_cast<f64>(px)) {}
+    explicit constexpr Au(Meta::Integral auto value) : Au(static_cast<f64>(value)) {}
 
     always_inline static constexpr Au fromRaw(i32 value) {
         Au au;
@@ -40,48 +34,48 @@ export struct Au {
     }
 
     template <Meta::Float F>
-    always_inline static constexpr Au fromFloatNearest(F px) {
-        if (Math::isNan(px))
+    always_inline static constexpr Au fromFloatNearest(F value) {
+        if (isNan(value))
             return Au{};
 
-        f64 val = static_cast<f64>(px) * _UNIT_PER_PX;
+        f64 val = static_cast<f64>(value) * _DENO;
 
         if (val > static_cast<f64>(_MAX))
             return fromRaw(_MAX);
         if (val < static_cast<f64>(_MIN))
             return fromRaw(_MIN);
 
-        return fromRaw(Math::roundi(val));
+        return fromRaw(roundi(val));
     }
 
     template <Meta::Float F>
-    always_inline static constexpr Au fromFloatFloor(F px) {
-        if (Math::isNan(px))
+    always_inline static constexpr Au fromFloatFloor(F value) {
+        if (isNan(value))
             return Au{};
 
-        f64 val = static_cast<f64>(px) * _UNIT_PER_PX;
+        f64 val = static_cast<f64>(value) * _DENO;
 
         if (val > static_cast<f64>(_MAX))
             return fromRaw(_MAX);
         if (val < static_cast<f64>(_MIN))
             return fromRaw(_MIN);
 
-        return fromRaw(Math::floori(val));
+        return fromRaw(floori(val));
     }
 
     template <Meta::Float F>
-    always_inline static constexpr Au fromFloatCeil(F px) {
-        if (Math::isNan(px))
+    always_inline static constexpr Au fromFloatCeil(F value) {
+        if (isNan(value))
             return Au{};
 
-        f64 val = static_cast<f64>(px) * _UNIT_PER_PX;
+        f64 val = static_cast<f64>(value) * _DENO;
 
         if (val > static_cast<f64>(_MAX))
             return fromRaw(_MAX);
         if (val < static_cast<f64>(_MIN))
             return fromRaw(_MIN);
 
-        return fromRaw(Math::ceili(val));
+        return fromRaw(ceili(val));
     }
 
     always_inline constexpr bool operator==(Au const& other) const = default;
@@ -142,7 +136,7 @@ export struct Au {
 
     template <typename U>
     constexpr U cast() const {
-        return static_cast<f64>(_val) / _UNIT_PER_PX;
+        return static_cast<f64>(_val) / _DENO;
     }
 
     template <typename U>
@@ -152,44 +146,32 @@ export struct Au {
     }
 
     void repr(Io::Emit& e) const {
-        e("{}px", this->cast<f64>());
+        e("{}au", cast<f64>());
     }
-};
-
-export always_inline constexpr Au operator*(f64 lhs, Au rhs) {
-    return rhs * lhs;
-}
-
-export template <>
-struct Karm::Limits<Au> {
-    static constexpr Au MIN = Au::fromRaw(Au::_MIN);
-    static constexpr Au MAX = Au::fromRaw(Au::_MAX);
-    static constexpr Au EPSILON = Au::fromRaw(1);
-    static constexpr bool SIGNED = true;
 };
 
 export constexpr Au abs(Au const& val) {
     return val < Au{0} ? -val : val;
 }
 
-export using RectAu = Math::Rect<Au>;
+} // namespace Karm::Math
 
-export using Vec2Au = Math::Vec2<Au>;
-
-export using InsetsAu = Math::Insets<Au>;
-
-export using RadiiAu = Math::Radii<Au>;
-
-} // namespace Karm
+export template <>
+struct Karm::Limits<Karm::Math::Au> {
+    static constexpr Math::Au MIN = Math::Au::fromRaw(Math::Au::_MIN);
+    static constexpr Math::Au MAX = Math::Au::fromRaw(Math::Au::_MAX);
+    static constexpr Math::Au EPSILON = Math::Au::fromRaw(1);
+    static constexpr bool SIGNED = true;
+};
 
 namespace Karm::Math::Literals {
 
-export constexpr Karm::Au operator""_au(unsigned long long val) {
-    return Karm::Au{val};
+export constexpr Au operator""_au(unsigned long long val) {
+    return Au{val};
 }
 
-export constexpr Karm::Au operator""_au(long double val) {
-    return Karm::Au{val};
+export constexpr Au operator""_au(long double val) {
+    return Au{val};
 }
 
 } // namespace Karm::Math::Literals
