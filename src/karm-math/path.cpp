@@ -163,9 +163,9 @@ export struct Path {
         return Iter{*this};
     }
 
-    Opt<Math::Rectf> _bound;
+    mutable Opt<Math::Rectf> _bound;
 
-    Math::Rectf bound() {
+    Math::Rectf bound() const {
         if (isEmpty(_verts))
             return {};
 
