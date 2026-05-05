@@ -18,7 +18,7 @@ test$("karm-ref-uti-basic-properties") {
     expectEq$(text.mimeTypes()[0].str(), "text/plain"s);
     expectEq$(text.declaredConformances().len(), 1uz);
     expectEq$(text.declaredConformances()[0], "public.data"_sym);
-    expectEq$(text.primarySuffix().unwrap(), "txt"s);
+    expectEq$(text.primarySuffix(), "txt"s);
     expectEq$(text.primaryMimeType().str(), "text/plain"s);
 
     return Ok();
@@ -32,7 +32,7 @@ test$("karm-ref-uti-from-extension") {
 
     // Unknown extension (should generate dynamic UTI)
     auto dynamicUti = Uti::fromSuffix("mycustomext");
-    expectEq$(dynamicUti.primarySuffix().unwrap(), "mycustomext"s);
+    expectEq$(dynamicUti.primarySuffix(), "mycustomext"s);
     expectEq$(dynamicUti.primaryMimeType().str(), "application/octet-stream"s);
     expect$(dynamicUti.conformsTo("public.data"_uti));
 
@@ -43,7 +43,7 @@ test$("karm-ref-uti-from-mime") {
     // Known mime type
     auto jpegUti = Uti::fromMime("image/jpeg"_mime);
     expectEq$(jpegUti.name(), "public.jpeg"_sym);
-    expectEq$(jpegUti.primarySuffix().unwrap(), "jpg"s);
+    expectEq$(jpegUti.primarySuffix(), "jpg"s);
 
     // Unknown mime type (should generate dynamic UTI)
     auto dynamicUti = Uti::fromMime("application/x-custom-type"_mime);

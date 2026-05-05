@@ -2,6 +2,7 @@
 
 import Karm.Core;
 
+using namespace Karm::Literals;
 using namespace Karm::Json::Literals;
 
 namespace Karm::Json::Tests {
@@ -39,7 +40,7 @@ test$("json-parse-object") {
 test$("json-parse-string") {
     auto val = R"("hello")"_json;
     expect$(val.isStr());
-    expectEq$(val.asStr(), "hello");
+    expectEq$(val.asStr(), "hello"s);
     return Ok();
 }
 
@@ -74,11 +75,11 @@ test$("json-parse-bool") {
 test$("json-parse-escaped-unicode") {
     auto val = "\"\\u0041\""_json;
     expect$(val.isStr());
-    expectEq$(val.asStr(), "A");
+    expectEq$(val.asStr(), "A"s);
 
     val = "\"\\uD83E\\uDD21\""_json;
     expect$(val.isStr());
-    expectEq$(val.asStr(), "🤡");
+    expectEq$(val.asStr(), "🤡"s);
 
     return Ok();
 }

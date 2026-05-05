@@ -2,6 +2,8 @@
 
 import Karm.Core;
 
+using namespace Karm::Literals;
+
 namespace Karm::Base::Tests {
 
 // Basic construction ----------------------------------------------------------
@@ -20,7 +22,7 @@ test$("res-err-basic") {
     Res<int> r = e;
 
     expect$(not r.has());
-    expectEq$(r.none().msg(), "broken");
+    expectEq$(r.none().msg(), "broken"s);
 
     return Ok();
 }
@@ -39,7 +41,7 @@ test$("res-take-ok") {
     Res<String> r = Ok<String>("hello");
 
     auto v = r.take();
-    expectEq$(v, "hello");
+    expectEq$(v, "hello"s);
     // NOTE: take() works like move, Res is in the moved-from Ok state
     expect$(r.has());
 
@@ -57,7 +59,7 @@ test$("res-ok-err-access") {
 
     expect$(not r2.ok().has());
     expect$(r2.error().has());
-    expectEq$(r2.error().unwrap().msg(), "nope");
+    expectEq$(r2.error().unwrap().msg(), "nope"s);
 
     return Ok();
 }
@@ -113,7 +115,7 @@ test$("res-map-err") {
     });
 
     expect$(not r2.has());
-    expectEq$(r2.error().unwrap().msg(), "boom");
+    expectEq$(r2.error().unwrap().msg(), "boom"s);
 
     return Ok();
 }
@@ -128,7 +130,7 @@ test$("res-map-err-transform") {
     });
 
     expect$(not r2.has());
-    expectEq$(r2.error().unwrap().msg(), "new:old");
+    expectEq$(r2.error().unwrap().msg(), "new:old"s);
 
     return Ok();
 }
@@ -267,7 +269,7 @@ test$("res-ref-mapErr") {
     });
 
     expect$(not r2.has());
-    expectEq$(r2.error().unwrap().msg(), "new:bad");
+    expectEq$(r2.error().unwrap().msg(), "new:bad"s);
 
     return Ok();
 }

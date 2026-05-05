@@ -19,7 +19,7 @@ test$("string-value-constructed-inline") {
     InlineString<16> str("Hello, World!");
 
     expectEq$(str.len(), 13uz);
-    expectEq$(str, "Hello, World!");
+    expectEq$(str, "Hello, World!"s);
 
     return Ok();
 }
@@ -41,7 +41,7 @@ test$("string-value-constructed") {
     String str("Hello, World!");
 
     expectEq$(str.len(), 13uz);
-    expectEq$(str, "Hello, World!");
+    expectEq$(str, "Hello, World!"s);
 
     return Ok();
 }

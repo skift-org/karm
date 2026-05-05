@@ -20,8 +20,8 @@ namespace Karm::Test {
 #define __expect$(LHS, RHS, OP)                         \
     ({                                                  \
         /* Make sure LHS and RHS are evaluated once */  \
-        auto __lhs = (LHS);                             \
-        auto __rhs = (RHS);                             \
+        auto&& __lhs = (LHS);                             \
+        auto&& __rhs = (RHS);                             \
                                                         \
         if (not((__lhs)OP(__rhs))) {                    \
             return _driver.unexpect(__lhs, __rhs, #OP); \
@@ -47,8 +47,8 @@ namespace Karm::Test {
 #define __co_expect$(LHS, RHS, OP, OPSTR)                    \
     ({                                                       \
         /* Make sure LHS and RHS are evaluated once */       \
-        auto __lhs = (LHS);                                  \
-        auto __rhs = (RHS);                                  \
+        auto&& __lhs = (LHS);                                  \
+        auto&& __rhs = (RHS);                                  \
                                                              \
         if (not((__lhs)OP(__rhs))) {                         \
             co_return _driver.unexpect(__lhs, __rhs, OPSTR); \

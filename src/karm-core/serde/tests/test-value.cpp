@@ -11,7 +11,7 @@ test$("json-value-null") {
 
     expectEq$(value, NONE);
     expect$(value.isNull());
-    expectEq$(value.asStr(), "null");
+    expectEq$(value.asStr(), "null"s);
     expectEq$(value.asInt(), 0);
     expectEq$(value.asFloat(), 0.0);
     expectEq$(value.asBool(), false);
@@ -29,7 +29,7 @@ test$("json-value-array") {
 
     expect$(not value.isNull());
     expect$(value.isArray());
-    expectEq$(value.asStr(), "<array>");
+    expectEq$(value.asStr(), "<array>"s);
     expectEq$(value.asInt(), 0);
     expectEq$(value.asFloat(), 0.0);
     expectEq$(value.asBool(), true);
@@ -52,7 +52,7 @@ test$("json-value-object") {
 
     expect$(not value.isNull());
     expect$(value.isObject());
-    expectEq$(value.asStr(), "<object>");
+    expectEq$(value.asStr(), "<object>"s);
     expectEq$(value.asInt(), 0);
     expectEq$(value.asFloat(), 0.0);
     expectEq$(value.asBool(), true);
@@ -70,7 +70,7 @@ test$("json-value-string") {
     Value value = String{"hello"};
 
     expect$(value.isStr());
-    expectEq$(value.asStr(), "hello");
+    expectEq$(value.asStr(), "hello"s);
     expectEq$(value.asInt(), 0);
     expectEq$(value.asFloat(), 0.0);
     expectEq$(value.asBool(), true);
@@ -83,7 +83,7 @@ test$("json-value-integer") {
     Value value = Integer{42};
 
     expect$(value.isInt());
-    expectEq$(value.asStr(), "42");
+    expectEq$(value.asStr(), "42"s);
     expectEq$(value.asInt(), 42);
     expectEq$(value.asFloat(), 42.0);
     expectEq$(value.asBool(), true);
@@ -97,7 +97,7 @@ test$("json-value-float") {
 
     expect$(value.isFloat());
     expect$(Math::epsilonEq(value.asFloat(), 3.14, 0.001));
-    expectEq$(value.asStr(), "3.140000"); // FIXME: Once FloatFormatter can stop producing trailing zeros
+    expectEq$(value.asStr(), "3.140000"s); // FIXME: Once FloatFormatter can stop producing trailing zeros
     expectEq$(value.asInt(), 3);
     expectEq$(value.asBool(), true);
     expectEq$(value.len(), 0uz);
@@ -109,7 +109,7 @@ test$("json-value-true") {
     Value value = true;
 
     expect$(value.isBool());
-    expectEq$(value.asStr(), "true");
+    expectEq$(value.asStr(), "true"s);
     expectEq$(value.asInt(), 1);
     expectEq$(value.asFloat(), 1.0);
     expectEq$(value.asBool(), true);
@@ -122,7 +122,7 @@ test$("json-value-false") {
     Value value = false;
 
     expect$(value.isBool());
-    expectEq$(value.asStr(), "false");
+    expectEq$(value.asStr(), "false"s);
     expectEq$(value.asInt(), 0);
     expectEq$(value.asFloat(), 0.0);
     expectEq$(value.asBool(), false);

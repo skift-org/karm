@@ -77,4 +77,6 @@ export using Ellipsei = Ellipse<isize>;
 
 export using Ellipsef = Ellipse<f64>;
 
+export using EllipseAu = Ellipse<Au>;
+
 } // namespace Karm::Math
