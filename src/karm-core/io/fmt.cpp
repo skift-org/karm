@@ -23,6 +23,17 @@ namespace Karm::Io {
 export template <typename T>
 struct Formatter;
 
+export template <typename T>
+struct Joined {
+    T const& inner;
+    Str sep;
+};
+
+export template <typename T>
+Joined<T> join(T const& inner, Str sep = ", "s) {
+    return {inner, sep};
+}
+
 export struct _Args {
     virtual ~_Args() = default;
     virtual usize len() = 0;
@@ -770,6 +781,28 @@ concept Reprable =
     };
 
 // MARK: Format Sliceable ------------------------------------------------------
+
+export template <Sliceable T>
+struct Formatter<Joined<T>> {
+    Formatter<typename T::Inner> inner;
+
+    void parse(SScan& scan) {
+        if constexpr (requires() {
+                          inner.parse(scan);
+                      }) {
+            inner.parse(scan);
+        }
+    }
+
+    Res<> format(TextWriter& writer, Joined<T> const& val) {
+        for (usize i = 0; i < val.inner.len(); i++) {
+            if (i != 0)
+                try$(writer.writeStr(val.sep));
+            try$(inner.format(writer, val.inner[i]));
+        }
+        return Ok();
+    }
+};
 
 export template <Sliceable T>
 struct Formatter<T> {
