@@ -100,15 +100,23 @@ export auto selectionArea() {
 
 struct SelectionItem : Ui::ProxyNode<SelectionItem> {
     bool _selected = false;
+    Ui::Send<bool> _onChange;
 
-    explicit SelectionItem(Ui::Child const& child)
-        : ProxyNode(child) {}
+    explicit SelectionItem(bool selected, Ui::Send<bool> onChange, Ui::Child const& child)
+        : ProxyNode(child), _selected(selected), _onChange(onChange) {}
+
+    void reconcile(SelectionItem& o) override {
+        ProxyNode::reconcile(o);
+        _selected = o._selected;
+        _onChange = std::move(o._onChange);
+    }
 
     void event(App::Event& e) override {
         if (auto selectionEvent = e.is<SelectionUpdateEvent>()) {
             bool const newSelected = selectionEvent->rect.colide(bound());
             if (_selected != newSelected) {
                 _selected = newSelected;
+                _onChange(*this, _selected);
                 Ui::shouldRepaint(*this);
             }
             return;
@@ -128,9 +136,13 @@ struct SelectionItem : Ui::ProxyNode<SelectionItem> {
     }
 };
 
-export auto selectionItem() {
-    return [](Ui::Child child) -> Ui::Child {
-        return makeRc<SelectionItem>(child);
+export Ui::Child selectionItem(bool selected, Ui::Send<bool> onChange, Ui::Child child) {
+    return makeRc<SelectionItem>(selected, onChange, child);
+}
+
+export auto selectionItem(bool selected, Ui::Send<bool> onChange) {
+    return [selected, onChange](Ui::Child child) -> Ui::Child {
+        return makeRc<SelectionItem>(selected, onChange, child);
     };
 }
 
