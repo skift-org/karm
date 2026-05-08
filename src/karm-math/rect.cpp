@@ -229,6 +229,10 @@ union Rect {
         );
     }
 
+    always_inline constexpr Rect<T> bound() const {
+        return *this;
+    }
+
     always_inline constexpr T operator[](isize i) {
         return _els[i];
     }
