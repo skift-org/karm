@@ -198,7 +198,12 @@ Res<> launch(Intent intent) {
 
     auto [url, _] = intent.objects[0];
 
-    String str = try$(Posix::resolve(url)).str();
+    String str = ""s;
+    if (url.scheme == "file"s or url.scheme == "bundle"s) {
+        str = try$(Posix::resolve(url)).str();
+    } else {
+        str = url.str();
+    }
 
     int pid = fork();
     if (pid < 0)
