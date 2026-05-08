@@ -794,6 +794,34 @@ struct Formatter<T> {
     }
 };
 
+// MARK: Format Set ------------------------------------------------------------
+
+export template <typename T>
+struct Formatter<Set<T>> {
+    Formatter<T> valueFormatter;
+
+    void parse(SScan& scan) {
+        if constexpr (requires() {
+                          valueFormatter.parse(scan);
+                      }) {
+            valueFormatter.parse(scan);
+        }
+    }
+
+    Res<> format(TextWriter& writer, Set<T> const& val) {
+        try$(writer.writeStr("{"s));
+        bool first = true;
+        for (auto const& value : val.iter()) {
+            if (not first)
+                try$(writer.writeStr(", "s));
+            first = false;
+            try$(valueFormatter.format(writer, value));
+        }
+        try$(writer.writeStr("}"s));
+        return Ok();
+    }
+};
+
 // MARK: Format Map ------------------------------------------------------------
 
 export template <typename K, typename V>
