@@ -10,14 +10,10 @@
         "aio",
         "async",
         "base",
-        "glob",
-        "icu",
         "io",
         "json",
         "math",
         "meta",
-        "pack",
-        "regex",
         "serde"
     ],
     "requires": [
