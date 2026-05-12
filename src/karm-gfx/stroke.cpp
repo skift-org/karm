@@ -33,6 +33,8 @@ export struct Stroke {
     StrokeAlign align = CENTER_ALIGN;
     StrokeCap cap = BUTT_CAP;
     StrokeJoin join = BEVEL_JOIN;
+    Vec<f64> dashPattern{};
+    f64 dashOffset{0};
 
     auto& withFill(Fill p) {
         fill = p;
@@ -56,6 +58,12 @@ export struct Stroke {
 
     auto& withJoin(StrokeJoin j) {
         join = j;
+        return *this;
+    }
+
+    auto& withDash(Vec<f64> pattern, f64 offset = 0) {
+        dashPattern = pattern;
+        dashOffset = offset;
         return *this;
     }
 };
@@ -200,9 +208,103 @@ static void _createCap(Math::Polyf& poly, Stroke stroke, Cap cap) {
     }
 }
 
+// MARK: Path Dashing ----------------------------------------------------------
+
+static Math::Path _createDashedPath(Math::Path const& path, Stroke const& stroke) {
+    if (not stroke.dashPattern) {
+        return path;
+    }
+
+    Math::Path dashedPath;
+    f64 totalDashLen = 0;
+    for (f64 val : stroke.dashPattern)
+        totalDashLen += val;
+
+    if (totalDashLen <= 0.0001)
+        return path;
+
+    for (auto contour : path.iterContours()) {
+        if (contour.len() < 2)
+            continue;
+
+        f64 distanceAlongPattern = stroke.dashOffset;
+
+        while (distanceAlongPattern < 0)
+            distanceAlongPattern += totalDashLen;
+        while (distanceAlongPattern >= totalDashLen)
+            distanceAlongPattern -= totalDashLen;
+
+        usize patternIdx = 0;
+        f64 currentAccumulatedLen = 0;
+
+        // Find the starting state in the pattern
+        while (currentAccumulatedLen + stroke.dashPattern[patternIdx] <= distanceAlongPattern) {
+            currentAccumulatedLen += stroke.dashPattern[patternIdx];
+            patternIdx = (patternIdx + 1) % stroke.dashPattern.len();
+        }
+
+        f64 distanceIntoCurrentDash = distanceAlongPattern - currentAccumulatedLen;
+        bool isDash = (patternIdx % 2 == 0); // Even indices are dashes, odd are gaps
+
+        if (isDash)
+            dashedPath.moveTo(contour[0]);
+
+        auto l = contour.close ? contour.len() : contour.len() - 1;
+
+        for (usize i = 0; i < l; i++) {
+            Math::Edgef edge = {contour[i], contour[(i + 1) % contour.len()]};
+
+            if (edge.degenerated(0.0001))
+                continue;
+
+            f64 edgeLen = edge.len();
+
+            Math::Vec2f dir = edge.dir().unit();
+
+            f64 edgeProgress = 0;
+            while (edgeProgress < edgeLen) {
+                f64 remainingInPatternElement = stroke.dashPattern[patternIdx] - distanceIntoCurrentDash;
+
+                if (remainingInPatternElement <= 0.0001 and stroke.dashPattern[patternIdx] <= 0.0001) {
+                    remainingInPatternElement = 0;
+                }
+
+                f64 step = min(remainingInPatternElement, edgeLen - edgeProgress);
+                edgeProgress += step;
+
+                Math::Vec2f nextPos = edge.start + dir * edgeProgress;
+
+                if (isDash)
+                    dashedPath.lineTo(nextPos);
+
+                distanceIntoCurrentDash += step;
+
+                if (distanceIntoCurrentDash >= stroke.dashPattern[patternIdx] - 0.0001) {
+                    distanceIntoCurrentDash = 0;
+                    patternIdx = (patternIdx + 1) % stroke.dashPattern.len();
+                    isDash = (patternIdx % 2 == 0);
+
+                    if (isDash)
+                        dashedPath.moveTo(nextPos);
+                }
+            }
+        }
+    }
+
+    return dashedPath;
+}
+
 // MARK: Public Api ------------------------------------------------------------
 
 export void createStroke(Math::Polyf& poly, Math::Path const& path, Stroke stroke) {
+    if (stroke.dashPattern) {
+        Math::Path dashed = _createDashedPath(path, stroke);
+        Stroke solidStroke = stroke;
+        solidStroke.dashPattern.clear();
+        createStroke(poly, dashed, solidStroke);
+        return;
+    }
+
     f64 outerDist = 0;
 
     if (stroke.align == CENTER_ALIGN) {
@@ -214,14 +316,29 @@ export void createStroke(Math::Polyf& poly, Math::Path const& path, Stroke strok
     f64 innerDist = outerDist + stroke.width;
 
     for (auto contour : path.iterContours()) {
+        if (contour.zeroLength()) {
+            if (stroke.cap == ROUND_CAP) {
+                Math::Vec2f center = contour[0];
+                Math::Vec2f start = center + Math::Vec2f{stroke.width / 2, 0};
+                _createArc(poly, center, start, start, 0, Math::TAU, stroke.width / 2);
+            } else if (stroke.cap == SQUARE_CAP) {
+                f64 r = stroke.width / 2;
+                Math::Vec2f c = contour[0];
+                poly.pushBack({c + Math::Vec2f{-r, -r}, c + Math::Vec2f{r, -r}});
+                poly.pushBack({c + Math::Vec2f{r, -r}, c + Math::Vec2f{r, r}});
+                poly.pushBack({c + Math::Vec2f{r, r}, c + Math::Vec2f{-r, r}});
+                poly.pushBack({c + Math::Vec2f{-r, r}, c + Math::Vec2f{-r, -r}});
+            }
+            continue;
+        }
+
         auto l = contour.close ? contour.len() : contour.len() - 1;
 
         for (usize i = 0; i < l; i++) {
             Math::Edgef curr = {contour[i], contour[(i + 1) % contour.len()]};
 
-            if (curr.degenerated()) {
+            if (curr.degenerated())
                 continue;
-            }
 
             auto outerCurr = curr.offset(outerDist);
             auto innerCurr = curr.offset(innerDist).swap();
@@ -246,9 +363,8 @@ export void createStroke(Math::Polyf& poly, Math::Path const& path, Stroke strok
                 };
 
                 // Make sure that the edge is not degenerate
-                if (next.degenerated()) {
+                if (next.degenerated())
                     continue;
-                }
 
                 auto outerNext = outerDist > -0.001 ? next : next.offset(outerDist);
                 auto innerNext = innerDist < 0.001 ? next.swap() : next.offset(innerDist).swap();
