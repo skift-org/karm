@@ -5,7 +5,7 @@ when:
 
 steps:
   - name: Build & Test
-    image: ubuntu
+    image: ubuntu:24.04
     commands:
       - apt-get update
       - apt-get install -y --no-install-recommends build-essential git ninja-build ccache jq libseccomp-dev liburing-dev curl wget lsb-release software-properties-common gnupg pkg-config
