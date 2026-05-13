@@ -493,9 +493,29 @@ struct [[nodiscard]] Opt {
         else
             Karm::hash(h, NONE);
     }
+
+    template <std::size_t>
+    T const& get() const {
+        return _store.unwrap();
+    }
+
+    template <std::size_t>
+    T& get() {
+        return _store.unwrap();
+    }
 };
 
 export template <typename T>
 Opt(T) -> Opt<T>;
 
 } // namespace Karm
+
+export template <typename T>
+struct std::tuple_size<Karm::Opt<T>> {
+    static constexpr std::size_t value = 1;
+};
+
+export template <std::size_t I, typename T>
+struct std::tuple_element<I, Karm::Opt<T>> {
+    using type = T;
+};

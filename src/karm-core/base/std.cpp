@@ -8,6 +8,7 @@ module;
 #include <initializer_list>
 #include <memory>
 #include <new>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 
@@ -68,6 +69,10 @@ using std::make_index_sequence;
 using std::make_integer_sequence;
 using std::move;
 using std::swap;
+
+// <tuple>
+using std::tuple_element;
+using std::tuple_size;
 
 } // namespace std
 
