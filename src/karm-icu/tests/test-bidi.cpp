@@ -121,35 +121,22 @@ struct TestCase {
     }
 };
 
-Yield<TestCase> testCasesFromFile(Sys::File& file) {
-    while (true) {
-        Io::BufferWriter bw;
-        auto maybeLine = Io::readLine(file, bw, "\n"_bytes);
-        if (not maybeLine)
-            continue;
-
-        auto [read, reachedDelim] = maybeLine.take();
-
-        if (read == 0) {
-            if (reachedDelim)
-                continue;
-            else
-                co_return;
-        }
-
-        auto testCase = TestCase::fromRow(bw.bytes().cast<char>());
+Yield<TestCase> testCasesFromFile(Sys::Mmap& file) {
+    for (auto line : iterSplit(file.bytes(), '\n')) {
+        auto testCase = TestCase::fromRow(line.cast<char>());
         if (not testCase)
             continue;
-
         co_yield *testCase;
     }
 }
 
 test$("bidiTestFileLevels") {
     auto file = try$(Sys::File::open("bundle://karm-icu.tests/BidiCharacterTest.txt"_url));
+    auto mmap = try$(Sys::mmap(file));
+
     usize testCount = 0;
     [[maybe_unused]] usize correct = 0;
-    for (auto testCase : testCasesFromFile(file)) {
+    for (auto testCase : testCasesFromFile(mmap)) {
         auto const& inputParagraph = testCase.runes;
         auto [levels, _] = Bidi::computeLevels(inputParagraph, testCase.paragraphLevel);
 
@@ -183,9 +170,11 @@ test$("bidiTestFileLevels") {
 
 test$("bidiTestFileReorder") {
     auto file = try$(Sys::File::open("bundle://karm-icu.tests/BidiCharacterTest.txt"_url));
+    auto mmap = try$(Sys::mmap(file));
+
     usize testCount = 0;
     [[maybe_unused]] usize correct = 0;
-    for (auto testCase : testCasesFromFile(file)) {
+    for (auto testCase : testCasesFromFile(mmap)) {
         Vec<Pair<usize, usize>> levels;
         for (usize i = 0; i < testCase.levels.len(); i++) {
             if (testCase.levels[i]) {
