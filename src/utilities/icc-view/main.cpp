@@ -48,7 +48,7 @@ Opt<usize> firstVisibleProfile(State const& state) {
 }
 
 Ui::Task<Action> reduce(State& state, Action action) {
-    action.visit(Visitor{
+    action.visit(
         [&](SelectProfile a) {
             state.selected = a.index;
         },
@@ -63,8 +63,8 @@ Ui::Task<Action> reduce(State& state, Action action) {
 
             if (auto first = firstVisibleProfile(state))
                 state.selected = first.unwrap();
-        },
-    });
+        }
+    );
     return NONE;
 }
 

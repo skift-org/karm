@@ -92,9 +92,9 @@ export struct [[nodiscard]] Error {
     constexpr Error none() const { return *this; }
 
     constexpr Opt<Error const&> cause() const {
-        if (not _cause.has())
-            return NONE;
-        return _cause.unwrap().unwrap();
+        if (auto const& [cause] = _cause)
+            return cause.unwrap();
+        return NONE;
     }
 
     Error wrap(Union<Str, String> msg) {

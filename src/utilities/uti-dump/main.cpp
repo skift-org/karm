@@ -14,8 +14,8 @@ static void _dumpRegistration(Ref::Uti uti) {
     else
         Sys::println("description: {}", uti.description());
 
-    if (auto suffix = uti.primarySuffix(); suffix)
-        Sys::println("primary suffix: {}", suffix.unwrap());
+    if (auto const& [suffix] = uti.primarySuffix())
+        Sys::println("primary suffix: {}", suffix);
     else
         Sys::println("primary suffix: <none>");
 
@@ -41,15 +41,17 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
 
     co_trya$(cmd.execAsync(env));
 
-    if (cmd) {
-        auto query = queryArg.value();
-        Ref::Uti uti = (contains(query, "/"s) or contains(query, "."s))
-                           ? Ref::Uti::fromUtiOrMime(query)
-                           : Ref::Uti::fromSuffix(query);
+    if (not cmd)
+        co_return Ok();
 
-        Sys::println("query: {}", query);
-        _dumpRegistration(uti);
-    }
+    auto query = queryArg.value();
+    Ref::Uti uti =
+        (contains(query, "/"s) or contains(query, "."s))
+            ? Ref::Uti::fromUtiOrMime(query)
+            : Ref::Uti::fromSuffix(query);
+
+    Sys::println("query: {}", query);
+    _dumpRegistration(uti);
 
     co_return Ok();
 }

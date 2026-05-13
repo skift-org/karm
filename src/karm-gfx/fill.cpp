@@ -231,7 +231,7 @@ export struct Fill : _Fills {
     }
 
     void repr(Io::Emit& e) const {
-        visit(Visitor{
+        visit(
             [&](Color const& c) {
                 c.repr(e);
             },
@@ -240,8 +240,8 @@ export struct Fill : _Fills {
             },
             [&](Pixels const& pixels) {
                 e("(pixels {} {})", pixels.width(), pixels.height());
-            },
-        });
+            }
+        );
     }
 };
 

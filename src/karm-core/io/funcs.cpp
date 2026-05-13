@@ -146,7 +146,7 @@ export Res<Tuple<usize, bool>> readLine(Readable auto& reader, Writable auto& wr
         auto read = try$(reader.read({&b, 1}));
 
         if (read == 0)
-            return Ok(Tuple<usize, bool>{result, false});
+            return Ok(Tuple{result, false});
 
         result += read;
 
@@ -163,7 +163,7 @@ export Res<Tuple<usize, bool>> readLine(Readable auto& reader, Writable auto& wr
             break;
         }
     }
-    return Ok(Tuple<usize, bool>{result, true});
+    return Ok(Tuple{result, true});
 }
 
 } // namespace Karm::Io

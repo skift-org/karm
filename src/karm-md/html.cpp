@@ -29,14 +29,14 @@ String _htmlEscape(Str str) {
 }
 
 void _renderSpan(Node const& node, Io::Emit& e) {
-    node.visit(Visitor{
+    node.visit(
         [&](String const& s) {
             e(s);
         },
         [&](auto const& n) {
             logWarn("could not render {} as a span", n);
-        },
-    });
+        }
+    );
 }
 
 void _renderParagraphContent(Paragraph const& p, Io::Emit& e) {
@@ -45,7 +45,7 @@ void _renderParagraphContent(Paragraph const& p, Io::Emit& e) {
 }
 
 void _renderBlock(Node const& node, Io::Emit& e) {
-    node.visit(Visitor{
+    node.visit(
         [&](Heading const& h) {
             e("<h{}>", h.level);
             _renderParagraphContent(h.children, e);
@@ -64,8 +64,8 @@ void _renderBlock(Node const& node, Io::Emit& e) {
         },
         [&](auto const& n) {
             logWarn("could not render {} as a block", n);
-        },
-    });
+        }
+    );
 }
 
 export void renderHtml(Document const& doc, Io::Emit& e) {

@@ -50,14 +50,14 @@ export struct Node : _Node {
     using _Node::_Node;
 
     void repr(Io::Emit& e) const {
-        visit(Visitor{
+        visit(
             [&](String const& n) {
                 e("{#}", n);
             },
             [&](auto const& n) {
                 e("{}", n);
-            },
-        });
+            }
+        );
     }
 };
 

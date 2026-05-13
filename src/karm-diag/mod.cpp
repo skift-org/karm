@@ -344,11 +344,11 @@ export struct Renderer {
         }
 
         // Help
-        if (diag.help) {
+        if (auto const& [help] = diag.help) {
             e(" {}", styleBlue);
             _writeSpaces(e, lineNumWidth);
             e(" = {}help{}: {}{}\n", _levelStyle(Level::HELP),
-              styleReset, diag.help.unwrap(), styleReset);
+              styleReset, help, styleReset);
         }
 
         e('\n');
@@ -427,10 +427,10 @@ export struct SimpleRenderer {
               styleReset, note, styleReset);
         }
 
-        if (diag.help) {
+        if (auto const& [help] = diag.help) {
             e(" {}={}", styleBlue, styleReset);
             e(" {}help{}: {}{}\n", _levelStyle(Level::HELP),
-              styleReset, diag.help.unwrap(), styleReset);
+              styleReset, help, styleReset);
         }
 
         e('\n');

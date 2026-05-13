@@ -16,7 +16,7 @@ export Ui::Child avatar(Union<None, String, Gfx::Icon, Rc<Gfx::Surface>> icon = 
 
     auto innerSize = Math::ceili(size * 0.56);
 
-    Ui::Child inner = icon.visit(Visitor{
+    Ui::Child inner = icon.visit(
         [&](None) {
             return Ui::icon(Mdi::ACCOUNT, innerSize);
         },
@@ -28,8 +28,8 @@ export Ui::Child avatar(Union<None, String, Gfx::Icon, Rc<Gfx::Surface>> icon = 
         },
         [](Rc<Gfx::Surface> s) {
             return Ui::image(s, {999});
-        },
-    });
+        }
+    );
 
     return inner |
            Ui::center() |

@@ -320,60 +320,58 @@ export void escape(Io::Emit& emit, Str s) {
 
 export Res<> unparse(Io::Emit& emit, Serde::Value const& v) {
     return v.visit(
-        Visitor{
-            [&](None) -> Res<> {
-                emit("null");
-                return Ok();
-            },
-            [&](Serde::Array const& v) -> Res<> {
-                emit('[');
-                for (usize i = 0; i < v.len(); ++i) {
-                    if (i > 0) {
-                        emit(',');
-                    }
-                    try$(unparse(emit, v[i]));
+        [&](None) -> Res<> {
+            emit("null");
+            return Ok();
+        },
+        [&](Serde::Array const& v) -> Res<> {
+            emit('[');
+            for (usize i = 0; i < v.len(); ++i) {
+                if (i > 0) {
+                    emit(',');
                 }
-                emit(']');
+                try$(unparse(emit, v[i]));
+            }
+            emit(']');
 
-                return Ok();
-            },
-            [&](Serde::Object const& m) -> Res<> {
-                emit('{');
-                bool first = true;
-                for (auto const& [k, v] : m.iterItems()) {
-                    if (not first) {
-                        emit(',');
-                    }
-                    first = false;
-
-                    emit('"');
-                    escape(emit, k);
-                    emit("\":");
-                    try$(unparse(emit, v));
+            return Ok();
+        },
+        [&](Serde::Object const& m) -> Res<> {
+            emit('{');
+            bool first = true;
+            for (auto const& [k, v] : m.iterItems()) {
+                if (not first) {
+                    emit(',');
                 }
-                emit('}');
-                return Ok();
-            },
-            [&](String const& s) -> Res<> {
+                first = false;
+
                 emit('"');
-                escape(emit, s);
-                emit('"');
-                return Ok();
-            },
-            [&](Serde::Integer i) -> Res<> {
-                emit("{}", i);
-                return Ok();
-            },
+                escape(emit, k);
+                emit("\":");
+                try$(unparse(emit, v));
+            }
+            emit('}');
+            return Ok();
+        },
+        [&](String const& s) -> Res<> {
+            emit('"');
+            escape(emit, s);
+            emit('"');
+            return Ok();
+        },
+        [&](Serde::Integer i) -> Res<> {
+            emit("{}", i);
+            return Ok();
+        },
 #ifndef __ck_freestanding__
-            [&](Serde::Number d) -> Res<> {
-                emit("{}", d);
-                return Ok();
-            },
+        [&](Serde::Number d) -> Res<> {
+            emit("{}", d);
+            return Ok();
+        },
 #endif
-            [&](bool b) -> Res<> {
-                emit(b ? "true" : "false");
-                return Ok();
-            },
+        [&](bool b) -> Res<> {
+            emit(b ? "true" : "false");
+            return Ok();
         }
     );
 }

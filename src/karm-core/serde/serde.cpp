@@ -220,8 +220,8 @@ export struct Deserializer {
         }
 
         Res<bool> ended() const {
-            if (type.len)
-                return Ok(_consumed >= type.len.unwrap());
+            if (auto const& [len] = type.len)
+                return Ok(_consumed >= len);
             return _de->endedUnit();
         }
 

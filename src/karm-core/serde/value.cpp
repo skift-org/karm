@@ -157,53 +157,49 @@ export struct Value {
 
     String asStr() const {
         return _store.visit(
-            Visitor{
-                [](None) -> String {
-                    return "null"s;
-                },
-                [](Array const&) -> String {
-                    return "<array>"s;
-                },
-                [](Object const&) -> String {
-                    return "<object>"s;
-                },
-                [](String const& s) -> String {
-                    return s;
-                },
-                [](Integer i) -> String {
-                    return Io::format("{}", i);
-                },
+            [](None) -> String {
+                return "null"s;
+            },
+            [](Array const&) -> String {
+                return "<array>"s;
+            },
+            [](Object const&) -> String {
+                return "<object>"s;
+            },
+            [](String const& s) -> String {
+                return s;
+            },
+            [](Integer i) -> String {
+                return Io::format("{}", i);
+            },
 #ifndef __ck_freestanding__
-                [](Number d) -> String {
-                    return Io::format("{}", d);
-                },
+            [](Number d) -> String {
+                return Io::format("{}", d);
+            },
 #endif
-                [](bool b) -> String {
-                    return b ? "true"s : "false"s;
-                },
+            [](bool b) -> String {
+                return b ? "true"s : "false"s;
             }
         );
     }
 
     isize asInt() const {
         return _store.visit(
-            Visitor{
-                [](Integer i) {
-                    return i;
-                },
+            [](Integer i) {
+                return i;
+            },
 
 #ifndef __ck_freestanding__
-                [](Number d) {
-                    return (isize)d;
-                },
+            [](Number d) {
+                return (isize)d;
+            },
 #endif
 
-                [](bool b) {
-                    return b ? 1 : 0;
-                },
-                [](auto const&) {
-                    return 0;
-                },
+            [](bool b) {
+                return b ? 1 : 0;
+            },
+            [](auto const&) {
+                return 0;
             }
         );
     }
@@ -211,19 +207,17 @@ export struct Value {
 #ifndef __ck_freestanding__
     f64 asFloat() const {
         return _store.visit(
-            Visitor{
-                [](Integer i) {
-                    return (f64)i;
-                },
-                [](Number d) {
-                    return d;
-                },
-                [](bool b) {
-                    return b ? (Number)1.0 : (Number)0.0;
-                },
-                [](auto const&) {
-                    return (Number)0;
-                },
+            [](Integer i) {
+                return (f64)i;
+            },
+            [](Number d) {
+                return d;
+            },
+            [](bool b) {
+                return b ? (Number)1.0 : (Number)0.0;
+            },
+            [](auto const&) {
+                return (Number)0;
             }
         );
     }
@@ -231,30 +225,28 @@ export struct Value {
 
     bool asBool() const {
         return _store.visit(
-            Visitor{
-                [](None) {
-                    return false;
-                },
-                [](Array const& v) {
-                    return v.len() > 0;
-                },
-                [](Object const& m) {
-                    return m.len() > 0;
-                },
-                [](String s) {
-                    return s.len() > 0;
-                },
-                [](Integer i) {
-                    return i != 0;
-                },
+            [](None) {
+                return false;
+            },
+            [](Array const& v) {
+                return v.len() > 0;
+            },
+            [](Object const& m) {
+                return m.len() > 0;
+            },
+            [](String s) {
+                return s.len() > 0;
+            },
+            [](Integer i) {
+                return i != 0;
+            },
 #ifndef __ck_freestanding__
-                [](Number d) {
-                    return d != (Number)0;
-                },
+            [](Number d) {
+                return d != (Number)0;
+            },
 #endif
-                [](bool b) {
-                    return b;
-                },
+            [](bool b) {
+                return b;
             }
         );
     }
@@ -294,19 +286,17 @@ export struct Value {
 
     usize len() const {
         return _store.visit(
-            Visitor{
-                [](Array const& v) {
-                    return v.len();
-                },
-                [](Object const& m) {
-                    return m.len();
-                },
-                [](String const& s) {
-                    return s.len();
-                },
-                [](auto const&) {
-                    return 0;
-                },
+            [](Array const& v) {
+                return v.len();
+            },
+            [](Object const& m) {
+                return m.len();
+            },
+            [](String const& s) {
+                return s.len();
+            },
+            [](auto const&) {
+                return 0;
             }
         );
 
@@ -315,16 +305,14 @@ export struct Value {
 
     void clear() {
         _store.visit(
-            Visitor{
-                [](auto& v) {
-                    v = {};
-                }
+            [](auto& v) {
+                v = {};
             }
         );
     }
 
-    auto visit(auto visitor) const {
-        return _store.visit(visitor);
+    auto visit(auto&&... visitors) const {
+        return _store.visit(std::forward<decltype(visitors)>(visitors)...);
     }
 
     template <typename T>
@@ -351,14 +339,14 @@ export struct Value {
     }
 
     void repr(Io::Emit& e) const {
-        _store.visit(Visitor{
+        _store.visit(
             [&](String const& s) {
                 e("{#}", s);
             },
             [&](auto const& v) {
                 e("{}", v);
-            },
-        });
+            }
+        );
     }
 };
 

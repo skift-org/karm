@@ -221,14 +221,14 @@ struct UpdateHsv {
 using Action = Union<UpdatePage, UpdateHsv>;
 
 Ui::Task<Action> reduce(State& s, Action action) {
-    action.visit(Visitor{
+    action.visit(
         [&](UpdatePage update) {
             s.page = update.page;
         },
         [&](UpdateHsv update) {
             s.hsv = update.hsv;
-        },
-    });
+        }
+    );
 
     return NONE;
 }

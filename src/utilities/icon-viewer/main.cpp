@@ -61,15 +61,15 @@ struct SelectIcon {
 using Action = Union<UpdateSearch, SelectIcon>;
 
 Ui::Task<Action> reduce(State& state, Action action) {
-    action.visit(Visitor{
+    action.visit(
         [&](UpdateSearch a) {
             state.searchQuery = a.query;
             state.filter();
         },
         [&](SelectIcon a) {
             state.selected = a.index;
-        },
-    });
+        }
+    );
     return NONE;
 }
 

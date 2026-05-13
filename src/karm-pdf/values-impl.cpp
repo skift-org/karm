@@ -41,7 +41,7 @@ Res<> Stream::write(Io::Writer& w) const {
 }
 
 Res<> Value::write(Io::Writer& w) const {
-    return visit(Visitor{
+    return visit(
         [&](None) -> Res<> {
             return Io::format(w, "null");
         },
@@ -65,8 +65,8 @@ Res<> Value::write(Io::Writer& w) const {
         },
         [&](auto const& v) -> Res<> {
             return v.write(w);
-        },
-    });
+        }
+    );
 }
 
 Res<> File::write(Io::Writer& writer) const {
