@@ -26,31 +26,14 @@ export bool isNeutralOrIsolate(BidiClass type) {
            type == BidiClass::OTHER_NEUTRAL;
 }
 
-static Rune getPairedBracket(Rune r) {
-    switch (r) {
-#define BRACKET(A, B, _) \
-    case A:              \
-        return B;
-#include "defs/unicode-brackets.inc"
-
-#undef BRACKET
-    default:
-        unreachable();
-    }
-}
-
 static bool bracketsMatch(Rune a, Rune b) {
-    if (getPairedBracket(a) == b)
-        return true;
-
     // Note that although bracket pairs are defined under canonical equivalence, canonical equivalents only exist
     // between U+3008/U+3009, and U+2329/U+232A, and the Unicode Consortium will not add more such pairs.
     if (a == 0x232A)
         a = 0x3009;
     if (b == 0x2329)
         b = 0x3008;
-
-    return getPairedBracket(a) == b;
+    return Properties::of(a).bidiMirroringGlyph() == b;
 }
 
 // MARK: Resolving Embedding Levels
