@@ -4,10 +4,11 @@ import Karm.App;
 import Karm.Ui;
 import Karm.Math;
 import Karm.Core;
+import Karm.Gfx;
 
 namespace Karm::Kira {
 
-export enum struct ResizeHandle {
+export enum struct ResizeHandlePosition {
     TOP,
     START,
     BOTTOM,
@@ -16,12 +17,14 @@ export enum struct ResizeHandle {
 
 struct Resizable : Ui::ProxyNode<Resizable> {
     Math::Vec2i _size;
+    Math::Vec2i _resizeDirection;
     Opt<Ui::Send<Math::Vec2i>> _onChange;
     bool _grabbed = false;
 
-    Resizable(Ui::Child child, Math::Vec2i size, Opt<Ui::Send<Math::Vec2i>> onChange)
-        : ProxyNode<Resizable>(child),
+    Resizable(Ui::Child child, Math::Vec2i size, Math::Vec2i resizeDirection, Opt<Ui::Send<Math::Vec2i>> onChange)
+        : ProxyNode(child),
           _size(size),
+          _resizeDirection{resizeDirection},
           _onChange(std::move(onChange)) {}
 
     void reconcile(Resizable& o) override {
@@ -29,7 +32,7 @@ struct Resizable : Ui::ProxyNode<Resizable> {
             _size = o._size;
         }
         _onChange = std::move(o._onChange);
-        ProxyNode<Resizable>::reconcile(o);
+        ProxyNode::reconcile(o);
     }
 
     void event(App::Event& e) override {
@@ -43,7 +46,7 @@ struct Resizable : Ui::ProxyNode<Resizable> {
                 _grabbed = false;
                 e.accept();
             } else if (it->type == App::MouseEvent::MOVE) {
-                _size = _size + it->delta;
+                _size = _size + it->delta * _resizeDirection;
                 auto minSize = child().size({}, Ui::Hint::MIN);
                 _size = _size.max(minSize);
                 if (_onChange) {
@@ -57,7 +60,7 @@ struct Resizable : Ui::ProxyNode<Resizable> {
     }
 
     void bubble(App::Event& e) override {
-        if (auto de = e.is<App::DragStartEvent>()) {
+        if (e.is<App::DragStartEvent>()) {
             _grabbed = true;
             e.accept();
         }
@@ -70,57 +73,92 @@ struct Resizable : Ui::ProxyNode<Resizable> {
             .size(s, hint)
             .max(_size);
     }
+
+    App::HitResult hitTest(Math::Vec2i) override {
+        return App::HitResult::HIT;
+    }
 };
 
-export Ui::Child resizable(Ui::Child child, Math::Vec2i size, Opt<Ui::Send<Math::Vec2i>> onChange) {
-    return makeRc<Resizable>(child, size, std::move(onChange));
+export Ui::Child resizable(Ui::Child child, Math::Vec2i size, Math::Vec2i resizeDirection, Opt<Ui::Send<Math::Vec2i>> onChange) {
+    return makeRc<Resizable>(child, size, resizeDirection, std::move(onChange));
 }
 
-export auto resizable(Math::Vec2i size, Opt<Ui::Send<Math::Vec2i>> onChange) {
-    return [size, onChange = std::move(onChange)](Ui::Child child) mutable -> Ui::Child {
-        return resizable(child, size, std::move(onChange));
+export auto resizable(Math::Vec2i size, Math::Vec2i resizeDirection, Opt<Ui::Send<Math::Vec2i>> onChange) {
+    return [size, onChange = std::move(onChange), resizeDirection](Ui::Child child) mutable -> Ui::Child {
+        return resizable(child, size, resizeDirection, std::move(onChange));
     };
 }
 
-static Ui::Child _resizeHandle(Math::Vec2i dir) {
-    return Ui::empty(4) |
-           Ui::box({
-               .backgroundFill = Ui::GRAY800,
-           }) |
-           Ui::dragRegion(dir);
-}
+struct ResizeHandle : Ui::View<ResizeHandle> {
+    bool _pressed = false;
+    bool _hover = false;
 
-export Ui::Child resizable(Ui::Child child, ResizeHandle handlePosition, Math::Vec2i size, Opt<Ui::Send<Math::Vec2i>> onChange) {
-    if (handlePosition == ResizeHandle::TOP) {
+    void paint(Gfx::Canvas& g, Math::Recti) override {
+        g.push();
+        if (_pressed) {
+            g.fillStyle(Ui::GRAY700);
+            g.fill(bound().cast<f64>());
+        } else if (_hover) {
+            g.fillStyle(Ui::GRAY800);
+            g.fill(bound().cast<f64>());
+        }
+        g.pop();
+    }
+
+    void event(App::Event& event) override {
+        if (auto it = event.is<App::MouseEvent>()) {
+            bool wasHover = _hover;
+            _hover = bound().contains(it->pos);
+            if (_hover and it->type == App::MouseEvent::PRESS) {
+                _pressed = true;
+                bubble<App::DragStartEvent>(*this);
+                event.accept();
+                Ui::shouldRepaint(*this);
+            } else if (it->type == App::MouseEvent::RELEASE) {
+                _pressed = false;
+                Ui::shouldRepaint(*this);
+            } else if (wasHover != _hover) {
+                Ui::shouldRepaint(*this);
+            }
+        }
+    }
+
+    Math::Vec2i size(Math::Vec2i, Ui::Hint) override {
+        return 3;
+    }
+};
+
+export Ui::Child resizable(Ui::Child child, ResizeHandlePosition handlePosition, Math::Vec2i size, Opt<Ui::Send<Math::Vec2i>> onChange) {
+    if (handlePosition == ResizeHandlePosition::TOP) {
         return Ui::vflow(
-                   _resizeHandle({0, -1}),
+                   makeRc<ResizeHandle>(),
                    child | Ui::grow()
                ) |
-               resizable(size, std::move(onChange));
-    } else if (handlePosition == ResizeHandle::START) {
+               resizable(size, {0, -1}, std::move(onChange));
+    } else if (handlePosition == ResizeHandlePosition::START) {
         return Ui::hflow(
-                   _resizeHandle({-1, 0}),
+                   makeRc<ResizeHandle>(),
                    child | Ui::grow()
                ) |
-               resizable(size, std::move(onChange));
-    } else if (handlePosition == ResizeHandle::BOTTOM) {
+               resizable(size, {-1, 0}, std::move(onChange));
+    } else if (handlePosition == ResizeHandlePosition::BOTTOM) {
         return Ui::vflow(
                    child | Ui::grow(),
-                   _resizeHandle({0, 1})
+                   makeRc<ResizeHandle>()
                ) |
-               resizable(size, std::move(onChange));
-    } else if (handlePosition == ResizeHandle::END) {
+               resizable(size, {0, 1}, std::move(onChange));
+    } else if (handlePosition == ResizeHandlePosition::END) {
         return Ui::hflow(
                    child | Ui::grow(),
-                   _resizeHandle({1, 0})
+                   makeRc<ResizeHandle>()
                ) |
-               resizable(size, std::move(onChange));
+               resizable(size, {1, 0}, std::move(onChange));
     } else {
         unreachable();
     }
 }
 
-export auto resizable(ResizeHandle handlePosition, Math::Vec2i size, Opt<Ui::Send<Math::Vec2i>> onChange) {
+export auto resizable(ResizeHandlePosition handlePosition, Math::Vec2i size, Opt<Ui::Send<Math::Vec2i>> onChange) {
     return [handlePosition, size, onChange](Ui::Child child) mutable -> Ui::Child {
         return resizable(child, handlePosition, size, onChange);
     };

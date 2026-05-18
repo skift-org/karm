@@ -177,6 +177,11 @@ struct Reducer :
         ensureBuild();
         return (*_child)->bound();
     }
+
+    App::HitResult hitTest(Math::Vec2i p) override {
+        ensureBuild();
+        return (*_child)->hitTest(p);
+    }
 };
 
 export template <typename Model>

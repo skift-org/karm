@@ -30,7 +30,7 @@ struct PopoverLayer : ProxyNode<PopoverLayer> {
     bool _shouldPopoverClose = false;
     Math::Vec2i _popoverAt;
 
-    using ProxyNode<PopoverLayer>::ProxyNode;
+    using ProxyNode::ProxyNode;
 
     ~PopoverLayer() {
         if (_popover)
@@ -125,6 +125,12 @@ struct PopoverLayer : ProxyNode<PopoverLayer> {
 
         if (_popover)
             (*_popover)->layout(_positionPopover(r));
+    }
+
+    App::HitResult hitTest(Math::Vec2i p) override {
+        if (auto& [popover] = _popover)
+            return popover->hitTest(p);
+        return _child->hitTest(p);
     }
 };
 

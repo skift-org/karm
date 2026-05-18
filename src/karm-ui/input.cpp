@@ -53,7 +53,8 @@ export struct MouseListener {
 
         if (auto e = event.is<App::MouseEvent>()) {
             if (not node.bound().contains(e->pos)) {
-                state = IDLE;
+                if (state != PRESS or e->type == App::MouseEvent::RELEASE)
+                    state = IDLE;
             } else {
                 if (state != PRESS) {
                     state = HOVER;
@@ -311,6 +312,10 @@ struct Button : _Box<Button> {
             _onPress(*this);
         }
     };
+
+    App::HitResult hitTest(Math::Vec2i) override {
+        return App::HitResult::HIT;
+    }
 };
 
 export Child button(Opt<Send<>> onPress, ButtonStyle style, Child child) {
@@ -515,6 +520,10 @@ struct Input : View<Input> {
         size.x = max(size.x, Au{1});
         return size.ceil().cast<isize>();
     }
+
+    App::HitResult hitTest(Math::Vec2i) override {
+        return App::HitResult::HIT;
+    }
 };
 
 export Child input(Gfx::ProseStyle style, Rc<TextModel> text, Send<TextAction> onChange) {
@@ -638,6 +647,10 @@ struct SimpleInput : View<SimpleInput> {
         size.x = max(size.x, Au{1});
         return size.ceil().cast<isize>();
     }
+
+    App::HitResult hitTest(Math::Vec2i) override {
+        return App::HitResult::HIT;
+    }
 };
 
 export Child input(Gfx::ProseStyle style, String text, Send<String> onChange) {
@@ -701,6 +714,10 @@ struct Slider : ProxyNode<Slider> {
             e.accept();
         }
         ProxyNode::bubble(e);
+    }
+
+    App::HitResult hitTest(Math::Vec2i) override {
+        return App::HitResult::HIT;
     }
 };
 

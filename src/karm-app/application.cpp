@@ -16,6 +16,12 @@ namespace Karm::App {
 export using WindowId = Distinct<usize, struct WindowIdTag>;
 export constexpr WindowId GLOBAL = WindowId{Limits<usize>::MAX};
 
+export enum struct HitResult {
+    NORMAL,
+    HIT,
+    DRAG,
+};
+
 export enum struct Direction : u8 {
     EAST,
     NORTH,
@@ -75,6 +81,10 @@ export struct Handler {
     virtual void update() {}
 
     virtual void handle(WindowId windowId, Event& e) = 0;
+
+    virtual HitResult hitTest([[maybe_unused]] WindowId windowId, [[maybe_unused]] Math::Vec2i pos) {
+        return HitResult::NORMAL;
+    }
 
     template <typename E, typename... Args>
     void handle(WindowId windowId, Args&&... args) {

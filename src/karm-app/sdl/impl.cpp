@@ -95,7 +95,7 @@ struct SdlWindow : Window {
     }
 
     void drag() override {
-        // FIXME
+        // NOTE: This is a no-op because SDL lacks a  programmatic way of initiating a window drag.
     }
 
     void snap(Snap snap) override {
@@ -116,6 +116,7 @@ struct SdlWindow : Window {
 };
 
 struct SdlApplication : Application {
+    Opt<Rc<Handler>> _handler = NONE;
     Map<SDL_WindowID, SdlWindow*> _windows;
     ApplicationProps _props;
     bool _exited = false;
@@ -123,6 +124,46 @@ struct SdlApplication : Application {
 
     explicit SdlApplication(ApplicationProps const& props)
         : _props(props) {}
+
+    static SDL_HitTestResult _windowHitTest(SDL_Window* win, SDL_Point const* area, void* data) {
+        int w, h;
+        SDL_GetWindowSize(win, &w, &h);
+
+        int const margin = 6;
+        bool isTop = area->y < margin;
+        bool isBottom = area->y >= (h - margin);
+        bool isLeft = area->x < margin;
+        bool isRight = area->x >= (w - margin);
+
+        if (isTop && isLeft)
+            return SDL_HITTEST_RESIZE_TOPLEFT;
+        if (isTop && isRight)
+            return SDL_HITTEST_RESIZE_TOPRIGHT;
+        if (isBottom && isLeft)
+            return SDL_HITTEST_RESIZE_BOTTOMLEFT;
+        if (isBottom && isRight)
+            return SDL_HITTEST_RESIZE_BOTTOMRIGHT;
+
+        if (isTop)
+            return SDL_HITTEST_RESIZE_TOP;
+        if (isBottom)
+            return SDL_HITTEST_RESIZE_BOTTOM;
+        if (isLeft)
+            return SDL_HITTEST_RESIZE_LEFT;
+        if (isRight)
+            return SDL_HITTEST_RESIZE_RIGHT;
+
+        auto app = (SdlApplication*)data;
+        if (auto& [handler] = app->_handler) {
+            auto result = handler->hitTest(
+                WindowId{SDL_GetWindowID(win)},
+                {area->x, area->y}
+            );
+            if (result == HitResult::DRAG)
+                return SDL_HITTEST_DRAGGABLE;
+        }
+        return SDL_HITTEST_NORMAL;
+    }
 
     Async::Task<Rc<Window>> createWindowAsync(WindowProps const& props, Async::CancellationToken) override {
         SDL_Window* sdlWindow = SDL_CreateWindow(
@@ -132,6 +173,7 @@ struct SdlApplication : Application {
             SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WINDOW_RESIZABLE | SDL_WINDOW_BORDERLESS
         );
 
+        SDL_SetWindowHitTest(sdlWindow, _windowHitTest, this);
         SDL_ShowWindow(sdlWindow);
         SDL_UpdateWindowSurface(sdlWindow);
         SDL_StartTextInput(sdlWindow);
@@ -327,8 +369,12 @@ struct SdlApplication : Application {
     }
 
     Async::Task<> runAsync(Rc<Handler> handler, Async::CancellationToken ct) override {
-        Duration const frameDuration = Duration::fromMSecs(16);
+        _handler = handler;
+        Defer _ = [&] {
+            _handler = NONE;
+        };
 
+        Duration const frameDuration = Duration::fromMSecs(16);
         Instant nextFrameTime = Sys::instant();
 
         while (not exited()) {

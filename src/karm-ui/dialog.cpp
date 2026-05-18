@@ -158,6 +158,12 @@ struct DialogLayer : LeafNode<DialogLayer> {
     Math::Recti bound() override {
         return _child->bound();
     }
+
+    App::HitResult hitTest(Math::Vec2i p) override {
+        if (auto& [dialog] = _dialog)
+            return dialog->hitTest(p);
+        return _child->hitTest(p);
+    }
 };
 
 export Child dialogLayer(Child child) {

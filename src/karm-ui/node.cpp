@@ -70,6 +70,10 @@ struct Node : App::Dispatch {
 
     virtual Math::Recti bound() { panic("bound() not implemented"); }
 
+    virtual App::HitResult hitTest([[maybe_unused]] Math::Vec2i p) {
+        return App::HitResult::NORMAL;
+    }
+
     virtual Node* parent() { return nullptr; }
 
     virtual void attach(Node*) {}
@@ -143,6 +147,10 @@ struct LeafNode : Node {
     void detach(Node* parent) override {
         if (_parent == parent)
             _parent = nullptr;
+    }
+
+    App::HitResult hitTest(Math::Vec2i) override {
+        return App::HitResult::NORMAL;
     }
 };
 
@@ -229,6 +237,17 @@ struct GroupNode : LeafNode<Crtp> {
     Math::Recti bound() override {
         return _bound;
     }
+
+    App::HitResult hitTest(Math::Vec2i p) override {
+        for (auto& child : children()) {
+            if (not child->bound().contains(p))
+                continue;
+            auto hit = child->hitTest(p);
+            if (hit != App::HitResult::NORMAL)
+                return hit;
+        }
+        return App::HitResult::NORMAL;
+    }
 };
 
 // MARK: ProxyNode -------------------------------------------------------------
@@ -279,7 +298,13 @@ struct ProxyNode : LeafNode<Crtp> {
     }
 
     Math::Recti bound() override {
-        return _child->bound();
+        return child().bound();
+    }
+
+    App::HitResult hitTest(Math::Vec2i p) override {
+        if (not child().bound().contains(p))
+            return App::HitResult::NORMAL;
+        return child().hitTest(p);
     }
 };
 

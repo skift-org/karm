@@ -68,7 +68,6 @@ struct RootNode : ProxyNode<RootNode> {
             g.begin(pixels);
             for (auto& d : _dirty) {
                 paint(g, d);
-                g.plot(d, Gfx::CYAN);
             }
             g.end();
         }
@@ -135,6 +134,10 @@ struct Handler : App::Handler {
 
     void handle(App::WindowId, App::Event& e) override {
         _root->event(e);
+    }
+
+    App::HitResult hitTest(App::WindowId, Math::Vec2i pos) override {
+        return _root->hitTest(pos);
     }
 };
 

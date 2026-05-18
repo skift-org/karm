@@ -159,12 +159,6 @@ export auto dismisable(Send<> onDismis, Flags<DismisDir> dir, f64 threshold) {
 // MARK: Drag Region -----------------------------------------------------------
 
 struct DragRegion : ProxyNode<DragRegion> {
-    Math::Vec2i _dir;
-
-    DragRegion(Child child, Math::Vec2i dir)
-        : ProxyNode(child),
-          _dir(dir) {}
-
     using ProxyNode::ProxyNode;
 
     void event(App::Event& event) override {
@@ -178,15 +172,21 @@ struct DragRegion : ProxyNode<DragRegion> {
             event.accept();
         }
     }
+
+    App::HitResult hitTest(Math::Vec2i p) override {
+        if (auto result = child().hitTest(p); result != App::HitResult::NORMAL)
+            return result;
+        return App::HitResult::DRAG;
+    }
 };
 
-export Child dragRegion(Child child, Math::Vec2i dir) {
-    return makeRc<DragRegion>(child, dir);
+export Child dragRegion(Child child) {
+    return makeRc<DragRegion>(child);
 }
 
-export auto dragRegion(Math::Vec2i dir = {1, 1}) {
-    return [dir](Child child) {
-        return dragRegion(child, dir);
+export auto dragRegion() {
+    return [](Child child) {
+        return dragRegion(child);
     };
 }
 
