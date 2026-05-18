@@ -495,12 +495,12 @@ struct [[nodiscard]] Opt {
     }
 
     template <std::size_t>
-    T const& get() const {
+    constexpr T& get() & {
         return _store.unwrap();
     }
 
-    template <std::size_t>
-    T& get() {
+    template <std::size_t I>
+    constexpr T const& get() const& {
         return _store.unwrap();
     }
 };
@@ -518,4 +518,14 @@ struct std::tuple_size<Karm::Opt<T>> {
 export template <std::size_t I, typename T>
 struct std::tuple_element<I, Karm::Opt<T>> {
     using type = T;
+};
+
+export template <typename T>
+struct std::tuple_size<Karm::Opt<T> const> {
+    static constexpr std::size_t value = 1;
+};
+
+export template <std::size_t I, typename T>
+struct std::tuple_element<I, Karm::Opt<T> const> {
+    using type = T const;
 };
