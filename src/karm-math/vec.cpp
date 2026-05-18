@@ -223,16 +223,28 @@ union Vec2 {
         return U{x, y};
     }
 
-    Vec2 floor() {
+    Vec2 floor() const {
         return {Math::floor(x), Math::floor(y)};
     }
 
-    Vec2 ceil() {
+    Vec2 ceil() const {
         return {Math::ceil(x), Math::ceil(y)};
     }
 
-    Vec2 round() {
+    Vec2 round() const {
         return {Math::round(x), Math::round(y)};
+    }
+
+    Vec2<isize> floori() const {
+        return {Math::floori(x), Math::floori(y)};
+    }
+
+    Vec2<isize> ceili() const {
+        return {Math::ceili(x), Math::ceili(y)};
+    }
+
+    Vec2<isize> roundi() const {
+        return {Math::roundi(x), Math::roundi(y)};
     }
 
     bool hasNan() const {

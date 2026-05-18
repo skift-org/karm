@@ -28,18 +28,21 @@ struct RootNode : ProxyNode<RootNode> {
 
     void paint(Gfx::Canvas& g, Math::Recti r) override {
         g.push();
-        g.scale(_window->scaleFactor());
         g.clip(r);
         g.clear(GRAY900);
-        g.fillStyle(GRAY50);
-        child().paint(g, r);
+        g.scale(_window->scaleFactor());
+        auto logicalClip =
+            Math::Trans2f::scale(1.0 / _window->scaleFactor())
+                .apply(r.cast<f64>())
+                .bound()
+                .cast<isize>();
+        child().paint(g, logicalClip);
         g.pop();
     }
 
     void update() {
         if (_shouldAnimate) {
             _shouldAnimate = false;
-
             auto e = App::makeEvent<AnimateEvent>(FRAME_TIME);
             child().event(*e);
         }
@@ -50,8 +53,13 @@ struct RootNode : ProxyNode<RootNode> {
 
             child().layout(_window->bound().size());
 
+            auto s = _window->scaleFactor();
+
+            auto logicalSize = _window->bound().size().cast<f64>();
+            Math::Recti physicalBound = (logicalSize * s).ceili();
+
             _dirty.clear();
-            _dirty.pushBack(_window->bound().size());
+            _dirty.pushBack(physicalBound);
         }
 
         auto pixels = _window->acquireSurface();
@@ -60,6 +68,7 @@ struct RootNode : ProxyNode<RootNode> {
             g.begin(pixels);
             for (auto& d : _dirty) {
                 paint(g, d);
+                g.plot(d, Gfx::CYAN);
             }
             g.end();
         }
@@ -80,7 +89,13 @@ struct RootNode : ProxyNode<RootNode> {
 
     void bubble(App::Event& event) override {
         if (auto e = event.is<PaintEvent>()) {
-            _dirty.pushBack(e->bound);
+            auto s = _window->scaleFactor();
+            auto logical = e->bound.cast<double>();
+            auto physical = Math::Recti::fromTwoPoint(
+                (logical.topStart() * s).floori(),
+                (logical.bottomEnd() * s).ceili()
+            );
+            _dirty.pushBack(physical);
             event.accept();
         } else if (auto e = event.is<LayoutEvent>()) {
             _shouldLayout = true;
