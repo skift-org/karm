@@ -433,6 +433,7 @@ struct Input : View<Input> {
     Rc<TextModel> _model;
     Send<TextAction> _onChange;
     bool _mouseDown = false;
+    SelectionBoundary _selectionBoundary = SelectionBoundary::RUNE;
 
     Opt<Rc<Gfx::Prose>> _text;
 
@@ -488,16 +489,22 @@ struct Input : View<Input> {
                 auto local = me->pos - bound().xy;
                 auto pos = _ensureText().hitTest({Au{local.x}, Au{local.y}});
                 _mouseDown = true;
-                _onChange(*this, TextAction::moveTo(pos));
+                _selectionBoundary =
+                    me->clicks == 1
+                        ? SelectionBoundary::RUNE
+                    : me->clicks == 2 ? SelectionBoundary::WORD
+                                      : SelectionBoundary::LINE;
+                _onChange(*this, TextAction::moveTo(pos, _selectionBoundary));
                 e.accept();
             } else if (me->type == App::MouseEvent::MOVE and _mouseDown) {
                 _ensureText().layout(Au{bound().width});
                 auto local = me->pos - bound().xy;
                 auto pos = _ensureText().hitTest({Au{local.x}, Au{local.y}});
-                _onChange(*this, TextAction::selectTo(pos));
+                _onChange(*this, TextAction::selectTo(pos, _selectionBoundary));
                 e.accept();
             } else if (me->type == App::MouseEvent::RELEASE and me->button == App::MouseButton::LEFT) {
                 _mouseDown = false;
+                _selectionBoundary = SelectionBoundary::RUNE;
             }
             return;
         }
@@ -543,6 +550,7 @@ struct SimpleInput : View<SimpleInput> {
     Opt<TextModel> _model;
     Opt<Rc<Gfx::Prose>> _prose;
     bool _mouseDown = false;
+    SelectionBoundary _selectionBoundary = SelectionBoundary::RUNE;
 
     SimpleInput(Gfx::ProseStyle style, String text, Send<String> onChange)
         : _style(style),
@@ -608,18 +616,22 @@ struct SimpleInput : View<SimpleInput> {
                 auto local = me->pos - bound().xy;
                 auto pos = _ensureText().hitTest({Au{local.x}, Au{local.y}});
                 _mouseDown = true;
-                _ensureModel().setCursor(pos);
-                shouldRepaint(*this);
+                _selectionBoundary =
+                    me->clicks == 1
+                        ? SelectionBoundary::RUNE
+                    : me->clicks == 2 ? SelectionBoundary::WORD
+                                      : SelectionBoundary::LINE;
+                _ensureModel().reduce(TextAction::moveTo(pos, _selectionBoundary));
                 e.accept();
             } else if (me->type == App::MouseEvent::MOVE and _mouseDown) {
                 _ensureText().layout(Au{bound().width});
                 auto local = me->pos - bound().xy;
                 auto pos = _ensureText().hitTest({Au{local.x}, Au{local.y}});
-                _ensureModel().setSelectionEnd(pos);
-                shouldRepaint(*this);
+                _ensureModel().reduce(TextAction::selectTo(pos, _selectionBoundary));
                 e.accept();
             } else if (me->type == App::MouseEvent::RELEASE and me->button == App::MouseButton::LEFT) {
                 _mouseDown = false;
+                _selectionBoundary = SelectionBoundary::RUNE;
             }
             return;
         }

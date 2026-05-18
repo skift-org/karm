@@ -202,6 +202,7 @@ export struct MouseEvent {
     Flags<MouseButton> buttons{};
     Flags<KeyMod> mods{};
     MouseButton button{};
+    u8 clicks = 1;
 
     bool pressed(Flags<MouseButton> button) const {
         return button.any(buttons);

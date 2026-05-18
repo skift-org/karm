@@ -287,6 +287,7 @@ struct SdlApplication : Application {
                     .buttons = buttons,
                     .mods = currentMods(),
                     .button = button,
+                    .clicks = sdlEvent.button.clicks,
                 }
             );
             break;
@@ -322,6 +323,7 @@ struct SdlApplication : Application {
                     .buttons = buttons,
                     .mods = currentMods(),
                     .button = button,
+                    .clicks = sdlEvent.button.clicks,
                 }
             );
             break;

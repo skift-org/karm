@@ -9,6 +9,12 @@ bool _isWord(Rune r) {
     return isAsciiAlphaNum(r) or r == '_';
 }
 
+export enum struct SelectionBoundary {
+    RUNE,
+    WORD,
+    LINE,
+};
+
 export struct TextAction {
     enum struct _Op {
         TYPE,
@@ -56,20 +62,24 @@ export struct TextAction {
     using enum _Op;
 
     _Op op;
-    Rune rune = {};
+    Rune rune;
     usize pos = {};
+    SelectionBoundary boundary = SelectionBoundary::RUNE;
 
-    TextAction(_Op op, Rune rune = 0) : op(op), rune(rune) {}
+    TextAction(_Op op, Rune rune = 0, SelectionBoundary boundary = SelectionBoundary::RUNE)
+        : op(op), rune(rune), boundary(boundary) {}
 
-    static TextAction moveTo(usize pos) {
+    static TextAction moveTo(usize pos, SelectionBoundary boundary = SelectionBoundary::RUNE) {
         TextAction a{MOVE_TO};
         a.pos = pos;
+        a.boundary = boundary;
         return a;
     }
 
-    static TextAction selectTo(usize pos) {
+    static TextAction selectTo(usize pos, SelectionBoundary boundary = SelectionBoundary::RUNE) {
         TextAction a{SELECT_TO};
         a.pos = pos;
+        a.boundary = boundary;
         return a;
     }
 
@@ -171,6 +181,8 @@ export struct TextModel {
     struct Cur {
         usize head;
         usize tail;
+        usize pivot;
+        SelectionBoundary anchorBoundary = SelectionBoundary::RUNE;
 
         bool open() const {
             return head != tail;
@@ -184,6 +196,7 @@ export struct TextModel {
         Cur cur;
         Vec<Rune> buf;
         usize group;
+        SelectionBoundary boundary;
     };
 
     Vec<Rune> _buf;
@@ -217,6 +230,17 @@ export struct TextModel {
 
     // MARK: Operations
 
+    urange _resolveBoundary(usize pos, SelectionBoundary boundary) {
+        switch (boundary) {
+        case SelectionBoundary::RUNE:
+            return urange::fromStartEnd(pos, pos);
+        case SelectionBoundary::WORD:
+            return urange::fromStartEnd(_wordStart(pos), _wordEnd(pos));
+        case SelectionBoundary::LINE:
+            return urange::fromStartEnd(_lineStart(pos), _lineEnd(pos));
+        }
+    }
+
     void _do(Record& r) {
         switch (r.op) {
         case INSERT:
@@ -226,16 +250,32 @@ export struct TextModel {
         case MOVE:
             _cur.head = r.pos;
             _cur.tail = r.pos;
+            _cur.pivot = r.pos;
+            _cur.anchorBoundary = SelectionBoundary::RUNE;
             break;
 
-        case SELECT:
-            _cur.head = r.pos;
+        case SELECT: {
+            if (r.boundary > _cur.anchorBoundary)
+                _cur.anchorBoundary = r.boundary;
+
+            auto pivotRange = _resolveBoundary(_cur.pivot, _cur.anchorBoundary);
+            auto headRange = _resolveBoundary(r.pos, r.boundary);
+
+            if (_cur.pivot > r.pos) {
+                _cur.tail = pivotRange.end();
+                _cur.head = headRange.start;
+            } else {
+                _cur.tail = pivotRange.start;
+                _cur.head = headRange.end();
+            }
             break;
+        }
 
         case DELETE:
             auto start = min(_cur.head, r.pos);
             auto end = max(_cur.head, r.pos);
             auto slice = sub(_buf, start, end);
+
             r.buf = slice;
             r.pos = start;
 
@@ -265,7 +305,7 @@ export struct TextModel {
         _cur = r.cur;
     }
 
-    void _push(Op op, usize pos, Rune rune) {
+    void _push(Op op, usize pos, Rune rune, SelectionBoundary boundary = SelectionBoundary::RUNE) {
         if (_index != _records.len())
             _records.trunc(_index);
 
@@ -275,6 +315,7 @@ export struct TextModel {
         record.rune = rune;
         record.cur = _cur;
         record.group = _group;
+        record.boundary = boundary;
         _do(record);
 
         _index++;
@@ -284,12 +325,14 @@ export struct TextModel {
         _push(INSERT, pos, rune);
     }
 
-    void _moveTo(usize pos) {
+    void _moveTo(usize pos, SelectionBoundary boundary = SelectionBoundary::RUNE) {
         _push(MOVE, pos, 0);
+        if (boundary != SelectionBoundary::RUNE)
+            _selectTo(pos, boundary);
     }
 
-    void _selectTo(usize pos) {
-        _push(SELECT, pos, 0);
+    void _selectTo(usize pos, SelectionBoundary boundary = SelectionBoundary::RUNE) {
+        _push(SELECT, pos, 0, boundary);
     }
 
     void _deleteTo(usize pos) {
@@ -337,6 +380,38 @@ export struct TextModel {
         auto off = pos - _lineStart(pos);
         auto nextLine = _lineStart(_nextLine(pos));
         return min(nextLine + off, _lineEnd(nextLine));
+    }
+
+    usize _wordStart(usize pos) const {
+        if (pos == 0)
+            return 0;
+
+        auto isWordBlock = (pos == _buf.len()) ? _isWord(_buf[pos - 1]) : _isWord(_buf[pos]);
+
+        if (isWordBlock)
+            while (pos != 0 and _isWord(_buf[pos - 1]))
+                pos--;
+        else
+            while (pos != 0 and not _isWord(_buf[pos - 1]))
+                pos--;
+
+        return pos;
+    }
+
+    usize _wordEnd(usize pos) const {
+        if (pos == _buf.len())
+            return pos;
+
+        auto isWordBlock = (pos == 0) ? _isWord(_buf[pos]) : _isWord(_buf[pos - 1]);
+
+        if (isWordBlock)
+            while (pos != _buf.len() and _isWord(_buf[pos]))
+                pos++;
+        else
+            while (pos != _buf.len() and not _isWord(_buf[pos]))
+                pos++;
+
+        return pos;
     }
 
     usize _prevWord(usize pos) const {
@@ -695,11 +770,11 @@ export struct TextModel {
             break;
 
         case TextAction::MOVE_TO:
-            _moveTo(a.pos);
+            _moveTo(a.pos, a.boundary);
             break;
 
         case TextAction::SELECT_TO:
-            _selectTo(a.pos);
+            _selectTo(a.pos, a.boundary);
             break;
 
         case TextAction::UNDO:
