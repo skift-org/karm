@@ -96,10 +96,10 @@ struct ResizeHandle : Ui::View<ResizeHandle> {
     void paint(Gfx::Canvas& g, Math::Recti) override {
         g.push();
         if (_pressed) {
-            g.fillStyle(Ui::GRAY700);
+            g.fillStyle(Ui::ACCENT700);
             g.fill(bound().cast<f64>());
         } else if (_hover) {
-            g.fillStyle(Ui::GRAY800);
+            g.fillStyle(Ui::ACCENT600);
             g.fill(bound().cast<f64>());
         }
         g.pop();
@@ -124,7 +124,7 @@ struct ResizeHandle : Ui::View<ResizeHandle> {
     }
 
     Math::Vec2i size(Math::Vec2i, Ui::Hint) override {
-        return 3;
+        return 4;
     }
 };
 

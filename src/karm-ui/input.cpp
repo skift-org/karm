@@ -468,8 +468,8 @@ struct Input : View<Input> {
 
         if (_focus) {
             g.push();
-            _paintSelection(g, text, _model->_cur.head, _model->_cur.tail, Ui::ACCENT500.withOpacity(0.5));
-            _paintCaret(g, text, _model->_cur.head, _style.color.unwrapOr(Ui::GRAY100));
+            _paintSelection(g, text, _model->_cur.head, _model->_cur.tail, ACCENT500.withOpacity(0.5));
+            _paintCaret(g, text, _model->_cur.head, _style.color.unwrapOr(GRAY100));
             g.pop();
         }
 
@@ -595,8 +595,8 @@ struct SimpleInput : View<SimpleInput> {
 
         if (_focus) {
             g.push();
-            _paintSelection(g, text, _model->_cur.head, _model->_cur.tail, Ui::ACCENT500.withOpacity(0.5));
-            _paintCaret(g, text, _ensureModel()._cur.head, _style.color.unwrapOr(Ui::GRAY100));
+            _paintSelection(g, text, _model->_cur.head, _model->_cur.tail, ACCENT500.withOpacity(0.5));
+            _paintCaret(g, text, _ensureModel()._cur.head, _style.color.unwrapOr(GRAY100));
             g.pop();
         }
 
@@ -623,12 +623,14 @@ struct SimpleInput : View<SimpleInput> {
                                       : SelectionBoundary::LINE;
                 _ensureModel().reduce(TextAction::moveTo(pos, _selectionBoundary));
                 e.accept();
+                shouldRepaint(*this);
             } else if (me->type == App::MouseEvent::MOVE and _mouseDown) {
                 _ensureText().layout(Au{bound().width});
                 auto local = me->pos - bound().xy;
                 auto pos = _ensureText().hitTest({Au{local.x}, Au{local.y}});
                 _ensureModel().reduce(TextAction::selectTo(pos, _selectionBoundary));
                 e.accept();
+                shouldRepaint(*this);
             } else if (me->type == App::MouseEvent::RELEASE and me->button == App::MouseButton::LEFT) {
                 _mouseDown = false;
                 _selectionBoundary = SelectionBoundary::RUNE;
