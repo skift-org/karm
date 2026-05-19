@@ -55,18 +55,16 @@ static void _dumpName(Font::Ttf::Name const& name) {
 }
 
 Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
-    auto& args = env.args();
-
-    if (args.len() < 1)
+    if (env.argsLen() < 1)
         co_return Error::invalidInput("Usage: ttf-dump <verb> <args...>");
 
-    auto verb = args[0];
+    auto verb = env[0];
 
     if (verb == "dump-ttf") {
-        if (args.len() != 2)
+        if (env.argsLen() != 2)
             co_return Error::invalidInput("Usage: ttf-dump dump-ttf <url>");
 
-        auto url = Ref::parseUrlOrPath(args[1], env.cwd());
+        auto url = Ref::parseUrlOrPath(env[1], env.cwd());
         auto file = co_try$(Sys::File::open(url));
         auto map = co_try$(Sys::mmap(file));
         auto ttf = co_try$(Font::Ttf::Parser::init(map.bytes()));
@@ -81,10 +79,10 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
         co_try$(db.loadSystemFonts());
         co_return Ok();
     } else if (verb == "dump-attr") {
-        if (args.len() != 2)
+        if (env.argsLen() != 2)
             co_return Error::invalidInput("Usage: ttf-dump dump-attr <url>");
 
-        auto url = Ref::parseUrlOrPath(args[1], env.cwd());
+        auto url = Ref::parseUrlOrPath(env[1], env.cwd());
         auto font = co_try$(Font::loadFontface(url));
 
         Sys::println("{}", font->attrs());

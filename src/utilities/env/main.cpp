@@ -33,13 +33,13 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
     co_trya$(cmd.execAsync(env));
 
     if (dump) {
-        for (auto& e : env.vars().iter()) {
+        for (auto& e : env.iterVars()) {
             Sys::println("{}={}"s, e.v0, e.v1);
         }
     } else if (get) {
-        if (not env.vars().has(name.value()))
+        if (not env.hasVar(name.value()))
             co_return Error::invalidInput("This environment variable does not exist."s);
-        Sys::println("{}"s, env.vars().get(name.value()));
+        Sys::println("{}"s, env.getVar(name.value()));
     }
 
     co_return Ok();

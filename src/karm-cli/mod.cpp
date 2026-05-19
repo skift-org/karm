@@ -677,10 +677,9 @@ export struct Command : Meta::Pinned {
     }
 
     Async::Task<> execAsync(Sys::Env& env) {
-        auto& args = env.args();
         Vec<Token> tokens;
-        for (usize i = 0; i < args.len(); ++i)
-            tokenize(args[i], tokens);
+        for (usize i = 0; i < env.argsLen(); ++i)
+            tokenize(env[i], tokens);
         co_return co_await execAsync(tokens);
     }
 

@@ -11,44 +11,55 @@ using namespace Karm::Literals;
 
 namespace Karm::Sys {
 
-export struct Vars {
-    virtual ~Vars() = default;
+export struct Env;
 
-    virtual Opt<Str> get(Str key) const = 0;
+static Env* _globalEnv = nullptr;
 
-    Opt<isize> geti(Str key) const {
-        auto value = try$(get(key));
-        return Io::atoi(value);
-    }
-
-    Opt<usize> getu(Str key) const {
-        auto value = try$(get(key));
-        return Io::atou(value);
-    }
-
-    virtual bool has(Str key) const = 0;
-
-    virtual Yield<Pair<Str>> iter() const = 0;
-};
-
-export struct Envp : Vars {
+export struct Env {
+    usize _argc;
+    char const** _argv;
     char const* const* _envp;
+    Ref::Url _cwd;
 
-    Envp(char const* const* envp)
-        : _envp(envp) {}
+    Env(usize argc, char const** argv, char const* const* envp, Ref::Url cwd)
+        : _argc(argc), _argv(argv), _envp(envp), _cwd(cwd) {
+        if (not _globalEnv)
+            _globalEnv = this;
+    }
 
-    Opt<Str> get(Str name) const override {
-        for (auto [k, v] : iter())
+    Str self() const {
+        return _argv[0];
+    }
+
+    usize argsLen() const {
+        return _argc - 1;
+    }
+
+    Str operator[](usize i) const {
+        if (i >= argsLen())
+            panic("index out of bounds");
+        return _argv[i + 1];
+    }
+
+    bool argsHas(Str arg) const {
+        for (usize i = 0; i < argsLen(); ++i)
+            if (operator[](i) == arg)
+                return true;
+        return false;
+    }
+
+    Opt<Str> getVar(Str name) const {
+        for (auto [k, v] : iterVars())
             if (k == name)
                 return v;
         return NONE;
     }
 
-    bool has(Str name) const override {
-        return get(name) != NONE;
+    bool hasVar(Str name) const {
+        return getVar(name) != NONE;
     }
 
-    Yield<Pair<Str>> iter() const override {
+    Yield<Pair<Str>> iterVars() const {
         for (char const* const* e = _envp; *e != nullptr; e++) {
             auto env = Str::fromNullterminated(*e);
             auto index = indexOf(env, '=');
@@ -64,61 +75,10 @@ export struct Envp : Vars {
             };
         }
     }
-};
 
-export struct Args {
-    virtual ~Args() = default;
-
-    virtual Str self() const = 0;
-    virtual usize len() const = 0;
-    virtual Str operator[](usize i) const = 0;
-    virtual bool has(Str arg) const = 0;
-};
-
-export struct Argv : Args {
-    usize _argc;
-    char const** _argv;
-
-    Argv(usize argc, char const** argv)
-        : _argc(argc), _argv(argv) {}
-
-    Str self() const override {
-        return _argv[0];
+    Ref::Url cwd() const {
+        return _cwd;
     }
-
-    usize len() const override {
-        return _argc - 1;
-    }
-
-    Str operator[](usize i) const override {
-        if (i >= len())
-            panic("index out of bounds");
-        return _argv[i + 1];
-    }
-
-    bool has(Str arg) const override {
-        for (usize i = 0; i < len(); ++i)
-            if (operator[](i) == arg)
-                return true;
-        return false;
-    }
-};
-
-export struct Env;
-
-static Env* _globalEnv = nullptr;
-
-export struct Env {
-    Env() {
-        if (not _globalEnv)
-            _globalEnv = this;
-    }
-
-    virtual ~Env() = default;
-
-    virtual Vars const& vars() const = 0;
-    virtual Args const& args() const = 0;
-    virtual Ref::Url cwd() const = 0;
 };
 
 export Env const& globalEnv() {

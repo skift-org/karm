@@ -3,6 +3,7 @@
     "id": "karm-sys.base",
     "type": "lib",
     "requires": [
-        "karm-core"
+        "karm-core",
+        "karm-ref"
     ]
 }
