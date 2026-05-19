@@ -133,6 +133,8 @@ static Ui::Child _desktopScaffoldToolbar(Scaffold::State const& s, Scaffold cons
 
 static Ui::Child _desktopScaffoldHeader(Scaffold::State const& s, Scaffold const& scaffold) {
     return _desktopScaffoldToolbar(s, scaffold) |
+           Ui::doubleClick(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::FULL)) |
+           Ui::box({.borderWidth = 1, .borderFill = Gfx::RED500}) |
            contextMenu([] {
                return contextMenuContent({
                    contextMenuItem(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::NONE), Mdi::WINDOW_RESTORE, "Restore"),

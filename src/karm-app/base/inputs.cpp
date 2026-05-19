@@ -211,6 +211,10 @@ export struct MouseEvent {
     bool released(MouseButton button) const {
         return not pressed(button);
     }
+
+    void repr(Io::Emit& e) const {
+        e("(mouse-event type:{} pos:{})", type, pos);
+    }
 };
 
 export struct MouseLeaveEvent {

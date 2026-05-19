@@ -14,7 +14,7 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken ct) {
             .icon = Mdi::DUCK,
             .title = "Kira Application"s,
             .body = [] {
-                return Ui::labelMedium("Hello, world"s);
+                return Ui::labelMedium("Hello, world"s) | Ui::center() | Kr::scaffoldContent();
             },
         }),
         ct

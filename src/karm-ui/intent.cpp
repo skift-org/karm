@@ -26,13 +26,6 @@ struct Intent : ProxyNode<Intent> {
         _map(*this, e);
         ProxyNode<Intent>::event(e);
     }
-
-    void bubble(App::Event& e) override {
-        if (e.accepted())
-            return;
-        _map(*this, e);
-        ProxyNode<Intent>::bubble(e);
-    }
 };
 
 export Child intent(Send<App::Event&> filter, Child child) {
@@ -67,6 +60,16 @@ export auto keyboardShortcut(App::Key key, Flags<App::KeyMod> mods = {}) {
             event<KeyboardShortcutActivated>(n);
         }
     );
+}
+
+export auto doubleClick(Send<> onDoubleClick) {
+    return intent([=](Ui::Node& n, App::Event& e) {
+        if (auto me = e.is<App::MouseEvent>();
+            me and n.bound().contains(me->pos) and me->type == App::MouseEvent::PRESS and me->clicks == 2) {
+            onDoubleClick(n);
+            e.accept();
+        }
+    });
 }
 
 } // namespace Karm::Ui

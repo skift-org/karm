@@ -167,7 +167,8 @@ struct DragRegion : ProxyNode<DragRegion> {
         if (event.accepted())
             return;
 
-        if (auto it = event.is<App::MouseEvent>(); it and bound().contains(it->pos) and it->type == App::MouseEvent::PRESS) {
+        if (auto it = event.is<App::MouseEvent>();
+            it and bound().contains(it->pos) and it->type == App::MouseEvent::PRESS) {
             bubble<App::DragStartEvent>(*this);
             event.accept();
         }

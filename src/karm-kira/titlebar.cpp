@@ -32,13 +32,10 @@ export Ui::Child titlebarTitle(Gfx::Icon icon, String title, bool compact = fals
 }
 
 export Ui::Child titlebarClose() {
-    return Ui::hflow(
-        4,
-        Ui::button(
-            Ui::bindBubble<App::RequestCloseEvent>(),
-            Ui::ButtonStyle::subtle(),
-            Mdi::WINDOW_CLOSE
-        )
+    return Ui::button(
+        Ui::bindBubble<App::RequestCloseEvent>(),
+        Ui::ButtonStyle::subtle(),
+        Mdi::WINDOW_CLOSE
     );
 }
 
@@ -66,8 +63,7 @@ export struct TitlebarContent {
                        separator(),
                        contextMenuItem(Ui::bindBubble<App::RequestCloseEvent>(), Mdi::WINDOW_CLOSE, "Close"),
                    });
-               }) |
-               Ui::dragRegion();
+               });
     }
 };
 

@@ -66,7 +66,6 @@ export struct MouseListener {
                     e->button == App::MouseButton::LEFT) {
                     state = PRESS;
                     event.accept();
-
                 } else if (e->type == App::MouseEvent::RELEASE and e->button == App::MouseButton::LEFT) {
                     if (state == PRESS) {
                         state = HOVER;

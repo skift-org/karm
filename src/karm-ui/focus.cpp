@@ -107,6 +107,10 @@ struct Focusable : ProxyNode<Focusable> {
             _stealFocus();
         }
     }
+
+    App::HitResult hitTest(Math::Vec2i) override {
+        return App::HitResult::HIT;
+    }
 };
 
 export Ui::Child focusable(Ui::Child child, FocusableProps props = {}) {
