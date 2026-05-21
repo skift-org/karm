@@ -14,7 +14,7 @@ export struct Viewbox : Proxy {
     Viewbox(Rc<Node> node, Math::Rectf viewbox)
         : Proxy(node), _viewbox(viewbox) {}
 
-    Math::Rectf bound() override {
+    Math::Rectf bound() const override {
         return _viewbox.size();
     }
 

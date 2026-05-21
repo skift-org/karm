@@ -17,7 +17,7 @@ export struct Image : Node {
         : _bound(bound), _surface(surface), _radii(radii) {
     }
 
-    Math::Rectf bound() override {
+    Math::Rectf bound() const override {
         return _bound;
     }
 

@@ -17,7 +17,7 @@ export struct Shape : Node {
     Shape(Math::Path path, Opt<Gfx::Stroke> stroke, Opt<Gfx::Fill> fill)
         : _path(path), _stroke(stroke), _fill(fill) {}
 
-    Math::Rectf bound() override {
+    Math::Rectf bound() const override {
         return _path.bound();
     }
 

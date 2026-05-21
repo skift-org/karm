@@ -21,7 +21,7 @@ export struct Box : Node {
         : _bound(bound), _borders(borders), _outline(outline), _backgrounds(backgrounds) {
     }
 
-    Math::Rectf bound() override {
+    Math::Rectf bound() const override {
         return _bound;
     }
 

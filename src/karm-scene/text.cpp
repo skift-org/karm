@@ -14,7 +14,7 @@ export struct Text : Node {
     Text(Math::Vec2f origin, Rc<Gfx::Prose> prose)
         : _origin(origin), _prose(prose) {}
 
-    Math::Rectf bound() override {
+    Math::Rectf bound() const override {
         return {_origin, _prose->size().cast<f64>()};
     }
 

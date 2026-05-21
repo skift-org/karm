@@ -14,7 +14,7 @@ export struct Transform : Proxy {
     Transform(Rc<Node> node, Math::Trans2f transform)
         : Proxy(node), _transform(transform) {}
 
-    Math::Rectf bound() override {
+    Math::Rectf bound() const override {
         return _transform
             .apply(_node->bound())
             .bound();

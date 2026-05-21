@@ -24,7 +24,7 @@ export struct Stack : Node {
             child->prepare();
     }
 
-    Math::Rectf bound() override {
+    Math::Rectf bound() const override {
         Math::Rectf rect;
         bool first = true;
         for (auto& child : _children) {

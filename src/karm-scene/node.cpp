@@ -19,7 +19,7 @@ export struct Node {
     virtual void prepare() {}
 
     /// The bounding rectangle of the node
-    virtual Math::Rectf bound() { return {}; }
+    virtual Math::Rectf bound() const { return {}; }
 
     virtual void paint(Gfx::Canvas&, Math::Rectf, PaintOptions = {}) {}
 

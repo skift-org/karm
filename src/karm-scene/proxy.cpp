@@ -18,7 +18,7 @@ export struct Proxy : Node {
         _node->prepare();
     }
 
-    Math::Rectf bound() override {
+    Math::Rectf bound() const override {
         return _node->bound();
     }
 
