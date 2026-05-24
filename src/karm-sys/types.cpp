@@ -6,7 +6,7 @@ namespace Karm::Sys {
 
 export using Handle = Distinct<usize, struct _HandleTag>;
 
-export Handle INVALID = Handle(-1);
+export Handle INVALID_HANDLE = Handle(-1);
 
 export enum struct MmapOption : u64 {
     READ = 1 << 0,

@@ -23,5 +23,4 @@ export import :socket;
 export import :stat;
 export import :time;
 export import :types;
-export import :ipc;
 export import :env;
