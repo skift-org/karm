@@ -9,7 +9,6 @@ import Karm.Math;
 using namespace Karm;
 using namespace Karm::Ref::Literals;
 
-
 struct Sin : Av::Stream {
     f64 freq = 440.0f; // A4
     f64 phase = 0.0f;

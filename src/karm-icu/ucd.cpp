@@ -2224,7 +2224,6 @@ export struct Properties {
     bool xidStart() const {
         return (_XidStartPages[(_XidStartIndirect[_rune >> 8] << 4) + ((_rune & 255) >> 4)] >> (_rune & 15)) & 1;
     }
-
 };
 
 } // namespace Karm::Icu

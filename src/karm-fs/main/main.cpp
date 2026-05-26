@@ -7,7 +7,6 @@ using namespace Karm;
 using namespace Karm::Literals;
 using namespace Karm::Ref::Literals;
 
-
 Async::Task<> entryPointAsync(Sys::Env&, Async::CancellationToken) {
     auto file = co_trya$(Fs::Image::openOrCreateAsync("file:disk.raw"_url));
     co_trya$(file->truncateAsync(DataSize::fromMiB(512)));

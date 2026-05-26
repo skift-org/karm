@@ -747,8 +747,7 @@ void runN0ForBracketPair(
             ((
                  Properties::of(input[i + 1]).bidiClass() == BidiClass::NONSPACING_MARK and paragraph[i + 1] == BidiClass::OTHER_NEUTRAL
              ) or
-             Properties::of(input[i + 1]).bidiClass() == BidiClass::BOUNDARY_NEUTRAL)
-        ) {
+             Properties::of(input[i + 1]).bidiClass() == BidiClass::BOUNDARY_NEUTRAL)) {
             paragraph[i + 1] = newType;
             i++;
         }

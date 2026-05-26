@@ -46,4 +46,4 @@ test$("expr-single") {
     return Ok();
 }
 
-} // namespace Karm::Io::Tests
+} // namespace Karm::Re::Tests
