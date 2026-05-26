@@ -5,80 +5,14 @@ module;
 export module Karm.Dl.Elf:base;
 
 import Karm.Core;
+import :abi;
 
 namespace Karm::Elf {
 
-export constexpr Array<u8, 4> MAGIC = {
-    0x7f, 0x45, 0x4C, 0x46
-};
-
-export enum struct ElfClass : u8 {
-    ELFCLASSNONE = 0,
-    ELFCLASS32 = 1,
-    ELFCLASS64 = 2,
-    _LEN,
-};
-
-export enum struct ElfData : u8 {
-    ELFDATANONE = 0,
-    ELFDATA2LSB = 1,
-    ELFDATA2MSB = 2,
-    _LEN,
-};
-
-export struct Elf32LeAbi {
-    using Addr = u32le;
-    using Off = u32le;
-    using Half = u16le;
-    using Word = u32le;
-    using Sword = i32le;
-    using Xword = u32le;
-    using Sxword = i32le;
-
-    static constexpr ElfClass CLASS = ElfClass::ELFCLASS32;
-    static constexpr ElfData DATA = ElfData::ELFDATA2LSB;
-};
-
-export struct Elf32BeAbi {
-    using Addr = u32be;
-    using Off = u32be;
-    using Half = u16be;
-    using Word = u32be;
-    using Sword = i32be;
-    using Xword = u32be;
-    using Sxword = i32be;
-
-    static constexpr ElfClass CLASS = ElfClass::ELFCLASS32;
-    static constexpr ElfData DATA = ElfData::ELFDATA2MSB;
-};
-
-export struct Elf64LeAbi {
-    using Addr = u64le;
-    using Off = u64le;
-    using Half = u16le;
-    using Word = u32le;
-    using Sword = i32le;
-    using Xword = u64le;
-    using Sxword = i64le;
-
-    static constexpr ElfClass CLASS = ElfClass::ELFCLASS64;
-    static constexpr ElfData DATA = ElfData::ELFDATA2LSB;
-};
-
-export struct Elf64BeAbi {
-    using Addr = u64be;
-    using Off = u64be;
-    using Half = u16be;
-    using Word = u32be;
-    using Sword = i32be;
-    using Xword = u64be;
-    using Sxword = i64be;
-
-    static constexpr ElfClass CLASS = ElfClass::ELFCLASS64;
-    static constexpr ElfData DATA = ElfData::ELFDATA2MSB;
-};
-
 export struct ElfIdent {
+    static constexpr Array<u8, 4> MAGIC = {
+        0x7f, 0x45, 0x4C, 0x46
+    };
     Array<u8, 4> ei_magic;
     ElfClass ei_class;
     ElfData ei_data;
@@ -86,6 +20,22 @@ export struct ElfIdent {
     u8 ei_osabi;
     Array<u8, 8> _pad;
 };
+
+export Res<ElfAbi> sniffAbi(Bytes buf) {
+    if (buf.len() < sizeof(ElfIdent))
+        return Error::invalidData("too small to be elf");
+
+    auto ident = buf.cast<ElfIdent>()[0];
+    if (ident.ei_magic != ElfIdent::MAGIC)
+        return Error::invalidData("invalid elf magic");
+
+    return ElfAbi::any([&]<typename Abi> -> Opt<ElfAbi> {
+               if (ident.ei_class == Abi::CLASS and ident.ei_data == Abi::DATA)
+                   return Abi{};
+               return NONE;
+           })
+        .okOr(Error::invalidData("invalid or unsupported elf abi"));
+}
 
 static_assert(sizeof(ElfIdent) == 16);
 
@@ -385,7 +335,6 @@ export enum struct ElfShdrFlags : u64 {
     SHF_GROUP = 0x200,            //< Section is a member of a group
     SHF_TLS = 0x400,              //< Section holds thread-local storage
     SHF_COMPRESSED = 0x800,       //< Section with compressed data,
-    _LEN,
 
     /// Bits reserved for operating system-specific semantics
     SHF_MASKOS = 0x0ff00000,
@@ -510,14 +459,17 @@ struct [[gnu::packed]] Elf64Sym {
 export template <typename Abi>
 using ElfSym = Meta::Cond<Abi::CLASS == ElfClass::ELFCLASS64, Elf64Sym<Abi>, Elf32Sym<Abi>>;
 
+// MARK: 6. Relocation ----------------------------------------------------
+// https://gabi.xinuos.com/elf/06-reloc.html#relocation
+
 export template <typename Abi>
-struct ElfRel {
+struct [[gnu::packed]] ElfRel {
     Abi::Addr r_offset;
     Abi::Xword r_info;
 };
 
 export template <typename Abi>
-struct ElfRela {
+struct [[gnu::packed]] ElfRela {
     Abi::Addr r_offset;
     Abi::Xword r_info;
     Abi::Sxword r_addend;
@@ -525,6 +477,9 @@ struct ElfRela {
 
 export template <typename Abi>
 using ElfRelr = Abi::Xword;
+
+// MARK: 7.1. Program Header Entry ---------------------------------------------
+// https://gabi.xinuos.com/elf/07-pheader.html#program-header-entry
 
 export enum struct ElfPhdrType : u32 {
     PT_NULL = 0,    //< Unused entry
@@ -554,11 +509,8 @@ export enum struct ElfPhdrFlags : u32 {
     PF_MASKPROC = 0xf0000000, //< Unspecified processor-specific
 };
 
-// MARK: 7.1. Program Header Entry ---------------------------------------------
-// https://gabi.xinuos.com/elf/07-pheader.html#program-header-entry
-
 export template <typename Abi>
-struct Elf32Phdr {
+struct [[gnu::packed]] Elf32Phdr {
     Abi::Word p_type;
     Abi::Off p_offset;
     Abi::Addr p_vaddr;
@@ -570,7 +522,7 @@ struct Elf32Phdr {
 };
 
 export template <typename Abi>
-struct Elf64Phdr {
+struct [[gnu::packed]] Elf64Phdr {
     Abi::Word p_type;
     Flags<ElfPhdrFlags, typename Abi::Word> p_flags;
     Abi::Off p_offset;
@@ -582,6 +534,70 @@ struct Elf64Phdr {
 };
 
 export template <typename Abi>
-using ElfPhdr = Meta::Cond<Abi::CLASS == ElfClass::ELFCLASS64, Elf32Phdr<Abi>, Elf64Phdr<Abi>>;
+using ElfPhdr = Meta::Cond<Abi::CLASS == ElfClass::ELFCLASS64, Elf64Phdr<Abi>, Elf32Phdr<Abi>>;
+
+// MARK: 8.3. Dynamic Section --------------------------------------------------
+// https://gabi.xinuos.com/elf/08-dynamic.html#dynamic-section
+
+export enum struct ElfDynTag {
+    DT_NULL = 0,
+    DT_NEEDED = 1,
+    DT_PLTRELSZ = 2,
+    DT_PLTGOT = 3,
+    DT_HASH = 4,
+    DT_STRTAB = 5,
+    DT_SYMTAB = 6,
+    DT_RELA = 7,
+    DT_RELASZ = 8,
+    DT_RELAENT = 9,
+    DT_STRSZ = 10,
+    DT_SYMENT = 11,
+    DT_INIT = 12,
+    DT_FINI = 13,
+    DT_SONAME = 14,
+    DT_RPATH = 15,
+    DT_SYMBOLIC = 16,
+    DT_REL = 17,
+    DT_RELSZ = 18,
+    DT_RELENT = 19,
+    DT_PLTREL = 20,
+    DT_DEBUG = 21,
+    DT_TEXTREL = 22,
+    DT_JMPREL = 23,
+    DT_BIND_NOW = 24,
+    DT_INIT_ARRAY = 25,
+    DT_FINI_ARRAY = 26,
+    DT_INIT_ARRAYSZ = 27,
+    DT_FINI_ARRAYSZ = 28,
+    DT_RUNPATH = 29,
+    DT_FLAGS = 30,
+    DT_ENCODING = 32,
+    DT_PREINIT_ARRAY = 32,
+    DT_PREINIT_ARRAYSZ = 33,
+    DT_SYMTAB_SHNDX = 34,
+    DT_RELRSZ = 35,
+    DT_RELR = 36,
+    DT_RELRENT = 37,
+    DT_SYMTABSZ = 39,
+
+    DT_LOOS = 0x6000000D,
+    DT_HIOS = 0x6ffff000,
+    DT_LOPROC = 0x70000000,
+    DT_HIPROC = 0x7fffffff
+};
+
+export template <typename Abi>
+struct ElfDyn {
+    Abi::Sxword d_tag;
+
+    union {
+        Abi::Xword d_val;
+        Abi::Addr d_ptr;
+    };
+
+    ElfDynTag tag() const {
+        return static_cast<ElfDynTag>(d_tag.value());
+    }
+};
 
 } // namespace Karm::Elf

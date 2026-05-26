@@ -20,6 +20,10 @@ struct ElfProgram : ElfPhdr<Abi> {
     ElfPhdrType type() const {
         return static_cast<ElfPhdrType>(this->p_type.value());
     }
+
+    urange vrange() const {
+        return {this->p_vaddr, this->p_memsz};
+    }
 };
 
 export template <typename Abi>
@@ -81,6 +85,36 @@ struct ElfDynSymSection : ElfSection<Abi> {
 };
 
 export template <typename Abi>
+struct ElfDynamicSection : ElfSection<Abi> {
+    static constexpr auto TYPE = ElfShdrType::SHT_DYNAMIC;
+
+    auto iterDyn() const {
+        struct Iter {
+            Io::BScan s;
+            usize entsize;
+
+            Opt<ElfDyn<Abi>> next() {
+                if (s.ended())
+                    return NONE;
+                auto sym = s.peek<ElfDyn<Abi>>();
+                s.skip(entsize);
+                return sym;
+            }
+        };
+
+        return Iter{this->data, this->sh_entsize};
+    }
+
+    Opt<ElfDyn<Abi>> dyn(Elf::ElfDynTag tag) {
+        for (ElfDyn dyn : iterDyn())
+            if (dyn.tag() == tag)
+                return dyn;
+        
+        return NONE;
+    }
+};
+
+export template <typename Abi>
 struct ElfObject : Io::BChunk {
     ElfHeader<Abi> header() const {
         return begin().template next<ElfHeader<Abi>>();
@@ -93,19 +127,30 @@ struct ElfObject : Io::BChunk {
                 .skip(h.e_phoff)
                 .skip(h.e_phentsize * index)
                 .template next<ElfPhdr<Abi>>();
+
         auto data =
             begin()
                 .skip(phdr.p_offset)
                 .nextBytes(phdr.p_filesz);
+
         return {phdr, data};
     }
 
-    auto iterProgram() {
+    auto iterProgram() const {
         auto h = header();
         return urange(0, h.e_phnum) |
                Select([&](auto i) {
                    return program(i);
                });
+    }
+
+    Opt<Str> interp() const {
+        for (ElfProgram pg : iterProgram()) {
+            if (pg.type() == ElfPhdrType::PT_INTERP) {
+                return Str{sub(pg.data, 0, pg.data.len() - 1).template cast<char>()};
+            }
+        }
+        return NONE;
     }
 
     ElfSection<Abi> section(usize index) const {

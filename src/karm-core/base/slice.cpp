@@ -94,6 +94,13 @@ struct Slice {
         return {buf, len};
     }
 
+    static constexpr Slice fromNullterminated(Slice<T> slice) {
+        usize len = 0;
+        while (slice[len] and len < slice.len())
+            len++;
+        return {slice.buf(), len};
+    }
+
     constexpr Slice() = default;
 
     constexpr Slice(T const* buf, usize len)
