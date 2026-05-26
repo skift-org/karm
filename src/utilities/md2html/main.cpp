@@ -24,14 +24,15 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
 
     co_trya$(cmd.execAsync(env));
 
-    if (cmd) {
-        auto markdown = co_try$(Sys::readAllUtf8(urlArg.value()));
-        auto document = Md::parse(markdown);
-        auto html = Md::renderHtml(document);
+    if (not cmd)
+        co_return Ok();
 
-        co_try$(Sys::out().writeStr(html.str()));
-        co_try$(Sys::out().flush());
-    }
+    auto markdown = co_try$(Sys::readAllUtf8(urlArg.value()));
+    auto document = Md::parse(markdown);
+    auto html = Md::renderHtml(document);
+
+    co_try$(Sys::out().writeStr(html.str()));
+    co_try$(Sys::out().flush());
 
     co_return Ok();
 }

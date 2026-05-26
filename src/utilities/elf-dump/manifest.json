@@ -1,0 +1,10 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "elf-dump",
+    "type": "exe",
+    "requires": [
+        "karm-cli",
+        "karm-sys",
+        "karm-dl.elf"
+    ]
+}

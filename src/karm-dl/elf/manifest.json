@@ -1,0 +1,9 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "karm-dl.elf",
+    "description": "ELF related definitions and parser",
+    "type": "lib",
+    "requires": [
+        "karm-core"
+    ]
+}
