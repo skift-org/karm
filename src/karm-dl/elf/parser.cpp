@@ -1,3 +1,7 @@
+module;
+
+#include <karm/macros>
+
 export module Karm.Dl.Elf:parser;
 
 import Karm.Core;
@@ -109,7 +113,7 @@ struct ElfDynamicSection : ElfSection<Abi> {
         for (ElfDyn dyn : iterDyn())
             if (dyn.tag() == tag)
                 return dyn;
-        
+
         return NONE;
     }
 };
@@ -118,6 +122,17 @@ export template <typename Abi>
 struct ElfObject : Io::BChunk {
     ElfHeader<Abi> header() const {
         return begin().template next<ElfHeader<Abi>>();
+    }
+
+    Res<> validate() const {
+        if (bytes().len() < sizeof(ElfHeader<Abi>))
+            return Error::invalidData("elf object too small");
+
+        auto h = header();
+        if (h.e_ident.ei_magic != ElfIdent::MAGIC)
+            return Error::invalidData("not an elf file");
+
+        return Ok();
     }
 
     ElfProgram<Abi> program(usize index) const {
@@ -191,6 +206,16 @@ struct ElfObject : Io::BChunk {
         for (ElfSection<Abi> sec : iterSection()) {
             if (sec.type() == Section<Abi>::TYPE)
                 return Ok<Section<Abi>>(sec);
+        }
+        return Error::invalidData("section not found");
+    }
+
+    Res<ElfSection<Abi>> section(Str name) {
+        auto shstr = try$(section<Elf::ElfStrTab>(header().e_shstrndx));
+
+        for (ElfSection<Abi> sec : iterSection()) {
+            if (shstr.string(sec.sh_name) == name)
+                return Ok(sec);
         }
         return Error::invalidData("section not found");
     }
