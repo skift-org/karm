@@ -76,4 +76,19 @@ export using ElfAbi = Union<
     Elf64LeAbi,
     Elf64BeAbi>;
 
+#ifdef __ck_bits_64__
+#    if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+export using CurrentAbi = Elf64LeAbi;
+#    else
+export using CurrentAbi = Elf64BeAbi;
+#    endif
+#elifdef __ck_bits_32__
+#    if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+export using CurrentAbi = Elf32LeAbi;
+#    else
+export using CurrentAbi = Elf32BeAbi;
+#    endif
+#else
+#endif
+
 } // namespace Karm::Elf
