@@ -97,19 +97,19 @@ struct DialogLayer : LeafNode<DialogLayer> {
         if (_visibility.needRepaint(*this, e))
             Ui::shouldRepaint(*this);
 
-        auto ke = e.is<App::KeyboardEvent>();
-
-        if (ke and ke->type == App::KeyboardEvent::PRESS and ke->key == App::Key::ESC) {
-            _closeDialog();
-            e.accept();
-        } else if (auto se = e.is<ShowDialogEvent>()) {
+        if (auto se = e.is<ShowDialogEvent>()) {
             _showDialog(se->child);
             e.accept();
         } else if (e.is<CloseDialogEvent>()) {
             _closeDialog();
             e.accept();
         } else if (_dialog) {
-            (*_dialog)->event(e);
+            if (auto ke = e.is<App::KeyboardEvent>(); ke and ke->type == App::KeyboardEvent::PRESS and ke->key == App::Key::ESC) {
+                _closeDialog();
+                e.accept();
+            } else {
+                (*_dialog)->event(e);
+            }
         } else {
             _child->event(e);
         }
