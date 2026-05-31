@@ -10,7 +10,7 @@ export struct BoxShadow {
     f64 blur;
     f64 spread;
     Math::Vec2i offset;
-    bool fillCenter = true;
+    bool skipOccluded = false; //< Skip painting parts of the shadow that are occluded by the element itself
 
     static BoxShadow elevated(f64 v, Gfx::Color fill = Gfx::BLACK) {
         return {
@@ -41,92 +41,112 @@ export struct BoxShadow {
         return *this;
     }
 
-    auto& withFillCenter(bool value) {
-        fillCenter = value;
+    auto& withSkipOccluded(bool value) {
+        skipOccluded = value;
         return *this;
     }
 
     void paint(Gfx::Canvas& g, Math::Recti bound) const {
+
         /// 1 / sqrt(2)
         static constexpr f64 IS2 = 0.7071067811865475;
 
         // 1 - (1 / sqrt(2))
         static constexpr f64 IS2M = 1 - IS2;
 
-        bound = bound.grow(spread);
-        bound = bound.offset(offset);
+        auto shadowBound = bound;
+        shadowBound = shadowBound.grow(spread);
+        shadowBound = shadowBound.offset(offset);
 
-        auto grad = Gfx::Gradient::linear().withColors(fill, fill.withOpacity(0)).bake();
+        auto grad = Gfx::Gradient::linear()
+                        .withColors(fill, fill.withOpacity(0))
+                        .bake();
 
         auto topStart = Math::Recti::fromTwoPoint(
-            bound.topStart(),
-            bound.topStart() - Math::Vec2i{(int)blur, (int)blur}
+            shadowBound.topStart(),
+            shadowBound.topStart() - Math::Vec2i{(int)blur, (int)blur}
         );
 
         auto topEnd = Math::Recti::fromTwoPoint(
-            bound.topEnd(),
-            bound.topEnd() + Math::Vec2i{(int)blur, -(int)blur}
+            shadowBound.topEnd(),
+            shadowBound.topEnd() + Math::Vec2i{(int)blur, -(int)blur}
         );
 
         auto bottomStart = Math::Recti::fromTwoPoint(
-            bound.bottomStart(),
-            bound.bottomStart() + Math::Vec2i{-(int)blur, (int)blur}
+            shadowBound.bottomStart(),
+            shadowBound.bottomStart() + Math::Vec2i{-(int)blur, (int)blur}
         );
 
         auto bottomEnd = Math::Recti::fromTwoPoint(
-            bound.bottomEnd(),
-            bound.bottomEnd() + Math::Vec2i{(int)blur, (int)blur}
+            shadowBound.bottomEnd(),
+            shadowBound.bottomEnd() + Math::Vec2i{(int)blur, (int)blur}
         );
 
         auto top = Math::Recti::fromTwoPoint(
-            bound.topStart() - Math::Vec2i{0, (int)blur},
-            bound.topEnd()
+            shadowBound.topStart() - Math::Vec2i{0, (int)blur},
+            shadowBound.topEnd()
         );
 
         auto bottom = Math::Recti::fromTwoPoint(
-            bound.bottomStart(),
-            bound.bottomEnd() + Math::Vec2i{0, (int)blur}
+            shadowBound.bottomStart(),
+            shadowBound.bottomEnd() + Math::Vec2i{0, (int)blur}
         );
 
         auto start = Math::Recti::fromTwoPoint(
-            bound.topStart() - Math::Vec2i{(int)blur, 0},
-            bound.bottomStart()
+            shadowBound.topStart() - Math::Vec2i{(int)blur, 0},
+            shadowBound.bottomStart()
         );
 
         auto end = Math::Recti::fromTwoPoint(
-            bound.topEnd(),
-            bound.bottomEnd() + Math::Vec2i{(int)blur, 0}
+            shadowBound.topEnd(),
+            shadowBound.bottomEnd() + Math::Vec2i{(int)blur, 0}
         );
 
         grad.withType(Gradient::RADIAL);
-        g.fillStyle(grad.withPoints({1, 1}, {IS2M, IS2M}));
-        g.fill(topStart);
+        if (not skipOccluded or not bound.contains(topStart)) {
+            g.fillStyle(grad.withPoints({1, 1}, {IS2M, IS2M}));
+            g.fill(topStart);
+        }
 
-        g.fillStyle(grad.withPoints({0, 1}, {IS2, IS2M}));
-        g.fill(topEnd);
+        if (not skipOccluded or not bound.contains(topEnd)) {
+            g.fillStyle(grad.withPoints({0, 1}, {IS2, IS2M}));
+            g.fill(topEnd);
+        }
 
-        g.fillStyle(grad.withPoints({1, 0}, {IS2M, IS2}));
-        g.fill(bottomStart);
+        if (not skipOccluded or not bound.contains(bottomStart)) {
+            g.fillStyle(grad.withPoints({1, 0}, {IS2M, IS2}));
+            g.fill(bottomStart);
+        }
 
-        g.fillStyle(grad.withPoints({0, 0}, {IS2, IS2}));
-        g.fill(bottomEnd);
+        if (not skipOccluded or not bound.contains(bottomEnd)) {
+            g.fillStyle(grad.withPoints({0, 0}, {IS2, IS2}));
+            g.fill(bottomEnd);
+        }
 
         grad.withType(Gradient::LINEAR);
-        g.fillStyle(grad.withPoints({0, 1}, {0, 0}));
-        g.fill(top);
+        if (not skipOccluded or not bound.contains(top)) {
+            g.fillStyle(grad.withPoints({0, 1}, {0, 0}));
+            g.fill(top);
+        }
 
-        g.fillStyle(grad.withPoints({0, 0}, {0, 1}));
-        g.fill(bottom);
+        if (not skipOccluded or not bound.contains(bottom)) {
+            g.fillStyle(grad.withPoints({0, 0}, {0, 1}));
+            g.fill(bottom);
+        }
 
-        g.fillStyle(grad.withPoints({1, 0}, {0, 0}));
-        g.fill(start);
+        if (not skipOccluded or not bound.contains(start)) {
+            g.fillStyle(grad.withPoints({1, 0}, {0, 0}));
+            g.fill(start);
+        }
 
-        g.fillStyle(grad.withPoints({0, 0}, {1, 0}));
-        g.fill(end);
+        if (not skipOccluded or not bound.contains(end)) {
+            g.fillStyle(grad.withPoints({0, 0}, {1, 0}));
+            g.fill(end);
+        }
 
-        if (fillCenter) {
+        if (not skipOccluded or not bound.contains(shadowBound.shrink(blur))) {
             g.fillStyle(fill);
-            g.fill(bound);
+            g.fill(shadowBound.shrink(blur));
         }
     }
 };

@@ -72,7 +72,7 @@ union Rect {
         _els.~Array();
     }
 
-    always_inline static constexpr Rect<T> fromTwoPoint(Vec2<T> a, Vec2<T> b) {
+    always_inline static constexpr Rect fromTwoPoint(Vec2<T> a, Vec2<T> b) {
         return {
             min(a.x, b.x),
             min(a.y, b.y),
@@ -81,7 +81,7 @@ union Rect {
         };
     }
 
-    always_inline static constexpr Rect<T> fromCenter(Vec2<T> center, Vec2<T> size) {
+    always_inline static constexpr Rect fromCenter(Vec2<T> center, Vec2<T> size) {
         return {
             center.x - size.x / 2,
             center.y - size.y / 2,
@@ -170,41 +170,39 @@ union Rect {
                v.y < y + height;
     }
 
-    always_inline constexpr bool contains(Rect<T> r) const {
-        return r.x >= x and
-               r.y >= y and
-               r.x + r.width <= x + width and
-               r.y + r.height <= y + height;
+    always_inline constexpr bool contains(Rect r) const {
+        return contains(r.topStart()) and
+               contains(r.bottomEnd());
     }
 
-    always_inline constexpr bool colide(Rect<T> r) const {
+    always_inline constexpr bool colide(Rect r) const {
         return r.x + r.width > x and
                r.y + r.height > y and
                r.x < x + width and
                r.y < y + height;
     }
 
-    always_inline constexpr Rect fit(Rect<T> r) const {
+    always_inline constexpr Rect fit(Rect r) const {
         auto scale = (r.size() / size().template cast<f64>()).min();
         Rect result{0, 0, static_cast<T>(width * scale), static_cast<T>(height * scale)};
         result.xy = r.center() - result.center();
         return result;
     }
 
-    always_inline constexpr Rect cover(Rect<T> r) const {
+    always_inline constexpr Rect cover(Rect r) const {
         f64 scale = (r.size() / size().template cast<f64>()).max();
         Rect result{0, 0, static_cast<T>(width * scale), static_cast<T>(height * scale)};
         result.xy = r.center() - result.center();
         return result;
     }
 
-    always_inline constexpr Rect center(Rect<T> r) const {
+    always_inline constexpr Rect center(Rect r) const {
         Rect result{0, 0, width, height};
         result.xy = r.center() - center();
         return result;
     }
 
-    always_inline constexpr Rect<T> clipTo(Rect<T> r) const {
+    always_inline constexpr Rect clipTo(Rect r) const {
         if (not colide(r))
             return {};
 
@@ -216,7 +214,7 @@ union Rect {
         };
     }
 
-    always_inline constexpr Rect<T> mergeWith(Rect<T> r) const {
+    always_inline constexpr Rect mergeWith(Rect r) const {
         return fromTwoPoint(
             {
                 min(start(), r.start()),
@@ -229,7 +227,7 @@ union Rect {
         );
     }
 
-    always_inline constexpr Rect<T> bound() const {
+    always_inline constexpr Rect bound() const {
         return *this;
     }
 
@@ -251,7 +249,7 @@ union Rect {
         };
     }
 
-    always_inline Rect<T> ceil() {
+    always_inline Rect ceil() {
         return fromTwoPoint(
             {
                 Math::floor(start()),
@@ -264,7 +262,7 @@ union Rect {
         );
     }
 
-    always_inline Rect<T> floor() {
+    always_inline Rect floor() {
         return fromTwoPoint(
             {
                 Math::ceil(start()),
@@ -277,7 +275,7 @@ union Rect {
         );
     }
 
-    always_inline Rect<T> round() {
+    always_inline Rect round() {
         return fromTwoPoint(
             {
                 Math::round(start()),
