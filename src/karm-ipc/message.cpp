@@ -13,7 +13,7 @@ namespace Karm::Ipc {
 
 export constexpr u64 SEQ_EVENT = -1;
 
-export struct Header {
+export struct [[gnu::packed]] Header {
     u64 seq;
     Meta::Id mid;
 
@@ -24,17 +24,18 @@ export struct Header {
 
 static_assert(Meta::TriviallyCopyable<Header>);
 
-export struct Message {
-    static constexpr usize CAP = 4096;
+export constexpr usize MAX_MESSAGE_SIZE = Io::DEFAULT_BUFFER_SIZE * 2;
+export constexpr usize MAX_TRANSFER_SIZE = Io::DEFAULT_BUFFER_SIZE;
 
+export struct Message {
     union {
         struct
         {
             Header _header;
-            Array<u8, CAP - sizeof(Header)> _payload;
+            Array<u8, MAX_MESSAGE_SIZE - sizeof(Header)> _payload;
         };
 
-        Array<u8, CAP> _buf;
+        Array<u8, MAX_MESSAGE_SIZE> _buf;
     };
 
     usize _len = 0;

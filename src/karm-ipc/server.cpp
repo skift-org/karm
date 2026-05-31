@@ -27,7 +27,7 @@ export struct Session {
         while (true) {
             co_try$(ct.errorIfCanceled());
             auto message = co_trya$(Ipc::recvAsync(_connection, ct));
-            auto res = co_await handleAsync(message, ct);
+            auto res = co_await handleAsync(*message, ct);
             if (not res)
                 logInfo("message handling error: {}", res);
         }

@@ -4,6 +4,8 @@ import :base.base;
 import :base.res;
 import :base.size;
 
+using namespace Karm::Literals;
+
 namespace Karm::Io {
 
 export constexpr usize DEFAULT_BUFFER_SIZE = 8_KiB;

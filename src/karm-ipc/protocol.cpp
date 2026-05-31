@@ -16,13 +16,13 @@ Res<> send(Sys::IpcConnection& con, u64 seq, T const& payload) {
     return Ok();
 }
 
-export Async::Task<Message> recvAsync(Sys::IpcConnection& con, Async::CancellationToken ct) {
-    Message msg;
-    auto [bufLen, hndsLen] = co_trya$(con.recvAsync(msg._buf, msg._hnds, ct));
+export Async::Task<Box<Message>> recvAsync(Sys::IpcConnection& con, Async::CancellationToken ct) {
+    Box<Message> msg = makeBox<Message>();
+    auto [bufLen, hndsLen] = co_trya$(con.recvAsync(msg->_buf, msg->_hnds, ct));
     if (bufLen < sizeof(Header))
         co_return Error::invalidData("invalid message");
-    msg._len = bufLen;
-    msg._hndsLen = hndsLen;
+    msg->_len = bufLen;
+    msg->_hndsLen = hndsLen;
 
     co_return msg;
 }

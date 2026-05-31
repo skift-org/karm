@@ -17,14 +17,14 @@ namespace Karm::Ipc {
 export struct Client : Meta::NoCopy {
     struct _State {
         Sys::IpcConnection connection;
-        Async::Queue<Message> incoming{};
-        Map<u64, Async::_Promise<Message>> pending{};
+        Async::Queue<Box<Message>> incoming{};
+        Map<u64, Async::_Promise<Box<Message>>> pending{};
         Async::Cancellation cancellation;
         u64 seq = 1;
 
         void failAllPending(Error error) {
-            Message const msg{};
-            (void)msg.packReq<Error>(SEQ_EVENT, error);
+            auto msg = makeBox<Message>();
+            (void)msg->packReq<Error>(SEQ_EVENT, error);
             for (auto& v : pending.mutIterValue())
                 v.resolve(msg);
         }
@@ -62,7 +62,7 @@ export struct Client : Meta::NoCopy {
             }
 
             auto& msg = res.unwrap();
-            auto header = msg._header;
+            auto header = msg->_header;
 
             if (state->pending.contains(header.seq)) {
                 auto promise = state->pending.remove(header.seq);
@@ -75,11 +75,11 @@ export struct Client : Meta::NoCopy {
         }
     }
 
-    Async::Task<Message> recvAsync(Async::CancellationToken ct) {
+    Async::Task<Box<Message>> recvAsync(Async::CancellationToken ct) {
         co_return Ok(co_await _state->incoming.dequeueAsync(ct));
     }
 
-    Opt<Message> poll() {
+    Opt<Box<Message>> poll() {
         return _state->incoming.tryDequeue();
     }
 
@@ -87,22 +87,22 @@ export struct Client : Meta::NoCopy {
     Async::Task<typename T::Response> callAsync(T const& payload, Async::CancellationToken) {
         // FIXME: Handle cancellation
         auto seq = _state->seq++;
-        Async::_Promise<Message> promise;
+        Async::_Promise<Box<Message>> promise;
         auto future = promise.future();
         _state->pending.put(seq, std::move(promise));
 
         co_try$(Ipc::send<T>(_state->connection, seq, payload));
 
-        Message msg = co_await future;
+        Box<Message> msg = co_await future;
 
-        if (msg.is<Error>())
-            co_return co_try$(msg.unpack<Error>());
+        if (msg->is<Error>())
+            co_return co_try$(msg->unpack<Error>());
 
-        if (not msg.is<typename T::Response>()) {
+        if (not msg->is<typename T::Response>()) {
             co_return Error::invalidInput("unexpected response");
         }
 
-        co_return Ok(co_try$(msg.unpack<typename T::Response>()));
+        co_return Ok(co_try$(msg->unpack<typename T::Response>()));
     }
 
     template <typename T>
