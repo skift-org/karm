@@ -33,7 +33,7 @@ export Ui::Child aboutDialog(String name) {
         dialogHeader({
             Ui::hflow(6, Math::Align::CENTER, dialogTitle(name), versionBadge()),
             dialogDescription(
-                "Copyright © 2018-2025 The skiftOS Developers\n"
+                "Copyright © 2018-2026 The skiftOS Developers\n"
                 "\n"
                 "All rights reserved."s
             ),
