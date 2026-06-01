@@ -270,6 +270,13 @@ struct _Rc {
     }
 
     template <typename U>
+    constexpr Opt<_Rc<L, U>> cast() {
+        if (not is<U>())
+            return NONE;
+        return _Rc<L, U>(MOVE, _cell);
+    }
+
+    template <typename U>
     constexpr Opt<_Rc<L, U>> cast() const {
         if (not is<U>())
             return NONE;
