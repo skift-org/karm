@@ -1,0 +1,755 @@
+module;
+
+#include <karm/macros>
+
+export module Karm.Cli:command;
+
+import Karm.Core;
+import Karm.Debug;
+import Karm.Sys;
+import Karm.Ref;
+
+using namespace Karm::Literals;
+using namespace Karm::Re::Literals;
+
+namespace Karm::Cli {
+
+// MARK: Tokenizer -------------------------------------------------------------
+
+export struct Token {
+    enum struct Kind {
+        OPERAND,
+        OPTION,
+        FLAG,
+        EXTRA,
+
+        _LEN,
+    };
+
+    using enum Kind;
+
+    Kind kind;
+    Rune flag = 0;
+    Str value = "";
+
+    Token(Str value)
+        : Token(OPERAND, value) {}
+
+    Token(Kind kind, Str value)
+        : kind(kind), value(value) {}
+
+    Token(Kind kind)
+        : kind(kind) {}
+
+    Token(Rune flag)
+        : kind(FLAG), flag(flag) {}
+
+    bool operator==(Token const& other) const = default;
+
+    void repr(Io::Emit& e) const {
+        if (kind == FLAG)
+            e("(token {} {#c})", kind, flag);
+        else
+            e("(token {} {#})", kind, value);
+    }
+};
+
+export void tokenize(Str arg, Vec<Token>& out) {
+    if (arg == "--"s) {
+        out.pushBack(Token::EXTRA);
+    } else if (arg == "-"s) {
+        out.pushBack("-"s);
+    } else if (startWith(arg, "--"s) == Match::PARTIAL) {
+        out.emplaceBack(Token::OPTION, next(arg, 2));
+    } else if (startWith(arg, "-"s) == Match::PARTIAL) {
+        Str flags = next(arg, 1);
+        for (auto r : iterRunes(flags))
+            out.emplaceBack(r);
+    } else {
+        out.pushBack(arg);
+    }
+}
+
+export void tokenize(Slice<Str> args, Vec<Token>& out) {
+    for (auto& arg : args)
+        tokenize(arg, out);
+}
+
+export void tokenize(int argc, char** argv, Vec<Token>& out) {
+    for (int i = 0; i < argc; ++i)
+        tokenize(Str::fromNullterminated(argv[i]), out);
+}
+
+// MARK: Values ----------------------------------------------------------------
+
+export template <typename T>
+struct ValueParser;
+
+export template <>
+struct ValueParser<bool> {
+    static Res<> usage(Io::TextWriter& w) {
+        return w.writeStr("true|false"s);
+    }
+
+    static Res<bool> parse(Cursor<Token>&) {
+        return Ok(true);
+    }
+};
+
+export template <Meta::Enum T>
+struct ValueParser<T> {
+    static Res<> usage(Io::TextWriter& w) {
+        auto items = enumItems<T>();
+        bool first = false;
+        for (auto& i : items) {
+            if (not first)
+                try$(w.writeStr("|"s));
+            try$(w.writeStr(i.name));
+            first = true;
+        }
+        return Ok();
+    }
+
+    static Res<T> parse(Cursor<Token>& c) {
+        if (c.ended() or c->kind != Token::OPERAND)
+            return Error::invalidInput("expected enum value");
+
+        auto value = c.next().value;
+
+        auto items = enumItems<T>();
+        for (auto& i : items) {
+            if (eqCi(i.name, value))
+                return Ok(static_cast<T>(i.value));
+        }
+
+        return Error::invalidInput("expected enum value");
+    }
+};
+
+export template <>
+struct ValueParser<isize> {
+    static Res<> usage(Io::TextWriter& w) {
+        return w.writeStr("integer"s);
+    }
+
+    static Res<isize> parse(Cursor<Token>& c) {
+        if (c.ended() or c->kind != Token::OPERAND)
+            return Error::other("missing value");
+
+        auto value = c.next().value;
+
+        auto result = Io::atoi(value);
+        if (not result)
+            return Error::other("expected integer");
+
+        return Ok(result.unwrap());
+    }
+};
+
+export template <>
+struct ValueParser<DataSize> {
+    static Res<> usage(Io::TextWriter& w) {
+        return w.writeStr("size"s);
+    }
+
+    static Res<DataSize> parse(Cursor<Token>& c) {
+        if (c.ended() or c->kind != Token::OPERAND)
+            return Error::other("missing value");
+
+        Io::SScan scan = c.next().value;
+
+        auto result = Io::atoi(scan);
+        if (not result)
+            return Error::other("expected integer");
+
+        auto s = scan.remStr();
+        auto val = result.unwrap();
+
+        if (s == "TiB" or s == "T")
+            return Ok(DataSize::fromTiB(val));
+
+        if (s == "GiB" or s == "G")
+            return Ok(DataSize::fromGiB(val));
+
+        if (s == "MiB" or s == "M")
+            return Ok(DataSize::fromMiB(val));
+
+        if (s == "KiB" or s == "K")
+            return Ok(DataSize::fromKiB(val));
+
+        if (s == "B" or s == "")
+            return Ok(DataSize(val));
+
+        return Error::invalidInput("unknown unit");
+    }
+};
+
+export template <>
+struct ValueParser<Str> {
+    static Res<> usage(Io::TextWriter& w) {
+        return w.writeStr("string"s);
+    }
+
+    static Res<Str> parse(Cursor<Token>& c) {
+        if (c.ended() or c->kind != Token::OPERAND)
+            return Error::other("expected string");
+
+        return Ok(c.next().value);
+    }
+};
+
+export template <>
+struct ValueParser<Ref::Uuid> {
+    static Res<> usage(Io::TextWriter& w) {
+        return w.writeStr("mime"s);
+    }
+
+    static Res<Ref::Uuid> parse(Cursor<Token>& c) {
+        if (c.ended() or c->kind != Token::OPERAND)
+            return Error::other("expected mime");
+
+        return Ref::Uuid::parse(c.next().value);
+    }
+};
+
+export template <>
+struct ValueParser<Ref::Mime> {
+    static Res<> usage(Io::TextWriter& w) {
+        return w.writeStr("mime"s);
+    }
+
+    static Res<Ref::Mime> parse(Cursor<Token>& c) {
+        if (c.ended() or c->kind != Token::OPERAND)
+            return Error::other("expected mime");
+
+        return Ok(Ref::Mime{c.next().value});
+    }
+};
+
+export template <>
+struct ValueParser<Ref::Uti> {
+    static Res<> usage(Io::TextWriter& w) {
+        return w.writeStr("uti"s);
+    }
+
+    static Res<Ref::Uti> parse(Cursor<Token>& c) {
+        if (c.ended() or c->kind != Token::OPERAND)
+            return Error::other("expected uti");
+
+        return Ok(Ref::Uti::fromUtiOrMime(c.next().value));
+    }
+};
+
+export template <>
+struct ValueParser<Ref::Path> {
+    static Res<> usage(Io::TextWriter& w) {
+        return w.writeStr("path"s);
+    }
+
+    static Res<Ref::Path> parse(Cursor<Token>& c) {
+        if (c.ended() or c->kind != Token::OPERAND)
+            return Error::other("expected path");
+
+        return Ok(Ref::Path::parse(c.next().value));
+    }
+};
+
+export template <>
+struct ValueParser<Ref::Url> {
+    static Res<> usage(Io::TextWriter& w) {
+        return w.writeStr("url"s);
+    }
+
+    static Res<Ref::Url> parse(Cursor<Token>& c) {
+        if (c.ended() or c->kind != Token::OPERAND)
+            return Error::other("expected url");
+
+        return Ok(Ref::parseUrlOrPath(c.next().value, Sys::globalEnv().cwd()));
+    }
+};
+
+export template <typename T>
+struct ValueParser<Vec<T>> {
+    static Res<> usage(Io::TextWriter& w) {
+        ValueParser<T>::usage(w);
+        return w.writeStr("..."s);
+    }
+
+    static Res<Vec<T>> parse(Cursor<Token>& c) {
+        Vec<T> values;
+        while (not c.ended() and c->kind == Token::OPERAND)
+            values.pushBack(try$(ValueParser<T>::parse(c)));
+        return Ok(values);
+    }
+};
+
+export template <typename T>
+struct ValueParser<Opt<T>> {
+    static Res<> usage(Io::TextWriter& w) {
+        return ValueParser<T>::usage(w);
+    }
+
+    static Res<Opt<T>> parse(Cursor<Token>& c) {
+        if (c.ended() or c->kind != Token::OPERAND)
+            return Ok(NONE);
+
+        return ValueParser<T>::parse(c);
+    }
+};
+
+// MARK: Options ---------------------------------------------------------------
+
+export enum struct OptionKind {
+    OPTION,
+    OPERAND,
+    EXTRA,
+};
+
+export struct _OptionImpl {
+    OptionKind kind;
+    Opt<Rune> shortName;
+    String longName;
+    String description;
+
+    _OptionImpl(
+        OptionKind kind,
+        Opt<Rune> shortName,
+        String longName,
+        String description
+    ) : kind(kind),
+        shortName(shortName),
+        longName(std::move(longName)),
+        description(std::move(description)) {}
+
+    virtual ~_OptionImpl() = default;
+
+    virtual Res<> parse(Cursor<Token>& c) = 0;
+
+    virtual Res<> usage(Io::TextWriter& w) {
+        if (kind == OptionKind::OPTION) {
+            try$(w.writeRune('['));
+            if (shortName)
+                try$(format(w, "-{c},", shortName.unwrap()));
+            try$(format(w, "--{}", longName));
+            try$(w.writeRune(']'));
+        } else if (kind == OptionKind::OPERAND) {
+            try$(w.writeStr(longName.str()));
+        } else if (kind == OptionKind::EXTRA) {
+            try$(format(w, "[-- {}...]", longName));
+        }
+
+        return Ok();
+    }
+};
+
+export template <typename T>
+struct OptionImpl : _OptionImpl {
+    Opt<T> value;
+
+    OptionImpl(
+        OptionKind kind,
+        Opt<Rune> shortName,
+        String longName,
+        String description,
+        Opt<T> defaultValue
+    ) : _OptionImpl(kind, shortName, std::move(longName), std::move(description)),
+        value(std::move(defaultValue)) {}
+
+    Res<> parse(Cursor<Token>& c) override {
+        value = try$(ValueParser<T>::parse(c));
+        return Ok();
+    }
+};
+
+export template <typename T>
+struct Option {
+    Rc<OptionImpl<T>> _impl;
+
+    Option(Rc<OptionImpl<T>> impl)
+        : _impl(std::move(impl)) {}
+
+    T const& value() const {
+        return _impl->value.unwrap();
+    }
+
+    bool has() const {
+        return _impl->value.has();
+    }
+
+    operator Rc<_OptionImpl>() {
+        return _impl;
+    }
+};
+
+export using Flag = Option<bool>;
+
+export Flag flag(Opt<Rune> shortName, String longName, String description) {
+    return makeRc<OptionImpl<bool>>(OptionKind::OPTION, shortName, longName, description, false);
+}
+
+export template <typename T>
+Option<T> option(Opt<Rune> shortName, String longName, String description, Opt<T> defaultValue = NONE) {
+    return makeRc<OptionImpl<T>>(OptionKind::OPTION, shortName, longName, description, defaultValue);
+}
+
+export template <typename T>
+Option<T> operand(String longName, String description, T defaultValue = {}) {
+    return makeRc<OptionImpl<T>>(OptionKind::OPERAND, NONE, longName, description, defaultValue);
+}
+
+export Option<Vec<Str>> extra(String description) {
+    return makeRc<OptionImpl<Vec<Str>>>(OptionKind::EXTRA, NONE, ""s, description, Vec<Str>{});
+}
+
+// MARK: Debug & Feature Flags -------------------------------------------------
+
+struct DebugFlagDescriptor {
+    Str name;
+    bool enabled;
+};
+
+export template <>
+struct ValueParser<DebugFlagDescriptor> {
+    static Res<> usage(Io::TextWriter& w) {
+        return w.writeStr("<name>[=on|off]"s);
+    }
+
+    static Res<DebugFlagDescriptor> parse(Cursor<Token>& c) {
+        if (c.ended() or c->kind != Token::OPERAND)
+            return Error::other("missing value");
+
+        Io::SScan scan = c->value;
+
+        DebugFlagDescriptor res;
+        res.name = scan.token(Re::oneOrMore(Re::alnum() | '-'_re | '_'_re | '*'_re));
+        res.enabled = true;
+
+        if (scan.skip('=')) {
+            if (scan.skip("on"))
+                res.enabled = true;
+            else if (scan.skip("off"))
+                res.enabled = false;
+            else
+                return Error::invalidInput("expected on or off");
+        }
+
+        c.next();
+        return Ok(res);
+    }
+};
+
+static Res<bool> handleDescriptors(Debug::FlagType type, Slice<DebugFlagDescriptor> flags) {
+    if (flags.len() == 1) {
+        if (flags[0].name == "list") {
+            Sys::println(type == Debug::DEBUG ? "Debug:" : "Features:");
+            for (auto flag = Debug::flags(); flag; flag = flag->next)
+                if (flag->type == type)
+                    Sys::println(" ({}) {}: {}", flag->enabled ? "✓" : " ", flag->name, flag->description);
+            return Ok(true);
+        }
+    }
+
+    for (auto [name, enabled] : flags)
+        try$(Debug::toggleFlag(type, name, enabled));
+
+    return Ok(false);
+}
+
+// MARK: Command ---------------------------------------------------------------
+
+export struct Section {
+    String title;
+    Vec<Rc<_OptionImpl>> options = {};
+    String prolog = ""s;
+    String epilog = ""s;
+};
+
+export struct Command : Meta::Pinned {
+    using Callback = Func<Async::Task<>(Sys::Env&)>;
+
+    String _longName;
+    String _description = ""s;
+    Vec<Section> _sections;
+
+    Vec<Rc<Command>> _commands;
+    Command* _parent = nullptr;
+
+    Option<bool> _help = flag('h', "help"s, "Show this help message and exit."s);
+    Option<bool> _usage = flag('u', "usage"s, "Show usage message and exit."s);
+    Option<bool> _version = flag('v', "version"s, "Show version information and exit."s);
+    Option<Vec<DebugFlagDescriptor>> _debug = option<Vec<DebugFlagDescriptor>>(
+        NONE,
+        "debug"s,
+        "Toggle or list debug flags by name or wildcard (e.g. karm-*=on or list)"s,
+        Vec<DebugFlagDescriptor>{}
+    );
+
+    Option<Vec<DebugFlagDescriptor>> _features = option<Vec<DebugFlagDescriptor>>(
+        NONE,
+        "feature"s,
+        "Toggle or list features by name or wildcard (e.g. karm-*=on or list)"s,
+        Vec<DebugFlagDescriptor>{}
+    );
+
+    bool _invoked = false;
+
+    Command(
+        String longName,
+        String description = ""s,
+        Vec<Section> sections = {}
+    )
+        : _longName(std::move(longName)),
+          _description(std::move(description)),
+          _sections(std::move(sections)) {
+
+        _sections.pushFront({
+            .title = "Common Options"s,
+            .options = {
+                _help,
+                _usage,
+                _version,
+            },
+        });
+
+        _sections.pushBack({
+            .title = "Developer Options"s,
+            .options = {
+                _debug,
+                _features,
+            },
+        });
+    }
+
+    Command& subCommand(
+        String longName,
+        String description = ""s,
+        Vec<Section> sections = {}
+    ) {
+        auto cmd = makeRc<Command>(
+            longName,
+            description,
+            sections
+        );
+        cmd->_parent = this;
+        _commands.pushBack(cmd);
+        return *last(_commands);
+    }
+
+    Res<> usage(Io::TextWriter& w) {
+        auto printLongName = [](this auto& self, Command& cmd, Io::TextWriter& w) -> Res<> {
+            if (cmd._parent)
+                try$(self(*cmd._parent, w));
+            try$(format(w, "{} ", cmd._longName));
+            return Ok();
+        };
+
+        try$(printLongName(*this, w));
+
+        for (auto& sec : _sections)
+            for (auto& opt : sec.options) {
+                if (opt->kind != OptionKind::OPTION)
+                    continue;
+                try$(opt->usage(w));
+                try$(w.writeRune(' '));
+            }
+
+        for (auto& sec : _sections)
+            for (auto& opt : sec.options) {
+                if (opt->kind != OptionKind::OPERAND)
+                    continue;
+                try$(opt->usage(w));
+                try$(w.writeRune(' '));
+            }
+
+        for (auto& sec : _sections)
+            for (auto& opt : sec.options) {
+                if (opt->kind != OptionKind::EXTRA)
+                    continue;
+                try$(opt->usage(w));
+            }
+
+        if (Karm::any(_commands)) {
+            try$(format(w, "<command> [args...]"));
+        }
+
+        return Ok();
+    }
+
+    Res<> _showUsage(Io::TextWriter& w) {
+        try$(format(w, "Usage: "));
+        try$(usage(w));
+        try$(w.writeRune('\n'));
+
+        return Ok();
+    }
+
+    Res<> _showHelp(Io::TextWriter& w) {
+        try$(format(w, "Usage:\n  "));
+        try$(usage(w));
+        try$(w.writeStr("\n\n"s));
+
+        try$(format(w, "Description:\n  {}\n\n", _description));
+
+        for (auto& sec : _sections) {
+            if (Karm::any(sec.options) or sec.prolog or sec.epilog) {
+                if (sec.title)
+                    try$(Io::format(w, "{}:\n"s, sec.title));
+
+                Io::Emit e{w};
+                e.indent();
+                if (sec.prolog) {
+                    e("{}\n", sec.prolog);
+                }
+
+                if (sec.options) {
+                    for (auto& opt : sec.options) {
+                        if (opt->kind != OptionKind::OPTION)
+                            continue;
+
+                        try$(w.writeStr("  "s));
+                        if (opt->shortName)
+                            try$(format(w, "-{c}, ", opt->shortName.unwrap()));
+
+                        try$(format(w, "--{} - {}\n", opt->longName, opt->description));
+                    }
+                }
+
+                if (sec.epilog)
+                    e("{}\n", sec.epilog);
+
+                try$(e.flush());
+                try$(w.writeRune('\n'));
+            }
+        }
+
+        if (Karm::any(_commands)) {
+            try$(w.writeStr("Subcommands:\n"s));
+            for (auto& cmd : _commands) {
+                try$(format(w, "  {} - {}\n", cmd->_longName, cmd->_description));
+            }
+            try$(w.writeRune('\n'));
+        }
+
+        return Ok();
+    }
+
+    Res<bool> _parseOption(Cursor<Token>& c) {
+        bool found = false;
+
+        for (auto& sec : _sections) {
+            for (auto& opt : sec.options) {
+                if (c.ended())
+                    break;
+
+                if (opt->kind != OptionKind::OPTION)
+                    continue;
+
+                bool shortNameMatch = opt->shortName and c->flag == opt->shortName.unwrap();
+                bool longNameMatch = c->value == opt->longName;
+
+                if (not(shortNameMatch or longNameMatch))
+                    continue;
+
+                c.next();
+                try$(opt->parse(c));
+                found = true;
+            }
+        }
+
+        return Ok(found);
+    }
+
+    Res<> _parseParams(Cursor<Token>& c) {
+        for (auto& sec : _sections) {
+            for (auto& opt : sec.options) {
+                while (try$(_parseOption(c)))
+                    ;
+
+                if (c.ended())
+                    break;
+
+                if (opt->kind != OptionKind::OPERAND)
+                    continue;
+
+                try$(opt->parse(c));
+            }
+        }
+
+        return Ok();
+    }
+
+    Async::Task<> execAsync(Sys::Env& env) {
+        Vec<Token> tokens;
+        for (usize i = 0; i < env.argsLen(); ++i)
+            tokenize(env[i], tokens);
+        co_return co_await execAsync(tokens);
+    }
+
+    Async::Task<> execAsync(Slice<Str> args) {
+        Vec<Token> tokens;
+        tokenize(args, tokens);
+        co_return co_await execAsync(tokens);
+    }
+
+    Async::Task<> execAsync(Cursor<Token> c) {
+        co_try$(_parseParams(c));
+
+        if (_help.value()) {
+            co_try$(_showHelp(Sys::out()));
+            co_return Ok();
+        }
+
+        if (_usage.value()) {
+            co_try$(_showUsage(Sys::out()));
+            co_return Ok();
+        }
+
+        if (_version.value()) {
+            co_try$(format(Sys::out(), "{} {}\n", _longName, stringify$(__ck_version_value) ""s));
+            co_return Ok();
+        }
+
+        if (_debug.value().len()) {
+            if (co_try$(handleDescriptors(Debug::DEBUG, _debug.value())))
+                co_return Ok();
+        }
+
+        if (_features.value().len()) {
+            if (co_try$(handleDescriptors(Debug::FEATURE, _features.value())))
+                co_return Ok();
+        }
+
+        _invoked = true;
+
+        if (Karm::any(_commands) and c.ended()) {
+            co_try$(_showUsage(Sys::out()));
+            co_return Error::invalidInput("expected subcommand");
+        }
+
+        if (not c.ended()) {
+            if (c->kind != Token::OPERAND)
+                co_return Error::invalidInput("expected subcommand");
+
+            if (not Karm::any(_commands))
+                co_return Error::invalidInput("unexpected subcommand");
+
+            auto value = c->value;
+            c.next();
+
+            for (auto& cmd : _commands) {
+                if (value != cmd->_longName)
+                    continue;
+                co_return co_await cmd->execAsync(c);
+            }
+
+            co_return Error::invalidInput("unknown subcommand");
+        }
+        co_return Ok();
+    }
+
+    operator bool() const {
+        return _invoked;
+    }
+};
+
+} // namespace Karm::Cli
