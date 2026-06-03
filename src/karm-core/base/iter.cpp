@@ -2,6 +2,7 @@ export module Karm.Core:base.iter;
 
 import :base.opt;
 import :base.clamp;
+import :base.tuple;
 
 namespace Karm {
 
@@ -265,6 +266,25 @@ struct Selecti {
         };
 
         return Iter{std::forward<decltype(iter)>(iter), std::move(f)};
+    }
+};
+
+export struct Index {
+    constexpr auto pipe(auto&& iter) {
+        using I = Meta::RemoveConstVolatileRef<decltype(iter)>;
+
+        struct Iter {
+            I iter;
+            usize index = 0;
+
+            auto next() -> Opt<decltype(Tuple(*iter.next(), index))> {
+                while (auto value = iter.next())
+                    return Tuple(*value, index++);
+                return NONE;
+            }
+        };
+
+        return Iter{std::forward<decltype(iter)>(iter)};
     }
 };
 
