@@ -105,7 +105,7 @@ export struct Header : Map<Symbol, String> {
             if (not s.skip(RE_KEY_VALUE))
                 return Error::invalidData("Expected header");
 
-            put(Symbol::from(key), value);
+            put(Symbol::from(try$(Io::toTrainCase(key))), value);
         }
 
         return Ok();
@@ -113,7 +113,7 @@ export struct Header : Map<Symbol, String> {
 
     Res<> unparse(Io::TextWriter& w) const {
         for (auto const& [key, value] : iterItems()) {
-            try$(Io::format(w, "{}: {}\r\n", key, value));
+            try$(Io::format(w, "{}: {}\r\n", Io::cased(key.str(), Io::Case::TRAIN), value));
         }
         return Ok();
     }

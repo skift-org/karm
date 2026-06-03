@@ -73,6 +73,20 @@ export struct Request {
         return parse(scan);
     }
 
+    void prepare() {
+        version = Version{1, 1};
+
+        if (not header.contains(Header::CONTENT_LENGTH) and
+            not header.contains(Header::TRANSFER_ENCODING)) {
+
+            if (auto const [b] = body) {
+                if (auto const [contentLength] = b->contentLength()) {
+                    header.put(Header::CONTENT_LENGTH, Io::toStr(contentLength));
+                }
+            }
+        }
+    }
+
     Res<> unparse(Io::TextWriter& w) const {
         // Start line
         auto path = url.path;

@@ -37,6 +37,10 @@ export struct Body : Aio::Reader {
             Async::Task<usize> readAsync(MutBytes buf, [[maybe_unused]] Async::CancellationToken ct) override {
                 co_return _reader.read(buf);
             }
+
+            Opt<usize> contentLength() const override {
+                return _buf.len();
+            }
         };
 
         return makeRc<BufBody>(std::move(buf));
@@ -52,6 +56,10 @@ export struct Body : Aio::Reader {
 
             Async::Task<usize> readAsync(MutBytes buf, Async::CancellationToken) override {
                 co_return _reader.read(buf);
+            }
+
+            Opt<usize> contentLength() const override {
+                return _blob->len();
             }
         };
 
@@ -75,6 +83,10 @@ export struct Body : Aio::Reader {
         };
 
         return makeRc<EmptyBody>();
+    }
+
+    virtual Opt<usize> contentLength() const {
+        return NONE;
     }
 
     Async::Task<Serde::Value> readJsonAsync(Async::CancellationToken ct) {

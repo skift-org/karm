@@ -165,6 +165,14 @@ Rune _toSpongeCase(Rune rune, usize si, usize) {
     return toAsciiLower(rune);
 }
 
+Rune _toTrainCase(Rune rune, usize, usize wi) {
+    if (rune == ' ')
+        return '-';
+    if (wi == 0)
+        return toAsciiUpper(rune);
+    return toAsciiLower(rune);
+}
+
 export enum struct Case {
     DEFAULT,
     CAMEL,
@@ -185,6 +193,7 @@ export enum struct Case {
     UPPER,
     UPPER_FIRST,
     SPONGE,
+    TRAIN,
 };
 
 export Res<String> toDefaultCase(Str str) {
@@ -263,6 +272,10 @@ export Res<String> toSpongeCase(Str str) {
     return _changeCase(str, _toSpongeCase);
 }
 
+export Res<String> toTrainCase(Str str) {
+    return _changeCase(str, _toTrainCase);
+}
+
 export Res<String> changeCase(Str str, Case toCase) {
     switch (toCase) {
     case Case::CAMEL:
@@ -318,6 +331,9 @@ export Res<String> changeCase(Str str, Case toCase) {
 
     case Case::SPONGE:
         return toSpongeCase(str);
+
+    case Case::TRAIN:
+        return toTrainCase(str);
 
     default:
         return toDefaultCase(str);

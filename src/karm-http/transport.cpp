@@ -239,7 +239,7 @@ struct ChunkedBody : Body {
 struct HttpTransport : Transport {
     Async::Task<> _sendRequestAsync(Request& request, Sys::TcpConnection& conn, Async::CancellationToken ct) {
         Io::StringWriter req;
-        request.version = Version{1, 1};
+        request.prepare();
         co_try$(request.unparse(req));
         co_trya$(conn.writeAsync(req.bytes(), ct));
 
@@ -312,7 +312,7 @@ struct PipeBody : Body {
 
 struct PipeTransport : Transport {
     Async::Task<> _sendRequest(Request& request, Async::CancellationToken ct) {
-        request.version = Version{1, 1};
+        request.prepare();
         co_try$(request.unparse(Sys::out()));
 
         if (auto body = request.body) {
