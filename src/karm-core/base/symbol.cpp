@@ -41,7 +41,7 @@ struct _SymbolBuf {
     }
 
     static Rc<_SymbolBuf> from(Str str) {
-        using _StorageCell = Cell<NoLock, _SymbolBuf>;
+        using _StorageCell = Cell<i32, _SymbolBuf>;
         Rc<_SymbolBuf> buf = {
             MOVE,
             new (reinterpret_cast<_StorageCell*>(new u8[sizeof(_StorageCell) + str.len() + 1])) _StorageCell(str.len()),

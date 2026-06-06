@@ -5,19 +5,18 @@ module;
 export module Karm.Core:base.rc;
 
 import :base.cursor;
-import :base.lock;
 import :base.manual;
+import :base.atomic;
 import :base.opt;
 import :meta.traits;
 
 namespace Karm {
 
 /// A reference-counted object heap cell.
-export template <typename L>
+export template <typename I>
 struct _Cell {
-    i32 _strong = 0;
-    i32 _weak = 0;
-    [[no_unique_address]] L _lock;
+    I _strong = 0;
+    I _weak = 0;
 
     virtual ~_Cell() = default;
 
@@ -28,49 +27,40 @@ struct _Cell {
     virtual Meta::Id id() = 0;
 
     void collectAndRelease() {
-        _lock.release();
         if (_strong == 0 and _weak == 0)
             delete this;
     }
 
     _Cell* refStrong() lifetimebound {
-        LockScope scope(_lock);
-
-        _strong++;
-        if (_strong < 0) [[unlikely]]
+        auto v = ++_strong;
+        if (v < 0) [[unlikely]]
             panic("refStrong() overflow");
 
         return this;
     }
 
     void derefStrong() {
-        _lock.acquire();
-
-        if (_strong == 1)
+        auto v = --_strong;
+        if (v == 0)
             clear();
 
-        _strong--;
-        if (_strong < 0) [[unlikely]]
+        if (v < 0) [[unlikely]]
             panic("derefStrong() underflow");
 
         collectAndRelease();
     }
 
     _Cell* refWeak() lifetimebound {
-        LockScope scope(_lock);
-
-        _weak++;
-        if (_weak < 0) [[unlikely]]
+        auto v = ++_weak;
+        if (v < 0) [[unlikely]]
             panic("refWeak() overflow");
 
         return this;
     }
 
     void derefWeak() {
-        _lock.acquire();
-
-        _weak--;
-        if (_weak < 0) [[unlikely]]
+        auto v = --_weak;
+        if (v < 0) [[unlikely]]
             panic("derefWeak() underflow");
 
         collectAndRelease();
@@ -82,8 +72,8 @@ struct _Cell {
     }
 };
 
-export template <typename L, typename T>
-struct Cell : _Cell<L> {
+export template <typename I, typename T>
+struct Cell : _Cell<I> {
     Manual<T> _buf{};
 
     template <typename... Args>
@@ -110,15 +100,27 @@ struct Cell : _Cell<L> {
 /// reference is in scope. When the reference goes out of scope
 /// the object is deallocated if there are no other strong
 /// references to it.
-export template <typename L, typename T>
+export template <typename I, typename T>
 struct _Rc {
-    _Cell<L>* _cell{};
+    _Cell<I>* _cell{};
 
     // MARK: Rule of Five ------------------------------------------------------
 
+    /// Get a strong reference back from a raw pointer.
+    static _Rc fromRaw(T* ptr) {
+        using CellType = Cell<I, T>;
+        usize offset = offsetof(CellType, _buf);
+        auto cell = reinterpret_cast<_Cell<I>*>(reinterpret_cast<u8*>(ptr) - offset);
+        return _Rc(MOVE, cell);
+    }
+
+    static _Rc fromRef(T& ref) {
+        return fromRaw(&ref);
+    }
+
     constexpr _Rc() = delete;
 
-    constexpr _Rc(Move, _Cell<L>* ptr)
+    constexpr _Rc(Move, _Cell<I>* ptr)
         : _cell(ptr->refStrong()) {
     }
 
@@ -134,12 +136,12 @@ struct _Rc {
     }
 
     template <Meta::Derive<T> U>
-    constexpr _Rc(_Rc<L, U> const& other)
+    constexpr _Rc(_Rc<I, U> const& other)
         : _cell(other._cell->refStrong()) {
     }
 
     template <Meta::Derive<T> U>
-    constexpr _Rc(_Rc<L, U>&& other)
+    constexpr _Rc(_Rc<I, U>&& other)
         : _cell(std::exchange(other._cell, nullptr)) {
     }
 
@@ -270,21 +272,21 @@ struct _Rc {
     }
 
     template <typename U>
-    constexpr Opt<_Rc<L, U>> cast() {
+    constexpr Opt<_Rc<I, U>> cast() {
         if (not is<U>())
             return NONE;
-        return _Rc<L, U>(MOVE, _cell);
+        return _Rc<I, U>(MOVE, _cell);
     }
 
     template <typename U>
-    constexpr Opt<_Rc<L, U>> cast() const {
+    constexpr Opt<_Rc<I, U>> cast() const {
         if (not is<U>())
             return NONE;
-        return _Rc<L, U>(MOVE, _cell);
+        return _Rc<I, U>(MOVE, _cell);
     }
 
-    template <typename UL, Meta::Comparable<T> U>
-    auto operator<=>(_Rc<UL, U> const& other) const
+    template <typename UI, Meta::Comparable<T> U>
+    auto operator<=>(_Rc<UI, U> const& other) const
         requires Meta::Comparable<T>
     {
         if (_cell == other._cell)
@@ -292,8 +294,8 @@ struct _Rc {
         return unwrap() <=> other.unwrap();
     }
 
-    template <typename UL, Meta::Equatable<T> U>
-    bool operator==(_Rc<UL, U> const& other) const
+    template <typename UI, Meta::Equatable<T> U>
+    bool operator==(_Rc<UI, U> const& other) const
         requires Meta::Equatable<T>
     {
         if (_cell == other._cell)
@@ -314,30 +316,41 @@ struct _Rc {
 ///
 /// A weak reference does not keep the object alive, but can be
 /// upgraded to a strong reference if the object is still alive.
-template <typename L, typename T>
+template <typename I, typename T>
 struct _Weak {
-    _Cell<L>* _cell;
+    _Cell<I>* _cell;
+    
+    static _Weak fromRaw(T* ptr) {
+        using CellType = Cell<I, T>;
+        usize offset = offsetof(CellType, _buf);
+        auto cell = reinterpret_cast<_Cell<I>*>(reinterpret_cast<u8*>(ptr) - offset);
+        return _Weak(MOVE, cell);
+    }
+
+    static _Weak fromRef(T& ref) {
+        return fromRaw(&ref);
+    }
 
     constexpr _Weak() = delete;
 
     template <Meta::Derive<T> U>
-    constexpr _Weak(_Rc<L, U> const& other)
+    constexpr _Weak(_Rc<I, U> const& other)
         : _cell(other._cell->refWeak()) {}
 
     template <Meta::Derive<T> U>
-    constexpr _Weak(_Weak<L, U> const& other)
+    constexpr _Weak(_Weak<I, U> const& other)
         : _cell(other._cell->refWeak()) {}
 
     template <Meta::Derive<T> U>
-    constexpr _Weak(_Weak<L, U>&& other)
+    constexpr _Weak(_Weak<I, U>&& other)
         : _cell(std::exchange(other._cell, nullptr)) {
     }
 
-    constexpr _Weak(Move, _Cell<L>* ptr)
+    constexpr _Weak(Move, _Cell<I>* ptr)
         : _cell(ptr->refWeak()) {
     }
 
-    constexpr _Weak& operator=(_Rc<L, T> const& other) {
+    constexpr _Weak& operator=(_Rc<I, T> const& other) {
         *this = _Weak(other);
         return *this;
     }
@@ -362,18 +375,18 @@ struct _Weak {
     /// Upgrades the weak reference to a strong reference.
     ///
     /// Returns `NONE` if the object has been deallocated.
-    Opt<_Rc<L, T>> upgrade() const {
+    Opt<_Rc<I, T>> upgrade() const {
         if (not _cell or _cell->_strong == 0)
             return NONE;
-        return _Rc<L, T>(MOVE, _cell);
+        return _Rc<I, T>(MOVE, _cell);
     }
 };
 
 export template <typename T>
-using Rc = _Rc<NoLock, T>;
+using Rc = _Rc<i32, T>;
 
 export template <typename T>
-using Weak = _Weak<NoLock, T>;
+using Weak = _Weak<i32, T>;
 
 /// Allocates an object of type `T` on the heap and returns
 /// a strong reference to it.
@@ -381,34 +394,34 @@ export template <typename T, typename... Args>
 constexpr Rc<T> makeRc(Args&&... args)
     requires Meta::Constructible<T, Args...>
 {
-    return {MOVE, new Cell<NoLock, T>(std::forward<Args>(args)...)};
+    return {MOVE, new Cell<i32, T>(std::forward<Args>(args)...)};
 }
 
 export template <typename T>
 constexpr Rc<T> makeRc(T&& value) {
-    return {MOVE, new Cell<NoLock, T>(std::forward<T>(value))};
+    return {MOVE, new Cell<i32, T>(std::forward<T>(value))};
 }
 
 export template <typename T>
-using Arc = _Rc<Lock, T>;
+using Arc = _Rc<Atomic<i32>, T>;
 
 export template <typename T>
-using Aweak = _Weak<Lock, T>;
+using Aweak = _Weak<Atomic<i32>, T>;
 
 export template <typename T, typename... Args>
 constexpr Arc<T> makeArc(Args&&... args)
     requires Meta::Constructible<T, Args...>
 {
-    return {MOVE, new Cell<Lock, T>(std::forward<Args>(args)...)};
+    return {MOVE, new Cell<Atomic<i32>, T>(std::forward<Args>(args)...)};
 }
 
 export template <typename T>
 constexpr Arc<T> makeArc(T&& value) {
-    return {MOVE, new Cell<Lock, T>(std::forward<T>(value))};
+    return {MOVE, new Cell<Atomic<i32>, T>(std::forward<T>(value))};
 }
 
-export template <typename L, typename T>
-struct Niche<_Rc<L, T>> {
+export template <typename I, typename T>
+struct Niche<_Rc<I, T>> {
     struct Content {
         void* ptr;
 

@@ -82,6 +82,26 @@ struct Atomic {
     always_inline bool lockFree() const {
         return __atomic_is_lock_free(&_val);
     }
+
+    always_inline T operator++() {
+        return fetchInc() + 1;
+    }
+
+   always_inline T operator++(int) {
+        return fetchInc();
+    }
+
+    always_inline T operator--() {
+        return fetchDec() - 1;
+    }
+
+    always_inline T operator--(int) {
+        return fetchDec();
+    }
+
+    bool operator==(T const& other) const {
+        return load() == other;
+    }
 };
 
 } // namespace Karm

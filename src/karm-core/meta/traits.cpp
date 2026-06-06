@@ -105,8 +105,19 @@ using UnderlyingType = __underlying_type(T);
 
 // MARK: Type relationships ----------------------------------------------------
 
+export template <typename T, typename U>
+concept Same = __is_same(T, U);
+
 export template <typename Derived, typename Base>
 concept Derive = __is_base_of(Base, Derived);
+
+template <typename Base, typename Derived>
+concept VirtualDerive =
+    Derive<Base, Derived> and
+    not Same<Base, Derived> and
+    not requires(Base* b) {
+        static_cast<Derived*>(b);
+    };
 
 export template <typename T, typename... Args>
 concept Constructible = requires {
@@ -126,9 +137,6 @@ export template <typename From, typename To>
 concept Convertible = requires {
     declval<void (*)(To)>()(declval<From>());
 };
-
-export template <typename T, typename U>
-concept Same = __is_same(T, U);
 
 /// A type is comparable if it can be compared using the <=> operator.
 /// Comparable does not imply Equatable.
