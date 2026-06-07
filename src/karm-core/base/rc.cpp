@@ -319,7 +319,7 @@ struct _Rc {
 template <typename I, typename T>
 struct _Weak {
     _Cell<I>* _cell;
-    
+
     static _Weak fromRaw(T* ptr) {
         using CellType = Cell<I, T>;
         usize offset = offsetof(CellType, _buf);

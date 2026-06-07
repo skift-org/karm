@@ -18,7 +18,7 @@ export struct MutBlob {
     urange _slice;
 
     static MutBlob alloc(usize len) {
-        using BlobCell = Cell<NoLock, _Blob>;
+        using BlobCell = Cell<i32, _Blob>;
         auto* buf = new u8[sizeof(BlobCell) + len];
         auto* cell = new (reinterpret_cast<BlobCell*>(buf)) BlobCell(len);
         return {

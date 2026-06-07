@@ -94,15 +94,18 @@ export struct Server : Meta::NoCopy {
     Async::Task<> servAsync(Async::CancellationToken ct) {
         while (true) {
             auto conn = co_trya$(_state->listener.acceptAsync(ct));
-            auto session = co_trya$(_handler->acceptSessionAsync(std::move(conn), ct));
-            _state->sessions.pushBack(session);
-            Async::detach(
-                session->runAsync(_state->cancellation.token()),
-                [state = _state, session](Res<> res) mutable {
-                    logInfo("session close: {}", res);
-                    state->sessions.removeAll(session);
-                }
-            );
+            auto maybeSession = co_await _handler->acceptSessionAsync(std::move(conn), ct);
+            if (maybeSession) {
+                auto session = maybeSession.take();
+                _state->sessions.pushBack(session);
+                Async::detach(
+                    session->runAsync(_state->cancellation.token()),
+                    [state = _state, session](Res<> res) mutable {
+                        logInfo("session close: {}", res);
+                        state->sessions.removeAll(session);
+                    }
+                );
+            }
         }
     }
 };

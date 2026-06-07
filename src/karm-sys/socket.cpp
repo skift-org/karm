@@ -73,13 +73,11 @@ struct _Listener :
         : _fd(std::move(fd)) {}
 
     Res<C> accept() {
-        auto [fd, addr] = try$(_fd->accept());
-        return Ok(C(std::move(fd), addr));
+        return Ok(C(try$(_fd->accept())));
     }
 
     Async::Task<C> acceptAsync(Async::CancellationToken ct) {
-        auto [fd, addr] = co_trya$(globalSched().acceptAsync(_fd, ct));
-        co_return Ok(C(std::move(fd), addr));
+        co_return Ok(C(co_trya$(globalSched().acceptAsync(_fd, ct))));
     }
 
     Rc<Fd> fd() { return _fd; }
@@ -96,11 +94,11 @@ export struct UdpConnection :
     static Res<UdpConnection> listen(SocketAddr addr) {
         try$(ensureUnrestricted());
         auto fd = try$(_Embed::listenUdp(addr));
-        return Ok(UdpConnection(std::move(fd), addr));
+        return Ok(UdpConnection({std::move(fd), addr}));
     }
 
-    UdpConnection(Rc<Sys::Fd> fd, SocketAddr addr)
-        : _fd(std::move(fd)), _addr(addr) {}
+    UdpConnection(_Accepted accepted)
+        : _fd(std::move(accepted.fd)), _addr(accepted.addr.take<SocketAddr>()) {}
 
     Res<usize> send(Bytes buf, SocketAddr addr) {
         auto [nbytes, _] = try$(_fd->send(buf, {}, addr));
@@ -133,11 +131,11 @@ export struct TcpConnection :
     static Res<TcpConnection> connect(SocketAddr addr) {
         try$(ensureUnrestricted());
         auto fd = try$(_Embed::connectTcp(addr));
-        return Ok(TcpConnection(std::move(fd), addr));
+        return Ok(TcpConnection({std::move(fd), addr}));
     }
 
-    TcpConnection(Rc<Sys::Fd> fd, SocketAddr addr)
-        : Connection(std::move(fd)), _addr(addr) {}
+    TcpConnection(_Accepted accepted)
+        : Connection(std::move(accepted.fd)), _addr(accepted.addr.take<SocketAddr>()) {}
 
     SocketAddr addr() const {
         return _addr;
@@ -167,15 +165,19 @@ export struct TcpListener :
 
 export struct IpcConnection {
     Rc<Sys::Fd> _fd;
-    Opt<Ref::Url> _url;
+    Ref::Url _url;
 
     static Res<IpcConnection> connect(Ref::Url url) {
         auto fd = try$(_Embed::connectIpc(url));
-        return Ok(IpcConnection{fd, url});
+        return Ok(IpcConnection{{fd, url}});
     }
 
-    IpcConnection(Rc<Sys::Fd> fd, Opt<Ref::Url> url)
-        : _fd(std::move(fd)), _url(std::move(url)) {}
+    Ref::Url url() const {
+        return _url;
+    }
+
+    IpcConnection(_Accepted accepted)
+        : _fd(std::move(accepted.fd)), _url(accepted.addr.take<Ref::Url>()) {}
 
     Res<> send(Bytes buf, Slice<Handle> hnds) {
         try$(_fd->send(buf, hnds, {Ip4::unspecified(), 0}));
@@ -198,8 +200,8 @@ export struct IpcConnection {
     }
 };
 
-export struct IpcListener {
-    Rc<Fd> _fd;
+export struct IpcListener :
+    _Listener<IpcConnection> {
     Opt<Ref::Url> _url;
 
     static Res<IpcListener> listen(Ref::Url url) {
@@ -209,19 +211,7 @@ export struct IpcListener {
     }
 
     IpcListener(Rc<Sys::Fd> fd, Ref::Url url)
-        : _fd(fd), _url(url) {}
-
-    Res<IpcConnection> accept() {
-        auto [fd, _] = try$(_fd->accept());
-        return Ok(IpcConnection(std::move(fd), NONE));
-    }
-
-    Async::Task<IpcConnection> acceptAsync(Async::CancellationToken ct) {
-        auto [fd, _] = co_trya$(globalSched().acceptAsync(_fd, ct));
-        co_return Ok(IpcConnection(std::move(fd), NONE));
-    }
-
-    Rc<Fd> fd() { return _fd; }
+        : _Listener(fd), _url(url) {}
 };
 
 } // namespace Karm::Sys

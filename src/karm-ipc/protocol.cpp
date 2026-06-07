@@ -23,7 +23,6 @@ export Async::Task<Box<Message>> recvAsync(Sys::IpcConnection& con, Async::Cance
         co_return Error::invalidData("invalid message");
     msg->_len = bufLen;
     msg->_hndsLen = hndsLen;
-
     co_return msg;
 }
 

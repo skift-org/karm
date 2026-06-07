@@ -125,7 +125,7 @@ struct Cursor {
     /// the cursor's state will be restored to its position at the time of
     /// this rollback point's creation when it goes out of scope.
     auto rollbackPoint() {
-        return ArmedDefer{[&, saved = *this] {
+        return Defer{[&, saved = *this] {
             *this = saved;
         }};
     }
@@ -266,7 +266,7 @@ struct MutCursor {
     /// the cursor's state will be restored to its position at the time of
     /// this rollback point's creation when it goes out of scope.
     auto rollbackPoint() {
-        return ArmedDefer{[&, saved = *this] {
+        return Defer{[&, saved = *this] {
             *this = saved;
         }};
     }

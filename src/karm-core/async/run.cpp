@@ -30,7 +30,7 @@ typename S::Inner run(S s) {
     struct Receiver {
         Opt<typename S::Inner>& _ret;
 
-        void recv(InlineOrLater, typename S::Inner r) { _ret = r; }
+        void recv(InlineOrLater, typename S::Inner r) { _ret = std::move(r); }
     };
 
     auto op = s.connect(Receiver{ret});

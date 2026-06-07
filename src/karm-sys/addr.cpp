@@ -118,7 +118,7 @@ export union Ip6 {
 // MARK: IP --------------------------------------------------------------------
 
 export struct Ip : Union<Ip4, Ip6> {
-    using Union<Ip4, Ip6>::Union;
+    using Union::Union;
 
     static Res<Ip> parse(Io::SScan& s) {
         auto saved = s;

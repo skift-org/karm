@@ -355,7 +355,7 @@ Res<Tuple<Rc<Pid>, Rc<Fd>>> spawnPty(Command const& cmd) {
 
     int pty = -1;
     pid_t pid = ::forkpty(&pty, nullptr, nullptr, nullptr);
-    ArmedDefer deferClose = [&] {
+    Defer deferClose = [&] {
         if (pty != -1)
             close(pty);
     };

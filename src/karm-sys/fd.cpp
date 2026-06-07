@@ -16,7 +16,11 @@ namespace Karm::Sys {
 
 export struct Fd;
 
-export using _Accepted = Pair<Rc<Fd>, SocketAddr>;
+export struct _Accepted {
+    Rc<Fd> fd;
+    Union<SocketAddr, Ref::Url> addr;
+};
+
 export using _Sent = Pair<usize, usize>;
 export using _Received = Tuple<usize, usize, SocketAddr>;
 
