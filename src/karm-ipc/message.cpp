@@ -69,42 +69,40 @@ export struct Message {
     }
 
     template <typename T>
-    static Res<Message> packReq(u64 seq, T const& payload) {
-        Message msg;
-        msg._header = {
+    static Res<Box<Message>> packReq(u64 seq, T const& payload) {
+        Box<Message> msg = makeBox<Message>();
+        msg->_header = {
             seq,
             Meta::idOf<T>(),
         };
-        Io::BufWriter reqBuf{msg._payload};
+        Io::BufWriter reqBuf{msg->_payload};
         Io::BEmit emit{reqBuf};
         MessageSerializer messageSerializer{emit};
 
         try$(Serde::serialize(messageSerializer, payload));
         for (auto h : messageSerializer.handles()) {
-            msg._hnds[msg._hndsLen++] = h;
+            msg->_hnds[msg->_hndsLen++] = h;
         }
 
-        msg._len = try$(Io::tell(reqBuf)) + sizeof(Header);
-
+        msg->_len = try$(Io::tell(reqBuf)) + sizeof(Header);
         return Ok(std::move(msg));
     }
 
     template <typename T>
-    Res<Message> packResp(T::Response const& payload) {
-        Message resp;
-        resp._header = {
+    Res<Box<Message>> packResp(T::Response const& payload) {
+        Box<Message> msg = makeBox<Message>();
+        msg->_header = {
             header().seq,
             Meta::idOf<typename T::Response>(),
         };
 
-        Io::BufWriter respBuf{resp._payload};
+        Io::BufWriter respBuf{msg->_payload};
         Io::BEmit emit{respBuf};
         MessageSerializer messageSerializer{emit};
         try$(Serde::serialize(messageSerializer, payload));
 
-        resp._len = try$(Io::tell(respBuf)) + sizeof(Header);
-
-        return Ok(std::move(resp));
+        msg->_len = try$(Io::tell(respBuf)) + sizeof(Header);
+        return Ok(std::move(msg));
     }
 
     template <typename T>

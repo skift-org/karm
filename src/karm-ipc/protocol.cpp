@@ -12,7 +12,7 @@ namespace Karm::Ipc {
 export template <typename T>
 Res<> send(Sys::IpcConnection& con, u64 seq, T const& payload) {
     auto msg = try$(Message::packReq<T>(seq, payload));
-    try$(con.send(msg.bytes(), msg.handles()));
+    try$(con.send(msg->bytes(), msg->handles()));
     return Ok();
 }
 

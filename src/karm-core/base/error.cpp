@@ -80,7 +80,7 @@ export struct [[nodiscard]] Error {
 
     constexpr Error() : _code(OTHER), _msg("unknown error"s) {}
 
-    constexpr Error(Code code, Str msg) : _code(code), _msg(msg) {}
+    constexpr Error(Code code, Str msg = ""s) : _code(code), _msg(msg) {}
 
     constexpr Error(Code code, String msg) : _code(code), _msg(msg) {}
 

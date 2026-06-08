@@ -28,9 +28,9 @@ export struct _Connection :
 export struct Connection :
     _Connection {
 
-    Rc<Sys::Fd> _fd;
+    Rc<Fd> _fd;
 
-    Connection(Rc<Sys::Fd> fd)
+    Connection(Rc<Fd> fd)
         : _fd(std::move(fd)) {}
 
     Res<usize> read(MutBytes buf) override {
@@ -67,9 +67,9 @@ template <typename C>
 struct _Listener :
     Meta::NoCopy {
 
-    Rc<Sys::Fd> _fd;
+    Rc<Fd> _fd;
 
-    _Listener(Rc<Sys::Fd> fd)
+    _Listener(Rc<Fd> fd)
         : _fd(std::move(fd)) {}
 
     Res<C> accept() {
@@ -88,7 +88,7 @@ struct _Listener :
 export struct UdpConnection :
     Meta::NoCopy {
 
-    Rc<Sys::Fd> _fd;
+    Rc<Fd> _fd;
     SocketAddr _addr;
 
     static Res<UdpConnection> listen(SocketAddr addr) {
@@ -153,7 +153,7 @@ export struct TcpListener :
         return Ok(TcpListener(std::move(fd), addr));
     }
 
-    TcpListener(Rc<Sys::Fd> fd, SocketAddr addr)
+    TcpListener(Rc<Fd> fd, SocketAddr addr)
         : _Listener(std::move(fd)), _addr(addr) {}
 
     SocketAddr addr() const {
@@ -164,7 +164,7 @@ export struct TcpListener :
 // MARK: Ipc Socket -----------------------------------------------------------
 
 export struct IpcConnection {
-    Rc<Sys::Fd> _fd;
+    Rc<Fd> _fd;
     Ref::Url _url;
 
     static Res<IpcConnection> connect(Ref::Url url) {
@@ -210,7 +210,7 @@ export struct IpcListener :
         return Ok(IpcListener(std::move(fd), url));
     }
 
-    IpcListener(Rc<Sys::Fd> fd, Ref::Url url)
+    IpcListener(Rc<Fd> fd, Ref::Url url)
         : _Listener(fd), _url(url) {}
 };
 

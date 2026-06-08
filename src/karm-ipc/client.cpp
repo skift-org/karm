@@ -23,8 +23,7 @@ export struct Client : Meta::NoCopy {
         u64 seq = 1;
 
         void failAllPending(Error error) {
-            auto msg = makeBox<Message>();
-            (void)msg->packReq<Error>(SEQ_EVENT, error);
+            auto msg = Message::packReq<Error>(SEQ_EVENT, error).unwrap();
             for (auto& v : pending.mutIterValue())
                 v.resolve(msg);
         }
@@ -98,9 +97,8 @@ export struct Client : Meta::NoCopy {
         if (msg->is<Error>())
             co_return co_try$(msg->unpack<Error>());
 
-        if (not msg->is<typename T::Response>()) {
+        if (not msg->is<typename T::Response>())
             co_return Error::invalidInput("unexpected response");
-        }
 
         co_return Ok(co_try$(msg->unpack<typename T::Response>()));
     }

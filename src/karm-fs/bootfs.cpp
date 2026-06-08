@@ -19,16 +19,23 @@ export Async::Task<Rc<Node>> mountBootfsAsync(Rc<Sys::Fd> fd) {
     bootfs_iter_t iter = bootfs_iter(header);
     for (bootfs_dirent_t const* dirent = bootfs_next(&iter); dirent != nullptr; dirent = bootfs_next(&iter)) {
         auto filePath = Ref::Path::parse(Str::fromNullterminated(dirent->name));
-        auto sliceFd = co_try$(fd->slice({
-            dirent->offset,
-            alignUp(dirent->length, Sys::pageSize()),
-        }));
-
-        auto fileMmap = co_try$(Sys::mmap(sliceFd));
 
         auto fileParent = co_trya$(mkdirsAsync(fsRoot, filePath.parent()));
-        auto fileNode = co_trya$(createAsync<VFileMmap>(std::move(fileMmap), dirent->length, sliceFd));
-        co_trya$(fileParent->linkAsync(filePath.basename(), fileNode));
+        if (dirent->length != 0) {
+            auto sliceFd = co_try$(fd->slice({
+                dirent->offset,
+                alignUp(dirent->length, Sys::pageSize()),
+            }));
+
+            auto fileMmap = co_try$(Sys::mmap(sliceFd));
+
+            auto fileNode = co_trya$(createAsync<VFileMmap>(std::move(fileMmap), dirent->length, sliceFd));
+
+            co_trya$(fileParent->linkAsync(filePath.basename(), fileNode));
+        } else {
+            auto fileNode = co_trya$(createAsync<VFile>());
+            co_trya$(fileParent->linkAsync(filePath.basename(), fileNode));
+        }
     }
 
     co_return Ok(fsRoot);

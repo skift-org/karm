@@ -23,16 +23,6 @@ export struct Session {
 
     virtual Async::Task<> handleAsync(Message& msg, Async::CancellationToken ct) = 0;
 
-    Async::Task<> runAsync(Async::CancellationToken ct) {
-        while (true) {
-            co_try$(ct.errorIfCanceled());
-            auto message = co_trya$(Ipc::recvAsync(_connection, ct));
-            auto res = co_await handleAsync(*message, ct);
-            if (not res)
-                logInfo("message handling error: {}", res);
-        }
-    }
-
     template <typename T>
     Res<> notify(T const& payload) {
         return Ipc::send<T>(_connection, SEQ_EVENT, payload);
@@ -66,7 +56,7 @@ export struct Server : Meta::NoCopy {
 
     Rc<_State> _state;
     Rc<Handler> _handler;
-    Opt<bool> _active = true; // HACK: Abuse the fact that when an Opt is moved from it become NONE
+    Opt<bool> _active = true; // HACK: Abuse the fact that when an Opt is moved from, it becomes NONE
 
     static Async::Task<Server> createAsync(Ref::Url url, Rc<Handler> handler) {
         auto listener = co_try$(Sys::IpcListener::listen(url));
@@ -86,26 +76,35 @@ export struct Server : Meta::NoCopy {
 
     template <typename T>
     void broadcast(T const& payload) {
-        for (auto s : _state->sessions) {
+        for (auto& s : _state->sessions) {
             (void)s->notify(payload);
         }
     }
 
+    static Async::Task<> acceptSessionAsync(Sys::IpcConnection connection, Rc<_State> state, Rc<Handler> handler, Async::CancellationToken ct) {
+        auto session = co_trya$(handler->acceptSessionAsync(connection, ct));
+        state->sessions.pushBack(session);
+        Defer _ = [&] {
+            state->sessions.removeAll(session);
+        };
+
+        while (true) {
+            co_try$(ct.errorIfCanceled());
+            auto message = co_trya$(Ipc::recvAsync(connection, ct));
+            auto res = co_await session->handleAsync(*message, ct);
+            if (not res)
+                logInfo("message handling error: {}", res);
+        }
+
+        co_return Ok();
+    }
+
     Async::Task<> servAsync(Async::CancellationToken ct) {
         while (true) {
-            auto conn = co_trya$(_state->listener.acceptAsync(ct));
-            auto maybeSession = co_await _handler->acceptSessionAsync(std::move(conn), ct);
-            if (maybeSession) {
-                auto session = maybeSession.take();
-                _state->sessions.pushBack(session);
-                Async::detach(
-                    session->runAsync(_state->cancellation.token()),
-                    [state = _state, session](Res<> res) mutable {
-                        logInfo("session close: {}", res);
-                        state->sessions.removeAll(session);
-                    }
-                );
-            }
+            auto connection = co_trya$(_state->listener.acceptAsync(ct));
+            Async::detach(acceptSessionAsync(std::move(connection), _state, _handler, _state->cancellation.token()), [](Res<> r) {
+                logDebug("connection closed {}", r);
+            });
         }
     }
 };
