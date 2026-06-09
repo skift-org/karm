@@ -32,9 +32,21 @@ export struct Client : Meta::NoCopy {
     Rc<_State> _state;
     Opt<bool> _active = true; // HACK: Abuse the fact that when an Opt is moved from it become NONE
 
-    static Async::Task<Client> connectAsync(Ref::Url url, Async::CancellationToken) {
-        auto conn = co_try$(Sys::IpcConnection::connect(url));
-        co_return Ok<Client>(std::move(conn));
+    static Async::Task<Client> connectAsync(Ref::Url url, Async::CancellationToken ct) {
+        auto connection = co_try$(Sys::IpcConnection::connect(url));
+
+        // When a broker established the connection, it already delivered the
+        // url to the server on our behalf.
+        if (not connection.brokered())
+            co_try$(Ipc::send(connection, SEQ_HELLO, Hello{url}));
+
+        auto message = co_trya$(Ipc::recvAsync(connection, ct));
+        if (message->is<Error>())
+            co_return co_try$(message->unpack<Error>());
+        if (not message->is<Hello::Response>())
+            co_return Error::invalidData("unexpected handshake reply");
+
+        co_return Ok<Client>(std::move(connection));
     }
 
     Client(Sys::IpcConnection con) : _state(makeRc<_State>(std::move(con))) {

@@ -11,6 +11,7 @@ import :serde;
 
 namespace Karm::Ipc {
 
+export constexpr u64 SEQ_HELLO = 0;
 export constexpr u64 SEQ_EVENT = -1;
 
 export struct [[gnu::packed]] Header {

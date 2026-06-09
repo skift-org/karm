@@ -4,10 +4,17 @@ module;
 
 export module Karm.Ipc:protocol;
 
+import Karm.Ref;
 import Karm.Sys;
+
 import :message;
 
 namespace Karm::Ipc {
+
+struct Hello {
+    using Response = None;
+    Ref::Url url;
+};
 
 export template <typename T>
 Res<> send(Sys::IpcConnection& con, u64 seq, T const& payload) {

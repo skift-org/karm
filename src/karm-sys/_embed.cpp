@@ -11,6 +11,7 @@ namespace Karm::Sys {
 
 export struct Intent;
 export struct Fd;
+export struct _Connected;
 export struct Pid;
 export struct Sched;
 export struct SysInfo;
@@ -67,7 +68,7 @@ export Res<Rc<Fd>> connectTcp(SocketAddr addr);
 
 export Res<Rc<Fd>> listenTcp(SocketAddr addr);
 
-export Res<Rc<Fd>> connectIpc(Ref::Url url);
+export Res<_Connected> connectIpc(Ref::Url url);
 
 export Res<Rc<Fd>> listenIpc(Ref::Url url);
 

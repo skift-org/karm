@@ -18,7 +18,20 @@ export struct Fd;
 
 export struct _Accepted {
     Rc<Fd> fd;
-    Union<SocketAddr, Ref::Url> addr;
+    SocketAddr addr;
+
+    // Target url pre-verified by a broker (e.g. a component manager); absent
+    // on raw transports, where the server expects an in-channel hello instead.
+    Opt<Ref::Url> url = NONE;
+};
+
+export struct _Connected {
+    Rc<Fd> fd;
+
+    // Whether a broker established the connection and delivered the target
+    // url to the server on the client's behalf; if not, the client is
+    // expected to introduce itself with an in-channel hello.
+    bool brokered = false;
 };
 
 export using _Sent = Pair<usize, usize>;

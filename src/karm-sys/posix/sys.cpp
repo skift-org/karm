@@ -432,7 +432,7 @@ Res<Rc<Fd>> listenTcp(SocketAddr addr) {
     return Ok(makeRc<Posix::Fd>(fd));
 }
 
-Res<Rc<Fd>> connectIpc(Ref::Url url) {
+Res<_Connected> connectIpc(Ref::Url url) {
     int fd = ::socket(AF_UNIX, SOCK_STREAM, 0);
     if (fd < 0)
         return Posix::fromLastErrno();
@@ -446,7 +446,7 @@ Res<Rc<Fd>> connectIpc(Ref::Url url) {
     if (::connect(fd, (sockaddr*)&addr, sizeof(addr)) < 0)
         return Posix::fromLastErrno();
 
-    return Ok(makeRc<Posix::Fd>(fd));
+    return Ok<_Connected>(makeRc<Posix::Fd>(fd), false);
 }
 
 Res<Rc<Fd>> listenIpc(Ref::Url url) {

@@ -98,7 +98,7 @@ export struct UdpConnection :
     }
 
     UdpConnection(_Accepted accepted)
-        : _fd(std::move(accepted.fd)), _addr(accepted.addr.take<SocketAddr>()) {}
+        : _fd(std::move(accepted.fd)), _addr(accepted.addr) {}
 
     Res<usize> send(Bytes buf, SocketAddr addr) {
         auto [nbytes, _] = try$(_fd->send(buf, {}, addr));
@@ -135,7 +135,7 @@ export struct TcpConnection :
     }
 
     TcpConnection(_Accepted accepted)
-        : Connection(std::move(accepted.fd)), _addr(accepted.addr.take<SocketAddr>()) {}
+        : Connection(std::move(accepted.fd)), _addr(accepted.addr) {}
 
     SocketAddr addr() const {
         return _addr;
@@ -165,19 +165,22 @@ export struct TcpListener :
 
 export struct IpcConnection {
     Rc<Fd> _fd;
-    Ref::Url _url;
+    bool _brokered;
 
     static Res<IpcConnection> connect(Ref::Url url) {
-        auto fd = try$(_Embed::connectIpc(url));
-        return Ok(IpcConnection{{fd, url}});
+        auto connected = try$(_Embed::connectIpc(url));
+        return Ok(IpcConnection{std::move(connected.fd), connected.brokered});
     }
 
-    Ref::Url url() const {
-        return _url;
-    }
+    IpcConnection(Rc<Fd> fd, bool brokered = false)
+        : _fd(std::move(fd)), _brokered(brokered) {}
 
-    IpcConnection(_Accepted accepted)
-        : _fd(std::move(accepted.fd)), _url(accepted.addr.take<Ref::Url>()) {}
+    // Whether a broker established this connection and delivered the target
+    // url to the server on our behalf; if not, we are expected to introduce
+    // ourselves with an in-channel hello.
+    bool brokered() const {
+        return _brokered;
+    }
 
     Res<> send(Bytes buf, Slice<Handle> hnds) {
         try$(_fd->send(buf, hnds, {Ip4::unspecified(), 0}));
@@ -200,18 +203,35 @@ export struct IpcConnection {
     }
 };
 
+export struct IpcAccepted {
+    IpcConnection connection;
+
+    // Target url pre-verified by a broker; absent on raw transports, where
+    // the server expects an in-channel hello instead.
+    Opt<Ref::Url> url;
+};
+
 export struct IpcListener :
-    _Listener<IpcConnection> {
-    Opt<Ref::Url> _url;
+    Meta::NoCopy {
+
+    Rc<Fd> _fd;
 
     static Res<IpcListener> listen(Ref::Url url) {
         try$(ensureUnrestricted());
         auto fd = try$(_Embed::listenIpc(url));
-        return Ok(IpcListener(std::move(fd), url));
+        return Ok(IpcListener(std::move(fd)));
     }
 
-    IpcListener(Rc<Fd> fd, Ref::Url url)
-        : _Listener(fd), _url(url) {}
+    IpcListener(Rc<Fd> fd)
+        : _fd(std::move(fd)) {}
+
+    Async::Task<IpcAccepted> acceptAsync(Async::CancellationToken ct) {
+        auto accepted = co_trya$(globalSched().acceptAsync(_fd, ct));
+        bool brokered = accepted.url.has();
+        co_return Ok(IpcAccepted{{std::move(accepted.fd), brokered}, std::move(accepted.url)});
+    }
+
+    Rc<Fd> fd() { return _fd; }
 };
 
 } // namespace Karm::Sys

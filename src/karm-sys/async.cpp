@@ -47,7 +47,7 @@ export Sched& globalSched() {
 }
 
 export template <Async::Sender S>
-auto run(S s, Sched& sched = globalSched()) {
+typename S::Inner run(S s, Sched& sched = globalSched()) {
     return Async::run(std::move(s), [&] {
         (void)sched.wait(Instant::endOfTime());
     });

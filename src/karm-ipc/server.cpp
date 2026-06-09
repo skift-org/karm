@@ -44,7 +44,7 @@ export struct Session {
 export struct Handler {
     virtual ~Handler() = default;
 
-    virtual Async::Task<Rc<Session>> acceptSessionAsync(Sys::IpcConnection conn, Async::CancellationToken ct) = 0;
+    virtual Async::Task<Rc<Session>> acceptSessionAsync(Sys::IpcConnection conn, Ref::Url const& url, Async::CancellationToken ct) = 0;
 };
 
 export struct Server : Meta::NoCopy {
@@ -81,8 +81,31 @@ export struct Server : Meta::NoCopy {
         }
     }
 
-    static Async::Task<> acceptSessionAsync(Sys::IpcConnection connection, Rc<_State> state, Rc<Handler> handler, Async::CancellationToken ct) {
-        auto session = co_trya$(handler->acceptSessionAsync(connection, ct));
+    static Async::Task<Rc<Session>> handleHandshake(Sys::IpcConnection connection, Opt<Ref::Url> url, Rc<Handler> handler, Async::CancellationToken ct) {
+        if (not url) {
+            // No broker vouched for this connection, the client introduces
+            // itself with an in-channel hello.
+            auto hello = co_trya$(recvAsync(connection, ct))->unpack<Hello>();
+            if (not hello) {
+                co_try$(send(connection, SEQ_HELLO, Error::invalidData("expected client hello")));
+                co_return hello.none();
+            }
+            url = hello.take().url;
+        }
+
+        auto maybeSession = co_await handler->acceptSessionAsync(connection, url.take(), ct);
+        if (not maybeSession) {
+            co_try$(send(connection, SEQ_HELLO, maybeSession.none()));
+            co_return maybeSession;
+        }
+
+        co_try$(send(connection, SEQ_HELLO, None{}));
+        co_return maybeSession;
+    }
+
+    static Async::Task<> acceptSessionAsync(Sys::IpcConnection connection, Opt<Ref::Url> url, Rc<_State> state, Rc<Handler> handler, Async::CancellationToken ct) {
+        auto session = co_trya$(handleHandshake(connection, std::move(url), handler, ct));
+
         state->sessions.pushBack(session);
         Defer _ = [&] {
             state->sessions.removeAll(session);
@@ -101,8 +124,8 @@ export struct Server : Meta::NoCopy {
 
     Async::Task<> servAsync(Async::CancellationToken ct) {
         while (true) {
-            auto connection = co_trya$(_state->listener.acceptAsync(ct));
-            Async::detach(acceptSessionAsync(std::move(connection), _state, _handler, _state->cancellation.token()), [](Res<> r) {
+            auto [connection, url] = co_trya$(_state->listener.acceptAsync(ct));
+            Async::detach(acceptSessionAsync(std::move(connection), std::move(url), _state, _handler, _state->cancellation.token()), [](Res<> r) {
                 logDebug("connection closed {}", r);
             });
         }
