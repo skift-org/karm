@@ -16,7 +16,7 @@ namespace Karm {
 export template <typename I>
 struct _Cell {
     I _strong = 0;
-    I _weak = 0;
+    I _weak = 1; 
 
     virtual ~_Cell() = default;
 
@@ -25,11 +25,6 @@ struct _Cell {
     virtual void clear() = 0;
 
     virtual Meta::Id id() = 0;
-
-    void collectAndRelease() {
-        if (_strong == 0 and _weak == 0)
-            delete this;
-    }
 
     _Cell* refStrong() lifetimebound {
         auto v = ++_strong;
@@ -41,13 +36,11 @@ struct _Cell {
 
     void derefStrong() {
         auto v = --_strong;
-        if (v == 0)
+        if (v < 0) [[unlikely]] panic("derefStrong() underflow");
+        if (v == 0) {
             clear();
-
-        if (v < 0) [[unlikely]]
-            panic("derefStrong() underflow");
-
-        collectAndRelease();
+            derefWeak();
+        }
     }
 
     _Cell* refWeak() lifetimebound {
@@ -58,12 +51,12 @@ struct _Cell {
         return this;
     }
 
+ 
     void derefWeak() {
         auto v = --_weak;
-        if (v < 0) [[unlikely]]
-            panic("derefWeak() underflow");
-
-        collectAndRelease();
+        if (v < 0) [[unlikely]] panic("derefWeak() underflow");
+        if (v == 0)
+            delete this;
     }
 
     template <typename T>
@@ -332,6 +325,12 @@ struct _Weak {
     }
 
     constexpr _Weak() = delete;
+
+    constexpr _Weak(_Weak const& other)
+    : _cell(other._cell ? other._cell->refWeak() : nullptr) {}
+
+    constexpr _Weak(_Weak&& other)
+        : _cell(std::exchange(other._cell, nullptr)) {}
 
     template <Meta::Derive<T> U>
     constexpr _Weak(_Rc<I, U> const& other)
