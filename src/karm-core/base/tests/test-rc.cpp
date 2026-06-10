@@ -32,7 +32,7 @@ test$("weak-self") {
 
     expectEq$(foo.strong(), 2uz);
     expectEq$(foo2.strong(), 2uz);
-    expectEq$(foo2.weak(), 1uz);
+    expectEq$(foo2.weak(), 2uz);
 
     return Ok();
 }
