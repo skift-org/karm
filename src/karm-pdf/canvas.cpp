@@ -38,8 +38,12 @@ export struct Canvas : Gfx::Canvas {
     MutCursor<FontManager> _fontManager;
     Vec<GraphicalStateDict>& _graphicalStates;
 
+    Vec<f64> _opacityStack;
+
     Canvas(Io::Emit e, Math::Vec2f mediaBox, MutCursor<FontManager> fontManager, Vec<GraphicalStateDict>& graphicalStates)
-        : _e{e}, _mediaBox{mediaBox}, _fontManager{fontManager}, _graphicalStates(graphicalStates) {}
+        : _e{e}, _mediaBox{mediaBox}, _fontManager{fontManager}, _graphicalStates(graphicalStates) {
+        _opacityStack.pushBack(1.0);
+    }
 
     Math::Vec2f _mapPoint(Math::Vec2f p, Flags<Math::Path::Option> options) {
         if (options & Math::Path::RELATIVE)
@@ -58,10 +62,30 @@ export struct Canvas : Gfx::Canvas {
 
     void push() override {
         _e.ln("q");
+        f64 opacity = last(_opacityStack);
+        _opacityStack.pushBack(opacity);
     }
 
     void pop() override {
         _e.ln("Q");
+        if (_opacityStack.len() > 1)
+            _opacityStack.popBack();
+    }
+
+    void _applyOpacity(f64 opacity) {
+        usize gsIndex = _graphicalStates.len();
+        for (usize i = 0; i < _graphicalStates.len(); ++i) {
+            if (Math::epsilonEq(_graphicalStates[i].opacity, opacity, 0.001)) {
+                gsIndex = i;
+                break;
+            }
+        }
+
+        if (gsIndex == _graphicalStates.len()) {
+            _graphicalStates.pushBack(GraphicalStateDict{opacity});
+        }
+
+        _e.ln("/GS{} gs", gsIndex);
     }
 
     void fillStyle(Gfx::Fill fill) override {
@@ -69,29 +93,16 @@ export struct Canvas : Gfx::Canvas {
 
         _e.ln("{:.3} {:.3} {:.3} rg", color.red / 255.0, color.green / 255.0, color.blue / 255.0);
 
-        f64 targetOpacity = color.alpha / 255.0;
-
-        usize gsIndex = _graphicalStates.len();
-        for (usize i = 0; i < _graphicalStates.len(); ++i) {
-            if (Math::epsilonEq(_graphicalStates[i].opacity, targetOpacity, 0.001)) {
-                gsIndex = i;
-                break;
-            }
-        }
-
-        if (gsIndex == _graphicalStates.len()) {
-            _graphicalStates.pushBack(GraphicalStateDict{targetOpacity});
-        }
-
-        _e.ln("/GS{} gs", gsIndex);
+        _applyOpacity(color.alpha / 255.0 * last(_opacityStack));
     }
 
     void strokeStyle(Gfx::Stroke) override {
         logDebugIf(debugCanvas, "pdf: strokeStyle() operation not implemented");
     }
 
-    void opacity(f64) override {
-        logDebugIf(debugCanvas, "pdf: opacity() operation not implemented");
+    void opacity(f64 opacity) override {
+        last(_opacityStack) = opacity;
+        _applyOpacity(opacity);
     }
 
     void transform(Math::Trans2f trans) override {
