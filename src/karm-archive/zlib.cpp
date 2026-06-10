@@ -5,6 +5,7 @@ module;
 export module Karm.Archive:zlib;
 
 import Karm.Core;
+import Karm.Crypto;
 import Karm.Debug;
 import Karm.Logger;
 
@@ -58,6 +59,29 @@ export Res<> zlibDecompress(Bytes bytes, Io::Writer& out) {
 export Res<Vec<u8>> zlibDecompress(Bytes bytes) {
     Io::BufferWriter w;
     try$(zlibDecompress(bytes, w));
+    return Ok(w.take());
+}
+
+export Res<> zlibCompress(Bytes bytes, Io::Writer& out) {
+    u8 cmf = 0x78; // cm = 8 (deflate), cinfo = 7 (32K window)
+    u8 flg = 0x9c; // flevel = 2, fcheck such that (cmf * 256 + flg) % 31 == 0
+    try$(Io::putByte(out, cmf));
+    try$(Io::putByte(out, flg));
+
+    try$(deflate(bytes, out));
+
+    u32 adler = Crypto::adler32(bytes);
+    try$(Io::putByte(out, adler >> 24));
+    try$(Io::putByte(out, adler >> 16));
+    try$(Io::putByte(out, adler >> 8));
+    try$(Io::putByte(out, adler));
+
+    return Ok();
+}
+
+export Res<Vec<u8>> zlibCompress(Bytes bytes) {
+    Io::BufferWriter w;
+    try$(zlibCompress(bytes, w));
     return Ok(w.take());
 }
 

@@ -137,12 +137,14 @@ struct Window {
         return Ok();
     }
 
+    // Peek the byte at distance `off` from the end of the output, where
+    // a distance of 1 is the most recently emitted byte.
     Res<u8> peek(usize off) {
-        if (off >= _r.cap())
+        if (off > _r.cap())
             return Error::invalidInput("peek outside of window");
-        if (off >= _r.len())
+        if (off > _r.len())
             return Ok(0);
-        return Ok(_r.peekBack(off));
+        return Ok(_r.peekBack(off - 1));
     }
 };
 
@@ -228,6 +230,117 @@ export Res<> inflate(Io::BitReader& r, Io::Writer& out) {
             return Error::invalidData("invalid block type");
         }
     }
+
+    return Ok();
+}
+
+// MARK: Deflate -----------------------------------------------------------
+
+static constexpr usize MIN_MATCH = 3;
+static constexpr usize MAX_MATCH = 258;
+static constexpr usize MAX_DIST = 32768;
+static constexpr usize HASH_BITS = 15;
+static constexpr usize MAX_CHAIN = 128;
+
+// Huffman codes are packed starting from the most significant bit,
+// unlike everything else in the bitstream.
+static Res<> writeCode(Io::BitWriter& w, u16 code, u8 len) {
+    for (u8 i = len; i > 0; i--)
+        try$(w.writeBit(code >> (i - 1)));
+    return Ok();
+}
+
+static Res<> writeFixedSym(Io::BitWriter& w, u16 sym) {
+    if (sym < 144)
+        return writeCode(w, 0x30 + sym, 8);
+    if (sym < 256)
+        return writeCode(w, 0x190 + sym - 144, 9);
+    if (sym < 280)
+        return writeCode(w, sym - 256, 7);
+    return writeCode(w, 0xc0 + sym - 280, 8);
+}
+
+static Res<> writeLen(Io::BitWriter& w, usize len) {
+    usize sym = LENS.len() - 1;
+    while (LENS[sym] > len)
+        sym--;
+    try$(writeFixedSym(w, 257 + sym));
+    try$(w.writeBits<u32>(len - LENS[sym], LEXT[sym]));
+    return Ok();
+}
+
+static Res<> writeDist(Io::BitWriter& w, usize dist) {
+    usize sym = DISTS.len() - 1;
+    while (DISTS[sym] > dist)
+        sym--;
+    try$(writeCode(w, sym, 5));
+    try$(w.writeBits<u32>(dist - DISTS[sym], DEXT[sym]));
+    return Ok();
+}
+
+static usize hash3(Bytes input, usize i) {
+    u32 h = input[i] | (input[i + 1] << 8) | (input[i + 2] << 16);
+    return (h * 0x9e3779b1u) >> (32 - HASH_BITS);
+}
+
+export Res<> deflate(Bytes input, Io::Writer& out) {
+    Io::BitWriter w{out};
+
+    // Emit a single final block using the fixed Huffman codes.
+    try$(w.writeBit(1));
+    try$(w.writeBits<u8>(0b01, 2));
+
+    Vec<isize> head;
+    head.resize(1uz << HASH_BITS, -1);
+    Vec<isize> prev;
+    prev.resize(input.len(), -1);
+
+    auto insert = [&](usize pos) {
+        if (pos + MIN_MATCH > input.len())
+            return;
+        usize h = hash3(input, pos);
+        prev[pos] = head[h];
+        head[h] = pos;
+    };
+
+    usize i = 0;
+    while (i < input.len()) {
+        usize bestLen = 0;
+        usize bestDist = 0;
+
+        if (i + MIN_MATCH <= input.len()) {
+            usize maxLen = min(MAX_MATCH, input.len() - i);
+            isize cand = head[hash3(input, i)];
+            usize chain = MAX_CHAIN;
+            while (cand >= 0 and chain-- > 0 and i - cand <= MAX_DIST) {
+                usize len = 0;
+                while (len < maxLen and input[cand + len] == input[i + len])
+                    len++;
+                if (len > bestLen) {
+                    bestLen = len;
+                    bestDist = i - cand;
+                    if (len == maxLen)
+                        break;
+                }
+                cand = prev[cand];
+            }
+        }
+
+        if (bestLen >= MIN_MATCH) {
+            try$(writeLen(w, bestLen));
+            try$(writeDist(w, bestDist));
+            for (usize j = 0; j < bestLen; j++)
+                insert(i + j);
+            i += bestLen;
+        } else {
+            try$(writeFixedSym(w, input[i]));
+            insert(i);
+            i++;
+        }
+    }
+
+    try$(writeFixedSym(w, 256));
+    try$(w.flush());
 
     return Ok();
 }

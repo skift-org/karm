@@ -95,4 +95,54 @@ test$("zlib-zeroes") {
     return Ok();
 }
 
+test$("zlib-compress-roundtrip") {
+    auto roundtrip = [&](Str input) -> Res<> {
+        auto compressed = try$(zlibCompress(bytes(input)));
+        auto decompressed = try$(zlibDecompress(compressed));
+        expectEq$(decompressed, bytes(input));
+        return Ok();
+    };
+
+    try$(roundtrip(""));
+    try$(roundtrip("a"));
+    try$(roundtrip("Hello World!"));
+    try$(roundtrip("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
+    try$(roundtrip("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas nec orci eu libero condimentum accumsan. Phasellus ex mi, elementum nec metus et, rutrum iaculis mauris. Phasellus mi nunc, placerat id leo tristique, ultrices semper tortor. Sed sed metus viverra, pharetra tellus eu, pretium turpis. Quisque suscipit urna ac enim consectetur tempor. Mauris nec quam augue. Sed sagittis, mauris vitae efficitur scelerisque, est metus pellentesque velit, vel faucibus ex sapien at mauris."));
+
+    return Ok();
+}
+
+test$("zlib-compress-roundtrip-long") {
+    // Long repetitive data exercises matches capped at the maximum
+    // length and distances spanning several extra-bits buckets.
+    Vec<u8> input;
+    for (usize _ : urange::zeroTo(4096uz))
+        input.pushBack(0);
+    for (usize i : urange::zeroTo(65536uz))
+        input.pushBack(i * 31 % 251);
+    for (usize i : urange::zeroTo(65536uz))
+        input.pushBack(i * 7 % 13);
+
+    auto compressed = try$(zlibCompress(input));
+    auto decompressed = try$(zlibDecompress(compressed));
+    expectEq$(decompressed, input);
+
+    return Ok();
+}
+
+test$("zlib-compress-header-and-adler") {
+    auto compressed = try$(zlibCompress(bytes(Str{"Hello World!"})));
+
+    expectEq$(compressed[0], 0x78);
+    expectEq$((compressed[0] * 256 + compressed[1]) % 31, 0);
+
+    // Adler-32 of "Hello World!", stored big-endian.
+    expectEq$(compressed[compressed.len() - 4], 0x1c);
+    expectEq$(compressed[compressed.len() - 3], 0x49);
+    expectEq$(compressed[compressed.len() - 2], 0x04);
+    expectEq$(compressed[compressed.len() - 1], 0x3e);
+
+    return Ok();
+}
+
 } // namespace Karm::Archive::Tests

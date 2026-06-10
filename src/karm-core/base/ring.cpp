@@ -112,14 +112,14 @@ struct Ring {
         if (index >= _len) [[unlikely]]
             panic("peek out of bounds");
 
-        return _buf[(_head - index) % _cap].unwrap();
+        return _buf[(_head + _cap - 1 - index) % _cap].unwrap();
     }
 
     T const& peekBack(usize index) const {
         if (index >= _len) [[unlikely]]
             panic("peek out of bounds");
 
-        return _buf[(_head - index) % _cap].unwrap();
+        return _buf[(_head + _cap - 1 - index) % _cap].unwrap();
     }
 
     void trunc(usize newLen) {

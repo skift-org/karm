@@ -252,4 +252,43 @@ export struct BitReader {
     }
 };
 
+export struct BitWriter {
+    Writer& _writer;
+    u8 _bits{};
+    u8 _len{};
+
+    BitWriter(Writer& writer)
+        : _writer(writer) {
+    }
+
+    Res<> writeBit(u8 bit) {
+        _bits |= (bit & 1) << _len;
+        _len += 1;
+
+        if (_len == 8)
+            try$(flush());
+
+        return Ok();
+    }
+
+    template <Meta::Unsigned T>
+    Res<> writeBits(T bits, usize n) {
+        for (usize i = 0; i < n; i++)
+            try$(writeBit(bits >> i));
+        return Ok();
+    }
+
+    // Write out any pending bits, padding the last byte with zeros.
+    Res<> flush() {
+        if (_len == 0)
+            return Ok();
+
+        try$(_writer.write({&_bits, 1}));
+        _bits = 0;
+        _len = 0;
+
+        return Ok();
+    }
+};
+
 } // namespace Karm::Io
