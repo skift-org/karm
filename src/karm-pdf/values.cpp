@@ -45,6 +45,8 @@ export struct Stream {
     Dict dict;
     Vec<u8> data;
 
+    static Stream flate(Bytes data, Dict dict = {});
+
     Res<> write(Io::Writer& writer) const;
 };
 

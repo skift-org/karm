@@ -163,13 +163,12 @@ export struct TrueTypeFontAdapter {
 
     Pdf::Stream fontFile() {
         // 9.9 Embedded font programs
-        return Pdf::Stream{
-            .dict = Pdf::Dict{
-                {"Length"s, _font->_mmap.bytes().len()},
+        return Pdf::Stream::flate(
+            _font->_mmap.bytes(),
+            Pdf::Dict{
                 {"Length1"s, _font->_mmap.bytes().len()},
-            },
-            .data = _font->_mmap.bytes(),
-        };
+            }
+        );
     }
 
     Pdf::Dict CIDSystemInfo() {
@@ -213,13 +212,7 @@ export struct TrueTypeFontAdapter {
     }
 
     Pdf::Stream CIDToGIDMap() {
-        auto stream = ttfGlyphInfoAdapter.CIDToGIDMap();
-        return Pdf::Stream{
-            .dict = Pdf::Dict{
-                {"Length"s, stream.len()},
-            },
-            .data = std::move(stream)
-        };
+        return Pdf::Stream::flate(ttfGlyphInfoAdapter.CIDToGIDMap());
     }
 
     Pdf::Dict CIDFont() {

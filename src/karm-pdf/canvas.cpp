@@ -1,5 +1,6 @@
 export module Karm.Pdf:canvas;
 
+import Karm.Archive;
 import Karm.Core;
 import Karm.Debug;
 import Karm.Gfx;
@@ -338,17 +339,24 @@ export struct Canvas : Gfx::Canvas {
             _e.ln("/Height {}", clippedPixels.height());
             _e.ln("/ColorSpace /DeviceRGB");
             _e.ln("/BitsPerComponent 8");
-            _e.ln("/Filter [/ASCIIHexDecode]");
+            _e.ln("/Filter [/ASCIIHexDecode /FlateDecode]");
         });
 
         _e.ln("ID");
 
+        Vec<u8> rgb(usize(clippedPixels.width() * clippedPixels.height() * 3));
         for (isize y = 0; y < clippedPixels.height(); y++) {
             for (isize x = 0; x < clippedPixels.width(); x++) {
                 auto color = clippedPixels.load({x, y});
-                _e("{:02X}{:02X}{:02X}", color.red, color.green, color.blue);
+                rgb.pushBack(color.red);
+                rgb.pushBack(color.green);
+                rgb.pushBack(color.blue);
             }
         }
+
+        auto compressed = Archive::zlibCompress(rgb).take("failed to compress image data");
+        for (usize i = 0; i < compressed.len(); i++)
+            _e("{:02X}", compressed[i]);
         _e.ln(">");
 
         _e.ln("EI");

@@ -125,12 +125,7 @@ export struct PdfPrinter : FilePrinter {
 
             file.add(
                 contentsRef,
-                Pdf::Stream{
-                    .dict = Pdf::Dict{
-                        {"Length"s, p.data.bytes().len()},
-                    },
-                    .data = p.data.bytes(),
-                }
+                Pdf::Stream::flate(p.data.bytes())
             );
 
             pagesKids.pushBack(pageRef);

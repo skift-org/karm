@@ -5,6 +5,9 @@ module;
 module Karm.Pdf;
 
 import Karm.Core;
+import Karm.Archive;
+
+using namespace Karm::Literals;
 
 namespace Karm::Pdf {
 
@@ -31,6 +34,20 @@ Res<> Dict::write(Io::Writer& w) const {
         try$(Io::format(w, "\n"));
     }
     return Io::format(w, ">>");
+}
+
+Stream Stream::flate(Bytes data, Dict dict) {
+    auto compressed = Archive::zlibCompress(data);
+    if (not compressed) {
+        // Compression failed, fall back to uncompressed stream.
+        dict.put(Name{"Length"s}, data.len());
+        return {std::move(dict), data};
+    }
+
+    auto buf = compressed.take();
+    dict.put(Name{"Filter"s}, Name{"FlateDecode"s});
+    dict.put(Name{"Length"s}, buf.len());
+    return {std::move(dict), std::move(buf)};
 }
 
 Res<> Stream::write(Io::Writer& w) const {
