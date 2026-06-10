@@ -130,6 +130,26 @@ test$("zlib-compress-roundtrip-long") {
     return Ok();
 }
 
+test$("zlib-compress-incompressible") {
+    // Incompressible data triggers the stored-block fallback, spanning
+    // more than one stored block.
+    Vec<u8> input;
+    u32 x = 1;
+    for (usize _ : urange::zeroTo(100000uz)) {
+        x = x * 1103515245u + 12345u;
+        input.pushBack(u8(x >> 16));
+    }
+
+    auto compressed = try$(zlibCompress(input));
+    // 2 bytes of header, 5 per stored block and 4 of checksum.
+    expectLteq$(compressed.len(), input.len() + 16);
+
+    auto decompressed = try$(zlibDecompress(compressed));
+    expectEq$(decompressed, input);
+
+    return Ok();
+}
+
 test$("zlib-compress-header-and-adler") {
     auto compressed = try$(zlibCompress(bytes(Str{"Hello World!"})));
 

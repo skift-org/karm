@@ -133,6 +133,12 @@ always_inline constexpr T reverseBits(T data) {
     return res;
 }
 
+// Reverse the lowest `len` bits of `data`.
+export template <typename T>
+always_inline constexpr T reverseBits(T data, usize len) {
+    return reverseBits(data) >> (sizeof(T) * 8 - len);
+}
+
 // MARK: Signed -----------------------------------------------------------
 
 export using isize = __PTRDIFF_TYPE__;

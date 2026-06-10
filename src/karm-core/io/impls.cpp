@@ -4,6 +4,7 @@ module;
 
 export module Karm.Core:io.impls;
 
+import :base.array;
 import :base.vec;
 import :base.res;
 import :io.traits;
@@ -254,40 +255,52 @@ export struct BitReader {
 
 export struct BitWriter {
     Writer& _writer;
-    u8 _bits{};
-    u8 _len{};
+    Array<u8, 256> _buf;
+    usize _len{};
+    usize _bits{};
+    usize _bitLen{};
 
     BitWriter(Writer& writer)
         : _writer(writer) {
     }
 
-    Res<> writeBit(u8 bit) {
-        _bits |= (bit & 1) << _len;
-        _len += 1;
-
-        if (_len == 8)
-            try$(flush());
-
+    Res<> _flushBytes() {
+        if (_len) {
+            try$(_writer.write(sub(_buf, 0, _len)));
+            _len = 0;
+        }
         return Ok();
     }
 
+    Res<> writeBit(u8 bit) {
+        return writeBits<u8>(bit, 1);
+    }
+
+    // Queue up to 56 bits, least significant first.
     template <Meta::Unsigned T>
     Res<> writeBits(T bits, usize n) {
-        for (usize i = 0; i < n; i++)
-            try$(writeBit(bits >> i));
+        _bits |= (usize(bits) & ((1uz << n) - 1)) << _bitLen;
+        _bitLen += n;
+
+        while (_bitLen >= 8) {
+            _buf[_len++] = _bits;
+            _bits >>= 8;
+            _bitLen -= 8;
+            if (_len == _buf.len())
+                try$(_flushBytes());
+        }
+
         return Ok();
     }
 
     // Write out any pending bits, padding the last byte with zeros.
     Res<> flush() {
-        if (_len == 0)
-            return Ok();
-
-        try$(_writer.write({&_bits, 1}));
-        _bits = 0;
-        _len = 0;
-
-        return Ok();
+        if (_bitLen) {
+            _buf[_len++] = _bits;
+            _bits = 0;
+            _bitLen = 0;
+        }
+        return _flushBytes();
     }
 };
 

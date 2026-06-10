@@ -242,87 +242,136 @@ static constexpr usize MAX_DIST = 32768;
 static constexpr usize HASH_BITS = 15;
 static constexpr usize MAX_CHAIN = 128;
 
-// Huffman codes are packed starting from the most significant bit,
-// unlike everything else in the bitstream.
-static Res<> writeCode(Io::BitWriter& w, u16 code, u8 len) {
-    for (u8 i = len; i > 0; i--)
-        try$(w.writeBit(code >> (i - 1)));
-    return Ok();
-}
+struct FixedCode {
+    u16 bits;
+    u8 len;
+};
+
+// Huffman codes are packed starting from the most significant bit, unlike
+// everything else in the bitstream, so they are stored pre-reversed for
+// LSB-first emission.
+static constexpr Array<FixedCode, 288> FIXED_LITS = [] {
+    Array<FixedCode, 288> res{};
+    for (u16 sym = 0; sym < 288; sym++) {
+        if (sym < 144)
+            res[sym] = {reverseBits<u16>(0x30 + sym, 8), 8};
+        else if (sym < 256)
+            res[sym] = {reverseBits<u16>(0x190 + sym - 144, 9), 9};
+        else if (sym < 280)
+            res[sym] = {reverseBits<u16>(sym - 256, 7), 7};
+        else
+            res[sym] = {reverseBits<u16>(0xc0 + sym - 280, 8), 8};
+    }
+    return res;
+}();
+
+static constexpr Array<u8, 30> DIST_CODES = [] {
+    Array<u8, 30> res{};
+    for (u8 sym = 0; sym < 30; sym++)
+        res[sym] = reverseBits<u8>(sym, 5);
+    return res;
+}();
+
+// Length to symbol lookup, indexed by len - MIN_MATCH.
+static constexpr Array<u8, 256> LEN_SYMS = [] {
+    Array<u8, 256> res{};
+    for (u8 sym = 0; sym < 29; sym++) {
+        usize hi = sym + 1 < 29 ? LENS[sym + 1] : 259;
+        for (usize len = LENS[sym]; len < hi; len++)
+            res[len - MIN_MATCH] = sym;
+    }
+    return res;
+}();
+
+// Distance to symbol lookup: [0, 256) covers dist - 1 for distances up to
+// 256, [256, 512) covers (dist - 1) >> 7 for the rest.
+static constexpr Array<u8, 512> DIST_SYMS = [] {
+    Array<u8, 512> res{};
+    for (u8 sym = 0; sym < 30; sym++) {
+        usize hi = sym + 1 < 30 ? DISTS[sym + 1] : MAX_DIST + 1;
+        for (usize dist = DISTS[sym]; dist < hi; dist++) {
+            usize d = dist - 1;
+            if (d < 256)
+                res[d] = sym;
+            else
+                res[256 + (d >> 7)] = sym;
+        }
+    }
+    return res;
+}();
 
 static Res<> writeFixedSym(Io::BitWriter& w, u16 sym) {
-    if (sym < 144)
-        return writeCode(w, 0x30 + sym, 8);
-    if (sym < 256)
-        return writeCode(w, 0x190 + sym - 144, 9);
-    if (sym < 280)
-        return writeCode(w, sym - 256, 7);
-    return writeCode(w, 0xc0 + sym - 280, 8);
+    auto [bits, len] = FIXED_LITS[sym];
+    return w.writeBits<u16>(bits, len);
 }
 
 static Res<> writeLen(Io::BitWriter& w, usize len) {
-    usize sym = LENS.len() - 1;
-    while (LENS[sym] > len)
-        sym--;
+    usize sym = LEN_SYMS[len - MIN_MATCH];
     try$(writeFixedSym(w, 257 + sym));
     try$(w.writeBits<u32>(len - LENS[sym], LEXT[sym]));
     return Ok();
 }
 
 static Res<> writeDist(Io::BitWriter& w, usize dist) {
-    usize sym = DISTS.len() - 1;
-    while (DISTS[sym] > dist)
-        sym--;
-    try$(writeCode(w, sym, 5));
+    usize d = dist - 1;
+    usize sym = d < 256 ? DIST_SYMS[d] : DIST_SYMS[256 + (d >> 7)];
+    try$(w.writeBits<u8>(DIST_CODES[sym], 5));
     try$(w.writeBits<u32>(dist - DISTS[sym], DEXT[sym]));
     return Ok();
 }
 
-static usize hash3(Bytes input, usize i) {
-    u32 h = input[i] | (input[i + 1] << 8) | (input[i + 2] << 16);
-    return (h * 0x9e3779b1u) >> (32 - HASH_BITS);
-}
-
-export Res<> deflate(Bytes input, Io::Writer& out) {
+static Res<> deflateFixed(Bytes input, Io::Writer& out) {
     Io::BitWriter w{out};
 
     // Emit a single final block using the fixed Huffman codes.
-    try$(w.writeBit(1));
-    try$(w.writeBits<u8>(0b01, 2));
+    try$(w.writeBits<u8>(0b011, 3));
 
-    Vec<isize> head;
+    Vec<i32> head;
     head.resize(1uz << HASH_BITS, -1);
-    Vec<isize> prev;
-    prev.resize(input.len(), -1);
+    Vec<i32> prev;
+    prev.resize(MAX_DIST, -1);
+
+    u8 const* data = input.buf();
+    usize len = input.len();
+
+    auto hash = [&](usize pos) {
+        u32 h = data[pos] | (data[pos + 1] << 8) | (data[pos + 2] << 16);
+        return (h * 0x9e3779b1u) >> (32 - HASH_BITS);
+    };
 
     auto insert = [&](usize pos) {
-        if (pos + MIN_MATCH > input.len())
+        if (pos + MIN_MATCH > len)
             return;
-        usize h = hash3(input, pos);
-        prev[pos] = head[h];
+        u32 h = hash(pos);
+        prev[pos & (MAX_DIST - 1)] = head[h];
         head[h] = pos;
     };
 
     usize i = 0;
-    while (i < input.len()) {
+    while (i < len) {
         usize bestLen = 0;
         usize bestDist = 0;
 
-        if (i + MIN_MATCH <= input.len()) {
-            usize maxLen = min(MAX_MATCH, input.len() - i);
-            isize cand = head[hash3(input, i)];
+        if (i + MIN_MATCH <= len) {
+            usize maxLen = min(MAX_MATCH, len - i);
+            i32 cand = head[hash(i)];
             usize chain = MAX_CHAIN;
             while (cand >= 0 and chain-- > 0 and i - cand <= MAX_DIST) {
-                usize len = 0;
-                while (len < maxLen and input[cand + len] == input[i + len])
-                    len++;
-                if (len > bestLen) {
-                    bestLen = len;
-                    bestDist = i - cand;
-                    if (len == maxLen)
-                        break;
+                usize c = cand;
+                // A better match has to improve on the byte right past the
+                // current best, check it before comparing the whole match.
+                if (bestLen == 0 or data[c + bestLen] == data[i + bestLen]) {
+                    usize l = 0;
+                    while (l < maxLen and data[c + l] == data[i + l])
+                        l++;
+                    if (l > bestLen) {
+                        bestLen = l;
+                        bestDist = i - c;
+                        if (l == maxLen)
+                            break;
+                    }
                 }
-                cand = prev[cand];
+                cand = prev[c & (MAX_DIST - 1)];
             }
         }
 
@@ -333,7 +382,7 @@ export Res<> deflate(Bytes input, Io::Writer& out) {
                 insert(i + j);
             i += bestLen;
         } else {
-            try$(writeFixedSym(w, input[i]));
+            try$(writeFixedSym(w, data[i]));
             insert(i);
             i++;
         }
@@ -341,6 +390,43 @@ export Res<> deflate(Bytes input, Io::Writer& out) {
 
     try$(writeFixedSym(w, 256));
     try$(w.flush());
+
+    return Ok();
+}
+
+static Res<> deflateStored(Bytes input, Io::Writer& out) {
+    usize i = 0;
+    do {
+        usize n = min(input.len() - i, 65535uz);
+        bool last = i + n == input.len();
+        Array<u8, 5> header = {
+            u8(last ? 1 : 0),
+            u8(n),
+            u8(n >> 8),
+            u8(~n),
+            u8(~n >> 8),
+        };
+        try$(out.write(header));
+        try$(out.write(sub(input, i, i + n)));
+        i += n;
+    } while (i < input.len());
+
+    return Ok();
+}
+
+export Res<> deflate(Bytes input, Io::Writer& out) {
+    if (input.len() > usize(Limits<i32>::MAX))
+        return Error::notImplemented("input too large");
+
+    Io::BufferWriter buf;
+    try$(deflateFixed(input, buf));
+
+    // Fall back to stored blocks if compression made things worse.
+    usize blocks = max(1uz, (input.len() + 65534) / 65535);
+    if (sizeOf(buf.bytes()) <= input.len() + 5 * blocks)
+        try$(out.write(buf.bytes()));
+    else
+        try$(deflateStored(input, out));
 
     return Ok();
 }
