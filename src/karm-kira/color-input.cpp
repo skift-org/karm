@@ -61,7 +61,7 @@ struct HsvSquare : Ui::View<HsvSquare> {
 
         auto hsv = makeHsvSquare();
 
-        g.blit(bound(), *hsv);
+        g.blit(bound(), hsv);
 
         Math::Vec2i pos = {
             bound().x + (isize)(_value.saturation * bound().width),

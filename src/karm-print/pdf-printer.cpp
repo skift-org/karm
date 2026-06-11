@@ -17,11 +17,12 @@ export struct PdfPrinter : FilePrinter {
     Vec<PdfPage> _pages;
     Opt<Pdf::Canvas> _canvas;
     Pdf::FontManager fontManager;
+    Pdf::ImageManager imageManager;
     Vec<Pdf::GraphicalStateDict> graphicalStates;
 
     Gfx::Canvas& beginPage(Math::Vec2f size) override {
         auto& page = _pages.emplaceBack(size);
-        _canvas = Pdf::Canvas{page.data, size, &fontManager, graphicalStates};
+        _canvas = Pdf::Canvas{page.data, size, &fontManager, &imageManager, graphicalStates};
 
         // Convert fron the karm-pdf internal units to PDF units (1/72 inch)
         _canvas->scale(72.0 / DPI);
@@ -80,6 +81,72 @@ export struct PdfPrinter : FilePrinter {
             );
         }
 
+        // Images
+        Pdf::Dict xObjectDict;
+        for (auto& [id, surface] : imageManager.mapping.iterValue()) {
+            auto pixels = surface->pixels();
+
+            auto rgbData = Vec<u8>(pixels.width() * pixels.height() * 3);
+            for (isize y = 0; y < pixels.height(); y++) {
+                for (isize x = 0; x < pixels.width(); x++) {
+                    auto c = pixels.loadUnsafe({x, y});
+                    rgbData.pushBack(c.red);
+                    rgbData.pushBack(c.green);
+                    rgbData.pushBack(c.blue);
+                }
+            }
+
+            auto imageStreamParams = Pdf::Dict{
+                {"Type"s, Pdf::Name{"XObject"s}},
+                {"Subtype"s, Pdf::Name{"Image"s}},
+                {"Width"s, pixels.width()},
+                {"Height"s, pixels.height()},
+                {"ColorSpace"s, Pdf::Name{"DeviceRGB"}},
+                {"BitsPerComponent"s, 8ul},
+            };
+
+            if (not pixels.isOpaque()) {
+                auto smaskRef = alloc.alloc();
+
+                imageStreamParams.put("SMask"s, smaskRef);
+
+                auto maskData = Vec<u8>(pixels.bytes().len());
+                for (isize y = 0; y < pixels.height(); y++) {
+                    for (isize x = 0; x < pixels.width(); x++) {
+                        auto a = pixels.loadUnsafe({x, y}).alpha;
+                        maskData.pushBack(a);
+                    }
+                }
+
+                file.add(
+                    smaskRef,
+                    Pdf::Stream::flate(
+                        std::move(maskData),
+                        Pdf::Dict{
+                            {"Type"s, Pdf::Name{"XObject"s}},
+                            {"Subtype"s, Pdf::Name{"Image"s}},
+                            {"Width"s, pixels.width()},
+                            {"Height"s, pixels.height()},
+                            {"ColorSpace"s, Pdf::Name{"DeviceGray"s}},
+                            {"BitsPerComponent"s, 8ul},
+                        }
+                    )
+                );
+            }
+
+            auto xObjectRef = alloc.alloc();
+
+            file.add(
+                xObjectRef,
+                Pdf::Stream::flate(
+                    std::move(rgbData),
+                    imageStreamParams
+                )
+            );
+
+            xObjectDict.put(Pdf::Name{Io::format("Im{}", id)}, xObjectRef);
+        }
+
         // Page
         for (auto& p : _pages) {
             Pdf::Ref pageRef = alloc.alloc();
@@ -116,8 +183,14 @@ export struct PdfPrinter : FilePrinter {
                                 "Font"s,
                                 pageFontsDict,
                             },
-                            {"ExtGState"s,
-                             graphicalStatesDict}
+                            {
+                                "ExtGState"s,
+                                graphicalStatesDict,
+                            },
+                            {
+                                "XObject"s,
+                                xObjectDict,
+                            }
                         },
                     }
                 }

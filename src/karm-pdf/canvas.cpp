@@ -1,6 +1,5 @@
 export module Karm.Pdf:canvas;
 
-import Karm.Archive;
 import Karm.Core;
 import Karm.Debug;
 import Karm.Gfx;
@@ -26,6 +25,19 @@ export struct FontManager {
     }
 };
 
+export struct ImageManager {
+    Map<usize, Tuple<usize, Rc<Gfx::Surface>>> mapping;
+
+    usize getImageId(Rc<Gfx::Surface> surface) {
+        if (auto entry = mapping.lookup(reinterpret_cast<usize>(surface._cell)))
+            return entry.unwrap().v0;
+
+        auto id = mapping.len() + 1;
+        mapping.put(reinterpret_cast<usize>(surface._cell), Tuple{id, surface});
+        return id;
+    }
+};
+
 // 8.4.5 Graphics state parameter dictionaries
 export struct GraphicalStateDict {
     f64 opacity;
@@ -37,12 +49,13 @@ export struct Canvas : Gfx::Canvas {
     Math::Vec2f _p{};
 
     MutCursor<FontManager> _fontManager;
+    MutCursor<ImageManager> _imageManager;
     Vec<GraphicalStateDict>& _graphicalStates;
 
     Vec<f64> _opacityStack;
 
-    Canvas(Io::Emit e, Math::Vec2f mediaBox, MutCursor<FontManager> fontManager, Vec<GraphicalStateDict>& graphicalStates)
-        : _e{e}, _mediaBox{mediaBox}, _fontManager{fontManager}, _graphicalStates(graphicalStates) {
+    Canvas(Io::Emit e, Math::Vec2f mediaBox, MutCursor<FontManager> fontManager, MutCursor<ImageManager> imageManager, Vec<GraphicalStateDict>& graphicalStates)
+        : _e{e}, _mediaBox{mediaBox}, _fontManager{fontManager}, _imageManager{imageManager}, _graphicalStates(graphicalStates) {
         _opacityStack.pushBack(1.0);
     }
 
@@ -324,42 +337,17 @@ export struct Canvas : Gfx::Canvas {
 
     // MARK: Blit Operations ---------------------------------------------------
 
-    void blit(Math::Recti src, Math::Recti dest, Gfx::Pixels pixels) override {
+    void blit(Math::Recti src, Math::Recti dest, Rc<Gfx::Surface> surface) override {
+        if (src != dest)
+            logWarn("image clipping is not implemented");
+
         auto destf = dest.cast<f64>();
 
-        auto clippedPixels = pixels.clip(src);
-
         push();
-        transform(Math::Trans2f{destf.width, 0, 0, -destf.height, destf.x, destf.y + destf.height});
 
-        _e.ln("BI");
+        transform({destf.width, 0, 0, -destf.height, destf.x, destf.y + dest.height});
 
-        _e.indented([&] {
-            _e.ln("/Width {}", clippedPixels.width());
-            _e.ln("/Height {}", clippedPixels.height());
-            _e.ln("/ColorSpace /DeviceRGB");
-            _e.ln("/BitsPerComponent 8");
-            _e.ln("/Filter [/ASCIIHexDecode /FlateDecode]");
-        });
-
-        _e.ln("ID");
-
-        Vec<u8> rgb(usize(clippedPixels.width() * clippedPixels.height() * 3));
-        for (isize y = 0; y < clippedPixels.height(); y++) {
-            for (isize x = 0; x < clippedPixels.width(); x++) {
-                auto color = clippedPixels.load({x, y});
-                rgb.pushBack(color.red);
-                rgb.pushBack(color.green);
-                rgb.pushBack(color.blue);
-            }
-        }
-
-        auto compressed = Archive::zlibCompress(rgb).take("failed to compress image data");
-        for (usize i = 0; i < compressed.len(); i++)
-            _e("{:02X}", compressed[i]);
-        _e.ln(">");
-
-        _e.ln("EI");
+        _e.ln("/Im{} Do", _imageManager->getImageId(surface));
 
         pop();
     }

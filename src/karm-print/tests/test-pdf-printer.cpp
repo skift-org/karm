@@ -21,11 +21,16 @@ test$("pdf-printer-generate") {
     canvas.fillStyle(Gfx::RED);
     canvas.fill(Gfx::FillRule::NONZERO);
 
-    Array<u8, 64 * 64 * 4> px;
-    for (usize i = 0; i < px.len(); i++)
-        px[i] = i;
-    Gfx::Pixels pixels{px.buf(), {64, 64}, 64 * 4, Gfx::RGBA8888};
-    canvas.blit({0, 0, 64, 64}, {200, 200, 128, 128}, pixels);
+    auto surface = Gfx::Surface::alloc({64, 64});
+    auto pixels = surface->mutPixels();
+
+    for (isize y = 0; y < pixels.height(); y++) {
+        for (isize x = 0; x < pixels.width(); x++) {
+            pixels.loadUnsafe({x, y}) = Gfx::GREEN;
+        }
+    }
+
+    canvas.blit({0, 0, 64, 64}, {200, 200, 128, 128}, surface);
 
     Io::BufferWriter bw;
     try$(printer.write(bw));

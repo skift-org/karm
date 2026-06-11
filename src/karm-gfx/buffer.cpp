@@ -260,6 +260,20 @@ struct _Pixels {
     {
         clear({});
     }
+
+    /// Linearly computes if each pixel is opaque.
+    always_inline bool isOpaque() const {
+        for (isize y = 0; y < height(); y++) {
+            for (isize x = 0; x < width(); x++) {
+                auto color = loadUnsafe({x, y});
+                if (color.alpha < Limits<u8>::MAX) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
 };
 
 export using Pixels = _Pixels<false>;

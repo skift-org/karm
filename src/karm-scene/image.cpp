@@ -29,7 +29,7 @@ export struct Image : Node {
             ctx.fillStyle(_surface->pixels());
             ctx.fill(bound(), _radii);
         } else {
-            ctx.blit(_bound.cast<isize>(), _surface->pixels());
+            ctx.blit(_bound.cast<isize>(), _surface);
         }
     }
 

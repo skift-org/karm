@@ -334,6 +334,10 @@ union Rect {
         return width / height;
     }
 
+    always_inline bool operator==(Rect const& other) const {
+        return _els == other._els;
+    }
+
     void repr(Io::Emit& e) const {
         e("(rect {} {} {} {})", x, y, width, height);
     }

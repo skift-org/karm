@@ -73,7 +73,7 @@ export struct ImagePrinter : FilePrinter {
             finalCanvas.blit(
                 page->bound(),
                 page->bound().offset({0, ypos}),
-                page->pixels()
+                page
             );
             ypos += page->height() + GAPS;
         }
