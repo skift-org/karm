@@ -98,6 +98,35 @@ struct SdlWindow : Window {
         // NOTE: This is a no-op because SDL lacks a  programmatic way of initiating a window drag.
     }
 
+    void resize(Direction) override {
+        // NOTE: This is a no-op because SDL lacks a programmatic way of initiating a window resize,
+        //       the host window manager already provides this affordance.
+    }
+
+    void cursor(CursorStyle style) override {
+        static Array<SDL_Cursor*, (usize)CursorStyle::_LEN> cursors = {};
+
+        auto sdlCursor = [](CursorStyle style) {
+            switch (style) {
+            case CursorStyle::RESIZE_EW:
+                return SDL_SYSTEM_CURSOR_EW_RESIZE;
+            case CursorStyle::RESIZE_NS:
+                return SDL_SYSTEM_CURSOR_NS_RESIZE;
+            case CursorStyle::RESIZE_NWSE:
+                return SDL_SYSTEM_CURSOR_NWSE_RESIZE;
+            case CursorStyle::RESIZE_NESW:
+                return SDL_SYSTEM_CURSOR_NESW_RESIZE;
+            default:
+                return SDL_SYSTEM_CURSOR_DEFAULT;
+            }
+        };
+
+        auto& cursor = cursors[(usize)style];
+        if (not cursor)
+            cursor = SDL_CreateSystemCursor(sdlCursor(style));
+        SDL_SetCursor(cursor);
+    }
+
     void snap(Snap snap) override {
         if (snap == Snap::NONE) {
             SDL_RestoreWindow(_sdlWindow);
@@ -159,8 +188,28 @@ struct SdlApplication : Application {
                 WindowId{SDL_GetWindowID(win)},
                 {area->x, area->y}
             );
-            if (result == HitResult::DRAG)
+            switch (result) {
+            case HitResult::DRAG:
                 return SDL_HITTEST_DRAGGABLE;
+            case HitResult::RESIZE_EAST:
+                return SDL_HITTEST_RESIZE_RIGHT;
+            case HitResult::RESIZE_NORTH:
+                return SDL_HITTEST_RESIZE_TOP;
+            case HitResult::RESIZE_NORTH_EAST:
+                return SDL_HITTEST_RESIZE_TOPRIGHT;
+            case HitResult::RESIZE_NORTH_WEST:
+                return SDL_HITTEST_RESIZE_TOPLEFT;
+            case HitResult::RESIZE_SOUTH:
+                return SDL_HITTEST_RESIZE_BOTTOM;
+            case HitResult::RESIZE_SOUTH_EAST:
+                return SDL_HITTEST_RESIZE_BOTTOMRIGHT;
+            case HitResult::RESIZE_SOUTH_WEST:
+                return SDL_HITTEST_RESIZE_BOTTOMLEFT;
+            case HitResult::RESIZE_WEST:
+                return SDL_HITTEST_RESIZE_LEFT;
+            default:
+                break;
+            }
         }
         return SDL_HITTEST_NORMAL;
     }

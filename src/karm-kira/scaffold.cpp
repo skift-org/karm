@@ -166,6 +166,7 @@ static Ui::Child _desktopScaffold(Scaffold::State const& s, Scaffold const& scaf
     }
 
     return Ui::vflow(body) |
+           Ui::resizeRegion(8) |
            Ui::pinSize(scaffold.size) |
            Ui::dialogLayer() |
            Ui::popoverLayer();

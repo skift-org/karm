@@ -191,4 +191,46 @@ export auto dragRegion() {
     };
 }
 
+// MARK: Resize Region ---------------------------------------------------------
+
+struct ResizeRegion : ProxyNode<ResizeRegion> {
+    isize _grip;
+
+    ResizeRegion(Child child, isize grip)
+        : ProxyNode(std::move(child)), _grip(grip) {}
+
+    void event(App::Event& event) override {
+        if (auto it = event.is<App::MouseEvent>();
+            it and not event.accepted() and bound().contains(it->pos)) {
+            if (auto [dir] = App::resizeDirectionFromPos(it->pos, bound(), _grip)) {
+                if (it->type == App::MouseEvent::MOVE) {
+                    bubble<App::RequestCursorEvent>(*this, App::cursorFromDirection(dir));
+                } else if (it->type == App::MouseEvent::PRESS and it->button == App::MouseButton::LEFT) {
+                    bubble<App::ResizeStartEvent>(*this, dir);
+                    event.accept();
+                    return;
+                }
+            }
+        }
+
+        ProxyNode::event(event);
+    }
+
+    App::HitResult hitTest(Math::Vec2i pos) override {
+        if (auto dir = App::resizeDirectionFromPos(pos, bound(), _grip))
+            return App::resizeHit(*dir);
+        return child().hitTest(pos);
+    }
+};
+
+export Child resizeRegion(Child child, isize grip = 6) {
+    return makeRc<ResizeRegion>(std::move(child), grip);
+}
+
+export auto resizeRegion(isize grip = 6) {
+    return [=](Child child) {
+        return resizeRegion(child, grip);
+    };
+}
+
 } // namespace Karm::Ui

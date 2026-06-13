@@ -22,6 +22,8 @@ struct RootNode : ProxyNode<RootNode> {
     bool _shouldAnimate = true;
     bool _shouldLayout = true;
     Vec<Math::Recti> _dirty;
+    App::CursorStyle _cursorStyle = App::CursorStyle::DEFAULT;
+    App::CursorStyle _cursorRequest = App::CursorStyle::DEFAULT;
 
     RootNode(Child child, Rc<App::Window> window)
         : ProxyNode(child), _window(window) {}
@@ -82,8 +84,18 @@ struct RootNode : ProxyNode<RootNode> {
             event.accept();
         }
 
+        auto m = event.is<App::MouseEvent>();
+        bool updateCursor = m and m->type == App::MouseEvent::MOVE;
+        if (updateCursor)
+            _cursorRequest = App::CursorStyle::DEFAULT;
+
         if (not event.accepted())
             ProxyNode::event(event);
+
+        if (updateCursor and _cursorRequest != _cursorStyle) {
+            _cursorStyle = _cursorRequest;
+            _window->cursor(_cursorStyle);
+        }
     }
 
     void bubble(App::Event& event) override {
@@ -105,6 +117,9 @@ struct RootNode : ProxyNode<RootNode> {
         } else if (event.is<App::DragStartEvent>()) {
             _window->drag();
             event.accept();
+        } else if (auto e = event.is<App::ResizeStartEvent>()) {
+            _window->resize(e->dir);
+            event.accept();
         } else if (auto e = event.is<App::RequestCloseEvent>()) {
             _window->close();
             event.accept();
@@ -113,6 +128,9 @@ struct RootNode : ProxyNode<RootNode> {
             event.accept();
         } else if (auto e = event.is<App::RequestMinimizeEvent>()) {
             _window->minimize();
+            event.accept();
+        } else if (auto e = event.is<App::RequestCursorEvent>()) {
+            _cursorRequest = e->style;
             event.accept();
         }
 

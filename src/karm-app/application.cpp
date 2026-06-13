@@ -20,18 +20,38 @@ export enum struct HitResult {
     NORMAL,
     HIT,
     DRAG,
+    RESIZE_EAST,
+    RESIZE_NORTH,
+    RESIZE_NORTH_EAST,
+    RESIZE_NORTH_WEST,
+    RESIZE_SOUTH,
+    RESIZE_SOUTH_EAST,
+    RESIZE_SOUTH_WEST,
+    RESIZE_WEST,
 };
 
-export enum struct Direction : u8 {
-    EAST,
-    NORTH,
-    NORTH_EAST,
-    NORTH_WEST,
-    SOUTH,
-    SOUTH_EAST,
-    SOUTH_WEST,
-    WEST,
-};
+export constexpr HitResult resizeHit(Direction dir) {
+    switch (dir) {
+    case Direction::EAST:
+        return HitResult::RESIZE_EAST;
+    case Direction::NORTH:
+        return HitResult::RESIZE_NORTH;
+    case Direction::NORTH_EAST:
+        return HitResult::RESIZE_NORTH_EAST;
+    case Direction::NORTH_WEST:
+        return HitResult::RESIZE_NORTH_WEST;
+    case Direction::SOUTH:
+        return HitResult::RESIZE_SOUTH;
+    case Direction::SOUTH_EAST:
+        return HitResult::RESIZE_SOUTH_EAST;
+    case Direction::SOUTH_WEST:
+        return HitResult::RESIZE_SOUTH_WEST;
+    case Direction::WEST:
+        return HitResult::RESIZE_WEST;
+    default:
+        unreachable();
+    }
+}
 
 export struct WindowProps {
     String title = "Karm Application"s;
@@ -62,6 +82,10 @@ export struct Window : Meta::Pinned {
 
     virtual void resize(Direction) {
         logWarn("Window::resize() not implemented");
+    }
+
+    virtual void cursor(CursorStyle) {
+        logWarn("Window::cursor() not implemented");
     }
 
     virtual void snap(Snap) {
