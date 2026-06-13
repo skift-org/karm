@@ -283,40 +283,56 @@ export using MutPixels = _Pixels<true>;
 // MARK: Surface --------------------------------------------------------------
 
 export struct Surface {
-    Vec<u8> _buf;
+    Union<Vec<u8>, MutBytes> _buf;
     Math::Vec2i _size;
     usize _stride;
-    Gfx::Fmt _fmt;
+    Fmt _fmt;
 
-    static Rc<Surface> alloc(Math::Vec2i size, Gfx::Fmt fmt = Gfx::RGBA8888) {
+    static Rc<Surface> alloc(Math::Vec2i size, Fmt fmt = RGBA8888) {
         return makeRc<Surface>(
-            Buf<u8>::init(size.x * size.y * fmt.bpp()),
+            Vec<u8>{Buf<u8>::init(size.x * size.y * fmt.bpp())},
             size,
             size.x * fmt.bpp(),
             fmt
         );
     }
 
+    static Rc<Surface> wrap(MutBytes buf, Math::Vec2i size, usize stride, Fmt fmt) {
+        return makeRc<Surface>(std::move(buf), size, stride, fmt);
+    }
+
     static Rc<Surface> fallback() {
-        auto img = alloc({2, 2}, Gfx::RGBA8888);
-        img->mutPixels().clear(Gfx::Color::fromHex(0xFF00FF));
+        auto img = alloc({2, 2}, RGBA8888);
+        img->mutPixels().clear(Color::fromHex(0xFF00FF));
         return img;
     }
 
-    always_inline operator Gfx::Pixels() const {
+    always_inline operator Pixels() const {
         return pixels();
     }
 
-    always_inline operator Gfx::MutPixels() {
+    always_inline operator MutPixels() {
         return mutPixels();
     }
 
-    always_inline Gfx::Pixels pixels() const {
-        return {_buf.buf(), _size, _stride, _fmt};
+    u8* buf() {
+        return _buf.visit([](auto& b) {
+            return b.buf();
+        });
     }
 
-    always_inline Gfx::MutPixels mutPixels() {
-        return {_buf.buf(), _size, _stride, _fmt};
+    u8 const* buf() const {
+        return _buf.visit([](auto& b) {
+            return b.buf();
+        });
+    }
+
+    always_inline Pixels pixels() const {
+        return {buf(), _size, _stride, _fmt};
+    }
+
+    always_inline MutPixels mutPixels() {
+        return {buf(), _size, _stride, _fmt};
     }
 
     always_inline isize width() const {
@@ -331,7 +347,7 @@ export struct Surface {
         return {0, 0, width(), height()};
     }
 
-    always_inline Gfx::Color sample(Math::Vec2f pos) const {
+    always_inline Color sample(Math::Vec2f pos) const {
         return pixels().sample(pos);
     }
 };
