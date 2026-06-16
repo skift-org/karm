@@ -37,6 +37,24 @@ struct Union {
         new (_buf) T(value);
     }
 
+    template <typename... Us>
+        requires(Meta::Contains<Us, Ts...> && ...)
+    always_inline Union(Union<Us...> const& other) {
+        other.visit([this]<typename U>(U const& val) {
+            _index = Meta::indexOf<U, Ts...>();
+            new (_buf) U(val);
+        });
+    }
+
+    template <typename... Us>
+        requires(Meta::Contains<Us, Ts...> && ...)
+    always_inline Union(Union<Us...>&& other) {
+        other.visit([this]<typename U>(U& val) {
+            _index = Meta::indexOf<U, Ts...>();
+            new (_buf) U(std::move(val));
+        });
+    }
+
     template <Meta::Contains<Ts...> T>
     always_inline Union(T&& value)
         : _index(Meta::indexOf<T, Ts...>()) {
@@ -80,6 +98,36 @@ struct Union {
 
         _index = Meta::indexOf<T, Ts...>();
         new (_buf) T(std::move(value));
+
+        return *this;
+    }
+
+    template <typename... Us>
+        requires(Meta::Contains<Us, Ts...> && ...)
+    always_inline Union& operator=(Union<Us...> const& other) {
+        Meta::indexCast<Ts...>(_index, _buf, []<typename T>(T& ptr) {
+            ptr.~T();
+        });
+
+        other.visit([this]<typename U>(U const& val) {
+            _index = Meta::indexOf<U, Ts...>();
+            new (_buf) U(val);
+        });
+
+        return *this;
+    }
+
+    template <typename... Us>
+        requires(Meta::Contains<Us, Ts...> && ...)
+    always_inline Union& operator=(Union<Us...>&& other) {
+        Meta::indexCast<Ts...>(_index, _buf, []<typename T>(T& ptr) {
+            ptr.~T();
+        });
+
+        other.visit([this]<typename U>(U& val) {
+            _index = Meta::indexOf<U, Ts...>();
+            new (_buf) U(std::move(val));
+        });
 
         return *this;
     }
