@@ -72,6 +72,10 @@ export struct Color {
         return c.blue;
     };
 
+    always_inline constexpr bool transparent() const {
+        return alpha == 0;
+    }
+
     always_inline constexpr Color blendOverComponent(Color const background, auto comp) const {
         if (alpha == 0xff) {
             Color res = background;
