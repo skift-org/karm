@@ -54,6 +54,7 @@ struct Resizable : Ui::ProxyNode<Resizable> {
                 } else {
                     Ui::shouldLayout(*this);
                 }
+                Ui::bubble<App::RequestCursorEvent>(*this, _resizeDirection.x ? App::CursorStyle::RESIZE_EW : App::CursorStyle::RESIZE_NS);
                 e.accept();
             }
         }
@@ -90,17 +91,21 @@ export auto resizable(Math::Vec2i size, Math::Vec2i resizeDirection, Opt<Ui::Sen
 }
 
 struct ResizeHandle : Ui::View<ResizeHandle> {
+    App::CursorStyle _cursor;
     bool _pressed = false;
     bool _hover = false;
+
+    ResizeHandle(App::CursorStyle cursor = App::CursorStyle::DEFAULT)
+        : _cursor(cursor) {}
 
     void paint(Gfx::Canvas& g, Math::Recti) override {
         g.push();
         if (_pressed) {
             g.fillStyle(Ui::ACCENT700);
-            g.fill(bound().cast<f64>());
+            g.fill(bound().cast<f64>(), 99);
         } else if (_hover) {
-            g.fillStyle(Ui::ACCENT600);
-            g.fill(bound().cast<f64>());
+            g.fillStyle(Ui::GRAY600);
+            g.fill(bound().cast<f64>(), 99);
         }
         g.pop();
     }
@@ -114,10 +119,14 @@ struct ResizeHandle : Ui::View<ResizeHandle> {
                 bubble<App::DragStartEvent>(*this);
                 event.accept();
                 Ui::shouldRepaint(*this);
+            } else if (_hover and it->type == App::MouseEvent::MOVE) {
+                bubble<App::RequestCursorEvent>(*this, _cursor);
             } else if (it->type == App::MouseEvent::RELEASE) {
                 _pressed = false;
                 Ui::shouldRepaint(*this);
-            } else if (wasHover != _hover) {
+            }
+
+            if (wasHover != _hover) {
                 Ui::shouldRepaint(*this);
             }
         }
@@ -131,26 +140,26 @@ struct ResizeHandle : Ui::View<ResizeHandle> {
 export Ui::Child resizable(Ui::Child child, ResizeHandlePosition handlePosition, Math::Vec2i size, Opt<Ui::Send<Math::Vec2i>> onChange) {
     if (handlePosition == ResizeHandlePosition::TOP) {
         return Ui::vflow(
-                   makeRc<ResizeHandle>(),
+                   makeRc<ResizeHandle>(App::CursorStyle::RESIZE_NS),
                    child | Ui::grow()
                ) |
                resizable(size, {0, -1}, std::move(onChange));
     } else if (handlePosition == ResizeHandlePosition::START) {
         return Ui::hflow(
-                   makeRc<ResizeHandle>(),
+                   makeRc<ResizeHandle>(App::CursorStyle::RESIZE_EW),
                    child | Ui::grow()
                ) |
                resizable(size, {-1, 0}, std::move(onChange));
     } else if (handlePosition == ResizeHandlePosition::BOTTOM) {
         return Ui::vflow(
                    child | Ui::grow(),
-                   makeRc<ResizeHandle>()
+                   makeRc<ResizeHandle>(App::CursorStyle::RESIZE_NS)
                ) |
                resizable(size, {0, 1}, std::move(onChange));
     } else if (handlePosition == ResizeHandlePosition::END) {
         return Ui::hflow(
                    child | Ui::grow(),
-                   makeRc<ResizeHandle>()
+                   makeRc<ResizeHandle>(App::CursorStyle::RESIZE_EW)
                ) |
                resizable(size, {1, 0}, std::move(onChange));
     } else {
