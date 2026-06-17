@@ -9,6 +9,7 @@ import Karm.Ref;
 
 using namespace Karm::Literals;
 using namespace Karm::Re::Literals;
+using namespace Karm::Fmt::Literals;
 
 namespace Karm::Http {
 
@@ -20,7 +21,7 @@ export struct Version {
 
     static Res<Version> parse(Io::SScan& s) {
         if (not s.skip("HTTP/"))
-            return Error::invalidData("Expected \"HTTP/\"");
+            return Error::invalidData("Expected \"HTTP/\", got {}"_f(s.remStr()));
         Version v;
         v.major = try$(atou(s));
         s.skip('.');

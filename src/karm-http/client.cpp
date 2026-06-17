@@ -18,29 +18,59 @@ static auto debugClientExtra = Debug::Flag::debug("http-client-extra"s, "Log ext
 
 export struct Client : Transport {
     String userAgent = "Karm-Http/" stringify$(__ck_version_value) ""s;
+    usize maxRedirection = 4;
+
     Rc<Transport> _transport;
 
     Client(Rc<Transport> transport)
         : _transport(std::move(transport)) {}
 
-    Async::Task<Rc<Response>> doAsync(Rc<Request> request, Async::CancellationToken ct) override {
-        request->header.put(Header::USER_AGENT, userAgent);
-        auto maybeResp = co_await _transport->doAsync(request, ct);
-        if (not maybeResp) {
-            logErrorIf(debugClient, "\"{} {}\" {}", request->method, request->url, maybeResp.none());
-            co_return maybeResp.none();
-        }
-
-        auto resp = maybeResp.unwrap();
+    Res<> _logRequest(Request& request, Response& response) {
         if (debugClient or debugClientExtra) {
             Io::StringWriter sw;
             if (debugClientExtra) {
-                if (auto cache = resp->header.lookup("X-Karm-Cache"_sym))
-                    co_try$(Io::format(sw, " ({})"s, cache));
+                if (auto cache = response.header.lookup("X-Karm-Cache"_sym))
+                    try$(Io::format(sw, " ({})"s, cache));
             }
-            logInfo("\"{} {}\" {} {}{}", request->method, request->url, toUnderlyingType(resp->code), resp->code, sw.take());
+            logInfo("\"{} {}\" {} {}{}", request.method, request.url, toUnderlyingType(response.code), response.code, sw.take());
         }
-        co_return Ok(resp);
+
+        return Ok();
+    }
+
+    Async::Task<Rc<Response>> doAsync(Rc<Request> request, Async::CancellationToken ct) override {
+        auto scheme = request->url.scheme;
+        request->header.put(Header::USER_AGENT, userAgent);
+        usize redirection = 0;
+        
+        for (;;) {
+            auto maybeResp = co_await _transport->doAsync(request, ct);
+            if (not maybeResp) {
+                logErrorIf(debugClient, "\"{} {}\" {}", request->method, request->url, maybeResp.none());
+                co_return maybeResp.none();
+            }
+
+            auto response = maybeResp.unwrap();
+            co_try$(_logRequest(*request, *response));
+
+            // 10.3.4 303 See Other
+            // https://datatracker.ietf.org/doc/html/rfc2616#section-10.3.4
+            if (response->code == SEE_OTHER) {
+                redirection++;
+                if (redirection > maxRedirection)
+                    co_return Error::tooManyLinks("too many redirection");
+
+                auto location = co_try$(response->header.lookup(Header::LOCATION).okOr(Error::invalidData("missing see other location"s)));
+                request->url = Ref::Url::parse(location);
+                request->url.scheme = scheme;
+                if (not oneOf(request->method, GET, HEAD))
+                    request->method = GET;
+                if (auto [body] = response->body)
+                    co_trya$(body->closeAsync(ct));
+            } else {
+                co_return Ok(response);
+            }
+        }
     }
 
     [[clang::coro_wrapper]]

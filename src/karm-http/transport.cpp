@@ -298,7 +298,6 @@ struct PipeBody : Body {
     }
 
     Async::Task<usize> readAsync(MutBytes buf, Async::CancellationToken) override {
-
         if (_contentLength == 0)
             co_return 0;
 

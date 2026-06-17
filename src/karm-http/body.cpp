@@ -93,6 +93,13 @@ export struct Body : Aio::Reader {
         auto str = co_trya$(Aio::readAllUtf8Async(*this, ct));
         co_return Json::parse(str);
     }
+
+    Async::Task<> closeAsync(Async::CancellationToken ct) {
+        Io::Sink sink;
+        auto adapt = Aio::adapt(sink);
+        co_try$(co_await Aio::copyAsync(*this, adapt, ct));
+        co_return Ok();
+    }
 };
 
 } // namespace Karm::Http
