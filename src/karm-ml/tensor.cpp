@@ -116,12 +116,18 @@ export struct Tensor {
         if (p > 1)
             e("[");
         for (auto w : urange::zeroTo(p)) {
+            if (w > 0)
+                e(", ");
             if (o > 1)
                 e("[");
             for (auto z : urange::zeroTo(o)) {
+                if (z > 0)
+                    e(", ");
                 if (n > 1)
                     e("[");
                 for (auto y : urange::zeroTo(n)) {
+                    if (y > 0)
+                        e(", ");
                     if (m > 1)
                         e("[");
                     for (auto x : urange::zeroTo(m))
@@ -177,7 +183,7 @@ void matMul(Tensor& out, Tensor const& a, Tensor const& b) {
     for (usize i : urange::zeroTo(n)) {
         for (usize j : urange::zeroTo(p)) {
             f64 sum = 0;
-            for (usize k : urange::zeroTo(m_a)) 
+            for (usize k : urange::zeroTo(m_a))
                 sum += a[k, i] * b[j, k];
             out[j, i] = sum;
         }
