@@ -16,16 +16,18 @@ export enum struct ResizeHandlePosition {
 };
 
 struct Resizable : Ui::ProxyNode<Resizable> {
-    Math::Vec2i _size;
+    Math::Vec2i _minSize;
     Math::Vec2i _resizeDirection;
     Opt<Ui::Send<Math::Vec2i>> _onChange;
     bool _grabbed = false;
+    Math::Vec2i _size;
 
-    Resizable(Ui::Child child, Math::Vec2i size, Math::Vec2i resizeDirection, Opt<Ui::Send<Math::Vec2i>> onChange)
+    Resizable(Ui::Child child, Math::Vec2i minSize, Math::Vec2i resizeDirection, Opt<Ui::Send<Math::Vec2i>> onChange)
         : ProxyNode(child),
-          _size(size),
+          _minSize(minSize),
           _resizeDirection{resizeDirection},
-          _onChange(std::move(onChange)) {}
+          _onChange(std::move(onChange)),
+          _size(minSize) {}
 
     void reconcile(Resizable& o) override {
         if (o._onChange) {
@@ -47,8 +49,7 @@ struct Resizable : Ui::ProxyNode<Resizable> {
                 e.accept();
             } else if (it->type == App::MouseEvent::MOVE) {
                 _size = _size + it->delta * _resizeDirection;
-                auto minSize = child().size({}, Ui::Hint::MIN);
-                _size = _size.max(minSize);
+                _size = _size.max(_minSize);
                 if (_onChange) {
                     _onChange(*this, _size);
                 } else {
@@ -69,10 +70,8 @@ struct Resizable : Ui::ProxyNode<Resizable> {
         ProxyNode::bubble(e);
     }
 
-    Math::Vec2i size(Math::Vec2i s, Ui::Hint hint) override {
-        return child()
-            .size(s, hint)
-            .max(_size);
+    Math::Vec2i size(Math::Vec2i, Ui::Hint) override {
+        return _size;
     }
 
     App::HitResult hitTest(Math::Vec2i) override {
@@ -167,7 +166,7 @@ export Ui::Child resizable(Ui::Child child, ResizeHandlePosition handlePosition,
     }
 }
 
-export auto resizable(ResizeHandlePosition handlePosition, Math::Vec2i size, Opt<Ui::Send<Math::Vec2i>> onChange) {
+export auto resizable(ResizeHandlePosition handlePosition, Math::Vec2i size = {240}, Opt<Ui::Send<Math::Vec2i>> onChange = NONE) {
     return [handlePosition, size, onChange](Ui::Child child) mutable -> Ui::Child {
         return resizable(child, handlePosition, size, onChange);
     };
