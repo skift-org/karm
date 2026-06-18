@@ -78,13 +78,13 @@ Res<> hardenSandbox() {
     if (setrlimit(RLIMIT_AS, &rl) < 0)
         return Posix::fromLastErrno();
 
-    // MARK: Landlock
-    auto [repo, _] = try$(Posix::repoRoot());
-    try$(_landlockInDirectory(repo));
-
     // https://www.kernel.org/doc/Documentation/prctl/no_new_privs.txt
     if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) < 0)
         return Posix::fromLastErrno();
+
+    // MARK: Landlock
+    auto [repo, _] = try$(Posix::repoRoot());
+    try$(_landlockInDirectory(repo));
 
     // MARK: Seccomp
     scmp_filter_ctx ctx = seccomp_init(SCMP_ACT_KILL_PROCESS);
