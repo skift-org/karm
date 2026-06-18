@@ -171,11 +171,20 @@ void reLu(Tensor& out, Tensor const& a) {
         out.elements()[i] = max(0.f, a.elements()[i]);
 }
 
+/// Element-Wise heaviside
+/// https://en.wikipedia.org/wiki/Heaviside_step_function
+void heaviside(Tensor& out, Tensor const& a) {
+    for (auto i : urange::zeroTo(a.elements().len())) {
+        auto x = a.elements()[i];
+        out.elements()[i] = x >= 0 ? 1 : 0;
+    }
+}
+
 /// Matrix multiplication
 /// https://en.wikipedia.org/wiki/Matrix_multiplication
 void matMul(Tensor& out, Tensor const& a, Tensor const& b) {
-    auto& [m_a, n, _1, _2] = a.shape; // m_a = A width, n = A height
-    auto& [p, m_b, _3, _4] = b.shape; // p = B width, m_b = B height
+    auto& [m_a, n, _, _] = a.shape;
+    auto& [p, m_b, _, _] = b.shape;
 
     if (m_a != m_b) [[unlikely]]
         panic("inner dimensions must match");
