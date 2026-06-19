@@ -6,7 +6,11 @@ module;
 #include <fcntl.h>
 #include <netdb.h>
 #include <netinet/in.h>
+#ifdef __ck_sys_darwin__
+#include <util.h>
+#else
 #include <pty.h>
+#endif
 #include <signal.h>
 #include <stdlib.h>
 #include <sys/mman.h>

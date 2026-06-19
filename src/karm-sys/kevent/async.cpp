@@ -1,18 +1,15 @@
 module;
 
+#include <karm/macros>
+
 #include <sys/event.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
 
-//
-#include <karm/macros>
-
-#include "../posix/fd.h"
-#include "../posix/utils.h"
-
 module Karm.Sys;
 
+import Karm.Sys.Posix;
 import Karm.Core;
 
 namespace Karm::Sys::_Embed {
@@ -64,7 +61,7 @@ struct DarwinSched :
         return Async::makeTask(future);
     }
 
-    Async::Task<usize> readAsync(Rc<Fd> fd, MutBytes buf) override {
+    Async::Task<usize> readAsync(Rc<Fd> fd, MutBytes buf, Async::CancellationToken) override {
         co_trya$(waitFor({
             .ident = (u64)co_try$(Posix::ensurePosixFd(fd))->_raw,
             .filter = EVFILT_READ,
@@ -77,7 +74,7 @@ struct DarwinSched :
         co_return Ok(co_try$(fd->read(buf)));
     }
 
-    Async::Task<usize> writeAsync(Rc<Fd> fd, Bytes buf) override {
+    Async::Task<usize> writeAsync(Rc<Fd> fd, Bytes buf, Async::CancellationToken) override {
         co_trya$(waitFor({
             .ident = (u64)co_try$(Posix::ensurePosixFd(fd))->_raw,
             .filter = EVFILT_WRITE,
@@ -90,7 +87,7 @@ struct DarwinSched :
         co_return Ok(co_try$(fd->write(buf)));
     }
 
-    Async::Task<> flushAsync(Rc<Fd> fd) override {
+    Async::Task<> flushAsync(Rc<Fd> fd, Async::CancellationToken) override {
         co_trya$(waitFor({
             .ident = (u64)co_try$(Posix::ensurePosixFd(fd))->_raw,
             .filter = EVFILT_WRITE,
@@ -103,7 +100,7 @@ struct DarwinSched :
         co_return Ok(co_try$(fd->flush()));
     }
 
-    Async::Task<_Accepted> acceptAsync(Rc<Fd> fd) override {
+    Async::Task<_Accepted> acceptAsync(Rc<Fd> fd, Async::CancellationToken) override {
         co_trya$(waitFor({
             .ident = (u64)co_try$(Posix::ensurePosixFd(fd))->_raw,
             .filter = EVFILT_READ,
@@ -116,7 +113,7 @@ struct DarwinSched :
         co_return Ok(co_try$(fd->accept()));
     }
 
-    Async::Task<_Sent> sendAsync(Rc<Fd> fd, Bytes buf, Slice<Handle> handles, SocketAddr addr) override {
+    Async::Task<_Sent> sendAsync(Rc<Fd> fd, Bytes buf, Slice<Handle> handles, SocketAddr addr, Async::CancellationToken) override {
         co_trya$(waitFor({
             .ident = (u64)co_try$(Posix::ensurePosixFd(fd))->_raw,
             .filter = EVFILT_WRITE,
@@ -129,7 +126,7 @@ struct DarwinSched :
         co_return Ok(co_try$(fd->send(buf, handles, addr)));
     }
 
-    Async::Task<_Received> recvAsync(Rc<Fd> fd, MutBytes buf, MutSlice<Handle> hnds) override {
+    Async::Task<_Received> recvAsync(Rc<Fd> fd, MutBytes buf, MutSlice<Handle> hnds, Async::CancellationToken) override {
         co_trya$(waitFor({
             .ident = (u64)co_try$(Posix::ensurePosixFd(fd))->_raw,
             .filter = EVFILT_READ,
@@ -142,7 +139,7 @@ struct DarwinSched :
         co_return Ok(co_try$(fd->recv(buf, hnds)));
     }
 
-    Async::Task<> sleepAsync(Instant until) override {
+    Async::Task<> sleepAsync(Instant until, Async::CancellationToken) override {
         struct timespec ts = _computeTimeout(until);
 
         co_trya$(waitFor({
@@ -155,6 +152,11 @@ struct DarwinSched :
             .ext = {},
         }));
         co_return Ok();
+    }
+
+    [[clang::coro_wrapper]]
+    Async::Task<Flags<Poll>> pollAsync(Rc<Fd>, Flags<Poll>, Async::CancellationToken) override {
+        notImplemented();
     }
 
     Res<> wait(Instant until) override {
@@ -181,8 +183,8 @@ struct DarwinSched :
             return Ok();
 
         usize id = ev.udata;
-        auto promise = _promises.take(id);
-        promise.resolve(Ok());
+        auto promise = _promises.remove(id);
+        promise->resolve(Ok());
         return Ok();
     }
 };
