@@ -337,7 +337,7 @@ export struct SvgCanvas : Canvas {
     // ------------------------------------------------------------
     // high-level shape helpers (stroke/fill specific overloads)
 
-    void fill(Font&, Glyph, Math::Vec2f) override {
+    void fill(Font const&, Glyph, Math::Vec2f) override {
         // Text shaping to SVG is out of scope for this minimal backend.
     }
 
@@ -371,7 +371,7 @@ export struct SvgCanvas : Canvas {
             _sb.append("\""s);
         }
         _sb.append(" fill=\""s);
-        _sb.append(colorToSvg(prose._style.color.unwrapOr(FUCHSIA), _state.opacity));
+        // _sb.append(colorToSvg(prose._style.color.unwrapOr(FUCHSIA), _state.opacity));
         _sb.append("\""s);
         _sb.append(">"s);
 
@@ -382,7 +382,7 @@ export struct SvgCanvas : Canvas {
 
             for (auto& block : line.blocks()) {
                 for (auto& cell : block.cells()) {
-                    if (cell.strut())
+                    if (oneOf(cell.type(), Prose::CellType::STRUT, Prose::CellType::SPACER))
                         continue;
 
                     _sb.append("    <text xml:space=\"preserve\" dominant-baseline=\"alphabetic\" x=\""s);

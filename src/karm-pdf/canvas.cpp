@@ -208,18 +208,10 @@ export struct Canvas : Gfx::Canvas {
     void fill(Gfx::Prose& prose) override {
         push();
 
-        if (prose._style.color) {
-            fillStyle(*prose._style.color);
-        }
-
         _e.ln("BT");
 
-        f64 fontSize = prose._style.font.fontSize();
-        _e.ln(
-            "/F{} {} Tf",
-            _fontManager->getFontId(prose._style.font.fontface),
-            fontSize
-        );
+        Opt<Gfx::Color> currentColor = NONE;
+        Opt<Gfx::Font> currentFont = NONE;
 
         for (usize i = 0; i < prose._lines.len(); ++i) {
             auto const& line = prose._lines[i];
@@ -233,14 +225,52 @@ export struct Canvas : Gfx::Canvas {
             _e.ln("1 0 0 -1 {} {} Tm", lineStartPos, lineBaseline);
 
             auto prevEndPos = lineStartPos;
+            bool inArray = false;
 
-            _e("[<");
+            auto ensureState = [&](Gfx::Prose::SpanStyle const& style) {
+                bool changed =
+                    not currentColor or *currentColor != style.color or
+                    not currentFont or currentFont->fontface._cell != style.font.fontface._cell or
+                    currentFont->fontsize != style.font.fontsize;
+
+                if (changed) {
+                    if (inArray) {
+                        _e.ln(">] TJ"s);
+                        inArray = false;
+                    }
+                    currentColor = style.color;
+                    currentFont = style.font;
+                    fillStyle(*currentColor);
+                    _e.ln(
+                        "/F{} {} Tf",
+                        _fontManager->getFontId(currentFont->fontface),
+                        currentFont->fontsize
+                    );
+                }
+
+                if (not inArray) {
+                    _e("[<");
+                    inArray = true;
+                }
+            };
+
             for (auto& block : line.blocks()) {
                 for (auto& cell : block.cells()) {
-                    if (cell.strut())
+                    if (cell.type() == Gfx::Prose::CellType::STRUT)
                         continue;
 
-                    auto glyphAdvance = prose._style.font.advance(cell.glyph);
+                    if (cell.type() == Gfx::Prose::CellType::SPACER) {
+                        ensureState(cell.style());
+                        f64 pdfAdv = cell.adv.cast<f64>() * (1000.0 / currentFont->fontsize);
+                        _e(">{}<", -pdfAdv);
+                        prevEndPos = prevEndPos + cell.adv.cast<f64>();
+                        continue;
+                    }
+
+                    ensureState(cell.style());
+
+                    f64 fontSize = currentFont->fontsize;
+                    auto glyphAdvance = currentFont->advance(cell.glyph);
                     auto nextEndPosWithoutKern = prevEndPos + glyphAdvance;
                     auto nextDesiredEndPos = (block.pos + cell.pos + cell.adv).cast<f64>();
 
@@ -252,13 +282,15 @@ export struct Canvas : Gfx::Canvas {
                     }
 
                     for (auto rune : cell.runes()) {
-                        _e("{04x}", rune);
+                        _e("{04x}", rune == '\n' ? ' ' : rune);
                     }
 
                     prevEndPos = prevEndPos + glyphAdvance - kernDiff;
                 }
             }
-            _e(">] TJ"s);
+
+            if (inArray)
+                _e(">] TJ"s);
             _e.ln("");
         }
 

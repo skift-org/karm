@@ -293,7 +293,7 @@ export struct Canvas : Meta::NoCopy {
     }
 
     // Fill a single glyph of text
-    virtual void fill(Font& font, Glyph glyph, Math::Vec2f baseline) {
+    virtual void fill(Font const& font, Glyph glyph, Math::Vec2f baseline) {
         push();
         beginPath();
         origin(baseline);
@@ -307,22 +307,21 @@ export struct Canvas : Meta::NoCopy {
     virtual void fill(Prose& prose) {
         push();
 
-        if (prose._style.color)
-            fillStyle(*prose._style.color);
-
         for (auto const& line : prose._lines) {
             for (auto const& block : line.blocks()) {
                 for (auto const& cell : block.cells()) {
-                    if (cell.strut())
+                    if (cell.type() == Prose::CellType::STRUT)
                         continue;
-                    if (cell.span and cell.span.unwrap()->color) {
-                        push();
-                        fillStyle(*cell.span.unwrap()->color);
-                        fill(prose._style.font, cell.glyph, Math::Vec2Au{block.pos + cell.pos, line.baseline}.cast<f64>());
-                        pop();
-                    } else {
-                        fill(prose._style.font, cell.glyph, Math::Vec2Au{block.pos + cell.pos, line.baseline}.cast<f64>());
+
+                    if (cell.type() == Prose::CellType::SPACER) {
+                        translate({cell.adv.cast<f64>(), 0});
+                        continue;
                     }
+
+                    push();
+                    fillStyle(cell.style().color);
+                    fill(cell.style().font, cell.glyph, Math::Vec2Au{block.pos + cell.pos, line.baseline}.cast<f64>());
+                    pop();
                 }
             }
         }

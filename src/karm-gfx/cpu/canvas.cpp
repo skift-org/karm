@@ -361,7 +361,7 @@ export struct CpuCanvas : Canvas {
         _fill(current().fill, rule);
     }
 
-    void fill(Font& font, Glyph glyph, Math::Vec2f baseline) override {
+    void fill(Font const& font, Glyph glyph, Math::Vec2f baseline) override {
         _useSpaa = true;
         Canvas::fill(font, glyph, baseline);
         _useSpaa = false;

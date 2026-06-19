@@ -16,54 +16,34 @@ export enum struct TextAlign {
 };
 
 export struct ProseStyle {
-    Font font;
     TextAlign align = TextAlign::LEFT;
-    Opt<Color> color = NONE;
-    bool wordwrap = true;
-    bool multiline = false;
     bool collapseEmptyLines = true;
-
-    ProseStyle withSize(f64 size) const {
-        ProseStyle style = *this;
-        style.font.fontsize = size;
-        return style;
-    }
-
-    ProseStyle withLineHeight(f64 height) const {
-        ProseStyle style = *this;
-        style.font.lineheight = height;
-        return style;
-    }
-
-    ProseStyle withAlign(TextAlign align) const {
-        ProseStyle style = *this;
-        style.align = align;
-        return style;
-    }
-
-    ProseStyle withColor(Color color) const {
-        ProseStyle style = *this;
-        style.color = color;
-        return style;
-    }
-
-    ProseStyle withWordwrap(bool wordwrap) const {
-        ProseStyle style = *this;
-        style.wordwrap = wordwrap;
-        return style;
-    }
-
-    ProseStyle withMultiline(bool multiline) const {
-        ProseStyle style = *this;
-        style.multiline = multiline;
-        return style;
-    }
 };
 
 export struct Prose : Meta::Pinned {
+    struct SpanStyle {
+        Font font = Font::fallback();
+        Color color = {0, 0, 0, 255};
+        Math::Au marginLeft = 0_au;
+        Math::Au marginRight = 0_au;
+
+        bool wordwrap = true;
+        bool multiline = false;
+
+        SpanStyle withColor(Color color) const {
+            SpanStyle style = *this;
+            style.color = color;
+            return style;
+        }
+    };
+
     struct Span {
         Opt<Rc<Span>> parent;
-        Opt<Color> color;
+        SpanStyle style;
+
+        void repr(Io::Emit& e) const {
+            e("(span color={} margins=({}, {}))", style.color, style.marginLeft, style.marginRight);
+        }
     };
 
     struct StrutCell {
@@ -77,22 +57,55 @@ export struct Prose : Meta::Pinned {
         }
     };
 
+    enum struct CellType {
+        GLYPH,
+        SPACER,
+        STRUT,
+    };
+
     struct Cell {
-        MutCursor<Prose> prose;
-        Opt<Rc<Span>> span;
+        Opt<Prose&> prose;
+        Rc<Span> span;
 
         urange runeRange;
         Glyph glyph;
         Math::Au pos = 0_au; //< Position of the glyph within the block
         Math::Au adv = 0_au; //< Advance of the glyph
 
-        Opt<usize> relatedStrutIndex = NONE;
+        static constexpr u32 GLYPH_SENTINEL = -1;
+        static constexpr u32 SPACER_SENTINEL = -2;
+
+        // Encodes the cell type and strut index, see type() and strutIndex() for more infos.
+        u32 extra = GLYPH_SENTINEL;
+
+        CellType type() const {
+            if (extra == GLYPH_SENTINEL) {
+                return CellType::GLYPH;
+            } else if (extra == SPACER_SENTINEL) {
+                return CellType::SPACER;
+            } else {
+                return CellType::STRUT;
+            }
+        }
+
+        usize strutIndex() const {
+            if (type() != CellType::STRUT)
+                panic("cell is not a strut");
+
+            return extra;
+        }
+
+        SpanStyle const& style() const {
+            return span->style;
+        }
 
         void measureAdvance() {
-            if (strut()) {
-                adv = prose->_struts[relatedStrutIndex.unwrap()].size.x;
+            if (type() == CellType::SPACER) {
+                // Nothing because adv is already set.
+            } else if (type() == CellType::STRUT) {
+                adv = strut()->size.x;
             } else {
-                adv = Math::Au{prose->_style.font.advance(glyph)};
+                adv = Math::Au{style().font.advance(glyph)};
             }
         }
 
@@ -119,29 +132,29 @@ export struct Prose : Meta::Pinned {
         }
 
         Cursor<StrutCell> strut() const {
-            if (relatedStrutIndex == NONE)
+            if (type() != CellType::STRUT)
                 return nullptr;
 
-            return &prose->_struts[relatedStrutIndex.unwrap()];
+            return &prose->_struts[strutIndex()];
         }
 
         MutCursor<StrutCell> strut() {
-            if (relatedStrutIndex == NONE)
+            if (type() != CellType::STRUT)
                 return nullptr;
 
-            return &prose->_struts[relatedStrutIndex.unwrap()];
+            return &prose->_struts[strutIndex()];
         }
 
         Math::Au yPosition(Math::Au dominantBaselineYPosition) const {
-            if (relatedStrutIndex == NONE)
+            if (type() != CellType::STRUT)
                 return dominantBaselineYPosition;
 
-            return dominantBaselineYPosition - prose->_struts[relatedStrutIndex.unwrap()].baseline;
+            return dominantBaselineYPosition - strut()->baseline;
         }
     };
 
     struct Block {
-        MutCursor<Prose> prose;
+        Opt<Prose&> prose;
 
         urange runeRange;
         urange cellRange;
@@ -187,10 +200,24 @@ export struct Prose : Meta::Pinned {
 
             return last(cells()).strut();
         }
+
+        bool allowsBreakAfter() const {
+            if (empty())
+                return false;
+            if (strut())
+                return true;
+            return last(cells()).style().wordwrap;
+        }
+
+        bool forcesBreakAfter() const {
+            if (empty())
+                return false;
+            return newline() and last(cells()).style().multiline;
+        }
     };
 
     struct Line {
-        MutCursor<Prose> prose;
+        Opt<Prose&> prose;
 
         urange runeRange;
         urange blockRange;
@@ -223,12 +250,29 @@ export struct Prose : Meta::Pinned {
 
     Math::Vec2Au _size;
 
-    Prose(ProseStyle style, Str str = "") : _style(style) {
+    Prose(ProseStyle style, SpanStyle rootSpanStyle, Str str = "")
+        : _style(style),
+          _currentSpan(makeRc<Span>(NONE, rootSpanStyle)),
+          _rootSpan(_currentSpan) {
         clear();
-        _spaceWidth = _style.font.advance(_style.font.glyph(' '));
-        auto m = _style.font.metrics();
-        _lineHeight = m.ascend;
+        _spaceWidth = _currentSpan->style.font.advance(_currentSpan->style.font.glyph(' '));
+        _lineHeight = _currentSpan->style.font.metrics().ascend;
         append(str);
+    }
+
+    static Rc<Span> _findRoot(Rc<Span> span) {
+        while (span->parent)
+            span = span->parent.unwrap();
+        return span;
+    }
+
+    Prose(ProseStyle style, Rc<Span> continueFrom)
+        : _style(style),
+          _currentSpan(continueFrom),
+          _rootSpan(_findRoot(continueFrom)) {
+        clear();
+        _spaceWidth = _currentSpan->style.font.advance(_currentSpan->style.font.glyph(' '));
+        _lineHeight = _currentSpan->style.font.metrics().ascend;
     }
 
     Math::Vec2Au size() const {
@@ -239,7 +283,7 @@ export struct Prose : Meta::Pinned {
 
     void _beginBlock() {
         _blocks.pushBack({
-            .prose = this,
+            .prose = *this,
             .runeRange = {_runes.len(), 0},
             .cellRange = {_cells.len(), 0},
         });
@@ -259,16 +303,33 @@ export struct Prose : Meta::Pinned {
         if (any(_blocks) and (last(_blocks).newline() or last(_blocks).spaces() or last(_blocks).strut()))
             _beginBlock();
 
-        auto glyph = _style.font.glyph(rune == '\n' ? ' ' : rune);
+        auto glyph = _currentSpan->style.font.glyph(rune == '\n' ? ' ' : rune);
 
         _cells.pushBack({
-            .prose = this,
+            .prose = *this,
             .span = _currentSpan,
             .runeRange = {_runes.len(), 1},
             .glyph = glyph,
+            .extra = Cell::GLYPH_SENTINEL,
         });
 
         _runes.pushBack(rune);
+        last(_blocks).cellRange.size++;
+        last(_blocks).runeRange.end(_runes.len());
+    }
+
+    void appendSpacer(Math::Au width) {
+        _cells.pushBack({
+            .prose = *this,
+            .span = _currentSpan,
+            .runeRange = {_runes.len(), 1},
+            .glyph = Glyph::TOFU,
+            .adv = width,
+            .extra = Cell::SPACER_SENTINEL,
+        });
+
+        _runes.pushBack(0);
+
         last(_blocks).cellRange.size++;
         last(_blocks).runeRange.end(_runes.len());
     }
@@ -297,11 +358,11 @@ export struct Prose : Meta::Pinned {
 
         _strutCellsIndexes.pushBack(_cells.len());
         _cells.pushBack({
-            .prose = this,
+            .prose = *this,
             .span = _currentSpan,
             .runeRange = {_runes.len(), 1},
             .glyph = Glyph::TOFU,
-            .relatedStrutIndex = _struts.len(),
+            .extra = static_cast<u32>(_struts.len()),
         });
         _struts.pushBack(std::move(strut));
 
@@ -313,50 +374,28 @@ export struct Prose : Meta::Pinned {
 
     // MARK: Span --------------------------------------------------------------
 
-    Vec<Rc<Span>> _spans;
-    Opt<Rc<Span>> _currentSpan = NONE;
+    Rc<Span const> _currentSpan;
+    Rc<Span const> _rootSpan;
 
-    void pushSpan() {
-        if (_currentSpan == NONE)
-            _spans.pushBack(makeRc<Span>(Span{}));
-        else
-            _spans.pushBack(makeRc<Span>(_currentSpan->unwrap()));
+    void pushSpan(SpanStyle const& spanStyle) {
+        auto span = makeRc<Span>(_currentSpan, spanStyle);
 
-        last(_spans)->parent = _currentSpan;
-
-        auto refToLast = last(_spans);
+        auto refToLast = span;
         _currentSpan = refToLast;
-    }
 
-    void spanColor(Color color) {
-        if (not _currentSpan)
-            return;
-
-        _currentSpan.unwrap()->color = color;
+        if (spanStyle.marginLeft != 0_au)
+            appendSpacer(spanStyle.marginLeft);
     }
 
     void popSpan() {
-        if (not _currentSpan)
-            return;
+        if (not _currentSpan->parent)
+            panic("popping the root span");
 
-        auto newCurr = _currentSpan.unwrap()->parent;
+        if (_currentSpan->style.marginRight != 0_au)
+            appendSpacer(_currentSpan->style.marginRight);
+
+        auto newCurr = _currentSpan->parent.unwrap();
         _currentSpan = newCurr;
-    }
-
-    void overrideSpanStackWith(Prose const& prose) {
-        _spans.clear();
-
-        for (auto currSpan = prose._currentSpan; currSpan != NONE; currSpan = currSpan.unwrap()->parent) {
-            Rc<Span> copySpanRc = currSpan.unwrap();
-            _spans.pushBack(copySpanRc);
-        }
-
-        reverse(mutSub(_spans));
-
-        if (_spans.len()) {
-            auto lastSpan = last(_spans);
-            _currentSpan = lastSpan;
-        }
     }
 
     // MARK: Strut ------------------------------------------------------------
@@ -378,7 +417,7 @@ export struct Prose : Meta::Pinned {
             Glyph prev = Glyph::TOFU;
             for (auto& cell : block.cells()) {
                 if (not first)
-                    adv += Math::Au{_style.font.kern(prev, cell.glyph)};
+                    adv += Math::Au{cell.style().font.kern(prev, cell.glyph)};
                 else
                     first = false;
 
@@ -395,36 +434,31 @@ export struct Prose : Meta::Pinned {
     void _wrapLines(Math::Au width) {
         _lines.clear();
 
-        Line line{this, {}, {}};
+        Line line{*this, {}, {}};
         bool first = true;
         Math::Au adv = 0_au;
         for (usize i = 0; i < _blocks.len(); i++) {
             auto& block = _blocks[i];
-            if (adv + block.width > width and _style.wordwrap and _style.multiline and not first) {
+
+            bool wordwrapAllowed = not first and _blocks[i - 1].allowsBreakAfter();
+
+            if (adv + block.width > width and wordwrapAllowed) {
                 _lines.pushBack(line);
-                line = {this, block.runeRange, {i, 1}};
+                line = {*this, block.runeRange, {i, 1}};
                 adv = block.width;
 
-                if (block.newline()) {
+                if (block.forcesBreakAfter()) {
                     _lines.pushBack(line);
-                    line = {
-                        this,
-                        {block.runeRange.end(), 0},
-                        {i + 1, 0},
-                    };
+                    line = {*this, {block.runeRange.end(), 0}, {i + 1, 0}};
                     adv = 0_au;
                 }
             } else {
                 line.blockRange.size++;
                 line.runeRange.end(block.runeRange.end());
 
-                if (block.newline() and _style.multiline) {
+                if (block.forcesBreakAfter()) {
                     _lines.pushBack(line);
-                    line = {
-                        this,
-                        {block.runeRange.end(), 0},
-                        {i + 1, 0},
-                    };
+                    line = {*this, {block.runeRange.end(), 0}, {i + 1, 0}};
                     adv = 0_au;
                 } else {
                     adv += block.width;
@@ -437,7 +471,7 @@ export struct Prose : Meta::Pinned {
     }
 
     Math::Au _layoutVerticaly() {
-        auto m = _style.font.metrics();
+        auto m = _rootSpan->style.font.metrics();
 
         // NOTE: applying ceiling so fonts are pixel aligned
         f64 halfFontLineGap = m.linegap / 2;
