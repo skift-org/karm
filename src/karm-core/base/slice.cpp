@@ -112,6 +112,12 @@ struct Slice {
     constexpr Slice(Sliceable<T> auto const& other)
         : Slice(other.buf(), other.len()) {}
 
+    constexpr Opt<T const&> index(usize i) const {
+        if (i >= _len)
+            return NONE;
+        return _buf[i];
+    }
+
     constexpr T const& operator[](usize i) const {
         if (i >= _len) {
             panic("index out of bounds");
@@ -161,6 +167,18 @@ struct MutSlice {
 
     constexpr MutSlice(MutSliceable<T> auto& other)
         : MutSlice(other.buf(), other.len()) {}
+
+    constexpr Opt<T&> index(usize i) {
+        if (i >= _len)
+            return NONE;
+        return _buf[i];
+    }
+
+    constexpr Opt<T const&> index(usize i) const {
+        if (i >= _len)
+            return NONE;
+        return _buf[i];
+    }
 
     constexpr T& operator[](usize i) {
         if (i >= _len) {
@@ -588,9 +606,8 @@ constexpr void reverse(MutSlice<T> slice) {
 
 export template <typename T>
 constexpr usize fill(MutSlice<T> slice, T value) {
-    for (usize i = 0; i < slice.len(); i++) {
+    for (usize i = 0; i < slice.len(); i++)
         slice[i] = value;
-    }
     return slice.len();
 }
 
