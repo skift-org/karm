@@ -10,6 +10,6 @@
     },
     "requires": [
         "karm-core",
-        "stdc-math"
+        "libm"
     ]
 }

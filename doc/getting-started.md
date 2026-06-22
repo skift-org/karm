@@ -35,7 +35,7 @@ To use the Karm framework, you need to add it as an external dependency. Open th
 ```json
 {
     // ... existing configuration ...
-    "extern": {
+    "externs": {
         "skift/karm": {
             "git": "https://codeberg.org/skift/karm.git",
             "tag": "main"

@@ -4,7 +4,9 @@
     "type": "lib",
     "description": "A beautiful components library",
     "requires": [
+        "mdi",
         "karm-ui",
-        "fonts-core"
+        "fonts.inter",
+        "fonts.fira-code"
     ]
 }

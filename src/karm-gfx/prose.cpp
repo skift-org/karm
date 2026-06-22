@@ -286,6 +286,11 @@ export struct Prose : Meta::Pinned {
             append(rune);
     }
 
+    template <typename E>
+    void append(_String<E> const& str) {
+        append(str.str());
+    }
+
     void append(StrutCell&& strut) {
         if (_blocks.len() and not last(_blocks).empty())
             _beginBlock();

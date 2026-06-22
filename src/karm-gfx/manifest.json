@@ -6,8 +6,7 @@
     "requires": [
         "karm-math",
         "karm-core",
-        "karm-icc",
-        "mdi"
+        "karm-icc"
     ],
     "subdirs": [
         "cpu",
