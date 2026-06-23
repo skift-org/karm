@@ -21,7 +21,7 @@ export Ui::Child avatar(Union<None, String, Gfx::Icon, Rc<Gfx::Surface>> icon = 
             return Ui::icon(Mdi::ACCOUNT, innerSize);
         },
         [&](String s) {
-            return Ui::text(Ui::TextStyles::labelMedium().withSize(innerSize), s);
+            return Ui::text(Ui::TextStyles::labelMedium().withFontSize(innerSize), s);
         },
         [&](Gfx::Icon i) {
             return Ui::icon(i, Math::ceili(innerSize));

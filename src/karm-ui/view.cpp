@@ -35,7 +35,7 @@ static Opt<Rc<Gfx::Fontface>> _regularFontface = NONE;
 
 Rc<Gfx::Fontface> regularFontface() {
     if (not _regularFontface) {
-        _regularFontface = Font::loadFontfaceOrFallback("bundle://fonts-inter/fonts/Inter-Regular.ttf"_url).unwrap();
+        _regularFontface = Font::loadFontfaceOrFallback("bundle://fonts.inter/fonts/Inter-Regular.ttf"_url).unwrap();
     }
     return *_regularFontface;
 }
@@ -44,7 +44,7 @@ static Opt<Rc<Gfx::Fontface>> _mediumFontface = NONE;
 
 Rc<Gfx::Fontface> mediumFontface() {
     if (not _mediumFontface) {
-        _mediumFontface = Font::loadFontfaceOrFallback("bundle://fonts-inter/fonts/Inter-Medium.ttf"_url).unwrap();
+        _mediumFontface = Font::loadFontfaceOrFallback("bundle://fonts.inter/fonts/Inter-Medium.ttf"_url).unwrap();
     }
     return *_mediumFontface;
 }
@@ -53,7 +53,7 @@ static Opt<Rc<Gfx::Fontface>> _boldFontface = NONE;
 
 Rc<Gfx::Fontface> boldFontface() {
     if (not _boldFontface) {
-        _boldFontface = Font::loadFontfaceOrFallback("bundle://fonts-inter/fonts/Inter-Bold.ttf"_url).unwrap();
+        _boldFontface = Font::loadFontfaceOrFallback("bundle://fonts.inter/fonts/Inter-Bold.ttf"_url).unwrap();
     }
     return *_boldFontface;
 }
@@ -62,7 +62,7 @@ static Opt<Rc<Gfx::Fontface>> _italicFontface = NONE;
 
 Rc<Gfx::Fontface> italicFontface() {
     if (not _italicFontface) {
-        _italicFontface = Font::loadFontfaceOrFallback("bundle://fonts-inter/fonts/Inter-Italic.ttf"_url).unwrap();
+        _italicFontface = Font::loadFontfaceOrFallback("bundle://fonts.inter/fonts/Inter-Italic.ttf"_url).unwrap();
     }
     return *_italicFontface;
 }
@@ -71,193 +71,237 @@ static Opt<Rc<Gfx::Fontface>> _codeFontface = NONE;
 
 Rc<Gfx::Fontface> codeFontface() {
     if (not _codeFontface) {
-        _codeFontface = Font::loadFontfaceOrFallback("bundle://fonts-fira-code/fonts/FiraCode-Regular.ttf"_url).unwrap();
+        _codeFontface = Font::loadFontfaceOrFallback("bundle://fonts.fira-code/fonts/FiraCode-Regular.ttf"_url).unwrap();
     }
     return *_codeFontface;
 }
 
-export struct TextStyles {
-private:
-    TextStyles() = default;
+export struct TextStyles :
+    Gfx::ProseStyle,
+    Gfx::SpanStyle {
 
-public:
-    static Gfx::ProseStyle displayLarge() {
-        return {
-            .font = Gfx::Font{
-                regularFontface(),
-                57,
-            },
+    static TextStyles displayLarge() {
+        TextStyles style;
+        style.font = Gfx::Font{
+            regularFontface(),
+            57,
         };
+        return style;
     }
 
-    static Gfx::ProseStyle displayMedium() {
-        return {
-            .font = Gfx::Font{
-                regularFontface(),
-                45,
-            },
+    static TextStyles displayMedium() {
+        TextStyles style;
+        style.font = Gfx::Font{
+            regularFontface(),
+            45,
         };
+        return style;
     }
 
-    static Gfx::ProseStyle displaySmall() {
-        return {
-            .font = Gfx::Font{
-                regularFontface(),
-                36,
-            },
+    static TextStyles displaySmall() {
+        TextStyles style;
+        style.font = Gfx::Font{
+            regularFontface(),
+            36,
         };
+        return style;
     }
 
-    static Gfx::ProseStyle headlineLarge() {
-        return {
-            .font = Gfx::Font{
-                regularFontface(),
-                32,
-            },
+    static TextStyles headlineLarge() {
+        TextStyles style;
+        style.font = Gfx::Font{
+            regularFontface(),
+            32,
         };
+        return style;
     }
 
-    static Gfx::ProseStyle headlineMedium() {
-        return {
-            .font = Gfx::Font{
-                regularFontface(),
-                28,
-            },
+    static TextStyles headlineMedium() {
+        TextStyles style;
+        style.font = Gfx::Font{
+            regularFontface(),
+            28,
         };
+        return style;
     }
 
-    static Gfx::ProseStyle headlineSmall() {
-        return {
-            .font = Gfx::Font{
-                regularFontface(),
-                24,
-            },
+    static TextStyles headlineSmall() {
+        TextStyles style;
+        style.font = Gfx::Font{
+            regularFontface(),
+            24,
         };
+        return style;
     }
 
-    static Gfx::ProseStyle titleLarge() {
-        return {
-            .font = Gfx::Font{
-                regularFontface(),
-                22,
-            },
+    static TextStyles titleLarge() {
+        TextStyles style;
+        style.font = Gfx::Font{
+            regularFontface(),
+            22,
         };
+        return style;
     }
 
-    static Gfx::ProseStyle titleMedium() {
-        return {
-            .font = Gfx::Font{
-                mediumFontface(),
-                16,
-            },
+    static TextStyles titleMedium() {
+        TextStyles style;
+        style.font = Gfx::Font{
+            mediumFontface(),
+            16,
         };
+        return style;
     }
 
-    static Gfx::ProseStyle titleSmall() {
-        return {
-            .font = Gfx::Font{
-                mediumFontface(),
-                14,
-            },
+    static TextStyles titleSmall() {
+        TextStyles style;
+        style.font = Gfx::Font{
+            mediumFontface(),
+            14,
         };
+        return style;
     }
 
-    static Gfx::ProseStyle labelLarge() {
-        return {
-            .font = Gfx::Font{
-                mediumFontface(),
-                14,
-            },
+    static TextStyles labelLarge() {
+        TextStyles style;
+        style.font = Gfx::Font{
+            mediumFontface(),
+            14,
         };
+        return style;
     }
 
-    static Gfx::ProseStyle labelMedium() {
-        return {
-            .font = Gfx::Font{
-                mediumFontface(),
-                12,
-            },
+    static TextStyles labelMedium() {
+        TextStyles style;
+        style.font = Gfx::Font{
+            mediumFontface(),
+            12,
         };
+        return style;
     }
 
-    static Gfx::ProseStyle labelSmall() {
-        return {
-            .font = Gfx::Font{
-                mediumFontface(),
-                11,
-            },
+    static TextStyles labelSmall() {
+        TextStyles style;
+        style.font = Gfx::Font{
+            mediumFontface(),
+            11,
         };
+        return style;
     }
 
-    static Gfx::ProseStyle bodyLarge() {
-        return {
-            .font = Gfx::Font{
-                regularFontface(),
-                16,
-            },
-            .multiline = true,
+    static TextStyles bodyLarge() {
+        TextStyles style;
+        style.font = Gfx::Font{
+            regularFontface(),
+            16,
         };
+        style.multiline = true;
+        return style;
     }
 
-    static Gfx::ProseStyle bodyMedium() {
-        return {
-            .font = Gfx::Font{
-                regularFontface(),
-                14,
-            },
-            .multiline = true,
+    static TextStyles bodyMedium() {
+        TextStyles style;
+        style.font = Gfx::Font{
+            regularFontface(),
+            14,
         };
+        style.multiline = true;
+        return style;
     }
 
-    static Gfx::ProseStyle bodySmall() {
-        return {
-            .font = Gfx::Font{
-                regularFontface(),
-                12,
-            },
-            .multiline = true,
+    static TextStyles bodySmall() {
+        TextStyles style;
+        style.font = Gfx::Font{
+            regularFontface(),
+            12,
         };
+        style.multiline = true;
+        return style;
     }
 
-    static Gfx::ProseStyle codeLarge() {
-        return {
-            .font = Gfx::Font{
-                codeFontface(),
-                16,
-            },
-            .multiline = true,
+    static TextStyles codeLarge() {
+        TextStyles style;
+        style.font = Gfx::Font{
+            codeFontface(),
+            16,
         };
+        style.multiline = true;
+        return style;
     }
 
-    static Gfx::ProseStyle codeMedium() {
-        return {
-            .font = Gfx::Font{
-                codeFontface(),
-                14,
-            },
-            .multiline = true,
+    static TextStyles codeMedium() {
+        TextStyles style;
+        style.font = Gfx::Font{
+            codeFontface(),
+            14,
         };
+        style.multiline = true;
+        return style;
     }
 
-    static Gfx::ProseStyle codeSmall() {
-        return {
-            .font = Gfx::Font{
-                codeFontface(),
-                12,
-            },
-            .multiline = true,
+    static TextStyles codeSmall() {
+        TextStyles style;
+        style.font = Gfx::Font{
+            codeFontface(),
+            12,
         };
+        style.multiline = true;
+        return style;
+    }
+
+    TextStyles& withAlign(Gfx::TextAlign value) {
+        align = value;
+        return *this;
+    }
+
+    TextStyles& withCollapseEmptyLines(bool value) {
+        collapseEmptyLines = value;
+        return *this;
+    }
+
+    TextStyles& withMultiline(bool value) {
+        multiline = value;
+        return *this;
+    }
+
+    TextStyles& withFont(Gfx::Font const& value) {
+        font = value;
+        return *this;
+    }
+
+    TextStyles& withFontSize(f64 fontsize) {
+        font.fontsize = fontsize;
+        return *this;
+    }
+
+    TextStyles& withColor(Gfx::Color value) {
+        color = value;
+        return *this;
+    }
+
+    TextStyles& withMarginLeft(Math::Au value) {
+        marginLeft = value;
+        return *this;
+    }
+
+    TextStyles& withMarginRight(Math::Au value) {
+        marginRight = value;
+        return *this;
+    }
+
+    TextStyles& withWordwrap(bool value) {
+        wordwrap = value;
+        return *this;
     }
 };
 
 struct Text : View<Text> {
-    Rc<Karm::Gfx::Prose> _prose;
+    Rc<Gfx::Prose> _prose;
 
-    Text(Rc<Karm::Gfx::Prose> prose)
+    Text(Rc<Gfx::Prose> prose)
         : _prose(std::move(prose)) {}
 
-    Text(Karm::Gfx::ProseStyle style, Str text)
-        : _prose(makeRc<Karm::Gfx::Prose>(style, text)) {}
+    Text(TextStyles style, Str text)
+        : _prose(makeRc<Gfx::Prose>(style, style, text)) {}
 
     void reconcile(Text& o) override {
         _prose = std::move(o._prose);
@@ -281,7 +325,7 @@ struct Text : View<Text> {
     }
 };
 
-export Child text(Karm::Gfx::ProseStyle style, Str text) {
+export Child text(TextStyles style, Str text) {
     return makeRc<Text>(style, text);
 }
 
@@ -294,7 +338,7 @@ export Child text(Rc<Karm::Gfx::Prose> prose) {
 }
 
 export template <typename... Args>
-Child text(Karm::Gfx::ProseStyle style, Str format, Args&&... args) {
+Child text(TextStyles style, Str format, Args&&... args) {
     return text(style, Io::format(format, std::forward<Args>(args)...));
 }
 
@@ -303,16 +347,22 @@ Child text(Str format, Args&&... args) {
     return text(Io::format(format, std::forward<Args>(args)...));
 }
 
-#define DEF_STYLE(STYLE)                                                                                                  \
-    export Child STYLE(Str text) { return Karm::Ui::text(TextStyles::STYLE(), text); }                                    \
-    export Child STYLE(Gfx::Color color, Str text) { return Karm::Ui::text(TextStyles::STYLE().withColor(color), text); } \
-    export template <typename... Args>                                                                                    \
-    inline Child STYLE(Str format, Args&&... args) {                                                                      \
-        return text(TextStyles::STYLE(), format, std::forward<Args>(args)...);                                            \
-    }                                                                                                                     \
-    export template <typename... Args>                                                                                    \
-    inline Child STYLE(Gfx::Color color, Str format, Args&&... args) {                                                    \
-        return text(TextStyles::STYLE().withColor(color), format, std::forward<Args>(args)...);                           \
+#define DEF_STYLE(STYLE)                                                               \
+    export Child STYLE(Str text) { return Karm::Ui::text(TextStyles::STYLE(), text); } \
+    export Child STYLE(Gfx::Color color, Str text) {                                   \
+        auto style = TextStyles::STYLE();                                              \
+        style.color = color;                                                           \
+        return Karm::Ui::text(style, text);                                            \
+    }                                                                                  \
+    export template <typename... Args>                                                 \
+    inline Child STYLE(Str format, Args&&... args) {                                   \
+        return text(TextStyles::STYLE(), format, std::forward<Args>(args)...);         \
+    }                                                                                  \
+    export template <typename... Args>                                                 \
+    inline Child STYLE(Gfx::Color color, Str format, Args&&... args) {                 \
+        auto style = TextStyles::STYLE();                                              \
+        style.color = color;                                                           \
+        return text(style, format, std::forward<Args>(args)...);                       \
     }
 
 DEF_STYLE(displayLarge)

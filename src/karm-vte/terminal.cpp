@@ -147,13 +147,13 @@ export struct ColorScheme {
 
 export struct Theme {
     Gfx::Font font = {
-        Font::loadFontfaceOrFallback("bundle://fonts-fira-code/fonts/FiraCode-Regular.ttf"_url).unwrap(),
+        Font::loadFontfaceOrFallback("bundle://fonts.fira-code/fonts/FiraCode-Regular.ttf"_url).unwrap(),
         12,
         1.2,
     };
 
     Gfx::Font boldFont = {
-        Font::loadFontfaceOrFallback("bundle://fonts-fira-code/fonts/FiraCode-Bold.ttf"_url).unwrap(),
+        Font::loadFontfaceOrFallback("bundle://fonts.fira-code/fonts/FiraCode-Bold.ttf"_url).unwrap(),
         12,
         1.2,
     };

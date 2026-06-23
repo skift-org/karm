@@ -18,25 +18,43 @@ export enum struct TextAlign {
 export struct ProseStyle {
     TextAlign align = TextAlign::LEFT;
     bool collapseEmptyLines = true;
+    bool multiline = false;
+};
+
+export struct SpanStyle {
+    Font font = Font::fallback();
+    Opt<Color> color = NONE;
+    Math::Au marginLeft = 0_au;
+    Math::Au marginRight = 0_au;
+    bool wordwrap = true;
+
+    SpanStyle& withFont(Font const& value) {
+        font = value;
+        return *this;
+    }
+
+    SpanStyle& withColor(Color value) {
+        color = value;
+        return *this;
+    }
+
+    SpanStyle& withMarginLeft(Math::Au value) {
+        marginLeft = value;
+        return *this;
+    }
+
+    SpanStyle& withMarginRight(Math::Au value) {
+        marginRight = value;
+        return *this;
+    }
+
+    SpanStyle& withWordwrap(bool value) {
+        wordwrap = value;
+        return *this;
+    }
 };
 
 export struct Prose : Meta::Pinned {
-    struct SpanStyle {
-        Font font = Font::fallback();
-        Color color = {0, 0, 0, 255};
-        Math::Au marginLeft = 0_au;
-        Math::Au marginRight = 0_au;
-
-        bool wordwrap = true;
-        bool multiline = false;
-
-        SpanStyle withColor(Color color) const {
-            SpanStyle style = *this;
-            style.color = color;
-            return style;
-        }
-    };
-
     struct Span {
         Opt<Rc<Span>> parent;
         SpanStyle style;
@@ -212,7 +230,7 @@ export struct Prose : Meta::Pinned {
         bool forcesBreakAfter() const {
             if (empty())
                 return false;
-            return newline() and last(cells()).style().multiline;
+            return newline() and prose->_style.multiline;
         }
     };
 
@@ -223,6 +241,8 @@ export struct Prose : Meta::Pinned {
         urange blockRange;
         Math::Au baseline = 0_au; // Baseline of the line within the text
         Math::Au width = 0_au;
+        Math::Au ascent = 0_au;
+        Math::Au descend = 0_au;
 
         Slice<Block> blocks() const {
             return sub(prose->_blocks, blockRange);
@@ -398,6 +418,10 @@ export struct Prose : Meta::Pinned {
         _currentSpan = newCurr;
     }
 
+    SpanStyle currentSpanStyle() const {
+        return _currentSpan->style;
+    }
+
     // MARK: Strut ------------------------------------------------------------
 
     Vec<MutCursor<Cell>> cellsWithStruts() {
@@ -487,7 +511,7 @@ export struct Prose : Meta::Pinned {
 
             if (not _style.collapseEmptyLines) {
                 maxAscent = fontAscent;
-                maxAscent = fontDescend;
+                maxDescend = fontDescend;
             }
 
             for (auto const& block : line.blocks()) {
@@ -502,6 +526,8 @@ export struct Prose : Meta::Pinned {
             }
 
             line.baseline = lineTop + maxAscent;
+            line.ascent = maxAscent;
+            line.descend = maxDescend;
             currHeight += maxAscent + maxDescend;
         }
 
@@ -616,7 +642,7 @@ export struct Prose : Meta::Pinned {
         return {li, bi, ci};
     }
 
-    Math::Vec2Au queryPosition(usize runeIndex) const {
+    Tuple<Math::Vec2Au, Math::Au, Math::Au> queryCaret(usize runeIndex) const {
         auto [li, bi, ci] = lbcAt(runeIndex);
 
         if (isEmpty(_lines))
@@ -625,22 +651,55 @@ export struct Prose : Meta::Pinned {
         auto& line = _lines[li];
 
         if (isEmpty(line.blocks()))
-            return {0_au, line.baseline};
+            return {
+                {
+                    0_au,
+                    line.baseline,
+                },
+                line.ascent,
+                line.descend,
+            };
 
         auto& block = line.blocks()[bi];
 
         if (isEmpty(block.cells()))
-            return {block.pos, line.baseline};
+            return {
+                {
+                    block.pos,
+                    line.baseline,
+                },
+                line.ascent,
+                line.descend,
+            };
 
         if (ci >= block.cells().len()) {
             // Handle the case where the rune is the last of the text
             auto& cell = last(block.cells());
-            return {block.pos + cell.pos + cell.adv, cell.yPosition(line.baseline)};
+            return {
+                {
+                    block.pos + cell.pos + cell.adv,
+                    cell.yPosition(line.baseline),
+                },
+                line.ascent,
+                line.descend,
+            };
         }
 
         auto& cell = block.cells()[ci];
+        return {
+            Math::Vec2Au{
+                block.pos + cell.pos,
+                cell.yPosition(line.baseline),
+            },
+            line.ascent,
+            line.descend
+        };
+    }
 
-        return {block.pos + cell.pos, cell.yPosition(line.baseline)};
+    Math::Vec2Au
+    queryPosition(usize runeIndex) const {
+        auto [pos, _, _] = queryCaret(runeIndex);
+        return pos;
     }
 
     // MARK: Hit Testing -------------------------------------------------------

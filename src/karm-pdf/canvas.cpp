@@ -227,7 +227,7 @@ export struct Canvas : Gfx::Canvas {
             auto prevEndPos = lineStartPos;
             bool inArray = false;
 
-            auto ensureState = [&](Gfx::Prose::SpanStyle const& style) {
+            auto ensureState = [&](Gfx::SpanStyle const& style) {
                 bool changed =
                     not currentColor or *currentColor != style.color or
                     not currentFont or currentFont->fontface._cell != style.font.fontface._cell or

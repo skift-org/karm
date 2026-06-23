@@ -375,14 +375,13 @@ export Child button(Opt<Send<>> onPress, Gfx::Icon i, Str t) {
 // MARK: Input -----------------------------------------------------------------
 
 static void _paintCaret(Gfx::Canvas& g, Gfx::Prose& p, usize runeIndex, Gfx::Color color) {
-    auto m = p._style.font.metrics();
-    auto baseline = p.queryPosition(runeIndex);
-    auto cs = baseline.cast<f64>() - Math::Vec2f{0, m.ascend};
-    auto ce = baseline.cast<f64>() + Math::Vec2f{0, m.descend};
+    auto [baseline, ascend, descend] = p.queryCaret(runeIndex);
+    auto cs = baseline - Vec2Au{0_au, ascend};
+    auto ce = baseline + Vec2Au{0_au, descend};
 
     g.beginPath();
-    g.moveTo(cs);
-    g.lineTo(ce);
+    g.moveTo(cs.cast<f64>());
+    g.lineTo(ce.cast<f64>());
     g.strokeStyle({
         .fill = color,
         .width = 1.0,
@@ -398,7 +397,6 @@ static void _paintSelection(Gfx::Canvas& g, Gfx::Prose& p, usize start, usize en
     if (start > end)
         std::swap(start, end);
 
-    auto m = p._style.font.metrics();
     auto [startLi, startBi, startCi] = p.lbcAt(start);
     auto [endLi, endBi, endCi] = p.lbcAt(end);
 
@@ -417,8 +415,8 @@ static void _paintSelection(Gfx::Canvas& g, Gfx::Prose& p, usize start, usize en
 
         g.fill(
             RectAu::fromTwoPoint(
-                lineStart + Vec2Au{0_au, Au{m.descend}},
-                lineEnd - Vec2Au{0_au, Au{m.ascend}}
+                lineStart + Vec2Au{0_au, line.descend},
+                lineEnd - Vec2Au{0_au, line.ascent}
             )
                 .cast<f64>()
         );
@@ -426,7 +424,7 @@ static void _paintSelection(Gfx::Canvas& g, Gfx::Prose& p, usize start, usize en
 }
 
 struct Input : View<Input> {
-    Gfx::ProseStyle _style;
+    TextStyles _style;
 
     FocusListener _focus;
     Rc<TextModel> _model;
@@ -436,7 +434,7 @@ struct Input : View<Input> {
 
     Opt<Rc<Gfx::Prose>> _text;
 
-    Input(Gfx::ProseStyle style, Rc<TextModel> model, Send<TextAction> onChange)
+    Input(TextStyles style, Rc<TextModel> model, Send<TextAction> onChange)
         : _style(style), _model(model), _onChange(std::move(onChange)) {}
 
     void reconcile(Input& o) override {
@@ -452,7 +450,7 @@ struct Input : View<Input> {
     Gfx::Prose& _ensureText() {
         if (not _text) {
             _style.collapseEmptyLines = false;
-            _text = makeRc<Gfx::Prose>(_style);
+            _text = makeRc<Gfx::Prose>(_style, _style);
             (*_text)->append(_model->runes());
         }
         return **_text;
@@ -532,7 +530,7 @@ struct Input : View<Input> {
     }
 };
 
-export Child input(Gfx::ProseStyle style, Rc<TextModel> text, Send<TextAction> onChange) {
+export Child input(TextStyles style, Rc<TextModel> text, Send<TextAction> onChange) {
     return makeRc<Input>(style, text, std::move(onChange));
 }
 
@@ -541,7 +539,7 @@ export Child input(Rc<TextModel> text, Send<TextAction> onChange) {
 }
 
 struct SimpleInput : View<SimpleInput> {
-    Gfx::ProseStyle _style;
+    TextStyles _style;
     String _text;
     Send<String> _onChange;
 
@@ -551,7 +549,7 @@ struct SimpleInput : View<SimpleInput> {
     bool _mouseDown = false;
     SelectionBoundary _selectionBoundary = SelectionBoundary::RUNE;
 
-    SimpleInput(Gfx::ProseStyle style, String text, Send<String> onChange)
+    SimpleInput(TextStyles style, String text, Send<String> onChange)
         : _style(style),
           _text(text),
           _onChange(std::move(onChange)) {}
@@ -579,7 +577,7 @@ struct SimpleInput : View<SimpleInput> {
     Gfx::Prose& _ensureText() {
         if (not _prose) {
             _style.collapseEmptyLines = false;
-            _prose = makeRc<Gfx::Prose>(_style);
+            _prose = makeRc<Gfx::Prose>(_style, _style);
             (*_prose)->append(_ensureModel().runes());
         }
         return **_prose;
@@ -666,7 +664,7 @@ struct SimpleInput : View<SimpleInput> {
     }
 };
 
-export Child input(Gfx::ProseStyle style, String text, Send<String> onChange) {
+export Child input(TextStyles style, String text, Send<String> onChange) {
     return makeRc<SimpleInput>(style, text, std::move(onChange));
 }
 
