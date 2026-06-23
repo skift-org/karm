@@ -277,19 +277,32 @@ export struct Prose : Meta::Pinned {
         clear();
         _spaceWidth = _currentSpan->style.font.advance(_currentSpan->style.font.glyph(' '));
         _lineHeight = _currentSpan->style.font.metrics().ascend;
+        _spanHistory.pushBack(_rootSpan);
         append(str);
     }
 
-    static Rc<Span> _findRoot(Rc<Span> span) {
+    static Vec<Rc<Span const>> _ancestorChain(Rc<Span const> span) {
+        Vec<Rc<Span const>> chain;
+        Opt<Rc<Span const>> cur = span;
+        while (cur) {
+            chain.pushBack(cur.unwrap());
+            cur = cur.unwrap()->parent;
+        }
+        reverse(mutSub(chain));
+        return chain;
+    }
+
+    static Rc<Span> _findRoot(Rc<Span const> span) {
         while (span->parent)
             span = span->parent.unwrap();
         return span;
     }
 
-    Prose(ProseStyle style, Rc<Span> continueFrom)
+    Prose(ProseStyle style, Rc<Span const> continueFrom)
         : _style(style),
           _currentSpan(continueFrom),
-          _rootSpan(_findRoot(continueFrom)) {
+          _rootSpan(_findRoot(continueFrom)),
+          _spanHistory(_ancestorChain(continueFrom)) {
         clear();
         _spaceWidth = _currentSpan->style.font.advance(_currentSpan->style.font.glyph(' '));
         _lineHeight = _currentSpan->style.font.metrics().ascend;
@@ -397,8 +410,13 @@ export struct Prose : Meta::Pinned {
     Rc<Span const> _currentSpan;
     Rc<Span const> _rootSpan;
 
+    // INFO: Used for testing, might be removed later.
+    Vec<Rc<Span const>> _spanHistory{};
+
     void pushSpan(SpanStyle const& spanStyle) {
         auto span = makeRc<Span>(_currentSpan, spanStyle);
+
+        _spanHistory.pushBack(span);
 
         auto refToLast = span;
         _currentSpan = refToLast;
