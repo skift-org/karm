@@ -13,5 +13,5 @@ steps:
       - export PATH=/usr/lib/llvm-21/bin:$PATH
       - curl -LsSf https://astral.sh/uv/install.sh | sh
       - export PATH="$HOME/.local/bin:$PATH"
-      - uv tool install cutekit@0.11.0
+      - uv tool install cutekit@0.12.0
       - ck test --props:async=epoll
