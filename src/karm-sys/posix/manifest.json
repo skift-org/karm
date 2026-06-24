@@ -13,7 +13,8 @@
         ]
     },
     "requires": [
-        "karm-sys.async"
+        "karm-sys.async",
+        "unwind"
     ],
     "provides": [
         "karm-sys.impl"

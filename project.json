@@ -53,6 +53,11 @@
             "names": [
                 "libseccomp"
             ]
+        },
+        "unwind": {
+            "names": [
+                "libunwind"
+            ]
         }
     }
 }
