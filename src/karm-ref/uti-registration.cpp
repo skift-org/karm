@@ -70,6 +70,7 @@ void Uti::Repository::registerCommonUti() {
         {
             .name = "public.data"_sym,
             .description = "Raw Data"s,
+            .mimes = {"application/octet-stream"_mime},
             .conformsTo = {"public.item"_sym},
         }
     );

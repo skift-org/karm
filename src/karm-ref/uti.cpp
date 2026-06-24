@@ -167,6 +167,8 @@ export struct Uti {
     mutable Rc<Registration> _registration;
 
     static Uti fromSuffix(Str suffix) {
+        if (not suffix)
+            return PUBLIC_DATA;
         return repository().lookupBySuffix(suffix);
     }
 
@@ -177,7 +179,6 @@ export struct Uti {
     static Uti fromUtiOrMime(Str str) {
         if (contains(str, "/"s))
             return fromMime(Mime{str});
-
         return Uti{Symbol::from(str)};
     }
 
