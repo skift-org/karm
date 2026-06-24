@@ -55,6 +55,7 @@
             ]
         },
         "unwind": {
+            "description": "Linux libunwind library",
             "names": [
                 "libunwind"
             ]

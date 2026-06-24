@@ -309,11 +309,11 @@ export Res<Ref::Path> resolve(Ref::Url const& url) {
     if (url.scheme == "file") {
         resolved = url.path;
     } else if (url.scheme == "fd") {
-        if (url.path == "stdin"_path) {
+        if (url.path.stem() == "stdin") {
             resolved = "/dev/stdin"_path;
-        } else if (url.path == "stdout"_path) {
+        } else if (url.path.stem() == "stdout") {
             resolved = "/dev/stdout"_path;
-        } else if (url.path == "stderr"_path) {
+        } else if (url.path.stem() == "stderr") {
             resolved = "/dev/stderr"_path;
         } else {
             return Error::notFound("unknown fd");
