@@ -1,6 +1,7 @@
 module;
 
-#include <fcntl.h>
+#include <errno.h>
+#include <sys/random.h>
 #include <unistd.h>
 
 module Karm.Crypto;
@@ -10,15 +11,17 @@ import Karm.Sys.Posix;
 namespace Karm::Crypto::_Embed {
 
 Res<> entropy(MutBytes out) {
-    int fd = open("/dev/urandom", O_RDONLY);
-    if (fd < 0)
-        return Posix::fromLastErrno();
+    usize total = 0;
 
-    ssize_t n = read(fd, out.buf(), out.len());
-    close(fd);
-
-    if (n != static_cast<ssize_t>(out.len()))
-        return Posix::fromLastErrno();
+    while (total < out.len()) {
+        usize n = getrandom(out.buf() + total, out.len() - total, 0);
+        if (n < 0) {
+            if (errno == EINTR)
+                continue;
+            return Posix::fromLastErrno();
+        }
+        total += n;
+    }
 
     return Ok();
 }
