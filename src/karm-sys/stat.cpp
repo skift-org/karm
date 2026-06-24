@@ -14,7 +14,7 @@ import :sandbox;
 namespace Karm::Sys {
 
 export Res<Stat> stat(Ref::Url const& url) {
-    if (url.scheme != "bundle")
+    if (not oneOf(url.scheme, "bundle", "fd"))
         try$(ensureUnrestricted());
     return _Embed::stat(url);
 }

@@ -53,7 +53,7 @@ export struct File :
         if (url.scheme == "bundle" and options.any({OpenOption::WRITE, OpenOption::CREATE}))
             return Error::invalidInput("cannot write in bundle.");
 
-        if (url.scheme != "bundle")
+        if (not oneOf(url.scheme, "bundle", "fd"))
             try$(ensureUnrestricted());
 
         Str action =

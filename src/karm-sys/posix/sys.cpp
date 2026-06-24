@@ -7,9 +7,9 @@ module;
 #include <netdb.h>
 #include <netinet/in.h>
 #ifdef __ck_sys_darwin__
-#include <util.h>
+#    include <util.h>
 #else
-#include <pty.h>
+#    include <pty.h>
 #endif
 #include <signal.h>
 #include <stdlib.h>
@@ -43,7 +43,6 @@ Res<Rc<Sys::Fd>> deserializeFd(Serde::Deserializer&) {
 // MARK: File I/O --------------------------------------------------------------
 
 Res<Rc<Fd>> openFile(Ref::Url const& url, Flags<OpenOption> options) {
-
     i32 flags = 0;
     if (options.has({OpenOption::READ, OpenOption::WRITE}))
         flags |= O_RDWR;
