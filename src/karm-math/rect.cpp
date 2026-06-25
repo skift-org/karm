@@ -356,6 +356,13 @@ union Rect {
         res._els = try$(Serde::deserialize<decltype(_els)>(de));
         return Ok(std::move(res));
     }
+
+    void hash(Meta::Derive<Hasher> auto& h) const {
+        Karm::hash(h, x);
+        Karm::hash(h, y);
+        Karm::hash(h, width);
+        Karm::hash(h, height);
+    }
 };
 
 template <typename T>

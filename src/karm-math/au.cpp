@@ -148,6 +148,10 @@ export struct Au {
     void repr(Io::Emit& e) const {
         e("{}au", cast<f64>());
     }
+
+    void hash(Meta::Derive<Hasher> auto& h) const {
+        Karm::hash(h, _val);
+    }
 };
 
 export constexpr Au abs(Au const& val) {

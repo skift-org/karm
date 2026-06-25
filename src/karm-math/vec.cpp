@@ -277,6 +277,11 @@ union Vec2 {
         res._els = try$(Serde::deserialize<decltype(_els)>(de));
         return Ok(std::move(res));
     }
+
+    void hash(Meta::Derive<Hasher> auto& h) const {
+        Karm::hash(h, x);
+        Karm::hash(h, y);
+    }
 };
 
 template <typename T>
@@ -531,6 +536,12 @@ union Vec3 {
         res._els = try$(Serde::deserialize<decltype(_els)>(de));
         return Ok(std::move(res));
     }
+
+    void hash(Meta::Derive<Hasher> auto& h) const {
+        Karm::hash(h, x);
+        Karm::hash(h, y);
+        Karm::hash(h, z);
+    }
 };
 
 template <typename T>
@@ -765,6 +776,13 @@ union Vec4 {
         Vec4 res;
         res._els = try$(Serde::deserialize<decltype(_els)>(de));
         return Ok(std::move(res));
+    }
+
+    void hash(Meta::Derive<Hasher> auto& h) const {
+        Karm::hash(h, x);
+        Karm::hash(h, y);
+        Karm::hash(h, z);
+        Karm::hash(h, w);
     }
 };
 
