@@ -424,7 +424,7 @@ static void _paintSelection(Gfx::Canvas& g, Gfx::Prose& p, usize start, usize en
 }
 
 struct Input : View<Input> {
-    TextStyles _style;
+    Gfx::ProseProps _style;
 
     FocusListener _focus;
     Rc<TextModel> _model;
@@ -434,7 +434,7 @@ struct Input : View<Input> {
 
     Opt<Rc<Gfx::Prose>> _text;
 
-    Input(TextStyles style, Rc<TextModel> model, Send<TextAction> onChange)
+    Input(Gfx::ProseProps style, Rc<TextModel> model, Send<TextAction> onChange)
         : _style(style), _model(model), _onChange(std::move(onChange)) {}
 
     void reconcile(Input& o) override {
@@ -530,7 +530,7 @@ struct Input : View<Input> {
     }
 };
 
-export Child input(TextStyles style, Rc<TextModel> text, Send<TextAction> onChange) {
+export Child input(Gfx::ProseProps style, Rc<TextModel> text, Send<TextAction> onChange) {
     return makeRc<Input>(style, text, std::move(onChange));
 }
 
@@ -539,7 +539,7 @@ export Child input(Rc<TextModel> text, Send<TextAction> onChange) {
 }
 
 struct SimpleInput : View<SimpleInput> {
-    TextStyles _style;
+    Gfx::ProseProps _style;
     String _text;
     Send<String> _onChange;
 
@@ -549,7 +549,7 @@ struct SimpleInput : View<SimpleInput> {
     bool _mouseDown = false;
     SelectionBoundary _selectionBoundary = SelectionBoundary::RUNE;
 
-    SimpleInput(TextStyles style, String text, Send<String> onChange)
+    SimpleInput(Gfx::ProseProps style, String text, Send<String> onChange)
         : _style(style),
           _text(text),
           _onChange(std::move(onChange)) {}
@@ -664,7 +664,7 @@ struct SimpleInput : View<SimpleInput> {
     }
 };
 
-export Child input(TextStyles style, String text, Send<String> onChange) {
+export Child input(Gfx::ProseProps style, String text, Send<String> onChange) {
     return makeRc<SimpleInput>(style, text, std::move(onChange));
 }
 

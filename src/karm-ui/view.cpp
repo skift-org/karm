@@ -76,12 +76,9 @@ Rc<Gfx::Fontface> codeFontface() {
     return *_codeFontface;
 }
 
-export struct TextStyles :
-    Gfx::ProseStyle,
-    Gfx::SpanStyle {
-
-    static TextStyles displayLarge() {
-        TextStyles style;
+export struct TextStyles {
+    static Gfx::ProseProps displayLarge() {
+        Gfx::ProseProps style;
         style.font = Gfx::Font{
             regularFontface(),
             57,
@@ -89,8 +86,8 @@ export struct TextStyles :
         return style;
     }
 
-    static TextStyles displayMedium() {
-        TextStyles style;
+    static Gfx::ProseProps displayMedium() {
+        Gfx::ProseProps style;
         style.font = Gfx::Font{
             regularFontface(),
             45,
@@ -98,8 +95,8 @@ export struct TextStyles :
         return style;
     }
 
-    static TextStyles displaySmall() {
-        TextStyles style;
+    static Gfx::ProseProps displaySmall() {
+        Gfx::ProseProps style;
         style.font = Gfx::Font{
             regularFontface(),
             36,
@@ -107,8 +104,8 @@ export struct TextStyles :
         return style;
     }
 
-    static TextStyles headlineLarge() {
-        TextStyles style;
+    static Gfx::ProseProps headlineLarge() {
+        Gfx::ProseProps style;
         style.font = Gfx::Font{
             regularFontface(),
             32,
@@ -116,8 +113,8 @@ export struct TextStyles :
         return style;
     }
 
-    static TextStyles headlineMedium() {
-        TextStyles style;
+    static Gfx::ProseProps headlineMedium() {
+        Gfx::ProseProps style;
         style.font = Gfx::Font{
             regularFontface(),
             28,
@@ -125,8 +122,8 @@ export struct TextStyles :
         return style;
     }
 
-    static TextStyles headlineSmall() {
-        TextStyles style;
+    static Gfx::ProseProps headlineSmall() {
+        Gfx::ProseProps style;
         style.font = Gfx::Font{
             regularFontface(),
             24,
@@ -134,8 +131,8 @@ export struct TextStyles :
         return style;
     }
 
-    static TextStyles titleLarge() {
-        TextStyles style;
+    static Gfx::ProseProps titleLarge() {
+        Gfx::ProseProps style;
         style.font = Gfx::Font{
             regularFontface(),
             22,
@@ -143,8 +140,8 @@ export struct TextStyles :
         return style;
     }
 
-    static TextStyles titleMedium() {
-        TextStyles style;
+    static Gfx::ProseProps titleMedium() {
+        Gfx::ProseProps style;
         style.font = Gfx::Font{
             mediumFontface(),
             16,
@@ -152,8 +149,8 @@ export struct TextStyles :
         return style;
     }
 
-    static TextStyles titleSmall() {
-        TextStyles style;
+    static Gfx::ProseProps titleSmall() {
+        Gfx::ProseProps style;
         style.font = Gfx::Font{
             mediumFontface(),
             14,
@@ -161,8 +158,8 @@ export struct TextStyles :
         return style;
     }
 
-    static TextStyles labelLarge() {
-        TextStyles style;
+    static Gfx::ProseProps labelLarge() {
+        Gfx::ProseProps style;
         style.font = Gfx::Font{
             mediumFontface(),
             14,
@@ -170,8 +167,8 @@ export struct TextStyles :
         return style;
     }
 
-    static TextStyles labelMedium() {
-        TextStyles style;
+    static Gfx::ProseProps labelMedium() {
+        Gfx::ProseProps style;
         style.font = Gfx::Font{
             mediumFontface(),
             12,
@@ -179,8 +176,8 @@ export struct TextStyles :
         return style;
     }
 
-    static TextStyles labelSmall() {
-        TextStyles style;
+    static Gfx::ProseProps labelSmall() {
+        Gfx::ProseProps style;
         style.font = Gfx::Font{
             mediumFontface(),
             11,
@@ -188,8 +185,8 @@ export struct TextStyles :
         return style;
     }
 
-    static TextStyles bodyLarge() {
-        TextStyles style;
+    static Gfx::ProseProps bodyLarge() {
+        Gfx::ProseProps style;
         style.font = Gfx::Font{
             regularFontface(),
             16,
@@ -198,8 +195,8 @@ export struct TextStyles :
         return style;
     }
 
-    static TextStyles bodyMedium() {
-        TextStyles style;
+    static Gfx::ProseProps bodyMedium() {
+        Gfx::ProseProps style;
         style.font = Gfx::Font{
             regularFontface(),
             14,
@@ -208,8 +205,8 @@ export struct TextStyles :
         return style;
     }
 
-    static TextStyles bodySmall() {
-        TextStyles style;
+    static Gfx::ProseProps bodySmall() {
+        Gfx::ProseProps style;
         style.font = Gfx::Font{
             regularFontface(),
             12,
@@ -218,8 +215,8 @@ export struct TextStyles :
         return style;
     }
 
-    static TextStyles codeLarge() {
-        TextStyles style;
+    static Gfx::ProseProps codeLarge() {
+        Gfx::ProseProps style;
         style.font = Gfx::Font{
             codeFontface(),
             16,
@@ -228,8 +225,8 @@ export struct TextStyles :
         return style;
     }
 
-    static TextStyles codeMedium() {
-        TextStyles style;
+    static Gfx::ProseProps codeMedium() {
+        Gfx::ProseProps style;
         style.font = Gfx::Font{
             codeFontface(),
             14,
@@ -238,59 +235,14 @@ export struct TextStyles :
         return style;
     }
 
-    static TextStyles codeSmall() {
-        TextStyles style;
+    static Gfx::ProseProps codeSmall() {
+        Gfx::ProseProps style;
         style.font = Gfx::Font{
             codeFontface(),
             12,
         };
         style.multiline = true;
         return style;
-    }
-
-    TextStyles& withAlign(Gfx::TextAlign value) {
-        align = value;
-        return *this;
-    }
-
-    TextStyles& withCollapseEmptyLines(bool value) {
-        collapseEmptyLines = value;
-        return *this;
-    }
-
-    TextStyles& withMultiline(bool value) {
-        multiline = value;
-        return *this;
-    }
-
-    TextStyles& withFont(Gfx::Font const& value) {
-        font = value;
-        return *this;
-    }
-
-    TextStyles& withFontSize(f64 fontsize) {
-        font.fontsize = fontsize;
-        return *this;
-    }
-
-    TextStyles& withColor(Gfx::Color value) {
-        color = value;
-        return *this;
-    }
-
-    TextStyles& withMarginLeft(Math::Au value) {
-        marginLeft = value;
-        return *this;
-    }
-
-    TextStyles& withMarginRight(Math::Au value) {
-        marginRight = value;
-        return *this;
-    }
-
-    TextStyles& withWordwrap(bool value) {
-        wordwrap = value;
-        return *this;
     }
 };
 
@@ -300,7 +252,7 @@ struct Text : View<Text> {
     Text(Rc<Gfx::Prose> prose)
         : _prose(std::move(prose)) {}
 
-    Text(TextStyles style, Str text)
+    Text(Gfx::ProseProps style, Str text)
         : _prose(makeRc<Gfx::Prose>(style, style, text)) {}
 
     void reconcile(Text& o) override {
@@ -325,7 +277,7 @@ struct Text : View<Text> {
     }
 };
 
-export Child text(TextStyles style, Str text) {
+export Child text(Gfx::ProseProps style, Str text) {
     return makeRc<Text>(style, text);
 }
 
@@ -338,7 +290,7 @@ export Child text(Rc<Karm::Gfx::Prose> prose) {
 }
 
 export template <typename... Args>
-Child text(TextStyles style, Str format, Args&&... args) {
+Child text(Gfx::ProseProps style, Str format, Args&&... args) {
     return text(style, Io::format(format, std::forward<Args>(args)...));
 }
 

@@ -54,6 +54,66 @@ export struct SpanStyle {
     }
 };
 
+export struct ProseProps :
+    ProseStyle,
+    SpanStyle {
+
+    ProseProps() = default;
+
+    ProseProps(Gfx::Font font) {
+        this->font = font;
+    }
+
+    ProseProps(Rc<Gfx::Fontface> fontface) {
+        this->font.fontface = fontface;
+    }
+
+    ProseProps& withAlign(Gfx::TextAlign value) {
+        align = value;
+        return *this;
+    }
+
+    ProseProps& withCollapseEmptyLines(bool value) {
+        collapseEmptyLines = value;
+        return *this;
+    }
+
+    ProseProps& withMultiline(bool value) {
+        multiline = value;
+        return *this;
+    }
+
+    ProseProps& withFont(Gfx::Font const& value) {
+        font = value;
+        return *this;
+    }
+
+    ProseProps& withFontSize(f64 fontsize) {
+        font.fontsize = fontsize;
+        return *this;
+    }
+
+    ProseProps& withColor(Gfx::Color value) {
+        color = value;
+        return *this;
+    }
+
+    ProseProps& withMarginLeft(Math::Au value) {
+        marginLeft = value;
+        return *this;
+    }
+
+    ProseProps& withMarginRight(Math::Au value) {
+        marginRight = value;
+        return *this;
+    }
+
+    ProseProps& withWordwrap(bool value) {
+        wordwrap = value;
+        return *this;
+    }
+};
+
 export struct Prose : Meta::Pinned {
     struct Span {
         Opt<Rc<Span>> parent;
@@ -269,6 +329,8 @@ export struct Prose : Meta::Pinned {
     f64 _lineHeight{};
 
     Math::Vec2Au _size;
+
+    Prose(ProseProps props, Str str = "") : Prose(props, props, str) {}
 
     Prose(ProseStyle style, SpanStyle rootSpanStyle, Str str = "")
         : _style(style),
