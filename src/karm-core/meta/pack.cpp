@@ -87,6 +87,32 @@ always_inline auto any(auto func) {
         return _Any<Ts...>::eval(func);
 }
 
+template <typename T, typename... Ts>
+struct _All {
+    always_inline static auto eval(auto func)
+        requires(not Meta::Same<decltype(func.template operator()<T>()), void>)
+    {
+        auto test = func.template operator()<T>();
+        (void)(test and ((test = func.template operator()<Ts>()) and ...));
+        return test;
+    }
+
+    always_inline static auto eval(auto func)
+        requires(Meta::Same<decltype(func.template operator()<T>()), void>)
+    {
+        func.template operator()<T>();
+        (func.template operator()<Ts>(), ...);
+    }
+};
+
+export template <typename... Ts>
+always_inline auto all(auto func) {
+    if constexpr (sizeof...(Ts) == 0)
+        return;
+    else
+        return _All<Ts...>::eval(func);
+}
+
 // MARK: First -----------------------------------------------------------------
 
 template <typename...>
