@@ -8,8 +8,9 @@ steps:
     image: ubuntu:24.04
     commands:
       - apt-get update
-      - apt-get install -y --no-install-recommends build-essential git ninja-build ccache jq libseccomp-dev liburing-dev curl wget lsb-release software-properties-common gnupg pkg-config libunwind-dev
-      - bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)" llvm 22 all
+      - apt-get install -y --no-install-recommends lsb-release curl software-properties-common gnupg
+      - curl -LsSf https://apt.llvm.org/llvm.sh | bash -s -- 22 all
+      - apt-get install -y --no-install-recommends build-essential git ninja-build ccache jq libseccomp-dev liburing-dev pkg-config libunwind-dev
       - export PATH=/usr/lib/llvm-22/bin:$PATH
       - curl -LsSf https://astral.sh/uv/install.sh | sh
       - export PATH="$HOME/.local/bin:$PATH"
