@@ -312,10 +312,10 @@ Ui::Child _printSettings(State const& s) {
                         Kr::selectValue(Io::format("{}", Io::cased(s.settings.margins, Io::Case::CAPITAL))),
                         [] -> Ui::Children {
                             return {
-                                Kr::selectItem(Model::bind<ChangeMargin>(Margins::NONE), "None"s),
-                                Kr::selectItem(Model::bind<ChangeMargin>(Margins::MINIMUM), "Minimum"s),
-                                Kr::selectItem(Model::bind<ChangeMargin>(Margins::DEFAULT), "Default"s),
-                                Kr::selectItem(Model::bind<ChangeMargin>(Margins::CUSTOM), "Custom"s),
+                                Kr::selectItem(Model::bind<ChangeMargin>(MarginOption::NONE), "None"s),
+                                Kr::selectItem(Model::bind<ChangeMargin>(MarginOption::MINIMUM), "Minimum"s),
+                                Kr::selectItem(Model::bind<ChangeMargin>(MarginOption::DEFAULT), "Default"s),
+                                Kr::selectItem(Model::bind<ChangeMargin>(Math::InsetsAu{}), "Custom"s),
                             };
                         },
                         "Margins"s

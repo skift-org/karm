@@ -173,38 +173,20 @@ export Res<PaperStock> lookupStockByName(Str name) {
 
 // MARK: Print Settings --------------------------------------------------------
 
-export struct Margins {
-    enum struct Named {
-        DEFAULT,
-        NONE,
-        MINIMUM,
-        CUSTOM,
+export enum struct MarginOption {
+    DEFAULT,
+    NONE,
+    MINIMUM,
 
-        _LEN
-    };
-    using enum Named;
-    Named named;
-    Math::InsetsAu custom = mmToAu(20.0);
-
-    Margins(Named named)
-        : named(named) {}
-
-    Margins(Math::InsetsAu custom)
-        : named(CUSTOM), custom(custom) {}
-
-    bool operator==(Named named) const {
-        return this->named == named;
-    }
-
-    void repr(Io::Emit& e) const {
-        e("{}", named);
-    }
+    _LEN
 };
+
+export using Margins = Union<MarginOption, Math::InsetsAu>;
 
 export struct Settings {
     PaperStock stock = A4;
     Orientation orientation = Orientation::PORTRAIT;
-    Margins margins = Margins::DEFAULT;
+    Margins margins = MarginOption::DEFAULT;
     f64 scale = 1.;
     bool headerFooter = true;
     bool backgroundGraphics = true;
