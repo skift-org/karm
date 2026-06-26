@@ -290,8 +290,14 @@ struct ValueParser<Opt<T>> {
 export template <typename... Ts>
 struct ValueParser<Union<Ts...>> {
     static Res<> usage(Io::TextWriter& w) {
-        return Meta::any<Ts...>([&w]<typename T>() -> Res<> {
-            return ValueParser<T>::usage(w);
+        bool first = true;
+        return Meta::all<Ts...>([&w, &first]<typename T>() -> Res<> {
+            if (not first)
+                try$(w.writeStr(" | "s));
+            else
+                first = false;
+            try$(ValueParser<T>::usage(w));
+            return Ok();
         });
     }
 
