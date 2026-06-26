@@ -114,15 +114,9 @@ struct ValueParser<T> {
         if (c.ended() or c->kind != Token::OPERAND)
             return Error::invalidInput("expected enum value");
 
-        auto value = c.next().value;
-
-        auto items = enumItems<T>();
-        for (auto& i : items) {
-            if (eqCi(i.name, value))
-                return Ok(static_cast<T>(i.value));
-        }
-
-        return Error::invalidInput("expected enum value");
+        auto res = try$(valueOfCi<T>(c->value).okOr(Error::invalidInput("expected enum value")));
+        c.next();
+        return Ok(res);
     }
 };
 
@@ -136,13 +130,9 @@ struct ValueParser<isize> {
         if (c.ended() or c->kind != Token::OPERAND)
             return Error::other("missing value");
 
-        auto value = c.next().value;
-
-        auto result = Io::atoi(value);
-        if (not result)
-            return Error::other("expected integer");
-
-        return Ok(result.unwrap());
+        auto res = try$(Io::atoi(c->value).okOr(Error::other("expected integer")));
+        c.next();
+        return Ok(res);
     }
 };
 
@@ -208,7 +198,9 @@ struct ValueParser<Ref::Uuid> {
         if (c.ended() or c->kind != Token::OPERAND)
             return Error::other("expected mime");
 
-        return Ref::Uuid::parse(c.next().value);
+        auto res = try$(Ref::Uuid::parse(c->value));
+        c.next();
+        return Ok(std::move(res));
     }
 };
 
@@ -263,7 +255,6 @@ struct ValueParser<Ref::Url> {
     static Res<Ref::Url> parse(Cursor<Token>& c) {
         if (c.ended() or c->kind != Token::OPERAND)
             return Error::other("expected url");
-
         return Ok(Ref::parseUrlOrPath(c.next().value, Sys::globalEnv().cwd()));
     }
 };
@@ -292,8 +283,25 @@ struct ValueParser<Opt<T>> {
     static Res<Opt<T>> parse(Cursor<Token>& c) {
         if (c.ended() or c->kind != Token::OPERAND)
             return Ok(NONE);
-
         return ValueParser<T>::parse(c);
+    }
+};
+
+export template <typename... Ts>
+struct ValueParser<Union<Ts...>> {
+    static Res<> usage(Io::TextWriter& w) {
+        return Meta::any<Ts...>([&w]<typename T>() -> Res<> {
+            return ValueParser<T>::usage(w);
+        });
+    }
+
+    static Res<Union<Ts...>> parse(Cursor<Token>& c) {
+        if (c.ended() or c->kind != Token::OPERAND)
+            return Error::other("expected union");
+
+        return Meta::any<Ts...>([&c]<typename T>() -> Res<Union<Ts...>> {
+            return ValueParser<T>::parse(c);
+        });
     }
 };
 
@@ -344,14 +352,14 @@ export struct _OptionImpl {
 
 export template <typename T>
 struct OptionImpl : _OptionImpl {
-    Opt<T> value;
+    T value;
 
     OptionImpl(
         OptionKind kind,
         Opt<Rune> shortName,
         String longName,
         String description,
-        Opt<T> defaultValue
+        T defaultValue
     ) : _OptionImpl(kind, shortName, std::move(longName), std::move(description)),
         value(std::move(defaultValue)) {}
 
@@ -369,11 +377,11 @@ struct Option {
         : _impl(std::move(impl)) {}
 
     T const& value() const {
-        return _impl->value.unwrap();
+        return _impl->value;
     }
 
-    bool has() const {
-        return _impl->value.has();
+    operator T const&() const {
+        return _impl->value;
     }
 
     operator Rc<_OptionImpl>() {
@@ -388,7 +396,7 @@ export Flag flag(Opt<Rune> shortName, String longName, String description) {
 }
 
 export template <typename T>
-Option<T> option(Opt<Rune> shortName, String longName, String description, Opt<T> defaultValue = NONE) {
+Option<T> option(Opt<Rune> shortName, String longName, String description, T defaultValue = {}) {
     return makeRc<OptionImpl<T>>(OptionKind::OPTION, shortName, longName, description, defaultValue);
 }
 
