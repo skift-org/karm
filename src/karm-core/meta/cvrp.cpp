@@ -128,4 +128,9 @@ struct _RemovePtr<T*> {
 export template <typename T>
 using RemovePtr = typename _RemovePtr<RemoveConstVolatile<T>>::Type;
 
+// MARK: Decay -----------------------------------------------------------------
+
+template <typename T>
+using Decay = __decay(T);
+
 } // namespace Karm::Meta
