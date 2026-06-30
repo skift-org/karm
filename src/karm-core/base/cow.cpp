@@ -36,6 +36,18 @@ struct Cow {
     bool sameInstance(Cow const& other) const {
         return _inner.sameInstance(other._inner);
     }
+
+    bool operator==(Cow const& other) const {
+        return _inner == other._inner;
+    }
+
+    auto operator<=>(Cow const& other) const {
+        return _inner <=> other._inner;
+    }
+
+    void hash(Meta::Derive<Hasher> auto& h) const {
+        Karm::hash(h, _inner);
+    }
 };
 
 export template <typename T, typename... Args>
