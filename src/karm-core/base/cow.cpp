@@ -8,12 +8,10 @@ export template <typename T>
 struct Cow {
     Rc<T> _inner = default_();
 
-    static Opt<Rc<T>> _base;
-
     static Rc<T> default_() {
-        if (not _base) {
+        static Opt<Rc<T>> _base = NONE;
+        if (not _base)
             _base = makeRc<T>();
-        }
         return _base.unwrap();
     }
 
@@ -39,9 +37,6 @@ struct Cow {
         return _inner.sameInstance(other._inner);
     }
 };
-
-template <typename T>
-Opt<Rc<T>> Cow<T>::_base = NONE;
 
 export template <typename T, typename... Args>
 Cow<T> makeCow(Args&&... args) {
