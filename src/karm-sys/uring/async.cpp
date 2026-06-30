@@ -28,7 +28,7 @@ struct __kernel_timespec toKernelTimespec(Instant ts) {
 
 struct __kernel_timespec toKernelTimespec(Duration ts) {
     struct __kernel_timespec kts;
-    if (ts.isInfinite()) {
+    if (ts.infinite()) {
         kts.tv_sec = Limits<long>::MAX;
         kts.tv_nsec = 0;
         return kts;
@@ -407,7 +407,7 @@ struct UringSched : Sys::Sched {
     Res<> wait(Instant until) override {
         Instant now = Sys::instant();
 
-        Duration delta = Duration::zero();
+        Duration delta = Duration::ZERO;
         if (now < until)
             delta = until - now;
 

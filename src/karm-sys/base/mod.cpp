@@ -37,7 +37,7 @@ export struct DirEntry {
         if (type == Type::DIR)
             return Ref::Uti::PUBLIC_DIRECTORY;
         else if (type == Type::FILE)
-            return Ref::Uti::fromSuffix(Ref::suffixOf(name));
+            return Ref::Uti::fromSuffix(Ref::Path::parse(name).suffix());
         else
             return Ref::Uti::PUBLIC_ITEM;
     }

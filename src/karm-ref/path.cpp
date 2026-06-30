@@ -10,27 +10,17 @@ import Karm.Core;
 
 namespace Karm::Ref {
 
-// MARK: Path ------------------------------------------------------------------
-
-export Str suffixOf(Str str) {
-    auto dotIndex = lastIndexOf(str, '.');
-    if (not dotIndex.has())
-        return "";
-    return next(str, *dotIndex + 1);
-}
-
 export struct Path {
-    static constexpr auto SEP = '/';
+    static constexpr auto SEPARATOR = '/';
 
-    bool rooted = false;
-    Vec<String> _segs;
+    Vec<String> _segments;
+    bool _absolute = false;
 
     static Path parse(Io::SScan& s, bool inUrl = false, bool stopAtWhitespace = false) {
         Path path;
 
-        if (s.skip(SEP)) {
-            path.rooted = true;
-        }
+        if (s.skip(SEPARATOR))
+            path._absolute = true;
 
         s.begin();
         while (not s.ended()) {
@@ -40,8 +30,8 @@ export struct Path {
             if (stopAtWhitespace and isAsciiSpace(s.peek()))
                 break;
 
-            if (s.peek() == SEP) {
-                path._segs.pushBack(s.end());
+            if (s.peek() == SEPARATOR) {
+                path._segments.pushBack(s.end());
                 s.next();
                 s.begin();
             } else {
@@ -51,7 +41,7 @@ export struct Path {
 
         auto last = s.end();
         if (last.len() > 0)
-            path._segs.pushBack(last);
+            path._segments.pushBack(last);
 
         return path;
     }
@@ -63,28 +53,52 @@ export struct Path {
 
     void normalize() {
         Vec<String> parts;
-        for (auto const& part : _segs) {
+        for (auto const& part : _segments) {
             if (part == ".")
                 continue;
 
             if (part == "..") {
                 if (parts.len() > 0) {
                     parts.popBack();
-                } else if (not rooted) {
+                } else if (not _absolute) {
                     parts.pushBack(part);
                 }
             } else
                 parts.pushBack(part);
         }
 
-        _segs = parts;
+        _segments = parts;
+    }
+
+    void absolutize() {
+        _absolute = true;
+    }
+
+    void relativize() {
+        _absolute = false;
+    }
+
+    bool absolute() const {
+        return _absolute;
+    }
+
+    void absolute(bool value) {
+        _absolute = value;
+    }
+
+    bool relative() const {
+        return not _absolute;
+    }
+
+    void relative(bool value) {
+        _absolute = not value;
     }
 
     Str basename() const {
-        if (not _segs.len())
+        if (not _segments.len())
             return {};
 
-        return last(_segs);
+        return last(_segments);
     }
 
     Str stem() const {
@@ -108,11 +122,11 @@ export struct Path {
     }
 
     Path join(Path const& other) const {
-        if (other.rooted)
+        if (other._absolute)
             return other;
 
         Path path = *this;
-        path._segs.pushBack(other._segs);
+        path._segments.pushBack(other._segments);
         path.normalize();
         return path;
     }
@@ -122,21 +136,21 @@ export struct Path {
     }
 
     void append(Str part) {
-        _segs.pushBack(part);
+        _segments.pushBack(part);
     }
 
     Path parent(usize n = 1) const {
         Path path = *this;
-        path._segs.resize(path._segs.len() > n ? path._segs.len() - n : 0);
+        path._segments.resize(path._segments.len() > n ? path._segments.len() - n : 0);
         return path;
     }
 
-    bool isParentOf(Path const& other) const {
+    bool parentOf(Path const& other) const {
         if (len() > other.len())
             return false;
 
         for (usize i = 0; i < len(); i++) {
-            if (_segs[i] != other._segs[i])
+            if (_segments[i] != other._segments[i])
                 return false;
         }
 
@@ -144,17 +158,17 @@ export struct Path {
     }
 
     Res<> unparse(Io::TextWriter& writer) const {
-        if (not rooted and len() == 0)
+        if (not _absolute and len() == 0)
             try$(writer.writeRune('.'));
 
-        if (rooted and len() == 0)
-            try$(writer.writeRune(SEP));
+        if (_absolute and len() == 0)
+            try$(writer.writeRune(SEPARATOR));
 
-        bool first = not rooted;
+        bool first = not _absolute;
 
-        for (auto const& part : _segs) {
+        for (auto const& part : _segments) {
             if (not first)
-                try$(writer.writeRune(SEP));
+                try$(writer.writeRune(SEPARATOR));
             try$(writer.writeStr(part.str()));
             first = false;
         }
@@ -168,25 +182,25 @@ export struct Path {
         return writer.str();
     }
 
-    Slice<String> parts() const {
-        return _segs;
+    Slice<String> segments() const {
+        return _segments;
     }
 
     auto iter() const {
-        return Karm::iter(_segs);
+        return Karm::iter(_segments);
     }
 
     Str operator[](usize i) const {
-        return _segs[i];
+        return _segments[i];
     }
 
     usize len() const {
-        return _segs.len();
+        return _segments.len();
     }
 
     void hash(Meta::Derive<Hasher> auto& h) const {
-        Karm::hash(h, rooted);
-        Karm::hash(h, _segs);
+        Karm::hash(h, _absolute);
+        Karm::hash(h, _segments);
     }
 
     bool operator==(Path const&) const = default;

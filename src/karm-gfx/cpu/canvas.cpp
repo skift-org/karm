@@ -314,7 +314,7 @@ export struct CpuCanvas : Canvas {
         bool isSuitableForFastFill =
             radii.zero() and
             current().fill.is<Color>() and
-            current().trans.isAxisAligned() and
+            current().trans.axisAligned() and
             not current().clipMask.has() and
             current().opacity > 0.99;
 
@@ -334,7 +334,7 @@ export struct CpuCanvas : Canvas {
     }
 
     void clip(Math::Rectf r) override {
-        if (current().trans.isAxisAligned()) {
+        if (current().trans.axisAligned()) {
             r = current().trans.apply(r).bound();
             current().clip = r.cast<isize>().clipTo(current().clip);
             return;

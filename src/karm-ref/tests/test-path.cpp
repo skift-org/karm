@@ -36,13 +36,13 @@ test$("karm-ref-path-up-down") {
 }
 
 test$("karm-ref-path-parent-of") {
-    expect$(""_path.isParentOf(""_path));
-    expect$("/a"_path.isParentOf("/a"_path));
-    expect$("/a"_path.isParentOf("/a/b"_path));
-    expect$("/a"_path.isParentOf("/a/b/c"_path));
-    expect$("/a/b"_path.isParentOf("/a/b/c"_path));
-    expectNot$("/a/c"_path.isParentOf("/a/b/c"_path));
-    expect$("."_path.isParentOf("."_path));
+    expect$(""_path.parentOf(""_path));
+    expect$("/a"_path.parentOf("/a"_path));
+    expect$("/a"_path.parentOf("/a/b"_path));
+    expect$("/a"_path.parentOf("/a/b/c"_path));
+    expect$("/a/b"_path.parentOf("/a/b/c"_path));
+    expectNot$("/a/c"_path.parentOf("/a/b/c"_path));
+    expect$("."_path.parentOf("."_path));
 
     return Ok();
 }

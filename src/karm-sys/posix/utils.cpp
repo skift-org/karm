@@ -252,7 +252,7 @@ export struct timespec toTimespec(SystemTime ts) {
 
 export timespec toTimespec(Duration ts) {
     timespec pts{};
-    if (ts.isInfinite()) {
+    if (ts.infinite()) {
         pts.tv_sec = Limits<long>::MAX;
         pts.tv_nsec = 0;
         return pts;
@@ -326,14 +326,14 @@ export Res<Ref::Path> resolve(Ref::Url const& url) {
         }
 
         auto path = url.path;
-        path.rooted = false;
+        path.relativize();
 
         resolved = Ref::Path::parse(runtimeDir).join(path);
     } else if (url.scheme == "bundle") {
         auto [repo, format] = try$(Posix::repoRoot());
 
         auto path = url.path;
-        path.rooted = false;
+        path.relativize();
 
         if (format == Posix::RepoType::CUTEKIT) {
             resolved = Ref::Path::parse(repo)
@@ -354,7 +354,7 @@ export Res<Ref::Path> resolve(Ref::Url const& url) {
             return Error::notFound("HOME not set");
 
         auto path = url.path;
-        path.rooted = false;
+        path.relativize();
 
         if (url.host == "home")
             resolved = Ref::Path::parse(maybeHome).join(path);

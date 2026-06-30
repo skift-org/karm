@@ -148,10 +148,10 @@ struct Range {
     }
 
     Opt<bool> ensureAligned(T alignment) const {
-        if (not isAlign(start, alignment))
+        if (not aligned(start, alignment))
             return NONE;
 
-        if (not isAlign(size, alignment))
+        if (not aligned(size, alignment))
             return NONE;
 
         return true;

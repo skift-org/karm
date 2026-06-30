@@ -20,12 +20,12 @@ export constexpr usize alignUp(usize addr, usize align) {
     return (addr + align - 1) & ~(align - 1);
 }
 
-export constexpr bool isAlign(usize addr, usize align) {
+export constexpr bool aligned(usize addr, usize align) {
     return alignDown(addr, align) == addr;
 }
 
 export constexpr Opt<bool> ensureAlign(usize addr, usize align) {
-    if (not isAlign(addr, align))
+    if (not aligned(addr, align))
         return NONE;
     return true;
 }

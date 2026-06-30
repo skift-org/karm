@@ -103,7 +103,7 @@ union Trans2 {
         return ox != 0 or oy != 0;
     }
 
-    bool isAxisAligned() const {
+    bool axisAligned() const {
         return Math::epsilonEq(xy, T{0.}) and Math::epsilonEq(yx, T{0.});
     }
 

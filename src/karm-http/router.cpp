@@ -95,31 +95,31 @@ export struct RoutePattern {
 
         RouteParams params;
 
-        Cursor parts = url.path.parts();
+        Cursor segments = url.path.segments();
 
         for (auto& seg : _segments) {
-            if (parts.ended())
+            if (segments.ended())
                 return NONE;
 
             switch (seg.type) {
             case Segment::PARAM:
-                params.put(seg.value, parts.next());
+                params.put(seg.value, segments.next());
                 break;
 
             case Segment::PATH:
-                if (seg.value != *parts)
+                if (seg.value != *segments)
                     return NONE;
-                parts.next();
+                segments.next();
                 break;
 
             case Segment::EXTRA: {
                 StringBuilder sb;
 
                 bool first = true;
-                while (not parts.ended()) {
+                while (not segments.ended()) {
                     if (not first)
                         sb.append('/');
-                    sb.append(parts.next());
+                    sb.append(segments.next());
                     first = false;
                 }
 
@@ -132,7 +132,7 @@ export struct RoutePattern {
             }
         }
 
-        if (not parts.ended())
+        if (not segments.ended())
             return NONE;
 
         return params;

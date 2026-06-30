@@ -44,7 +44,7 @@ export struct Request {
             return Error::invalidData("Expected space");
 
         auto path = Ref::Path::parse(s, true, true);
-        path.rooted = true;
+        path.absolutize();
         path.normalize();
         req.url.path = path;
 
@@ -90,8 +90,8 @@ export struct Request {
     Res<> unparse(Io::TextWriter& w) const {
         // Start line
         auto path = url.path;
-        path.rooted = true;
-        try$(Io::format(w, "{} {} ", toStr(method), url.path));
+        path.absolutize();
+        try$(Io::format(w, "{} {} ", toStr(method), path));
 
         try$(version.unparse(w));
         try$(w.writeStr("\r\n"s));

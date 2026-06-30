@@ -59,12 +59,12 @@ test$("karm-ref-url-unparse") {
 }
 
 test$("karm-ref-url-parent-of") {
-    expect$("http://example.com/"_url.isParentOf("http://example.com/"_url));
-    expect$("http://example.com"_url.isParentOf("http://example.com/a"_url));
-    expect$("http://example.com"_url.isParentOf("http://example.com/a/b"_url));
+    expect$("http://example.com/"_url.parentOf("http://example.com/"_url));
+    expect$("http://example.com"_url.parentOf("http://example.com/a"_url));
+    expect$("http://example.com"_url.parentOf("http://example.com/a/b"_url));
 
-    expectNot$("http://example.com/a"_url.isParentOf("http://example.com"_url));
-    expectNot$("http://example.com/a/b"_url.isParentOf("http://example.com"_url));
+    expectNot$("http://example.com/a"_url.parentOf("http://example.com"_url));
+    expectNot$("http://example.com/a/b"_url.parentOf("http://example.com"_url));
 
     return Ok();
 }

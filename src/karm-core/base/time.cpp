@@ -11,13 +11,8 @@ export using _TimeVal = u64;
 export struct Duration {
     _TimeVal _value; // microseconds (us) aka 1/1,000,000th of a second
 
-    static constexpr Duration zero() {
-        return Duration{0};
-    }
-
-    static constexpr Duration infinite() {
-        return Duration{~0uz};
-    }
+    static Duration const ZERO;
+    static Duration const INFINITE;
 
     static constexpr Duration fromUSecs(_TimeVal value) {
         return {value};
@@ -61,7 +56,7 @@ export struct Duration {
     constexpr Duration(_TimeVal value)
         : _value(value) {}
 
-    constexpr bool isInfinite() const {
+    constexpr bool infinite() const {
         return _value == ~0uz;
     }
 
@@ -127,6 +122,9 @@ export struct Duration {
     bool operator==(Duration const& other) const = default;
 };
 
+constexpr Duration Duration::ZERO = Duration{0};
+constexpr Duration Duration::INFINITE = Duration{~0UL};
+
 export struct MonotonicClock {
     static constexpr bool monotonic = true;
 };
@@ -171,7 +169,7 @@ struct _Instant {
     }
 
     constexpr _Instant operator+(Duration other) const {
-        if (other.isInfinite()) {
+        if (other.infinite()) {
             return endOfTime();
         }
         if (isEndOfTime()) {
@@ -189,7 +187,7 @@ struct _Instant {
 
     constexpr Duration operator-(_Instant other) const {
         if (isEndOfTime() or other.isEndOfTime()) {
-            return Duration::infinite();
+            return Duration::INFINITE;
         }
         return _value - other._value;
     }
@@ -322,7 +320,7 @@ export struct Year {
     constexpr Year(isize raw = 0)
         : _raw(raw) {}
 
-    constexpr bool isLeap() const {
+    constexpr bool leap() const {
         return (_raw % 4 == 0 and _raw % 100 != 0) or _raw % 400 == 0;
     }
 
@@ -335,7 +333,7 @@ export struct Year {
     }
 
     Day days() const {
-        return isLeap() ? 366 : 365;
+        return leap() ? 366 : 365;
     }
 
     constexpr Day daysIn(Month month) const {
@@ -354,7 +352,7 @@ export struct Year {
         case 10:
             return 30;
         case 1:
-            return isLeap() ? 29 : 28;
+            return leap() ? 29 : 28;
         default:
             return 0;
         }
@@ -457,7 +455,7 @@ export struct Date {
         usize days{};
 
         for (isize y = 1970; y < isize(year); y++) {
-            days += Year{y}.isLeap() ? 366 : 365;
+            days += Year{y}.leap() ? 366 : 365;
         }
 
         for (isize m = 0; m < isize(month); m++) {

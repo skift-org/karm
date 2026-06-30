@@ -166,8 +166,8 @@ export struct Url {
                s.skip(':');
     }
 
-    bool rooted() const {
-        return path.rooted;
+    bool absolute() const {
+        return path.absolute();
     }
 
     Url join(Path const& other) const {
@@ -194,12 +194,12 @@ export struct Url {
         return url;
     }
 
-    bool isParentOf(Url const& other) const {
+    bool parentOf(Url const& other) const {
         bool same = scheme == other.scheme and
                     host == other.host and
                     port == other.port;
 
-        return same and path.isParentOf(other.path);
+        return same and path.parentOf(other.path);
     }
 
     Res<> unparse(Io::TextWriter& writer) const {
@@ -218,7 +218,7 @@ export struct Url {
         if (port)
             try$(Io::format(writer, ":{}", port.unwrap()));
 
-        if (path.rooted or path.len() > 0)
+        if (path.absolute() or path.len() > 0)
             try$(path.unparse(writer));
 
         if (query)
@@ -264,7 +264,7 @@ export struct Url {
     static Path _mergePaths(Url const& baseUrl, Url const& referenceUrl) {
         if (baseUrl.host and baseUrl.path.len() == 0) {
             Path path = referenceUrl.path;
-            path.rooted = true;
+            path.absolutize();
             return path;
         }
 
@@ -295,7 +295,7 @@ export struct Url {
             if (referenceUrl.query)
                 targetUrl.query = referenceUrl.query;
         } else {
-            if (referenceUrl.path.rooted)
+            if (referenceUrl.path.absolute())
                 targetUrl.path = referenceUrl.path;
             else
                 targetUrl.path = _mergePaths(baseUrl, referenceUrl);
