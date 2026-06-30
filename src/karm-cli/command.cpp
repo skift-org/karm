@@ -723,15 +723,11 @@ export struct Command : Meta::Pinned {
             co_return Ok();
         }
 
-        if (_debug.value().len()) {
-            if (co_try$(handleDescriptors(Debug::DEBUG, _debug.value())))
-                co_return Ok();
-        }
+        if (co_try$(handleDescriptors(Debug::DEBUG, _debug.value())))
+            co_return Ok();
 
-        if (_features.value().len()) {
-            if (co_try$(handleDescriptors(Debug::FEATURE, _features.value())))
-                co_return Ok();
-        }
+        if (co_try$(handleDescriptors(Debug::FEATURE, _features.value())))
+            co_return Ok();
 
         _invoked = true;
 
