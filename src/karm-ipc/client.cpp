@@ -32,9 +32,7 @@ export struct Client : Meta::NoCopy {
     Rc<_State> _state;
     Opt<bool> _active = true; // HACK: Abuse the fact that when an Opt is moved from it become NONE
 
-    static Async::Task<Client> connectAsync(Ref::Url url, Async::CancellationToken ct) {
-        auto connection = co_try$(Sys::IpcConnection::connect(url));
-
+    static Async::Task<Client> connectAsync(Sys::IpcConnection connection, Ref::Url url, Async::CancellationToken ct) {
         // When a broker established the connection, it already delivered the
         // url to the server on our behalf.
         if (not connection.brokered())
@@ -49,9 +47,15 @@ export struct Client : Meta::NoCopy {
         co_return Ok<Client>(std::move(connection));
     }
 
+    static Async::Task<Client> connectAsync(Ref::Url url, Async::CancellationToken ct) {
+        auto connection = co_try$(Sys::IpcConnection::connect(url));
+        co_return co_await connectAsync(connection, url, ct);
+    }
+
     Client(Sys::IpcConnection con) : _state(makeRc<_State>(std::move(con))) {
         Async::detach(_receiverTask(_state, _state->cancellation.token()), [](Res<> res) {
-            logError("receiver task exited: {}", res);
+            if (not res and res.none() != Error::Code::INTERRUPTED)
+                logError("receiver task exited: {}", res);
         });
     }
 

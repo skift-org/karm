@@ -52,6 +52,10 @@ export struct Message {
         return _header;
     }
 
+    bool event() const {
+        return header().seq == SEQ_EVENT;
+    }
+
     usize len() const {
         return _len;
     }

@@ -23,6 +23,14 @@ Res<> send(Sys::IpcConnection& con, u64 seq, T const& payload) {
     return Ok();
 }
 
+export template <typename T>
+Res<> resp(Sys::IpcConnection& con, Message& msg, Res<typename T::Response> payload) {
+    auto header = msg._header;
+    if (not payload)
+        return Ipc::send<Error>(con, header.seq, payload.none());
+    return Ipc::send<typename T::Response>(con, header.seq, payload.take());
+}
+
 export Async::Task<Box<Message>> recvAsync(Sys::IpcConnection& con, Async::CancellationToken ct) {
     Box<Message> msg = makeBox<Message>();
     auto [bufLen, hndsLen] = co_trya$(con.recvAsync(msg->_buf, msg->_hnds, ct));

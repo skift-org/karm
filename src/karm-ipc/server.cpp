@@ -30,10 +30,13 @@ export struct Session {
 
     template <typename T>
     Res<> resp(Message& msg, Res<typename T::Response> payload) {
-        auto header = msg._header;
-        if (not payload)
-            return Ipc::send<Error>(_connection, header.seq, payload.none());
-        return Ipc::send<typename T::Response>(_connection, header.seq, payload.take());
+        return Ipc::resp<T>(_connection, msg, payload);
+    }
+
+    Res<> unsupported(Message& msg) {
+        if (msg.event())
+            return Ok();
+        return Ipc::send<Error>(_connection, msg.header().seq, Error::unsupported("unsupported request"));
     }
 
     bool operator==(Session const& other) const {
@@ -126,7 +129,7 @@ export struct Server : Meta::NoCopy {
         while (true) {
             auto [connection, url] = co_trya$(_state->listener.acceptAsync(ct));
             Async::detach(acceptSessionAsync(std::move(connection), std::move(url), _state, _handler, _state->cancellation.token()), [](Res<> r) {
-                logDebug("connection closed {}", r);
+                logWarn("connection closed {}", r);
             });
         }
     }
