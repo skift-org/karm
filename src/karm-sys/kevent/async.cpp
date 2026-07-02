@@ -31,7 +31,7 @@ struct DarwinSched :
 
     struct timespec _computeTimeout(Instant until) {
         Instant now = Sys::instant();
-        Duration delta = Duration::zero();
+        Duration delta = Duration::ZERO;
         if (now < until)
             delta = until - now;
         return Posix::toTimespec(delta);

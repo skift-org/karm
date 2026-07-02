@@ -128,7 +128,7 @@ struct EpollSched : Sys::Sched {
 
     Async::Task<> sleepAsync(Instant until, Async::CancellationToken ct) override {
         Instant instant = Sys::instant();
-        Duration delta = Duration::zero();
+        Duration delta = Duration::ZERO;
         if (instant < until)
             delta = until - instant;
 
@@ -153,7 +153,7 @@ struct EpollSched : Sys::Sched {
     Res<> wait(Instant until) override {
         epoll_event ev;
         auto instant = Sys::instant();
-        Duration delta = Duration::zero();
+        Duration delta = Duration::ZERO;
         if (instant < until)
             delta = until - instant;
         int timeout = until.isEndOfTime() ? -1 : delta.toMSecs();
