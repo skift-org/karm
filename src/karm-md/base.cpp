@@ -33,6 +33,84 @@ export struct Code {
     }
 };
 
+export struct InlineCode {
+    String text;
+
+    void repr(Io::Emit& e) const {
+        e("(icode {#})", text);
+    }
+};
+
+export struct Html {
+    String text;
+
+    void repr(Io::Emit& e) const {
+        e("(html {#})", text);
+    }
+};
+
+export struct Italic {
+    Paragraph children;
+
+    void repr(Io::Emit& e) const {
+        e("(em {})", children);
+    }
+};
+
+export struct Bold {
+    Paragraph children;
+
+    void repr(Io::Emit& e) const {
+        e("(strong {})", children);
+    }
+};
+
+export struct Link {
+    String href;
+    Paragraph children;
+
+    void repr(Io::Emit& e) const {
+        e("(a {#} {})", href, children);
+    }
+};
+
+export struct Image {
+    String src;
+    String alt;
+
+    void repr(Io::Emit& e) const {
+        e("(img {#} {#})", src, alt);
+    }
+};
+
+export struct ListItem {
+    Vec<Node> children;
+
+    void repr(Io::Emit& e) const {
+        e("(li {})", children);
+    }
+};
+
+export struct List {
+    bool ordered;
+    Vec<ListItem> items;
+
+    void repr(Io::Emit& e) const {
+        if (ordered)
+            e("(ol {})", items);
+        else
+            e("(ul {})", items);
+    }
+};
+
+export struct Quote {
+    Vec<Paragraph> children;
+
+    void repr(Io::Emit& e) const {
+        e("(blockquote {})", children);
+    }
+};
+
 export struct Hr {
     void repr(Io::Emit& e) const {
         e("(hr)");
@@ -43,6 +121,14 @@ using _Node = Union<
     Paragraph,
     Heading,
     Code,
+    InlineCode,
+    Html,
+    Italic,
+    Bold,
+    Link,
+    Image,
+    List,
+    Quote,
     Hr,
     String>;
 
