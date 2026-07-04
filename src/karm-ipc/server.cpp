@@ -128,9 +128,18 @@ export struct Server : Meta::NoCopy {
     Async::Task<> servAsync(Async::CancellationToken ct) {
         while (true) {
             auto [connection, url] = co_trya$(_state->listener.acceptAsync(ct));
-            Async::detach(acceptSessionAsync(std::move(connection), std::move(url), _state, _handler, _state->cancellation.token()), [](Res<> r) {
-                logWarn("connection closed {}", r);
-            });
+            Async::detach(
+                acceptSessionAsync(
+                    std::move(connection),
+                    url,
+                    _state,
+                    _handler,
+                    _state->cancellation.token()
+                ),
+                [url](Res<> r) {
+                    logWarn("connection to {} closed {}", url, r);
+                }
+            );
         }
     }
 };
