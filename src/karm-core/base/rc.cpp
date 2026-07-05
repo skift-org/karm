@@ -12,11 +12,14 @@ import :meta.traits;
 
 namespace Karm {
 
+#define _sketchyOffsetOff(st, m) \
+    ((usize) & (((st*)0)->m))
+
 /// A reference-counted object heap cell.
 export template <typename I>
 struct _Cell {
     I _strong = 0;
-    I _weak = 1; 
+    I _weak = 1;
 
     virtual ~_Cell() = default;
 
@@ -36,7 +39,8 @@ struct _Cell {
 
     void derefStrong() {
         auto v = --_strong;
-        if (v < 0) [[unlikely]] panic("derefStrong() underflow");
+        if (v < 0) [[unlikely]]
+            panic("derefStrong() underflow");
         if (v == 0) {
             clear();
             derefWeak();
@@ -51,10 +55,10 @@ struct _Cell {
         return this;
     }
 
- 
     void derefWeak() {
         auto v = --_weak;
-        if (v < 0) [[unlikely]] panic("derefWeak() underflow");
+        if (v < 0) [[unlikely]]
+            panic("derefWeak() underflow");
         if (v == 0)
             delete this;
     }
@@ -101,8 +105,9 @@ struct _Rc {
 
     /// Get a strong reference back from a raw pointer.
     static _Rc fromRaw(T* ptr) {
+
         using CellType = Cell<I, T>;
-        usize offset = offsetof(CellType, _buf);
+        usize offset = _sketchyOffsetOff(CellType, _buf);
         auto cell = reinterpret_cast<_Cell<I>*>(reinterpret_cast<u8*>(ptr) - offset);
         return _Rc(MOVE, cell);
     }
@@ -315,7 +320,7 @@ struct _Weak {
 
     static _Weak fromRaw(T* ptr) {
         using CellType = Cell<I, T>;
-        usize offset = offsetof(CellType, _buf);
+        usize offset = _sketchyOffsetOff(CellType, _buf);
         auto cell = reinterpret_cast<_Cell<I>*>(reinterpret_cast<u8*>(ptr) - offset);
         return _Weak(MOVE, cell);
     }
@@ -327,7 +332,7 @@ struct _Weak {
     constexpr _Weak() = delete;
 
     constexpr _Weak(_Weak const& other)
-    : _cell(other._cell ? other._cell->refWeak() : nullptr) {}
+        : _cell(other._cell ? other._cell->refWeak() : nullptr) {}
 
     constexpr _Weak(_Weak&& other)
         : _cell(std::exchange(other._cell, nullptr)) {}
