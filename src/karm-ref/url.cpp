@@ -4,7 +4,6 @@ module;
 
 export module Karm.Ref:url;
 
-// https://url.spec.whatwg.org/
 import Karm.Core;
 import Karm.Crypto;
 
@@ -59,18 +58,27 @@ export String urlEncode(Io::SScan& s) {
     Io::StringWriter sw;
 
     while (not s.ended()) {
-        Rune r = s.next();
-        if (isAsciiAlphaNum(r) or r == '-' or r == '_' or r == '.' or r == '~') {
-            sw.append(r);
-        } else {
-            sw.append('%');
-            Io::format(sw, "{:02X}", (u8)r).unwrap();
+        Utf8::One one;
+        Utf8::encodeUnit(s.next(), one);
+        for (auto c : one) {
+            if (isAsciiAlphaNum(c) or c == '-' or c == '_' or c == '.' or c == '~') {
+                sw.append(c);
+            } else {
+                sw.append('%');
+                Io::format(sw, "{:02X}", static_cast<u8>(c)).unwrap();
+            }
         }
     }
 
     return sw.take();
 }
 
+export String urlEncode(Str str) {
+    Io::SScan s{str};
+    return urlEncode(s);
+}
+
+// https://url.spec.whatwg.org/#concept-url
 export struct Url {
     Symbol scheme = ""_sym;
     String userInfo;
@@ -170,6 +178,10 @@ export struct Url {
         return path.absolute();
     }
 
+    bool relative() const {
+        return path.relative();
+    }
+
     Url join(Path const& other) const {
         Url url = *this;
         url.path = url.path.join(other);
@@ -262,7 +274,7 @@ export struct Url {
     }
 
     static Path _mergePaths(Url const& baseUrl, Url const& referenceUrl) {
-        if (baseUrl.host and baseUrl.path.len() == 0) {
+        if (baseUrl.host and baseUrl.path.lenIncludingEndSlash() == 0) {
             Path path = referenceUrl.path;
             path.absolutize();
             return path;
@@ -291,7 +303,7 @@ export struct Url {
         }
 
         Url targetUrl = baseUrl;
-        if (referenceUrl.path.len() == 0) {
+        if (referenceUrl.path.lenIncludingEndSlash() == 0) {
             if (referenceUrl.query)
                 targetUrl.query = referenceUrl.query;
         } else {

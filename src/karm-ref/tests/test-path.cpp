@@ -39,6 +39,7 @@ test$("karm-ref-path-parent-of") {
     expect$(""_path.parentOf(""_path));
     expect$("/a"_path.parentOf("/a"_path));
     expect$("/a"_path.parentOf("/a/b"_path));
+    expect$("/a/"_path.parentOf("/a/b"_path));
     expect$("/a"_path.parentOf("/a/b/c"_path));
     expect$("/a/b"_path.parentOf("/a/b/c"_path));
     expectNot$("/a/c"_path.parentOf("/a/b/c"_path));
@@ -51,10 +52,11 @@ test$("karm-ref-path-str") {
     expectEq$(""_path.str(), "."s);
     expectEq$("/a/b/c"_path.str(), "/a/b/c"s);
     expectEq$("a/b/c"_path.str(), "a/b/c"s);
-    expectEq$("a/b/c/"_path.str(), "a/b/c"s);
+
+    expectEq$("a/b/c/"_path.str(), "a/b/c/"s);
     expectEq$("a/b/c/."_path.str(), "a/b/c/."s);
     expectEq$("a/b/c/.."_path.str(), "a/b/c/.."s);
-    expectEq$("a/b/c/../"_path.str(), "a/b/c/.."s);
+    expectEq$("a/b/c/../"_path.str(), "a/b/c/../"s);
 
     return Ok();
 }
@@ -99,6 +101,11 @@ test$("karm-ref-path-basename-stem-suffix") {
     expectEq$(path8.basename(), "file.txt"s);
     expectEq$(path8.stem(), "file"s);
     expectEq$(path8.suffix(), "txt"s);
+
+    auto path9 = "/dir/subdir/"_path;
+    expectEq$(path9.basename(), ""s);
+    expectEq$(path9.stem(), ""s);
+    expectEq$(path9.suffix(), ""s);
 
     return Ok();
 }

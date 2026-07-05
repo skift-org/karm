@@ -8,8 +8,11 @@ export module Karm.Ref:path;
 
 import Karm.Core;
 
+using namespace Karm::Literals;
+
 namespace Karm::Ref {
 
+// https://url.spec.whatwg.org/#concept-url-path
 export struct Path {
     static constexpr auto SEPARATOR = '/';
 
@@ -40,7 +43,7 @@ export struct Path {
         }
 
         auto last = s.end();
-        if (last.len() > 0)
+        if (last.len() > 0 or path._segments.len() > 0)
             path._segments.pushBack(last);
 
         return path;
@@ -51,20 +54,46 @@ export struct Path {
         return parse(s, inUrl, stopAtWhitespace);
     }
 
+    bool trailingSlash() const {
+        if (_segments.len() <= 0)
+            return false;
+
+        auto const& lastSeg = last(_segments);
+        return lastSeg == "" or lastSeg == "." or lastSeg == "..";
+    }
+
     void normalize() {
         Vec<String> parts;
+
         for (auto const& part : _segments) {
             if (part == ".")
                 continue;
 
             if (part == "..") {
                 if (parts.len() > 0) {
-                    parts.popBack();
+                    if (last(parts) == "") {
+                        parts.popBack();
+                        if (parts.len() > 0)
+                            parts.popBack();
+                    } else {
+                        parts.popBack();
+                    }
                 } else if (not _absolute) {
                     parts.pushBack(part);
                 }
-            } else
+            } else {
+                if (part == "" and _absolute and parts.len() == 0)
+                    continue;
                 parts.pushBack(part);
+            }
+        }
+
+        if (trailingSlash()) {
+            if (parts.len() == 0 or last(parts) != "") {
+                if (parts.len() > 0 or not _absolute) {
+                    parts.pushBack(""s);
+                }
+            }
         }
 
         _segments = parts;
@@ -136,6 +165,8 @@ export struct Path {
     }
 
     void append(Str part) {
+        if (_segments.len() > 0 and last(_segments) == "")
+            _segments.popBack();
         _segments.pushBack(part);
     }
 
@@ -183,19 +214,29 @@ export struct Path {
     }
 
     Slice<String> segments() const {
+        if (trailingSlash())
+            return sub(_segments, 0, _segments.len() - 1);
         return _segments;
     }
 
+    usize len() const {
+        return segments().len();
+    }
+
+    Slice<String> segmentsIncludingEndSlash() const {
+        return _segments;
+    }
+
+    usize lenIncludingEndSlash() const {
+        return _segments.len();
+    }
+
     auto iter() const {
-        return Karm::iter(_segments);
+        return Karm::iter(segments());
     }
 
     Str operator[](usize i) const {
-        return _segments[i];
-    }
-
-    usize len() const {
-        return _segments.len();
+        return segments()[i];
     }
 
     void hash(Meta::Derive<Hasher> auto& h) const {
