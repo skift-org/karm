@@ -6,6 +6,7 @@
     "requires": [
         "karm-logger.impl",
         "karm-core",
-        "karm-tty"
+        "karm-tty",
+        "karm-debug"
     ]
 }

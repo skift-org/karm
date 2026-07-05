@@ -2,6 +2,7 @@ export module Karm.Logger;
 
 import Karm.Core;
 import Karm.Tty;
+import Karm.Debug;
 
 export import :_embed;
 
@@ -29,10 +30,11 @@ struct Format {
 export constexpr Level PRINT = {-2, "print", Tty::BLUE};
 export constexpr Level YAP = {-1, "yappin'", Tty::GREEN};
 export constexpr Level DEBUG = {0, "debug", Tty::BLUE};
-export constexpr Level INFO = {1, "info ", Tty::GREEN};
-export constexpr Level WARNING = {2, "warn ", Tty::YELLOW};
+export constexpr Level INFO = {1, "info", Tty::GREEN};
+export constexpr Level WARNING = {2, "warn", Tty::YELLOW};
 export constexpr Level ERROR = {3, "error", Tty::RED};
 export constexpr Level FATAL = {4, "fatal", Tty::style(Tty::RED).bold()};
+static auto debugLogLocation = Debug::Flag::debug("logger-location", "Show log statement filename and line number.");
 
 void _catch(Res<> res) {
     if (res)
@@ -56,7 +58,9 @@ void _log(Level level, Format fmt, Io::_Args& args) {
 
     if (level.value != -2) {
         _catch(Io::format(out, "{} ", level.name | level.style));
-        _catch(Io::format(out, "{}{}:{}: ", Tty::reset().fg(Tty::GRAY_DARK), fmt.loc.file, fmt.loc.line));
+
+        if (debugLogLocation)
+            _catch(Io::format(out, "{}{}:{}: ", Tty::reset().fg(Tty::GRAY_DARK), fmt.loc.file, fmt.loc.line));
     }
 
     _catch(Io::format(out, "{}", Tty::reset()));
