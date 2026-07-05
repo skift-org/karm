@@ -32,6 +32,16 @@ export struct ResponseWriter : Aio::Writer {
         auto data = co_try$(Sys::readAllUtf8(url));
         co_return co_await writeStrAsync(data, ct);
     }
+
+    Async::Task<> redirectAsync(Code code, Ref::Url location, Async::CancellationToken ct) {
+        header.put(Header::LOCATION, location.str());
+        co_return co_await writeHeaderAsync(code, ct);
+    }
+
+    Async::Task<> notFoundAsync(Async::CancellationToken ct) {
+        code = Http::Code::NOT_FOUND;
+        co_return co_await writeStrAsync("Not Found"s, ct);
+    }
 };
 
 export struct Response {

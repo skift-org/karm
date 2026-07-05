@@ -45,7 +45,7 @@ export struct ServerProps {
 };
 
 export struct Server {
-    struct _ResponseWriter : Http::ResponseWriter {
+    struct _ResponseWriter : ResponseWriter {
         Rc<Sys::TcpConnection> _conn;
         bool _headerSent = false;
 
