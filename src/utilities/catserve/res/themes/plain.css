@@ -1,0 +1,13 @@
+:root {
+    font-family: sans-serif;
+    line-height: 1.5;
+}
+
+body {
+    width: 720px;
+    margin: 0 auto;
+}
+
+header a {
+    text-decoration: none;
+}

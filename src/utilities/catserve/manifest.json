@@ -1,0 +1,13 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "catserve",
+    "type": "exe",
+    "description": "Tiny static site server/generator",
+    "requires": [
+        "karm-http",
+        "karm-md",
+        "karm-sys",
+        "karm-cli",
+        "karm-template"
+    ]
+}
