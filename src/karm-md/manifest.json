@@ -5,6 +5,7 @@
     "description": "Markdown parser and renderer",
     "requires": [
         "karm-core",
+        "karm-ref",
         "karm-logger"
     ]
 }

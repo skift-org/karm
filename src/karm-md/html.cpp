@@ -3,6 +3,7 @@ export module Karm.Md:html;
 import Karm.Logger;
 
 import :base;
+import :parser;
 
 using namespace Karm::Literals;
 
@@ -11,7 +12,7 @@ namespace Karm::Md {
 void _renderParagraphContent(Paragraph const& p, Io::Emit& e);
 void _renderBlock(Node const& node, Io::Emit& e);
 
-String _htmlEscape(Str str) {
+export String htmlEscape(Str str) {
     StringBuilder sw;
     sw.ensure(str.len());
     for (auto r : iterRunes(str)) {
@@ -34,10 +35,10 @@ String _htmlEscape(Str str) {
 void _renderSpan(Node const& node, Io::Emit& e) {
     node.visit(
         [&](String const& s) {
-            e("{}", _htmlEscape(s));
+            e("{}", htmlEscape(s));
         },
         [&](InlineCode const& s) {
-            e("<code>{}</code>", _htmlEscape(s.text));
+            e("<code>{}</code>", htmlEscape(s.text));
         },
         [&](Html const& s) {
             e("{}", s.text);
@@ -53,12 +54,12 @@ void _renderSpan(Node const& node, Io::Emit& e) {
             e("</strong>");
         },
         [&](Link const& s) {
-            e("<a href=\"{}\">", _htmlEscape(s.href));
+            e("<a href=\"{}\">", htmlEscape(s.href.str()));
             _renderParagraphContent(s.children, e);
             e("</a>");
         },
         [&](Image const& s) {
-            e("<img src=\"{}\" alt=\"{}\"/>", _htmlEscape(s.src), _htmlEscape(s.alt));
+            e("<img src=\"{}\" alt=\"{}\"/>", htmlEscape(s.src.str()), htmlEscape(s.alt));
         },
         [&](auto const& n) {
             logWarn("could not render {} as a span", n);
@@ -105,7 +106,7 @@ void _renderBlock(Node const& node, Io::Emit& e) {
             e("</p>");
         },
         [&](Code const& p) {
-            e("<pre><code>{}</code></pre>", _htmlEscape(p.text));
+            e("<pre><code>{}</code></pre>", htmlEscape(p.text));
         },
         [&](Html const& h) {
             e("{}", h.text);
@@ -145,10 +146,25 @@ void _renderBlock(Node const& node, Io::Emit& e) {
     );
 }
 
-export void renderHtml(Document const& doc, Io::Emit& e) {
-    e(R"(<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body>)");
+export void renderHtmlFragment(Document const& doc, Io::Emit& e) {
     for (auto const& n : doc.children)
         _renderBlock(n, e);
+}
+
+export String renderHtmlFragment(Document const& doc) {
+    Io::StringWriter sw;
+    Io::Emit e{sw};
+    renderHtmlFragment(doc, e);
+    return sw.take();
+}
+
+export String md2htmlFragment(Str markdown) {
+    return renderHtmlFragment(parse(markdown));
+}
+
+export void renderHtml(Document const& doc, Io::Emit& e) {
+    e(R"(<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body>)");
+    renderHtmlFragment(doc, e);
     e(R"(</body></html>)");
 }
 
@@ -157,6 +173,10 @@ export String renderHtml(Document const& doc) {
     Io::Emit e{sw};
     renderHtml(doc, e);
     return sw.take();
+}
+
+export String md2html(Str markdown) {
+    return renderHtml(parse(markdown));
 }
 
 } // namespace Karm::Md

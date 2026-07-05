@@ -64,7 +64,7 @@ void _skipBlankLines(Io::SScan& s) {
 
 bool _isHr(Io::SScan s) {
     auto marker = s.peek();
-    if (marker != '*' and marker != '-' and marker != '_')
+    if (marker != '*' and marker != '-' and marker != '_' and marker != '.')
         return false;
 
     usize count = 0;
@@ -121,7 +121,12 @@ Opt<_ListMarker> _listMarker(Io::SScan s) {
 }
 
 bool _isBlockStart(Io::SScan s) {
-    return s.ahead('#') or s.ahead("```") or _isHr(s) or _listMarker(s) != NONE or _isHtmlBlockStart(s) or _isQuoteBlockStart(s);
+    return s.ahead('#') or
+           s.ahead("```") or
+           _isHr(s) or
+           _listMarker(s) != NONE or
+           _isHtmlBlockStart(s) or
+           _isQuoteBlockStart(s);
 }
 
 bool _matchesAt(Str text, usize index, Str marker) {
@@ -177,7 +182,7 @@ _InlineParseResult _parseInline(Str text, usize start, Str closing) {
                 if (close < text.len()) {
                     flushText();
                     children.pushBack(Image{
-                        .src = String{sub(text, inner.next + 1, close)},
+                        .src = Ref::Url::parse(sub(text, inner.next + 1, close)),
                         .alt = String{sub(text, index + 2, inner.next - 1)},
                     });
                     index = close + 1;
@@ -211,7 +216,7 @@ _InlineParseResult _parseInline(Str text, usize start, Str closing) {
                 if (close < text.len()) {
                     flushText();
                     children.pushBack(Link{
-                        .href = String{sub(text, inner.next + 1, close)},
+                        .href = Ref::Url::parse(sub(text, inner.next + 1, close)),
                         .children = std::move(inner.children),
                     });
                     index = close + 1;
@@ -493,17 +498,17 @@ Node _lowerBlock(_Block const& block) {
         [&](Hr const& hr) -> Node {
             return hr;
         },
-        [&]( _HtmlBlock const& html) -> Node {
+        [&](_HtmlBlock const& html) -> Node {
             return Html{html.text};
         },
-        [&]( _QuoteBlock const& quote) -> Node {
+        [&](_QuoteBlock const& quote) -> Node {
             Vec<Paragraph> children;
             for (auto const& paragraph : quote.paragraphs)
                 children.pushBack(_parseInline(paragraph));
 
             return Quote{std::move(children)};
         },
-        [&]( _ListBlock const& list) -> Node {
+        [&](_ListBlock const& list) -> Node {
             Vec<ListItem> items;
             for (auto const& item : list.items) {
                 Io::SScan scan{item};
@@ -515,26 +520,47 @@ Node _lowerBlock(_Block const& block) {
                 .items = std::move(items),
             };
         },
-        [&]( _HeadingBlock const& heading) -> Node {
+        [&](_HeadingBlock const& heading) -> Node {
             return Heading{
                 .level = heading.level,
                 .children = _parseInline(heading.text),
             };
         },
-        [&]( _ParagraphBlock const& paragraph) -> Node {
+        [&](_ParagraphBlock const& paragraph) -> Node {
             return _parseInline(paragraph.text);
         }
     );
 }
 
+Serde::Object _parseFrontmatter(Io::SScan& s) {
+    Serde::Object result;
+    if (not _isHr(s))
+        return result;
+    _parseHr(s);
+
+    while (not _isHr(s) and not s.ended()) {
+        auto key = s.token(Re::until('\n'_re | ':'_re));
+        if (not s.skip(":"))
+            continue;
+        s.eat(Re::blank());
+        auto value = s.token(Re::until('\n'_re));
+        result.put(key, value);
+        s.skip("\n");
+    }
+
+    _parseHr(s);
+    return result;
+}
+
 Document _parseDocument(Io::SScan& s) {
+    auto frontmatter = _parseFrontmatter(s);
     Vec<Node> children;
     _skipBlankLines(s);
     while (not s.ended()) {
         children.pushBack(_lowerBlock(_parseBlock(s)));
         _skipBlankLines(s);
     }
-    return Document{children};
+    return Document{std::move(frontmatter), std::move(children)};
 }
 
 export Document parse(Io::SScan& s) {
