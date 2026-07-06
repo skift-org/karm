@@ -29,7 +29,7 @@ export struct ResponseWriter : Aio::Writer {
     }
 
     Async::Task<> writeFileAsync(Ref::Url const& url, Async::CancellationToken ct) {
-        auto data = co_try$(Sys::readAllUtf8(url));
+        auto data = co_try$(Sys::readAllText<Utf8>(url));
         co_return co_await writeStrAsync(data, ct);
     }
 

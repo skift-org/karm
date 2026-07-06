@@ -20,7 +20,7 @@ export struct Test : Meta::Pinned {
     using Func = Res<> (*)(Driver&);
     using FuncAsync = Async::Task<> (*)(Driver&, Async::CancellationToken);
 
-    Str _name;
+    Str name;
     Kind _kind;
 
     union {
@@ -28,7 +28,7 @@ export struct Test : Meta::Pinned {
         FuncAsync _funcAsync;
     };
 
-    Loc _loc;
+    SourceLocation sourceLocation;
     Test* next = nullptr;
 
     static Test* first() {
@@ -45,8 +45,8 @@ export struct Test : Meta::Pinned {
         return n;
     }
 
-    Test(Str name, Func func, Loc loc = Loc::current())
-        : _name(name), _kind(SYNC), _func(func), _loc(loc) {
+    Test(Str name, Func func, SourceLocation loc = SourceLocation::current())
+        : name(name), _kind(SYNC), _func(func), sourceLocation(loc) {
         if (not _first) {
             _first = this;
             _last = this;
@@ -56,8 +56,8 @@ export struct Test : Meta::Pinned {
         }
     }
 
-    Test(Str name, FuncAsync func, Loc loc = Loc::current())
-        : _name(name), _kind(ASYNC), _funcAsync(func), _loc(loc) {
+    Test(Str name, FuncAsync func, SourceLocation loc = SourceLocation::current())
+        : name(name), _kind(ASYNC), _funcAsync(func), sourceLocation(loc) {
         if (not _first) {
             _first = this;
             _last = this;

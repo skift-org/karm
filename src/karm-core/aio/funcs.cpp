@@ -36,18 +36,6 @@ export Async::Task<Vec<u8>> readAllAsync(AsyncReadable auto& reader, Async::Canc
     co_return Ok(buf.take());
 }
 
-export Async::Task<String> readAllUtf8Async(AsyncReadable auto& reader, Async::CancellationToken ct) {
-    Io::StringWriter w;
-    Array<Utf8::Unit, 512> buf = {};
-    while (true) {
-        usize read = co_trya$(reader.readAsync(buf.mutBytes(), ct));
-        if (read == 0)
-            break;
-        co_try$(w.writeUnit(sub(buf, 0, read)));
-    }
-    co_return Ok(w.take());
-}
-
 export Async::Task<> drainAsync(AsyncReadable auto& reader, Async::CancellationToken ct) {
     Array<Utf8::Unit, 512> buf = {};
     while (true) {
@@ -56,6 +44,22 @@ export Async::Task<> drainAsync(AsyncReadable auto& reader, Async::CancellationT
             break;
     }
     co_return Ok();
+}
+
+export template <StaticEncoding E>
+Async::Task<_String<E>> readAllTextAsync(AsyncReadable auto& reader, Async::CancellationToken ct) {
+    Io::_StringWriter<E> w;
+    bool first = true;
+    Array<typename E::Unit, Io::DEFAULT_BUFFER_SIZE / sizeof(typename E::Unit)> buf = {};
+    while (true) {
+        usize read = co_trya$(reader.readAsync(buf.mutBytes(), ct));
+        if (read == 0)
+            break;
+        auto b = sub(buf, 0, read / sizeof(typename E::Unit));
+        co_try$(w.writeUnit(first ? stripPreamble<E>(b) : b));
+        first = false;
+    }
+    co_return Ok(w.take());
 }
 
 export Async::Task<Tuple<usize, bool>> readLineAsync(AsyncReadable auto& reader, AsyncWritable auto& writer, Bytes delim, Async::CancellationToken ct) {

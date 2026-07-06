@@ -45,7 +45,9 @@ export struct Heap : Meta::Pinned {
     }
 
     template <typename T, typename... Args>
-    Ref<T> alloc(Args&&... args) lifetimebound {
+    Ref<T> alloc(Args&&... args) lifetimebound
+        requires Meta::Constructible<T, Args...>
+    {
         auto* cell = new _Cell<T>(std::forward<Args>(args)...);
 
         if (not _root) {

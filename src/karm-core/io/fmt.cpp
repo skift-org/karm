@@ -10,6 +10,7 @@ import :base.endian;
 import :base.enum_;
 import :base.map;
 import :base.rc;
+import :base.loc;
 import :base.symbol;
 import :base.time;
 import :base.vec;
@@ -480,6 +481,15 @@ struct Formatter<T> {
         } else {
             return Io::format(writer, "({} {})", nameOf<T>(), toUnderlyingType(val));
         }
+    }
+};
+
+// MARK: Source Locations ------------------------------------------------------
+
+export template <>
+struct Formatter<SourceLocation> {
+    Res<> format(TextWriter& writer, SourceLocation const& val) {
+        return Io::format(writer, "{}:{}", val.file, val.line);
     }
 };
 

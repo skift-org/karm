@@ -27,7 +27,7 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
     if (not cmd)
         co_return Ok();
 
-    auto markdown = co_try$(Sys::readAllUtf8(urlArg.value()));
+    auto markdown = co_try$(Sys::readAllText<Utf8>(urlArg.value()));
     auto document = Md::parse(markdown);
     auto html = Md::renderHtml(document);
 

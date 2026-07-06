@@ -134,7 +134,7 @@ Ui::Child app(Vec<IconMetadata> icons) {
 }
 
 Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken ct) {
-    auto data = co_try$(Sys::readAllUtf8("bundle://mdi/icons.json"_url));
+    auto data = co_try$(Sys::readAllText<Utf8>("bundle://mdi/icons.json"_url));
     auto icons = co_try$(Json::parse(data));
 
     Vec<IconMetadata> metadatas;

@@ -9,7 +9,7 @@ namespace Karm::Cli {
 
 export Res<String> prompt(Str prompt = "]"s) {
     Sys::print("{} ", prompt);
-    return Io::readLineUtf8(Sys::in());
+    return Io::readLine<Utf8>(Sys::in());
 }
 
 } // namespace Karm::Cli

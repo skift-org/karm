@@ -16,13 +16,13 @@ struct Level {
 
 struct Format {
     Str str;
-    Loc loc;
+    SourceLocation loc;
 
-    Format(char const* str, Loc loc = Loc::current())
+    Format(char const* str, SourceLocation loc = SourceLocation::current())
         : str(str), loc(loc) {
     }
 
-    Format(Str str, Loc loc = Loc::current())
+    Format(Str str, SourceLocation loc = SourceLocation::current())
         : str(str), loc(loc) {
     }
 };
@@ -57,13 +57,14 @@ void _log(Level level, Format fmt, Io::_Args& args) {
     auto& out = Logger::_Embed::loggerOut();
 
     if (level.value != -2) {
-        _catch(Io::format(out, "{} ", level.name | level.style));
+        _catch(Io::format(out, "{}: ", level.name | level.style));
 
-        if (debugLogLocation)
-            _catch(Io::format(out, "{}{}:{}: ", Tty::reset().fg(Tty::GRAY_DARK), fmt.loc.file, fmt.loc.line));
+        if (debugLogLocation) {
+            _catch(Io::format(out, "{}{}:{}: ", Tty::reset().fg(Tty::GRAY_DARK), fmt.loc));
+            _catch(Io::format(out, "{}", Tty::reset()));
+        }
     }
 
-    _catch(Io::format(out, "{}", Tty::reset()));
     _catch(Io::_format(out, fmt.str, args));
     _catch(Io::format(out, "{}\n", Tty::reset()));
 

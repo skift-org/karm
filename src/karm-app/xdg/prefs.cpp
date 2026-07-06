@@ -21,7 +21,7 @@ struct XdgConfigPrefs : Prefs {
         : _url{std::move(url)} {}
 
     Serde::Value _load() {
-        auto data = Sys::readAllUtf8(_url).unwrapOr("{}"s);
+        auto data = Sys::readAllText<Utf8>(_url).unwrapOr("{}"s);
         Io::SScan s{data};
         return Json::parse(s).unwrapOr(Serde::Object{});
     }

@@ -97,6 +97,7 @@ concept DecodeInput = requires(T t, U u) {
 export struct Utf8 {
     using Unit = char;
     using One = _Multiple<Unit, 4>;
+    static constexpr Array PREAMBLE = {0xef, 0xbb, 0xbf};
 
     always_inline static constexpr usize unitLen(Unit first) {
         if ((first & 0xf8) == 0xf0)
@@ -188,6 +189,7 @@ export template <typename T>
 struct _Utf16 {
     using Unit = T;
     using One = _Multiple<Unit, 2>;
+    static constexpr Array PREAMBLE = {Unit(0xef), 0xbb, 0xbf};
 
     always_inline static constexpr usize unitLen(Unit first) {
         if (first >= 0xd800 and first <= 0xdbff)
@@ -263,6 +265,7 @@ static_assert(StaticEncoding<Utf16le>);
 export struct Utf32 {
     using Unit = char32_t;
     using One = _Single<Unit>;
+    static constexpr Array PREAMBLE = {Unit(0xef), 0xbb, 0xbf};
 
     always_inline static constexpr usize unitLen(Unit) {
         return 1;
@@ -480,6 +483,14 @@ bool encodeOne(Rune rune, One<E>& one) {
 export template <StaticEncoding E>
 bool encodeOne(One<E>& one, Rune& rune) {
     return E::decodeUnit(rune, one);
+}
+
+export template <StaticEncoding E>
+Slice<typename E::Unit> stripPreamble(Slice<typename E::Unit> units) {
+    if constexpr (requires { E::PREAMBLE; })
+        if (startWith(units, E::PREAMBLE) == Match::PARTIAL)
+            return next(units, E::PREAMBLE.len());
+    return units;
 }
 
 } // namespace Karm

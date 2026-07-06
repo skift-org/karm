@@ -30,20 +30,20 @@ export struct Driver {
     Async::Task<> runAllAsync(RunOptions options, Async::CancellationToken ct) {
         usize passed = 0, failed = 0, skipped = 0;
 
-        Sys::errln("Running {} tests...", Test::len());
+        Sys::errln("Running {} tests…", Test::len());
         if (options.glob != "*")
-            Sys::errln("Matching glob: {#}", options.glob);
+            Sys::errln("Matching glob: {:#}", options.glob);
 
         Sys::errln("");
 
         for (auto* test = Test::first(); test; test = test->next) {
-            if (not Glob::matchGlob(options.glob, test->_name))
+            if (not Glob::matchGlob(options.glob, test->name))
                 continue;
 
             Sys::err(
-                "Running {}: {}... ",
-                test->_loc.file,
-                Io::toNoCase(test->_name).unwrap()
+                "Running {:#}… ",
+                Io::toNoCase(test->name)
+                    .unwrap()
             );
 
             auto result = co_await test->runAsync(*this, ct);
@@ -54,6 +54,7 @@ export struct Driver {
             } else if (not result) {
                 if (options.fast) {
                     Sys::errln("{}", "FAIL"s | Tty::style(Tty::RED).bold());
+                    Sys::errln("{}", test->sourceLocation);
                     co_return Error::other("test failed");
                 }
                 failed++;
@@ -68,20 +69,20 @@ export struct Driver {
 
         if (skipped) {
             Sys::errln(
-                " {5} skipped",
+                " {:5} skipped",
                 skipped | YELLOW
             );
         }
 
         if (failed) {
             Sys::errln(
-                " {5} failed - {} {}",
+                " {:5} failed - {} {}",
                 failed | RED,
                 witty(Sys::now().val()) | NOTE,
                 badEmoji(Sys::now().val())
             );
             Sys::errln(
-                " {5} passed\n",
+                " {:5} passed\n",
                 passed | GREEN
             );
 
@@ -89,7 +90,7 @@ export struct Driver {
         }
 
         Sys::errln(
-            " {5} passed - {} {}\n",
+            " {:5} passed - {} {}\n",
             passed | GREEN,
             nice(Sys::now().val()) | NOTE,
             goodEmoji(Sys::now().val())
@@ -98,8 +99,8 @@ export struct Driver {
         co_return Ok();
     }
 
-    Res<> unexpect(auto const& lhs, auto const& rhs, Str op, Loc loc = Loc::current()) {
-        logError({"unexpected: {#} {} {#}"s, loc}, lhs, op, rhs);
+    Res<> unexpect(auto const& lhs, auto const& rhs, Str op, SourceLocation sourceLocation = SourceLocation::current()) {
+        logError({"unexpected: {:#} {} {:#}"s, sourceLocation}, lhs, op, rhs);
         return Error::other("unexpected");
     }
 };

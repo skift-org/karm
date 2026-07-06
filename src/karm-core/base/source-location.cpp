@@ -4,13 +4,13 @@ import :base.string;
 
 namespace Karm {
 
-export struct Loc {
+export struct SourceLocation {
     Str file{};
     Str func{};
     usize line{};
     usize column{};
 
-    static constexpr Loc current(
+    static constexpr SourceLocation current(
         Str file = __builtin_FILE(),
         Str func = __builtin_FUNCTION(),
         usize line = __builtin_LINE(),

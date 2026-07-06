@@ -130,9 +130,10 @@ export struct File :
 };
 
 /// Read the entire file as a UTF-8 string.
-export Res<String> readAllUtf8(Ref::Url const& url) {
+export template <StaticEncoding E>
+Res<_String<E>> readAllText(Ref::Url const& url) {
     auto file = try$(Sys::File::open(url));
-    return Io::readAllUtf8(file);
+    return Io::readAllText<Utf8>(file);
 }
 
 } // namespace Karm::Sys

@@ -24,28 +24,31 @@ export Res<u8> getByte(Readable auto& reader) {
     return Ok(byte);
 }
 
-export Res<String> readAllUtf8(Readable auto& reader) {
-    StringWriter writer;
-    Array<Utf8::Unit, 512> buf;
+export template <StaticEncoding E>
+Res<_String<E>> readAllText(Readable auto& reader) {
+    _StringWriter<E> writer;
+    bool first = true;
+    Array<typename E::Unit, DEFAULT_BUFFER_SIZE / sizeof(typename E::Unit)> buf;
     while (true) {
         usize read = try$(reader.read(buf.mutBytes()));
-        if (read == 0) {
+        if (read == 0)
             break;
-        }
-        try$(writer.writeUnit({buf.buf(), read}));
+        auto b = sub(buf, 0, read / sizeof(typename E::Unit));
+        try$(writer.writeUnit(first ? stripPreamble<E>(b) : b));
+        first = false;
     }
     return Ok(writer.take());
 }
 
-export Res<String> readLineUtf8(Readable auto& reader) {
-    StringWriter writer;
-    Array<Utf8::Unit, 1> buf;
+export template <StaticEncoding E>
+Res<_String<E>> readLine(Readable auto& reader) {
+    _StringWriter<E> writer;
+    Array<typename E::Unit, 1> buf;
     while (true) {
         auto read = try$(reader.read(buf.mutBytes()));
-        if (read == 0 or buf[0] == '\n') {
+        if (read == 0 or buf[0] == '\n')
             break;
-        }
-        try$(writer.writeUnit({buf.buf(), read}));
+        try$(writer.writeUnit({buf.buf(), read / sizeof(typename E::Unit)}));
     }
     return Ok(writer.take());
 }
@@ -94,7 +97,7 @@ export Res<usize> copy(Readable auto& reader, MutBytes bytes) {
 }
 
 export Res<usize> copy(Readable auto& reader, Writable auto& writer) {
-    Array<u8, Io::DEFAULT_BUFFER_SIZE> buffer;
+    Array<u8, DEFAULT_BUFFER_SIZE> buffer;
     usize result = 0;
     while (true) {
         auto read = try$(reader.read(mutBytes(buffer)));
@@ -110,7 +113,7 @@ export Res<usize> copy(Readable auto& reader, Writable auto& writer) {
 }
 
 export Res<usize> copy(Readable auto& reader, Writable auto& writer, usize size) {
-    Array<u8, Io::DEFAULT_BUFFER_SIZE> buf;
+    Array<u8, DEFAULT_BUFFER_SIZE> buf;
     usize result = 0;
     while (size > 0) {
         auto read = try$(reader.read(mutSub(buf, 0, size)));

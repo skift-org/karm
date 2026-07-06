@@ -90,7 +90,7 @@ export struct Body : Aio::Reader {
     }
 
     Async::Task<Serde::Value> readJsonAsync(Async::CancellationToken ct) {
-        auto str = co_trya$(Aio::readAllUtf8Async(*this, ct));
+        auto str = co_trya$(Aio::readAllTextAsync<Utf8>(*this, ct));
         co_return Json::parse(str);
     }
 

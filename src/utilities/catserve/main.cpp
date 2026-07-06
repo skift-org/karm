@@ -31,7 +31,7 @@ struct Site : Http::Handler {
     static Res<Rc<Site>> load(Ref::Url baseurl, Opt<Str> theme = "default"s) {
         auto site = makeRc<Site>();
         site->baseurl = baseurl;
-        auto json = try$(Json::parse(try$(Sys::readAllUtf8(baseurl / "site.json"))));
+        auto json = try$(Json::parse(try$(Sys::readAllText<Utf8>(baseurl / "site.json"))));
         auto& manifest = site->manifest;
         manifest.title = json.get("title").asStr();
         manifest.header = json.get("header").asStr();
@@ -39,9 +39,9 @@ struct Site : Http::Handler {
         manifest.navbar = json.get("navbar").asStr();
         manifest.footer = json.get("footer").asStr();
 
-        site->theme = try$(Sys::readAllUtf8("bundle://catserve/themes"_url / "{}.css"_f(theme)).wrapErr(Error::notFound("could not load theme")));
+        site->theme = try$(Sys::readAllText<Utf8>("bundle://catserve/themes"_url / "{}.css"_f(theme)).wrapErr(Error::notFound("could not load theme")));
 
-        auto style = Sys::readAllUtf8(baseurl / "style.css");
+        auto style = Sys::readAllText<Utf8>(baseurl / "style.css");
         site->style = style.unwrapOr(""s);
 
         return Ok(site);
@@ -69,7 +69,7 @@ struct Site : Http::Handler {
     }
 
     Res<String> renderPage(Ref::Url const& url) const {
-        auto md = Md::parse(try$(Sys::readAllUtf8(url)));
+        auto md = Md::parse(try$(Sys::readAllText<Utf8>(url)));
         md.walk(Visitor{
             [](Md::Link& link) {
                 auto href = link.href;

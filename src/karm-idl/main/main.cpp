@@ -6,7 +6,7 @@ using namespace Karm;
 using namespace Karm::Ref::Literals;
 
 Async::Task<> entryPointAsync(Sys::Env&, Async::CancellationToken) {
-    auto data = Sys::readAllUtf8("bundle://karm-idl/public/idl/echo.idl"_url).unwrap("could not read idl file");
+    auto data = Sys::readAllText<Utf8>("bundle://karm-idl/public/idl/echo.idl"_url).unwrap("could not read idl file");
     auto maybeModule = Idl::parseModule(data);
     if (not maybeModule)
         Sys::errln("could not parse module: {}", maybeModule);
