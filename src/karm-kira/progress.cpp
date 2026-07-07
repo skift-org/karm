@@ -8,15 +8,15 @@ import Karm.Math;
 
 namespace Karm::Kira {
 
-struct Progress : Ui::View<Progress> {
+struct IndeterminedProgress : Ui::View<IndeterminedProgress> {
     isize _size;
     f64 _spin = 0;
 
-    Progress(isize size)
+    IndeterminedProgress(isize size)
         : _size(size) {
     }
 
-    void reconcile(Progress& o) override {
+    void reconcile(IndeterminedProgress& o) override {
         _size = o._size;
     }
 
@@ -52,7 +52,7 @@ struct Progress : Ui::View<Progress> {
             Ui::shouldRepaint(*this);
         }
 
-        Ui::View<Progress>::event(e);
+        Ui::View<IndeterminedProgress>::event(e);
     }
 
     Math::Vec2i size(Math::Vec2i, Ui::Hint) override {
@@ -60,8 +60,53 @@ struct Progress : Ui::View<Progress> {
     }
 };
 
-export Ui::Child progress(isize size = 16) {
-    return makeRc<Progress>(size);
+export Ui::Child indeterminedProgress(isize size = 16) {
+    return makeRc<IndeterminedProgress>(size);
+}
+
+struct PieCountDown : Ui::View<PieCountDown> {
+    f64 _value;
+    isize _size;
+
+    PieCountDown(f64 value, isize size)
+        : _value(value), _size(size) {
+    }
+
+    void reconcile(PieCountDown& o) override {
+        _value = o._value;
+    }
+
+    void paint(Gfx::Canvas& g, Math::Recti) override {
+        g.push();
+        g.clip(bound());
+
+        auto radii = min(bound().width / 2., bound().height / 2.);
+        auto center = bound().cast<f64>().center();
+
+        g.fill(Ui::ACCENT500.withOpacity(0.25));
+        g.fill(Math::Ellipsef{center, radii});
+
+        g.beginPath();
+        g.arc({
+            center,
+            radii,
+            Math::PI * 2 * _value - (Math::PI / 2),
+            Math::PI * 2 - (Math::PI / 2),
+        });
+        g.lineTo(center);
+        g.closePath();
+        g.fill(Ui::ACCENT500);
+
+        g.pop();
+    }
+
+    Math::Vec2i size(Math::Vec2i, Ui::Hint) override {
+        return _size;
+    }
+};
+
+export Ui::Child pieCountDown(f64 value, isize size) {
+    return makeRc<PieCountDown>(value, size);
 }
 
 } // namespace Karm::Kira
