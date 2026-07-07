@@ -60,6 +60,13 @@ export using HmacSha1 = Hmac<Sha1>;
 export using HmacSha256 = Hmac<Sha256>;
 export using HmacSha512 = Hmac<Sha512>;
 
+export template <typename Hash>
+constexpr Hmac<Hash>::Digest hmac(Bytes key, Bytes message) {
+    Hmac<Hash> hmac{key};
+    hmac.update(message);
+    return hmac.digest();
+}
+
 export constexpr HmacSha1::Digest hmacSha1(Bytes key, Bytes message) {
     HmacSha1 hmac{key};
     hmac.update(message);
