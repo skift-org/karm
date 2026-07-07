@@ -126,11 +126,11 @@ constexpr Duration Duration::ZERO = Duration{0};
 constexpr Duration Duration::INFINITE = Duration{~0UL};
 
 export struct MonotonicClock {
-    static constexpr bool monotonic = true;
+    static constexpr bool MONOTONIC = true;
 };
 
 export struct SystemClock {
-    static constexpr bool monotonic = false;
+    static constexpr bool MONOTONIC = false;
 };
 
 export template <typename Clock>
@@ -203,6 +203,8 @@ struct _Instant {
 export using Instant = _Instant<MonotonicClock>;
 
 export using SystemTime = _Instant<SystemClock>;
+
+export using UtcTime = SystemTime;
 
 // MARK: Time ------------------------------------------------------------------
 
