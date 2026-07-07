@@ -1,5 +1,6 @@
 export module Karm.Crypto:hmac;
 
+import :sha1;
 import :sha2;
 
 namespace Karm::Crypto {
@@ -55,8 +56,15 @@ struct Hmac {
     }
 };
 
+export using HmacSha1 = Hmac<Sha1>;
 export using HmacSha256 = Hmac<Sha256>;
 export using HmacSha512 = Hmac<Sha512>;
+
+export constexpr HmacSha1::Digest hmacSha1(Bytes key, Bytes message) {
+    HmacSha1 hmac{key};
+    hmac.update(message);
+    return hmac.digest();
+}
 
 export constexpr HmacSha256::Digest hmacSha256(Bytes key, Bytes message) {
     HmacSha256 hmac{key};

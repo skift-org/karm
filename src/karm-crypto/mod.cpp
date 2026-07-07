@@ -6,4 +6,6 @@ export import :crc;
 export import :entropy;
 export import :hex;
 export import :hmac;
+export import :md5;
+export import :sha1;
 export import :sha2;

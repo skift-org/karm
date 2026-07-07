@@ -293,18 +293,14 @@ struct Sha512State {
     }
 };
 
-// ==============================================================================
-// No macros needed: C++20 allows passing the array references directly
-// ==============================================================================
-
 export template <typename State, usize DIGEST_SIZE, auto const& INITIAL>
-struct Sha {
+struct Sha2 {
     using Digest = Array<u8, DIGEST_SIZE>;
     static constexpr auto BLOCK_SIZE = State::BLOCK_SIZE;
 
     State _state{INITIAL};
 
-    constexpr Sha() = default;
+    constexpr Sha2() = default;
 
     constexpr void update(u8 byte) {
         _state.update(byte);
@@ -320,10 +316,10 @@ struct Sha {
     }
 };
 
-export using Sha224 = Sha<Sha256State, SHA224_BYTES, SHA224_INITIAL>;
-export using Sha256 = Sha<Sha256State, SHA256_BYTES, SHA256_INITIAL>;
-export using Sha384 = Sha<Sha512State, SHA384_BYTES, SHA384_INITIAL>;
-export using Sha512 = Sha<Sha512State, SHA512_BYTES, SHA512_INITIAL>;
+export using Sha224 = Sha2<Sha256State, SHA224_BYTES, SHA224_INITIAL>;
+export using Sha256 = Sha2<Sha256State, SHA256_BYTES, SHA256_INITIAL>;
+export using Sha384 = Sha2<Sha512State, SHA384_BYTES, SHA384_INITIAL>;
+export using Sha512 = Sha2<Sha512State, SHA512_BYTES, SHA512_INITIAL>;
 
 export constexpr Sha224::Digest sha224(Bytes bytes) {
     Sha224 sha;
