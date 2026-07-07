@@ -71,8 +71,7 @@ export struct ColorSpace {
     }
 
     static Opt<ColorSpace> fromSignature(u32be sig) {
-        auto bytes = unionCast<Array<u8, 4>>(sig);
-        return fromSignature(bytes);
+        return fromSignature(sig.bytes());
     }
 
     ColorSpace(_Name name) : _name(name) {
@@ -179,8 +178,7 @@ export struct ProfileClass {
     }
 
     static Opt<ProfileClass> fromSignature(u32be sig) {
-        auto bytes = unionCast<Array<u8, 4>>(sig);
-        return fromSignature(bytes);
+        return fromSignature(sig.bytes());
     }
 
     ProfileClass(_Name name) : _name(name) {}
