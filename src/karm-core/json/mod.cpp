@@ -18,7 +18,7 @@ namespace Karm::Json {
 
 export Res<Serde::Value> parse(Io::SScan& s);
 
-Res<String> parseStr(Io::SScan& s) {
+export Res<String> parseStr(Io::SScan& s) {
     if (not s.skip('"'))
         return Error::invalidData("expected '\"'");
 
