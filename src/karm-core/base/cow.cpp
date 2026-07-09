@@ -15,6 +15,17 @@ struct Cow {
         return _base.unwrap();
     }
 
+    Cow() = default;
+
+    Cow(Rc<T> inner)
+        : _inner(std::move(inner)) {}
+
+    Cow(T const& inner)
+        : _inner(makeRc<T>(inner)) {}
+
+    Cow(T&& inner)
+        : _inner(makeRc<T>(std::move(inner))) {}
+
     T& cow() {
         if (_inner.refs() > 1)
             _inner = makeRc<T>(_inner.unwrap());
@@ -49,10 +60,5 @@ struct Cow {
         Karm::hash(h, _inner);
     }
 };
-
-export template <typename T, typename... Args>
-Cow<T> makeCow(Args&&... args) {
-    return {makeRc<T>(std::forward<Args>(args)...)};
-}
 
 } // namespace Karm
