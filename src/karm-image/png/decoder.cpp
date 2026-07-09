@@ -58,6 +58,24 @@ enum struct InterlacingMethod : u8 {
     _LEN,
 };
 
+// https://www.w3.org/TR/2003/REC-PNG-20031110/#8Interlace
+struct Adam7Pass {
+    usize startX;
+    usize startY;
+    usize stepX;
+    usize stepY;
+};
+
+static constexpr Array<Adam7Pass, 7> ADAM7_PASSES = {{
+    {0, 0, 8, 8},
+    {4, 0, 8, 8},
+    {0, 4, 4, 8},
+    {2, 0, 4, 4},
+    {0, 2, 2, 4},
+    {1, 0, 2, 2},
+    {0, 1, 1, 2},
+}};
+
 static constexpr Array<u8, 8> SIG = {
     0x89, 0x50, 0x4E, 0x47,
     0x0D, 0x0A, 0x1A, 0x0A
@@ -175,6 +193,18 @@ export struct Decoder {
 
     isize height() const {
         return _height;
+    }
+
+    usize _passWidth(Adam7Pass const& pass) const {
+        if (_width <= pass.startX)
+            return 0;
+        return (_width - pass.startX + pass.stepX - 1) / pass.stepX;
+    }
+
+    usize _passHeight(Adam7Pass const& pass) const {
+        if (_height <= pass.startY)
+            return 0;
+        return (_height - pass.startY + pass.stepY - 1) / pass.stepY;
     }
 
     Res<> _loaderHeader() {
@@ -302,16 +332,18 @@ export struct Decoder {
         }
     };
 
-    Res<Vec<u8>> _unfilter(Bytes data) {
+    Res<Vec<u8>> _unfilterPass(Io::BScan& s, usize passWidth, usize passHeight) {
+        if (passWidth == 0 or passHeight == 0)
+            return Ok(Vec<u8>{});
+
         usize bytePerPixel = bitsPerPixel() < 8 ? 1 : bitsPerPixel() / 8;
-        usize bytesPerScan = bytePerPixel * width();
+        usize bytesPerScan = bytePerPixel * passWidth;
 
         Vec<u8> res;
-        res.resize(bytesPerScan * height());
+        res.resize(bytesPerScan * passHeight);
 
-        Io::BScan s = data;
         Bytes prev = {};
-        for (usize scanline : urange::zeroTo(height())) {
+        for (usize scanline : urange::zeroTo(passHeight)) {
             Filter filter = static_cast<Filter>(s.nextU8be());
             auto filt = s.nextBytes(bytesPerScan);
             MutBytes curr = mutSub(res, bytesPerScan * scanline, bytesPerScan * scanline + bytesPerScan);
@@ -334,15 +366,16 @@ export struct Decoder {
 
     // MARK: Decoding ----------------------------------------------------------
 
-    Res<> _decodeScanline(Io::BScan& s, Gfx::MutPixels out, usize scanline) {
-        for (usize i : urange::zeroTo(_width)) {
+    Res<> _decodeScanline(Io::BScan& s, Gfx::MutPixels out, usize passWidth, usize x0, usize y, usize dx) {
+        for (usize i : urange::zeroTo(passWidth)) {
+            usize x = x0 + i * dx;
             if (_colorType == ColorType::GREYSCALE or
                 _colorType == ColorType::GREYSCALE_ALPHA) {
                 auto g = s.nextU8be();
                 u8 a = 255;
                 if (_colorType == ColorType::GREYSCALE_ALPHA)
                     a = s.nextU8be();
-                out.store(Math::Vec2u{i, scanline}.cast<isize>(), Gfx::Color{g, g, g, a});
+                out.store(Math::Vec2u{x, y}.cast<isize>(), Gfx::Color{g, g, g, a});
             } else {
                 auto r = s.nextU8be();
                 auto g = s.nextU8be();
@@ -350,17 +383,25 @@ export struct Decoder {
                 u8 a = 255;
                 if (_colorType == ColorType::TRUECOLOR_ALPHA)
                     a = s.nextU8be();
-                out.store(Math::Vec2u{i, scanline}.cast<isize>(), Gfx::Color{r, g, b, a});
+                out.store(Math::Vec2u{x, y}.cast<isize>(), Gfx::Color{r, g, b, a});
             }
         }
         return Ok();
     }
 
-    Res<> _decodeImage(Gfx::MutPixels out, Bytes unfiltered) {
+    Res<> _decodePass(
+        Gfx::MutPixels out,
+        Bytes unfiltered,
+        usize passWidth,
+        usize passHeight,
+        usize x0,
+        usize y0,
+        usize dx,
+        usize dy
+    ) {
         Io::BScan s = unfiltered;
-        for (usize scanline : urange::zeroTo(_height)) {
-            try$(_decodeScanline(s, out, scanline));
-        }
+        for (usize row : urange::zeroTo(passHeight))
+            try$(_decodeScanline(s, out, passWidth, x0, y0 + row * dy, dx));
         return Ok();
     }
 
@@ -393,12 +434,35 @@ export struct Decoder {
         if (_filterMethod != FilterMethod::STANDARD)
             return Error::invalidData("unsupported filter methode");
 
-        if (_interlacingMethod != InterlacingMethod::NULL)
-            return Error::invalidData("unsupported interlacing methode");
-
         auto imageData = try$(Archive::zlibDecompress(_compressedData.bytes()));
-        auto unfiltered = try$(_unfilter(imageData));
-        try$(_decodeImage(out, unfiltered));
+        Io::BScan s = bytes(imageData);
+
+        if (_interlacingMethod == InterlacingMethod::NULL) {
+            auto unfiltered = try$(_unfilterPass(s, _width, _height));
+            try$(_decodePass(out, unfiltered, _width, _height, 0, 0, 1, 1));
+        } else if (_interlacingMethod == InterlacingMethod::ADAM7) {
+            for (auto const& pass : ADAM7_PASSES) {
+                usize passWidth = _passWidth(pass);
+                usize passHeight = _passHeight(pass);
+
+                if (passWidth == 0 or passHeight == 0)
+                    continue;
+
+                auto unfiltered = try$(_unfilterPass(s, passWidth, passHeight));
+                try$(_decodePass(
+                    out,
+                    unfiltered,
+                    passWidth,
+                    passHeight,
+                    pass.startX,
+                    pass.startY,
+                    pass.stepX,
+                    pass.stepY
+                ));
+            }
+        } else {
+            return Error::invalidData("unsupported interlacing methode");
+        }
 
         return Ok();
     }
