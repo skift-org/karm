@@ -352,7 +352,7 @@ export struct _OptionImpl {
             try$(format(w, "--{}", longName));
             try$(w.writeRune(']'));
         } else if (kind == OptionKind::OPERAND) {
-            try$(w.writeStr(longName.str()));
+            try$(format(w, "<{}>", longName));
         } else if (kind == OptionKind::EXTRA) {
             try$(format(w, "[-- {}...]", longName));
         }
@@ -566,19 +566,13 @@ export struct Command : Meta::Pinned {
 
         for (auto& sec : _sections)
             for (auto& opt : sec.options) {
-                if (opt->kind != OptionKind::OPTION)
-                    continue;
-                try$(opt->usage(w));
-                try$(w.writeRune(' '));
-            }
-
-        for (auto& sec : _sections)
-            for (auto& opt : sec.options) {
                 if (opt->kind != OptionKind::OPERAND)
                     continue;
                 try$(opt->usage(w));
                 try$(w.writeRune(' '));
             }
+
+        try$(format(w, "[options...] "));
 
         for (auto& sec : _sections)
             for (auto& opt : sec.options) {
@@ -587,9 +581,8 @@ export struct Command : Meta::Pinned {
                 try$(opt->usage(w));
             }
 
-        if (Karm::any(_commands)) {
+        if (Karm::any(_commands))
             try$(format(w, "<command> [args...]"));
-        }
 
         return Ok();
     }
