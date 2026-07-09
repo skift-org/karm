@@ -85,6 +85,11 @@ export void tokenize(int argc, char** argv, Vec<Token>& out) {
 export template <typename T>
 struct ValueParser;
 
+template <typename T>
+concept ValueParsable = requires() {
+    ValueParser<T>::parse;
+};
+
 export template <>
 struct ValueParser<bool> {
     static Res<> usage(Io::TextWriter& w) {
@@ -259,7 +264,7 @@ struct ValueParser<Ref::Url> {
     }
 };
 
-export template <typename T>
+export template <ValueParsable T>
 struct ValueParser<Vec<T>> {
     static Res<> usage(Io::TextWriter& w) {
         ValueParser<T>::usage(w);
@@ -274,7 +279,7 @@ struct ValueParser<Vec<T>> {
     }
 };
 
-export template <typename T>
+export template <ValueParsable T>
 struct ValueParser<Opt<T>> {
     static Res<> usage(Io::TextWriter& w) {
         return ValueParser<T>::usage(w);
@@ -287,7 +292,7 @@ struct ValueParser<Opt<T>> {
     }
 };
 
-export template <typename... Ts>
+export template <ValueParsable... Ts>
 struct ValueParser<Union<Ts...>> {
     static Res<> usage(Io::TextWriter& w) {
         bool first = true;
