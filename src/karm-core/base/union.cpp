@@ -177,14 +177,10 @@ struct Union {
 
     template <typename T, typename... Args>
     always_inline T& emplace(Args&&... args) {
-        if (_index != Meta::indexOf<T, Ts...>()) {
-            Meta::indexCast<Ts...>(_index, _buf, []<typename U>(U& ptr) {
-                ptr.~U();
-            });
-
-            _index = Meta::indexOf<T, Ts...>();
-        }
-
+        Meta::indexCast<Ts...>(_index, _buf, []<typename U>(U& ptr) {
+            ptr.~U();
+        });
+        _index = Meta::indexOf<T, Ts...>();
         return *new (_buf) T(std::forward<Args>(args)...);
     }
 
