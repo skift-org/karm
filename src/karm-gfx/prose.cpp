@@ -325,8 +325,6 @@ export struct Prose : Meta::Pinned {
 
     // Various cached values
     bool _blocksMeasured = false;
-    f64 _spaceWidth{};
-    f64 _lineHeight{};
 
     Math::Vec2Au _size;
 
@@ -337,8 +335,6 @@ export struct Prose : Meta::Pinned {
           _currentSpan(makeRc<Span>(NONE, rootSpanStyle)),
           _rootSpan(_currentSpan) {
         clear();
-        _spaceWidth = _currentSpan->style.font.advance(_currentSpan->style.font.glyph(' '));
-        _lineHeight = _currentSpan->style.font.metrics().ascend;
         _spanHistory.pushBack(_rootSpan);
         append(str);
     }
@@ -366,8 +362,6 @@ export struct Prose : Meta::Pinned {
           _rootSpan(_findRoot(continueFrom)),
           _spanHistory(_ancestorChain(continueFrom)) {
         clear();
-        _spaceWidth = _currentSpan->style.font.advance(_currentSpan->style.font.glyph(' '));
-        _lineHeight = _currentSpan->style.font.metrics().ascend;
     }
 
     Math::Vec2Au size() const {
@@ -788,12 +782,10 @@ export struct Prose : Meta::Pinned {
         if (isEmpty(_lines))
             return 0;
 
-        Math::Au fontAscent = Math::Au{_lineHeight};
-
         // Find the line containing the y coordinate
         usize li = _lines.len() - 1;
         for (usize i = 0; i + 1 < _lines.len(); i++) {
-            Math::Au nextLineTop = _lines[i + 1].baseline - fontAscent;
+            Math::Au nextLineTop = _lines[i + 1].baseline - _lines[i + 1].ascent;
             if (point.y < nextLineTop) {
                 li = i;
                 break;
