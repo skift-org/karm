@@ -1,3 +1,7 @@
+module;
+
+#include <karm/macros>
+
 export module Karm.Av:audio;
 
 import Karm.Core;
@@ -8,6 +12,15 @@ export struct Format {
     usize rate = 44100; // hz
     usize channels = 1;
     usize frames = 2048;
+
+    usize toFrames(Duration duration) const {
+        f64 secs = duration.toUSecs() / 1'000'000.0;
+        return static_cast<usize>(secs * rate);
+    }
+
+    Duration toDuration(usize frames) const {
+        return Duration::fromUSecs(frames * 1'000'000ull / rate);
+    }
 
     bool operator==(Format const&) const = default;
 };
@@ -59,7 +72,7 @@ export struct Frames {
 
     FramesIter iter();
 
-    usize len() {
+    usize len() const {
         return samples.len() / format.channels;
     }
 
@@ -101,7 +114,7 @@ FramesIter Frames::iter() {
 
 export struct Stream {
     virtual ~Stream() = default;
-    virtual void process(Frames input, Frames output) = 0;
+    virtual Res<usize> process(Frames input, Frames output) = 0;
 };
 
 struct Options {
@@ -227,14 +240,29 @@ export struct Audio {
     }
 
     Duration duration() const {
-        f64 secs = samples.len() / static_cast<f64>(format.rate * format.channels);
-        return Duration::fromUSecs(secs * Duration::fromSecs(1).toUSecs());
+        return format.toDuration(samples.len() / format.channels);
     }
 
     usize fill(usize frame, Frames output) {
         return resamples(frames().sub(frame), output);
     }
 };
+
+export Res<usize> pump(Stream& source, Stream& sink, Format fmt, usize maxFrames = Limits<usize>::MAX) {
+    Audio buf{fmt, fmt.frames};
+    Frames none{fmt, {}};
+
+    usize total = 0;
+    while (total < maxFrames) {
+        usize want = min(fmt.frames, maxFrames - total);
+        auto produced = try$(source.process(none, buf.frames().sub(0, want)));
+        if (produced == 0)
+            break;
+        try$(sink.process(buf.frames().sub(0, produced), none));
+        total += produced;
+    }
+    return Ok(total);
+}
 
 export struct Player : Stream {
     enum struct Status {
@@ -265,10 +293,8 @@ export struct Player : Stream {
         if (not _audio)
             return Duration::fromSecs(0);
 
-        auto curr = _currentFrame.load();
         auto fmt = _audio.unwrap()->format;
-        f64 secs = curr / static_cast<f64>(fmt.rate);
-        return Duration::fromUSecs(secs * Duration::fromSecs(1).toUSecs());
+        return fmt.toDuration(_currentFrame.load());
     }
 
     Duration duration() const {
@@ -303,7 +329,7 @@ export struct Player : Stream {
         return Status::PLAYING;
     }
 
-    void process(Frames, Frames output) override {
+    Res<usize> process(Frames, Frames output) override {
         if (_pause or not _audio) {
             for (auto f : output.iter())
                 f.mono(0);
@@ -315,6 +341,8 @@ export struct Player : Stream {
                     f.volume(_mute ? 0. : _volume);
             }
         }
+
+        return Ok(output.len());
     }
 };
 

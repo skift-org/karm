@@ -69,7 +69,14 @@ struct Decoder {
         if (format.bitsPerSample != 16)
             return Error::invalidData("only pcm data supported");
 
-        auto audio = makeRc<Audio>(Av::Format{format.freq, format.channels}, c.data.len() / 2 / format.channels);
+        auto audio =
+            makeRc<Audio>(
+                Av::Format{
+                    format.freq,
+                    format.channels,
+                },
+                c.data.len() / 2 / format.channels
+            );
 
         for (auto sample : audio->frames().iter()) {
             for (auto channel : urange::zeroTo(format.channels)) {
@@ -100,6 +107,54 @@ struct Decoder {
         }
 
         return Error::invalidData("missing data chunk");
+    }
+};
+
+export struct Encoder : Stream {
+    Io::Writer& _w;
+    Format format;
+
+    Encoder(Io::Writer& w, Format format)
+        : _w(w), format(format) {}
+
+    static Res<Rc<Encoder>> create(Io::Writer& w, Format format) {
+        Io::BEmit e{w};
+
+        Riff::ChunkHeader riffHeader;
+        riffHeader.id = Riff::RIFF;
+        riffHeader.size = Limits<u32>::MAX;
+        try$(e.writeFrom(riffHeader));
+        try$(e.writeFrom(WAVE));
+
+        Riff::ChunkHeader fmtHeader;
+        fmtHeader.id = FMT;
+        fmtHeader.size = 1 + sizeof(PcmFormat);
+        try$(e.writeFrom(fmtHeader));
+        try$(e.writeFrom(Type::PCM));
+        try$(e.writeFrom(PcmFormat{
+            .channels = format.channels,
+            .freq = format.rate,
+            .bps = 16 * format.channels * format.rate,
+            .align = 2,
+            .bitsPerSample = 16,
+        }));
+
+        Riff::ChunkHeader dataHeader;
+        dataHeader.id = DATA;
+        dataHeader.size = Limits<u32>::MAX;
+        try$(e.writeFrom(dataHeader));
+
+        return Ok(makeRc<Encoder>(w, format));
+    }
+
+    Res<usize> process(Frames input, Frames) override {
+        Io::BEmit e{_w};
+        for (auto frame : input.iter()) {
+            for (auto sample : frame.samples) {
+                try$(e.writeI16le(static_cast<i16>(sample * Limits<i16>::MAX)));
+            }
+        }
+        return Ok(input.len());
     }
 };
 

@@ -4,3 +4,4 @@ export import :audio;
 export import :loader;
 export import :video;
 export import :camera;
+export import :wav;

@@ -10,7 +10,7 @@ export using Id = Array<char, 4>;
 
 export Id RIFF = {'R', 'I', 'F', 'F'};
 
-struct ChunkHeader {
+export struct ChunkHeader {
     Id id;
     u32le size;
 };

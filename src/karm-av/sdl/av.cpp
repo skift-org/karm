@@ -48,7 +48,7 @@ static void _callback(void* userdata, SDL_AudioStream* sdlStream, int additional
     output.format = device->_options.output;
     output.samples = device->_outputBuf;
 
-    stream->process(input, output);
+    (void)stream->process(input, output);
     SDL_PutAudioStreamData(sdlStream, device->_outputBuf.buf(), sizeOf(device->_outputBuf));
 }
 
