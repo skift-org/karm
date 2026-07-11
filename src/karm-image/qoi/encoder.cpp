@@ -1,3 +1,7 @@
+module;
+
+#include <karm/macros>
+
 export module Karm.Image:qoi.encoder;
 
 import Karm.Core;
@@ -8,11 +12,11 @@ import :qoi.base;
 namespace Karm::Image::Qoi {
 
 export Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
-    e.writeBytes(MAGIC);
-    e.writeU32be(pixels.width());
-    e.writeU32be(pixels.height());
-    e.writeU8be(4); // Channels
-    e.writeU8be(1); // Color space
+    try$(e.writeBytes(MAGIC));
+    try$(e.writeU32be(pixels.width()));
+    try$(e.writeU32be(pixels.height()));
+    try$(e.writeU8be(4)); // Channels
+    try$(e.writeU8be(1)); // Color space
 
     Array<Gfx::Color, 64> index = {};
     Gfx::Color curr = Gfx::BLACK;
@@ -30,21 +34,21 @@ export Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
             if (curr == prev) {
                 run++;
                 if (run == 62 or end) {
-                    e.writeU8be(Chunk::RUN | (run - 1));
+                    try$(e.writeU8be(Chunk::RUN | (run - 1)));
                     run = 0;
                 }
                 continue;
             }
 
             if (run > 0) {
-                e.writeU8be(Chunk::RUN | (run - 1));
+                try$(e.writeU8be(Chunk::RUN | (run - 1)));
                 run = 0;
             }
 
             usize index_pos = hashColor(curr) % 64;
 
             if (index[index_pos] == curr) {
-                e.writeU8be(Chunk::INDEX | index_pos);
+                try$(e.writeU8be(Chunk::INDEX | index_pos));
                 continue;
             }
 
@@ -63,7 +67,7 @@ export Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
                     vg > -3 and vg < 2 and
                     vb > -3 and vb < 2
                 ) {
-                    e.writeU8be(Chunk::DIFF | (vr + 2) << 4 | (vg + 2) << 2 | (vb + 2));
+                    try$(e.writeU8be(Chunk::DIFF | (vr + 2) << 4 | (vg + 2) << 2 | (vb + 2)));
                     continue;
                 }
 
@@ -72,26 +76,26 @@ export Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
                     vg > -33 and vg < 32 &&
                     vg_b > -9 and vg_b < 8
                 ) {
-                    e.writeU8be(Chunk::LUMA | (vg + 32));
-                    e.writeU8be((vg_r + 8) << 4 | (vg_b + 8));
+                    try$(e.writeU8be(Chunk::LUMA | (vg + 32)));
+                    try$(e.writeU8be((vg_r + 8) << 4 | (vg_b + 8)));
                 } else {
-                    e.writeU8be(Chunk::RGB);
-                    e.writeU8be(curr.red);
-                    e.writeU8be(curr.green);
-                    e.writeU8be(curr.blue);
+                    try$(e.writeU8be(Chunk::RGB));
+                    try$(e.writeU8be(curr.red));
+                    try$(e.writeU8be(curr.green));
+                    try$(e.writeU8be(curr.blue));
                 }
                 continue;
             }
 
-            e.writeU8be(Chunk::RGBA);
-            e.writeU8be(curr.red);
-            e.writeU8be(curr.green);
-            e.writeU8be(curr.blue);
-            e.writeU8be(curr.alpha);
+            try$(e.writeU8be(Chunk::RGBA));
+            try$(e.writeU8be(curr.red));
+            try$(e.writeU8be(curr.green));
+            try$(e.writeU8be(curr.blue));
+            try$(e.writeU8be(curr.alpha));
         }
     }
 
-    e.writeBytes(END);
+    try$(e.writeBytes(END));
 
     return Ok();
 }

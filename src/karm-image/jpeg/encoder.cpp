@@ -40,8 +40,8 @@ Res<> _encodeMcu(
     if (not dcTable.getCode(coeffLength, code, codeLength)) {
         return Error::invalidData("invalid dc huffman code length");
     }
-    bitWriter.writeBits(code, codeLength);
-    bitWriter.writeBits(coeff, coeffLength);
+    try$(bitWriter.writeBits(code, codeLength));
+    try$(bitWriter.writeBits(coeff, coeffLength));
 
     // encode AC values
     for (usize i = 1; i < 64; ++i) {
@@ -56,7 +56,7 @@ Res<> _encodeMcu(
             if (not acTable.getCode(0x00, code, codeLength))
                 return Error::invalidData("invalid ac huffman code");
 
-            bitWriter.writeBits(code, codeLength);
+            try$(bitWriter.writeBits(code, codeLength));
             return Ok();
         }
 
@@ -64,7 +64,7 @@ Res<> _encodeMcu(
             if (not acTable.getCode(0xF0, code, codeLength))
                 return Error::invalidData("invalid ac huffman code");
 
-            bitWriter.writeBits(code, codeLength);
+            try$(bitWriter.writeBits(code, codeLength));
             numZeroes -= 16;
         }
 
@@ -83,8 +83,8 @@ Res<> _encodeMcu(
         if (not acTable.getCode(symbol, code, codeLength))
             return Error::invalidData("invalid ac huffman code");
 
-        bitWriter.writeBits(code, codeLength);
-        bitWriter.writeBits(coeff, coeffLength);
+        try$(bitWriter.writeBits(code, codeLength));
+        try$(bitWriter.writeBits(coeff, coeffLength));
     }
 
     return Ok();
@@ -129,111 +129,116 @@ Res<> _writePixelData(Gfx::Pixels pixels, BitWriter& w) {
     return Ok();
 }
 
-void _writeQuantizationTable(Io::BEmit& e, u8 tableID, Quant const& qTable) {
-    e.writeU8be(0xFF);
-    e.writeU8be(DQT);
-    e.writeU16be(67);
-    e.writeU8be(tableID);
+Res<> _writeQuantizationTable(Io::BEmit& e, u8 tableID, Quant const& qTable) {
+    try$(e.writeU8be(0xFF));
+    try$(e.writeU8be(DQT));
+    try$(e.writeU16be(67));
+    try$(e.writeU8be(tableID));
     for (usize i = 0; i < 64; ++i) {
-        e.writeU8be(qTable[ZIGZAG[i]]);
+        try$(e.writeU8be(qTable[ZIGZAG[i]]));
     }
+    return Ok();
 }
 
-void _writeStartOfFrame(Io::BEmit& e, Gfx::Pixels pixels) {
-    e.writeU8be(0xFF);
-    e.writeU8be(SOF0);
-    e.writeU16be(17);
-    e.writeU8be(8);
-    e.writeU16be(pixels.height());
-    e.writeU16be(pixels.width());
-    e.writeU8be(3);
+Res<> _writeStartOfFrame(Io::BEmit& e, Gfx::Pixels pixels) {
+    try$(e.writeU8be(0xFF));
+    try$(e.writeU8be(SOF0));
+    try$(e.writeU16be(17));
+    try$(e.writeU8be(8));
+    try$(e.writeU16be(pixels.height()));
+    try$(e.writeU16be(pixels.width()));
+    try$(e.writeU8be(3));
     for (usize i = 1; i <= 3; ++i) {
-        e.writeU8be(i);
-        e.writeU8be(0x11);
-        e.writeU8be(i == 1 ? 0 : 1);
+        try$(e.writeU8be(i));
+        try$(e.writeU8be(0x11));
+        try$(e.writeU8be(i == 1 ? 0 : 1));
     }
+    return Ok();
 }
 
-void _writeAPP0(Io::BEmit& e) {
-    e.writeU8be(0xFF);
-    e.writeU8be(APP0);
-    e.writeU16be(16);
-    e.writeU8be('J');
-    e.writeU8be('F');
-    e.writeU8be('I');
-    e.writeU8be('F');
-    e.writeU8be(0);
-    e.writeU8be(1);
-    e.writeU8be(2);
-    e.writeU8be(0);
-    e.writeU16be(100);
-    e.writeU16be(100);
-    e.writeU8be(0);
-    e.writeU8be(0);
+Res<> _writeAPP0(Io::BEmit& e) {
+    try$(e.writeU8be(0xFF));
+    try$(e.writeU8be(APP0));
+    try$(e.writeU16be(16));
+    try$(e.writeU8be('J'));
+    try$(e.writeU8be('F'));
+    try$(e.writeU8be('I'));
+    try$(e.writeU8be('F'));
+    try$(e.writeU8be(0));
+    try$(e.writeU8be(1));
+    try$(e.writeU8be(2));
+    try$(e.writeU8be(0));
+    try$(e.writeU16be(100));
+    try$(e.writeU16be(100));
+    try$(e.writeU8be(0));
+    try$(e.writeU8be(0));
+    return Ok();
 }
 
-void _writeHuffmanTable(Io::BEmit& e, u8 acdc, u8 tableID, Huff const& hTable) {
-    e.writeU8be(0xFF);
-    e.writeU8be(DHT);
-    e.writeU16be(19 + hTable.offs[16]);
-    e.writeU8be(acdc << 4 | tableID);
+Res<> _writeHuffmanTable(Io::BEmit& e, u8 acdc, u8 tableID, Huff const& hTable) {
+    try$(e.writeU8be(0xFF));
+    try$(e.writeU8be(DHT));
+    try$(e.writeU16be(19 + hTable.offs[16]));
+    try$(e.writeU8be(acdc << 4 | tableID));
     for (usize i = 0; i < 16; ++i) {
-        e.writeU8be(hTable.offs[i + 1] - hTable.offs[i]);
+        try$(e.writeU8be(hTable.offs[i + 1] - hTable.offs[i]));
     }
     for (usize i = 0; i < 16; ++i) {
         for (usize j = hTable.offs[i]; j < hTable.offs[i + 1]; ++j) {
-            e.writeU8be(hTable.syms[j]);
+            try$(e.writeU8be(hTable.syms[j]));
         }
     }
+    return Ok();
 }
 
-void _writeStartOfScan(Io::BEmit& e) {
-    e.writeU8be(0xFF);
-    e.writeU8be(SOS);
-    e.writeU16be(12);
-    e.writeU8be(3);
+Res<> _writeStartOfScan(Io::BEmit& e) {
+    try$(e.writeU8be(0xFF));
+    try$(e.writeU8be(SOS));
+    try$(e.writeU16be(12));
+    try$(e.writeU8be(3));
     for (usize i = 1; i <= 3; ++i) {
-        e.writeU8be(i);
-        e.writeU8be(i == 1 ? 0x00 : 0x11);
+        try$(e.writeU8be(i));
+        try$(e.writeU8be(i == 1 ? 0x00 : 0x11));
     }
-    e.writeU8be(0);
-    e.writeU8be(63);
-    e.writeU8be(0);
+    try$(e.writeU8be(0));
+    try$(e.writeU8be(63));
+    try$(e.writeU8be(0));
+    return Ok();
 }
 
 } // namespace
 
 export Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
     // SOI
-    e.writeU8be(0xFF);
-    e.writeU8be(SOI);
+    try$(e.writeU8be(0xFF));
+    try$(e.writeU8be(SOI));
 
     // APP0
-    _writeAPP0(e);
+    try$(_writeAPP0(e));
 
     // DQT
-    _writeQuantizationTable(e, 0, QUANT_Y100);
-    _writeQuantizationTable(e, 1, QUANT_CbCr100);
+    try$(_writeQuantizationTable(e, 0, QUANT_Y100));
+    try$(_writeQuantizationTable(e, 1, QUANT_CbCr100));
 
     // SOF
-    _writeStartOfFrame(e, pixels);
+    try$(_writeStartOfFrame(e, pixels));
 
     // DHT
-    _writeHuffmanTable(e, 0, 0, HUFF_DC_Y);
-    _writeHuffmanTable(e, 0, 1, HUFF_DC_CbCr);
-    _writeHuffmanTable(e, 1, 0, HUFF_AC_Y);
-    _writeHuffmanTable(e, 1, 1, HUFF_AC_CbCr);
+    try$(_writeHuffmanTable(e, 0, 0, HUFF_DC_Y));
+    try$(_writeHuffmanTable(e, 0, 1, HUFF_DC_CbCr));
+    try$(_writeHuffmanTable(e, 1, 0, HUFF_AC_Y));
+    try$(_writeHuffmanTable(e, 1, 1, HUFF_AC_CbCr));
 
     // SOS
-    _writeStartOfScan(e);
+    try$(_writeStartOfScan(e));
 
     // ECS
     BitWriter w(e);
     try$(_writePixelData(pixels, w));
 
     // EOI
-    e.writeU8be(0xFF);
-    e.writeU8be(EOI);
+    try$(e.writeU8be(0xFF));
+    try$(e.writeU8be(EOI));
 
     return Ok();
 }

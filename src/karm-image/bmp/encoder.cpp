@@ -1,3 +1,7 @@
+module;
+
+#include <karm/macros>
+
 export module Karm.Image:bmp.encoder;
 
 import Karm.Core;
@@ -45,24 +49,24 @@ export Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
 
     usize fileSize = pixelOffset + pixelData.len();
 
-    e.writeStr("BM"s);
-    e.writeU32le(fileSize);    // file size
-    e.writeU32le(0);           // reserved
-    e.writeU32le(pixelOffset); // pixel offset
+    try$(e.writeStr("BM"s));
+    try$(e.writeU32le(fileSize));    // file size
+    try$(e.writeU32le(0));           // reserved
+    try$(e.writeU32le(pixelOffset)); // pixel offset
 
-    e.writeU32le(infoSize);        // info size
-    e.writeI32le(pixels.width());  // width
-    e.writeI32le(pixels.height()); // height
-    e.writeU16le(1);               // planes
-    e.writeU16le(32);              // bpp
-    e.writeU32le(0);               // compression
-    e.writeU32le(0);               // image size
-    e.writeI32le(2835);            // x pixels per meter
-    e.writeI32le(2835);            // y pixels per meter
-    e.writeU32le(0);               // colors used
-    e.writeU32le(0);               // important colors
+    try$(e.writeU32le(infoSize));        // info size
+    try$(e.writeI32le(pixels.width()));  // width
+    try$(e.writeI32le(pixels.height())); // height
+    try$(e.writeU16le(1));               // planes
+    try$(e.writeU16le(32));              // bpp
+    try$(e.writeU32le(0));               // compression
+    try$(e.writeU32le(0));               // image size
+    try$(e.writeI32le(2835));            // x pixels per meter
+    try$(e.writeI32le(2835));            // y pixels per meter
+    try$(e.writeU32le(0));               // colors used
+    try$(e.writeU32le(0));               // important colors
 
-    e.writeBytes(pixelData);
+    try$(e.writeBytes(pixelData));
 
     return Ok();
 }

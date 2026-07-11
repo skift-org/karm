@@ -123,10 +123,10 @@ struct Answer {
 
 Res<> encodeName(Io::BEmit& e, Str name) {
     for (auto part : iterSplit(name, '.')) {
-        e.writeU8be(part.len());
-        e.writeStr(part);
+        try$(e.writeU8be(part.len()));
+        try$(e.writeStr(part));
     }
-    e.writeU8be(0);
+    try$(e.writeU8be(0));
     return Ok();
 }
 
@@ -197,21 +197,21 @@ struct Packet {
         Io::BufferWriter buf;
         Io::BEmit e(buf);
 
-        e.writeBytes(p.header().bytes());
+        try$(e.writeBytes(p.header().bytes()));
 
         for (auto& q : p._qs) {
             try$(encodeName(e, q.name));
-            e.writeU16be(q.type);
-            e.writeU16be(q.class_);
+            try$(e.writeU16be(q.type));
+            try$(e.writeU16be(q.class_));
         }
 
         for (auto& a : p._ans) {
             try$(encodeName(e, a.name));
-            e.writeU16be(a.type);
-            e.writeU16be(a.class_);
-            e.writeU32be(a.ttl.toSecs());
-            e.writeU16be(a.data.len());
-            e.writeBytes(a.data);
+            try$(e.writeU16be(a.type));
+            try$(e.writeU16be(a.class_));
+            try$(e.writeU32be(a.ttl.toSecs()));
+            try$(e.writeU16be(a.data.len()));
+            try$(e.writeBytes(a.data));
         }
 
         return Ok(buf.take());

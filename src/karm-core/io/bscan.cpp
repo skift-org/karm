@@ -444,93 +444,97 @@ export struct BEmit {
         : _writer(writer) {}
 
     template <Meta::TriviallyCopyable T>
-    always_inline constexpr void writeFrom(T const& v) {
-        (void)_writer.write(Bytes{(u8 const*)&v, sizeof(v)});
+    always_inline constexpr Res<> writeFrom(T const& v) {
+        try$(_writer.write(Bytes{(u8 const*)&v, sizeof(v)}));
+        return Ok();
     }
 
-    always_inline constexpr void writeU8be(u8be v) {
-        writeFrom(v);
+    always_inline constexpr Res<> writeU8be(u8be v) {
+        return writeFrom(v);
     }
 
-    always_inline constexpr void writeU16be(u16be v) {
-        writeFrom(v);
+    always_inline constexpr Res<> writeU16be(u16be v) {
+        return writeFrom(v);
     }
 
-    always_inline constexpr void writeU32be(u32be v) {
-        writeFrom(v);
+    always_inline constexpr Res<> writeU32be(u32be v) {
+        return writeFrom(v);
     }
 
-    always_inline constexpr void writeU64be(u64be v) {
-        writeFrom(v);
+    always_inline constexpr Res<> writeU64be(u64be v) {
+        return writeFrom(v);
     }
 
-    always_inline constexpr void writeU8le(u8le v) {
-        writeFrom(v);
+    always_inline constexpr Res<> writeU8le(u8le v) {
+        return writeFrom(v);
     }
 
-    always_inline constexpr void writeU16le(u16le v) {
-        writeFrom(v);
+    always_inline constexpr Res<> writeU16le(u16le v) {
+        return writeFrom(v);
     }
 
-    always_inline constexpr void writeU32le(u32le v) {
-        writeFrom(v);
+    always_inline constexpr Res<> writeU32le(u32le v) {
+        return writeFrom(v);
     }
 
-    always_inline constexpr void writeU64le(u64le v) {
-        writeFrom(v);
+    always_inline constexpr Res<> writeU64le(u64le v) {
+        return writeFrom(v);
     }
 
-    always_inline constexpr void writeI8be(i8be v) {
-        writeFrom(v);
+    always_inline constexpr Res<> writeI8be(i8be v) {
+        return writeFrom(v);
     }
 
-    always_inline constexpr void writeI16be(i16be v) {
-        writeFrom(v);
+    always_inline constexpr Res<> writeI16be(i16be v) {
+        return writeFrom(v);
     }
 
-    always_inline constexpr void writeI32be(i32be v) {
-        writeFrom(v);
+    always_inline constexpr Res<> writeI32be(i32be v) {
+        return writeFrom(v);
     }
 
-    always_inline constexpr void writeI64be(i64be v) {
-        writeFrom(v);
+    always_inline constexpr Res<> writeI64be(i64be v) {
+        return writeFrom(v);
     }
 
-    always_inline constexpr void writeI8le(i8le v) {
-        writeFrom(v);
+    always_inline constexpr Res<> writeI8le(i8le v) {
+        return writeFrom(v);
     }
 
-    always_inline constexpr void writeI16le(i16le v) {
-        writeFrom(v);
+    always_inline constexpr Res<> writeI16le(i16le v) {
+        return writeFrom(v);
     }
 
-    always_inline constexpr void writeI32le(i32le v) {
-        writeFrom(v);
+    always_inline constexpr Res<> writeI32le(i32le v) {
+        return writeFrom(v);
     }
 
-    always_inline constexpr void writeI64le(i64le v) {
-        writeFrom(v);
+    always_inline constexpr Res<> writeI64le(i64le v) {
+        return writeFrom(v);
     }
 
-    always_inline constexpr void writeF32(f32 v) {
-        writeFrom(v);
+    always_inline constexpr Res<> writeF32(f32 v) {
+        return writeFrom(v);
     }
 
-    always_inline constexpr void writeF64(f64 v) {
-        writeFrom(v);
+    always_inline constexpr Res<> writeF64(f64 v) {
+        return writeFrom(v);
     }
 
-    always_inline constexpr void writeStr(Str s) {
-        (void)_writer.write(Bytes{(u8 const*)s.buf(), s.len()});
+    always_inline constexpr Res<> writeStr(Str s) {
+        try$(_writer.write(Bytes{(u8 const*)s.buf(), s.len()}));
+        return Ok();
     }
 
-    always_inline constexpr void writeCStr(Str s) {
-        (void)_writer.write(Bytes{(u8 const*)s.buf(), s.len()});
-        (void)_writer.write(Bytes{(u8 const*)"\0", 1});
+    always_inline constexpr Res<> writeCStr(Str s) {
+        try$(_writer.write(Bytes{(u8 const*)s.buf(), s.len()}));
+        try$(_writer.write(Bytes{(u8 const*)"\0", 1}));
+        return Ok();
     }
 
-    always_inline constexpr void writeBytes(Bytes b) {
-        (void)_writer.write(b);
+    always_inline constexpr Res<> writeBytes(Bytes b) {
+        try$(_writer.write(b));
+        return Ok();
     }
 };
 

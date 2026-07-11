@@ -18,11 +18,11 @@ export struct PackSerializer : Serializer {
     Res<> beginUnit(Type type) override {
         switch (type.kind) {
         case Type::NIL:
-            _emit.writeFrom<u8>(0);
+            try$(_emit.writeFrom<u8>(0));
             break;
 
         case Type::SOME:
-            _emit.writeFrom<u8>(1);
+            try$(_emit.writeFrom<u8>(1));
             break;
 
         case Type::UNIT:
@@ -32,7 +32,7 @@ export struct PackSerializer : Serializer {
             break;
 
         case Type::UNION_ITEM:
-            _emit.writeFrom<u8>(type.index.unwrap());
+            try$(_emit.writeFrom<u8>(type.index.unwrap()));
             break;
 
         case Type::ENUM:
@@ -69,34 +69,34 @@ export struct PackSerializer : Serializer {
     }
 
     Res<> serializeBool(bool v) override {
-        _emit.writeFrom<u8>(v);
+        try$(_emit.writeFrom<u8>(v));
         return Ok();
     }
 
     Res<> serializeInteger(i64 v, SizeHint) override {
-        _emit.writeFrom<i64>(v);
+        try$(_emit.writeFrom<i64>(v));
         return Ok();
     }
 
     Res<> serializeUnsigned(u64 v, SizeHint) override {
-        _emit.writeFrom<u64>(v);
+        try$(_emit.writeFrom<u64>(v));
         return Ok();
     }
 
     Res<> serializeFloat(f64 v, SizeHint) override {
-        _emit.writeFrom<f64>(v);
+        try$(_emit.writeFrom<f64>(v));
         return Ok();
     }
 
     Res<> serializeBytes(Bytes v) override {
-        _emit.writeFrom<u64>(v.len());
-        _emit.writeBytes(v);
+        try$(_emit.writeFrom<u64>(v.len()));
+        try$(_emit.writeBytes(v));
         return Ok();
     }
 
     Res<> serializeString(Str v) override {
-        _emit.writeFrom<u64>(v.len());
-        _emit.writeStr(v);
+        try$(_emit.writeFrom<u64>(v.len()));
+        try$(_emit.writeStr(v));
         return Ok();
     }
 };

@@ -127,44 +127,49 @@ export struct BitWriter {
 
     always_inline BitWriter(Io::BEmit& e) : e(e) {}
 
-    always_inline void putByte(u8 b) {
+    always_inline Res<> putByte(u8 b) {
         _out[_outLen++] = b;
         if (_outLen == OUT_CAP)
-            flushBytes();
+            return flushBytes();
+        return Ok();
     }
 
-    always_inline void flushBytes() {
+    always_inline Res<> flushBytes() {
         if (_outLen) {
-            e.writeBytes(sub(_out, 0, _outLen));
+            try$(e.writeBytes(sub(_out, 0, _outLen)));
             _outLen = 0;
         }
+        return Ok();
     }
 
-    always_inline void writeBit(u8 bit) {
+    always_inline Res<> writeBit(u8 bit) {
         _bit |= (bit & 1) << (7 - _bitLen);
         _bitLen = (_bitLen + 1) & 7;
 
         if (_bitLen == 0) {
-            putByte(_bit);
+            try$(putByte(_bit));
             if (_bit == 0xFF)
-                putByte(0);
+                try$(putByte(0));
             _bit = 0;
         }
+        return Ok();
     }
 
-    always_inline void writeBits(u64 bits, usize len) {
+    always_inline Res<> writeBits(u64 bits, usize len) {
         for (usize i = 1; i <= len; ++i)
-            writeBit(bits >> (len - i));
+            try$(writeBit(bits >> (len - i)));
+        return Ok();
     }
 
-    always_inline void flushBitByte() {
+    always_inline Res<> flushBitByte() {
         if (_bitLen) {
-            putByte(_bit);
+            try$(putByte(_bit));
             if (_bit == 0xFF)
-                putByte(0);
+                try$(putByte(0));
             _bit = 0;
             _bitLen = 0;
         }
+        return Ok();
     }
 };
 
