@@ -30,7 +30,7 @@
         },
         "cute-engineering/ce-targets": {
             "git": "https://codeberg.org/cute-engineering/ce-targets.git",
-            "tag": "v0.8.0"
+            "tag": "v0.9.0"
         },
         "cute-engineering/ce-bootfs": {
             "git": "https://codeberg.org/cute-engineering/ce-bootfs.git",
