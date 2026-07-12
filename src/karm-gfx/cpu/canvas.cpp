@@ -1,5 +1,6 @@
 export module Karm.Gfx:cpu.canvas;
 
+import Karm.Core;
 import Karm.Math;
 import :buffer;
 import :canvas;
@@ -31,6 +32,32 @@ export struct CpuCanvas : Canvas {
         float opacity = 1.0;
     };
 
+    static constexpr isize GLYPH_SUBPIXELS = 4;
+
+    struct GlyphKey {
+        Fontface const* face;
+        Glyph glyph;
+        f64 xScale;
+        f64 yScale;
+        u8 subpixel;
+
+        void hash(Meta::Derive<Hasher> auto& h) const {
+            Karm::hash(h, usize(face));
+            Karm::hash(h, glyph);
+            Karm::hash(h, xScale);
+            Karm::hash(h, yScale);
+            Karm::hash(h, subpixel);
+        }
+
+        bool operator==(GlyphKey const&) const = default;
+    };
+
+    struct CachedGlyph {
+        Rc<Fontface> face; //< Pins the face so the key's pointer stays valid
+        Opt<Rc<Surface>> mask = NONE; //< Per-channel coverage (r, g, b)
+        Math::Vec2i origin = {}; //< Top-left of the mask relative to the baseline
+    };
+
     Opt<MutPixels> _pixels{};
     Vec<Scope> _stack{};
     Math::Path _path{};
@@ -38,6 +65,7 @@ export struct CpuCanvas : Canvas {
     CpuRast _rast{};
     LcdLayout _lcdLayout = RGB;
     bool _useSpaa = false;
+    Lru<GlyphKey, CachedGlyph> _glyphCache{4096};
 
     // MARK: Buffers -----------------------------------------------------------
 
@@ -361,10 +389,123 @@ export struct CpuCanvas : Canvas {
         _fill(current().fill, rule);
     }
 
+    // MARK: Glyph Operations --------------------------------------------------
+
+    CachedGlyph _renderGlyph(Font const& font, Glyph glyph, Math::Vec2f scale, u8 subpixel) {
+        push();
+        current().trans = Math::Trans2f::scale(scale);
+        beginPath();
+        font.fontface->contour(*this, glyph);
+
+        _poly.clear();
+        createSolid(_poly, _path);
+        _poly.transform(current().trans);
+        pop();
+
+        _poly.offset({subpixel / (f64)GLYPH_SUBPIXELS, 0.0});
+        _poly.sortForAet();
+
+        if (not _poly.len())
+            return {font.fontface};
+
+        auto bound = _poly.bound().grow(1.0).ceil().cast<isize>();
+        if (bound.width <= 0 or bound.height <= 0)
+            return {font.fontface};
+
+        auto mask = Surface::alloc(bound.wh, RGBA8888);
+        auto maskPixels = mask->mutPixels();
+        maskPixels.clear();
+
+        Math::Vec2f last = {0, 0};
+        auto rasterComponent = [&](auto comp, Math::Vec2f off) {
+            _poly.offset(off - last);
+            last = off;
+            _rast.fill(_poly, bound, FillRule::NONZERO, [&](CpuRast::Frag frag) {
+                auto* px = maskPixels.pixelUnsafe(frag.xy - bound.xy);
+                auto c = RGBA8888.load(px);
+                comp(c) = Math::roundi(frag.a * 255);
+                RGBA8888.store(px, c);
+            });
+        };
+
+        rasterComponent(Color::RED_COMPONENT, _lcdLayout.red);
+        rasterComponent(Color::GREEN_COMPONENT, _lcdLayout.green);
+        rasterComponent(Color::BLUE_COMPONENT, _lcdLayout.blue);
+
+        return {font.fontface, mask, bound.xy};
+    }
+
+    void _blitGlyph(CachedGlyph const& cached, Math::Vec2i baseline) {
+        auto color = current().fill.unwrap<Color>();
+        auto opacity = current().opacity;
+        if (opacity < 0.001)
+            return;
+
+        auto src = cached.mask.unwrap()->pixels();
+        auto destRect = Math::Recti{baseline + cached.origin, src.size()};
+        auto clipped = current().clip.clipTo(destRect);
+        if (clipped.width <= 0 or clipped.height <= 0)
+            return;
+
+        pixels().fmt().visit([&](auto format) {
+            for (isize y = clipped.top(); y < clipped.bottom(); y++) {
+                for (isize x = clipped.start(); x < clipped.end(); x++) {
+                    Math::Vec2i pos = {x, y};
+                    auto cov = src.loadUnsafe(pos - destRect.xy);
+                    if (cov.red == 0 and cov.green == 0 and cov.blue == 0)
+                        continue;
+
+                    f64 factor = opacity;
+                    if (current().clipMask.has())
+                        factor *= current().clipMask.unwrap()->pixels().loadUnsafe(pos - current().clipBound.xy).red / 255.0;
+
+                    auto* px = mutPixels().pixelUnsafe(pos);
+                    auto c = format.load(px);
+
+                    auto tint = color;
+                    tint.alpha = Math::roundi(color.alpha * (cov.red / 255.0) * factor);
+                    c = tint.blendOverComponent(c, Color::RED_COMPONENT);
+                    tint.alpha = Math::roundi(color.alpha * (cov.green / 255.0) * factor);
+                    c = tint.blendOverComponent(c, Color::GREEN_COMPONENT);
+                    tint.alpha = Math::roundi(color.alpha * (cov.blue / 255.0) * factor);
+                    c = tint.blendOverComponent(c, Color::BLUE_COMPONENT);
+
+                    format.store(px, c);
+                }
+            }
+        });
+    }
+
     void fill(Font const& font, Glyph glyph, Math::Vec2f baseline) override {
-        _useSpaa = true;
-        Canvas::fill(font, glyph, baseline);
-        _useSpaa = false;
+        auto& trans = current().trans;
+
+        bool cacheable =
+            current().fill.is<Color>() and
+            trans.axisAligned() and
+            trans.xx > 0 and
+            trans.yy > 0;
+
+        if (not cacheable) {
+            _useSpaa = true;
+            Canvas::fill(font, glyph, baseline);
+            _useSpaa = false;
+            return;
+        }
+
+        Math::Vec2f scale = {trans.xx * font.fontsize, trans.yy * font.fontsize};
+        auto pos = trans.apply(baseline);
+        Math::Vec2i ipos = {Math::floori(pos.x), Math::roundi(pos.y)};
+        u8 subpixel = clamp<isize>(Math::floori((pos.x - ipos.x) * GLYPH_SUBPIXELS), 0, GLYPH_SUBPIXELS - 1);
+
+        auto& cached = _glyphCache.access(
+            GlyphKey{&font.fontface.unwrap(), glyph, scale.x, scale.y, subpixel},
+            [&] {
+                return _renderGlyph(font, glyph, scale, subpixel);
+            }
+        );
+
+        if (cached.mask.has())
+            _blitGlyph(cached, ipos);
     }
 
     // MARK: Clear Operations --------------------------------------------------

@@ -18,6 +18,19 @@ struct Lru {
 
     Lru(usize cap) : _cap(cap) {}
 
+    Lru(Lru&& other)
+        : _cap(other._cap),
+          _map(std::move(other._map)),
+          _ll(std::move(other._ll)) {}
+
+    Lru& operator=(Lru&& other) {
+        clear();
+        _cap = other._cap;
+        _map = std::move(other._map);
+        _ll = std::move(other._ll);
+        return *this;
+    }
+
     ~Lru() {
         clear();
     }

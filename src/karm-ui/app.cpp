@@ -19,6 +19,7 @@ export auto FRAME_TIME = 1.0 / FRAME_RATE;
 
 struct RootNode : ProxyNode<RootNode> {
     Rc<App::Window> _window;
+    Gfx::CpuCanvas _g;
     bool _shouldAnimate = true;
     bool _shouldLayout = true;
     Vec<Math::Recti> _dirty;
@@ -66,12 +67,11 @@ struct RootNode : ProxyNode<RootNode> {
 
         auto pixels = _window->acquireSurface();
         if (_dirty.len()) {
-            Gfx::CpuCanvas g;
-            g.begin(pixels);
+            _g.begin(pixels);
             for (auto& d : _dirty) {
-                paint(g, d);
+                paint(_g, d);
             }
-            g.end();
+            _g.end();
         }
 
         _window->releaseSurface(_dirty);

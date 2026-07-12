@@ -7,10 +7,27 @@ import Karm.Math;
 
 using namespace Karm;
 
+void report(Vec<Duration>& samples) {
+    sort(samples, [](auto& a, auto& b) {
+        return a.toUSecs() <=> b.toUSecs();
+    });
+
+    f64 sum = 0;
+    for (auto& s : samples)
+        sum += s.toUSecs();
+
+    Sys::println("");
+    Sys::println("median: {}", samples[samples.len() / 2]);
+    Sys::println("average: {}", Duration::fromUSecs(sum / samples.len()));
+    Sys::println("min: {}", first(samples));
+    Sys::println("max: {}", last(samples));
+}
+
 Async::Task<> entryPointAsync(Sys::Env&, Async::CancellationToken) {
     Vec<Duration> samples;
     auto surface = Gfx::Surface::alloc({1000, 1000});
 
+    Sys::println("strokes:");
     for (isize i = 0; i < 100; i++) {
         auto start = Sys::now();
         for (isize size = 100; size < 1000; size += 10) {
@@ -46,21 +63,39 @@ Async::Task<> entryPointAsync(Sys::Env&, Async::CancellationToken) {
         Sys::print("sampling {}/100: {}\r", i + 1, elapsed);
     }
 
-    // median
-    sort(samples, [](auto& a, auto& b) {
-        return a.toUSecs() <=> b.toUSecs();
-    });
+    report(samples);
 
-    // average
-    f64 sum = 0;
-    for (auto& s : samples)
-        sum += s.toUSecs();
+    Sys::println("");
+    Sys::println("text:");
+    samples.clear();
 
-    Sys::println("\n");
-    Sys::println("median: {}", samples[samples.len() / 2]);
-    Sys::println("average: {}", Duration::fromUSecs(sum / samples.len()));
-    Sys::println("min: {}", first(samples));
-    Sys::println("max: {}", last(samples));
+    auto font = Gfx::Font::fallback();
+    Gfx::CpuCanvas g;
+
+    for (isize i = 0; i < 100; i++) {
+        auto start = Sys::now();
+
+        g.begin(surface->mutPixels());
+        g.fillStyle(Gfx::WHITE);
+
+        for (isize line = 0; line < 100; line++) {
+            Math::Vec2f baseline = {8.25 * (line % 4), 16.0 + (line % 60) * 16.0};
+            for (auto rune : iterRunes(Str{"the quick brown fox jumps over the lazy dog"})) {
+                auto glyph = font.glyph(rune);
+                g.fill(font, glyph, baseline);
+                baseline.x += font.advance(glyph);
+            }
+        }
+
+        g.end();
+
+        auto elapsed = Sys::now() - start;
+        samples.pushBack(elapsed);
+
+        Sys::print("sampling {}/100: {}\r", i + 1, elapsed);
+    }
+
+    report(samples);
 
     co_return Ok();
 }
