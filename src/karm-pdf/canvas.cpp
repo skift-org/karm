@@ -194,7 +194,8 @@ export struct Canvas : Gfx::Canvas {
             for (auto& vert : next(contour)) {
                 lineTo(vert, {});
             }
-            closePath();
+            if (contour.close)
+                closePath();
         }
     }
 
