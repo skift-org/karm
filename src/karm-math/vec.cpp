@@ -209,6 +209,34 @@ union Vec2 {
         return {x / other.x, y / other.y};
     }
 
+    template <typename U>
+    constexpr Vec2& operator+=(Vec2<U> const& other) {
+        x += other.x;
+        y += other.y;
+        return *this;
+    }
+
+    template <typename U>
+    constexpr Vec2& operator-=(Vec2<U> const& other) {
+        x -= other.x;
+        y -= other.y;
+        return *this;
+    }
+
+    template <typename U>
+    constexpr Vec2& operator*=(Vec2<U> const& other) {
+        x *= other.x;
+        y *= other.y;
+        return *this;
+    }
+
+    template <typename U>
+    constexpr Vec2& operator/=(Vec2<U> const& other) {
+        x /= other.x;
+        y /= other.y;
+        return *this;
+    }
+
     constexpr Vec2 operator-() const {
         return {-x, -y};
     }
@@ -476,6 +504,38 @@ union Vec3 {
         return {x / other.x, y / other.y, z / other.z};
     }
 
+    template <typename U>
+    constexpr Vec3& operator+=(Vec3<U> const& other) {
+        x += other.x;
+        y += other.y;
+        z += other.z;
+        return *this;
+    }
+
+    template <typename U>
+    constexpr Vec3& operator-=(Vec3<U> const& other) {
+        x -= other.x;
+        y -= other.y;
+        z -= other.z;
+        return *this;
+    }
+
+    template <typename U>
+    constexpr Vec3& operator*=(Vec3<U> const& other) {
+        x *= other.x;
+        y *= other.y;
+        z *= other.z;
+        return *this;
+    }
+
+    template <typename U>
+    constexpr Vec3& operator/=(Vec3<U> const& other) {
+        x /= other.x;
+        y /= other.y;
+        z /= other.z;
+        return *this;
+    }
+
     constexpr Vec3 operator-() const {
         return {-x, -y, -z};
     }
@@ -714,6 +774,42 @@ union Vec4 {
     constexpr auto operator/(Vec4<U> const& other) const
         -> Vec4<decltype(T{} / U{})> {
         return {x / other.x, y / other.y, z / other.z, w / other.w};
+    }
+
+    template <typename U>
+    constexpr Vec4& operator+=(Vec4<U> const& other) {
+        x += other.x;
+        y += other.y;
+        z += other.z;
+        w += other.w;
+        return *this;
+    }
+
+    template <typename U>
+    constexpr Vec4& operator-=(Vec4<U> const& other) {
+        x -= other.x;
+        y -= other.y;
+        z -= other.z;
+        w -= other.w;
+        return *this;
+    }
+
+    template <typename U>
+    constexpr Vec4& operator*=(Vec4<U> const& other) {
+        x *= other.x;
+        y *= other.y;
+        z *= other.z;
+        w *= other.w;
+        return *this;
+    }
+
+    template <typename U>
+    constexpr Vec4& operator/=(Vec4<U> const& other) {
+        x /= other.x;
+        y /= other.y;
+        z /= other.z;
+        w /= other.w;
+        return *this;
     }
 
     constexpr Vec4 operator-() const {
