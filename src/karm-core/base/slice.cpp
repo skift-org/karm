@@ -109,6 +109,9 @@ struct Slice {
     constexpr Slice(T const* begin, T const* end)
         : Slice(begin, end - begin) {}
 
+    constexpr Slice(std::initializer_list<T> v)
+        : Slice(v.begin(), v.size()) {}
+
     constexpr Slice(Sliceable<T> auto const& other)
         : Slice(other.buf(), other.len()) {}
 
