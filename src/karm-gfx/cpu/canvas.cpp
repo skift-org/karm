@@ -53,9 +53,9 @@ export struct CpuCanvas : Canvas {
     };
 
     struct CachedGlyph {
-        Rc<Fontface> face; //< Pins the face so the key's pointer stays valid
+        Rc<Fontface> face;            //< Pins the face so the key's pointer stays valid
         Opt<Rc<Surface>> mask = NONE; //< Per-channel coverage (r, g, b)
-        Math::Vec2i origin = {}; //< Top-left of the mask relative to the baseline
+        Math::Vec2i origin = {};      //< Top-left of the mask relative to the baseline
     };
 
     Opt<MutPixels> _pixels{};

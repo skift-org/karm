@@ -42,7 +42,7 @@ export struct Client : Transport {
         auto scheme = request->url.scheme;
         request->header.put(Header::USER_AGENT, userAgent);
         usize redirection = 0;
-        
+
         for (;;) {
             auto maybeResp = co_await _transport->doAsync(request, ct);
             if (not maybeResp) {

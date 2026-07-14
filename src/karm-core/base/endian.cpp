@@ -23,17 +23,17 @@ struct [[gnu::packed]] Be {
     }
 
     always_inline constexpr Bytes bytes() const {
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Waddress-of-packed-member"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Waddress-of-packed-member"
         return Bytes((u8 const*)&_value, sizeof(T));
-        #pragma clang diagnostic pop
+#pragma clang diagnostic pop
     }
 
     always_inline constexpr MutBytes mutBytes() {
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Waddress-of-packed-member"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Waddress-of-packed-member"
         return MutBytes((u8*)&_value, sizeof(T));
-        #pragma clang diagnostic pop
+#pragma clang diagnostic pop
     }
 
     always_inline constexpr T value() const {
@@ -60,17 +60,17 @@ struct [[gnu::packed]] Le {
     }
 
     always_inline constexpr Bytes bytes() const {
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Waddress-of-packed-member"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Waddress-of-packed-member"
         return Bytes((u8 const*)&_value, sizeof(T));
-        #pragma clang diagnostic pop
+#pragma clang diagnostic pop
     }
 
     always_inline constexpr MutBytes mutBytes() {
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Waddress-of-packed-member"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Waddress-of-packed-member"
         return MutBytes((u8*)&_value, sizeof(T));
-        #pragma clang diagnostic pop
+#pragma clang diagnostic pop
     }
 
     always_inline constexpr T value() const {

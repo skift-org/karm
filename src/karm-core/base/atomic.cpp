@@ -87,7 +87,7 @@ struct Atomic {
         return fetchInc() + 1;
     }
 
-   always_inline T operator++(int) {
+    always_inline T operator++(int) {
         return fetchInc();
     }
 

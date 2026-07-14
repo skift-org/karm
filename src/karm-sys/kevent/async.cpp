@@ -1,7 +1,6 @@
 module;
 
 #include <karm/macros>
-
 #include <sys/event.h>
 #include <sys/time.h>
 #include <sys/types.h>

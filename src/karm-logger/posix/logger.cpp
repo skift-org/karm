@@ -34,7 +34,7 @@ Io::TextWriter& loggerOut() {
 
             if (rune == '\n')
                 try$(flush());
-            
+
             return Ok();
         }
     };
