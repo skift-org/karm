@@ -51,14 +51,14 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
 
         if (interpFlag.value() or allFlag.value()) {
             Sys::println("Interp:");
-            Sys::println("{#}", object.interp());
+            Sys::println("{:#}", object.interp());
         }
 
         if (sectionsFlag.value() or allFlag.value()) {
             Sys::println("Sections:");
             auto shstr = try$(object.template section<Elf::ElfStrTab>(object.header().e_shstrndx));
             for (auto section : object.iterSection())
-                Sys::println(" - {#} {} {}", shstr.string(section.sh_name), section.type(), section.data.len());
+                Sys::println(" - {:#} {} {}", shstr.string(section.sh_name), section.type(), section.data.len());
             Sys::println();
         }
 
@@ -75,7 +75,7 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
                 Sys::println("Symbols:");
                 auto symstr = try$(object.template section<Elf::ElfStrTab>(symtab.sh_link));
                 for (auto sym : symtab.iterSym())
-                    Sys::println(" - {#}", symstr.string(sym.st_name));
+                    Sys::println(" - {:#}", symstr.string(sym.st_name));
             } else {
                 Sys::println("ELF Object has no symbols");
             }

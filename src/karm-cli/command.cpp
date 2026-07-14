@@ -48,9 +48,9 @@ export struct Token {
 
     void repr(Io::Emit& e) const {
         if (kind == FLAG)
-            e("(token {} {#c})", kind, flag);
+            e("(token {} {:#c})", kind, flag);
         else
-            e("(token {} {#})", kind, value);
+            e("(token {} {:#})", kind, value);
     }
 };
 
@@ -348,7 +348,7 @@ export struct _OptionImpl {
         if (kind == OptionKind::OPTION) {
             try$(w.writeRune('['));
             if (shortName)
-                try$(format(w, "-{c},", shortName.unwrap()));
+                try$(format(w, "-{:c},", shortName.unwrap()));
             try$(format(w, "--{}", longName));
             try$(w.writeRune(']'));
         } else if (kind == OptionKind::OPERAND) {
@@ -620,7 +620,7 @@ export struct Command : Meta::Pinned {
 
                         try$(w.writeStr("  "s));
                         if (opt->shortName)
-                            try$(format(w, "-{c}, ", opt->shortName.unwrap()));
+                            try$(format(w, "-{:c}, ", opt->shortName.unwrap()));
 
                         try$(format(w, "--{} - {}\n", opt->longName, opt->description));
                     }

@@ -19,7 +19,7 @@ export struct Loca : Io::BChunk {
             s.skip(glyphId * 4);
             return s.nextU32be();
         } else {
-            logWarn("unsupported loca format {x}", format);
+            logWarn("unsupported loca format {:x}", format);
             return 0;
         }
     }

@@ -239,7 +239,7 @@ export struct FontAttrs {
     Monospace monospace = Monospace::NO;
 
     void repr(Io::Emit& e) const {
-        e.ln("family: {#}", family);
+        e.ln("family: {:#}", family);
         e.ln("weight: {}", weight);
         e.ln("stretch: {}", stretch);
         e.ln("style: {}", style);

@@ -27,7 +27,7 @@ export struct RoutePattern {
         String value;
 
         void repr(Io::Emit& e) const {
-            e("({} {#})", type, value);
+            e("({} {:#})", type, value);
         }
     };
 

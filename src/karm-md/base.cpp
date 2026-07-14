@@ -43,7 +43,7 @@ export struct Code {
     String text;
 
     void repr(Io::Emit& e) const {
-        e("(code {#})", text);
+        e("(code {:#})", text);
     }
 
     template <typename F>
@@ -54,7 +54,7 @@ export struct InlineCode {
     String text;
 
     void repr(Io::Emit& e) const {
-        e("(icode {#})", text);
+        e("(icode {:#})", text);
     }
 
     template <typename F>
@@ -65,7 +65,7 @@ export struct Html {
     String text;
 
     void repr(Io::Emit& e) const {
-        e("(html {#})", text);
+        e("(html {:#})", text);
     }
 
     template <typename F>
@@ -105,7 +105,7 @@ export struct Link {
     Paragraph children;
 
     void repr(Io::Emit& e) const {
-        e("(a {#} {})", href, children);
+        e("(a {:#} {})", href, children);
     }
 
     template <typename Self, typename F>
@@ -120,7 +120,7 @@ export struct Image {
     String alt;
 
     void repr(Io::Emit& e) const {
-        e("(img {#} {#})", src, alt);
+        e("(img {:#} {:#})", src, alt);
     }
 
     template <typename F>

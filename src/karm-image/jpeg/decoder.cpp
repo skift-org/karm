@@ -526,7 +526,7 @@ export struct Decoder {
                 e.ln("table {}:", i);
                 e.indent();
                 for (usize j = 0; j < 64; ++j) {
-                    e("{02} ", (*_quant[i])[j]);
+                    e("{:02} ", (*_quant[i])[j]);
                     if (j % 8 == 7)
                         e.newline();
                 }
@@ -565,9 +565,9 @@ export struct Decoder {
                 e("DC table {}:\n", i);
                 e.indent();
                 for (usize j = 0; j < 16; ++j) {
-                    e("{02x}:", table.offs[j]);
+                    e("{:02x}:", table.offs[j]);
                     for (usize k = table.offs[j]; k < table.offs[j + 1]; ++k) {
-                        e(" {02x}", table.syms[k]);
+                        e(" {:02x}", table.syms[k]);
                     }
                     e.newline();
                 }
@@ -583,9 +583,9 @@ export struct Decoder {
                 e.ln("AC table {}:", i);
                 e.indent();
                 for (usize j = 0; j < 16; ++j) {
-                    e("{02x}:", table.offs[j]);
+                    e("{:02x}:", table.offs[j]);
                     for (usize k = table.offs[j]; k < table.offs[j + 1]; ++k) {
-                        e(" {02x}", table.syms[k]);
+                        e(" {:02x}", table.syms[k]);
                     }
                     e.newline();
                 }

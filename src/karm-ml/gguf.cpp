@@ -244,7 +244,7 @@ export Res<> loadGguf(Ref::Url url) {
     auto tokens = vocab.encode(input);
     auto string = vocab.decode(tokens);
 
-    yap("input: {#} tokens: {#} string: {#}", input, tokens, string);
+    yap("input: {:#} tokens: {:#} string: {:#}", input, tokens, string);
 
     return Ok();
 }

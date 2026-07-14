@@ -112,7 +112,7 @@ export struct Parser {
 
         if (font.version() != 0x00010000 and
             font.version() != 0x4F54544F) {
-            logError("ttf: version {x} is not supported", (u64)font.version());
+            logError("ttf: version {:x} is not supported", (u64)font.version());
             return Error::other("invalid version");
         }
 

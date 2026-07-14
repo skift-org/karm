@@ -251,7 +251,7 @@ struct Karm::Io::Formatter<Karm::Sys::Ip6> {
     Res<> format(Io::TextWriter& writer, Karm::Sys::Ip6 addr) {
         return Io::format(
             writer,
-            "{04x}:{04x}:{04x}:{04x}:{04x}:{04x}:{04x}:{04x}",
+            "{:04x}:{:04x}:{:04x}:{:04x}:{:04x}:{:04x}:{:04x}:{:04x}",
             addr.a, addr.b, addr.c, addr.d, addr.e, addr.f, addr.g, addr.h
         );
     }

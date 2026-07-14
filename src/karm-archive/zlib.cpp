@@ -30,7 +30,7 @@ export Res<> zlibDecompress(Io::BitReader& r, Io::Writer& out) {
         return Error::invalidData("invalid compression info");
 
     u8 flg = try$(r.readByte());
-    logDebugIf(debugZlib, "flg: {#02x}", flg);
+    logDebugIf(debugZlib, "flg: {:#02x}", flg);
 
     if ((cmf * 256u + flg) % 31 != 0)
         return Error::invalidData("invalid checksum");

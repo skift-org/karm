@@ -127,7 +127,7 @@ export struct Server {
 
     Async::Task<> serveAsync(Async::CancellationToken ct) {
         auto listener = co_try$(Sys::TcpListener::listen(_props.addr));
-        logInfo("{#} listening on http://{}", _props.name, _props.addr);
+        logInfo("{:#} listening on http://{}", _props.name, _props.addr);
         while (true) {
             auto connection = makeRc<Sys::TcpConnection>(co_trya$(listener.acceptAsync(ct)));
             Async::detach(_handleConnectionAsync(connection, ct));

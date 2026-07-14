@@ -116,7 +116,7 @@ struct AtomMatcher : Matcher {
     }
 
     void repr(Io::Emit& e) const override {
-        e("(atom {#})", _data);
+        e("(atom {:#})", _data);
     }
 };
 

@@ -17,7 +17,10 @@ import :base.vec;
 import :io.aton;
 import :io.sscan;
 import :io.text;
+import :io.expr;
 import :base.size;
+
+using namespace Karm::Re::Literals;
 
 namespace Karm::Io {
 
@@ -87,15 +90,24 @@ export Res<> _format(TextWriter& writer, Str format, _Args& args) {
                 continue;
             }
 
-            scan.skip(':');
-            scan.begin();
-            while (scan.peek() != '}' and not scan.ended()) {
+            Str key = scan.token(Re::oneOrMore(Re::alnum() | '_'_re));
+            (void)key; // TODO: support named arguments
+            Str format = "";
+
+            if (scan.skip(':')) {
+                scan.begin();
+                while (scan.peek() != '}' and not scan.ended()) {
+                    scan.next();
+                }
+                if (scan.ended())
+                    return Error::invalidData("unmatched '{'");
                 scan.next();
+                format = scan.end();
+            } else {
+                if (not scan.skip('}'))
+                    return Error::invalidData("unmatched '{'");
             }
-            if (scan.ended())
-                return Error::invalidData("unmatched '{'");
-            scan.next();
-            SScan inner{scan.end()};
+            SScan inner{format};
             try$(args.format(inner, writer, index));
             index++;
         } else if (c == '}') {
@@ -424,7 +436,7 @@ export struct NumberFormatter {
             return writer.writeStr("\\v"s);
 
         if (not isAsciiPrint(val))
-            return format(writer, "\\u{x}", val);
+            return format(writer, "\\u{:x}", val);
 
         return writer.writeRune(val);
     }
@@ -959,7 +971,7 @@ struct StringFormatter {
             else if (c == '\v')
                 try$(writer.writeStr("\\v"s));
             else if (not isAsciiPrint(c))
-                try$(Io::format(writer, "\\u{x}", c));
+                try$(Io::format(writer, "\\u{:x}", c));
             else
                 try$(writer.writeRune(c));
         }
@@ -1001,7 +1013,7 @@ struct Formatter<Symbol> : StringFormatter<Utf8> {
 export template <>
 struct Formatter<Duration> {
     Res<> format(TextWriter& writer, Duration const& val) {
-        return Io::format(writer, "{}.{03}s", val.toSecs(), val.toMSecs() % 1000);
+        return Io::format(writer, "{}.{:03}s", val.toSecs(), val.toMSecs() % 1000);
     }
 };
 
@@ -1022,14 +1034,14 @@ struct Formatter<SystemTime> {
 export template <>
 struct Formatter<Time> {
     Res<> format(TextWriter& writer, Time const& val) {
-        return Io::format(writer, "{02}:{02}:{02}", val.hour, val.minute, val.second);
+        return Io::format(writer, "{:02}:{:02}:{:02}", val.hour, val.minute, val.second);
     }
 };
 
 export template <>
 struct Formatter<Date> {
     Res<> format(TextWriter& writer, Date const& val) {
-        return Io::format(writer, "{04}-{02}-{02}", (isize)val.year, (usize)val.month + 1, (usize)val.day + 1);
+        return Io::format(writer, "{:04}-{:02}-{:02}", (isize)val.year, (usize)val.month + 1, (usize)val.day + 1);
     }
 };
 

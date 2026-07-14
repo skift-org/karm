@@ -308,9 +308,9 @@ export void escape(Io::Emit& emit, Str s) {
             Utf16::encodeUnit(c, units);
 
             if (units.len() == 2) {
-                emit("\\u{04X}\\u{04X}", units[0], units[1]);
+                emit("\\u{:04X}\\u{:04X}", units[0], units[1]);
             } else {
-                emit("\\u{04X}", units[0]);
+                emit("\\u{:04X}", units[0]);
             }
         } else {
             emit(c);

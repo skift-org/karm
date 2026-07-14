@@ -417,7 +417,7 @@ export struct Decoder {
             else if (chunk.sig == IEND)
                 try$(_handleIend(data));
             else
-                logWarnIf(debugPng, "unknow chunk {#}", chunk.sig);
+                logWarnIf(debugPng, "unknow chunk {:#}", chunk.sig);
         }
 
         if (not _ended)

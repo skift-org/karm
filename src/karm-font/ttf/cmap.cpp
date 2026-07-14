@@ -68,7 +68,7 @@ export struct Cmap : Io::BChunk {
                 return Gfx::Glyph(s.skip(offset).nextU16be());
             }
 
-            logWarn("ttf: glyph not found for rune {x}", r);
+            logWarn("ttf: glyph not found for rune {:x}", r);
             return Gfx::Glyph(0);
         }
 

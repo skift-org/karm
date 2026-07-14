@@ -283,7 +283,7 @@ export struct Canvas : Gfx::Canvas {
                     }
 
                     for (auto rune : cell.runes()) {
-                        _e("{04x}", rune == '\n' ? ' ' : rune);
+                        _e("{:04x}", rune == '\n' ? ' ' : rune);
                     }
 
                     prevEndPos = prevEndPos + glyphAdvance - kernDiff;

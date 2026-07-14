@@ -50,7 +50,7 @@ static void _dumpName(Font::Ttf::Name const& name) {
     for (auto record : name.iterRecords()) {
         if (not record.isUnicode())
             continue;
-        Sys::println("    {}:{}:{} {}={#}", record.platformId, record.encodingId, record.languageId, record.nameId, name.string(record));
+        Sys::println("    {}:{}:{} {}={:#}", record.platformId, record.encodingId, record.languageId, record.nameId, name.string(record));
     }
 }
 

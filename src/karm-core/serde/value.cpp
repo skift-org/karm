@@ -341,7 +341,7 @@ export struct Value {
     void repr(Io::Emit& e) const {
         _store.visit(
             [&](String const& s) {
-                e("{#}", s);
+                e("{:#}", s);
             },
             [&](auto const& v) {
                 e("{}", v);
