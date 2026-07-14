@@ -309,7 +309,14 @@ export struct Terminal {
             break;
 
         case 'J':
-            if (n == 2) {
+            if (n == 0) {
+                _buffer.clearScreenAfterCursor();
+            } else if (n == 0) {
+                _buffer.clearScreenBeforeCursor();
+            } else if (n == 2) {
+                _buffer.clearAll();
+                _scrollTop = 0;
+            } else if (n == 3) {
                 _buffer.clearAll();
                 _scrollTop = 0;
             } else {
@@ -319,7 +326,7 @@ export struct Terminal {
 
         case 'K':
             if (n == 0) {
-                _buffer.clearAfterCursor();
+                _buffer.clearLineAfterCursor();
             }
             break;
 

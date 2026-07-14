@@ -88,13 +88,25 @@ struct Buffer {
         }
     }
 
+    void clearLineAfterCursor() {
+        line(cursor.y).cells.resize(cursor.x);
+    }
+
+    void clearScreenAfterCursor() {
+        clearLineAfterCursor();
+        for (usize i : urange::fromStartEnd(cursor.y + 1, lines.len()))
+            line(i).cells.resize(0);
+    }
+
+    void clearScreenBeforeCursor() {
+        fill(mutSub(line(cursor.y).cells, 0, cursor.y), Cell{});
+        for (usize i : urange::fromStartEnd(0, cursor.y))
+            line(i).cells.resize(0);
+    }
+
     void clearAll() {
         lines.clear();
         cursor = {0, 0};
-    }
-
-    void clearAfterCursor() {
-        line(cursor.y).cells.resize(cursor.x);
     }
 };
 
