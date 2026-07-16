@@ -39,7 +39,7 @@ class AuPrinter:
 
     def to_string(self):
         val = int(self.val["_val"])
-        return "%.2f" % (val / (1 << 8))
+        return "%.2f" % (val / 60)
 
 
 def build_opt_pretty_printer():
@@ -56,7 +56,7 @@ def build_vec2_pretty_printer():
 
 def build_au_pretty_printer():
     pp = gdb.printing.RegexpCollectionPrettyPrinter("karm_au")
-    pp.add_printer("Opt", "^(Karm::Math::)?Fixed<int, 8ul>$", AuPrinter)
+    pp.add_printer("Opt", "^(Karm::Math::)?Au$", AuPrinter)
     return pp
 
 
