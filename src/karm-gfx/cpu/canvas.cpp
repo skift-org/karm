@@ -11,16 +11,6 @@ import :cpu.rast;
 
 namespace Karm::Gfx {
 
-export struct LcdLayout {
-    Math::Vec2f red;
-    Math::Vec2f green;
-    Math::Vec2f blue;
-};
-
-export LcdLayout RGB = {{+0.33, 0.0}, {0.0, 0.0}, {-0.33, 0.0}};
-export LcdLayout BGR = {{-0.33, 0.0}, {0.0, 0.0}, {+0.33, 0.0}};
-export LcdLayout VRGB = {{0.0, +0.33}, {0.0, 0.0}, {0.0, -0.33}};
-
 export struct CpuCanvas : Canvas {
     struct Scope {
         Fill fill = Gfx::WHITE;
@@ -54,7 +44,7 @@ export struct CpuCanvas : Canvas {
 
     struct CachedGlyph {
         Rc<Fontface> face;            //< Pins the face so the key's pointer stays valid
-        Opt<Rc<Surface>> mask = NONE; //< Per-channel coverage (r, g, b)
+        Opt<Rc<Surface>> mask = NONE; //< Coverage mask
         Math::Vec2i origin = {};      //< Top-left of the mask relative to the baseline
     };
 
@@ -63,8 +53,6 @@ export struct CpuCanvas : Canvas {
     Math::Path _path{};
     Math::Polyf _poly;
     CpuRast _rast{};
-    LcdLayout _lcdLayout = RGB;
-    bool _useSpaa = false;
     Lru<GlyphKey, CachedGlyph> _glyphCache{4096};
 
     // MARK: Buffers -----------------------------------------------------------
@@ -167,50 +155,10 @@ export struct CpuCanvas : Canvas {
             });
     }
 
-    void _FillSmoothImpl(auto fill, auto format, FillRule fillRule) {
-        Math::Vec2f last = {0, 0};
-        auto opacity = current().opacity;
-        if (opacity < 0.001)
-            return;
-        auto fillComponent = [&](auto comp, Math::Vec2f pos) {
-            _poly.offset(pos - last);
-            last = pos;
-
-            if (current().clipMask.has()) {
-                auto& clipMask = *current().clipMask.unwrap();
-                _rast.fill(_poly, current().clip, fillRule, [&](CpuRast::Frag frag) {
-                    u8 mask = clipMask.pixels().loadUnsafe(frag.xy - current().clipBound.xy).red;
-
-                    auto pixel = mutPixels().pixelUnsafe(frag.xy);
-                    auto color = fill.sample(frag.uv);
-                    color.alpha = Math::roundi(color.alpha * frag.a * (mask / 255.0) * opacity);
-                    auto c = format.load(pixel);
-                    c = color.blendOverComponent(c, comp);
-                    format.store(pixel, c);
-                });
-            } else
-                _rast.fill(_poly, current().clip, fillRule, [&](CpuRast::Frag frag) {
-                    auto pixel = mutPixels().pixelUnsafe(frag.xy);
-                    auto color = fill.sample(frag.uv);
-                    color.alpha = Math::roundi(color.alpha * frag.a * opacity);
-                    auto c = format.load(pixel);
-                    c = color.blendOverComponent(c, comp);
-                    format.store(pixel, c);
-                });
-        };
-
-        fillComponent(Color::RED_COMPONENT, _lcdLayout.red);
-        fillComponent(Color::GREEN_COMPONENT, _lcdLayout.green);
-        fillComponent(Color::BLUE_COMPONENT, _lcdLayout.blue);
-    }
-
     void _fill(Fill fill, FillRule rule = FillRule::NONZERO) {
         fill.visit([&](auto fill) {
             pixels().fmt().visit([&](auto format) {
-                if (_useSpaa)
-                    _FillSmoothImpl(fill, format, rule);
-                else
-                    _fillImpl(fill, format, rule);
+                _fillImpl(fill, format, rule);
             });
         });
     }
@@ -412,25 +360,13 @@ export struct CpuCanvas : Canvas {
         if (bound.width <= 0 or bound.height <= 0)
             return {font.fontface};
 
-        auto mask = Surface::alloc(bound.wh, RGBA8888);
+        auto mask = Surface::alloc(bound.wh, GREYSCALE8);
         auto maskPixels = mask->mutPixels();
         maskPixels.clear();
 
-        Math::Vec2f last = {0, 0};
-        auto rasterComponent = [&](auto comp, Math::Vec2f off) {
-            _poly.offset(off - last);
-            last = off;
-            _rast.fill(_poly, bound, FillRule::NONZERO, [&](CpuRast::Frag frag) {
-                auto* px = maskPixels.pixelUnsafe(frag.xy - bound.xy);
-                auto c = RGBA8888.load(px);
-                comp(c) = Math::roundi(frag.a * 255);
-                RGBA8888.store(px, c);
-            });
-        };
-
-        rasterComponent(Color::RED_COMPONENT, _lcdLayout.red);
-        rasterComponent(Color::GREEN_COMPONENT, _lcdLayout.green);
-        rasterComponent(Color::BLUE_COMPONENT, _lcdLayout.blue);
+        _rast.fill(_poly, bound, FillRule::NONZERO, [&](CpuRast::Frag frag) {
+            maskPixels.store(frag.xy - bound.xy, Color::fromRgb(Math::roundi(frag.a * 255), 0, 0));
+        });
 
         return {font.fontface, mask, bound.xy};
     }
@@ -451,8 +387,8 @@ export struct CpuCanvas : Canvas {
             for (isize y = clipped.top(); y < clipped.bottom(); y++) {
                 for (isize x = clipped.start(); x < clipped.end(); x++) {
                     Math::Vec2i pos = {x, y};
-                    auto cov = src.loadUnsafe(pos - destRect.xy);
-                    if (cov.red == 0 and cov.green == 0 and cov.blue == 0)
+                    u8 cov = src.loadUnsafe(pos - destRect.xy).red;
+                    if (cov == 0)
                         continue;
 
                     f64 factor = opacity;
@@ -463,12 +399,8 @@ export struct CpuCanvas : Canvas {
                     auto c = format.load(px);
 
                     auto tint = color;
-                    tint.alpha = Math::roundi(color.alpha * (cov.red / 255.0) * factor);
-                    c = tint.blendOverComponent(c, Color::RED_COMPONENT);
-                    tint.alpha = Math::roundi(color.alpha * (cov.green / 255.0) * factor);
-                    c = tint.blendOverComponent(c, Color::GREEN_COMPONENT);
-                    tint.alpha = Math::roundi(color.alpha * (cov.blue / 255.0) * factor);
-                    c = tint.blendOverComponent(c, Color::BLUE_COMPONENT);
+                    tint.alpha = Math::roundi(color.alpha * (cov / 255.0) * factor);
+                    c = tint.blendOver(c);
 
                     format.store(px, c);
                 }
@@ -486,9 +418,7 @@ export struct CpuCanvas : Canvas {
             trans.yy > 0;
 
         if (not cacheable) {
-            _useSpaa = true;
             Canvas::fill(font, glyph, baseline);
-            _useSpaa = false;
             return;
         }
 
