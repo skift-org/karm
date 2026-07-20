@@ -6,7 +6,7 @@ import Karm.Gfx;
 namespace Karm::Av {
 
 export struct VideoFrame {
-    Rc<Gfx::Surface> surface;
+    Rc<Gfx::Image> surface;
     Duration timestamp;
 };
 

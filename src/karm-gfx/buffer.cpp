@@ -73,7 +73,7 @@ export Greyscale8 GREYSCALE8;
 
 using _Fmts = Union<Rgba8888, Bgra8888, Greyscale8>;
 
-export struct Fmt : _Fmts {
+export struct Format : _Fmts {
     using _Fmts::_Fmts;
 
     always_inline Color load(void const* pixel) const {
@@ -100,7 +100,7 @@ struct _Pixels {
     Meta::Cond<MUT, void*, void const*> _buf;
     Math::Vec2i _size;
     usize _stride;
-    Fmt _fmt;
+    Format _fmt;
 
     operator _Pixels<false>() const {
         return {_buf, _size, _stride, _fmt};
@@ -130,7 +130,7 @@ struct _Pixels {
 
     // MARK: Buffer Access -----------------------------------------------------
 
-    always_inline Fmt fmt() const {
+    always_inline Format fmt() const {
         return _fmt;
     }
 
@@ -282,14 +282,14 @@ export using MutPixels = _Pixels<true>;
 
 // MARK: Surface --------------------------------------------------------------
 
-export struct Surface {
+export struct Image {
     Union<Vec<u8>, MutBytes> _buf;
     Math::Vec2i _size;
     usize _stride;
-    Fmt _fmt;
+    Format _format;
 
-    static Rc<Surface> alloc(Math::Vec2i size, Fmt fmt = RGBA8888) {
-        return makeRc<Surface>(
+    static Rc<Image> alloc(Math::Vec2i size, Format fmt = RGBA8888) {
+        return makeRc<Image>(
             Vec<u8>{Buf<u8>::init(size.x * size.y * fmt.bpp())},
             size,
             size.x * fmt.bpp(),
@@ -297,11 +297,11 @@ export struct Surface {
         );
     }
 
-    static Rc<Surface> wrap(MutBytes buf, Math::Vec2i size, usize stride, Fmt fmt) {
-        return makeRc<Surface>(std::move(buf), size, stride, fmt);
+    static Rc<Image> wrap(MutBytes buf, Math::Vec2i size, usize stride, Format fmt) {
+        return makeRc<Image>(std::move(buf), size, stride, fmt);
     }
 
-    static Rc<Surface> fallback() {
+    static Rc<Image> fallback() {
         auto img = alloc({2, 2}, RGBA8888);
         img->mutPixels().clear(Color::fromHex(0xFF00FF));
         return img;
@@ -328,11 +328,11 @@ export struct Surface {
     }
 
     always_inline Pixels pixels() const {
-        return {buf(), _size, _stride, _fmt};
+        return {buf(), _size, _stride, _format};
     }
 
     always_inline MutPixels mutPixels() {
-        return {buf(), _size, _stride, _fmt};
+        return {buf(), _size, _stride, _format};
     }
 
     always_inline isize width() const {
@@ -343,12 +343,16 @@ export struct Surface {
         return _size.y;
     }
 
+    always_inline Math::Vec2i size() const {
+        return _size;
+    }
+
     always_inline Math::Recti bound() const {
         return {0, 0, width(), height()};
     }
 
-    always_inline Color sample(Math::Vec2f pos) const {
-        return pixels().sample(pos);
+    void repr(Io::Emit &e) const {
+        e("(image {}x{} stride={} fmt={})", width(), height(), _stride, _format.index());
     }
 };
 

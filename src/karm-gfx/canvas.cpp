@@ -353,17 +353,17 @@ export struct Canvas : Meta::NoCopy {
 
     // Blit the given pixels to the current pixels
     // using the given source and destination rectangles.
-    virtual void blit(Math::Recti src, Math::Recti dest, Rc<Surface> surface) = 0;
+    virtual void blit(Math::Recti src, Math::Recti dest, Rc<Image> image) = 0;
 
     // Blit the given pixels to the current pixels.
-    // The source rectangle is the entire piels.
-    virtual void blit(Math::Recti dest, Rc<Surface> surface) {
-        blit(surface->pixels().bound(), dest, surface);
+    // The source rectangle is the entire pixels.
+    virtual void blit(Math::Recti dest, Rc<Image> image) {
+        blit(image->bound(), dest, image);
     }
 
     // Blit the given pixels to the current pixels at the given position.
-    virtual void blit(Math::Vec2i dest, Rc<Surface> surface) {
-        blit(surface->pixels().bound(), Math::Recti(dest, surface->pixels().size()), surface);
+    virtual void blit(Math::Vec2i dest, Rc<Image> image) {
+        blit(image->bound(), Math::Recti(dest, image->size()), image);
     }
 
     // MARK: Filter Operations -------------------------------------------------

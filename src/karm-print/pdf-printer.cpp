@@ -83,8 +83,8 @@ export struct PdfPrinter : FilePrinter {
 
         // Images
         Pdf::Dict xObjectDict;
-        for (auto& [id, surface] : imageManager.mapping.iterValue()) {
-            auto pixels = surface->pixels();
+        for (auto& [id, image] : imageManager.mapping.iterValue()) {
+            auto pixels = image->pixels();
 
             auto rgbData = Vec<u8>(pixels.width() * pixels.height() * 3);
             for (isize y = 0; y < pixels.height(); y++) {

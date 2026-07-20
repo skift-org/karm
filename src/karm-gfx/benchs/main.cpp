@@ -25,7 +25,7 @@ void report(Vec<Duration>& samples) {
 
 Async::Task<> entryPointAsync(Sys::Env&, Async::CancellationToken) {
     Vec<Duration> samples;
-    auto surface = Gfx::Surface::alloc({1000, 1000});
+    auto image = Gfx::Image::alloc({1000, 1000});
 
     Sys::println("strokes:");
     for (isize i = 0; i < 100; i++) {
@@ -34,7 +34,7 @@ Async::Task<> entryPointAsync(Sys::Env&, Async::CancellationToken) {
             f64 scale = size / 100.0;
 
             Gfx::CpuCanvas g;
-            g.begin(surface->mutPixels());
+            g.begin(image->mutPixels());
             g.scale(scale);
 
             for (isize i = 0; i < 50; i++) {
@@ -75,7 +75,7 @@ Async::Task<> entryPointAsync(Sys::Env&, Async::CancellationToken) {
     for (isize i = 0; i < 100; i++) {
         auto start = Sys::now();
 
-        g.begin(surface->mutPixels());
+        g.begin(image->mutPixels());
         g.fillStyle(Gfx::WHITE);
 
         for (isize line = 0; line < 100; line++) {

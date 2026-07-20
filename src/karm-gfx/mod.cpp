@@ -11,7 +11,6 @@ export import :fill;
 export import :filters;
 export import :font;
 export import :icon;
-export import :image;
 export import :outline;
 export import :prose;
 export import :shadow;

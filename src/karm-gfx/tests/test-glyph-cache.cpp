@@ -5,9 +5,9 @@ import Karm.Math;
 
 namespace Karm::Gfx::Tests {
 
-static Rc<Surface> _renderText(Str text, Math::Vec2f baseline, auto prepare) {
+static Rc<Image> _renderText(Str text, Math::Vec2f baseline, auto prepare) {
     auto font = Font::fallback();
-    auto surface = Surface::alloc({64, 32}, Gfx::RGBA8888);
+    auto surface = Image::alloc({64, 32}, Gfx::RGBA8888);
     surface->mutPixels().clear(Gfx::BLACK);
 
     CpuCanvas g;

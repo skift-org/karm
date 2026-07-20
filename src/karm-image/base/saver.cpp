@@ -66,8 +66,8 @@ export Res<Vec<u8>> save(Rc<Scene::Node> scene, Math::Vec2i size, Saver const& p
     if (props.format == Ref::Uti::PUBLIC_SVG) {
         return Ok(bytes(scene->svg(size)));
     } else {
-        auto surface = scene->snapshot(size, props.density);
-        return Image::save(*surface, props);
+        auto image = scene->snapshot(size, props.density);
+        return Image::save(*image, props);
     }
 }
 

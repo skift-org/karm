@@ -25,7 +25,7 @@ struct HsvSquare : Ui::View<HsvSquare> {
     }
 
     auto makeHsvSquare() {
-        auto surf = Gfx::Surface::alloc({256, 256});
+        auto surf = Gfx::Image::alloc({256, 256});
 
         for (isize y = 0; y < surf->height(); y++) {
             for (isize x = 0; x < surf->width(); x++) {

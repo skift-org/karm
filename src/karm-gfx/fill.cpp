@@ -210,36 +210,26 @@ export struct Gradient {
         auto p = transform(pos);
         return (*_buf)[clamp(usize(p * 255), 0uz, 255uz)];
     }
+
+    void repr(Io::Emit& e) const {
+        e("(gradient {} {})", _start, _end);
+    }
 };
 
 using _Fills = Union<
     Color,
     Gradient,
-    Pixels>;
+    Rc<Image>>;
 
 export struct Fill : _Fills {
     using _Fills::_Fills;
 
     Fill(Color color = ALPHA) : _Fills(color) {}
 
-    always_inline Color sample(Math::Vec2f pos) const {
-        return visit(
-            [&](auto const& p) {
-                return p.sample(pos);
-            }
-        );
-    }
-
     void repr(Io::Emit& e) const {
         visit(
-            [&](Color const& c) {
-                c.repr(e);
-            },
-            [&](Gradient const& grad) {
-                e("(gradient {} {})", grad._start, grad._end);
-            },
-            [&](Pixels const& pixels) {
-                e("(pixels {} {})", pixels.width(), pixels.height());
+            [&](auto const& i) {
+                e("{}", i);
             }
         );
     }

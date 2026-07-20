@@ -7,7 +7,7 @@ import Mdi;
 
 namespace Karm::Kira {
 
-export Ui::Child avatar(Union<None, String, Gfx::Icon, Rc<Gfx::Surface>> icon = NONE, usize size = 46) {
+export Ui::Child avatar(Union<None, String, Gfx::Icon, Rc<Gfx::Image>> icon = NONE, usize size = 46) {
     Ui::BoxStyle boxStyle = {
         .borderRadii = 99,
         .backgroundFill = Ui::GRAY800,
@@ -26,7 +26,7 @@ export Ui::Child avatar(Union<None, String, Gfx::Icon, Rc<Gfx::Surface>> icon = 
         [&](Gfx::Icon i) {
             return Ui::icon(i, Math::ceili(innerSize));
         },
-        [](Rc<Gfx::Surface> s) {
+        [](Rc<Gfx::Image> s) {
             return Ui::image(s, {999});
         }
     );

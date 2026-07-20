@@ -26,14 +26,14 @@ export struct FontManager {
 };
 
 export struct ImageManager {
-    Map<usize, Tuple<usize, Rc<Gfx::Surface>>> mapping;
+    Map<usize, Tuple<usize, Rc<Gfx::Image>>> mapping;
 
-    usize getImageId(Rc<Gfx::Surface> surface) {
-        if (auto entry = mapping.lookup(reinterpret_cast<usize>(surface._cell)))
+    usize getImageId(Rc<Gfx::Image> image) {
+        if (auto entry = mapping.lookup(reinterpret_cast<usize>(image._cell)))
             return entry.unwrap().v0;
 
         auto id = mapping.len() + 1;
-        mapping.put(reinterpret_cast<usize>(surface._cell), Tuple{id, surface});
+        mapping.put(reinterpret_cast<usize>(image._cell), Tuple{id, image});
         return id;
     }
 };
@@ -370,7 +370,7 @@ export struct Canvas : Gfx::Canvas {
 
     // MARK: Blit Operations ---------------------------------------------------
 
-    void blit(Math::Recti src, Math::Recti dest, Rc<Gfx::Surface> surface) override {
+    void blit(Math::Recti src, Math::Recti dest, Rc<Gfx::Image> image) override {
         if (src != dest)
             logWarn("image clipping is not implemented");
 
@@ -380,7 +380,7 @@ export struct Canvas : Gfx::Canvas {
 
         transform({destf.width, 0, 0, -destf.height, destf.x, destf.y + dest.height});
 
-        _e.ln("/Im{} Do", _imageManager->getImageId(surface));
+        _e.ln("/Im{} Do", _imageManager->getImageId(image));
 
         pop();
     }

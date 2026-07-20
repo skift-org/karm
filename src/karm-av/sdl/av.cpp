@@ -95,7 +95,7 @@ struct SdlCameraStream : Av::VideoStream {
             Gfx::BGRA8888,
         };
 
-        auto surface = Gfx::Surface::alloc({sdlSurface->w, sdlSurface->h});
+        auto surface = Gfx::Image::alloc({sdlSurface->w, sdlSurface->h});
         Gfx::blitUnsafe(surface->mutPixels(), sdlPixels);
 
         SDL_DestroySurface(sdlConverted);

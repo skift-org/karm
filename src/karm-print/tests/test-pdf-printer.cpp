@@ -21,7 +21,7 @@ test$("pdf-printer-generate") {
     canvas.fillStyle(Gfx::RED);
     canvas.fill(Gfx::FillRule::NONZERO);
 
-    auto surface = Gfx::Surface::alloc({64, 64});
+    auto surface = Gfx::Image::alloc({64, 64});
     auto pixels = surface->mutPixels();
 
     for (isize y = 0; y < pixels.height(); y++) {

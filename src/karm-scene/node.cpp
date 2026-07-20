@@ -27,21 +27,21 @@ export struct Node {
         e("(node z:{})", zIndex);
     }
 
-    Rc<Gfx::Surface> snapshot(Math::Vec2i size, f64 density = 1) {
+    Rc<Gfx::Image> snapshot(Math::Vec2i size, f64 density = 1) {
         auto rect = bound();
-        auto surface = Gfx::Surface::alloc(
+        auto image = Gfx::Image::alloc(
             size * density,
             Gfx::RGBA8888
         );
 
         Gfx::CpuCanvas g;
-        g.begin(*surface);
+        g.begin(*image);
         g.scale(density);
         g.clear(Gfx::ALPHA);
         paint(g, Math::Rectf{size.cast<f64>()});
         g.end();
 
-        return surface;
+        return image;
     }
 
     String svg(Math::Vec2i size) {

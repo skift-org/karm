@@ -11,7 +11,7 @@ namespace Karm::Print {
 export struct ImagePrinter : FilePrinter {
     static constexpr isize GAPS = 16;
 
-    Vec<Rc<Gfx::Surface>> _pages;
+    Vec<Rc<Gfx::Image>> _pages;
     Opt<Gfx::CpuCanvas> _canvas;
     f64 _density;
     Image::Saver _saver;
@@ -21,7 +21,7 @@ export struct ImagePrinter : FilePrinter {
           _saver(saver) {}
 
     Gfx::Canvas& beginPage(Math::Vec2f size) override {
-        _pages.emplaceBack(Gfx::Surface::alloc(size.cast<isize>() * _density, Gfx::RGBA8888));
+        _pages.emplaceBack(Gfx::Image::alloc(size.cast<isize>() * _density, Gfx::RGBA8888));
 
         if (_canvas)
             _canvas->end();
@@ -33,9 +33,9 @@ export struct ImagePrinter : FilePrinter {
         return *_canvas;
     }
 
-    Rc<Gfx::Surface> _mergedImages() {
+    Rc<Gfx::Image> _mergedImages() {
         if (_pages.len() == 0)
-            return Gfx::Surface::alloc(GAPS, Gfx::RGBA8888);
+            return Gfx::Image::alloc(GAPS, Gfx::RGBA8888);
 
         // NOTE: There is only one page, no need to merge
         if (_pages.len() == 1)
@@ -62,7 +62,7 @@ export struct ImagePrinter : FilePrinter {
             finalHeight,
         };
 
-        auto finalImage = Gfx::Surface::alloc(finalImageSize, Gfx::RGBA8888);
+        auto finalImage = Gfx::Image::alloc(finalImageSize, Gfx::RGBA8888);
 
         auto finalCanvas = Gfx::CpuCanvas{};
         finalCanvas.begin(*finalImage);

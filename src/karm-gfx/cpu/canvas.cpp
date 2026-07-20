@@ -1,3 +1,7 @@
+module;
+
+#include <karm/macros>
+
 export module Karm.Gfx:cpu.canvas;
 
 import Karm.Core;
@@ -11,15 +15,47 @@ import :cpu.rast;
 
 namespace Karm::Gfx {
 
+using _CpuFills = Union<
+    Color,
+    Gradient,
+    Pixels>;
+
+
+export struct CpuFill : _CpuFills {
+    using _CpuFills::_CpuFills;
+
+    static CpuFill from(Fill fill) {
+        return fill.visit(
+            [](Color const& c) -> CpuFill {
+                return c;
+            },
+            [](Gradient const& g) -> CpuFill {
+                return g;
+            },
+            [](Rc<Image> const& img) -> CpuFill {
+                return img->pixels();
+            }
+        );
+    }
+
+    always_inline Color sample(Math::Vec2f pos) const {
+        return visit(
+            [&](auto const& p) {
+                return p.sample(pos);
+            }
+        );
+    }
+};
+
 export struct CpuCanvas : Canvas {
     struct Scope {
-        Fill fill = Gfx::WHITE;
+        CpuFill fill = Gfx::WHITE;
         Stroke stroke{};
         Math::Recti clip{};
         Math::Trans2f trans = Math::Trans2f::identity();
-        Opt<Rc<Surface>> clipMask = NONE;
+        Opt<Rc<Image>> clipMask = NONE;
         Math::Recti clipBound = {0, 0};
-        float opacity = 1.0;
+        f64 opacity = 1.0;
     };
 
     static constexpr isize GLYPH_SUBPIXELS = 4;
@@ -43,9 +79,9 @@ export struct CpuCanvas : Canvas {
     };
 
     struct CachedGlyph {
-        Rc<Fontface> face;            //< Pins the face so the key's pointer stays valid
-        Opt<Rc<Surface>> mask = NONE; //< Coverage mask
-        Math::Vec2i origin = {};      //< Top-left of the mask relative to the baseline
+        Rc<Fontface> face;          //< Pins the face so the key's pointer stays valid
+        Opt<Rc<Image>> mask = NONE; //< Coverage mask
+        Math::Vec2i origin = {};    //< Top-left of the mask relative to the baseline
     };
 
     Opt<MutPixels> _pixels{};
@@ -110,7 +146,7 @@ export struct CpuCanvas : Canvas {
     }
 
     void fillStyle(Fill style) override {
-        current().fill = style;
+        current().fill = CpuFill::from(style);
     }
 
     void strokeStyle(Stroke style) override {
@@ -155,7 +191,7 @@ export struct CpuCanvas : Canvas {
             });
     }
 
-    void _fill(Fill fill, FillRule rule = FillRule::NONZERO) {
+    void _fill(CpuFill fill, FillRule rule = FillRule::NONZERO) {
         fill.visit([&](auto fill) {
             pixels().fmt().visit([&](auto format) {
                 _fillImpl(fill, format, rule);
@@ -236,7 +272,7 @@ export struct CpuCanvas : Canvas {
         createStroke(_poly, _path, current().stroke);
         _poly.transform(current().trans);
         _poly.sortForAet();
-        _fill(current().stroke.fill);
+        _fill(CpuFill::from(current().stroke.fill));
     }
 
     void clip(FillRule rule) override {
@@ -247,7 +283,7 @@ export struct CpuCanvas : Canvas {
 
         auto clipBound = _poly.bound().ceil().cast<isize>().clipTo(current().clip);
 
-        Rc<Surface> newClipMask = Surface::alloc(clipBound.wh, Gfx::GREYSCALE8);
+        Rc<Image> newClipMask = Image::alloc(clipBound.wh, Gfx::GREYSCALE8);
 
         current().clip = clipBound;
         _rast.fill(_poly, current().clip, rule, [&](CpuRast::Frag frag) {
@@ -326,7 +362,7 @@ export struct CpuCanvas : Canvas {
         createStroke(_poly, path, current().stroke);
         _poly.transform(current().trans);
         _poly.sortForAet();
-        _fill(current().stroke.fill);
+        _fill(CpuFill::from(current().stroke.fill));
     }
 
     void fill(Math::Path const& path, FillRule rule = FillRule::NONZERO) override {
@@ -360,7 +396,7 @@ export struct CpuCanvas : Canvas {
         if (bound.width <= 0 or bound.height <= 0)
             return {font.fontface};
 
-        auto mask = Surface::alloc(bound.wh, GREYSCALE8);
+        auto mask = Image::alloc(bound.wh, GREYSCALE8);
         auto maskPixels = mask->mutPixels();
         maskPixels.clear();
 
@@ -538,7 +574,7 @@ export struct CpuCanvas : Canvas {
         }
     }
 
-    void blit(Math::Recti src, Math::Recti dest, Rc<Surface> surface) override {
+    void blit(Math::Recti src, Math::Recti dest, Rc<Image> surface) override {
         auto d = mutPixels();
         auto pixels = surface->pixels();
         d.fmt().visit([&](auto dfmt) {
