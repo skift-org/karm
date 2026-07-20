@@ -1,7 +1,7 @@
 export module Karm.Image:gif.decoder;
 
 import Karm.Core;
-import Karm.Gfx;
+import Karm.Gfx.Pixels;
 import Karm.Math;
 
 // GIF Image decoder

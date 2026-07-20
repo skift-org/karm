@@ -5,7 +5,7 @@ module;
 export module Karm.Image:tga.encoder;
 
 import Karm.Core;
-import Karm.Gfx;
+import Karm.Gfx.Pixels;
 import :tga.base;
 
 namespace Karm::Image::Tga {

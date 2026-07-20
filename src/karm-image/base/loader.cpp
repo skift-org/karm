@@ -6,7 +6,7 @@ export module Karm.Image:base.loader;
 
 import Karm.Sys;
 import Karm.Ref;
-import Karm.Gfx;
+import Karm.Gfx.Pixels;
 
 import :bmp.decoder;
 import :gif.decoder;

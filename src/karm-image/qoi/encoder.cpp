@@ -5,7 +5,7 @@ module;
 export module Karm.Image:qoi.encoder;
 
 import Karm.Core;
-import Karm.Gfx;
+import Karm.Gfx.Pixels;
 
 import :qoi.base;
 

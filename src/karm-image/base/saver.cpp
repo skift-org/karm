@@ -8,8 +8,7 @@ import Karm.Math;
 import Karm.Core;
 import Karm.Ref;
 import Karm.Sys;
-import Karm.Scene;
-import Karm.Gfx;
+import Karm.Gfx.Pixels;
 
 import :bmp.encoder;
 import :jpeg.encoder;
@@ -60,15 +59,6 @@ export Res<> save(Gfx::Pixels pixels, Ref::Url const& url, Saver const& props = 
     auto file = try$(Sys::File::create(url));
     Io::BEmit e{file};
     return save(pixels, e, props);
-}
-
-export Res<Vec<u8>> save(Rc<Scene::Node> scene, Math::Vec2i size, Saver const& props = {}) {
-    if (props.format == Ref::Uti::PUBLIC_SVG) {
-        return Ok(bytes(scene->svg(size)));
-    } else {
-        auto image = scene->snapshot(size, props.density);
-        return Image::save(*image, props);
-    }
 }
 
 } // namespace Karm::Image

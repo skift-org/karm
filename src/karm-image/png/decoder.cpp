@@ -7,7 +7,7 @@ export module Karm.Image:png.decoder;
 import Karm.Core;
 import Karm.Archive;
 import Karm.Debug;
-import Karm.Gfx;
+import Karm.Gfx.Pixels;
 import Karm.Math;
 import Karm.Logger;
 

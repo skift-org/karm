@@ -5,7 +5,7 @@ module;
 export module Karm.Image:jpeg.encoder;
 
 import Karm.Core;
-import Karm.Gfx;
+import Karm.Gfx.Pixels;
 import Karm.Math;
 
 import :jpeg.base;

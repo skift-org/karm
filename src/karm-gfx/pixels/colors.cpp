@@ -1,4 +1,4 @@
-export module Karm.Gfx:colors;
+export module Karm.Gfx.Pixels:colors;
 
 import Karm.Core;
 import Karm.Math;

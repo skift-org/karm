@@ -6,7 +6,8 @@
     "requires": [
         "karm-math",
         "karm-core",
-        "karm-icc"
+        "karm-icc",
+        "karm-gfx.pixels"
     ],
     "subdirs": [
         "cpu",

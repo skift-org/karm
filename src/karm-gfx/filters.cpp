@@ -2,9 +2,7 @@ export module Karm.Gfx:filters;
 
 import Karm.Core;
 import Karm.Math;
-
-import :buffer;
-import :color;
+import Karm.Gfx.Pixels;
 
 namespace Karm::Gfx {
 

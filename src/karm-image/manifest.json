@@ -10,9 +10,7 @@
         "karm-image.qoi",
         "karm-image.tga",
         "karm-image.gif",
-
-        "karm-gfx",
-        "karm-scene",
+        "karm-gfx.pixels",
         "karm-sys",
         "karm-logger",
         "karm-debug"

@@ -6,7 +6,8 @@ export module Karm.Gfx:cpu.canvas;
 
 import Karm.Core;
 import Karm.Math;
-import :buffer;
+import Karm.Gfx.Pixels;
+
 import :canvas;
 import :fill;
 import :filters;

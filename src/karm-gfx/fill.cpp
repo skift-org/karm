@@ -6,10 +6,7 @@ export module Karm.Gfx:fill;
 
 import Karm.Core;
 import Karm.Math;
-
-import :buffer;
-import :color;
-import :colors;
+import Karm.Gfx.Pixels;
 
 namespace Karm::Gfx {
 

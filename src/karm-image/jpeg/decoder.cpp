@@ -5,7 +5,7 @@ module;
 export module Karm.Image:jpeg.decoder;
 
 import Karm.Core;
-import Karm.Gfx;
+import Karm.Gfx.Pixels;
 import Karm.Logger;
 
 import :jpeg.base;

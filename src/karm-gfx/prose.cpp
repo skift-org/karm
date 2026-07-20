@@ -1,8 +1,8 @@
 export module Karm.Gfx:prose;
 
 import Karm.Math;
+import Karm.Gfx.Pixels;
 
-import :color;
 import :font;
 
 using namespace Karm::Math::Literals;

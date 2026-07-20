@@ -1,7 +1,7 @@
 export module Karm.Image:qoi.decoder;
 
 import Karm.Core;
-import Karm.Gfx;
+import Karm.Gfx.Pixels;
 
 import :qoi.base;
 

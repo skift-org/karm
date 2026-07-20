@@ -2,7 +2,7 @@ module;
 
 #include <karm/macros>
 
-export module Karm.Gfx:color;
+export module Karm.Gfx.Pixels:color;
 
 import Karm.Core;
 import Karm.Math;
