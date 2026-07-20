@@ -13,7 +13,7 @@ struct Sin : Av::Stream {
     f64 freq = 440.0f; // A4
     f64 phase = 0.0f;
 
-    void process(Av::Frames, Av::Frames output) override {
+    Res<usize> process(Av::Frames, Av::Frames output) override {
         f64 step = 2.0f * Math::PI * freq / output.format.rate;
         for (Av::Frame frame : output.iter()) {
             f64 s = Math::sin(phase);
@@ -23,6 +23,7 @@ struct Sin : Av::Stream {
             frame.mono(s);
             frame.clip();
         }
+        return Ok(output.len());
     }
 };
 
