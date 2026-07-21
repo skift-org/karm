@@ -51,6 +51,17 @@ union Tri2 {
         return Rect<T>::fromTwoPoint(min(), max());
     }
 
+    constexpr bool contains(Vec2<T> p) const {
+        T d1 = (b - a).cross(p - a);
+        T d2 = (c - b).cross(p - b);
+        T d3 = (a - c).cross(p - c);
+
+        bool hasNeg = (d1 < 0) or (d2 < 0) or (d3 < 0);
+        bool hasPos = (d1 > 0) or (d2 > 0) or (d3 > 0);
+
+        return not(hasNeg and hasPos);
+    }
+
     constexpr bool degenerated(T epsilon = Limits<T>::EPSILON) const {
         return epsilonEq(a, b, epsilon) or
                epsilonEq(b, c, epsilon) or
