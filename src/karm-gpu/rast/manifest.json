@@ -1,9 +1,9 @@
 {
     "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
-    "id": "karm-gpu",
+    "id": "karm-gpu.rast",
     "type": "lib",
     "requires": [
         "karm-core",
-        "karm-core.base"
+        "karm-gpu.base"
     ]
 }

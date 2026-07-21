@@ -2,114 +2,37 @@ export module Karm.Gpu;
 
 import Karm.Core;
 import Karm.Math;
+import Karm.Drm;
+import Karm.Gpu.Base;
 
 /// Based off Loon GPU
 /// MIT License
 /// Copyright (c) 2026 R. Kevin Gibson
 /// https://github.com/rkevingibson/loon_gpu/tree/main
+
 namespace Karm::Gpu {
 
 export struct Device;
 export struct Pipeline;
 export struct Texture;
-export struct TextureHeap;
-export struct DepthStancilState;
+export struct DepthStencilState;
 export struct Semaphore;
 export struct Queue;
 export struct CommandBuffer;
 export struct Buffer;
+export struct Sampler;
 
-using DevicePtr = Distinct<u64, struct _DevicePtrTag>;
+/// An address in GPU memory, usable from shaders and copy commands.
+export using DevicePtr = Distinct<u64, struct _DevicePtr>;
 
-export enum struct Nil {
-    NIL
-};
-
-export using enum Nil;
-
-template <typename T>
-struct Handle : Distinct<u64, T> {
-    using Distinct<u64, T>::Distinct;
-
-    Handle(Nil) : Distinct<u64, T>(0) {}
-
-    bool operator==(Nil const&) const {
-        return Distinct<u64, T>::value() == 0;
-    }
-};
-
+/// Type of memory an allocation lives in, trading CPU visibility for GPU speed.
 export enum struct Memory : u8 {
     DEFAULT,  //< CPU visible memory, optimized for writing to from the CPU and reading from GPU
     DEVICE,   //< GPU-only memory, not visible from the CPU
     READBACK, //< CPU visible memory, optimized for reading from the CPU.
 };
 
-export enum struct FrontFace : u8 {
-    COUNTER_CLOCKWISE = 0,
-    CLOCKWISE,
-};
-
-export enum struct Cull : u8 {
-    FRONT,
-    BACK,
-    NONE,
-};
-
-export enum struct DepthFlags : u8 {
-    NONE = 0,
-    READ = 1 << 0,
-    WRITE = 1 << 1,
-};
-
-/// Comparison operation for depth and stencil testing
-export enum struct Op : u8 {
-    NEVER,
-    LESS,
-    EQUAL,
-    LESS_EQUAL,
-    GREATER,
-    NOT_EQUAL,
-    GREATER_EQUAL,
-    ALWAYS,
-};
-
-/// Operations for stencil buffers
-export enum struct StencilOp : u8 {
-    KEEP,
-    ZERO,
-    REPLACE,
-    INCREMENT_CLAMP,
-    DECREMENT_CLAMP,
-    INVERT,
-    INCREMENT_WRAP,
-    DECREMENT_WRAP,
-};
-
-/// Operations for color/alpha blending.
-export enum struct Blend : u8 {
-    ADD,
-    SUBTRACT,
-    REV_SUBTRACT,
-    MIN,
-    MAX,
-};
-
-/// Blend factors for color/alpha blending.
-export enum struct Factor : u8 {
-    ZERO,
-    ONE,
-    SRC_COLOR,
-    DST_COLOR,
-    SRC_ALPHA,
-    ONE_MINUS_SRC_ALPHA,
-};
-
-/// Input primitive to be used for a render pass.
-export enum struct Topology : u8 {
-    TRIANGLE_LIST,
-    TRIANGLE_STRIP,
-};
-
+/// Dimensionality and layout of a texture resource.
 export enum struct TextureType : u8 {
     TEX_1D,
     TEX_2D,
@@ -119,115 +42,16 @@ export enum struct TextureType : u8 {
     TEX_CUBE_ARRAY,
 };
 
-enum struct Format : u32 {
-    NONE = 0x00000000,
-    R8_UNORM = 0x00000001,
-    R8_SNORM = 0x00000002,
-    R8_UINT = 0x00000003,
-    R8_SINT = 0x00000004,
-    R16_UNORM = 0x00000005,
-    R16_SNORM = 0x00000006,
-    R16_UINT = 0x00000007,
-    R16_SINT = 0x00000008,
-    R16_FLOAT = 0x00000009,
-    RG8_UNORM = 0x0000000A,
-    RG8_SNORM = 0x0000000B,
-    RG8_UINT = 0x0000000C,
-    RG8_SINT = 0x0000000D,
-    R32_FLOAT = 0x0000000E,
-    R32_UINT = 0x0000000F,
-    R32_SINT = 0x00000010,
-    RG16_UNORM = 0x00000011,
-    RG16_SNORM = 0x00000012,
-    RG16_UINT = 0x00000013,
-    RG16_SINT = 0x00000014,
-    RG16_FLOAT = 0x00000015,
-    RGBA8_UNORM = 0x00000016,
-    RGBA8_UNORM_SRGB = 0x00000017,
-    RGBA8_SNORM = 0x00000018,
-    RGBA8_UINT = 0x00000019,
-    RGBA8_SINT = 0x0000001A,
-    BGRA8_UNORM = 0x0000001B,
-    BGRA8_UNORM_SRGB = 0x0000001C,
-    RGB10_A2_UINT = 0x0000001D,
-    RGB10_A2_UNORM = 0x0000001E,
-    RG11_B10_UFLOAT = 0x0000001F,
-    RGB9_E5_UFLOAT = 0x00000020,
-    RG32_FLOAT = 0x00000021,
-    RG32_UINT = 0x00000022,
-    RG32_SINT = 0x00000023,
-    RGBA16_UNORM = 0x00000024,
-    RGBA16_SNORM = 0x00000025,
-    RGBA16_UINT = 0x00000026,
-    RGBA16_SINT = 0x00000027,
-    RGBA16_FLOAT = 0x00000028,
-    RGBA32_FLOAT = 0x00000029,
-    RGBA32_UINT = 0x0000002A,
-    RGBA32_SINT = 0x0000002B,
-    STENCIL8 = 0x0000002C,
-    DEPTH16_UNORM = 0x0000002D,
-    DEPTH24_PLUS = 0x0000002E,
-    DEPTH24_PLUS_STENCIL8 = 0x0000002F,
-    DEPTH32_FLOAT = 0x00000030,
-    DEPTH32_FLOAT_STENCIL8 = 0x00000031,
+export enum struct Format : u32 {
+    NONE,
+#define FORMAT(NAME) NAME,
+#include "defs/formats.inc"
 
-    // TODO: Implement compressed texture formats
-    // BC1_RGBA_UNORM = 0x00000032,
-    // BC1_RGBA_UNORM_SRGB = 0x00000033,
-    // BC2_RGBA_UNORM = 0x00000034,
-    // BC2_RGBA_UNORM_SRGB = 0x00000035,
-    // BC3_RGBA_UNORM = 0x00000036,
-    // BC3_RGBA_UNORM_SRGB = 0x00000037,
-    // BC4_R_UNORM = 0x00000038,
-    // BC4_R_SNORM = 0x00000039,
-    // BC5_RG_UNORM = 0x0000003A,
-    // BC5_RG_SNORM = 0x0000003B,
-    // BC6_HRGB_UFLOAT = 0x0000003C,
-    // BC6_HRGB_FLOAT = 0x0000003D,
-    // BC7_RGBA_UNORM = 0x0000003E,
-    // BC7_RGBA_UNORM_SRGB = 0x0000003F,
-    // ETC2_RGB8_UNORM = 0x00000040,
-    // ETC2_RGB8_UNORM_SRGB = 0x00000041,
-    // ETC2_RGB8_A1_UNORM = 0x00000042,
-    // ETC2_RGB8_A1_UNORM_SRGB = 0x00000043,
-    // ETC2_RGBA8_UNORM = 0x00000044,
-    // ETC2_RGBA8_UNORM_SRGB = 0x00000045,
-    // EACR11_UNORM = 0x00000046,
-    // EACR11_SNORM = 0x00000047,
-    // EACRG11_UNORM = 0x00000048,
-    // EACRG11_SNORM = 0x00000049,
-    // ASTC4X4_UNORM = 0x0000004A,
-    // ASTC4X4_UNORM_SRGB = 0x0000004B,
-    // ASTC5X4_UNORM = 0x0000004C,
-    // ASTC5X4_UNORM_SRGB = 0x0000004D,
-    // ASTC5X5_UNORM = 0x0000004E,
-    // ASTC5X5_UNORM_SRGB = 0x0000004F,
-    // ASTC6X5_UNORM = 0x00000050,
-    // ASTC6X5_UNORM_SRGB = 0x00000051,
-    // ASTC6X6_UNORM = 0x00000052,
-    // ASTC6X6_UNORM_SRGB = 0x00000053,
-    // ASTC8X5_UNORM = 0x00000054,
-    // ASTC8X5_UNORM_SRGB = 0x00000055,
-    // ASTC8X6_UNORM = 0x00000056,
-    // ASTC8X6_UNORM_SRGB = 0x00000057,
-    // ASTC8X8_UNORM = 0x00000058,
-    // ASTC8X8_UNORM_SRGB = 0x00000059,
-    // ASTC10X5_UNORM = 0x0000005A,
-    // ASTC10X5_UNORM_SRGB = 0x0000005B,
-    // ASTC10X6_UNORM = 0x0000005C,
-    // ASTC10X6_UNORM_SRGB = 0x0000005D,
-    // ASTC10X8_UNORM = 0x0000005E,
-    // ASTC10X8_UNORM_SRGB = 0x0000005F,
-    // ASTC10X10_UNORM = 0x00000060,
-    // ASTC10X10_UNORM_SRGB = 0x00000061,
-    // ASTC12X10_UNORM = 0x00000062,
-    // ASTC12X10_UNORM_SRGB = 0x00000063,
-    // ASTC12X12_UNORM = 0x00000064,
-    // ASTC12X12_UNORM_SRGB = 0x00000065,
-
+#undef FORMAT
     _LEN,
 };
 
+/// Flags describing how a texture may be used.
 export enum struct UsageFlags : u16 {
     NONE = 0,
     SAMPLED = 1 << 0,
@@ -238,6 +62,7 @@ export enum struct UsageFlags : u16 {
     TRANSFER_DST = 1 << 5,
 };
 
+/// Pipeline stages used to express synchronization scopes for barriers and semaphores.
 export enum struct StageFlags : u16 {
     NONE = 0,
     INDIRECT_ARGUMENTS = 1 << 0,
@@ -250,18 +75,21 @@ export enum struct StageFlags : u16 {
     HOST = 1 << 7,
 };
 
+/// How an attachment's contents are handled at the start of a render pass.
 export enum struct LoadOp : u8 {
     UNDEFINED,
     LOAD,
     CLEAR,
 };
 
+/// How an attachment's contents are handled at the end of a render pass.
 export enum struct StoreOp : u8 {
     UNDEFINED,
     STORE,
     DISCARD,
 };
 
+/// Kind of work a queue is able to execute.
 export enum struct QueueType : u8 {
     DEFAULT,  //< Queue capable of doing graphics, compute and transfer work
     COMPUTE,  //< Dedicated compute-only queue
@@ -270,24 +98,7 @@ export enum struct QueueType : u8 {
     _LEN,
 };
 
-export enum struct PresentMode : u8 {
-    IMMEDIATE,
-    MAILBOX,
-    FIFO,
-    FIFO_RELAXED,
-
-    _LEN,
-};
-
-export enum struct SurfaceStatus : u8 {
-    SUCCESS,
-    SUBOPTIMAL,
-    OUT_OF_DATE,
-    ERROR,
-
-    _LEN,
-};
-
+/// Coordinate space used when sampling a texture.
 export enum struct SamplerCoords : u8 {
     NORMALIZED, ///< Coordinates lie in [0,1] range
     PIXEL,      ///< Coordinates lie in [0, width] and [0, height] range
@@ -295,6 +106,7 @@ export enum struct SamplerCoords : u8 {
     _LEN,
 };
 
+/// Filtering applied when a texture is minified, magnified, or sampled between mips.
 export enum struct SamplerFilter : u8 {
     NEAREST,
     LINEAR,
@@ -302,6 +114,7 @@ export enum struct SamplerFilter : u8 {
     _LEN,
 };
 
+/// How texture coordinates outside the [0,1] range are resolved.
 export enum struct SamplerAddressing : u8 {
     CLAMP_TO_EDGE,
     REPEAT,
@@ -310,6 +123,7 @@ export enum struct SamplerAddressing : u8 {
     _LEN,
 };
 
+/// Bit width of the indices in an index buffer.
 export enum struct IndexType : u8 {
     U16,
     U32,
@@ -317,8 +131,10 @@ export enum struct IndexType : u8 {
     _LEN,
 };
 
+/// An RGBA color value.
 export using Color = Math::Vec4f;
 
+/// Per-face stencil test and the operations applied on its outcome.
 export struct Stencil {
     Op test = Op::ALWAYS;
     StencilOp failOp = StencilOp::KEEP;
@@ -327,22 +143,21 @@ export struct Stencil {
     u8 reference = 0;
 };
 
-/// Descriptor for a sampler object.
-export struct SamplerDesc {
+/// Description of how a sampler filters and addresses texture reads.
+export struct SamplerProps {
     SamplerCoords coord = SamplerCoords::NORMALIZED;
     SamplerFilter filter = SamplerFilter::NEAREST;
     SamplerAddressing address = SamplerAddressing::CLAMP_TO_EDGE;
     f32 maxAnisotropy = 1.0f;
 };
 
-/// Descriptor for a texture object.
-export struct DeviceDesc {
+/// Options used when creating a device.
+export struct DeviceProps {
     Opt<Str> preferredBackend = NONE;
-    usize windowHandle = 0;
-    usize instanceHandle = 0;
 };
 
-export struct DepthStencilDesc {
+/// Description of the depth test, depth bias, and stencil behavior of a pipeline.
+export struct DepthStencilProps {
     DepthFlags depthMode = DepthFlags::NONE;
     Op depthTest = Op::ALWAYS;
     f32 depthBias = 0.0f;
@@ -354,7 +169,8 @@ export struct DepthStencilDesc {
     Stencil stencilBack;
 };
 
-export struct BlendDesc {
+/// Description of how source and destination color/alpha are blended.
+export struct BlendProps {
     Blend colorOp = Blend::ADD;
     Factor srcColorFactor = Factor::ONE;
     Factor dstColorFactor = Factor::ZERO;
@@ -364,12 +180,14 @@ export struct BlendDesc {
     u8 colorWriteMask = 0xf;
 };
 
+/// Format and blend state of a single color attachment targeted by a pipeline.
 export struct ColorTarget {
     Format format = Format::NONE;
-    BlendDesc blendState = {};
+    BlendProps blendState = {};
 };
 
-export struct RasterDesc {
+/// Fixed-function rasterization state used to create a graphics pipeline.
+export struct RasterProps {
     Topology topology = Topology::TRIANGLE_LIST;
     bool alphaToCoverage = false;
     u8 sampleCount = 1;
@@ -378,21 +196,24 @@ export struct RasterDesc {
     Slice<ColorTarget> colorTargets = {};
 };
 
+/// A texture attachment of a render pass along with its load/store behavior.
 export struct RenderAttachment {
-    Handle<Texture> texture = NIL;
-    LoadOp loadOp;
-    StoreOp storeOp;
-    Color clearColor;
+    Opt<Rc<Texture>> texture = NONE;
+    LoadOp loadOp = LoadOp::CLEAR;
+    StoreOp storeOp = StoreOp::STORE;
+    Color clearColor = {};
 };
 
-export struct RenderPassDesc {
-    Slice<RenderAttachment> colorAttachments;
-    RenderAttachment depthAttachment;
-    RenderAttachment stencilAttachment;
-    Math::Recti renderArea;
+/// Attachments and render area describing a render pass.
+export struct RenderPassProps {
+    Slice<RenderAttachment> colorAttachments = {};
+    RenderAttachment depthAttachment = {};
+    RenderAttachment stencilAttachment = {};
+    Math::Recti renderArea = {};
 };
 
-export struct TextureDesc {
+/// Description of a texture's type, size, format, and allowed usages.
+export struct TextureProps {
     TextureType type = TextureType::TEX_2D;
     Math::Vec3u dimensions;
     u32 mipCount = 1;
@@ -402,14 +223,9 @@ export struct TextureDesc {
     UsageFlags usage = UsageFlags::NONE;
 };
 
-export struct TextureHeapDesc {
-    u32 textureCount = 0;
-    u32 rwTextureCount = 0;
-    u32 samplerCount = 0;
-};
-
-export struct TextureViewDesc {
-    Handle<Texture> texture;
+/// Description of a view over a subrange of a texture's mips and layers.
+export struct TextureViewProps {
+    Rc<Texture> texture;
     Format format = Format::NONE;
     u8 baseMip = 0;
     u8 mipCount = 1;
@@ -417,46 +233,32 @@ export struct TextureViewDesc {
     u16 layerCount = 1;
 };
 
+/// Memory size and alignment requirements of a texture.
 export struct TextureSizeAlign {
     usize size;
     usize align;
 };
 
+/// A compile-time constant value bound to a shader specialization slot.
 export struct SpecializationConstant {
     u32 constantId;
     Union<bool, u8, u16, u32, i8, i16, i32, f32> value;
 };
 
+/// Shader bytecode along with the entry point to execute.
 export struct ShaderSource {
     Bytes source;
     Str entryPoint;
 };
 
-export struct SurfaceCapabilities {
-    UsageFlags usages;
-    Slice<Format> formats;
-    Slice<PresentMode> presentModes;
-};
-
-export struct SurfaceConfiguration {
-    Format format;
-    UsageFlags usages;
-    u32 width;
-    u32 height;
-    PresentMode presentMode;
-};
-
-export struct SurfaceTextureInfo {
-    SurfaceStatus status;
-    Handle<Texture> texture;
-};
-
+/// A semaphore paired with the value and stage to wait on or signal at.
 export struct SemaphoreInfo {
-    Handle<Semaphore> semaphore;
+    Rc<Semaphore> semaphore;
     u64 value;
     StageFlags stage = StageFlags::NONE; // What stage must be blocked on the wait operation
 };
 
+/// Layout information for copying data between a buffer and a texture region.
 export struct BufferTextureCopyInfo {
     Math::Vec3u imageExtent;
 
@@ -474,6 +276,7 @@ export struct BufferTextureCopyInfo {
     u8 baseLayer = 0;
 };
 
+/// Arguments for an indexed, instanced draw call.
 export struct DrawIndexedInstancedInfo {
     DevicePtr vertexDataGpu;
     DevicePtr fragmentDataGpu;
@@ -483,6 +286,7 @@ export struct DrawIndexedInstancedInfo {
     IndexType type = IndexType::U16;
 };
 
+/// Arguments for an indexed draw whose parameters are read from GPU memory.
 export struct DrawIndexedIndirectInfo {
     DevicePtr vertexDataGpu;
     DevicePtr fragmentDataGpu;
@@ -491,6 +295,7 @@ export struct DrawIndexedIndirectInfo {
     IndexType type = IndexType::U16;
 };
 
+/// Arguments for multiple indirect indexed draws with a GPU-provided draw count.
 export struct MultiDrawIndirectInfo {
     DevicePtr vertexDataGpu;
     DevicePtr pixelDataGpu;
@@ -501,6 +306,7 @@ export struct MultiDrawIndirectInfo {
     IndexType type = IndexType::U16;
 };
 
+/// GPU-side layout of the arguments consumed by an indirect indexed draw.
 export struct DrawIndexedIndirectGpuArgs {
     u32 indexCount;
     u32 instanceCount;
@@ -509,151 +315,188 @@ export struct DrawIndexedIndirectGpuArgs {
     u32 firstInstance;
 };
 
-export template <typename T>
-struct Ressource {
-    Device& _device;
-    Handle<T> _handle;
-
-    ~Ressource();
-
-    Device& device() { return _device; }
-
-    Handle<T> handle() const { return _handle; }
-};
-
+/// A logical GPU device, entry point for creating all other GPU resources.
 export struct Device {
-    // Create a device object
-    static Res<Device> create(DeviceDesc const& desc);
+    /// Create a device object
+    static Res<Rc<Device>> create(DeviceProps const& props);
 
     virtual ~Device() = default;
 
-    Str backend();
+    /// Name of the underlying graphics API backend.
+    virtual Str backend() = 0;
 
-    // Block until any pending work on the GPU is completed.
-    void waitForIdle();
+    /// Block until any pending work on the GPU is completed.
+    virtual void waitForIdle() = 0;
 
-    // Get the surface capabilities for a device.
-    SurfaceCapabilities surfaceCapabilities();
+    /// Allocate a buffer of the given size in the requested memory type.
+    virtual Rc<Buffer> createBuffer(usize size, Memory memory = Memory::DEFAULT) = 0;
 
-    // Configures the presentation surface.
-    Res<> configureSurface(SurfaceConfiguration const& c);
+    /// Allocate a buffer with an explicit alignment in the requested memory type.
+    virtual Rc<Buffer> createBuffer(usize size, usize align, Memory memory = Memory::DEFAULT) = 0;
 
-    void unconfigureSurface();
+    /// Query the size and alignment a texture with this description would require.
+    virtual TextureSizeAlign textureSizeAlign(TextureProps const& props) = 0;
 
-    SurfaceTextureInfo currentTexture();
+    /// Create a texture, optionally placed at an existing GPU memory location.
+    virtual Rc<Texture> createTexture(Opt<DevicePtr> location, TextureProps const& props) = 0;
 
-    SurfaceStatus present(Handle<Queue> queue);
+    virtual Rc<Texture> createTexture(Rc<Drm::Buffer> from, UsageFlags usage) = 0;
 
-    Buffer malloc(usize size, Memory memory = Memory::DEFAULT);
+    /// Create a view into a texture
+    virtual Rc<Texture> createTextureView(TextureViewProps const& props) = 0;
 
-    Buffer malloc(usize size, usize align, Memory memory = Memory::DEFAULT);
+    /// Create a view into a texture
+    virtual Rc<Texture> createRwTextureView(TextureViewProps const& props) = 0;
 
-    void free(Handle<Buffer> handle);
+    /// Create a sampler
+    virtual Rc<Sampler> createSampler(SamplerProps const& props) = 0;
 
-    TextureSizeAlign textureSizeAlign(TextureDesc const& desc);
+    /// Create an immutable depth/stencil state object from a description.
+    virtual Rc<DepthStencilState> createDepthStencilState(DepthStencilProps const& props) = 0;
 
-    Texture createTexture(TextureDesc const& desc, Opt<DevicePtr> location);
+    /// Create a compute pipeline from a compute shader.
+    virtual Rc<Pipeline> createComputePipeline(ShaderSource compute, Slice<SpecializationConstant> constants = {}) = 0;
 
-    void free(Handle<Texture> handle);
+    /// Create a graphics pipeline from vertex and fragment shaders and raster state.
+    virtual Rc<Pipeline> createGraphicPipeline(ShaderSource vertex, ShaderSource fragment, RasterProps const& props, Slice<SpecializationConstant> constants = {}) = 0;
 
-    DepthStancilState createDepthStancilState(DepthStencilDesc const& desc);
+    /// Create a timeline semaphore with the given initial value.
+    virtual Rc<Semaphore> createSemaphore(u64 initial) = 0;
 
-    Pipeline createComputePipeline(ShaderSource compute, Slice<SpecializationConstant> constants = {});
+    virtual Rc<Semaphore> createSemaphore(Rc<Drm::Sync> from) = 0;
 
-    Pipeline createGraphicPipeline(ShaderSource vertex, ShaderSource fragment, RasterDesc const& desc, Slice<SpecializationConstant> constants = {});
-
-    void free(Handle<Pipeline>);
-
-    Semaphore createSemaphore(u64 initial);
-
-    void free(Handle<Semaphore>);
-
-    void wait(Handle<Semaphore> sema, u64 value);
-
-    Rc<Queue> createQueue(QueueType type);
+    /// Get a queue of the requested type for submitting work.
+    virtual Rc<Queue> createQueue(QueueType type) = 0;
 };
 
-template <typename T>
-Ressource<T>::~Ressource() {
-    if (_handle != NIL)
-        _device.free(_handle);
-}
+/// A linear allocation of GPU-addressable memory.
+export struct Buffer {
+    virtual ~Buffer() = default;
 
-export struct DepthStancilState : Ressource<DepthStancilState> {};
+    virtual DevicePtr ptr() = 0;
 
-export struct Texture : Ressource<Texture> {};
-
-export struct Pipeline : Ressource<Pipeline> {};
-
-export struct Semaphore : Ressource<Semaphore> {};
-
-export struct Buffer : Ressource<Buffer> {
-    void* host = nullptr;
+    virtual MutBytes map() = 0;
 };
 
+/// Immutable depth/stencil test configuration bound during rendering.
+export struct DepthStencilState {
+    virtual ~DepthStencilState() = default;
+};
+
+/// An image resource living in GPU memory.
+export struct Texture {
+    virtual ~Texture() = default;
+
+    virtual DevicePtr ptr() = 0;
+};
+
+/// A sampler living in GPU memory
+export struct Sampler {
+    virtual ~Sampler() = default;
+
+    virtual DevicePtr ptr() = 0;
+};
+
+/// A compiled compute or graphics pipeline state object.
+export struct Pipeline {
+    virtual ~Pipeline() = default;
+};
+
+/// A timeline semaphore used to synchronize GPU and CPU work.
+export struct Semaphore {
+    virtual ~Semaphore() = default;
+
+    /// Block the CPU until the semaphore reaches the given value.
+    virtual void wait(Rc<Semaphore> sema, u64 value) = 0;
+};
+
+/// Records GPU commands for later submission to a queue.
 export struct CommandBuffer {
     virtual ~CommandBuffer() = default;
 
-    void copy(DevicePtr dest, DevicePtr src, usize size);
+    /// Copy a range of bytes between two GPU memory locations.
+    virtual void copy(DevicePtr dest, DevicePtr src, usize size) = 0;
 
-    void copy(Handle<Texture> dest, DevicePtr src, BufferTextureCopyInfo const& infos);
+    /// Copy data from GPU memory into a texture region.
+    virtual void copy(Rc<Texture> dest, DevicePtr src, BufferTextureCopyInfo const& infos) = 0;
 
-    void copy(DevicePtr src, Handle<Texture> dest, BufferTextureCopyInfo const& infos);
+    /// Copy a texture region into GPU memory.
+    virtual void copy(DevicePtr src, Rc<Texture> dest, BufferTextureCopyInfo const& infos) = 0;
 
-    void barrier(StageFlags before, StageFlags after);
+    /// Insert a memory barrier between two sets of pipeline stages.
+    virtual void barrier(StageFlags before, StageFlags after) = 0;
 
-    void pipeline(Handle<Pipeline> pipeline);
+    /// Bind a compute or graphics pipeline for subsequent commands.
+    virtual void pipeline(Rc<Pipeline> pipeline) = 0;
 
-    void depthStencilState(Handle<DepthStancilState> state);
+    /// Bind a depth/stencil state for subsequent draws.
+    virtual void depthStencilState(Rc<DepthStencilState> state) = 0;
 
-    void viewport(Math::Recti rect);
+    /// Set the viewport transform for subsequent draws.
+    virtual void viewport(Math::Recti rect) = 0;
 
-    void scissor(Math::Recti rect);
+    /// Set the scissor rectangle for subsequent draws.
+    virtual void scissor(Math::Recti rect) = 0;
 
-    void dispatch(DevicePtr data, Math::Vec3u gridDimensions);
+    /// Dispatch a compute grid, passing a GPU pointer as shader data.
+    virtual void dispatch(DevicePtr data, Math::Vec3u gridDimensions) = 0;
 
-    void dispatchIndirect(DevicePtr data, DevicePtr gridDimensions);
+    /// Dispatch a compute grid whose dimensions are read from GPU memory.
+    virtual void dispatchIndirect(DevicePtr data, DevicePtr gridDimensions) = 0;
 
-    void beginRenderPass(RenderPassDesc const& desc);
-    void endRenderPass();
+    /// Begin a render pass with the given attachments and render area.
+    virtual void beginRenderPass(RenderPassProps const& props) = 0;
 
-    void frontFace(FrontFace frontFace);
+    /// End the current render pass.
+    virtual void endRenderPass() = 0;
 
-    void cullMode(Cull cull);
+    /// Set which winding order is considered front-facing.
+    virtual void frontFace(FrontFace frontFace) = 0;
 
-    void draw(DevicePtr vertexData, DevicePtr fragmentData, usize vertexCount, usize instanceCount);
+    /// Set which triangle faces are culled.
+    virtual void cullMode(Cull cull) = 0;
 
-    void drawIndexedInstanced(DrawIndexedInstancedInfo const& args);
+    /// Draw non-indexed primitives, passing GPU pointers as shader data.
+    virtual void draw(Opt<DevicePtr> vertexData, Opt<DevicePtr> fragmentData, usize vertexCount, usize instanceCount) = 0;
 
-    void drawIndexedInstancedIndirect(DrawIndexedIndirectInfo const& args);
+    /// Draw indexed, instanced primitives.
+    virtual void drawIndexedInstanced(DrawIndexedInstancedInfo const& args) = 0;
 
-    void drawIndexedInstancedIndirectMulti(MultiDrawIndirectInfo const& args);
+    /// Draw indexed primitives with arguments read from GPU memory.
+    virtual void drawIndexedInstancedIndirect(DrawIndexedIndirectInfo const& args) = 0;
 
-    void waitForSurfaceTexture();
+    /// Issue multiple indirect indexed draws with a GPU-provided draw count.
+    virtual void drawIndexedInstancedIndirectMulti(MultiDrawIndirectInfo const& args) = 0;
 
-    void signalSurfaceTexture();
+    /// Begin a labeled debug group for graphics debuggers.
+    virtual void pushDebugGroup(Str label) = 0;
 
-    void pushDebugGroup(Str label);
+    /// End the current debug group.
+    virtual void popDebugGroup() = 0;
 
-    void popDebugGroup();
-
-    void finalize();
+    /// Finish recording, making the command buffer ready for submission.
+    virtual void finalize() = 0;
 };
 
+/// A GPU submission queue that executes recorded command buffers.
 export struct Queue {
     virtual ~Queue() = default;
 
-    void submit(
+    /// Submit command buffers, waiting on and signaling the given semaphores.
+    virtual void submit(
         Slice<Rc<CommandBuffer>> commandBuffers,
         Slice<SemaphoreInfo> waitSemaphores = {},
         Slice<SemaphoreInfo> signalSemaphores = {}
-    );
+    ) = 0;
 
-    void cancel(Slice<Rc<CommandBuffer>> commandBuffers);
+    /// Discard recorded command buffers without executing them.
+    virtual void cancel(Slice<Rc<CommandBuffer>> commandBuffers) = 0;
 
-    void onCompleted(Func<void()> fn);
+    /// Invoke a callback once all currently submitted work has completed.
+    virtual void onCompleted(Func<void()> fn) = 0;
 
-    Rc<CommandBuffer> startCommandRecording();
+    /// Begin recording a new command buffer on this queue.
+    virtual Rc<CommandBuffer> startCommandRecording() = 0;
 };
 
 } // namespace Karm::Gpu

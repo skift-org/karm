@@ -69,6 +69,14 @@ union Mat3 {
     Array<Vec3<T>, 3> cols;
     Array<T, 3 * 3> _els;
 
+    static constexpr Mat3 identity() {
+        return Mat3(
+            Vec3<T>(1, 0, 0),
+            Vec3<T>(0, 1, 0),
+            Vec3<T>(0, 0, 1)
+        );
+    }
+
     Mat3() = default;
 
     Mat3(T m00, T m01, T m02, T m10, T m11, T m12, T m20, T m21, T m22)
@@ -76,6 +84,57 @@ union Mat3 {
 
     Mat3(Vec3<T> col0, Vec3<T> col1, Vec3<T> col2)
         : cols{col0, col1, col2} {}
+
+    Vec3<T>& operator[](usize i) { return cols[i]; }
+
+    Vec3<T> const& operator[](usize i) const { return cols[i]; }
+
+    friend Vec3<T> operator*(Mat3 const& m, Vec3<T> const& v) {
+        return Vec3<T>(
+            m.col0.x * v.x + m.col1.x * v.y + m.col2.x * v.z,
+            m.col0.y * v.x + m.col1.y * v.y + m.col2.y * v.z,
+            m.col0.z * v.x + m.col1.z * v.y + m.col2.z * v.z
+        );
+    }
+
+    friend Mat3 operator*(Mat3 const& a, Mat3 const& b) {
+        return Mat3(a * b.col0, a * b.col1, a * b.col2);
+    }
+
+    Mat3 transposed() const {
+        return Mat3(
+            Vec3<T>(col0.x, col1.x, col2.x),
+            Vec3<T>(col0.y, col1.y, col2.y),
+            Vec3<T>(col0.z, col1.z, col2.z)
+        );
+    }
+
+    T determinant() const {
+        return col0.x * (col1.y * col2.z - col2.y * col1.z) -
+               col1.x * (col0.y * col2.z - col2.y * col0.z) +
+               col2.x * (col0.y * col1.z - col1.y * col0.z);
+    }
+
+    Mat3 inverse() const {
+        T id = T(1) / determinant();
+        return Mat3(
+            Vec3<T>(
+                (col1.y * col2.z - col2.y * col1.z) * id,
+                (col2.y * col0.z - col0.y * col2.z) * id,
+                (col0.y * col1.z - col1.y * col0.z) * id
+            ),
+            Vec3<T>(
+                (col2.x * col1.z - col1.x * col2.z) * id,
+                (col0.x * col2.z - col2.x * col0.z) * id,
+                (col1.x * col0.z - col0.x * col1.z) * id
+            ),
+            Vec3<T>(
+                (col1.x * col2.y - col2.x * col1.y) * id,
+                (col2.x * col0.y - col0.x * col2.y) * id,
+                (col0.x * col1.y - col1.x * col0.y) * id
+            )
+        );
+    }
 
     void repr(Io::Emit& e) const {
         e("(mat3 ");
@@ -220,18 +279,43 @@ union Mat4 {
         T f = T(1) / tan(fovYRadians / T(2));
         return Mat4(
             Vec4<T>(f / aspect, 0, 0, 0),
-            Vec4<T>(0, f, 0, 0),
-            Vec4<T>(0, 0, (zFar + zNear) / (zNear - zFar), -1),
-            Vec4<T>(0, 0, (2 * zFar * zNear) / (zNear - zFar), 0)
+            Vec4<T>(0, -f, 0, 0),
+            Vec4<T>(0, 0, zFar / (zNear - zFar), -1),
+            Vec4<T>(0, 0, (zFar * zNear) / (zNear - zFar), 0)
+        );
+    }
+
+    static Mat4 perspectiveReverseZ(T fovYRadians, T aspect, T zNear, T zFar) {
+        T f = T(1) / tan(fovYRadians / T(2));
+        return Mat4(
+            Vec4<T>(f / aspect, 0, 0, 0),
+            Vec4<T>(0, -f, 0, 0),
+            Vec4<T>(0, 0, zNear / (zFar - zNear), -1),
+            Vec4<T>(0, 0, (zNear * zFar) / (zFar - zNear), 0)
+        );
+    }
+
+    static Mat4 perspectiveReverseZInfinite(T fovYRadians, T aspect, T zNear) {
+        T f = T(1) / tan(fovYRadians / T(2));
+        return Mat4(
+            Vec4<T>(f / aspect, 0, 0, 0),
+            Vec4<T>(0, -f, 0, 0),
+            Vec4<T>(0, 0, 0, -1),
+            Vec4<T>(0, 0, zNear, 0)
         );
     }
 
     static Mat4 orthographic(T left, T right, T bottom, T top, T zNear, T zFar) {
         return Mat4(
             Vec4<T>(2 / (right - left), 0, 0, 0),
-            Vec4<T>(0, 2 / (top - bottom), 0, 0),
-            Vec4<T>(0, 0, -2 / (zFar - zNear), 0),
-            Vec4<T>(-(right + left) / (right - left), -(top + bottom) / (top - bottom), -(zFar + zNear) / (zFar - zNear), 1)
+            Vec4<T>(0, -2 / (top - bottom), 0, 0),
+            Vec4<T>(0, 0, -1 / (zFar - zNear), 0),
+            Vec4<T>(
+                -(right + left) / (right - left),
+                (top + bottom) / (top - bottom),
+                -zNear / (zFar - zNear),
+                1
+            )
         );
     }
 
@@ -282,6 +366,27 @@ union Mat4 {
             m.col0.z * v.x + m.col1.z * v.y + m.col2.z * v.z + m.col3.z * v.w,
             m.col0.w * v.x + m.col1.w * v.y + m.col2.w * v.z + m.col3.w * v.w
         );
+    }
+
+    Vec3<T> project(Vec3<T> const& v) const {
+        auto r = *this * Vec4<T>(v.x, v.y, v.z, 1);
+        return Vec3<T>(r.x / r.w, r.y / r.w, r.z / r.w);
+    }
+
+    Vec3<T> transformPoint(Vec3<T> const& v) const {
+        return (*this * Vec4<T>(v.x, v.y, v.z, 1)).xyz;
+    }
+
+    Vec3<T> transformDirection(Vec3<T> const& v) const {
+        return (*this * Vec4<T>(v.x, v.y, v.z, 0)).xyz;
+    }
+
+    Mat3<T> linear() const {
+        return Mat3<T>(col0.xyz, col1.xyz, col2.xyz);
+    }
+
+    Mat3<T> normalMatrix() const {
+        return linear().inverse().transposed();
     }
 
     friend Mat4 operator*(Mat4 const& a, Mat4 const& b) {

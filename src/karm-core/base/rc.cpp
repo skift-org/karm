@@ -27,8 +27,6 @@ struct _Cell {
 
     virtual void clear() = 0;
 
-    virtual Meta::Id id() = 0;
-
     _Cell* refStrong() lifetimebound {
         auto v = ++_strong;
         if (v < 0) [[unlikely]]
@@ -80,10 +78,6 @@ struct Cell : _Cell<I> {
 
     void* _unwrap() lifetimebound override {
         return &_buf.unwrap();
-    }
-
-    Meta::Id id() override {
-        return Meta::idOf<T>();
     }
 
     void clear() override {
@@ -239,7 +233,7 @@ struct _Rc {
 
         if (not Meta::Same<T, U> and
             not Meta::Derive<T, U> and
-            not(_cell->id() == Meta::idOf<U>())) {
+            not(dynamic_cast<U*>(&unwrap()))) {
             return nullptr;
         }
 
@@ -253,16 +247,11 @@ struct _Rc {
 
         if (not Meta::Same<T, U> and
             not Meta::Derive<T, U> and
-            not(_cell->id() == Meta::idOf<U>())) {
+            not(dynamic_cast<U const*>(&unwrap()))) {
             return nullptr;
         }
 
         return &_cell->template unwrap<U>();
-    }
-
-    Meta::Id id() const {
-        ensure();
-        return _cell->id();
     }
 
     void hash(Meta::Derive<Hasher> auto& h) const {
