@@ -6,51 +6,67 @@ module;
 module Karm.App;
 
 import Karm.Core;
-import Karm.Gfx;
 import Karm.Sys;
-
-import :sdl.keys;
+import :sdl.bridge;
 
 namespace Karm::App::_Embed {
 
-static Flags<KeyMod> currentMods() {
-    auto sdl = SDL_GetModState();
-    Flags<KeyMod> mods;
-
-    if (sdl & SDL_KMOD_LSHIFT)
-        mods |= KeyMod::LSHIFT;
-    if (sdl & SDL_KMOD_RSHIFT)
-        mods |= KeyMod::RSHIFT;
-    if (sdl & SDL_KMOD_LCTRL)
-        mods |= KeyMod::LCTRL;
-    if (sdl & SDL_KMOD_RCTRL)
-        mods |= KeyMod::RCTRL;
-    if (sdl & SDL_KMOD_LALT)
-        mods |= KeyMod::LALT;
-    if (sdl & SDL_KMOD_RALT)
-        mods |= KeyMod::RALT;
-    if (sdl & SDL_KMOD_LGUI)
-        mods |= KeyMod::LSUPER;
-    if (sdl & SDL_KMOD_RGUI)
-        mods |= KeyMod::RSUPER;
-    if (sdl & SDL_KMOD_NUM)
-        mods |= KeyMod::NUM;
-    if (sdl & SDL_KMOD_CAPS)
-        mods |= KeyMod::CAPS;
-    if (sdl & SDL_KMOD_MODE)
-        mods |= KeyMod::MODE;
-    if (sdl & SDL_KMOD_SCROLL)
-        mods |= KeyMod::SCROLL;
-
-    return mods;
-}
-
 struct SdlApplication;
+
+struct SdlBuffer : Drm::Buffer {
+    u8* _pixel;
+
+    SdlBuffer(u8* pixels, Drm::Format format, Math::Vec2u size, usize stride)
+        : Buffer(format, size, stride), _pixel(pixels) {}
+
+    Bytes bytes() const override {
+        return {
+            static_cast<u8 const*>(_pixel),
+            stride * size.height,
+        };
+    }
+
+    MutBytes mutBytes() const override {
+        return {
+            static_cast<u8*>(_pixel),
+            stride * size.height,
+        };
+    }
+};
+
+struct SdlSwapChain : SwapChain {
+    SDL_Window* _window;
+    SDL_Surface* _surface = nullptr;
+
+    SdlSwapChain(SDL_Window* window)
+        : _window(window) {}
+
+    AcquiredBuffer acquire() override {
+        _surface = SDL_GetWindowSurface(_window);
+        if (not _surface)
+            panic("Failed to get window surface");
+        SDL_LockSurface(_surface);
+        return {
+            makeRc<SdlBuffer>(
+                static_cast<u8*>(_surface->pixels),
+                Sdl::bridge(_surface->format),
+                Math::Vec2i{_surface->w, _surface->h}.cast<usize>(),
+                static_cast<usize>(_surface->pitch)
+            ),
+            0
+        };
+    }
+
+    void present(Rc<Drm::Buffer>, Slice<Math::Recti>) override {
+        SDL_UpdateWindowSurface(_window);
+        SDL_UnlockSurface(_surface);
+        _surface = nullptr;
+    }
+};
 
 struct SdlWindow : Window {
     SdlApplication& _application;
     SDL_Window* _sdlWindow;
-    SDL_Surface* _sdlSurface = nullptr;
     Math::Vec2i _lastMousePos = {};
     bool _closed = false;
 
@@ -75,23 +91,8 @@ struct SdlWindow : Window {
         return SDL_GetWindowPixelDensity(_sdlWindow);
     }
 
-    Gfx::MutPixels acquireSurface() override {
-        _sdlSurface = SDL_GetWindowSurface(_sdlWindow);
-        if (not _sdlSurface)
-            panic("Failed to get window surface");
-        SDL_LockSurface(_sdlSurface);
-        return {
-            _sdlSurface->pixels,
-            {_sdlSurface->w, _sdlSurface->h},
-            (usize)_sdlSurface->pitch,
-            Gfx::BGRA8888,
-        };
-    }
-
-    void releaseSurface(Slice<Math::Recti>) override {
-        SDL_UpdateWindowSurface(_sdlWindow);
-        SDL_UnlockSurface(_sdlSurface);
-        _sdlSurface = nullptr;
+    Res<Rc<SwapChain>> createSwapChain(SwapChainProps const&) override {
+        return Ok(makeRc<SdlSwapChain>(_sdlWindow));
     }
 
     void drag() override {
@@ -105,25 +106,9 @@ struct SdlWindow : Window {
 
     void cursor(CursorStyle style) override {
         static Array<SDL_Cursor*, (usize)CursorStyle::_LEN> cursors = {};
-
-        auto sdlCursor = [](CursorStyle style) {
-            switch (style) {
-            case CursorStyle::RESIZE_EW:
-                return SDL_SYSTEM_CURSOR_EW_RESIZE;
-            case CursorStyle::RESIZE_NS:
-                return SDL_SYSTEM_CURSOR_NS_RESIZE;
-            case CursorStyle::RESIZE_NWSE:
-                return SDL_SYSTEM_CURSOR_NWSE_RESIZE;
-            case CursorStyle::RESIZE_NESW:
-                return SDL_SYSTEM_CURSOR_NESW_RESIZE;
-            default:
-                return SDL_SYSTEM_CURSOR_DEFAULT;
-            }
-        };
-
         auto& cursor = cursors[(usize)style];
         if (not cursor)
-            cursor = SDL_CreateSystemCursor(sdlCursor(style));
+            cursor = SDL_CreateSystemCursor(Sdl::bridge(style));
         SDL_SetCursor(cursor);
     }
 
@@ -184,32 +169,10 @@ struct SdlApplication : Application {
 
         auto app = (SdlApplication*)data;
         if (auto& [handler] = app->_handler) {
-            auto result = handler->hitTest(
+            return Sdl::bridge(handler->hitTest(
                 WindowId{SDL_GetWindowID(win)},
                 {area->x, area->y}
-            );
-            switch (result) {
-            case HitResult::DRAG:
-                return SDL_HITTEST_DRAGGABLE;
-            case HitResult::RESIZE_EAST:
-                return SDL_HITTEST_RESIZE_RIGHT;
-            case HitResult::RESIZE_NORTH:
-                return SDL_HITTEST_RESIZE_TOP;
-            case HitResult::RESIZE_NORTH_EAST:
-                return SDL_HITTEST_RESIZE_TOPRIGHT;
-            case HitResult::RESIZE_NORTH_WEST:
-                return SDL_HITTEST_RESIZE_TOPLEFT;
-            case HitResult::RESIZE_SOUTH:
-                return SDL_HITTEST_RESIZE_BOTTOM;
-            case HitResult::RESIZE_SOUTH_EAST:
-                return SDL_HITTEST_RESIZE_BOTTOMRIGHT;
-            case HitResult::RESIZE_SOUTH_WEST:
-                return SDL_HITTEST_RESIZE_BOTTOMLEFT;
-            case HitResult::RESIZE_WEST:
-                return SDL_HITTEST_RESIZE_LEFT;
-            default:
-                break;
-            }
+            ));
         }
         return SDL_HITTEST_NORMAL;
     }
@@ -301,7 +264,7 @@ struct SdlApplication : Application {
                     .pos = window->_lastMousePos,
                     .delta = screenPos.cast<isize>() - _lastScreenMousePos,
                     .buttons = buttons,
-                    .mods = currentMods(),
+                    .mods = Sdl::bridgeSdlKeymod(SDL_GetModState()),
                 }
             );
 
@@ -334,7 +297,7 @@ struct SdlApplication : Application {
                     .type = MouseEvent::RELEASE,
                     .pos = window->_lastMousePos,
                     .buttons = buttons,
-                    .mods = currentMods(),
+                    .mods = Sdl::bridgeSdlKeymod(SDL_GetModState()),
                     .button = button,
                     .clicks = sdlEvent.button.clicks,
                 }
@@ -370,7 +333,7 @@ struct SdlApplication : Application {
                     .type = MouseEvent::PRESS,
                     .pos = window->_lastMousePos,
                     .buttons = buttons,
-                    .mods = currentMods(),
+                    .mods = Sdl::bridgeSdlKeymod(SDL_GetModState()),
                     .button = button,
                     .clicks = sdlEvent.button.clicks,
                 }
@@ -395,7 +358,7 @@ struct SdlApplication : Application {
                         -sdlEvent.wheel.x,
                         sdlEvent.wheel.y,
                     },
-                    .mods = currentMods(),
+                    .mods = Sdl::bridgeSdlKeymod(SDL_GetModState()),
                 }
             );
 

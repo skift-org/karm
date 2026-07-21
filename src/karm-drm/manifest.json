@@ -1,8 +1,8 @@
 {
     "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
-    "id": "karm-ui.main",
-    "type": "exe",
+    "id": "karm-drm",
+    "type": "lib",
     "requires": [
-        "karm-ui"
+        "karm-core"
     ]
 }

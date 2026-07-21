@@ -4,6 +4,7 @@ module;
 
 export module Karm.Gfx.Pixels:pixels;
 
+import Karm.Drm;
 import :color;
 import :formats;
 
@@ -15,6 +16,15 @@ struct _Pixels {
     Math::Vec2i _size;
     usize _stride;
     Format _fmt;
+
+    static _Pixels from(Rc<Drm::Buffer> buf) {
+        return {
+            buf->mutBytes().buf(),
+            buf->size.cast<isize>(),
+            buf->stride,
+            bridge(buf->format),
+        };
+    }
 
     operator _Pixels<false>() const {
         return {_buf, _size, _stride, _fmt};

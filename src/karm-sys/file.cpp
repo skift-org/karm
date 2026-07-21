@@ -136,4 +136,11 @@ Res<_String<E>> readAllText(Ref::Url const& url) {
     return Io::readAllText<Utf8>(file);
 }
 
+export Res<Vec<u8>> readAll(Ref::Url const& url) {
+    auto file = try$(Sys::File::open(url));
+    Io::BufferWriter bw;
+    try$(Io::copy(file, bw));
+    return Ok(bw.take());
+}
+
 } // namespace Karm::Sys

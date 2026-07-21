@@ -1,7 +1,8 @@
 #include <karm/entry>
 
 import Karm.App;
-import Karm.Gfx;
+import Karm.Drm;
+import Karm.Gfx.Pixels;
 
 using namespace Karm;
 
@@ -9,17 +10,21 @@ namespace Example {
 
 struct Handler : App::Handler {
     Rc<App::Window> win;
+    Rc<App::SwapChain> swapChain;
 
     Handler(Rc<App::Window> win)
-        : win(win) {}
+        : win(win), swapChain(win->createSwapChain().unwrap()) {}
 
     void update() override {
-        auto s = win->acquireSurface();
-        s.clear(Gfx::BLUE500);
-        win->releaseSurface(s.bound());
+        auto [buffer, _] = swapChain->acquire();
+        auto pixels = Gfx::MutPixels::from(buffer);
+        pixels.clear(Gfx::BLUE500);
+        swapChain->present(buffer);
     }
 
     void handle(App::WindowId, App::Event& e) override {
+        if (e.is<App::ResizeEvent>())
+            swapChain = win->createSwapChain().unwrap();
         e.accept();
     }
 };

@@ -1,10 +1,8 @@
 {
     "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
-    "id": "karm-app.main",
+    "id": "hello-ui",
     "type": "exe",
     "requires": [
-        "karm-app",
-        "karm-sys",
-        "karm-gfx.pixels"
+        "karm-ui"
     ]
 }

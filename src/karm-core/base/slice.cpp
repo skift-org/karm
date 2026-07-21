@@ -103,6 +103,9 @@ struct Slice {
 
     constexpr Slice() = default;
 
+    constexpr Slice(T const& buf)
+        : _buf(&buf), _len(1) {}
+
     constexpr Slice(T const* buf, usize len)
         : _buf(buf), _len(len) {}
 

@@ -1,7 +1,7 @@
 export module Karm.App:application;
 
 import Karm.Core;
-import Karm.Gfx;
+import Karm.Drm;
 import Karm.Math;
 import Karm.Sys;
 
@@ -15,20 +15,6 @@ namespace Karm::App {
 
 export using WindowId = Distinct<usize, struct WindowIdTag>;
 export constexpr WindowId GLOBAL = WindowId{Limits<usize>::MAX};
-
-export enum struct HitResult {
-    NORMAL,
-    HIT,
-    DRAG,
-    RESIZE_EAST,
-    RESIZE_NORTH,
-    RESIZE_NORTH_EAST,
-    RESIZE_NORTH_WEST,
-    RESIZE_SOUTH,
-    RESIZE_SOUTH_EAST,
-    RESIZE_SOUTH_WEST,
-    RESIZE_WEST,
-};
 
 export constexpr HitResult resizeHit(Direction dir) {
     switch (dir) {
@@ -53,6 +39,40 @@ export constexpr HitResult resizeHit(Direction dir) {
     }
 }
 
+export enum struct PresentMode : u8 {
+    PACED,
+    IMMEDIATE,
+
+    _LEN,
+};
+
+export struct SwapChainProps {
+    Drm::Format format;
+    u8 size = 2;
+    PresentMode mode = PresentMode::PACED;
+};
+
+export struct AcquiredBuffer {
+    Rc<Drm::Buffer> buffer;
+    u8 age;
+};
+
+export struct SwapChain {
+    Drm::Format format;
+    Math::Vec2u size;
+
+    virtual ~SwapChain() = default;
+
+    virtual AcquiredBuffer acquire() = 0;
+
+    void present(Rc<Drm::Buffer> buf) {
+        Math::Recti rect{buf->size.cast<isize>()};
+        present(buf, rect);
+    }
+
+    virtual void present(Rc<Drm::Buffer>, Slice<Math::Recti> dirty) = 0;
+};
+
 export struct WindowProps {
     String title = "Karm Application"s;
     Math::Vec2i size = {800, 600};
@@ -67,14 +87,7 @@ export struct Window : Meta::Pinned {
 
     virtual f64 scaleFactor() = 0;
 
-    virtual Gfx::MutPixels acquireSurface() = 0;
-
-    void releaseSurface(Math::Recti r) {
-        Array dirty = {r};
-        releaseSurface(dirty);
-    }
-
-    virtual void releaseSurface(Slice<Math::Recti> dirty) = 0;
+    virtual Res<Rc<SwapChain>> createSwapChain(SwapChainProps const& props = {}) = 0;
 
     virtual void drag() {
         logWarn("Window::drag() not implemented");

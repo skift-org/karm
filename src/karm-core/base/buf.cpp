@@ -346,10 +346,10 @@ struct InlineBuf {
     }
 
     InlineBuf(InlineBuf&& other) {
-        for (usize i = 0; i < N; i++) {
+        for (usize i = 0; i < other._len; i++) {
             _buf[i].ctor(std::move(other._buf[i].take()));
         }
-        _len = other._len;
+        std::swap(_len, other._len);
     }
 
     ~InlineBuf() {
@@ -426,11 +426,11 @@ struct InlineBuf {
             panic("cap too large");
 
         for (usize i = _len; i > index; i--) {
-            _buf[i] = _buf[i - count];
+            _buf[i].ctor(_buf[i - count].take());
         }
 
         for (usize i = 0; i < count; i++) {
-            _buf[index + i] = first[i];
+            _buf[index + i].ctor(first[i]);
         }
 
         _len += count;
@@ -441,11 +441,11 @@ struct InlineBuf {
             panic("cap too large");
 
         for (usize i = _len; i > index; i--) {
-            _buf[i] = std::move<T>(_buf[i - count]);
+            _buf[i].ctor(_buf[i - count].take());
         }
 
         for (usize i = 0; i < count; i++) {
-            _buf[index + i] = std::move(first[i]);
+            _buf[index + i].ctor(std::move(first[i]));
         }
 
         _len += count;

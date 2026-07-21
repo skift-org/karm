@@ -6,6 +6,7 @@ export module Karm.Gfx.Pixels:formats;
 
 import Karm.Math;
 import Karm.Core;
+import Karm.Drm;
 
 import :color;
 
@@ -94,5 +95,20 @@ export struct Format : _Fmts {
         });
     }
 };
+
+export Format bridge(Drm::Format format) {
+    switch (format) {
+    case Drm::Format::ARGB8888:
+        return BGRA8888;
+    case Drm::Format::XRGB8888:
+        return BGRA8888;
+    case Drm::Format::ABGR8888:
+        return RGBA8888;
+    case Drm::Format::XBGR8888:
+        return RGBA8888;
+    default:
+        notImplemented();
+    }
+}
 
 } // namespace Karm::Gfx

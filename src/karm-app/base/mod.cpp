@@ -4,3 +4,4 @@ export import :event;
 export import :formFactor;
 export import :host;
 export import :inputs;
+export import :hit;

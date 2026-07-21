@@ -19,6 +19,7 @@ export auto FRAME_TIME = 1.0 / FRAME_RATE;
 
 struct RootNode : ProxyNode<RootNode> {
     Rc<App::Window> _window;
+    Rc<App::SwapChain> _swapChain;
     Gfx::CpuCanvas _g;
     bool _shouldAnimate = true;
     bool _shouldLayout = true;
@@ -27,7 +28,7 @@ struct RootNode : ProxyNode<RootNode> {
     App::CursorStyle _cursorRequest = App::CursorStyle::DEFAULT;
 
     RootNode(Child child, Rc<App::Window> window)
-        : ProxyNode(child), _window(window) {}
+        : ProxyNode(child), _window(window), _swapChain(window->createSwapChain().unwrap()) {}
 
     void paint(Gfx::Canvas& g, Math::Recti r) override {
         g.push();
@@ -65,8 +66,9 @@ struct RootNode : ProxyNode<RootNode> {
             _dirty.pushBack(physicalBound);
         }
 
-        auto pixels = _window->acquireSurface();
+        auto [buffer, _] = _swapChain->acquire();
         if (_dirty.len()) {
+            auto pixels = Gfx::MutPixels::from(buffer);
             _g.begin(pixels);
             for (auto& d : _dirty) {
                 paint(_g, d);
@@ -74,7 +76,7 @@ struct RootNode : ProxyNode<RootNode> {
             _g.end();
         }
 
-        _window->releaseSurface(_dirty);
+        _swapChain->present(buffer);
         _dirty.clear();
     }
 

@@ -5,6 +5,7 @@
     "description": "Pixel manipulation library",
     "requires": [
         "karm-math",
-        "karm-core"
+        "karm-core",
+        "karm-drm"
     ]
 }
