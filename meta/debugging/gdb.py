@@ -32,6 +32,48 @@ class Vec2Printer:
     def display_hint(self):
         return "array"
 
+class VecPrinter:
+    def __init__(self, val):
+        self.val = val
+        buf = val["_buf"]
+        self.len = int(buf["_len"])
+
+        manual_ptr = buf["_buf"]
+        if manual_ptr:
+            elem_type = manual_ptr.type.target().template_argument(0)
+            self.data = manual_ptr.cast(elem_type.pointer())
+        else:
+            self.data = None
+
+    def children(self):
+        if self.data is None:
+            return
+        for i in range(self.len):
+            yield (f"[{i}]", (self.data + i).dereference())
+
+    def display_hint(self):
+        return "array"
+
+
+class BufPrinter:
+    def __init__(self, val):
+        self.val = val
+        self.len = int(val["_len"])
+        manual_ptr = val["_buf"]
+        if manual_ptr:
+            elem_type = manual_ptr.type.target().template_argument(0)
+            self.data = manual_ptr.cast(elem_type.pointer())
+        else:
+            self.data = None
+
+    def children(self):
+        if self.data is None:
+            return
+        for i in range(self.len):
+            yield (f"[{i}]", (self.data + i).dereference())
+
+    def display_hint(self):
+        return "array"
 
 class AuPrinter:
     def __init__(self, val):
@@ -41,25 +83,13 @@ class AuPrinter:
         val = int(self.val["_val"])
         return "%.2f" % (val / 60)
 
-
-def build_opt_pretty_printer():
-    pp = gdb.printing.RegexpCollectionPrettyPrinter("karm_opt")
+def build_karm_pretty_printer():
+    pp = gdb.printing.RegexpCollectionPrettyPrinter("karm")
     pp.add_printer("Opt", "^(Karm::)?Opt<.*>$", OptPrinter)
+    pp.add_printer("Vec2", "^(Karm::)?(Math::)?Vec2<.*>$", Vec2Printer)
+    pp.add_printer("Au", "^(Karm::)?(Math::)?Au$", AuPrinter)
+    pp.add_printer("Vec", "^(Karm::)?_Vec<.*>$", VecPrinter)
+    pp.add_printer("Buf", "^(Karm::)?Buf<.*>$", BufPrinter)
     return pp
 
-
-def build_vec2_pretty_printer():
-    pp = gdb.printing.RegexpCollectionPrettyPrinter("karm_vec2")
-    pp.add_printer("Opt", "^(Karm::)?Vec2<.*>$", Vec2Printer)
-    return pp
-
-
-def build_au_pretty_printer():
-    pp = gdb.printing.RegexpCollectionPrettyPrinter("karm_au")
-    pp.add_printer("Opt", "^(Karm::Math::)?Au$", AuPrinter)
-    return pp
-
-
-gdb.printing.register_pretty_printer(None, build_opt_pretty_printer(), replace=True)
-gdb.printing.register_pretty_printer(None, build_vec2_pretty_printer(), replace=True)
-gdb.printing.register_pretty_printer(None, build_au_pretty_printer(), replace=True)
+gdb.printing.register_pretty_printer(None, build_karm_pretty_printer(), replace=True)
