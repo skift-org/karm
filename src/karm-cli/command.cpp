@@ -8,9 +8,11 @@ import Karm.Core;
 import Karm.Debug;
 import Karm.Sys;
 import Karm.Ref;
+import Karm.Tty;
 
 using namespace Karm::Literals;
 using namespace Karm::Re::Literals;
+using namespace Karm::Fmt::Literals;
 
 namespace Karm::Cli {
 
@@ -476,6 +478,9 @@ static Res<bool> handleDescriptors(Debug::FlagType type, Slice<DebugFlagDescript
 
 // MARK: Command ---------------------------------------------------------------
 
+static constexpr Tty::Style TTY_TITLE = {.foreground = Tty::WHITE, .bold = true};
+static constexpr Tty::Style TTY_OPTION = {.foreground = Tty::WHITE};
+
 export struct Section {
     String title;
     Vec<Rc<_OptionImpl>> options = {};
@@ -596,22 +601,19 @@ export struct Command : Meta::Pinned {
     }
 
     Res<> _showHelp(Io::TextWriter& w) {
-        try$(format(w, "Usage:\n  "));
+        try$(format(w, "{}:\n", "Usage"s | TTY_TITLE));
         try$(usage(w));
         try$(w.writeStr("\n\n"s));
 
-        try$(format(w, "Description:\n  {}\n\n", _description));
+        try$(format(w, "{}:\n{}\n\n", "Description"s | TTY_TITLE, _description));
 
         for (auto& sec : _sections) {
-            if (Karm::any(sec.options) or sec.prolog or sec.epilog) {
+            if (any(sec.options) or sec.prolog or sec.epilog) {
                 if (sec.title)
-                    try$(Io::format(w, "{}:\n"s, sec.title));
+                    try$(Io::format(w, "{}:\n"s, Io::toTitleCase(sec.title) | TTY_TITLE));
 
-                Io::Emit e{w};
-                e.indent();
-                if (sec.prolog) {
-                    e("{}\n", sec.prolog);
-                }
+                if (sec.prolog)
+                    try$(format(w, "{}\n", sec.prolog));
 
                 if (sec.options) {
                     for (auto& opt : sec.options) {
@@ -620,16 +622,14 @@ export struct Command : Meta::Pinned {
 
                         try$(w.writeStr("  "s));
                         if (opt->shortName)
-                            try$(format(w, "-{:c}, ", opt->shortName.unwrap()));
+                            try$(format(w, "{}, ", "-{:c}"_f(opt->shortName.unwrap()) | TTY_OPTION));
 
-                        try$(format(w, "--{} - {}\n", opt->longName, opt->description));
+                        try$(format(w, "{}: {}\n", "--{}"_f(opt->longName) | TTY_OPTION, opt->description));
                     }
                 }
 
                 if (sec.epilog)
-                    e("{}\n", sec.epilog);
-
-                try$(e.flush());
+                    try$(format(w, "\n{}\n", sec.epilog));
                 try$(w.writeRune('\n'));
             }
         }

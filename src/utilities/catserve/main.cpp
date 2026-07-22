@@ -68,8 +68,7 @@ struct Site : Http::Handler {
         return baseurl / path;
     }
 
-    Res<String> renderPage(Ref::Url const& url) const {
-        auto md = Md::parse(try$(Sys::readAllText<Utf8>(url)));
+    static void fixupLink(Md::Document& md) {
         md.walk(Visitor{
             [](Md::Link& link) {
                 auto href = link.href;
@@ -79,7 +78,17 @@ struct Site : Http::Handler {
             [](auto&) {
             }, // ignore
         });
+    }
 
+    static String renderMarkdown(Str buf) {
+        auto md = Md::parse(buf);
+        fixupLink(md);
+        return Md::renderHtmlFragment(md);
+    }
+
+    Res<String> renderPage(Ref::Url const& url) const {
+        auto md = Md::parse(try$(Sys::readAllText<Utf8>(url)));
+        fixupLink(md);
         auto pageTitle = md.frontmatter.get("title");
 
         Serde::Object env{
@@ -88,9 +97,9 @@ struct Site : Http::Handler {
             {"theme"s, theme},
             {"style"s, style},
             {"header"s, renderHeader()},
-            {"navbar"s, Md::md2htmlFragment(manifest.navbar)},
+            {"navbar"s, renderMarkdown(manifest.navbar)},
             {"main"s, Md::renderHtmlFragment(md)},
-            {"footer"s, Md::md2htmlFragment(manifest.footer)},
+            {"footer"s, renderMarkdown(manifest.footer)},
         };
 
         String templ = R"html(<!DOCTYPE html>

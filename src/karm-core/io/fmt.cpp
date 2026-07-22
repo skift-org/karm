@@ -926,11 +926,11 @@ struct Formatter<Range<T, Tag>> {
     }
 
     Res<> format(TextWriter& writer, Range<T, Tag> const& val) {
-        try$(writer.writeStr("["s));
+        try$(writer.writeStr("("s));
         try$(inner.format(writer, val.start));
-        try$(writer.writeStr("-"s));
+        try$(writer.writeStr(", "s));
         try$(inner.format(writer, val.end()));
-        try$(writer.writeStr("]"s));
+        try$(writer.writeStr(")"s));
         return Ok();
     }
 };
@@ -1041,7 +1041,13 @@ struct Formatter<Time> {
 export template <>
 struct Formatter<Date> {
     Res<> format(TextWriter& writer, Date const& val) {
-        return Io::format(writer, "{:04}-{:02}-{:02}", (isize)val.year, (usize)val.month + 1, (usize)val.day + 1);
+        return Io::format(
+            writer,
+            "{:04}-{:02}-{:02}",
+            static_cast<isize>(val.year),
+            static_cast<usize>(val.month) + 1,
+            static_cast<usize>(val.day) + 1
+        );
     }
 };
 
@@ -1054,27 +1060,11 @@ struct Formatter<DateTime> {
 
 // MARK: Format Tuple ----------------------------------------------------------
 
-export template <typename Car, typename Cdr>
-struct Formatter<Pair<Car, Cdr>> {
-    Res<> format(TextWriter& writer, Pair<Car, Cdr> const& val) {
-        try$(writer.writeRune('{'));
-
-        Formatter<Car> carFormatter;
-        try$(carFormatter.format(writer, val.v0));
-        try$(writer.writeStr(", "s));
-
-        Formatter<Cdr> cdrFormatter;
-        try$(cdrFormatter.format(writer, val.v1));
-        try$(writer.writeRune('}'));
-        return Ok();
-    }
-};
-
 export template <typename... Ts>
 struct Formatter<Tuple<Ts...>> {
     Res<> format(TextWriter& writer, Tuple<Ts...> const& val) {
         bool first = true;
-        try$(writer.writeRune('{'));
+        try$(writer.writeRune('('));
         try$(val.visit([&]<typename T>(T const& f) -> Res<> {
             if (not first)
                 try$(writer.writeStr(", "s));
@@ -1085,7 +1075,7 @@ struct Formatter<Tuple<Ts...>> {
             first = false;
             return Ok();
         }));
-        try$(writer.writeRune('}'));
+        try$(writer.writeRune(')'));
         return Ok();
     }
 };
@@ -1118,8 +1108,8 @@ export struct FStr {
 
 namespace Karm::Fmt::Literals {
 
-export constexpr Karm::Io::FStr operator""_f(char const* buf, Karm::usize len) {
-    return {Karm::Str{buf, len}};
+export constexpr Io::FStr operator""_f(char const* buf, Karm::usize len) {
+    return {Str{buf, len}};
 }
 
 } // namespace Karm::Fmt::Literals

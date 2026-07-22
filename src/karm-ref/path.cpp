@@ -62,6 +62,11 @@ export struct Path {
         return lastSeg == "" or lastSeg == "." or lastSeg == "..";
     }
 
+    void stripTrailingSlash() {
+        if (trailingSlash())
+            _segments.popBack();
+    }
+
     void normalize() {
         Vec<String> parts;
 
@@ -155,6 +160,7 @@ export struct Path {
             return other;
 
         Path path = *this;
+        path.stripTrailingSlash();
         path._segments.pushBack(other._segments);
         path.normalize();
         return path;
@@ -167,6 +173,7 @@ export struct Path {
     void append(Str part) {
         if (_segments.len() > 0 and last(_segments) == "")
             _segments.popBack();
+        stripTrailingSlash();
         _segments.pushBack(part);
     }
 

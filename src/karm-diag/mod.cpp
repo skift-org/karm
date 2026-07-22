@@ -12,6 +12,13 @@ using namespace Karm::Literals;
 
 namespace Karm::Diag {
 
+static constexpr Tty::Style TTY_BOLD = {.bold = true};
+static constexpr Tty::Style TTY_ACCENT = {.foreground = Tty::BLUE, .bold = true};
+static constexpr Tty::Style TTY_ERROR = {.foreground = Tty::RED, .bold = true};
+static constexpr Tty::Style TTY_WARNING = {.foreground = Tty::YELLOW, .bold = true};
+static constexpr Tty::Style TTY_NOTE = {.foreground = Tty::CYAN, .bold = true};
+static constexpr Tty::Style TTY_HELP = {.foreground = Tty::GREEN, .bold = true};
+
 // MARK: Diagnostic Level ------------------------------------------------------
 
 export enum struct Level {
@@ -22,6 +29,40 @@ export enum struct Level {
 
     _LEN,
 };
+
+static Tty::Style levelStyle(Level level) {
+    switch (level) {
+    case Level::ERROR:
+        return TTY_ERROR;
+
+    case Level::WARNING:
+        return TTY_WARNING;
+
+    case Level::NOTE:
+        return TTY_NOTE;
+
+    case Level::HELP:
+        return TTY_HELP;
+
+    default:
+        return Tty::RESET;
+    }
+}
+
+static Str levelName(Level level) {
+    switch (level) {
+    case Level::ERROR:
+        return "error"s;
+    case Level::WARNING:
+        return "warning"s;
+    case Level::NOTE:
+        return "note"s;
+    case Level::HELP:
+        return "help"s;
+    default:
+        return "unknown"s;
+    }
+}
 
 // MARK: Diagnostic Label ------------------------------------------------------
 
@@ -121,36 +162,6 @@ export struct Renderer {
     Renderer(Str source, Union<None, String, Ref::Url> filename = NONE)
         : _source(source), _filename(filename) {}
 
-    static Tty::Style _levelStyle(Level level) {
-        switch (level) {
-        case Level::ERROR:
-            return Tty::style(Tty::RED).bold();
-        case Level::WARNING:
-            return Tty::style(Tty::YELLOW).bold();
-        case Level::NOTE:
-            return Tty::style(Tty::CYAN).bold();
-        case Level::HELP:
-            return Tty::style(Tty::GREEN).bold();
-        default:
-            return Tty::reset();
-        }
-    }
-
-    static Str _levelName(Level level) {
-        switch (level) {
-        case Level::ERROR:
-            return "error"s;
-        case Level::WARNING:
-            return "warning"s;
-        case Level::NOTE:
-            return "note"s;
-        case Level::HELP:
-            return "help"s;
-        default:
-            return "unknown"s;
-        }
-    }
-
     static void _writeSpaces(Io::Emit& e, usize count) {
         for (usize i = 0; i < count; i++)
             e(' ');
@@ -194,16 +205,14 @@ export struct Renderer {
     void render(Io::TextWriter& writer, Diagnostic const& diag) const {
         Io::Emit e{writer};
 
-        auto styleReset = Tty::reset();
-        auto styleBold = Tty::Style{}.bold();
-        auto styleBlue = Tty::style(Tty::BLUE).bold();
+        auto styleReset = Tty::RESET;
 
         // Header: error[E0001]: message
-        e("{}{}", _levelStyle(diag.level), _levelName(diag.level));
+        e("{}{}", levelStyle(diag.level), levelName(diag.level));
         if (diag.code.len() > 0) {
             e("[{}]", diag.code);
         }
-        e("{}: {}{}\n", styleReset, styleBold, diag.message);
+        e("{}: {}{}\n", Tty::RESET, TTY_BOLD, diag.message);
         e("{}", styleReset);
 
         if (diag.labels.len() == 0) {
@@ -220,7 +229,7 @@ export struct Renderer {
 
         // Location header
         auto const& firstLabel = diag.labels[0];
-        e(" {}", styleBlue);
+        e(" {}", TTY_ACCENT);
         _writeSpaces(e, lineNumWidth);
         e("--> {}", styleReset);
         if (not _filename.is<None>()) {
@@ -229,7 +238,7 @@ export struct Renderer {
         e("{}\n", firstLabel.span.start);
 
         // Empty line separator
-        e(" {}", styleBlue);
+        e(" {}", TTY_ACCENT);
         _writeSpaces(e, lineNumWidth);
         e(" |{}", styleReset);
         e('\n');
@@ -258,7 +267,7 @@ export struct Renderer {
 
             // Line number and source
             Str lineContent = _lineContent(line);
-            e(" {}", styleBlue);
+            e(" {}", TTY_ACCENT);
             // Right-justify line number
             usize digits = _digitCount(line);
             for (usize i = digits; i < lineNumWidth; i++)
@@ -266,7 +275,7 @@ export struct Renderer {
             e("{} |{} {}\n", line, styleReset, lineContent);
 
             // Underline and label
-            e(" {}", styleBlue);
+            e(" {}", TTY_ACCENT);
             _writeSpaces(e, lineNumWidth);
             e(" |{} ", styleReset);
 
@@ -296,7 +305,7 @@ export struct Renderer {
                 }
 
                 // Underline character
-                auto underStyle = l->isPrimary ? _levelStyle(diag.level) : styleBlue;
+                auto underStyle = l->isPrimary ? levelStyle(diag.level) : TTY_ACCENT;
                 Rune underChar = l->isPrimary ? '^' : '-';
 
                 e("{}", underStyle);
@@ -316,7 +325,7 @@ export struct Renderer {
             // Render secondary labels on separate lines
             for (auto const* l : lineLabels) {
                 if (not l->isPrimary and l->message.len() > 0) {
-                    e(" {}", styleBlue);
+                    e(" {}", TTY_ACCENT);
                     _writeSpaces(e, lineNumWidth);
                     e(" |{}", styleReset);
 
@@ -324,30 +333,30 @@ export struct Renderer {
                     for (usize i = 0; i < startCol; i++) {
                         e(' ');
                     }
-                    e("{}{}{}\n", styleBlue, l->message, styleReset);
+                    e("{}{}{}\n", TTY_ACCENT, l->message, styleReset);
                 }
             }
         }
 
         // Empty line separator
-        e(" {}", styleBlue);
+        e(" {}", TTY_ACCENT);
         _writeSpaces(e, lineNumWidth);
         e(" |{}", styleReset);
         e('\n');
 
         // Notes
         for (auto const& note : diag.notes) {
-            e(" {}", styleBlue);
+            e(" {}", TTY_ACCENT);
             _writeSpaces(e, lineNumWidth);
-            e(" = {}note{}: {}{}\n", _levelStyle(Level::NOTE),
+            e(" = {}note{}: {}{}\n", levelStyle(Level::NOTE),
               styleReset, note, styleReset);
         }
 
         // Help
         if (auto const& [help] = diag.help) {
-            e(" {}", styleBlue);
+            e(" {}", TTY_ACCENT);
             _writeSpaces(e, lineNumWidth);
-            e(" = {}help{}: {}{}\n", _levelStyle(Level::HELP),
+            e(" = {}help{}: {}{}\n", levelStyle(Level::HELP),
               styleReset, help, styleReset);
         }
 
@@ -367,53 +376,19 @@ export struct SimpleRenderer {
     SimpleRenderer(Union<None, String, Ref::Url> filename = NONE)
         : _filename(filename) {}
 
-    static Tty::Style _levelStyle(Level level) {
-        switch (level) {
-        case Level::ERROR:
-            return Tty::style(Tty::RED).bold();
-        case Level::WARNING:
-            return Tty::style(Tty::YELLOW).bold();
-        case Level::NOTE:
-            return Tty::style(Tty::CYAN).bold();
-        case Level::HELP:
-            return Tty::style(Tty::GREEN).bold();
-        default:
-            return Tty::reset();
-        }
-    }
-
-    static Str _levelName(Level level) {
-        switch (level) {
-        case Level::ERROR:
-            return "error"s;
-        case Level::WARNING:
-            return "warning"s;
-        case Level::NOTE:
-            return "note"s;
-        case Level::HELP:
-            return "help"s;
-        default:
-            return "unknown"s;
-        }
-    }
-
     void render(Io::TextWriter& writer, Diagnostic const& diag) const {
         Io::Emit e{writer};
 
-        auto styleReset = Tty::reset();
-        auto styleBold = Tty::Style{}.bold();
-        auto styleBlue = Tty::style(Tty::BLUE).bold();
-
-        e("{}{}", _levelStyle(diag.level), _levelName(diag.level));
+        e("{}{}", levelStyle(diag.level), levelName(diag.level));
         if (diag.code.len() > 0) {
             e("[{}]", diag.code);
         }
-        e("{}: {}{}\n", styleReset, styleBold, diag.message);
-        e("{}", styleReset);
+        e("{}: {}{}\n", Tty::RESET, TTY_BOLD, diag.message);
+        e("{}", Tty::RESET);
 
         if (diag.labels.len() > 0) {
             auto const& firstLabel = diag.labels[0];
-            e(" {}--> {}", styleBlue, styleReset);
+            e(" {}--> {}", TTY_ACCENT, Tty::RESET);
 
             if (not _filename.is<None>()) {
                 e("{}:", _filename);
@@ -422,15 +397,15 @@ export struct SimpleRenderer {
         }
 
         for (auto const& note : diag.notes) {
-            e(" {}={}", styleBlue, styleReset);
-            e(" {}note{}: {}{}\n", _levelStyle(Level::NOTE),
-              styleReset, note, styleReset);
+            e(" {}={}", TTY_ACCENT, Tty::RESET);
+            e(" {}note{}: {}{}\n", levelStyle(Level::NOTE),
+              Tty::RESET, note, Tty::RESET);
         }
 
         if (auto const& [help] = diag.help) {
-            e(" {}={}", styleBlue, styleReset);
-            e(" {}help{}: {}{}\n", _levelStyle(Level::HELP),
-              styleReset, help, styleReset);
+            e(" {}={}", TTY_ACCENT, Tty::RESET);
+            e(" {}help{}: {}{}\n", levelStyle(Level::HELP),
+              Tty::RESET, help, Tty::RESET);
         }
 
         e('\n');

@@ -5,6 +5,7 @@ module;
 export module Karm.Http:response;
 
 import Karm.Core;
+import Karm.Ref;
 import :body;
 import :code;
 import :header;
@@ -29,8 +30,23 @@ export struct ResponseWriter : Aio::Writer {
     }
 
     Async::Task<> writeFileAsync(Ref::Url const& url, Async::CancellationToken ct) {
-        auto data = co_try$(Sys::readAllText<Utf8>(url));
-        co_return co_await writeStrAsync(data, ct);
+        auto f = co_try$(Sys::File::open(url));
+        header.put(Header::CONTENT_LENGTH, Io::format("{}", co_try$(f.stat()).size));
+
+        if (not header.contains(Header::CONTENT_TYPE)) {
+            Array<u8, Ref::SNIFF_BUFFER_SIZE> buf;
+            auto len = co_trya$(f.readAsync(buf, ct));
+            Ref::Uti uti =
+                (url.path.suffix()
+                     ? Ref::Uti::fromSuffix(url.path.suffix())
+                     : Ref::sniffBytes(sub(buf, 0, len)));
+            if (uti.mimeTypes())
+                header.put(Header::CONTENT_TYPE, uti.mimeTypes()[0].str());
+            co_trya$(writeAsync(sub(buf, 0, len), ct));
+        }
+
+        co_trya$(Aio::copyAsync(f, *this, ct));
+        co_return Ok();
     }
 
     Async::Task<> redirectAsync(Code code, Ref::Url location, Async::CancellationToken ct) {
@@ -39,7 +55,7 @@ export struct ResponseWriter : Aio::Writer {
     }
 
     Async::Task<> notFoundAsync(Async::CancellationToken ct) {
-        code = Http::Code::NOT_FOUND;
+        code = NOT_FOUND;
         co_return co_await writeStrAsync("Not Found"s, ct);
     }
 };

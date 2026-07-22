@@ -12,14 +12,10 @@ using namespace Karm::Literals;
 
 namespace Karm::Test {
 
-namespace {
-
-constexpr auto GREEN = Tty::Style{Tty::GREEN}.bold();
-constexpr auto RED = Tty::Style{Tty::RED}.bold();
-constexpr auto YELLOW = Tty::Style{Tty::YELLOW}.bold();
-constexpr auto NOTE = Tty::Style{Tty::GRAY_DARK}.bold();
-
-} // namespace
+static constexpr Tty::Style TTY_PASS = {.foreground = Tty::GREEN, .bold = true};
+static constexpr Tty::Style TTY_FAIL = {.foreground = Tty::RED, .bold = true};
+static constexpr Tty::Style TTY_WARN = {.foreground = Tty::YELLOW, .bold = true};
+static constexpr Tty::Style TTY_NOTE = {.foreground = Tty::GRAY_DARK, .bold = true};
 
 export struct RunOptions {
     String glob = "*"s;
@@ -50,18 +46,18 @@ export struct Driver {
 
             if (not result and result.none() == Error::SKIPPED) {
                 skipped++;
-                Sys::errln("{}", "SKIP"s | Tty::style(Tty::YELLOW).bold());
+                Sys::errln("{}", "SKIP"s | TTY_WARN);
             } else if (not result) {
                 if (options.fast) {
-                    Sys::errln("{}", "FAIL"s | Tty::style(Tty::RED).bold());
+                    Sys::errln("{}", "FAIL"s | TTY_FAIL);
                     Sys::errln("{}", test->sourceLocation);
                     co_return Error::other("test failed");
                 }
                 failed++;
-                Sys::errln("{}", Io::cased(result, Io::Case::UPPER) | Tty::style(Tty::RED).bold());
+                Sys::errln("{}", Io::cased(result, Io::Case::UPPER) | TTY_FAIL);
             } else {
                 passed++;
-                Sys::errln("{}", "PASS"s | Tty::style(Tty::GREEN).bold());
+                Sys::errln("{}", "PASS"s | TTY_PASS);
             }
         }
 
@@ -70,20 +66,20 @@ export struct Driver {
         if (skipped) {
             Sys::errln(
                 " {:5} skipped",
-                skipped | YELLOW
+                skipped | TTY_WARN
             );
         }
 
         if (failed) {
             Sys::errln(
                 " {:5} failed - {} {}",
-                failed | RED,
-                witty(Sys::now().val()) | NOTE,
+                failed | TTY_FAIL,
+                witty(Sys::now().val()) | TTY_NOTE,
                 badEmoji(Sys::now().val())
             );
             Sys::errln(
                 " {:5} passed\n",
-                passed | GREEN
+                passed | TTY_PASS
             );
 
             co_return Error::other("test failed");
@@ -91,8 +87,8 @@ export struct Driver {
 
         Sys::errln(
             " {:5} passed - {} {}\n",
-            passed | GREEN,
-            nice(Sys::now().val()) | NOTE,
+            passed | TTY_PASS,
+            nice(Sys::now().val()) | TTY_NOTE,
             goodEmoji(Sys::now().val())
         );
 

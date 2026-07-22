@@ -181,7 +181,7 @@ test$("fmt-references") {
     auto number = makeRc<int>(123);
     try$(testCase("123", number));
 
-    Opt<Rc<Str>> str = makeRc<Str>("test");
+    Opt str = makeRc<Str>("test");
     try$(testCase("test", str));
 
     Weak<Str> weakStr = *str;
@@ -204,9 +204,10 @@ test$("fmt-sliceable") {
 // MARK: Format Map ------------------------------------------------------------
 
 test$("fmt-map") {
-    Map<int, int> map;
-    map.put(1, 2);
-    map.put(3, 4);
+    Map<int, int> map{
+        {1, 2},
+        {3, 4}
+    };
 
     try$(testCase("{1: 2, 3: 4}", map));
     return Ok();
@@ -219,24 +220,22 @@ test$("fmt-string") {
     return Ok();
 }
 
-// MARK: Format Time -----------------------------------------------------------
-
 // MARK: Format Tuple ----------------------------------------------------------
 
 test$("fmt-pair") {
-    try$(testCase("{1, 2}", Pair{1, 2}));
+    try$(testCase("(1, 2)", Pair{1, 2}));
     return Ok();
 }
 
 test$("fmt-tuple") {
-    try$(testCase("{1}", Tuple{1}));
-    try$(testCase("{1, 2}", Tuple{1, 2}));
-    try$(testCase("{1, 2, 3}", Tuple{1, 2, 3}));
-    try$(testCase("{1, 2, 3, 4}", Tuple{1, 2, 3, 4}));
-    try$(testCase("{1, 2, 3, 4, 5}", Tuple{1, 2, 3, 4, 5}));
-    try$(testCase("{1, 2, 3, 4, 5, 6}", Tuple{1, 2, 3, 4, 5, 6}));
-    try$(testCase("{1, 2, 3, 4, 5, 6, 7}", Tuple{1, 2, 3, 4, 5, 6, 7}));
-    try$(testCase("{1, 2, 3, 4, 5, 6, 7, 8}", Tuple{1, 2, 3, 4, 5, 6, 7, 8}));
+    try$(testCase("(1)", Tuple{1}));
+    try$(testCase("(1, 2)", Tuple{1, 2}));
+    try$(testCase("(1, 2, 3)", Tuple{1, 2, 3}));
+    try$(testCase("(1, 2, 3, 4)", Tuple{1, 2, 3, 4}));
+    try$(testCase("(1, 2, 3, 4, 5)", Tuple{1, 2, 3, 4, 5}));
+    try$(testCase("(1, 2, 3, 4, 5, 6)", Tuple{1, 2, 3, 4, 5, 6}));
+    try$(testCase("(1, 2, 3, 4, 5, 6, 7)", Tuple{1, 2, 3, 4, 5, 6, 7}));
+    try$(testCase("(1, 2, 3, 4, 5, 6, 7, 8)", Tuple{1, 2, 3, 4, 5, 6, 7, 8}));
 
     return Ok();
 }

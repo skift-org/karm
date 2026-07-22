@@ -8,6 +8,8 @@ export import :_embed;
 
 namespace Karm {
 
+static constexpr Tty::Style TTY_LOCATION = {.foreground = Tty::GRAY_DARK, .bold = true};
+
 struct Level {
     isize value;
     char const* name;
@@ -16,24 +18,24 @@ struct Level {
 
 struct Format {
     Str str;
-    SourceLocation loc;
+    SourceLocation location;
 
-    Format(char const* str, SourceLocation loc = SourceLocation::current())
-        : str(str), loc(loc) {
+    Format(char const* str, SourceLocation location = SourceLocation::current())
+        : str(str), location(location) {
     }
 
-    Format(Str str, SourceLocation loc = SourceLocation::current())
-        : str(str), loc(loc) {
+    Format(Str str, SourceLocation location = SourceLocation::current())
+        : str(str), location(location) {
     }
 };
 
-export constexpr Level PRINT = {-2, "print", Tty::BLUE};
-export constexpr Level YAP = {-1, "yappin'", Tty::GREEN};
-export constexpr Level DEBUG = {0, "debug", Tty::BLUE};
-export constexpr Level INFO = {1, "info", Tty::GREEN};
-export constexpr Level WARNING = {2, "warn", Tty::YELLOW};
-export constexpr Level ERROR = {3, "error", Tty::RED};
-export constexpr Level FATAL = {4, "fatal", Tty::style(Tty::RED).bold()};
+export constexpr Level YAP = {.value = -1, .name = "yappin'", .style = {.foreground = Tty::GREEN}};
+export constexpr Level DEBUG = {.value = 0, .name = "debug", .style = {.foreground = Tty::BLUE}};
+export constexpr Level INFO = {.value = 1, .name = "info", .style = {.foreground = Tty::GREEN}};
+export constexpr Level WARNING = {.value = 2, .name = "warn", .style = {.foreground = Tty::YELLOW}};
+export constexpr Level ERROR = {.value = 3, .name = "error", .style = {.foreground = Tty::RED}};
+export constexpr Level FATAL = {.value = 4, .name = "fatal", .style = {.foreground = Tty::RED, .bold = true}};
+
 static auto debugLogLocation = Debug::Flag::debug("logger-location", "Show log statement filename and line number.");
 
 void _catch(Res<> res) {
@@ -56,25 +58,13 @@ void _log(Level level, Format fmt, Io::_Args& args) {
     Logger::_Embed::loggerLock();
     auto& out = Logger::_Embed::loggerOut();
 
-    if (level.value != -2) {
-        _catch(Io::format(out, "{}: ", level.name | level.style));
-
-        if (debugLogLocation) {
-            _catch(Io::format(out, "{}{}:{}: ", Tty::reset().fg(Tty::GRAY_DARK), fmt.loc));
-            _catch(Io::format(out, "{}", Tty::reset()));
-        }
-    }
-
+    _catch(Io::format(out, "{}: ", level.name | level.style));
+    if (debugLogLocation)
+        _catch(Io::format(out, "{}: ", fmt.location | TTY_LOCATION));
     _catch(Io::_format(out, fmt.str, args));
-    _catch(Io::format(out, "{}\n", Tty::reset()));
+    _catch(Io::format(out, "{}\n", Tty::RESET));
 
     Logger::_Embed::loggerUnlock();
-}
-
-export template <typename... Args>
-void logPrint(Format fmt, Args&&... va) {
-    Io::Args<Args...> args{std::forward<Args>(va)...};
-    _log(PRINT, fmt, args);
 }
 
 export template <typename... Args>

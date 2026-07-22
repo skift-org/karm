@@ -33,11 +33,9 @@ export enum Color {
 };
 
 export Color random(usize seed) {
-    if (seed & 1) {
-        return (Color)(((seed >> 1) % 7) + 1);
-    } else {
-        return (Color)((((seed >> 1) % 7) + 1) + 60);
-    }
+    if (seed & 1)
+        return static_cast<Color>((seed >> 1) % 7 + 1);
+    return static_cast<Color>((seed >> 1) % 7 + 1 + 60);
 }
 
 // clang-format off
@@ -58,112 +56,53 @@ export constexpr Array COLORS = {
 // clang-format on
 
 export struct Style {
-    bool _reset{};
-    Color _fg{_COLOR_UNDEF};
-    Color _bg{_COLOR_UNDEF};
-    bool _bold{};
-    bool _underline{};
-    bool _blink{};
-    bool _reverse{};
-    bool _invisible{};
-
-    constexpr Style() = default;
-
-    constexpr Style(Color fg)
-        : _fg(fg) {
-    }
-
-    constexpr Style(Color fg, Color bg)
-        : _fg(fg), _bg(bg) {
-    }
-
-    constexpr Style fg(Color color) {
-        _fg = color;
-        return *this;
-    }
-
-    constexpr Style bg(Color color) {
-        _bg = color;
-        return *this;
-    }
-
-    constexpr Style bold() {
-        _bold = true;
-        return *this;
-    }
-
-    constexpr Style underline() {
-        _underline = true;
-        return *this;
-    }
-
-    constexpr Style blink() {
-        _blink = true;
-        return *this;
-    }
-
-    constexpr Style reverse() {
-        _reverse = true;
-        return *this;
-    }
-
-    constexpr Style invisible() {
-        _invisible = true;
-        return *this;
-    }
-
-    constexpr Style reset() {
-        _reset = true;
-        return *this;
-    }
+    bool reset{};
+    Color foreground{_COLOR_UNDEF};
+    Color background{_COLOR_UNDEF};
+    bool bold{};
+    bool underline{};
+    bool blink{};
+    bool reverse{};
+    bool invisible{};
 
     void repr([[maybe_unused]] Io::Emit& e) const {
-
 #ifdef __ck_sys_terminal_ansi__
-        if (_reset) {
+        if (reset) {
             e("\x1b[0m"s);
         }
 
-        if (_fg != Karm::Tty::_COLOR_UNDEF) {
-            e("\x1b[{}m", _fg + 30);
+        if (foreground != Karm::Tty::_COLOR_UNDEF) {
+            e("\x1b[{}m", foreground + 30);
         }
 
-        if (_bg != Karm::Tty::_COLOR_UNDEF) {
-            e("\x1b[{}m", _bg + 40);
+        if (background != Karm::Tty::_COLOR_UNDEF) {
+            e("\x1b[{}m", background + 40);
         }
 
-        if (_bold) {
+        if (bold) {
             e("\x1b[1m"s);
         }
 
-        if (_underline) {
+        if (underline) {
             e("\x1b[4m"s);
         }
 
-        if (_blink) {
+        if (blink) {
             e("\x1b[5m"s);
         }
 
-        if (_reverse) {
+        if (reverse) {
             e("\x1b[7m"s);
         }
 
-        if (_invisible) {
+        if (invisible) {
             e("\x1b[8m"s);
         }
 #endif
     }
 };
 
-export constexpr Style reset() {
-    Style style;
-    style._reset = true;
-    return style;
-};
-
-export constexpr Style style(auto... args) {
-    return Style{args...};
-}
+export constexpr Style RESET = {.reset = true};
 
 export template <typename T>
 struct Styled {
@@ -185,10 +124,10 @@ Styled<T> operator|(T inner, Color color) {
 
 export template <typename T>
 struct Karm::Io::Formatter<Karm::Tty::Styled<T>> {
-    Formatter<Karm::Tty::Style> _styleFmt{};
+    Formatter<Tty::Style> _styleFmt{};
     Formatter<T> _innerFmt{};
 
-    void parse(Io::SScan& scan) {
+    void parse(SScan& scan) {
         if constexpr (requires() {
                           _innerFmt.parse(scan);
                       }) {
@@ -196,7 +135,7 @@ struct Karm::Io::Formatter<Karm::Tty::Styled<T>> {
         }
     }
 
-    Res<> format(Io::TextWriter& writer, Karm::Tty::Styled<T> const& val) {
+    Res<> format(TextWriter& writer, Tty::Styled<T> const& val) {
 #ifdef __ck_sys_terminal_ansi__
         try$(_styleFmt.format(writer, val._color));
         try$(_innerFmt.format(writer, val._inner));

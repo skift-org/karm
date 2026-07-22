@@ -50,6 +50,8 @@ bool _isBinaryData(Bytes const bytes) {
     return false;
 }
 
+export constexpr usize SNIFF_BUFFER_SIZE = 1445;
+
 // https://mimesniff.spec.whatwg.org/#identifying-a-resource-with-an-unknown-mime-type
 export Uti sniffBytes(Bytes bytes) {
     static Vec<MimePattern> patterns = {
@@ -125,7 +127,7 @@ export Uti sniffBytes(Bytes bytes) {
 }
 
 export Res<Uti> sniffReader(Io::Reader& reader) {
-    Array<u8, 1445> header;
+    Array<u8, SNIFF_BUFFER_SIZE> header;
     auto len = try$(reader.read(header));
     return Ok(sniffBytes(sub(header, 0, len)));
 }
