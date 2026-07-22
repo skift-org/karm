@@ -39,7 +39,7 @@ export struct Stack : Node {
     }
 
     void paint(Gfx::Canvas& g, Math::Rectf r, PaintOptions o) override {
-        if (not bound().colide(r))
+        if (not bound().collide(r))
             return;
 
         for (auto& child : _children)

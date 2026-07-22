@@ -209,7 +209,7 @@ struct GroupNode : LeafNode<Crtp> {
 
     void paint(Gfx::Canvas& g, Math::Recti r) override {
         for (auto& child : children()) {
-            if (not child->bound().colide(r))
+            if (not child->bound().collide(r))
                 continue;
 
             child->paint(g, r);

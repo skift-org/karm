@@ -105,9 +105,9 @@ struct Ranges {
         return false;
     }
 
-    bool colides(R range) const {
+    bool collides(R range) const {
         for (usize i = 0; i < _r.len(); i++) {
-            if (_r[i].colides(range)) {
+            if (_r[i].collides(range)) {
                 return true;
             }
         }

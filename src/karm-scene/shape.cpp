@@ -22,7 +22,7 @@ export struct Shape : Node {
     }
 
     void paint(Gfx::Canvas& g, Math::Rectf r, PaintOptions) override {
-        if (not bound().colide(r))
+        if (not bound().collide(r))
             return;
 
         if (not _fill and not _stroke)

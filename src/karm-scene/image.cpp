@@ -22,7 +22,7 @@ export struct Image : Node {
     }
 
     void paint(Gfx::Canvas& ctx, Math::Rectf r, PaintOptions) override {
-        if (not r.colide(bound()))
+        if (not r.collide(bound()))
             return;
 
         if (not _radii.zero()) {

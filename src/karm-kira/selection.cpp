@@ -113,7 +113,7 @@ struct SelectionItem : Ui::ProxyNode<SelectionItem> {
 
     void event(App::Event& e) override {
         if (auto selectionEvent = e.is<SelectionUpdateEvent>()) {
-            bool const newSelected = selectionEvent->rect.colide(bound());
+            bool newSelected = selectionEvent->rect.collide(bound());
             if (_selected != newSelected) {
                 _selected = newSelected;
                 _onChange(*this, _selected);

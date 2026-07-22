@@ -175,7 +175,7 @@ union Rect {
                contains(r.bottomEnd());
     }
 
-    always_inline constexpr bool colide(Rect r) const {
+    always_inline constexpr bool collide(Rect r) const {
         return r.x + r.width > x and
                r.y + r.height > y and
                r.x < x + width and
@@ -203,7 +203,7 @@ union Rect {
     }
 
     always_inline constexpr Rect clipTo(Rect r) const {
-        if (not colide(r))
+        if (not collide(r))
             return {};
 
         return {

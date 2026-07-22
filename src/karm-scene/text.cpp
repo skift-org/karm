@@ -19,7 +19,7 @@ export struct Text : Node {
     }
 
     void paint(Gfx::Canvas& g, Math::Rectf r, PaintOptions) override {
-        if (not bound().colide(r))
+        if (not bound().collide(r))
             return;
 
         g.push();

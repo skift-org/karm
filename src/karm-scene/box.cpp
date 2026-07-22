@@ -26,20 +26,19 @@ export struct Box : Node {
     }
 
     void paint(Gfx::Canvas& ctx, Math::Rectf r, PaintOptions o) override {
-        if (not r.colide(bound()))
+        if (not r.collide(bound()))
             return;
 
+        auto radii = _borders.radii.reduceOverlap(_bound.size());
         if (o.showBackgroundGraphics) {
             for (auto& background : _backgrounds) {
-                ctx.beginPath();
-                auto radii = _borders.radii.reduceOverlap(_bound.size());
                 ctx.fillStyle(background);
                 ctx.fill(_bound, radii);
             }
         }
 
         _borders.paint(ctx, _bound);
-        _outline.paint(ctx, _bound, _borders.radii);
+        _outline.paint(ctx, _bound, radii);
     }
 
     void repr(Io::Emit& e) const override {

@@ -15,16 +15,16 @@ export struct Viewbox : Proxy {
         : Proxy(node), _viewbox(viewbox) {}
 
     Math::Rectf bound() const override {
-        return _viewbox.size();
+        return _viewbox;
     }
 
     void paint(Gfx::Canvas& g, Math::Rectf r, PaintOptions o) override {
-        if (not bound().colide(r))
+        if (not bound().collide(r))
             return;
 
         g.push();
         g.origin(_viewbox.xy);
-        g.clip(_viewbox);
+        g.clip(_viewbox.size());
         Proxy::paint(g, r, o);
         g.pop();
     }
