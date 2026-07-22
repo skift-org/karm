@@ -19,6 +19,16 @@
 #    define no_unique_address no_unique_address
 #endif
 
+#ifdef __ck_debug__
+#define assert$(EXPR) do {                            \
+    if (!(EXPR)) {                                    \
+        panic("assertion failed: " stringify$(EXPR)); \
+    }                                                 \
+} while (0)
+#else
+#define assert$(EXPR) do {} while (0)
+#endif
+
 // MARK: Try -------------------------------------------------------------------
 
 #define __try$(EXPR, RET, AWAIT, FINAL) ({            \
