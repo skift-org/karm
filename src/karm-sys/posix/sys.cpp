@@ -83,8 +83,8 @@ Res<Pair<Rc<Fd>>> createPipe() {
         return Posix::fromLastErrno();
 
     return Ok(Pair<Rc<Fd>>{
-        makeRc<Posix::Fd>(fds[0]),
         makeRc<Posix::Fd>(fds[1]),
+        makeRc<Posix::Fd>(fds[0]),
     });
 }
 

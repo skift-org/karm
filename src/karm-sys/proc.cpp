@@ -37,7 +37,7 @@ export struct Process {
 };
 
 export struct Command {
-    String exe;
+    String exe = ""s;
     Vec<String> args = {};
     Map<String, String> env = {};
     Opt<Rc<Fd>> in = NONE, out = NONE, err = NONE;

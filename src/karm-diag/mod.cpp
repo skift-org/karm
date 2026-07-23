@@ -71,6 +71,14 @@ export struct Label {
     String message;
     bool isPrimary = true;
 
+    static Label here(Io::Loc loc) {
+        return {
+            .span = Io::LocSpan::single(loc),
+            .message = "here"s,
+            .isPrimary = true,
+        };
+    }
+
     static Label primary(Io::LocSpan span, Str message = ""s) {
         return Label{span, String{message}, true};
     }
@@ -84,11 +92,11 @@ export struct Label {
 
 export struct Diagnostic {
     Level level = Level::ERROR;
-    String code;
+    String code = ""s;
     String message;
-    Vec<Label> labels;
-    Vec<String> notes;
-    Opt<String> help;
+    Vec<Label> labels = {};
+    Vec<String> notes = {};
+    Opt<String> help = NONE;
 
     static Diagnostic error(Str message) {
         return Diagnostic{Level::ERROR, ""s, String{message}, {}, {}, NONE};
