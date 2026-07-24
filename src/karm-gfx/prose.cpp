@@ -26,6 +26,7 @@ export struct SpanStyle {
     Opt<Color> color = NONE;
     Math::Au marginLeft = 0_au;
     Math::Au marginRight = 0_au;
+    Opt<Math::Au> lineHeight = NONE;
     bool wordwrap = true;
 
     SpanStyle& withFont(Font const& value) {
@@ -569,12 +570,21 @@ export struct Prose : Meta::Pinned {
     }
 
     Math::Au _layoutVerticaly() {
+        // FIXME: Use each span's metrics.
         auto m = _rootSpan->style.font.metrics();
 
-        // NOTE: applying ceiling so fonts are pixel aligned
-        f64 halfFontLineGap = m.linegap / 2;
-        Math::Au fontAscent = Math::Au{Math::ceil(m.ascend + halfFontLineGap)};
-        Math::Au fontDescend = Math::Au{Math::ceil(m.descend + halfFontLineGap)};
+        f64 lineHeight = _rootSpan->style.lineHeight.visit(Visitor{
+            [](Math::Au au) {
+                return au.cast<f64>();
+            },
+            [&](None) {
+                return m.ascend + m.descend + m.linegap;
+            },
+        });
+
+        f64 halfLeading = (lineHeight - (m.ascend + m.descend)) / 2;
+        Math::Au fontAscent = Math::Au{Math::floor(m.ascend + halfLeading)};
+        Math::Au fontDescend = Math::Au{lineHeight} - fontAscent;
 
         Math::Au currHeight = 0_au;
         for (auto& line : _lines) {
