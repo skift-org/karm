@@ -6,7 +6,7 @@ import Karm.Scene;
 import Karm.Ref;
 import Karm.Image;
 
-namespace Karm::Scene { 
+namespace Karm::Scene {
 
 export Res<Vec<u8>> save(Rc<Scene::Node> scene, Math::Vec2i size, ::Karm::Image::Saver const& props = {}) {
     if (props.format == Ref::Uti::PUBLIC_SVG) {

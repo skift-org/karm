@@ -21,7 +21,6 @@ using _CpuFills = Union<
     Gradient,
     Pixels>;
 
-
 export struct CpuFill : _CpuFills {
     using _CpuFills::_CpuFills;
 

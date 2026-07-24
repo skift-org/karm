@@ -18,7 +18,7 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
         "shell"s,
         "Scripting language"s,
         {
-            Cli::Section{"Input"s, {scriptArg}},
+            {"Input"s, {scriptArg}},
         }
     };
 

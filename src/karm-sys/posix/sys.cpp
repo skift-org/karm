@@ -253,10 +253,12 @@ struct PosixPid : Sys::Pid {
     }
 
     Res<> wait() override {
-        int status;
-        if (::waitpid(_pid, &status, 0) == -1)
+        int status = 0;
+        if (::waitpid(_pid, &status, 0) < 0)
             return Posix::fromLastErrno();
-        return Ok();
+        if (WIFEXITED(status) and WEXITSTATUS(status) == 0)
+            return Ok();
+        return Error::other("process exited with non-zero status");
     }
 };
 

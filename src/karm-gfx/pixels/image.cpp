@@ -77,10 +77,9 @@ export struct Image {
         return {0, 0, width(), height()};
     }
 
-    void repr(Io::Emit &e) const {
+    void repr(Io::Emit& e) const {
         e("(image {}x{} stride={} fmt={})", width(), height(), _stride, _format.index());
     }
 };
-
 
 } // namespace Karm::Gfx
