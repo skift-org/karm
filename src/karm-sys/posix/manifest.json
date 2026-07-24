@@ -9,7 +9,8 @@
     "enableIf": {
         "sys": [
             "linux",
-            "darwin"
+            "darwin",
+            "freebsd"
         ]
     },
     "requires": [

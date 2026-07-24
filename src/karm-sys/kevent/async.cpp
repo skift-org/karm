@@ -6,6 +6,11 @@ module;
 #include <sys/types.h>
 #include <unistd.h>
 
+#ifdef __ck_sys_freebsd__
+#define kevent64 kevent
+#define kevent64_s kevent
+#endif
+
 module Karm.Sys;
 
 import Karm.Sys.Posix;
@@ -42,7 +47,7 @@ struct DarwinSched :
         auto promise = Async::Promise<>();
         auto future = promise.future();
 
-        ev.udata = id;
+        ev.udata = (decltype(ev.udata))id;
         ::kevent64(
             _kqueue,
 
@@ -52,7 +57,9 @@ struct DarwinSched :
             nullptr,
             0,
 
+            #ifdef __ck_sys_darwin__
             0,
+            #endif
             nullptr
         );
 
@@ -171,7 +178,9 @@ struct DarwinSched :
             &ev,
             1,
 
+            #ifdef __ck_sys_darwin__
             0,
+            #endif
             until.isEndOfTime() ? nullptr : &ts
         );
 
@@ -181,7 +190,7 @@ struct DarwinSched :
         if (n == 0)
             return Ok();
 
-        usize id = ev.udata;
+        usize id = (usize)ev.udata;
         auto promise = _promises.remove(id);
         promise->resolve(Ok());
         return Ok();

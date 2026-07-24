@@ -4,6 +4,10 @@ module;
 #include <netinet/in.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+#ifdef __ck_sys_freebsd__
+#include <sys/wait.h>
+#include <sys/socket.h>
+#endif
 //
 #include <karm/macros>
 

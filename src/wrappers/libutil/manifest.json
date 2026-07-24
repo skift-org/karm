@@ -1,13 +1,17 @@
 {
     "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
-    "id": "karm-sys.darwin",
+    "id": "freebsd.libutil",
     "type": "lib",
     "enableIf": {
         "sys": [
-            "darwin"
+            "freebsd"
         ]
     },
-    "provides": [
-        "karm-sys.sandbox"
-    ]
+    "tools": {
+        "ld": {
+            "args": [
+                "-lutil"
+            ]
+        }
+    }
 }
