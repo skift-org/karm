@@ -14,6 +14,7 @@ using namespace Karm::Re::Literals;
 
 namespace Karm::Sh {
 
+static constexpr auto RE_BLANK = Re::oneOrMore(Re::blank());
 static constexpr auto RE_SEGMENT = Re::oneOrMore(Re::alnum() | '_'_re | '-'_re | '/'_re | ':'_re | '.'_re);
 
 export struct Context {
@@ -75,7 +76,7 @@ export struct Pipeline {
 };
 
 static void _eatWhitespace(Io::SScan& s) {
-    s.eat(Re::blank());
+    s.skip(RE_BLANK);
 }
 
 static Res<String> _parseSegment(Io::SScan& s, Diag::Collector& c) {

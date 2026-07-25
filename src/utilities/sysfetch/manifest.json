@@ -1,0 +1,11 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "sysfetch",
+    "description": "Fetch and display system information",
+    "type": "exe",
+    "requires": [
+        "karm-cli",
+        "karm-sys",
+        "karm-app"
+    ]
+}
