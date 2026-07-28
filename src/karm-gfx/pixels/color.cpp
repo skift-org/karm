@@ -29,6 +29,15 @@ export struct Color {
         return {red, green, blue, alpha};
     }
 
+    always_inline static constexpr Color fromFloats(Math::Vec4f v) {
+        return {
+            clampTo<u8>(v.x * 255),
+            clampTo<u8>(v.y * 255),
+            clampTo<u8>(v.z * 255),
+            clampTo<u8>(v.w * 255),
+        };
+    }
+
     always_inline constexpr Color()
         : red(0), green(0), blue(0), alpha(0) {}
 
