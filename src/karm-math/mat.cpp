@@ -118,6 +118,26 @@ union Mat4 {
     Mat4(Vec4<T> col0, Vec4<T> col1, Vec4<T> col2, Vec4<T> col3)
         : cols{col0, col1, col2, col3} {}
 
+    constexpr Mat4(Mat4 const& other)
+        : _els{other._els} {}
+
+    constexpr Mat4(Mat4&& other)
+        : _els{std::move(other._els)} {}
+
+    constexpr Mat4& operator=(Mat4 const& other) {
+        _els = other._els;
+        return *this;
+    }
+
+    constexpr Mat4& operator=(Mat4&& other) {
+        _els = std::move(other._els);
+        return *this;
+    }
+
+    constexpr ~Mat4() {
+        _els.~Array();
+    }
+
     static Mat4 identity() {
         return Mat4(
             Vec4<T>(1, 0, 0, 0),
@@ -250,6 +270,10 @@ union Mat4 {
     Vec4<T>& operator[](usize i) { return cols[i]; }
 
     Vec4<T> const& operator[](usize i) const { return cols[i]; }
+
+    friend Vec4<T> operator*(Mat4 const& m, Vec3<T> const& v) {
+        return m * Vec4<T>(v.x, v.y, v.z, 1);
+    }
 
     friend Vec4<T> operator*(Mat4 const& m, Vec4<T> const& v) {
         return Vec4<T>(

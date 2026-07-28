@@ -387,6 +387,9 @@ union Vec3 {
     constexpr Vec3(T value)
         : _els{value, value, value} {}
 
+    constexpr Vec3(Vec2<T> vec, T z)
+        : _els{vec.x, vec.y, z} {}
+
     constexpr Vec3(Vec3 const& other)
         : _els{other._els} {}
 
@@ -419,7 +422,7 @@ union Vec3 {
         return Karm::max(x, y, z);
     }
 
-    constexpr Vec3 min(Vec3 const& other) {
+    constexpr Vec3 min(Vec3 const& other) const {
         return {
             Karm::min(x, other.x),
             Karm::min(y, other.y),
@@ -427,7 +430,7 @@ union Vec3 {
         };
     }
 
-    constexpr Vec3 max(Vec3<T> const& other) {
+    constexpr Vec3 max(Vec3<T> const& other) const {
         return {
             Karm::max(x, other.x),
             Karm::max(y, other.y),
@@ -668,6 +671,12 @@ union Vec4 {
 
     constexpr Vec4(T value)
         : _els{value, value, value, value} {}
+
+    constexpr Vec4(Vec2<T> vec, T z, T w)
+        : _els{vec.x, vec.y, z, w} {}
+
+    constexpr Vec4(Vec3<T> vec, T w)
+        : _els{vec.x, vec.y, vec.z, w} {}
 
     constexpr Vec4(Vec4 const& other)
         : _els{other._els} {}

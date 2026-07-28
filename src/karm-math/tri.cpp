@@ -5,8 +5,8 @@ import :vec;
 
 namespace Karm::Math {
 
-template <typename T>
-union Tri2 {
+export template <typename T>
+struct Tri2 {
     enum struct Orien {
         CLOCKWISE,
         COUNTER_CLOCKWISE,
@@ -15,16 +15,18 @@ union Tri2 {
 
     using Scalar = T;
 
-    struct {
-        T ax, ay, bx, by, cx, cy;
-    };
+    union {
+        struct {
+            T ax, ay, bx, by, cx, cy;
+        };
 
-    struct {
-        Vec2<T> a, b, c;
-    };
+        struct {
+            Vec2<T> a, b, c;
+        };
 
-    Array<T, 6> _els;
-    Array<Vec2<T>, 3> _pts;
+        Array<T, 6> _els;
+        Array<Vec2<T>, 3> _pts;
+    };
 
     constexpr Tri2()
         : _els{} {}
@@ -34,6 +36,26 @@ union Tri2 {
 
     constexpr Tri2(Vec2<T> a, Vec2<T> b, Vec2<T> c)
         : a{a}, b{b}, c{c} {}
+
+    constexpr Tri2(Tri2 const& other)
+        : _els{other._els} {}
+
+    constexpr Tri2(Tri2&& other)
+        : _els{std::move(other._els)} {}
+
+    constexpr Tri2& operator=(Tri2 const& other) {
+        _els = other._els;
+        return *this;
+    }
+
+    constexpr Tri2& operator=(Tri2&& other) {
+        _els = std::move(other._els);
+        return *this;
+    }
+
+    constexpr ~Tri2() {
+        _els.~Array();
+    }
 
     constexpr Tri2 reversed() const {
         return {c, b, a};
@@ -49,6 +71,10 @@ union Tri2 {
 
     constexpr Rect<T> bound() const {
         return Rect<T>::fromTwoPoint(min(), max());
+    }
+
+    constexpr T signedArea() const {
+        return 0.5 * ((by - ay) * (bx + ax) + (cy - by) * (cx + bx) + (ay - cy) * (ax + cx));
     }
 
     constexpr bool contains(Vec2<T> p) const {
@@ -91,8 +117,8 @@ union Tri2 {
     }
 };
 
-using Tri2i = Tri2<isize>;
-using Tri2u = Tri2<usize>;
-using Tri2f = Tri2<f64>;
+export using Tri2i = Tri2<isize>;
+export using Tri2u = Tri2<usize>;
+export using Tri2f = Tri2<f64>;
 
 } // namespace Karm::Math
