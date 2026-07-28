@@ -34,7 +34,9 @@ export template <typename T>
 struct Single {
     Opt<T> value;
 
-    constexpr Opt<T> next() {
+    constexpr auto next() -> Opt<T> {
+        if (not value)
+            return NONE;
         return value.take();
     }
 };
@@ -44,7 +46,7 @@ struct Repeat {
     T value;
     usize count;
 
-    constexpr T next() {
+    constexpr auto next() -> Opt<T> {
         if (count == 0)
             return NONE;
         count--;
@@ -65,7 +67,7 @@ struct Iota {
     constexpr Iota(T end)
         : Iota(static_cast<T>(0), end) {}
 
-    constexpr T next() {
+    constexpr auto next() -> Opt<T> {
         if (start >= end)
             return NONE;
         auto value = start;
