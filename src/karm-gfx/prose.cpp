@@ -143,7 +143,6 @@ export struct Prose : Meta::Pinned {
     };
 
     struct Cell {
-        Opt<Prose&> prose;
         Rc<Span> span;
 
         urange runeRange;
@@ -178,126 +177,122 @@ export struct Prose : Meta::Pinned {
             return span->style;
         }
 
-        void measureAdvance() {
+        void measureAdvance(Prose const& p) {
             if (type() == CellType::SPACER) {
                 // Nothing because adv is already set.
             } else if (type() == CellType::STRUT) {
-                adv = strut()->size.x;
+                adv = strut(p)->size.x;
             } else {
                 adv = Math::Au{style().font.advance(glyph)};
             }
         }
 
-        MutSlice<Rune> runes() {
-            return mutSub(prose->_runes, runeRange);
+        MutSlice<Rune> runes(Prose& p) {
+            return mutSub(p._runes, runeRange);
         }
 
-        Slice<Rune> runes() const {
-            return sub(prose->_runes, runeRange);
+        Slice<Rune> runes(Prose const& p) const {
+            return sub(p._runes, runeRange);
         }
 
-        bool newline() const {
-            auto r = runes();
+        bool newline(Prose const& p) const {
+            auto r = runes(p);
             if (not r)
                 return false;
             return last(r) == '\n';
         }
 
-        bool space() const {
-            auto r = runes();
+        bool space(Prose const& p) const {
+            auto r = runes(p);
             if (not r)
                 return false;
             return last(r) == '\n' or isAsciiSpace(last(r));
         }
 
-        Cursor<StrutCell> strut() const {
+        Opt<StrutCell&> strut(Prose& p) {
             if (type() != CellType::STRUT)
-                return nullptr;
+                return NONE;
 
-            return &prose->_struts[strutIndex()];
+            return p._struts[strutIndex()];
         }
 
-        MutCursor<StrutCell> strut() {
+        Opt<StrutCell const&> strut(Prose const& p) const {
             if (type() != CellType::STRUT)
-                return nullptr;
+                return NONE;
 
-            return &prose->_struts[strutIndex()];
+            return p._struts[strutIndex()];
         }
 
-        Math::Au yPosition(Math::Au dominantBaselineYPosition) const {
+        Math::Au yPosition(Prose const& p, Math::Au dominantBaselineYPosition) const {
             if (type() != CellType::STRUT)
                 return dominantBaselineYPosition;
 
-            return dominantBaselineYPosition - strut()->baseline;
+            return dominantBaselineYPosition - strut(p)->baseline;
         }
     };
 
     struct Block {
-        Opt<Prose&> prose;
-
         urange runeRange;
         urange cellRange;
 
         Math::Au pos = 0_au; // Position of the block within the line
         Math::Au width = 0_au;
 
-        MutSlice<Cell> cells() {
-            return mutSub(prose->_cells, cellRange);
+        MutSlice<Cell> cells(Prose& p) {
+            return mutSub(p._cells, cellRange);
         }
 
-        Slice<Cell> cells() const {
-            return sub(prose->_cells, cellRange);
+        Slice<Cell> cells(Prose const& p) const {
+            return sub(p._cells, cellRange);
         }
 
         bool empty() const {
             return cellRange.empty();
         }
 
-        bool spaces() const {
+        bool spaces(Prose& p) const {
             if (empty())
                 return false;
-            return last(cells()).space();
+            return last(cells(p)).space(p);
         }
 
-        bool newline() const {
+        bool newline(Prose& p) const {
             if (empty())
                 return false;
-            return last(cells()).newline();
+            return last(cells(p)).newline(p);
         }
 
-        MutCursor<StrutCell> strut() {
+        Opt<StrutCell&> strut(Prose& p) {
             if (empty())
-                return nullptr;
+                return NONE;
 
-            auto cellsRef = cells();
-            return last(cellsRef).strut();
+            auto cellsRef = cells(p);
+            return last(cellsRef).strut(p);
         }
 
-        Cursor<StrutCell> strut() const {
+        Opt<StrutCell const&> strut(Prose const& p) const {
             if (empty())
-                return nullptr;
+                return NONE;
 
-            return last(cells()).strut();
+            return last(cells(p)).strut(p);
         }
 
-        bool allowsBreakAfter() const {
+        bool allowsBreakAfter(Prose const& p) const {
             if (empty())
                 return false;
-            if (strut())
+            if (strut(p))
                 return true;
-            return last(cells()).style().wordwrap;
+            return last(cells(p)).style().wordwrap;
         }
 
-        bool forcesBreakAfter() const {
+        bool forcesBreakAfter(Prose& p) const {
             if (empty())
                 return false;
-            return newline() and prose->_style.multiline;
+            return newline(p) and p._style.multiline;
         }
     };
 
     struct Line {
-        Opt<Prose&> prose;
-
         urange runeRange;
         urange blockRange;
         Math::Au baseline = 0_au; // Baseline of the line within the text
@@ -305,12 +300,12 @@ export struct Prose : Meta::Pinned {
         Math::Au ascent = 0_au;
         Math::Au descend = 0_au;
 
-        Slice<Block> blocks() const {
-            return sub(prose->_blocks, blockRange);
+        Slice<Block> blocks(Prose const& p) const {
+            return sub(p._blocks, blockRange);
         }
 
-        MutSlice<Block> blocks() {
-            return mutSub(prose->_blocks, blockRange);
+        MutSlice<Block> blocks(Prose& p) {
+            return mutSub(p._blocks, blockRange);
         }
     };
 
@@ -373,7 +368,6 @@ export struct Prose : Meta::Pinned {
 
     void _beginBlock() {
         _blocks.pushBack({
-            .prose = *this,
             .runeRange = {_runes.len(), 0},
             .cellRange = {_cells.len(), 0},
         });
@@ -390,13 +384,17 @@ export struct Prose : Meta::Pinned {
     }
 
     void append(Rune rune) {
-        if (any(_blocks) and (last(_blocks).newline() or last(_blocks).spaces() or last(_blocks).strut()))
+        if (
+            any(_blocks) and
+            (last(_blocks).newline(*this) or
+             last(_blocks).spaces(*this) or
+             last(_blocks).strut(*this))
+        )
             _beginBlock();
 
         auto glyph = _currentSpan->style.font.glyph(rune == '\n' ? ' ' : rune);
 
         _cells.pushBack({
-            .prose = *this,
             .span = _currentSpan,
             .runeRange = {_runes.len(), 1},
             .glyph = glyph,
@@ -410,7 +408,6 @@ export struct Prose : Meta::Pinned {
 
     void appendSpacer(Math::Au width) {
         _cells.pushBack({
-            .prose = *this,
             .span = _currentSpan,
             .runeRange = {_runes.len(), 1},
             .glyph = Glyph::TOFU,
@@ -448,7 +445,6 @@ export struct Prose : Meta::Pinned {
 
         _strutCellsIndexes.pushBack(_cells.len());
         _cells.pushBack({
-            .prose = *this,
             .span = _currentSpan,
             .runeRange = {_runes.len(), 1},
             .glyph = Glyph::TOFU,
@@ -514,14 +510,14 @@ export struct Prose : Meta::Pinned {
             auto adv = 0_au;
             bool first = true;
             Glyph prev = Glyph::TOFU;
-            for (auto& cell : block.cells()) {
+            for (auto& cell : block.cells(*this)) {
                 if (not first)
                     adv += Math::Au{cell.style().font.kern(prev, cell.glyph)};
                 else
                     first = false;
 
                 cell.pos = adv;
-                cell.measureAdvance();
+                cell.measureAdvance(*this);
 
                 adv += cell.adv;
                 prev = cell.glyph;
@@ -533,31 +529,31 @@ export struct Prose : Meta::Pinned {
     void _wrapLines(Math::Au width) {
         _lines.clear();
 
-        Line line{*this, {}, {}};
+        Line line{{}, {}};
         bool first = true;
         Math::Au adv = 0_au;
         for (usize i = 0; i < _blocks.len(); i++) {
             auto& block = _blocks[i];
 
-            bool wordwrapAllowed = not first and _blocks[i - 1].allowsBreakAfter();
+            bool wordwrapAllowed = not first and _blocks[i - 1].allowsBreakAfter(*this);
 
             if (adv + block.width > width and wordwrapAllowed) {
                 _lines.pushBack(line);
-                line = {*this, block.runeRange, {i, 1}};
+                line = {block.runeRange, {i, 1}};
                 adv = block.width;
 
-                if (block.forcesBreakAfter()) {
+                if (block.forcesBreakAfter(*this)) {
                     _lines.pushBack(line);
-                    line = {*this, {block.runeRange.end(), 0}, {i + 1, 0}};
+                    line = {{block.runeRange.end(), 0}, {i + 1, 0}};
                     adv = 0_au;
                 }
             } else {
                 line.blockRange.size++;
                 line.runeRange.end(block.runeRange.end());
 
-                if (block.forcesBreakAfter()) {
+                if (block.forcesBreakAfter(*this)) {
                     _lines.pushBack(line);
-                    line = {*this, {block.runeRange.end(), 0}, {i + 1, 0}};
+                    line = {{block.runeRange.end(), 0}, {i + 1, 0}};
                     adv = 0_au;
                 } else {
                     adv += block.width;
@@ -598,11 +594,11 @@ export struct Prose : Meta::Pinned {
                 maxDescend = fontDescend;
             }
 
-            for (auto const& block : line.blocks()) {
-                if (block.strut()) {
-                    Math::Au baseline{block.strut()->baseline};
+            for (auto const& block : line.blocks(*this)) {
+                if (auto const& [strut] = block.strut(*this)) {
+                    Math::Au baseline{strut.baseline};
                     maxAscent = max(maxAscent, baseline);
-                    maxDescend = max(maxDescend, block.strut()->size.y - baseline);
+                    maxDescend = max(maxDescend, strut.size.y - baseline);
                 } else {
                     maxAscent = max(maxAscent, fontAscent);
                     maxDescend = max(maxDescend, fontDescend);
@@ -625,7 +621,7 @@ export struct Prose : Meta::Pinned {
                 continue;
 
             Math::Au pos = 0_au;
-            for (auto& block : line.blocks()) {
+            for (auto& block : line.blocks(*this)) {
                 block.pos = pos;
                 pos += block.width;
             }
@@ -640,12 +636,12 @@ export struct Prose : Meta::Pinned {
                 break;
 
             case TextAlign::CENTER:
-                for (auto& block : line.blocks())
+                for (auto& block : line.blocks(*this))
                     block.pos += free / 2;
                 break;
 
             case TextAlign::RIGHT:
-                for (auto& block : line.blocks())
+                for (auto& block : line.blocks(*this))
                     block.pos += free;
                 break;
             }
@@ -693,7 +689,7 @@ export struct Prose : Meta::Pinned {
         auto& line = _lines[li];
 
         auto maybeBi = searchLowerBound(
-            line.blocks(), [&](Block const& b) {
+            line.blocks(*this), [&](Block const& b) {
                 return b.runeRange.start <=> runeIndex;
             }
         );
@@ -703,10 +699,10 @@ export struct Prose : Meta::Pinned {
 
         auto bi = *maybeBi;
 
-        auto& block = line.blocks()[bi];
+        auto& block = line.blocks(*this)[bi];
 
         auto maybeCi = searchLowerBound(
-            block.cells(), [&](Cell const& c) {
+            block.cells(*this), [&](Cell const& c) {
                 return c.runeRange.start <=> runeIndex;
             }
         );
@@ -716,7 +712,7 @@ export struct Prose : Meta::Pinned {
 
         auto ci = *maybeCi;
 
-        auto cell = block.cells()[ci];
+        auto cell = block.cells(*this)[ci];
 
         if (cell.runeRange.end() == runeIndex) {
             // Handle the case where the rune is the last of the text
@@ -734,7 +730,7 @@ export struct Prose : Meta::Pinned {
 
         auto& line = _lines[li];
 
-        if (isEmpty(line.blocks()))
+        if (isEmpty(line.blocks(*this)))
             return {
                 {
                     0_au,
@@ -744,9 +740,9 @@ export struct Prose : Meta::Pinned {
                 line.descend,
             };
 
-        auto& block = line.blocks()[bi];
+        auto& block = line.blocks(*this)[bi];
 
-        if (isEmpty(block.cells()))
+        if (isEmpty(block.cells(*this)))
             return {
                 {
                     block.pos,
@@ -756,24 +752,24 @@ export struct Prose : Meta::Pinned {
                 line.descend,
             };
 
-        if (ci >= block.cells().len()) {
+        if (ci >= block.cells(*this).len()) {
             // Handle the case where the rune is the last of the text
-            auto& cell = last(block.cells());
+            auto& cell = last(block.cells(*this));
             return {
                 {
                     block.pos + cell.pos + cell.adv,
-                    cell.yPosition(line.baseline),
+                    cell.yPosition(*this, line.baseline),
                 },
                 line.ascent,
                 line.descend,
             };
         }
 
-        auto& cell = block.cells()[ci];
+        auto& cell = block.cells(*this)[ci];
         return {
             Math::Vec2Au{
                 block.pos + cell.pos,
-                cell.yPosition(line.baseline),
+                cell.yPosition(*this, line.baseline),
             },
             line.ascent,
             line.descend
@@ -804,13 +800,13 @@ export struct Prose : Meta::Pinned {
 
         auto& line = _lines[li];
 
-        if (isEmpty(line.blocks()))
+        if (isEmpty(line.blocks(*this)))
             return line.runeRange.start;
 
         // Find the block closest to the x coordinate
         usize bi = 0;
-        for (usize i = 0; i < line.blocks().len(); i++) {
-            auto& block = line.blocks()[i];
+        for (usize i = 0; i < line.blocks(*this).len(); i++) {
+            auto& block = line.blocks(*this)[i];
             if (point.x < block.pos + block.width) {
                 bi = i;
                 break;
@@ -818,20 +814,20 @@ export struct Prose : Meta::Pinned {
             bi = i;
         }
 
-        auto& block = line.blocks()[bi];
+        auto& block = line.blocks(*this)[bi];
 
-        if (isEmpty(block.cells()))
+        if (isEmpty(block.cells(*this)))
             return block.runeRange.start;
 
         // Find the cell closest to the x coordinate
-        for (auto& cell : block.cells()) {
+        for (auto& cell : block.cells(*this)) {
             Math::Au cellMid = block.pos + cell.pos + cell.adv / 2;
             if (point.x < cellMid)
                 return cell.runeRange.start;
         }
 
         // Past the last cell — return end of block
-        auto& lastCell = last(block.cells());
+        auto& lastCell = last(block.cells(*this));
         return lastCell.runeRange.end();
     }
 

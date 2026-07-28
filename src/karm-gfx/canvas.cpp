@@ -308,8 +308,8 @@ export struct Canvas : Meta::NoCopy {
         push();
 
         for (auto const& line : prose._lines) {
-            for (auto const& block : line.blocks()) {
-                for (auto const& cell : block.cells()) {
+            for (auto const& block : line.blocks(prose)) {
+                for (auto const& cell : block.cells(prose)) {
                     if (cell.type() == Prose::CellType::STRUT)
                         continue;
 

@@ -377,11 +377,11 @@ export struct SvgCanvas : Canvas {
 
         for (usize i = 0; i < prose._lines.len(); ++i) {
             auto const& line = prose._lines[i];
-            if (not line.blocks())
+            if (not line.blocks(prose))
                 continue;
 
-            for (auto& block : line.blocks()) {
-                for (auto& cell : block.cells()) {
+            for (auto& block : line.blocks(prose)) {
+                for (auto& cell : block.cells(prose)) {
                     if (oneOf(cell.type(), Prose::CellType::STRUT, Prose::CellType::SPACER))
                         continue;
 
@@ -390,7 +390,7 @@ export struct SvgCanvas : Canvas {
                     _sb.append("\" y=\""s);
                     _sb.append(fmtF64(line.baseline.cast<f64>()));
                     _sb.append("\">"s);
-                    for (auto& r : cell.runes())
+                    for (auto& r : cell.runes(prose))
                         appendXmlEscapedRune(_sb, r);
                     _sb.append("</text>"s);
                 }
