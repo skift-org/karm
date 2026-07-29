@@ -1,11 +1,13 @@
 export module Karm.Md:html;
 
 import Karm.Logger;
+import Karm.Core;
 
 import :base;
 import :parser;
 
 using namespace Karm::Literals;
+using namespace Karm::Fmt::Literals;
 
 namespace Karm::Md {
 
@@ -146,37 +148,66 @@ void _renderBlock(Node const& node, Io::Emit& e) {
     );
 }
 
-export void renderHtmlFragment(Document const& doc, Io::Emit& e) {
-    for (auto const& n : doc.children)
-        _renderBlock(n, e);
+export struct RenderProps {
+    bool hrSectionBreak = false;
+
+    static Res<RenderProps> from(Serde::Value const& frontmatter) {
+        RenderProps props;
+        auto type = frontmatter.getOr("type"s, "default"s);
+        if (type.asStr() == "default"s) {
+            // no op
+        } else if (type.asStr() == "presentation"s) {
+            props.hrSectionBreak = true;
+        } else {
+            return Error::invalidInput("unknown document type {:#}"_f(type));
+        }
+
+        return Ok(std::move(props));
+    }
+};
+
+export void renderFragment(Document const& doc, Io::Emit& e, RenderProps props = {}) {
+    if (props.hrSectionBreak) {
+        e("<section>");
+        for (auto const& n : doc.children) {
+            if (n.is<Hr>())
+                e("</section><section>");
+            else
+                _renderBlock(n, e);
+        }
+        e("</section>");
+    } else {
+        for (auto const& n : doc.children)
+            _renderBlock(n, e);
+    }
 }
 
-export String renderHtmlFragment(Document const& doc) {
+export String renderFragment(Document const& doc, RenderProps props = {}) {
     Io::StringWriter sw;
     Io::Emit e{sw};
-    renderHtmlFragment(doc, e);
+    renderFragment(doc, e, props);
     return sw.take();
 }
 
-export String md2htmlFragment(Str markdown) {
-    return renderHtmlFragment(parse(markdown));
+export String renderFragment(Str markdown, RenderProps props = {}) {
+    return renderFragment(parse(markdown), props);
 }
 
-export void renderHtml(Document const& doc, Io::Emit& e) {
+export void render(Document const& doc, Io::Emit& e, RenderProps props = {}) {
     e(R"(<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body>)");
-    renderHtmlFragment(doc, e);
+    renderFragment(doc, e, props);
     e(R"(</body></html>)");
 }
 
-export String renderHtml(Document const& doc) {
+export String render(Document const& doc, RenderProps props = {}) {
     Io::StringWriter sw;
     Io::Emit e{sw};
-    renderHtml(doc, e);
+    render(doc, e, props);
     return sw.take();
 }
 
-export String md2html(Str markdown) {
-    return renderHtml(parse(markdown));
+export String render(Str markdown, RenderProps props = {}) {
+    return render(parse(markdown), props);
 }
 
 } // namespace Karm::Md

@@ -1,5 +1,6 @@
 #include <karm/entry>
 
+import Karm.Core;
 import Karm.Cli;
 import Karm.Md;
 import Karm.Ref;
@@ -14,12 +15,14 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
     Cli::Command cmd{
         "md2html"s,
         "Convert a Markdown document to HTML using karm-md."s,
-        {{
-            "Arguments"s,
+        {
             {
-                urlArg,
+                "Arguments"s,
+                {
+                    urlArg,
+                },
             },
-        }},
+        },
     };
 
     co_trya$(cmd.execAsync(env));
@@ -29,7 +32,8 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
 
     auto markdown = co_try$(Sys::readAllText<Utf8>(urlArg.value()));
     auto document = Md::parse(markdown);
-    auto html = Md::renderHtml(document);
+    auto props = co_try$(Md::RenderProps::from(document.frontmatter));
+    auto html = Md::render(document, props);
 
     co_try$(Sys::out().writeStr(html.str()));
     co_try$(Sys::out().flush());

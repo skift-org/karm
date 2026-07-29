@@ -56,7 +56,7 @@ struct Site : Http::Handler {
     }
 
     String renderHeader() const {
-        auto header = Md::md2htmlFragment(manifest.header ?: manifest.title);
+        auto header = Md::renderFragment(manifest.header ?: manifest.title);
         return "<a class=\"title\" href=\"/\"><h1>{}</h1></a>"_f(header);
     }
 
@@ -83,7 +83,7 @@ struct Site : Http::Handler {
     static String renderMarkdown(Str buf) {
         auto md = Md::parse(buf);
         fixupLink(md);
-        return Md::renderHtmlFragment(md);
+        return Md::renderFragment(md);
     }
 
     Res<String> renderPage(Ref::Url const& url) const {
@@ -98,7 +98,7 @@ struct Site : Http::Handler {
             {"style"s, style},
             {"header"s, renderHeader()},
             {"navbar"s, renderMarkdown(manifest.navbar)},
-            {"main"s, Md::renderHtmlFragment(md)},
+            {"main"s, Md::renderFragment(md)},
             {"footer"s, renderMarkdown(manifest.footer)},
         };
 

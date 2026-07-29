@@ -7,7 +7,7 @@ using namespace Karm::Literals;
 namespace Karm::Md::Tests {
 
 test$("markdown-inline-formatting") {
-    auto html = renderHtml(parse("## *Italic* and **bold**\n\nParagraph with `code`."));
+    auto html = render(parse("## *Italic* and **bold**\n\nParagraph with `code`."));
 
     expectEq$(
         html,
@@ -18,7 +18,7 @@ test$("markdown-inline-formatting") {
 }
 
 test$("markdown-paragraph-starting-with-inline-code") {
-    auto html = renderHtml(parse("`./ck test`: Run all tests."));
+    auto html = render(parse("`./ck test`: Run all tests."));
 
     expectEq$(
         html,
@@ -29,7 +29,7 @@ test$("markdown-paragraph-starting-with-inline-code") {
 }
 
 test$("markdown-block-splitting-before-inline") {
-    auto html = renderHtml(parse("Paragraph with\na soft line and **bold**.\n\n---\n"));
+    auto html = render(parse("Paragraph with\na soft line and **bold**.\n\n---\n"));
 
     expectEq$(
         html,
@@ -40,7 +40,7 @@ test$("markdown-block-splitting-before-inline") {
 }
 
 test$("markdown-inline-links") {
-    auto html = renderHtml(parse("See [**docs**](https://example.com/docs) now."));
+    auto html = render(parse("See [**docs**](https://example.com/docs) now."));
 
     expectEq$(
         html,
@@ -51,7 +51,7 @@ test$("markdown-inline-links") {
 }
 
 test$("markdown-inline-images") {
-    auto html = renderHtml(parse("Logo: ![Paper Muncher](./doc/assets/logo-light.png)."));
+    auto html = render(parse("Logo: ![Paper Muncher](./doc/assets/logo-light.png)."));
 
     expectEq$(
         html,
@@ -62,7 +62,7 @@ test$("markdown-inline-images") {
 }
 
 test$("markdown-lists") {
-    auto html = renderHtml(parse("- One\n- Two with [link](./two)\n\n1. First\n2. Second with `code`\n"));
+    auto html = render(parse("- One\n- Two with [link](./two)\n\n1. First\n2. Second with `code`\n"));
 
     expectEq$(
         html,
@@ -73,7 +73,7 @@ test$("markdown-lists") {
 }
 
 test$("markdown-nested-lists") {
-    auto html = renderHtml(parse("- Parent\n  - Child A\n  - Child B\n- Sibling\n"));
+    auto html = render(parse("- Parent\n  - Child A\n  - Child B\n- Sibling\n"));
 
     expectEq$(
         html,
@@ -84,7 +84,7 @@ test$("markdown-nested-lists") {
 }
 
 test$("markdown-nested-lists-four-space-indent") {
-    auto html = renderHtml(parse("* Parent\n    * Child A\n    * Child B\n* Sibling\n"));
+    auto html = render(parse("* Parent\n    * Child A\n    * Child B\n* Sibling\n"));
 
     expectEq$(
         html,
@@ -95,7 +95,7 @@ test$("markdown-nested-lists-four-space-indent") {
 }
 
 test$("markdown-inline-html") {
-    auto html = renderHtml(parse("Line with <br/> raw HTML."));
+    auto html = render(parse("Line with <br/> raw HTML."));
 
     expectEq$(
         html,
@@ -106,7 +106,7 @@ test$("markdown-inline-html") {
 }
 
 test$("markdown-html-block") {
-    auto html = renderHtml(parse("<p align=\"center\">\n<img src=\"logo.png\" />\n</p>\n\n# Title\n"));
+    auto html = render(parse("<p align=\"center\">\n<img src=\"logo.png\" />\n</p>\n\n# Title\n"));
 
     expectEq$(
         html,
@@ -117,7 +117,7 @@ test$("markdown-html-block") {
 }
 
 test$("markdown-blockquote") {
-    auto html = renderHtml(parse("> **Warning**<br> Here be dragons!\n\nAfter quote.\n"));
+    auto html = render(parse("> **Warning**<br> Here be dragons!\n\nAfter quote.\n"));
 
     expectEq$(
         html,
@@ -128,7 +128,7 @@ test$("markdown-blockquote") {
 }
 
 test$("markdown-blockquote-multiple-paragraphs") {
-    auto html = renderHtml(parse("> First line\n> still first paragraph\n>\n> Second paragraph\n"));
+    auto html = render(parse("> First line\n> still first paragraph\n>\n> Second paragraph\n"));
 
     expectEq$(
         html,

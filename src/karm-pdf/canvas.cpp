@@ -217,10 +217,10 @@ export struct Canvas : Gfx::Canvas {
         for (usize i = 0; i < prose._lines.len(); ++i) {
             auto const& line = prose._lines[i];
 
-            if (not line.blocks())
+            if (not line.blocks(prose))
                 continue;
 
-            auto lineStartPos = first(line.blocks()).pos.cast<f64>();
+            auto lineStartPos = first(line.blocks(prose)).pos.cast<f64>();
             auto lineBaseline = line.baseline.cast<f64>();
 
             _e.ln("1 0 0 -1 {} {} Tm", lineStartPos, lineBaseline);
@@ -255,8 +255,8 @@ export struct Canvas : Gfx::Canvas {
                 }
             };
 
-            for (auto& block : line.blocks()) {
-                for (auto& cell : block.cells()) {
+            for (auto& block : line.blocks(prose)) {
+                for (auto& cell : block.cells(prose)) {
                     if (cell.type() == Gfx::Prose::CellType::STRUT)
                         continue;
 
@@ -282,7 +282,7 @@ export struct Canvas : Gfx::Canvas {
                         _e(">{}<", pdfKern);
                     }
 
-                    for (auto rune : cell.runes()) {
+                    for (auto rune : cell.runes(prose)) {
                         _e("{:04x}", rune == '\n' ? ' ' : rune);
                     }
 

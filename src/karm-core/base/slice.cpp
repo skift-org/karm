@@ -680,9 +680,9 @@ export always_inline constexpr void stableSort(MutSliceable auto& slice) {
 }
 
 export template <Sliceable T, typename U = T::Inner>
-always_inline constexpr Opt<usize> indexOf(T const& slice, Meta::Equatable<U> auto const& needle, auto const cmp) {
+always_inline constexpr Opt<usize> indexOf(T const& slice, Meta::Equatable<U> auto const& needle) {
     for (usize i = 0; i < slice.len(); i++)
-        if (cmp(slice[i], needle))
+        if (slice[i] == needle)
             return i;
     return NONE;
 }
