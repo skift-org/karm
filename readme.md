@@ -21,6 +21,10 @@ A batteries included framework for modern cross-platform C++ applications
 Follow the [Getting Started Guide](doc/getting-started.md) to set up your first Karm project and run a simple "Hello
 World" application.
 
+## Agents Policy
+
+We do not permit the use of "AI agents" for contributors.
+
 ## Sponsors
 
 [![JetBrains logo.](https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.svg)](https://jb.gg/OpenSource)
