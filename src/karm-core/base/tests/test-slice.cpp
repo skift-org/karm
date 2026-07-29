@@ -93,6 +93,26 @@ test$("slice-contains") {
     return Ok();
 }
 
+test$("slice-index-of") {
+    expectEq$(indexOf("Hello, world!"s, "world"s), 7uz);
+    expectEq$(indexOf("Hello, world!"s, "world!"s), 7uz);
+    expectEq$(indexOf("Hello, world!"s, "Hello"s), 0uz);
+    expectEq$(indexOf("Hello, world!"s, "Hello, world!"s), 0uz);
+    expectEq$(indexOf("Hello, world!"s, "Hello, world! "s), NONE);
+    expectEq$(indexOf("Hello, world!"s, "bruh"s), NONE);
+
+    auto customCmp = [](Rune a, Rune b) {
+        return toAsciiLower(a) == toAsciiLower(b);
+    };
+
+    expectEq$(indexOf("Ab"s, "ab"s, customCmp), 0uz);
+    expectEq$(indexOf("ab"s, "Ab"s, customCmp), 0uz);
+    expectEq$(indexOf("Ab"s, "ab"s), NONE);
+    expectEq$(indexOf("ab"s, "Ab"s), NONE);
+
+    return Ok();
+}
+
 test$("slice-split-simple") {
 
     Str text = "hello my friends"s;

@@ -680,11 +680,42 @@ export always_inline constexpr void stableSort(MutSliceable auto& slice) {
 }
 
 export template <Sliceable T, typename U = T::Inner>
-always_inline constexpr Opt<usize> indexOf(T const& slice, Meta::Equatable<U> auto const& needle) {
+always_inline constexpr Opt<usize> indexOf(T const& slice, Meta::Equatable<U> auto const& needle, auto const cmp) {
     for (usize i = 0; i < slice.len(); i++)
-        if (slice[i] == needle)
+        if (cmp(slice[i], needle))
             return i;
     return NONE;
+}
+
+export always_inline constexpr Opt<usize> indexOf(Sliceable auto const& slice, Sliceable auto const& needle, auto const cmp) {
+    if (needle.len() == 0)
+        return 0;
+
+    if (slice.len() < needle.len())
+        return NONE;
+
+    for (usize i = 0; i < slice.len() - needle.len() + 1; i++) {
+        bool found = true;
+        for (usize j = 0; j < needle.len(); j++) {
+            if (not cmp(slice[i + j], needle[j])) {
+                found = false;
+                break;
+            }
+        }
+        if (found)
+            return i;
+    }
+
+    return NONE;
+}
+
+export template <Sliceable T1, Sliceable T2, typename U1 = T1::Inner, typename U2 = T2::Inner>
+always_inline constexpr Opt<usize> indexOf(T1 const& slice, T2 const& needle)
+    requires Meta::Equatable<U1, U2>
+{
+    return indexOf(slice, needle, [](U1 const& a, U2 const& b) {
+        return a == b;
+    });
 }
 
 export template <Sliceable T, typename U = T::Inner>
