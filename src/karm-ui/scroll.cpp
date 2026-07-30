@@ -17,12 +17,13 @@ export struct ScrollToEvent {
 };
 
 export struct ScrollListener {
+    static constexpr isize SCROLL_STEP = 32;
     static constexpr isize SCROLL_BAR_WIDTH = 4;
 
     bool _mouseIn = false;
     bool _animated = false;
     Math::Orien _orient{};
-    Math::Vec2f _scroll{};
+    Math::Vec2f _animatedScroll{};
     Math::Vec2f _targetScroll{};
     Easedf _scrollOpacity;
 
@@ -55,15 +56,15 @@ export struct ScrollListener {
     }
 
     Math::Vec2f scroll() {
-        return _scroll;
+        return _animatedScroll;
     }
 
     void scroll(Math::Vec2i s) {
         _targetScroll.x = clamp(s.x, -(_contentBound.width - min(_contentBound.width, _containerBound.width)), 0);
         _targetScroll.y = clamp(s.y, -(_contentBound.height - min(_contentBound.height, _containerBound.height)), 0);
 
-        if (_scroll.dist(_targetScroll) < 0.5) {
-            _scroll = _targetScroll;
+        if (_animatedScroll.dist(_targetScroll) < 0.5) {
+            _animatedScroll = _targetScroll;
             _animated = false;
         } else {
             _animated = true;
@@ -126,7 +127,7 @@ export struct ScrollListener {
 
         if (canHScroll()) {
             auto scrollBarWidth = (_containerBound.width) * _containerBound.width / _contentBound.width;
-            auto scrollBarX = _containerBound.start() + (-_scroll.x * _containerBound.width / _contentBound.width);
+            auto scrollBarX = _containerBound.start() + (-_animatedScroll.x * _containerBound.width / _contentBound.width);
 
             g.fillStyle(Gfx::GRAY500.withOpacity(0.5 * clamp01(_scrollOpacity.value())));
             g.fill(Math::Recti{(isize)scrollBarX, _containerBound.bottom() - SCROLL_BAR_WIDTH, scrollBarWidth, SCROLL_BAR_WIDTH});
@@ -134,7 +135,7 @@ export struct ScrollListener {
 
         if (canVScroll()) {
             auto scrollBarHeight = (_containerBound.height) * _containerBound.height / _contentBound.height;
-            auto scrollBarY = _containerBound.top() + (-_scroll.y * _containerBound.height / _contentBound.height);
+            auto scrollBarY = _containerBound.top() + (-_animatedScroll.y * _containerBound.height / _contentBound.height);
 
             g.fillStyle(Ui::GRAY500.withOpacity(0.5 * clamp01(_scrollOpacity.value())));
             g.fill(Math::Recti{_containerBound.end() - SCROLL_BAR_WIDTH, (isize)scrollBarY, SCROLL_BAR_WIDTH, scrollBarHeight});
@@ -155,17 +156,51 @@ export struct ScrollListener {
                 shouldRepaint(*n.parent(), vTrack());
         }
 
-        if (auto me = e.is<App::MouseEvent>()) {
+        if (auto ke = e.is<App::KeyboardEvent>(); ke and (ke->type == App::KeyboardEvent::PRESS or ke->type == App::KeyboardEvent::REPEATE)) {
+            if (ke->key == App::Key::PGUP) {
+                scroll((_targetScroll + Math::Vec2f{0., (f64)containerBound().height}).cast<isize>());
+                shouldAnimate(n);
+                e.accept();
+            } else if (ke->key == App::Key::PGDOWN) {
+                scroll((_targetScroll - Math::Vec2f{0., (f64)containerBound().height}).cast<isize>());
+                shouldAnimate(n);
+                e.accept();
+            } else if (ke->key == App::Key::UP) {
+                scroll((_targetScroll + Math::Vec2f{0., SCROLL_STEP}).cast<isize>());
+                shouldAnimate(n);
+                e.accept();
+            } else if (ke->key == App::Key::DOWN) {
+                scroll((_targetScroll - Math::Vec2f{0., SCROLL_STEP}).cast<isize>());
+                shouldAnimate(n);
+                e.accept();
+            } else if (ke->key == App::Key::LEFT) {
+                scroll((_targetScroll + Math::Vec2f{SCROLL_STEP, 0.}).cast<isize>());
+                shouldAnimate(n);
+                e.accept();
+            } else if (ke->key == App::Key::RIGHT) {
+                scroll((_targetScroll - Math::Vec2f{SCROLL_STEP, 0.}).cast<isize>());
+                shouldAnimate(n);
+                e.accept();
+            } else if (ke->key == App::Key::HOME) {
+                scroll(Math::Vec2i{0, 0});
+                shouldAnimate(n);
+                e.accept();
+            } else if (ke->key == App::Key::END) {
+                scroll(Math::Vec2i{-(isize)(_contentBound.width - _containerBound.width), -(isize)(_contentBound.height - _containerBound.height)});
+                shouldAnimate(n);
+                e.accept();
+            }
+        } else if (auto me = e.is<App::MouseEvent>()) {
             if (_containerBound.contains(me->pos)) {
                 _mouseIn = true;
 
                 if (me->type == App::MouseEvent::SCROLL) {
                     if (_orient == Math::Orien::BOTH) {
-                        scroll((_scroll + me->scroll * 128).cast<isize>());
+                        scroll((_targetScroll + me->scroll * SCROLL_STEP).cast<isize>());
                     } else if (_orient == Math::Orien::HORIZONTAL) {
-                        scroll((_scroll + Math::Vec2f{(me->scroll.x + me->scroll.y) * 128, 0}).cast<isize>());
+                        scroll((_targetScroll + Math::Vec2f{(me->scroll.x + me->scroll.y) * SCROLL_STEP, 0}).cast<isize>());
                     } else if (_orient == Math::Orien::VERTICAL) {
-                        scroll((_scroll + Math::Vec2f{0, (me->scroll.x + me->scroll.y) * 128}).cast<isize>());
+                        scroll((_targetScroll + Math::Vec2f{0, (me->scroll.x + me->scroll.y) * SCROLL_STEP}).cast<isize>());
                     }
                     shouldAnimate(n);
                     _scrollOpacity.delay(0).animate(n, 1, 0.3);
@@ -178,12 +213,12 @@ export struct ScrollListener {
         } else if (e.is<Node::AnimateEvent>() and _animated) {
             shouldRepaint(*n.parent(), _containerBound);
 
-            auto delta = _targetScroll - _scroll;
+            auto delta = _targetScroll - _animatedScroll;
 
-            _scroll = _scroll + delta * (e.unwrap<Node::AnimateEvent>().dt * 12);
+            _animatedScroll = _animatedScroll + delta * (e.unwrap<Node::AnimateEvent>().dt * 12);
 
-            if (_scroll.dist(_targetScroll) < 0.5) {
-                _scroll = _targetScroll;
+            if (_animatedScroll.dist(_targetScroll) < 0.5) {
+                _animatedScroll = _targetScroll;
                 _animated = false;
                 _scrollOpacity.delay(1.0).animate(n, 0, 0.3);
             } else {
