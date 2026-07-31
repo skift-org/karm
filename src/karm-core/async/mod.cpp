@@ -7,5 +7,6 @@ export import :async.one;
 export import :async.promise;
 export import :async.queue;
 export import :async.run;
+export import :async.semaphore;
 export import :async.task;
 export import :async.join;

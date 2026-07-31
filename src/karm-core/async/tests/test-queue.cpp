@@ -25,14 +25,14 @@ test$("karm-queue-dequeue-enqueue") {
     isize res2 = 0;
     bool orderOk = false;
 
-    Async::detach(q.dequeueAsync(CancellationToken::uninterruptible()), [&](isize v) {
-        res1 = v;
+    Async::detach(q.dequeueAsync(CancellationToken::uninterruptible()), [&](Res<isize> res) {
+        res1 = res.unwrap();
     });
 
-    Async::detach(q.dequeueAsync(CancellationToken::uninterruptible()), [&](isize v) {
+    Async::detach(q.dequeueAsync(CancellationToken::uninterruptible()), [&](Res<isize> res) {
         if (res1 == 42)
             orderOk = true;
-        res2 = v;
+        res2 = res.unwrap();
     });
 
     q.enqueue(42);

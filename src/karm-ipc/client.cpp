@@ -91,7 +91,7 @@ export struct Client : Meta::NoCopy {
     }
 
     Async::Task<Box<Message>> recvAsync(Async::CancellationToken ct) {
-        co_return Ok(co_await _state->incoming.dequeueAsync(ct));
+        co_return Ok(co_trya$(_state->incoming.dequeueAsync(ct)));
     }
 
     Opt<Box<Message>> poll() {
