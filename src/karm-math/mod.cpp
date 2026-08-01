@@ -4,6 +4,7 @@ export import :align;
 export import :arc;
 export import :au;
 export import :bigint;
+export import :complex;
 export import :curve;
 export import :easing;
 export import :edge;

@@ -5,8 +5,8 @@ module;
 #include <stdlib.h>
 #include <sys/stat.h>
 #ifdef __ck_sys_freebsd__
-#include <sys/wait.h>
-#include <sys/socket.h>
+#    include <sys/socket.h>
+#    include <sys/wait.h>
 #endif
 //
 #include <karm/macros>

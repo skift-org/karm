@@ -11,6 +11,7 @@
         "karm-av.impl",
         "karm-sys",
         "karm-debug",
-        "karm-gfx"
+        "karm-gfx",
+        "karm-dsp"
     ]
 }

@@ -29,4 +29,24 @@ auto join(Ss... senders) {
     return future;
 }
 
+export template <typename... Ss>
+auto any(Ss... senders) {
+    struct State {
+        bool done = false;
+        Promise<> promise{};
+    };
+
+    auto* state = new State{};
+    auto future = state->promise.future();
+    auto onComplete = [state](auto) {
+        if (state->done)
+            return;
+        state->done = true;
+        state->promise.resolve(Ok());
+        delete state;
+    };
+    (Async::detach(std::move(senders), onComplete), ...);
+    return future;
+}
+
 } // namespace Karm::Async

@@ -7,7 +7,7 @@ module;
 #include <netdb.h>
 #include <netinet/in.h>
 #ifdef __ck_sys_freebsd__
-#include <libutil.h>
+#    include <libutil.h>
 #elifdef __ck_sys_darwin__
 #    include <util.h>
 #else

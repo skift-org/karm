@@ -235,7 +235,6 @@ test$("karm-semaphore-lock-scope-move-disarms-source") {
 
         auto scope2 = maybeScope1.take();
         expectEq$(sem._currentCount, 0uz);
-
     }
     expectEq$(sem._currentCount, 1uz);
 

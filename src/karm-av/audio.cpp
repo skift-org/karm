@@ -5,8 +5,91 @@ module;
 export module Karm.Av:audio;
 
 import Karm.Core;
+import Karm.Dsp;
 
 namespace Karm::Av {
+
+export enum struct ChannelPosition {
+    NONE,
+
+    FRONT_LEFT,
+    FRONT_RIGHT,
+    FRONT_CENTER,
+    LOW_FREQUENCY_SPEAKER,
+    BACK_LEFT,
+    BACK_RIGHT,
+    SURROUND_LEFT,
+    SURROUND_RIGHT,
+    BACK_CENTER,
+
+    _LEN
+};
+
+using ChannelLayout = Array<ChannelPosition, 8>;
+
+export constexpr Array LAYOUTS = {
+    ChannelLayout{},
+    // 1: mono
+    ChannelLayout{
+        ChannelPosition::FRONT_CENTER,
+    },
+    // 2: stereo
+    ChannelLayout{
+        ChannelPosition::FRONT_LEFT,
+        ChannelPosition::FRONT_RIGHT,
+    },
+    // 3: 2.1
+    ChannelLayout{
+        ChannelPosition::FRONT_LEFT,
+        ChannelPosition::FRONT_RIGHT,
+        ChannelPosition::LOW_FREQUENCY_SPEAKER,
+    },
+    // 4: quad
+    ChannelLayout{
+        ChannelPosition::FRONT_LEFT,
+        ChannelPosition::FRONT_RIGHT,
+        ChannelPosition::BACK_LEFT,
+        ChannelPosition::BACK_RIGHT,
+    },
+    // 5: 4.1
+    ChannelLayout{
+        ChannelPosition::FRONT_LEFT,
+        ChannelPosition::FRONT_RIGHT,
+        ChannelPosition::LOW_FREQUENCY_SPEAKER,
+        ChannelPosition::BACK_LEFT,
+        ChannelPosition::BACK_RIGHT,
+    },
+    // 6
+    ChannelLayout{
+        ChannelPosition::FRONT_LEFT,
+        ChannelPosition::FRONT_RIGHT,
+        ChannelPosition::FRONT_CENTER,
+        ChannelPosition::LOW_FREQUENCY_SPEAKER,
+        ChannelPosition::BACK_LEFT,
+        ChannelPosition::BACK_RIGHT,
+    },
+    // 7
+    ChannelLayout{
+        ChannelPosition::FRONT_LEFT,
+        ChannelPosition::FRONT_RIGHT,
+        ChannelPosition::FRONT_CENTER,
+        ChannelPosition::LOW_FREQUENCY_SPEAKER,
+        ChannelPosition::BACK_CENTER,
+        ChannelPosition::SURROUND_LEFT,
+        ChannelPosition::SURROUND_RIGHT,
+    },
+    // 8
+    ChannelLayout{
+        ChannelPosition::FRONT_LEFT,
+        ChannelPosition::FRONT_RIGHT,
+        ChannelPosition::FRONT_CENTER,
+        ChannelPosition::LOW_FREQUENCY_SPEAKER,
+        ChannelPosition::BACK_LEFT,
+        ChannelPosition::BACK_RIGHT,
+        ChannelPosition::SURROUND_LEFT,
+        ChannelPosition::SURROUND_RIGHT,
+    },
+};
 
 export struct Format {
     usize rate = 44100; // hz
@@ -336,6 +419,9 @@ export struct Player : Stream {
         } else {
             auto curr = _currentFrame.load();
             _currentFrame.store(curr + _audio.unwrap()->fill(curr, output));
+            for (auto f : output.iter())
+                f.mono(f.mono());
+
             if (_mute or _volume != 1) {
                 for (auto f : output.iter())
                     f.volume(_mute ? 0. : _volume);

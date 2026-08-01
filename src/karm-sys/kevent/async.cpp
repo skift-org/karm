@@ -7,8 +7,8 @@ module;
 #include <unistd.h>
 
 #ifdef __ck_sys_freebsd__
-#define kevent64 kevent
-#define kevent64_s kevent
+#    define kevent64 kevent
+#    define kevent64_s kevent
 #endif
 
 module Karm.Sys;
@@ -57,9 +57,9 @@ struct DarwinSched :
             nullptr,
             0,
 
-            #ifdef __ck_sys_darwin__
+#ifdef __ck_sys_darwin__
             0,
-            #endif
+#endif
             nullptr
         );
 
@@ -178,9 +178,9 @@ struct DarwinSched :
             &ev,
             1,
 
-            #ifdef __ck_sys_darwin__
+#ifdef __ck_sys_darwin__
             0,
-            #endif
+#endif
             until.isEndOfTime() ? nullptr : &ts
         );
 

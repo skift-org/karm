@@ -121,33 +121,36 @@ export struct Semaphore {
         return true;
     }
 
-    struct [[nodiscard]] _LockScope : Meta::NoCopy {
-        Semaphore& _lock;
-        bool _armed = true;
+    struct [[nodiscard]] Scope : Meta::NoCopy {
+        Semaphore* _sema = nullptr;
 
-        _LockScope(_LockScope&& other) : _lock(other._lock), _armed(other._armed) {
-            other._armed = false;
+        Scope(Semaphore& lock)
+            : _sema(&lock) {}
+
+        Scope(Scope&& other)
+            : _sema(std::exchange(other._sema, nullptr)) {
         }
-        _LockScope& operator=(_LockScope&& other) = delete;
 
-        _LockScope(Semaphore& lock)
-            : _lock(lock) {}
+        ~Scope() {
+            if (_sema)
+                _sema->release(1);
+        }
 
-        ~_LockScope() {
-            if (_armed)
-                _lock.release();
+        Scope& operator=(Scope&& other) {
+            std::swap(_sema, other._sema);
+            return *this;
         }
     };
 
-    Task<_LockScope> lockScopeAsync(CancellationToken ct) {
+    Task<Scope> lockScopeAsync(CancellationToken ct) {
         co_trya$(acquireAsync(ct));
-        co_return Ok(_LockScope{*this});
+        co_return Ok(Scope{*this});
     }
 
-    Opt<_LockScope> tryLockScope() {
+    Opt<Scope> tryLockScope() {
         if (not tryAcquire())
             return NONE;
-        return _LockScope{*this};
+        return Scope{*this};
     }
 
     ~Semaphore() {
