@@ -19,7 +19,7 @@ test$("read-http-response-good-body") {
 
     expectEq$(response.code, Code{200});
 
-    auto expectedVersion = Version{1u, 1u};
+    auto expectedVersion = Version{Http::Protocol::HTTP, 1u, 1u};
     expectEq$(response.version, expectedVersion);
 
     expectEq$(response.header.len(), 2u);
@@ -41,7 +41,7 @@ test$("read-http-response-body-content-length-mismatch") {
 
     expectEq$(response.code, Code{500});
 
-    auto expectedVersion = Version{1u, 2u};
+    auto expectedVersion = Version{Http::Protocol::HTTP, 1u, 2u};
     expectEq$(response.version, expectedVersion);
 
     expectEq$(response.header.len(), 1u);

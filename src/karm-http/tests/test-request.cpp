@@ -19,7 +19,7 @@ test$("parse-unparse-http-request-no-header") {
     expectEq$(request.url.path, "/"_path);
     expectEq$(request.method, Method::GET);
 
-    auto expectedVersion = Version{1u, 1u};
+    auto expectedVersion = Version{Http::Protocol::HTTP, 1u, 1u};
     expectEq$(request.version, expectedVersion);
 
     Io::StringWriter sw;
@@ -44,9 +44,8 @@ test$("parse-unparse-http-request-with-header") {
     expectEq$(request.url.path, "/"_path);
     expectEq$(request.method, Method::POST);
 
-    auto expectedVersion = Version{1u, 2u};
-    expectEq$(request.version.major, expectedVersion.major);
-    expectEq$(request.version.minor, expectedVersion.minor);
+    auto expectedVersion = Version{Http::Protocol::HTTP, 1u, 2u};
+    expectEq$(request.version, expectedVersion);
 
     Io::StringWriter sw;
     try$(request.unparse(sw));

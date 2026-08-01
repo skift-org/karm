@@ -15,14 +15,24 @@ namespace Karm::Http {
 
 // MARK: Version ---------------------------------------------------------------
 
+export enum struct Protocol {
+    HTTP,
+
+    _LEN,
+};
+
 export struct Version {
+    Protocol protocol;
     u8 major;
     u8 minor;
 
     static Res<Version> parse(Io::SScan& s) {
-        if (not s.skip("HTTP/"))
-            return Error::invalidData("Expected \"HTTP/\", got {}"_f(s.remStr()));
         Version v;
+        if (s.skip("HTTP/")) {
+            v.protocol = Protocol::HTTP;
+        } else {
+            return Error::invalidData("Unexpected protocol, got {}"_f(s.remStr()));
+        }
         v.major = try$(atou(s));
         s.skip('.');
         v.minor = try$(atou(s));
@@ -30,8 +40,12 @@ export struct Version {
     }
 
     Res<> unparse(Io::TextWriter& w) const {
-        try$(Io::format(w, "HTTP/{}.{}", major, minor));
+        try$(Io::format(w, "{}/{}.{}", protocol, major, minor));
         return Ok();
+    }
+
+    void repr(Io::Emit& e) const {
+        unparse(e).unwrap();
     }
 
     bool operator==(Version const& other) const = default;
@@ -199,10 +213,3 @@ export Res<Vec<u8>> readHeaders(Io::Reader& r) {
 }
 
 } // namespace Karm::Http
-
-template <>
-struct Karm::Io::Formatter<Karm::Http::Version> {
-    Res<> format(TextWriter& writer, Http::Version version) {
-        return Io::format(writer, "HTTP/{}.{}", version.major, version.minor);
-    }
-};

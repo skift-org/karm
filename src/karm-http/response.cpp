@@ -109,6 +109,10 @@ export struct Response {
 
         return Ok();
     }
+
+    void repr(Io::Emit& e) const {
+        unparse(e).unwrap();
+    }
 };
 
 } // namespace Karm::Http

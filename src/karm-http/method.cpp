@@ -33,24 +33,4 @@ export Res<Method> parseMethod(Io::SScan& s) {
     return Error::invalidData("Expected method");
 }
 
-export Str toStr(Method method) {
-    switch (method) {
-#define ITER(NAME)     \
-    case Method::NAME: \
-        return #NAME;
-        FOREACH_METHOD(ITER)
-#undef ITER
-    default:
-        unreachable();
-    }
-    return "UNKNOWN";
-}
-
 } // namespace Karm::Http
-
-template <>
-struct Karm::Io::Formatter<Karm::Http::Method> {
-    Res<> format(Io::TextWriter& writer, Karm::Http::Method method) {
-        return writer.writeStr(Karm::Http::toStr(method));
-    }
-};

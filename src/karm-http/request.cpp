@@ -74,7 +74,7 @@ export struct Request {
     }
 
     void prepare() {
-        version = Version{1, 1};
+        version = Version{Protocol::HTTP, 1, 1};
 
         if (not header.contains(Header::CONTENT_LENGTH) and
             not header.contains(Header::TRANSFER_ENCODING)) {
@@ -91,7 +91,7 @@ export struct Request {
         // Start line
         auto path = url.path;
         path.absolutize();
-        try$(Io::format(w, "{} {} ", toStr(method), path));
+        try$(Io::format(w, "{} {} ", method, path));
 
         try$(version.unparse(w));
         try$(w.writeStr("\r\n"s));
@@ -107,6 +107,10 @@ export struct Request {
         if (not body)
             co_return Error::invalidInput("request has no body");
         co_return co_await body.unwrap()->readJsonAsync(ct);
+    }
+
+    void repr(Io::Emit& e) const {
+        unparse(e).unwrap();
     }
 };
 

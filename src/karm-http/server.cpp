@@ -54,7 +54,7 @@ export struct Server {
 
         Async::Task<> writeHeaderAsync(Code code, Async::CancellationToken ct) override {
             Response resp;
-            resp.version = Version{1, 1};
+            resp.version = Version{Protocol::HTTP, 1, 1};
             resp.code = code;
             resp.header = header;
             // NOTE: Seems to be the average size of an HTTP header
