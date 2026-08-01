@@ -17,6 +17,14 @@ export struct Semaphore {
 
     struct _Listener : Cancellable {
         LlItem<_Listener> item;
+        usize _count;
+        Semaphore& _s;
+        CancellationToken _ct;
+        bool _cancelled = false;
+
+        _Listener(usize count, Semaphore& s, CancellationToken ct)
+            : _count(count), _s{s}, _ct{ct} {}
+
         virtual void complete() = 0;
     };
 
@@ -29,7 +37,7 @@ export struct Semaphore {
     }
 
     void release(usize count = 1) {
-        if (_currentCount + count > _maxCount)
+        if (_currentCount + count > _maxCount) [[unlikely]]
             panic("semaphore is full");
 
         if (_listeners.empty()) {
@@ -37,13 +45,13 @@ export struct Semaphore {
             return;
         }
 
-        if (_currentCount != 0)
-            panic("semaphore should be empty");
+        if (_listeners.head()->_count <= _currentCount) [[unlikely]]
+            panic("invalid listeners state");
 
         usize newCount = _currentCount + count;
-        while (newCount > 0 and not _listeners.empty()) {
+        while (not _listeners.empty() and newCount >= _listeners.head()->_count) {
             auto listener = _listeners.detach(_listeners.head());
-            newCount--;
+            newCount -= listener->_count;
             listener->complete();
         }
         _currentCount = newCount;
@@ -51,13 +59,10 @@ export struct Semaphore {
 
     template <Receiver<Res<>> R>
     struct _AcquireOperation : _Listener {
-        Semaphore& _s;
         R _r;
-        CancellationToken _ct;
-        bool _cancelled = false;
 
-        _AcquireOperation(Semaphore& s, R r, CancellationToken ct)
-            : _s{s}, _r{std::move(r)}, _ct{ct} {}
+        _AcquireOperation(usize count, Semaphore& s, CancellationToken ct, R r)
+            : _Listener(count, s, ct), _r{std::move(r)} {}
 
         bool start() {
             if (_cancelled)
@@ -72,15 +77,15 @@ export struct Semaphore {
             // Should only fail if ct is cancelled, which should be caught before, so we panic.
             attach(_ct).unwrap();
 
-            if (_s._currentCount == 0) {
+            if (_s._currentCount < _count or not _s._listeners.empty()) {
                 _s._listeners.append(this, _s._listeners.tail());
                 return false;
             }
 
-            if (not _s._listeners.empty())
-                panic("listeners should be empty");
+            if (not _s._listeners.empty() and _s._listeners.head()->_count >= _s._currentCount) [[unlikely]]
+                panic("invalid listeners state");
 
-            _s._currentCount--;
+            _s._currentCount -= _count;
             _r.recv(INLINE, Ok());
             return true;
         }
@@ -100,24 +105,28 @@ export struct Semaphore {
 
     struct _AcquireSender {
         using Inner = Res<>;
+        usize _count;
         Semaphore& _s;
         CancellationToken _ct;
 
         auto connect(Receiver<Res<>> auto r) -> _AcquireOperation<decltype(r)> {
-            return {_s, std::move(r), _ct};
+            return {_count, _s, _ct, std::move(r)};
         }
     };
 
-    auto acquireAsync(CancellationToken ct) {
-        return _AcquireSender{*this, ct};
+    auto acquireAsync(usize count, CancellationToken ct) {
+        return _AcquireSender{count, *this, ct};
     }
 
-    bool tryAcquire() {
-        if (_currentCount == 0)
+    auto acquireAsync(CancellationToken ct) {
+        return acquireAsync(1, ct);
+    }
+
+    bool tryAcquire(usize count = 1) {
+        if (_currentCount < count or not _listeners.empty())
             return false;
-        if (not _listeners.empty())
-            panic("listeners should be empty");
-        _currentCount--;
+
+        _currentCount -= count;
         return true;
     }
 

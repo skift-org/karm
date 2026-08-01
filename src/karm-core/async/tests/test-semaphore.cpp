@@ -241,4 +241,112 @@ test$("karm-semaphore-lock-scope-move-disarms-source") {
     return Ok();
 }
 
+test$("karm-semaphore-acquire-multiple-sync") {
+    Semaphore sem{5, 5};
+
+    auto res1 = Async::run(sem.acquireAsync(3, CancellationToken::uninterruptible()));
+    expect$(res1);
+    expectEq$(sem._currentCount, 2uz);
+
+    auto res2 = Async::run(sem.acquireAsync(2, CancellationToken::uninterruptible()));
+    expect$(res2);
+    expectEq$(sem._currentCount, 0uz);
+
+    return Ok();
+}
+
+test$("karm-semaphore-try-acquire-multiple") {
+    Semaphore sem{5, 5};
+
+    expect$(sem.tryAcquire(3));
+    expectEq$(sem._currentCount, 2uz);
+
+    expect$(not sem.tryAcquire(3));
+    expectEq$(sem._currentCount, 2uz);
+
+    expect$(sem.tryAcquire(2));
+    expectEq$(sem._currentCount, 0uz);
+
+    return Ok();
+}
+
+test$("karm-semaphore-acquire-multiple-waits-for-enough") {
+    Semaphore sem{0, 10};
+
+    bool done = false;
+    bool ok = false;
+
+    Async::detach(sem.acquireAsync(5, CancellationToken::uninterruptible()), [&](Res<> res) {
+        done = true;
+        ok = bool(res);
+    });
+
+    expect$(not done);
+
+    sem.release(3);
+    expect$(not done);
+    expectEq$(sem._currentCount, 3uz);
+
+    sem.release(2);
+    expect$(done);
+    expect$(ok);
+    expectEq$(sem._currentCount, 0uz);
+
+    return Ok();
+}
+
+test$("karm-semaphore-try-acquire-blocked-by-queued-listener") {
+    Semaphore sem{0, 10};
+
+    bool done = false;
+
+    Async::detach(sem.acquireAsync(5, CancellationToken::uninterruptible()), [&](Res<>) {
+        done = true;
+    });
+
+    sem.release(3);
+    expect$(not done);
+    expectEq$(sem._currentCount, 3uz);
+
+    expect$(not sem.tryAcquire(2));
+    expectEq$(sem._currentCount, 3uz);
+
+    sem.release(2);
+    expect$(done);
+    expectEq$(sem._currentCount, 0uz);
+
+    return Ok();
+}
+
+test$("karm-semaphore-fifo-blocks-smaller-later-request") {
+    Semaphore sem{0, 10};
+
+    bool firstDone = false;
+    bool secondDone = false;
+
+    Async::detach(sem.acquireAsync(3, CancellationToken::uninterruptible()), [&](Res<>) {
+        firstDone = true;
+    });
+
+    Async::detach(sem.acquireAsync(1, CancellationToken::uninterruptible()), [&](Res<>) {
+        secondDone = true;
+    });
+
+    sem.release(2);
+    expect$(not firstDone);
+    expect$(not secondDone);
+    expectEq$(sem._currentCount, 2uz);
+
+    sem.release(1);
+    expect$(firstDone);
+    expect$(not secondDone);
+    expectEq$(sem._currentCount, 0uz);
+
+    sem.release(1);
+    expect$(secondDone);
+    expectEq$(sem._currentCount, 0uz);
+
+    return Ok();
+}
+
 } // namespace Karm::Async::Tests
