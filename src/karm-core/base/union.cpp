@@ -312,32 +312,6 @@ void dispatch(V visitor, T&& t, Ts&&... ts) {
         );
     }
 }
-
-template <typename T, typename... Ts>
-struct _FlattenUnion {
-    using Type = T;
-};
-
-// If the type is already in the Union we discard it
-template <typename... Ts, Meta::Contains<Ts...> A, typename... Us>
-struct _FlattenUnion<Union<Ts...>, A, Us...> {
-    using Type = _FlattenUnion<Union<Ts...>, Us...>::Type;
-};
-
-// Else we add it to the Union
-template <typename... Ts, typename A, typename... Us>
-struct _FlattenUnion<Union<Ts...>, A, Us...> {
-    using Type = _FlattenUnion<Union<Ts..., A>, Us...>::Type;
-};
-
-template <typename... Ts, typename... Us, typename... Vs>
-struct _FlattenUnion<Union<Ts...>, Union<Us...>, Vs...> {
-    using Type = _FlattenUnion<Union<Ts...>, Us..., Vs...>::Type;
-};
-
-export template <typename... Ts>
-using FlatUnion = _FlattenUnion<Union<>, Ts...>::Type;
-
 export template <typename... Ts>
     requires(sizeof...(Ts) <= 254)
 struct Niche<Union<Ts...>> {
