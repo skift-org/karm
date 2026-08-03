@@ -6,6 +6,7 @@ export import :meta.cond;
 export import :meta.cvrp;
 export import :meta.decl;
 export import :meta.id;
+export import :meta.list;
 export import :meta.nocopy;
 export import :meta.pack;
 export import :meta.signess;
