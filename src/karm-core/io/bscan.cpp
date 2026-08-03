@@ -326,9 +326,9 @@ export struct BScan {
 
     always_inline constexpr i64 nextI64le() { return nextLe<i64>(); }
 
-    always_inline constexpr i32 nextF32() { return nextLe<f32>(); }
+    always_inline constexpr f32 nextF32() { return nextLe<f32>(); }
 
-    always_inline constexpr i64 nextF64() { return nextLe<f64>(); }
+    always_inline constexpr f64 nextF64() { return nextLe<f64>(); }
 
     always_inline constexpr u8 peekU8be() { return peekBe<u8>(); }
 
