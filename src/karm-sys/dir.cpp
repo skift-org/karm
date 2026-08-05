@@ -17,9 +17,6 @@ export struct Dir {
     Ref::Url _url;
 
     static Res<Dir> open(Ref::Url url) {
-        if (url.scheme != "bundle")
-            try$(ensureUnrestricted());
-
         auto entries = try$(_Embed::readDir(url));
         sort(entries, [](auto const& lhs, auto const& rhs) {
             return lhs.name <=> rhs.name;
@@ -28,12 +25,10 @@ export struct Dir {
     }
 
     static Res<> create(Ref::Url url) {
-        try$(ensureUnrestricted());
         return _Embed::createDir(url);
     }
 
     static Res<Dir> openOrCreate(Ref::Url url) {
-        try$(ensureUnrestricted());
         auto entries = try$(_Embed::readDirOrCreate(url));
         sort(entries, [](auto const& lhs, auto const& rhs) {
             return lhs.name <=> rhs.name;

@@ -9,13 +9,10 @@ import Karm.Ref;
 import Karm.Sys.Base;
 
 import :_embed;
-import :sandbox;
 
 namespace Karm::Sys {
 
 export Res<Stat> stat(Ref::Url const& url) {
-    if (not oneOf(url.scheme, "bundle", "fd"))
-        try$(ensureUnrestricted());
     return _Embed::stat(url);
 }
 

@@ -23,7 +23,6 @@ export struct SysInfo {
 };
 
 export Res<SysInfo> sysinfo() {
-    try$(ensureUnrestricted());
     SysInfo infos;
     try$(_Embed::populate(infos));
     return Ok(infos);
@@ -68,14 +67,12 @@ export struct UserInfo {
 };
 
 export Res<UserInfo> userinfo() {
-    try$(ensureUnrestricted());
     UserInfo infos;
     try$(_Embed::populate(infos));
     return Ok(infos);
 }
 
 export Res<Vec<UserInfo>> usersinfo() {
-    try$(ensureUnrestricted());
     Vec<UserInfo> infos;
     try$(_Embed::populate(infos));
     return Ok(infos);

@@ -92,7 +92,6 @@ export struct UdpConnection :
     SocketAddr _addr;
 
     static Res<UdpConnection> listen(SocketAddr addr) {
-        try$(ensureUnrestricted());
         auto fd = try$(_Embed::listenUdp(addr));
         return Ok(UdpConnection({std::move(fd), addr}));
     }
@@ -129,7 +128,6 @@ export struct TcpConnection :
     SocketAddr _addr;
 
     static Res<TcpConnection> connect(SocketAddr addr) {
-        try$(ensureUnrestricted());
         auto fd = try$(_Embed::connectTcp(addr));
         return Ok(TcpConnection({std::move(fd), addr}));
     }
@@ -148,7 +146,6 @@ export struct TcpListener :
     SocketAddr _addr;
 
     static Res<TcpListener> listen(SocketAddr addr) {
-        try$(ensureUnrestricted());
         auto fd = try$(_Embed::listenTcp(addr));
         return Ok(TcpListener(std::move(fd), addr));
     }
@@ -217,7 +214,6 @@ export struct IpcListener :
     Rc<Fd> _fd;
 
     static Res<IpcListener> listen(Ref::Url url) {
-        try$(ensureUnrestricted());
         auto fd = try$(_Embed::listenIpc(url));
         return Ok(IpcListener(std::move(fd)));
     }

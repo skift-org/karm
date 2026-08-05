@@ -28,12 +28,10 @@ export struct Intent {
 };
 
 export Res<> launch(Intent intent) {
-    try$(ensureUnrestricted());
     return _Embed::launch(intent);
 }
 
 export Async::Task<> launchAsync(Intent intent) {
-    co_try$(ensureUnrestricted());
     co_return co_await _Embed::launchAsync(intent);
 }
 

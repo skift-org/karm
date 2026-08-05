@@ -7,7 +7,6 @@ export module Karm.Sys:proc;
 import :_embed;
 import :time;
 import :pid;
-import :sandbox;
 import :pty;
 
 namespace Karm::Sys {

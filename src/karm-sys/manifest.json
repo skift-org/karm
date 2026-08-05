@@ -9,7 +9,6 @@
     "requires": [
         "karm-sys.impl",
         "karm-sys.async",
-        "karm-sys.sandbox",
         "karm-sys.base",
         "karm-ref",
         "karm-core",

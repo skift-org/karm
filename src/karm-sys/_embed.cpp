@@ -112,10 +112,6 @@ export Res<> sleepUntil(Instant);
 
 export Res<> exit(i32);
 
-// MARK: Sandboxing ------------------------------------------------------------
-
-export Res<> hardenSandbox();
-
 // MARK: Addr ------------------------------------------------------------------
 
 export Async::Task<Vec<Ip>> ipLookupAsync(Str host);

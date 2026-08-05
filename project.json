@@ -48,12 +48,6 @@
                 "liburing"
             ]
         },
-        "seccomp": {
-            "description": "Linux seccomp library",
-            "names": [
-                "libseccomp"
-            ]
-        },
         "unwind": {
             "description": "Linux libunwind library",
             "names": [

@@ -15,7 +15,6 @@ export struct Pipe {
     File out;
 
     static Res<Pipe> create() {
-        try$(ensureUnrestricted());
         auto [in, out] = try$(_Embed::createPipe());
         return Ok(Pipe{
             File{in, "pipe:"_url},
