@@ -67,6 +67,18 @@ Res<Rc<Fd>> openFile(Ref::Url const& url, Flags<OpenOption> options) {
     if (options.has(OpenOption::TRUNCATE))
         flags |= O_TRUNC;
 
+    if (url.scheme == "fd") {
+        if (url.path.stem() == "stdin") {
+            return Ok(in().fd());
+        } else if (url.path.stem() == "stdout") {
+            return Ok(out().fd());
+        } else if (url.path.stem() == "stderr") {
+            return Ok(err().fd());
+        } else {
+            return Error::notFound("unknown fd");
+        }
+    }
+
     String str = try$(Posix::resolve(url)).str();
 
     isize raw = ::open(str.buf(), flags, 0666);

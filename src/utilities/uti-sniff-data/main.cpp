@@ -23,7 +23,7 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
         }},
     };
 
-    co_trya$(cmd.execAsync(env));
+    co_try$(cmd.exec(env));
 
     if (cmd) {
         auto dump = [&](Ref::Url const& url) -> Async::Task<> {

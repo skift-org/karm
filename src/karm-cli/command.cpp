@@ -489,8 +489,6 @@ export struct Section {
 };
 
 export struct Command : Meta::Pinned {
-    using Callback = Func<Async::Task<>(Sys::Env&)>;
-
     String _longName;
     String _description = ""s;
     Vec<Section> _sections;
@@ -690,56 +688,56 @@ export struct Command : Meta::Pinned {
         return Ok();
     }
 
-    Async::Task<> execAsync(Sys::Env& env) {
+    Res<> exec(Sys::Env& env) {
         Vec<Token> tokens;
         for (usize i = 0; i < env.argsLen(); ++i)
             tokenize(env[i], tokens);
-        co_return co_await execAsync(tokens);
+        return exec(tokens);
     }
 
-    Async::Task<> execAsync(Slice<Str> args) {
+    Res<> exec(Slice<Str> args) {
         Vec<Token> tokens;
         tokenize(args, tokens);
-        co_return co_await execAsync(tokens);
+        return exec(tokens);
     }
 
-    Async::Task<> execAsync(Cursor<Token> c) {
-        co_try$(_parseParams(c));
+    Res<> exec(Cursor<Token> c) {
+        try$(_parseParams(c));
 
         if (_help.value()) {
-            co_try$(_showHelp(Sys::out()));
-            co_return Ok();
+            try$(_showHelp(Sys::out()));
+            return Ok();
         }
 
         if (_usage.value()) {
-            co_try$(_showUsage(Sys::out()));
-            co_return Ok();
+            try$(_showUsage(Sys::out()));
+            return Ok();
         }
 
         if (_version.value()) {
-            co_try$(format(Sys::out(), "{} {}\n", _longName, stringify$(__ck_version_value) ""s));
-            co_return Ok();
+            try$(format(Sys::out(), "{} {}\n", _longName, stringify$(__ck_version_value) ""s));
+            return Ok();
         }
 
-        if (co_try$(handleDescriptors(Debug::DEBUG, _debug.value())))
-            co_return Ok();
+        if (try$(handleDescriptors(Debug::DEBUG, _debug.value())))
+            return Ok();
 
-        if (co_try$(handleDescriptors(Debug::FEATURE, _features.value())))
-            co_return Ok();
+        if (try$(handleDescriptors(Debug::FEATURE, _features.value())))
+            return Ok();
 
         _invoked = true;
 
         if (Karm::any(_commands) and c.ended()) {
-            co_try$(_showUsage(Sys::out()));
-            co_return Error::invalidInput("expected subcommand");
+            try$(_showUsage(Sys::out()));
+            return Error::invalidInput("expected subcommand");
         }
 
         if (not c.ended()) {
             if (c->kind != Token::OPERAND)
-                co_return Error::invalidInput("expected subcommand");
+                return Error::invalidInput("expected subcommand");
 
             if (not Karm::any(_commands))
-                co_return Error::invalidInput("unexpected subcommand");
+                return Error::invalidInput("unexpected subcommand");
 
             auto value = c->value;
             c.next();
@@ -747,12 +745,12 @@ export struct Command : Meta::Pinned {
             for (auto& cmd : _commands) {
                 if (value != cmd->_longName)
                     continue;
-                co_return co_await cmd->execAsync(c);
+                return cmd->exec(c);
             }
 
-            co_return Error::invalidInput("unknown subcommand");
+            return Error::invalidInput("unknown subcommand");
         }
-        co_return Ok();
+        return Ok();
     }
 
     operator bool() const {

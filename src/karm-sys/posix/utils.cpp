@@ -272,12 +272,7 @@ export enum struct RepoType {
     PREFIX
 };
 
-Opt<Tuple<Str, RepoType>> _repoOverride;
-
 export Res<Tuple<Str, RepoType>> repoRoot() {
-    if (_repoOverride)
-        return Ok(*_repoOverride);
-
     auto* maybeRepo = getenv("CK_BUILDDIR");
     if (maybeRepo) {
         return Ok(Tuple<Str, RepoType>{
@@ -295,17 +290,13 @@ export Res<Tuple<Str, RepoType>> repoRoot() {
     }
 
 #ifdef __ck_prefix_value
-    return Ok(Tuple<Str, RepoType>{
+    return Ok(Tuple{
         stringify$(__ck_prefix_value) ""s,
         RepoType::PREFIX,
     });
 #endif
 
     return Error::notFound("SKIFT_BUNDLES not set");
-}
-
-export void overrideRepo(Tuple<Str, RepoType> repo) {
-    _repoOverride = repo;
 }
 
 export Res<Ref::Path> resolve(Ref::Url const& url) {

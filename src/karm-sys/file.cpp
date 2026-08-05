@@ -130,7 +130,7 @@ export struct File :
 export template <StaticEncoding E>
 Res<_String<E>> readAllText(Ref::Url const& url) {
     auto file = try$(Sys::File::open(url));
-    return Io::readAllText<Utf8>(file);
+    return Io::readAllText<E>(file);
 }
 
 export Res<Vec<u8>> readAll(Ref::Url const& url) {

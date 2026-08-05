@@ -9,7 +9,7 @@ Karm::Res<Karm::Ref::Url> __pwd();
 int main(int argc, char const** argv, char** envp) {
     Karm::registerPanicHandler(__panicHandler);
 
-    Karm::Sys::Env env{(Karm::usize)argc, argv, envp, __pwd().unwrap()};
+    Karm::Sys::Env env{static_cast<Karm::usize>(argc), argv, envp, __pwd().unwrap()};
     Karm::Async::Cancellation cancellation;
     Karm::Res<> code = Karm::Sys::run(entryPointAsync(env, cancellation.token()));
     cancellation.cancel();

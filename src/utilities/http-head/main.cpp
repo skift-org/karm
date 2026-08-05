@@ -23,7 +23,7 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken ct) {
         }
     };
 
-    co_trya$(cmd.execAsync(env));
+    co_try$(cmd.exec(env));
 
     auto url = Ref::parseUrlOrPath(urlArg.value(), env.cwd());
     auto header = co_trya$(Http::headAsync(url, ct))->header;

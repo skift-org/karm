@@ -20,7 +20,7 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
         }
     };
 
-    co_trya$(cmd.execAsync(env));
+    co_try$(cmd.exec(env));
 
     auto ips = co_trya$(Sys::lookupAsync(domainArg.value()));
     co_try$(Io::format(Sys::out(), "{}:\n", domainArg.value()));
