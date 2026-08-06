@@ -75,20 +75,6 @@ export enum struct StageFlags : u16 {
     HOST = 1 << 7,
 };
 
-/// How an attachment's contents are handled at the start of a render pass.
-export enum struct LoadOp : u8 {
-    UNDEFINED,
-    LOAD,
-    CLEAR,
-};
-
-/// How an attachment's contents are handled at the end of a render pass.
-export enum struct StoreOp : u8 {
-    UNDEFINED,
-    STORE,
-    DISCARD,
-};
-
 /// Kind of work a queue is able to execute.
 export enum struct QueueType : u8 {
     DEFAULT,  //< Queue capable of doing graphics, compute and transfer work
@@ -134,15 +120,6 @@ export enum struct IndexType : u8 {
 /// An RGBA color value.
 export using Color = Math::Vec4f;
 
-/// Per-face stencil test and the operations applied on its outcome.
-export struct Stencil {
-    Op test = Op::ALWAYS;
-    StencilOp failOp = StencilOp::KEEP;
-    StencilOp passOp = StencilOp::KEEP;
-    StencilOp depthFailOp = StencilOp::KEEP;
-    u8 reference = 0;
-};
-
 /// Description of how a sampler filters and addresses texture reads.
 export struct SamplerProps {
     SamplerCoords coord = SamplerCoords::NORMALIZED;
@@ -154,19 +131,6 @@ export struct SamplerProps {
 /// Options used when creating a device.
 export struct DeviceProps {
     Opt<Str> preferredBackend = NONE;
-};
-
-/// Description of the depth test, depth bias, and stencil behavior of a pipeline.
-export struct DepthStencilProps {
-    DepthFlags depthMode = DepthFlags::NONE;
-    Op depthTest = Op::ALWAYS;
-    f32 depthBias = 0.0f;
-    f32 depthBiasSlopeFactor = 0.0f;
-    f32 depthBiasClamp = 0.0f;
-    u8 stencilReadMask = 0xff;
-    u8 stencilWriteMask = 0xff;
-    Stencil stencilFront;
-    Stencil stencilBack;
 };
 
 /// Description of how source and destination color/alpha are blended.

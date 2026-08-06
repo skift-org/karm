@@ -8,6 +8,8 @@ import Karm.Logger;
 import Karm.Math;
 import Karm.Ref;
 import Karm.Sys;
+import Karm.Gpu.Base;
+import Karm.Gpu.Rast;
 
 using namespace Karm;
 using namespace Karm::Literals;
@@ -256,14 +258,26 @@ struct Pipeline {
     }
 };
 
-void drawPrimitive(Gfx::MutPixels px, MutSlice<f64> depth, Pipeline const& pipeline, PrimitiveData<VertexData> primitive) {
+bool cullPrimitive(Gpu::PipelineState const& pipelineState, Triangle const& triangle) {
+    if (pipelineState.cullMode == Gpu::Cull::NONE)
+        return false;
+
+    auto area = (pipelineState.frontFace == Gpu::FrontFace::COUNTER_CLOCKWISE ? 1 : -1) * triangle.xySignedArea();
+    if ((pipelineState.cullMode == Gpu::Cull::BACK and area < 0) or
+        (pipelineState.cullMode == Gpu::Cull::FRONT and area > 0))
+        return true;
+
+    return false;
+}
+
+void drawPrimitive(Gpu::PipelineState const& pipelineState, Gfx::MutPixels px, MutSlice<f64> depth, Pipeline const& pipeline, PrimitiveData<VertexData> primitive) {
     Triangle triangle = primitive.triangle();
     auto bound = triangle.xyBound().ceil().cast<isize>();
     if (not px.bound().collide(bound))
         return;
     bound = bound.clipTo(px.bound());
 
-    if (triangle.xySignedArea() < 1)
+    if (cullPrimitive(pipelineState, triangle))
         return;
 
     for (auto y : irange::fromStartEnd(bound.top(), bound.bottom())) {
@@ -276,18 +290,24 @@ void drawPrimitive(Gfx::MutPixels px, MutSlice<f64> depth, Pipeline const& pipel
             auto [color, z, discard] = pipeline.fragment(VertexData::interpolate(primitive, coords));
             if (discard)
                 continue;
-            if (depth) {
+
+            // https://docs.vulkan.org/spec/latest/chapters/fragops.html#fragops-depth
+            if (depth and pipelineState.depthStencil.depthMode.has(Gpu::DepthFlags::READ)) {
                 auto& d = depth[y * px.width() + x];
-                if (d > z)
+
+                // https://docs.vulkan.org/spec/latest/chapters/fragops.html#fragops-depth-comparison
+                if (not Gpu::compare(pipelineState.depthStencil.depthTest, z, d))
                     continue;
-                d = z;
+                if (pipelineState.depthStencil.depthMode.has(Gpu::DepthFlags::WRITE))
+                    d = z;
             }
+
             px.store(p, Gfx::Color::fromFloats(color));
         }
     }
 }
 
-void draw(Gfx::MutPixels pixels, MutSlice<f64> depths, Pipeline const& pipeline, usize vertexCount) {
+void draw(Gpu::PipelineState const& pipelineState, Gfx::MutPixels pixels, MutSlice<f64> depths, Pipeline const& pipeline, usize vertexCount) {
     for (auto vertexId : Iota<isize>(0, vertexCount, 3)) {
         PrimitiveData primitive{
             pipeline.vertex(vertexId + 0),
@@ -296,6 +316,7 @@ void draw(Gfx::MutPixels pixels, MutSlice<f64> depths, Pipeline const& pipeline,
         };
 
         drawPrimitive(
+            pipelineState,
             pixels,
             depths,
             pipeline,
@@ -328,7 +349,12 @@ struct Handler : App::Handler {
             Math::Mat4f::rotationX(rotate);
 
         Pipeline p{model, t};
-        draw(pixels, depths, p, model.len());
+        Gpu::PipelineState pipelineState;
+        pipelineState.frontFace = Gpu::FrontFace::COUNTER_CLOCKWISE;
+        pipelineState.cullMode = Gpu::Cull::BACK;
+        pipelineState.depthStencil.depthTest = Gpu::Op::GREATER;
+        pipelineState.depthStencil.depthMode = {Gpu::DepthFlags::READ, Gpu::DepthFlags::WRITE};
+        draw(pipelineState, pixels, depths, p, model.len());
         swapChain->present(buffer);
     }
 
