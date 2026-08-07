@@ -9,6 +9,7 @@ import Karm.Drm;
 import Karm.Core;
 import Karm.Math;
 import Karm.Gfx.Pixels;
+import Karm.Gpu.Base;
 import Karm.Logger;
 
 using namespace Karm::Literals;
@@ -70,7 +71,7 @@ struct SoftCommandBuffer : CommandBuffer {
     };
 
     struct ViewportCommand {
-        Math::Recti rect;
+        Viewport viewport;
     };
 
     struct ScissorCommand {
@@ -174,8 +175,8 @@ struct SoftCommandBuffer : CommandBuffer {
         commands.emplaceBack(DepthStencilStateCommand{state});
     }
 
-    void viewport(Math::Recti rect) override {
-        commands.emplaceBack(ViewportCommand{rect});
+    void viewport(Viewport viewport) override {
+        commands.emplaceBack(ViewportCommand{viewport});
     }
 
     void scissor(Math::Recti rect) override {
@@ -239,7 +240,8 @@ struct SoftExecutionContext {
     Opt<RenderPassProps> renderPass = NONE;
     Opt<Rc<Pipeline>> pipeline;
     Opt<Rc<DepthStencilState>> depthStencil;
-    Math::Recti viewport, scissor;
+    Viewport viewport;
+    Math::Recti scissor;
     FrontFace frontFace = FrontFace::COUNTER_CLOCKWISE;
     Cull cull = Cull::NONE;
 
@@ -272,7 +274,7 @@ struct SoftExecutionContext {
     }
 
     void execute(SoftCommandBuffer::ViewportCommand const& cmd) {
-        viewport = cmd.rect;
+        viewport = cmd.viewport;
     }
 
     void execute(SoftCommandBuffer::ScissorCommand const& cmd) {

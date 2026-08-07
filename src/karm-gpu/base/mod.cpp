@@ -1,6 +1,11 @@
+module;
+
+#include <karm/macros>
+
 export module Karm.Gpu.Base;
 
 import Karm.Core;
+import Karm.Math;
 
 namespace Karm::Gpu {
 
@@ -37,7 +42,7 @@ export enum struct Op : u8 {
 };
 
 export template <typename T>
-bool compare(Op op, T lhs, T rhs) {
+always_inline bool compare(Op op, T lhs, T rhs) {
     switch (op) {
     case Op::NEVER:
         return false;
@@ -129,6 +134,12 @@ export struct DepthStencilProps {
     u8 stencilWriteMask = 0xff;
     Stencil stencilFront;
     Stencil stencilBack;
+};
+
+export struct Viewport {
+    Math::Rectf bound;
+    f64 minDepth = 0;
+    f64 maxDepth = 1;
 };
 
 } // namespace Karm::Gpu

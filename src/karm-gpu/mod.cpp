@@ -282,7 +282,10 @@ export struct DrawIndexedIndirectGpuArgs {
 /// A logical GPU device, entry point for creating all other GPU resources.
 export struct Device {
     /// Create a device object
-    static Res<Rc<Device>> create(DeviceProps const& props);
+    static Res<Rc<Device>> create(DeviceProps const& props) {
+        (void)props;
+        return Error::notImplemented("Device::create");
+    }
 
     virtual ~Device() = default;
 
@@ -397,7 +400,7 @@ export struct CommandBuffer {
     virtual void depthStencilState(Rc<DepthStencilState> state) = 0;
 
     /// Set the viewport transform for subsequent draws.
-    virtual void viewport(Math::Recti rect) = 0;
+    virtual void viewport(Viewport viewport) = 0;
 
     /// Set the scissor rectangle for subsequent draws.
     virtual void scissor(Math::Recti rect) = 0;

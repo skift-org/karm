@@ -2,6 +2,7 @@
 
 import Karm.Sys;
 import Karm.Gpu;
+import Karm.Gpu.Base;
 import Karm.App;
 
 using namespace Karm;

@@ -4,6 +4,6 @@
     "type": "lib",
     "requires": [
         "karm-core",
-        "karm-core.base"
+        "karm-gpu.base"
     ]
 }
