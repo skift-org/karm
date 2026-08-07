@@ -5,6 +5,7 @@
     "requires": [
         "karm-app",
         "karm-sys",
+        "karm-image",
         "karm-gfx.pixels",
         "karm-gpu.base",
         "karm-gpu.rast"

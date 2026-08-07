@@ -10,6 +10,7 @@ import Karm.Ref;
 import Karm.Sys;
 import Karm.Gpu.Base;
 import Karm.Gpu.Rast;
+import Karm.Image;
 
 using namespace Karm;
 using namespace Karm::Literals;
@@ -19,9 +20,9 @@ using namespace Karm::Re::Literals;
 namespace Example {
 
 struct Triangle {
-    Math::Vec3f a, b, c;
+    Math::Vec4f a, b, c;
 
-    constexpr Math::Tri2f xy() const {
+    always_inline constexpr Math::Tri2f xy() const {
         return Math::Tri2f(
             a.xy,
             b.xy,
@@ -29,23 +30,23 @@ struct Triangle {
         );
     }
 
-    constexpr Math::Vec3f min() const {
+    always_inline constexpr Math::Vec4f min() const {
         return a.min(b).min(c);
     }
 
-    constexpr Math::Vec3f max() const {
+    always_inline constexpr Math::Vec4f max() const {
         return a.max(b).max(c);
     }
 
-    constexpr f64 xySignedArea() const {
+    always_inline constexpr f64 xySignedArea() const {
         return xy().signedArea();
     }
 
-    constexpr Math::Rectf xyBound() const {
+    always_inline constexpr Math::Rectf xyBound() const {
         return Math::Rectf::fromTwoPoint(min().xy, max().xy);
     }
 
-    constexpr Math::Vec3f xyBarycentricCoordinates(Math::Vec2f p) const {
+    always_inline constexpr Math::Vec3f xyBarycentricCoordinates(Math::Vec2f p) const {
         auto area = xySignedArea();
         return {
             Math::Tri2f{p, b.xy, c.xy}.signedArea() / area,
@@ -60,21 +61,25 @@ struct PrimitiveData {
     D a, b, c;
 
     template <auto D::* Field>
-    auto loadInterpolated(Math::Vec3f coords) const {
+    always_inline auto loadInterpolated(Math::Vec3f coords) const {
+        auto ia = coords.x / a.position.w;
+        auto ib = coords.y / b.position.w;
+        auto ic = coords.z / c.position.w;
+
+        return (a.*Field * ia + b.*Field * ib + c.*Field * ic) / (ia + ib + ic);
+    }
+
+    template <auto D::* Field>
+    always_inline auto loadInterpolatedNoPerspective(Math::Vec3f coords) const {
         return a.*Field * coords.x + b.*Field * coords.y + c.*Field * coords.z;
     }
 
     template <auto D::* Field>
-    auto loadInterpolatedNoPerspective(Math::Vec3f coords) const {
-        return a.*Field * coords.x + b.*Field * coords.y + c.*Field * coords.z;
-    }
-
-    template <auto D::* Field>
-    auto loadFlat() const {
+    always_inline auto loadFlat() const {
         return a.*Field;
     }
 
-    Triangle triangle() const {
+    always_inline Triangle triangle() const {
         return {
             a.position,
             b.position,
@@ -83,24 +88,10 @@ struct PrimitiveData {
     }
 };
 
-struct VertexData {
+struct Vertex {
     Math::Vec3f position;
     Math::Vec3f normal;
     Math::Vec2f uv;
-
-    static VertexData interpolate(PrimitiveData<VertexData> const& primitive, Math::Vec3f coords) {
-        return {
-            primitive.loadInterpolated<&VertexData::position>(coords),
-            primitive.loadInterpolated<&VertexData::normal>(coords),
-            primitive.loadInterpolated<&VertexData::uv>(coords),
-        };
-    }
-};
-
-struct FragmentData {
-    Math::Vec4f color;
-    f64 depth;
-    bool discard = false;
 };
 
 struct Mesh {
@@ -108,6 +99,76 @@ struct Mesh {
     Vec<Math::Vec3f> normals;
     Vec<Math::Vec2f> uvs;
     Vec<isize> indexes;
+
+    static Mesh plane(Math::Vec3f position, Math::Vec3f direction, f64 width, f64 height, usize widthSegments, usize heightSegments) {
+        Mesh mesh;
+
+        if (widthSegments < 1)
+            widthSegments = 1;
+        if (heightSegments < 1)
+            heightSegments = 1;
+
+        auto normalize = [](Math::Vec3f v) -> Math::Vec3f {
+            f32 l = Math::sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+            if (l == 0.f)
+                return {0.f, 0.f, 1.f};
+            return {v.x / l, v.y / l, v.z / l};
+        };
+
+        auto cross = [](Math::Vec3f a, Math::Vec3f b) -> Math::Vec3f {
+            return {
+                a.y * b.z - a.z * b.y,
+                a.z * b.x - a.x * b.z,
+                a.x * b.y - a.y * b.x,
+            };
+        };
+
+        // The normal of the plane.
+        Math::Vec3f n = normalize(direction);
+
+        // Select a reference vector that is not parallel to the normal.
+        f32 ny = n.y < 0.f ? -n.y : n.y;
+        Math::Vec3f ref = ny < 0.999f ? Math::Vec3f{0.f, 1.f, 0.f} : Math::Vec3f{1.f, 0.f, 0.f};
+
+        // Build an orthonormal basis. u goes right, v goes up.
+        Math::Vec3f u = normalize(cross(ref, n));
+        Math::Vec3f v = cross(n, u);
+
+        usize cols = widthSegments + 1;
+        usize rows = heightSegments + 1;
+
+        // Make the vertices.
+        for (usize y = 0; y < rows; y++) {
+            f64 ty = (f64)y / (f64)heightSegments;
+            for (usize x = 0; x < cols; x++) {
+                f64 tx = (f64)x / (f64)widthSegments;
+
+                f32 offsetU = (f32)((tx - 0.5) * width);
+                f32 offsetV = (f32)((ty - 0.5) * height);
+
+                mesh.vertex(
+                    position + u * offsetU + v * offsetV,
+                    n,
+                    {(f32)tx, (f32)ty}
+                );
+            }
+        }
+
+        // Make the triangles.
+        for (usize y = 0; y < heightSegments; y++) {
+            for (usize x = 0; x < widthSegments; x++) {
+                isize a = (isize)(y * cols + x);
+                isize b = a + 1;
+                isize c = a + (isize)cols;
+                isize d = c + 1;
+
+                mesh.triangle(a, b, d);
+                mesh.triangle(a, d, c);
+            }
+        }
+
+        return mesh;
+    }
 
     isize vertex(Math::Vec3f position, Math::Vec3f normal, Math::Vec2f uv) {
         positions.pushBack(position);
@@ -122,7 +183,7 @@ struct Mesh {
         indexes.pushBack(c);
     }
 
-    VertexData operator[](usize i) const {
+    Vertex operator[](usize i) const {
         return {
             positions[indexes[i]],
             normals[indexes[i]],
@@ -239,20 +300,43 @@ Res<Mesh> loadObj(Io::SScan& s) {
     return Ok(std::move(mesh));
 }
 
+struct VertexData {
+    Math::Vec4f position;
+    Math::Vec3f normal;
+    Math::Vec2f uv;
+
+    static VertexData interpolate(PrimitiveData<VertexData> const& primitive, Math::Vec3f coords) {
+        return {
+            primitive.loadInterpolated<&VertexData::position>(coords),
+            primitive.loadInterpolated<&VertexData::normal>(coords),
+            primitive.loadInterpolated<&VertexData::uv>(coords),
+        };
+    }
+};
+
+struct FragmentData {
+    Math::Vec4f color;
+    Opt<f64> depth = NONE;
+    bool discard = false;
+};
+
 struct Pipeline {
-    Mesh& _mesh;
-    Math::Mat4f& _local;
+    Mesh const& _mesh;
+    Gfx::Pixels texture;
+    Math::Mat4f const& _local;
 
     VertexData vertex(usize vertexId) const {
-        auto v = _mesh[vertexId];
-        v.position = (_local * v.position).xyz;
-        return v;
+        auto const& v = _mesh[vertexId];
+        return {
+            _local * Math::Vec4f{v.position, 1},
+            v.normal,
+            v.uv
+        };
     }
 
     FragmentData fragment(VertexData data) const {
         return {
-            .color = Math::Vec4f{data.normal * 0.5 + 0.5, 1},
-            .depth = data.position.z,
+            .color = texture.sample(data.uv).vec4(),
             .discard = false
         };
     }
@@ -272,11 +356,36 @@ bool cullPrimitive(Gpu::PipelineState const& pipelineState, Triangle const& tria
 
 void drawPrimitive(Gpu::PipelineState const& pipelineState, Gfx::MutPixels px, MutSlice<f64> depth, Pipeline const& pipeline, PrimitiveData<VertexData> primitive) {
     Triangle triangle = primitive.triangle();
+
+    constexpr f64 NEAR_EPSILON = 1e-6;
+    if (triangle.a.w <= NEAR_EPSILON or
+        triangle.b.w <= NEAR_EPSILON or
+        triangle.c.w <= NEAR_EPSILON)
+        return;
+
+    triangle.a = triangle.a / triangle.a.w;
+    triangle.b = triangle.b / triangle.b.w;
+    triangle.c = triangle.c / triangle.c.w;
+
+    // https://docs.vulkan.org/spec/latest/chapters/vertexpostproc.html#vertexpostproc-viewport
+    triangle.a.x = (pipelineState.viewport.bound.width / 2) * triangle.a.x + pipelineState.viewport.bound.center().x;
+    triangle.a.y = (pipelineState.viewport.bound.height / 2) * triangle.a.y + pipelineState.viewport.bound.center().y;
+    triangle.a.z = (pipelineState.viewport.maxDepth - pipelineState.viewport.minDepth) * triangle.a.z + pipelineState.viewport.minDepth;
+
+    triangle.b.x = (pipelineState.viewport.bound.width / 2) * triangle.b.x + pipelineState.viewport.bound.center().x;
+    triangle.b.y = (pipelineState.viewport.bound.height / 2) * triangle.b.y + pipelineState.viewport.bound.center().y;
+    triangle.b.z = (pipelineState.viewport.maxDepth - pipelineState.viewport.minDepth) * triangle.b.z + pipelineState.viewport.minDepth;
+
+    triangle.c.x = (pipelineState.viewport.bound.width / 2) * triangle.c.x + pipelineState.viewport.bound.center().x;
+    triangle.c.y = (pipelineState.viewport.bound.height / 2) * triangle.c.y + pipelineState.viewport.bound.center().y;
+    triangle.c.z = (pipelineState.viewport.maxDepth - pipelineState.viewport.minDepth) * triangle.c.z + pipelineState.viewport.minDepth;
+
     auto bound = triangle.xyBound().ceil().cast<isize>();
     if (not px.bound().collide(bound))
         return;
     bound = bound.clipTo(px.bound());
 
+    // https://docs.vulkan.org/spec/latest/chapters/primsrast.html#primsrast-polygons-basic
     if (cullPrimitive(pipelineState, triangle))
         return;
 
@@ -287,22 +396,29 @@ void drawPrimitive(Gpu::PipelineState const& pipelineState, Gfx::MutPixels px, M
             if (coords.x < 0 or coords.y < 0 or coords.z < 0)
                 continue;
 
-            auto [color, z, discard] = pipeline.fragment(VertexData::interpolate(primitive, coords));
-            if (discard)
+            auto fragDepth = triangle.a.z * coords.x +
+                             triangle.b.z * coords.y +
+                             triangle.c.z * coords.z;
+
+            auto [color, dd, discard] = pipeline.fragment(VertexData::interpolate(primitive, coords));
+            if (discard) [[unlikely]]
                 continue;
+
+            if (dd) [[unlikely]]
+                fragDepth = dd.unwrap();
 
             // https://docs.vulkan.org/spec/latest/chapters/fragops.html#fragops-depth
             if (depth and pipelineState.depthStencil.depthMode.has(Gpu::DepthFlags::READ)) {
                 auto& d = depth[y * px.width() + x];
 
                 // https://docs.vulkan.org/spec/latest/chapters/fragops.html#fragops-depth-comparison
-                if (not Gpu::compare(pipelineState.depthStencil.depthTest, z, d))
+                if (not Gpu::compare(pipelineState.depthStencil.depthTest, fragDepth, d))
                     continue;
                 if (pipelineState.depthStencil.depthMode.has(Gpu::DepthFlags::WRITE))
-                    d = z;
+                    d = fragDepth;
             }
 
-            px.store(p, Gfx::Color::fromFloats(color));
+            px.storeUnsafe(p, Gfx::Color::fromFloats(color));
         }
     }
 }
@@ -325,42 +441,173 @@ void draw(Gpu::PipelineState const& pipelineState, Gfx::MutPixels pixels, MutSli
     }
 }
 
+struct Camera {
+    Math::Vec3f position{0, 0, 0};
+    f64 yaw = 0;
+    f64 pitch = 0;
+
+    f64 speed = 5.0;
+    f64 sensitivity = 0.004;
+
+    bool goForward = false, goBack = false;
+    bool goLeft = false, goRight = false;
+    bool goUp = false, goDown = false;
+
+    // Camera looks along -Z when yaw and pitch are 0
+    Math::Vec3f forward() const {
+        return {
+            -Math::sin(yaw) * Math::cos(pitch),
+            Math::sin(pitch),
+            -Math::cos(yaw) * Math::cos(pitch),
+        };
+    }
+
+    Math::Vec3f right() const {
+        return {Math::cos(yaw), 0, -Math::sin(yaw)};
+    }
+
+    void key(App::Key k, bool pressed) {
+        switch (k.code()) {
+        case App::Key::W:
+            goForward = pressed;
+            break;
+        case App::Key::S:
+            goBack = pressed;
+            break;
+        case App::Key::A:
+            goLeft = pressed;
+            break;
+        case App::Key::D:
+            goRight = pressed;
+            break;
+        case App::Key::SPACE:
+            goUp = pressed;
+            break;
+        case App::Key::LSHIFT:
+        case App::Key::RSHIFT:
+            goDown = pressed;
+            break;
+        default:
+            break;
+        }
+    }
+
+    void look(f64 dx, f64 dy) {
+        yaw -= dx * sensitivity;
+        pitch -= dy * sensitivity;
+
+        // Do not let the camera turn over the poles
+        f64 limit = Math::PI / 2 - 0.001;
+        pitch = clamp(pitch, -limit, limit);
+    }
+
+    void update(f64 dt) {
+        auto f = forward();
+        auto r = right();
+
+        Math::Vec3f dir{0, 0, 0};
+        if (goForward)
+            dir = dir + f;
+        if (goBack)
+            dir = dir - f;
+        if (goRight)
+            dir = dir + r;
+        if (goLeft)
+            dir = dir - r;
+        if (goUp)
+            dir.y += 1;
+        if (goDown)
+            dir.y -= 1;
+
+        f64 len = Math::sqrt(dir.x * dir.x + dir.y * dir.y + dir.z * dir.z);
+        if (len < 0.0001)
+            return;
+
+        f64 step = speed * dt / len;
+        position = position + dir * step;
+    }
+
+    // The view matrix is the inverse of the camera transform
+    Math::Mat4f view() const {
+        return Math::Mat4f::rotationX(-pitch) *
+               Math::Mat4f::rotationY(-yaw) *
+               Math::Mat4f::translation(-position.x, -position.y, -position.z);
+    }
+};
+
 struct Handler : App::Handler {
     Mesh model;
+    Mesh ground;
+    Opt<Rc<Gfx::Image>> grass;
+    Opt<Rc<Gfx::Image>> stone;
     Rc<App::Window> win;
     Rc<App::SwapChain> swapChain;
-    float rotate = 0;
+    Vec<f64> depths;
+    float animation = 0;
+
+    Camera camera;
+    Math::Vec3f position;
 
     Handler(Mesh model, Rc<App::Window> win)
-        : model(std::move(model)), win(win), swapChain(win->createSwapChain().unwrap()) {}
+        : model(std::move(model)), win(win), swapChain(win->createSwapChain().unwrap()) {
+        camera.position = {0, 0, 10};
+        ground = Mesh::plane(
+            {0.f, 0.f, 0.f},
+            {0.f, 1.f, 0.f},
+            100.0,
+            100.0,
+            64,
+            64
+        );
+
+        grass = Image::load("bundle://hello-app/grass.png"_url).ok();
+        stone = Image::load("bundle://hello-app/stone.png"_url).ok();
+    }
 
     void update() override {
-        rotate += 0.01;
+        f64 dt = 1.0 / 60.0; // replace with the real frame time
+        camera.update(dt);
+
+        animation += 0.01;
         auto [buffer, _] = swapChain->acquire();
         auto pixels = Gfx::MutPixels::from(buffer);
         pixels.clear(Gfx::BLUE800);
-        Vec<f64> depths = {};
-        depths.resize(pixels.width() * pixels.height(), -1000);
+        depths.clear();
+        depths.resize(pixels.width() * pixels.height(), 1);
 
         Math::Mat4f t =
-            Math::Mat4f::translation(pixels.width() / 2, pixels.height() / 2, 200) *
-            Math::Mat4f::scaling(200, 200, 50) *
-            Math::Mat4f::rotationY(rotate) *
-            Math::Mat4f::rotationX(rotate);
+            Math::Mat4f::perspective(Math::PI / 2, pixels.width() / (f64)pixels.height(), 0.1, 1000) *
+            camera.view();
 
-        Pipeline p{model, t};
+        Pipeline p{model, stone.unwrap()->pixels(), t};
         Gpu::PipelineState pipelineState;
-        pipelineState.frontFace = Gpu::FrontFace::COUNTER_CLOCKWISE;
+        pipelineState.viewport = {
+            .bound = {0, 0, (f64)pixels.width(), (f64)pixels.height()},
+            .minDepth = 0,
+            .maxDepth = 1,
+        };
+        pipelineState.frontFace = Gpu::FrontFace::CLOCKWISE;
         pipelineState.cullMode = Gpu::Cull::BACK;
-        pipelineState.depthStencil.depthTest = Gpu::Op::GREATER;
+        pipelineState.depthStencil.depthTest = Gpu::Op::LESS;
         pipelineState.depthStencil.depthMode = {Gpu::DepthFlags::READ, Gpu::DepthFlags::WRITE};
         draw(pipelineState, pixels, depths, p, model.len());
+
+        Pipeline p1{ground, grass.unwrap()->pixels(), t};
+        draw(pipelineState, pixels, depths, p1, ground.len());
         swapChain->present(buffer);
     }
 
     void handle(App::WindowId, App::Event& e) override {
-        if (e.is<App::ResizeEvent>())
+        if (e.is<App::ResizeEvent>()) {
+
             swapChain = win->createSwapChain().unwrap();
+        } else if (auto ke = e.is<App::KeyboardEvent>()) {
+            if (ke->type != App::KeyboardEvent::REPEATE)
+                camera.key(ke->code, ke->type == App::KeyboardEvent::PRESS);
+        } else if (auto me = e.is<App::MouseEvent>()) {
+            if (me->type == App::MouseEvent::MOVE)
+                camera.look(me->delta.x, me->delta.y);
+        }
         e.accept();
     }
 };

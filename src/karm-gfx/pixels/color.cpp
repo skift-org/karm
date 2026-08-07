@@ -142,6 +142,15 @@ export struct Color {
         return *this;
     }
 
+    always_inline constexpr Math::Vec4f vec4() const {
+        return {
+            red / 255.,
+            green / 255.,
+            blue / 255.,
+            alpha / 255.,
+        };
+    }
+
     void repr(Io::Emit& e) const {
         e("(color #{:02x}{:02x}{:02x}{:02x})", red, green, blue, alpha);
     }
