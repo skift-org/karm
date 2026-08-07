@@ -275,6 +275,7 @@ union Mat4 {
         );
     }
 
+    // Right handed coordinate system, y-up, camera looks along -Z
     static Mat4 perspective(T fovYRadians, T aspect, T zNear, T zFar) {
         T f = T(1) / tan(fovYRadians / T(2));
         return Mat4(

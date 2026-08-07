@@ -706,21 +706,21 @@ union Vec4 {
         return max(x, y, z, w);
     }
 
-    constexpr Vec4 min(Vec4 const& other) {
+    constexpr Vec4 min(Vec4 const& other) const {
         return {
-            min(x, other.x),
-            min(y, other.y),
-            min(z, other.z),
-            min(w, other.w),
+            Karm::min(x, other.x),
+            Karm::min(y, other.y),
+            Karm::min(z, other.z),
+            Karm::min(w, other.w),
         };
     }
 
-    constexpr Vec4 max(Vec4 const& other) {
+    constexpr Vec4 max(Vec4 const& other) const {
         return {
-            max(x, other.x),
-            max(y, other.y),
-            max(z, other.z),
-            max(w, other.w),
+            Karm::max(x, other.x),
+            Karm::max(y, other.y),
+            Karm::max(z, other.z),
+            Karm::max(w, other.w),
         };
     }
 
