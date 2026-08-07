@@ -1,3 +1,7 @@
+module;
+
+#include <karm/macros>
+
 export module Karm.Core:base.flags;
 
 import :base.enum_;
@@ -8,33 +12,33 @@ export template <Meta::Enum E, typename U = Meta::UnderlyingType<E>>
 struct Flags {
     U _value = 0;
 
-    static Flags fromUnderlying(U underlying) {
+    always_inline static Flags fromUnderlying(U underlying) {
         Flags f;
         f._value = underlying;
         return f;
     }
 
-    Flags() = default;
+    always_inline Flags() = default;
 
-    Flags(None) {};
+    always_inline Flags(None){};
 
-    Flags(E value)
+    always_inline Flags(E value)
         : _value(toUnderlyingType(value)) {}
 
-    Flags(std::initializer_list<E> values) {
+    always_inline Flags(std::initializer_list<E> values) {
         for (auto value : values)
             _value |= toUnderlyingType(value);
     }
 
-    bool has(Flags other) const {
+    always_inline bool has(Flags other) const {
         return (_value & other._value) == other._value;
     }
 
-    void set(Flags other) {
+    always_inline void set(Flags other) {
         _value |= other._value;
     }
 
-    void set(E value, bool on = true) {
+    always_inline void set(E value, bool on = true) {
         if (on) {
             _value |= toUnderlyingType(value);
         } else {
@@ -42,86 +46,86 @@ struct Flags {
         }
     }
 
-    void unset(Flags other) {
+    always_inline void unset(Flags other) {
         _value &= ~other._value;
     }
 
-    void toggle(E value) {
+    always_inline void toggle(E value) {
         _value ^= toUnderlyingType(value);
     }
 
-    void clear() {
+    always_inline void clear() {
         _value = 0;
     }
 
-    bool empty() const {
+    always_inline bool empty() const {
         return _value == 0;
     }
 
-    bool any(Flags other) const {
+    always_inline bool any(Flags other) const {
         return _value & other._value;
     }
 
-    bool any() const {
+    always_inline bool any() const {
         return _value != 0;
     }
 
-    U raw() const {
+    always_inline U raw() const {
         return _value;
     }
 
-    explicit operator bool() const {
+    always_inline explicit operator bool() const {
         return _value != 0;
     }
 
-    Flags operator~() const {
+    always_inline Flags operator~() const {
         Flags res;
         res._value = ~_value;
         return res;
     }
 
-    Flags operator|(Flags other) const {
+    always_inline Flags operator|(Flags other) const {
         Flags res;
         res._value = _value | other._value;
         return res;
     }
 
-    Flags operator&(Flags other) const {
+    always_inline Flags operator&(Flags other) const {
         Flags res;
         res._value = _value & other._value;
         return res;
     }
 
-    Flags operator^(Flags other) const {
+    always_inline Flags operator^(Flags other) const {
         Flags res;
         res._value = _value ^ other._value;
         return res;
     }
 
-    Flags& operator|=(Flags other) {
+    always_inline Flags& operator|=(Flags other) {
         _value |= other._value;
         return *this;
     }
 
-    Flags& operator&=(Flags other) {
+    always_inline Flags& operator&=(Flags other) {
         _value &= other._value;
         return *this;
     }
 
-    Flags& operator^=(Flags other) {
+    always_inline Flags& operator^=(Flags other) {
         _value ^= other._value;
         return *this;
     }
 
-    bool operator!() const {
+    always_inline bool operator!() const {
         return !_value;
     }
 
-    bool operator==(Flags other) const {
+    always_inline bool operator==(Flags other) const {
         return _value == other._value;
     }
 
-    bool operator!=(Flags other) const {
+    always_inline bool operator!=(Flags other) const {
         return _value != other._value;
     }
 };
