@@ -1,4 +1,4 @@
-import Karm.Gpu;
+import Karm.Gpu.Core;
 import Karm.Core;
 
 namespace Karm::Gpu {

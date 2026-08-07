@@ -3,6 +3,6 @@
     "id": "karm-gpu.vk",
     "type": "lib",
     "requires": [
-        "karm-gpu"
+        "karm-gpu.core"
     ]
 }

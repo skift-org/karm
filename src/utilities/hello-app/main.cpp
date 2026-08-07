@@ -103,58 +103,33 @@ struct Mesh {
     static Mesh plane(Math::Vec3f position, Math::Vec3f direction, f64 width, f64 height, usize widthSegments, usize heightSegments) {
         Mesh mesh;
 
-        if (widthSegments < 1)
-            widthSegments = 1;
-        if (heightSegments < 1)
-            heightSegments = 1;
+        widthSegments = Karm::max(widthSegments, usize{1});
+        heightSegments = Karm::max(heightSegments, usize{1});
 
-        auto normalize = [](Math::Vec3f v) -> Math::Vec3f {
-            f32 l = Math::sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
-            if (l == 0.f)
-                return {0.f, 0.f, 1.f};
-            return {v.x / l, v.y / l, v.z / l};
-        };
+        auto n = direction.unitOr({0, 0, 1});
 
-        auto cross = [](Math::Vec3f a, Math::Vec3f b) -> Math::Vec3f {
-            return {
-                a.y * b.z - a.z * b.y,
-                a.z * b.x - a.x * b.z,
-                a.x * b.y - a.y * b.x,
-            };
-        };
+        auto a = n.abs();
+        Math::Vec3f ref = a.x <= a.y and a.x <= a.z ? Math::Vec3f{1, 0, 0}
+                          : a.y <= a.z              ? Math::Vec3f{0, 1, 0}
+                                                    : Math::Vec3f{0, 0, 1};
 
-        // The normal of the plane.
-        Math::Vec3f n = normalize(direction);
+        auto u = ref.cross(n).unit();
+        auto v = n.cross(u);
 
-        // Select a reference vector that is not parallel to the normal.
-        f32 ny = n.y < 0.f ? -n.y : n.y;
-        Math::Vec3f ref = ny < 0.999f ? Math::Vec3f{0.f, 1.f, 0.f} : Math::Vec3f{1.f, 0.f, 0.f};
-
-        // Build an orthonormal basis. u goes right, v goes up.
-        Math::Vec3f u = normalize(cross(ref, n));
-        Math::Vec3f v = cross(n, u);
+        Math::Vec2f size{width, height};
+        Math::Vec2f segments{(f64)widthSegments, (f64)heightSegments};
 
         usize cols = widthSegments + 1;
         usize rows = heightSegments + 1;
 
-        // Make the vertices.
         for (usize y = 0; y < rows; y++) {
-            f64 ty = (f64)y / (f64)heightSegments;
             for (usize x = 0; x < cols; x++) {
-                f64 tx = (f64)x / (f64)widthSegments;
-
-                f32 offsetU = (f32)((tx - 0.5) * width);
-                f32 offsetV = (f32)((ty - 0.5) * height);
-
-                mesh.vertex(
-                    position + u * offsetU + v * offsetV,
-                    n,
-                    {(f32)tx, (f32)ty}
-                );
+                auto st = Math::Vec2u{x, y}.cast<f64>() / segments; // parametric, +y follows +v
+                auto offset = (st - 0.5) * size;
+                mesh.vertex(position + u * offset.x + v * offset.y, n, {st.x, 1 - st.y});
             }
         }
 
-        // Make the triangles.
         for (usize y = 0; y < heightSegments; y++) {
             for (usize x = 0; x < widthSegments; x++) {
                 isize a = (isize)(y * cols + x);
@@ -325,18 +300,18 @@ struct Pipeline {
     Gfx::Pixels texture;
     Math::Mat4f const& _local;
 
-    VertexData vertex(usize vertexId) const {
+    auto vertex(VertexData& out, usize vertexId) const {
         auto const& v = _mesh[vertexId];
-        return {
+        out = {
             _local * Math::Vec4f{v.position, 1},
             v.normal,
             v.uv
         };
     }
 
-    FragmentData fragment(VertexData data) const {
-        return {
-            .color = texture.sample(data.uv).vec4(),
+    auto fragment(FragmentData& out, VertexData const& in) const {
+        out = {
+            .color = texture.sample(in.uv).vec4(),
             .discard = false
         };
     }
@@ -400,12 +375,14 @@ void drawPrimitive(Gpu::PipelineState const& pipelineState, Gfx::MutPixels px, M
                              triangle.b.z * coords.y +
                              triangle.c.z * coords.z;
 
-            auto [color, dd, discard] = pipeline.fragment(VertexData::interpolate(primitive, coords));
-            if (discard) [[unlikely]]
+            FragmentData fragment;
+            VertexData interpolated = VertexData::interpolate(primitive, coords);
+            pipeline.fragment(fragment, VertexData::interpolate(primitive, coords));
+            if (fragment.discard) [[unlikely]]
                 continue;
 
-            if (dd) [[unlikely]]
-                fragDepth = dd.unwrap();
+            if (fragment.depth) [[unlikely]]
+                fragDepth = fragment.depth.unwrap();
 
             // https://docs.vulkan.org/spec/latest/chapters/fragops.html#fragops-depth
             if (depth and pipelineState.depthStencil.depthMode.has(Gpu::DepthFlags::READ)) {
@@ -418,18 +395,17 @@ void drawPrimitive(Gpu::PipelineState const& pipelineState, Gfx::MutPixels px, M
                     d = fragDepth;
             }
 
-            px.storeUnsafe(p, Gfx::Color::fromFloats(color));
+            px.storeUnsafe(p, Gfx::Color::fromFloats(fragment.color));
         }
     }
 }
 
 void draw(Gpu::PipelineState const& pipelineState, Gfx::MutPixels pixels, MutSlice<f64> depths, Pipeline const& pipeline, usize vertexCount) {
     for (auto vertexId : Iota<isize>(0, vertexCount, 3)) {
-        PrimitiveData primitive{
-            pipeline.vertex(vertexId + 0),
-            pipeline.vertex(vertexId + 1),
-            pipeline.vertex(vertexId + 2),
-        };
+        PrimitiveData<VertexData> primitive{};
+        pipeline.vertex(primitive.a, vertexId + 0);
+        pipeline.vertex(primitive.b, vertexId + 1);
+        pipeline.vertex(primitive.c, vertexId + 2);
 
         drawPrimitive(
             pipelineState,
@@ -556,12 +532,12 @@ struct Handler : App::Handler {
             {0.f, 1.f, 0.f},
             100.0,
             100.0,
-            64,
-            64
+            16,
+            16
         );
 
-        grass = Image::load("bundle://hello-app/grass.png"_url).ok();
-        stone = Image::load("bundle://hello-app/stone.png"_url).ok();
+        grass = Image::load("bundle://hello-app/uv-texture.png"_url).ok();
+        stone = Image::load("bundle://hello-app/uv-texture.png"_url).ok();
     }
 
     void update() override {

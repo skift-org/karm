@@ -8,9 +8,11 @@ import Karm.Gpu;
 import Karm.Drm;
 import Karm.Core;
 import Karm.Math;
-import Karm.Gfx.Pixels;
-import Karm.Gpu.Base;
 import Karm.Logger;
+
+import Karm.Gpu.Base;
+import Karm.Gpu.Core;
+import Karm.Gpu.Rast;
 
 using namespace Karm::Literals;
 
@@ -30,6 +32,10 @@ struct SoftBuffer : Buffer {
     DevicePtr ptr() override {
         return DevicePtr{reinterpret_cast<u64>(_buf.buf())};
     }
+};
+
+struct SoftDepthStencilState : DepthStencilState {
+    DepthStencilProps props;
 };
 
 struct SoftGraphicPipeline : Pipeline {
@@ -67,7 +73,7 @@ struct SoftCommandBuffer : CommandBuffer {
     };
 
     struct DepthStencilStateCommand {
-        Rc<DepthStencilState> state;
+        Rc<SoftDepthStencilState> state;
     };
 
     struct ViewportCommand {
@@ -172,7 +178,8 @@ struct SoftCommandBuffer : CommandBuffer {
     }
 
     void depthStencilState(Rc<DepthStencilState> state) override {
-        commands.emplaceBack(DepthStencilStateCommand{state});
+        auto s = state.cast<SoftDepthStencilState>().unwrap();
+        commands.emplaceBack(DepthStencilStateCommand{s});
     }
 
     void viewport(Viewport viewport) override {
@@ -239,11 +246,7 @@ struct SoftCommandBuffer : CommandBuffer {
 struct SoftExecutionContext {
     Opt<RenderPassProps> renderPass = NONE;
     Opt<Rc<Pipeline>> pipeline;
-    Opt<Rc<DepthStencilState>> depthStencil;
-    Viewport viewport;
-    Math::Recti scissor;
-    FrontFace frontFace = FrontFace::COUNTER_CLOCKWISE;
-    Cull cull = Cull::NONE;
+    PipelineState pipelineState;
 
     void execute(SoftCommandBuffer::CopyBufferCommand const& cmd) {
         (void)cmd;
@@ -270,15 +273,15 @@ struct SoftExecutionContext {
     }
 
     void execute(SoftCommandBuffer::DepthStencilStateCommand const& cmd) {
-        depthStencil = cmd.state;
+        pipelineState.depthStencil = cmd.state->props;
     }
 
     void execute(SoftCommandBuffer::ViewportCommand const& cmd) {
-        viewport = cmd.viewport;
+        pipelineState.viewport = cmd.viewport;
     }
 
     void execute(SoftCommandBuffer::ScissorCommand const& cmd) {
-        scissor = cmd.rect;
+        pipelineState.scissor = cmd.rect;
     }
 
     void execute(SoftCommandBuffer::DispatchCommand const& cmd) {
@@ -301,11 +304,11 @@ struct SoftExecutionContext {
     }
 
     void execute(SoftCommandBuffer::FrontFaceCommand const& cmd) {
-        frontFace = cmd.frontFace;
+        pipelineState.frontFace = cmd.frontFace;
     }
 
     void execute(SoftCommandBuffer::CullModeCommand const& cmd) {
-        cull = cmd.cull;
+        pipelineState.cullMode = cmd.cull;
     }
 
     void execute(SoftCommandBuffer::DrawCommand const& cmd) {

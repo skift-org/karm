@@ -442,6 +442,18 @@ union Vec3 {
         return x * other.x + y * other.y + z * other.z;
     }
 
+    constexpr Vec3 cross(Vec3 const& other) const {
+        return {
+            y * other.z - z * other.y,
+            z * other.x - x * other.z,
+            x * other.y - y * other.x,
+        };
+    }
+
+    constexpr Vec3 abs() const {
+        return {Math::abs(x), Math::abs(y), Math::abs(z)};
+    }
+
     constexpr T lenSq() const {
         return dot(*this);
     }
@@ -461,6 +473,13 @@ union Vec3 {
     constexpr Vec3 unit() const {
         T l = len();
         return {x / l, y / l, z / l};
+    }
+
+    constexpr Vec3 unitOr(Vec3 fallback) const {
+        T l = len();
+        if (l == T{})
+            return fallback;
+        return *this / l;
     }
 
     constexpr T operator[](isize i) {

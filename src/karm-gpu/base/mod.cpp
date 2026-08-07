@@ -9,6 +9,47 @@ import Karm.Math;
 
 namespace Karm::Gpu {
 
+/// Operations for color/alpha blending.
+export enum struct Blend : u8 {
+    ADD,
+    SUBTRACT,
+    REV_SUBTRACT,
+    MIN,
+    MAX,
+};
+
+/// Blend factors for color/alpha blending.
+export enum struct Factor : u8 {
+    ZERO,
+    ONE,
+    SRC_COLOR,
+    DST_COLOR,
+    SRC_ALPHA,
+    ONE_MINUS_SRC_ALPHA,
+};
+
+/// How an attachment's contents are handled at the start of a render pass.
+export enum struct LoadOp : u8 {
+    UNDEFINED,
+    LOAD,
+    CLEAR,
+};
+
+/// How an attachment's contents are handled at the end of a render pass.
+export enum struct StoreOp : u8 {
+    UNDEFINED,
+    STORE,
+    DISCARD,
+};
+
+// MARK: Topology & Backface ---------------------------------------------------
+
+/// Input primitive to be used for a render pass.
+export enum struct Topology : u8 {
+    TRIANGLE_LIST,
+    TRIANGLE_STRIP,
+};
+
 /// Winding order that determines which side of a triangle is front-facing.
 export enum struct FrontFace : u8 {
     COUNTER_CLOCKWISE = 0,
@@ -22,12 +63,7 @@ export enum struct Cull : u8 {
     FRONT,
 };
 
-/// Flags controlling whether the depth buffer is read and/or written.
-export enum struct DepthFlags : u8 {
-    NONE = 0,
-    READ = 1 << 0,
-    WRITE = 1 << 1,
-};
+// MARK: Depth & Stencil -------------------------------------------------------
 
 /// Comparison operation for depth and stencil testing
 export enum struct Op : u8 {
@@ -63,6 +99,13 @@ always_inline bool compare(Op op, T lhs, T rhs) {
     }
 }
 
+/// Flags controlling whether the depth buffer is read and/or written.
+export enum struct DepthFlags : u8 {
+    NONE = 0,
+    READ = 1 << 0,
+    WRITE = 1 << 1,
+};
+
 /// Operations for stencil buffers
 export enum struct StencilOp : u8 {
     KEEP,
@@ -73,45 +116,6 @@ export enum struct StencilOp : u8 {
     INVERT,
     INCREMENT_WRAP,
     DECREMENT_WRAP,
-};
-
-/// Operations for color/alpha blending.
-export enum struct Blend : u8 {
-    ADD,
-    SUBTRACT,
-    REV_SUBTRACT,
-    MIN,
-    MAX,
-};
-
-/// Blend factors for color/alpha blending.
-export enum struct Factor : u8 {
-    ZERO,
-    ONE,
-    SRC_COLOR,
-    DST_COLOR,
-    SRC_ALPHA,
-    ONE_MINUS_SRC_ALPHA,
-};
-
-/// Input primitive to be used for a render pass.
-export enum struct Topology : u8 {
-    TRIANGLE_LIST,
-    TRIANGLE_STRIP,
-};
-
-/// How an attachment's contents are handled at the start of a render pass.
-export enum struct LoadOp : u8 {
-    UNDEFINED,
-    LOAD,
-    CLEAR,
-};
-
-/// How an attachment's contents are handled at the end of a render pass.
-export enum struct StoreOp : u8 {
-    UNDEFINED,
-    STORE,
-    DISCARD,
 };
 
 /// Per-face stencil test and the operations applied on its outcome.
@@ -136,10 +140,47 @@ export struct DepthStencilProps {
     Stencil stencilBack;
 };
 
+// MARK: Viewport & Scissor ----------------------------------------------------
+
 export struct Viewport {
     Math::Rectf bound;
     f64 minDepth = 0;
     f64 maxDepth = 1;
+};
+
+// MARK: Sampler ---------------------------------------------------------------
+
+/// Coordinate space used when sampling a texture.
+export enum struct SamplerCoords : u8 {
+    NORMALIZED, ///< Coordinates lie in [0,1] range
+    PIXEL,      ///< Coordinates lie in [0, width] and [0, height] range
+
+    _LEN,
+};
+
+/// Filtering applied when a texture is minified, magnified, or sampled between mips.
+export enum struct SamplerFilter : u8 {
+    NEAREST,
+    LINEAR,
+
+    _LEN,
+};
+
+/// How texture coordinates outside the [0,1] range are resolved.
+export enum struct SamplerAddressing : u8 {
+    CLAMP_TO_EDGE,
+    REPEAT,
+    MIRRORED,
+
+    _LEN,
+};
+
+/// Description of how a sampler filters and addresses texture reads.
+export struct SamplerProps {
+    SamplerCoords coord = SamplerCoords::NORMALIZED;
+    SamplerFilter filter = SamplerFilter::NEAREST;
+    SamplerAddressing address = SamplerAddressing::CLAMP_TO_EDGE;
+    f32 maxAnisotropy = 1.0f;
 };
 
 } // namespace Karm::Gpu
