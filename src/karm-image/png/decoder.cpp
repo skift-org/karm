@@ -376,6 +376,9 @@ export struct Decoder {
                 if (_colorType == ColorType::GREYSCALE_ALPHA)
                     a = s.nextU8be();
                 out.store(Math::Vec2u{x, y}.cast<isize>(), Gfx::Color{g, g, g, a});
+            } else if (_colorType == ColorType::INDEXED) {
+                auto i = s.nextU8be();
+                out.store(Math::Vec2u{x, y}.cast<isize>(), _palette[i]);
             } else {
                 auto r = s.nextU8be();
                 auto g = s.nextU8be();
@@ -433,6 +436,16 @@ export struct Decoder {
 
         if (_filterMethod != FilterMethod::STANDARD)
             return Error::invalidData("unsupported filter methode");
+
+        if (not oneOf(
+                _colorType,
+                ColorType::INDEXED,
+                ColorType::GREYSCALE,
+                ColorType::GREYSCALE_ALPHA,
+                ColorType::TRUECOLOR,
+                ColorType::TRUECOLOR_ALPHA
+            ))
+            return Error::invalidData("unsupported color type");
 
         auto imageData = try$(Archive::zlibDecompress(_compressedData.bytes()));
         Io::BScan s = bytes(imageData);
