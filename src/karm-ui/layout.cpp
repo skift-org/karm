@@ -808,6 +808,13 @@ struct GridLayout : GroupNode<GridLayout> {
     GridLayout(GridStyle style, Children children)
         : GroupNode(children), _style(style) {}
 
+    void reconcile(GridLayout& o) override {
+        _style = std::move(o._style);
+        _rows.clear();
+        _columns.clear();
+        GroupNode::reconcile(o);
+    }
+
     isize computeGapsRows() {
         return _style.gaps.y * (max(1uz, _style.rows.len()) - 1);
     }

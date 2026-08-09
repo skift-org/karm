@@ -191,7 +191,7 @@ struct [[nodiscard]] Opt {
             (Meta::CopyConstructible<T, U> or Meta::LvalueRef<T>)
         )
     {
-        _store.emplace(value.take());
+        _store.emplace(value.unwrap());
     }
 
     template <typename U = T>

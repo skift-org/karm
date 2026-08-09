@@ -17,3 +17,4 @@ export import :reducer;
 export import :scroll;
 export import :text;
 export import :view;
+export import :reactive;

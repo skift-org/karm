@@ -173,7 +173,7 @@ export Ui::Child numberRow(f64 value, Ui::Send<f64> onChange, f64 step, String t
 }
 
 export Ui::Child treeRow(Opt<Ui::Slot> leading, String title, Opt<String> subtitle, Ui::Slot child) {
-    return Ui::state(false, [=, leading = std::move(leading), child = std::move(child)](bool state, auto bind) {
+    return Ui::state(false, [=](bool state, auto bind) {
         return vflow(
             0,
             pressableRow(

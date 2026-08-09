@@ -15,7 +15,7 @@ export Ui::Child sidenavContent(Ui::Children children) {
 }
 
 export Ui::Child sidenavTree(Gfx::Icon icon, String title, Ui::Slot child) {
-    return Ui::state(true, [=, child = std::move(child)](bool state, auto bind) {
+    return Ui::state(true, [=](bool state, auto bind) {
         return Ui::vflow(
             Ui::button(
                 Some(bind(not state)),

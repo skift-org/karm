@@ -19,7 +19,7 @@ struct Func<Out(In...)> {
 
     template <typename F>
     struct Wrap : _Wrap {
-        F _f;
+        mutable F _f;
 
         Wrap(F&& f) : _f(std::move(f)) {}
 
@@ -91,7 +91,7 @@ struct SharedFunc<Out(In...)> {
 
     template <typename F>
     struct Wrap : _Wrap {
-        F _f;
+        mutable F _f;
 
         Wrap(F&& f) : _f(std::move(f)) {}
 

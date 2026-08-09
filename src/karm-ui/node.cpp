@@ -308,8 +308,8 @@ struct ProxyNode : LeafNode<Crtp> {
     }
 };
 
-export using Slot = Func<Child()>;
+export using Slot = SharedFunc<Child()>;
 
-export using Slots = Func<Children()>;
+export using Slots = SharedFunc<Children()>;
 
 } // namespace Karm::Ui
