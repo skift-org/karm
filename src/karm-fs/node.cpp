@@ -102,7 +102,7 @@ export struct Node {
 export template <typename T, typename... Args>
 Async::Task<Rc<T>> createAsync(Args&&... args) {
     auto node = makeRc<T>(std::forward<Args>(args)...);
-    node->_self = node;
+    node->_self = Some(node);
     co_trya$(node->initAsync());
     co_return Ok(node);
 }

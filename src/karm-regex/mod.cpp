@@ -68,7 +68,7 @@ struct ChainMatcher : Matcher {
         : _matchers(matchers) {}
 
     Opt<Match> match(Str input, usize curr) const override {
-        Opt<Match> match = Match{curr};
+        Opt<Match> match = Some(Match{curr});
         for (auto& m : _matchers) {
             match = m->match(input, match->end);
             if (not match)
@@ -84,9 +84,9 @@ struct ChainMatcher : Matcher {
 
 struct NopMatcher : Matcher {
     Opt<Match> match(Str, usize curr) const override {
-        return Match{
+        return Some(Match{
             curr,
-        };
+        });
     }
 
     void repr(Io::Emit& e) const override {
@@ -110,9 +110,9 @@ struct AtomMatcher : Matcher {
         Str s = sub(input, curr, curr + _data.len());
         if (s != _data)
             return NONE;
-        return Match{
+        return Some(Match{
             curr + _data.len(),
-        };
+        });
     }
 
     void repr(Io::Emit& e) const override {
@@ -128,9 +128,7 @@ struct DotMatcher : Matcher {
         if (rune == U'\n' or rune == U'\r' or rune == U'\u2028' or rune == U'\u2029')
             return NONE;
 
-        return Match{
-            curr + Utf8::runeLen(*rune)
-        };
+        return Some(Match{curr + Utf8::runeLen(*rune)});
     }
 
     void repr(Io::Emit& e) const override {
@@ -160,12 +158,12 @@ struct QuantifierMatcher : Matcher {
             if (not match) {
                 if (i < _quant.min)
                     return NONE;
-                return Match{curr};
+                return Some(Match{curr});
             }
             curr = match->end;
         }
 
-        return Match{curr};
+        return Some(Match{curr});
     }
 
     void repr(Io::Emit& e) const override {
@@ -207,7 +205,7 @@ struct AssertionMatcher : Matcher {
             unreachable();
         }
 
-        return Match{curr};
+        return Some(Match{curr});
     }
 
     void repr(Io::Emit& e) const override {
@@ -234,7 +232,7 @@ static Res<Quantifier> _parseQuantifier(Io::SScan& s) {
     else if (s.skip("+"))
         return Ok(Quantifier{1, NONE});
     else if (s.skip("?"))
-        return Ok(Quantifier{0, 1});
+        return Ok(Quantifier{0, Some(1)});
     else {
         return Error::invalidData("expected quantifier");
     }

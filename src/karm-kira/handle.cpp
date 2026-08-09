@@ -9,7 +9,7 @@ export Ui::Child handle() {
     return Ui::empty({128, 4}) |
            Ui::box({
                .borderRadii = 999,
-               .backgroundFill = Ui::GRAY50,
+               .backgroundFill = Some(Ui::GRAY50),
            }) |
            Ui::insets(12) |
            Ui::center();

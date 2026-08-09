@@ -114,13 +114,13 @@ export Ui::Child slider(f64 value, Ui::Send<f64> onChange, Gfx::Icon icon, Str t
            ) |
            Ui::box({
                .borderRadii = 6,
-               .backgroundFill = Ui::ACCENT600,
+               .backgroundFill = Some(Ui::ACCENT600),
            }) |
            Ui::dragRegion() |
            Ui::slider(value, std::move(onChange)) |
            Ui::box({
                .borderRadii = 6,
-               .backgroundFill = Ui::GRAY900,
+               .backgroundFill = Some(Ui::GRAY900),
            }) |
            Ui::maxSize({Ui::UNCONSTRAINED, 32});
 }

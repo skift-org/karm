@@ -23,7 +23,7 @@ test$("pack-unpack-primitives") {
 
     try$(packUnpack(NONE));
     try$(packUnpack(Opt<float>{NONE}));
-    try$(packUnpack(Opt<float>{3.14}));
+    try$(packUnpack(Opt<float>{Some(3.14)}));
 
     try$(packUnpack(Res<String>{Ok("Hello"s)}));
     try$(packUnpack(Res<String>{Error::invalidData()}));

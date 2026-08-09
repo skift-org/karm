@@ -130,7 +130,7 @@ export struct PackDeserializer : Deserializer {
         case Type::UNION_ITEM:
             if (_scan.peek<u8>() != type.index)
                 return Error::invalidData("union index mismatch");
-            res.index = _scan.next<u8>();
+            res.index = Some(_scan.next<u8>());
             break;
 
         case Type::ENUM:
@@ -143,15 +143,15 @@ export struct PackDeserializer : Deserializer {
             break;
 
         case Type::VEC:
-            res.len = try$(deserializeUnsigned(SizeHint::AUTO));
+            res.len = Some(try$(deserializeUnsigned(SizeHint::AUTO)));
             break;
 
         case Type::MAP:
-            res.len = try$(deserializeUnsigned(SizeHint::AUTO));
+            res.len = Some(try$(deserializeUnsigned(SizeHint::AUTO)));
             break;
 
         case Type::MAP_ITEM:
-            res.tag = Symbol::from(try$(deserializeString()));
+            res.tag = Some(Symbol::from(try$(deserializeString())));
             break;
 
         case Type::OBJECT:

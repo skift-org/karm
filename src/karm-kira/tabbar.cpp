@@ -25,7 +25,7 @@ export Ui::Child tabbarItem(bool selected, Ui::Send<> onSelect, Ui::Child conten
 
     if (not selected) {
         return Ui::button(
-                   onSelect,
+                   Some(onSelect),
                    Ui::ButtonStyle::subtle(),
                    content |
                        Ui::minSize({Ui::UNCONSTRAINED, 32})
@@ -37,7 +37,7 @@ export Ui::Child tabbarItem(bool selected, Ui::Send<> onSelect, Ui::Child conten
         {
             .margin = {8, 0},
             .borderRadii = 4,
-            .backgroundFill = Ui::GRAY900,
+            .backgroundFill = Some(Ui::GRAY900),
         },
         content | Ui::bound()
     );

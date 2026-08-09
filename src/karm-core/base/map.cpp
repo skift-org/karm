@@ -71,7 +71,7 @@ struct Map {
         if (auto* slot = _items.lookup(key); slot and slot->state == Items::USED) {
             V res = std::move(slot->unwrap().value);
             _items.clear(slot);
-            return res;
+            return Some(std::move(res));
         }
         return NONE;
     }
@@ -94,14 +94,14 @@ struct Map {
     [[nodiscard]] Opt<V&> lookup(Meta::Equatable<K> auto const& key) lifetimebound {
         if (auto* slot = _items.lookup(key);
             slot and slot->state == Items::USED)
-            return slot->unwrap().value;
+            return Some(slot->unwrap().value);
         return NONE;
     }
 
     [[nodiscard]] Opt<V const&> lookup(Meta::Equatable<K> auto const& key) const lifetimebound {
         if (auto* slot = _items.lookup(key);
             slot and slot->state == Items::USED)
-            return slot->unwrap().value;
+            return Some(slot->unwrap().value);
         return NONE;
     }
 

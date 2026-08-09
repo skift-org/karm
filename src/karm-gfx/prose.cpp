@@ -35,7 +35,7 @@ export struct SpanStyle {
     }
 
     SpanStyle& withColor(Color value) {
-        color = value;
+        color = Some(value);
         return *this;
     }
 
@@ -95,7 +95,7 @@ export struct ProseProps :
     }
 
     ProseProps& withColor(Gfx::Color value) {
-        color = value;
+        color = Some(value);
         return *this;
     }
 
@@ -213,14 +213,14 @@ export struct Prose : Meta::Pinned {
             if (type() != CellType::STRUT)
                 return NONE;
 
-            return p._struts[strutIndex()];
+            return Some(p._struts[strutIndex()]);
         }
 
         Opt<StrutCell const&> strut(Prose const& p) const {
             if (type() != CellType::STRUT)
                 return NONE;
 
-            return p._struts[strutIndex()];
+            return Some(p._struts[strutIndex()]);
         }
 
         Math::Au yPosition(Prose const& p, Math::Au dominantBaselineYPosition) const {
@@ -337,7 +337,7 @@ export struct Prose : Meta::Pinned {
 
     static Vec<Rc<Span const>> _ancestorChain(Rc<Span const> span) {
         Vec<Rc<Span const>> chain;
-        Opt<Rc<Span const>> cur = span;
+        Opt<Rc<Span const>> cur = Some(span);
         while (cur) {
             chain.pushBack(cur.unwrap());
             cur = cur.unwrap()->parent;
@@ -467,7 +467,7 @@ export struct Prose : Meta::Pinned {
     Vec<Rc<Span const>> _spanHistory{};
 
     void pushSpan(SpanStyle const& spanStyle) {
-        auto span = makeRc<Span>(_currentSpan, spanStyle);
+        auto span = makeRc<Span>(Some(_currentSpan), spanStyle);
 
         _spanHistory.pushBack(span);
 

@@ -45,7 +45,7 @@ struct [[nodiscard]] Res {
     always_inline constexpr Opt<V> ok() {
         if (_inner.template is<E>()) [[unlikely]]
             return NONE;
-        return _inner.template unwrap<Ok<V>>().unwrap();
+        return Some(_inner.template unwrap<Ok<V>>().unwrap());
     }
 
     always_inline constexpr Opt<V> ok() const {
@@ -57,7 +57,7 @@ struct [[nodiscard]] Res {
     always_inline constexpr Opt<E> error() const {
         if (not _inner.template is<E>()) [[unlikely]]
             return NONE;
-        return _inner.template unwrap<E>();
+        return Some(_inner.template unwrap<E>());
     }
 
     always_inline constexpr bool has() const {

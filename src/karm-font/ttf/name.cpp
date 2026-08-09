@@ -84,7 +84,7 @@ export struct Name : Io::BChunk {
                 r.length = s.nextU16be();
                 r.offset = s.nextU16be();
 
-                return r;
+                return Some(r);
             }
         };
 

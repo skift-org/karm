@@ -13,7 +13,7 @@ test$("opt-default-constructor") {
 }
 
 test$("opt-constructed") {
-    Opt<int> opt{420};
+    Opt<int> opt{Some(420)};
 
     expect$(opt.has());
     expectEq$(opt.unwrap(), 420);
@@ -24,7 +24,7 @@ test$("opt-constructed") {
 test$("opt-assign") {
     Opt<int> opt{};
 
-    opt = 420;
+    opt = Some(420);
 
     expect$(opt.has());
     expectEq$(opt.unwrap(), 420);
@@ -33,7 +33,7 @@ test$("opt-assign") {
 }
 
 test$("opt-assign-none") {
-    Opt<int> opt{420};
+    Opt<int> opt{Some(420)};
 
     opt = NONE;
 
@@ -43,7 +43,7 @@ test$("opt-assign-none") {
 }
 
 test$("opt-unwrap") {
-    Opt<int> opt{420};
+    Opt<int> opt{Some(420)};
 
     expectEq$(opt.unwrap(), 420);
 
@@ -51,7 +51,7 @@ test$("opt-unwrap") {
 }
 
 test$("opt-take") {
-    Opt<int> opt{420};
+    Opt<int> opt{Some(420)};
 
     expectEq$(opt.take(), 420);
     expect$(not opt.has());
@@ -62,9 +62,9 @@ test$("opt-take") {
 test$("opt-equal") {
     Opt<int> opt = NONE;
     expectEq$(opt, NONE);
-    expectNe$(opt, 42);
+    expectNe$(opt, Some(42));
 
-    opt = 42;
+    opt = Some(42);
     expectEq$(opt, 42);
     expectNe$(opt, NONE);
 
@@ -77,13 +77,13 @@ test$("bool-niche") {
     expectEq$(sizeof(test), sizeof(bool));
     expectEq$(test.has(), false);
     expectEq$(test, NONE);
-    test = true;
+    test = Some(true);
     expectEq$(test.unwrap(), true);
     expectEq$(test.take(), true);
     expectEq$(test, NONE);
-    test = false;
+    test = Some(false);
     expectEq$(test.has(), true);
-    test = 2;
+    test = Some(2);
     expectEq$(test.has(), true);
 
     return Ok();
@@ -102,11 +102,11 @@ test$("bool-niche") {
     expectEq$(sizeof(test), sizeof(TestEnum));
     expectEq$(test.has(), false);
     expectEq$(test, NONE);
-    test = TestEnum::A;
+    test = Some(TestEnum::A);
     expectEq$(test.unwrap(), TestEnum::A);
     expectEq$(test.take(), TestEnum::A);
     expectEq$(test, NONE);
-    test = TestEnum::_LEN;
+    test = Some(TestEnum::_LEN);
     expectEq$(test.has(), true);
 
     return Ok();
@@ -123,7 +123,7 @@ test$("opt-ref-default-constructor") {
 
 test$("opt-ref-constructed") {
     int value = 42;
-    Opt<int&> opt{value};
+    Opt<int&> opt{Some(value)};
 
     expect$(opt.has());
     expectEq$(opt.unwrap(), 42);
@@ -136,12 +136,12 @@ test$("opt-ref-assign") {
     int a = 1;
     int b = 2;
 
-    Opt<int&> opt{a};
+    Opt<int&> opt{Some(a)};
     expect$(opt.has());
     expectEq$(&opt.unwrap(), &a);
     expectEq$(opt.unwrap(), 1);
 
-    opt = b;
+    opt = Some(b);
     expect$(opt.has());
     expectEq$(&opt.unwrap(), &b);
     expectEq$(opt.unwrap(), 2);
@@ -155,7 +155,7 @@ test$("opt-ref-assign") {
 
 test$("opt-ref-assign-none") {
     int value = 123;
-    Opt<int&> opt{value};
+    Opt<int&> opt{Some(value)};
 
     expect$(opt.has());
 
@@ -169,7 +169,7 @@ test$("opt-ref-assign-none") {
 
 test$("opt-ref-unwrap") {
     int value = 7;
-    Opt<int&> opt{value};
+    Opt<int&> opt{Some(value)};
 
     expectEq$(opt.unwrap(), 7);
     expectEq$(&opt.unwrap(), &value);
@@ -183,7 +183,7 @@ test$("opt-ref-unwrap") {
 
 test$("opt-ref-take") {
     int value = 123;
-    Opt<int&> opt{value};
+    Opt<int&> opt{Some(value)};
 
     int& ref = opt.take();
 
@@ -200,7 +200,7 @@ test$("opt-ref-take") {
 
 test$("opt-const-ref") {
     int value = 5;
-    Opt<int const&> opt{value};
+    Opt<int const&> opt{Some(value)};
 
     expect$(opt.has());
     expectEq$(opt.unwrap(), 5);
@@ -222,7 +222,7 @@ test$("opt-ref-operator-bool-and-clear") {
     expect$(not opt);
     expect$(not opt.has());
 
-    opt = value;
+    opt = Some(value);
     expect$(opt);
     expect$(opt.has());
 
@@ -235,9 +235,9 @@ test$("opt-ref-operator-bool-and-clear") {
 
 test$("opt-ref-rebinding") {
     int foo = 1;
-    Opt<int&> foor{foo};
+    Opt<int&> foor{Some(foo)};
     int bar = 2;
-    foor = bar;
+    foor = Some(bar);
 
     expectEq$(foo, 1);
     expectEq$(bar, 2);
@@ -248,7 +248,7 @@ test$("opt-ref-rebinding") {
 
 test$("opt-ref-copy") {
     int value = 42;
-    Opt<int&> opt{value};
+    Opt<int&> opt{Some(value)};
 
     Opt<int&> optCopy = opt;
 
@@ -264,7 +264,7 @@ test$("opt-ref-copy") {
 
 test$("opt-ref-copy-const") {
     int value = 42;
-    Opt<int&> opt{value};
+    Opt<int&> opt{Some(value)};
     Opt<int&> const optCopy = opt;
 
     expect$(optCopy.has());
@@ -279,7 +279,7 @@ test$("opt-ref-copy-const") {
 
 test$("opt-ref-move") {
     int value = 42;
-    Opt<int&> opt{value};
+    Opt<int&> opt{Some(value)};
 
     Opt<int&> optMoved = std::move(opt);
 
@@ -296,7 +296,7 @@ test$("opt-ref-move") {
 
 test$("opt-ref-move-const") {
     int value = 42;
-    Opt<int&> opt{value};
+    Opt<int&> opt{Some(value)};
     Opt<int const&> optConst = opt;
     return Ok();
 }

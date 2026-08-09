@@ -95,73 +95,73 @@ export struct TextAction {
             bool optionalyShift = (nomod or shift);
 
             if (ke->key == App::Key::HOME and ctrl and shift)
-                return SELECT_START;
+                return Some(SELECT_START);
             else if (ke->key == App::Key::END and ctrl and shift)
-                return SELECT_END;
+                return Some(SELECT_END);
             else if (ke->key == App::Key::LEFT and ctrl and shift)
-                return SELECT_PREV_WORD;
+                return Some(SELECT_PREV_WORD);
             else if (ke->key == App::Key::RIGHT and ctrl and shift)
-                return SELECT_NEXT_WORD;
+                return Some(SELECT_NEXT_WORD);
             else if (ke->key == App::Key::Z and ctrl and shift)
-                return REDO;
+                return Some(REDO);
 
             else if (ke->key == App::Key::LEFT and shift)
-                return SELECT_PREV;
+                return Some(SELECT_PREV);
             else if (ke->key == App::Key::RIGHT and shift)
-                return SELECT_NEXT;
+                return Some(SELECT_NEXT);
             else if (ke->key == App::Key::UP and shift)
-                return SELECT_UP;
+                return Some(SELECT_UP);
             else if (ke->key == App::Key::DOWN and shift)
-                return SELECT_DOWN;
+                return Some(SELECT_DOWN);
             else if (ke->key == App::Key::HOME and shift)
-                return SELECT_LINE_START;
+                return Some(SELECT_LINE_START);
             else if (ke->key == App::Key::END and shift)
-                return SELECT_LINE_END;
+                return Some(SELECT_LINE_END);
 
             else if (ke->key == App::Key::BKSPC and ctrl)
-                return DELETE_PREV_WORD;
+                return Some(DELETE_PREV_WORD);
             else if (ke->key == App::Key::DELETE and ctrl)
-                return DELETE_NEXT_WORD;
+                return Some(DELETE_NEXT_WORD);
             else if (ke->key == App::Key::LEFT and ctrl)
-                return MOVE_PREV_WORD;
+                return Some(MOVE_PREV_WORD);
             else if (ke->key == App::Key::RIGHT and ctrl)
-                return MOVE_NEXT_WORD;
+                return Some(MOVE_NEXT_WORD);
             else if (ke->key == App::Key::HOME and ctrl)
-                return MOVE_START;
+                return Some(MOVE_START);
             else if (ke->key == App::Key::END and ctrl)
-                return MOVE_END;
+                return Some(MOVE_END);
             else if (ke->key == App::Key::A and ctrl)
-                return SELECT_ALL;
+                return Some(SELECT_ALL);
             else if (ke->key == App::Key::C and ctrl)
-                return COPY;
+                return Some(COPY);
             else if (ke->key == App::Key::X and ctrl)
-                return CUT;
+                return Some(CUT);
             else if (ke->key == App::Key::V and ctrl)
-                return PASTE;
+                return Some(PASTE);
             else if (ke->key == App::Key::Z and ctrl)
-                return UNDO;
+                return Some(UNDO);
 
             else if (ke->key == App::Key::LEFT and nomod)
-                return MOVE_PREV;
+                return Some(MOVE_PREV);
             else if (ke->key == App::Key::RIGHT and nomod)
-                return MOVE_NEXT;
+                return Some(MOVE_NEXT);
             else if (ke->key == App::Key::UP and nomod)
-                return MOVE_UP;
+                return Some(MOVE_UP);
             else if (ke->key == App::Key::DOWN and nomod)
-                return MOVE_DOWN;
+                return Some(MOVE_DOWN);
             else if (ke->key == App::Key::HOME and nomod)
-                return MOVE_LINE_START;
+                return Some(MOVE_LINE_START);
             else if (ke->key == App::Key::END and nomod)
-                return MOVE_LINE_END;
+                return Some(MOVE_LINE_END);
             else if (ke->key == App::Key::ENTER and nomod)
-                return NEWLINE;
+                return Some(NEWLINE);
 
             else if (ke->key == App::Key::BKSPC and optionalyShift)
-                return BACKSPACE;
+                return Some(BACKSPACE);
             else if (ke->key == App::Key::DELETE and optionalyShift)
-                return DELETE;
+                return Some(DELETE);
             else if (ke->rune)
-                return TextAction{TYPE, ke->rune};
+                return Some(TextAction{TYPE, ke->rune});
         }
 
         return NONE;

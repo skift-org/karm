@@ -21,7 +21,7 @@ export struct Sched :
 
     bool exited() const { return _ret.has(); }
 
-    void quit(Res<> ret) { _ret = ret; }
+    void quit(Res<> ret) { _ret = Some(ret); }
 
     virtual Res<> wait(Instant until) = 0;
 

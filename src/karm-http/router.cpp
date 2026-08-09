@@ -124,7 +124,7 @@ export struct RoutePattern {
                 }
 
                 params.put(seg.value, sb.take());
-                return params; // we're done, EXTRA is terminal
+                return Some(params); // we're done, EXTRA is terminal
             }
 
             default:
@@ -135,7 +135,7 @@ export struct RoutePattern {
         if (not segments.ended())
             return NONE;
 
-        return params;
+        return Some(params);
     }
 
     void repr(Io::Emit& e) const {

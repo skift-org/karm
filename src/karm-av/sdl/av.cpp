@@ -101,10 +101,10 @@ struct SdlCameraStream : Av::VideoStream {
         SDL_DestroySurface(sdlConverted);
         SDL_ReleaseCameraFrame(_sdlCamera, sdlSurface);
 
-        _curr = VideoFrame{
+        _curr = Some(VideoFrame{
             surface,
             Duration::fromSecs(0),
-        };
+        });
         return _curr;
     }
 };

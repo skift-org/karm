@@ -95,7 +95,7 @@ struct Reducer :
                 (*_child)->attach(this);
             }
         } else {
-            _child = _build(_state);
+            _child = Some(_build(_state));
             (*_child)->attach(this);
         }
 

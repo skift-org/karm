@@ -20,7 +20,7 @@ export struct BoxStyle {
     Math::Radiif borderRadii{};
     f64 borderWidth{};
 
-    Opt<Gfx::Fill> borderFill{Gfx::ALPHA};
+    Opt<Gfx::Fill> borderFill{Some(Gfx::ALPHA)};
     Opt<Gfx::Fill> backgroundFill{};
     Gfx::Fill foregroundFill{GRAY50};
     Opt<Gfx::BoxShadow> shadowStyle{};
@@ -52,13 +52,13 @@ export struct BoxStyle {
 
     BoxStyle withBorderFill(Gfx::Fill borderFill) const {
         auto copy = *this;
-        copy.borderFill = borderFill;
+        copy.borderFill = Some(borderFill);
         return copy;
     }
 
     BoxStyle withBackgroundFill(Gfx::Fill backgroundFill) const {
         auto copy = *this;
-        copy.backgroundFill = backgroundFill;
+        copy.backgroundFill = Some(backgroundFill);
         return copy;
     }
 
@@ -70,7 +70,7 @@ export struct BoxStyle {
 
     BoxStyle withShadowStyle(Gfx::BoxShadow shadowStyle) const {
         auto copy = *this;
-        copy.shadowStyle = shadowStyle;
+        copy.shadowStyle = Some(shadowStyle);
         return copy;
     }
 

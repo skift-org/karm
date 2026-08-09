@@ -10,7 +10,7 @@ namespace Karm::Kira {
 export Ui::Child avatar(Union<None, String, Gfx::Icon, Rc<Gfx::Image>> icon = NONE, usize size = 46) {
     Ui::BoxStyle boxStyle = {
         .borderRadii = 99,
-        .backgroundFill = Ui::GRAY800,
+        .backgroundFill = Some(Ui::GRAY800),
         .foregroundFill = Ui::GRAY400
     };
 
@@ -27,7 +27,7 @@ export Ui::Child avatar(Union<None, String, Gfx::Icon, Rc<Gfx::Image>> icon = NO
             return Ui::icon(i, Math::ceili(innerSize));
         },
         [](Rc<Gfx::Image> s) {
-            return Ui::image(s, {999});
+            return Ui::image(s, Some(999));
         }
     );
 

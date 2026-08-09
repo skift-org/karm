@@ -47,7 +47,7 @@ struct DialogLayer : LeafNode<DialogLayer> {
     void _showDialog(Child child) {
         // We need to defer showing the dialog until the next frame,
         // otherwise replacing the dialog might cause some use after free down the tree
-        _shouldShow = child;
+        _shouldShow = Some(child);
         mouseLeave(*_child);
         shouldLayout(*this);
         _visibility.animate(*this, 1, 0.3, Math::Easing::exponentialOut);

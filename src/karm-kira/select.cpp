@@ -11,7 +11,7 @@ namespace Karm::Kira {
 
 export Ui::Child select(Ui::Child value, Ui::Slots slots) {
     return Ui::button(
-        [slots = std::move(slots)](auto& n) {
+        Some([slots = std::move(slots)](auto& n) {
             auto popover =
                 Ui::vflow(
                     slots()
@@ -20,9 +20,9 @@ export Ui::Child select(Ui::Child value, Ui::Slots slots) {
                 Ui::box({
                     .borderRadii = 6,
                     .borderWidth = 1,
-                    .borderFill = Ui::GRAY800,
-                    .backgroundFill = Ui::GRAY900,
-                    .shadowStyle = Gfx::BoxShadow::elevated(4),
+                    .borderFill = Some(Ui::GRAY800),
+                    .backgroundFill = Some(Ui::GRAY900),
+                    .shadowStyle = Some(Gfx::BoxShadow::elevated(4)),
                 }) |
                 Ui::scaleIn();
 
@@ -41,7 +41,7 @@ export Ui::Child select(Ui::Child value, Ui::Slots slots) {
                         Ui::center()
                 );
             }
-        },
+        }),
         Ui::ButtonStyle::outline(),
         Ui::hflow(
             8,
@@ -71,10 +71,10 @@ export Ui::Child selectItem(Opt<Ui::Send<>> onPress, String t) {
            Ui::insets({6, 6, 6, 10}) |
            Ui::minSize({Ui::UNCONSTRAINED, 28}) |
            Ui::button(
-               [onPress = std::move(onPress)](auto& n) {
+               Some([onPress = std::move(onPress)](auto& n) {
                    onPress(n);
                    Ui::closePopover(n);
-               },
+               }),
                Ui::ButtonStyle::subtle()
            ) |
            Ui::insets(4);

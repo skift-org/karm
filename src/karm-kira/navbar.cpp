@@ -18,7 +18,7 @@ export Ui::Child navbarContent(Ui::Children children) {
                .margin = 8,
                .padding = 8,
                .borderRadii = 99,
-               .backgroundFill = Ui::GRAY800,
+               .backgroundFill = Some(Ui::GRAY800),
            }) |
            Ui::center();
 }

@@ -8,7 +8,7 @@ test$("promise-one-future") {
     Opt<Async::_Future<int>> future;
     {
         Async::_Promise<int> promise;
-        future = promise.future();
+        future = Some(promise.future());
         promise.resolve(42);
     }
     auto res = Async::run(*future);
@@ -21,9 +21,9 @@ test$("promise-multiple-futures") {
     {
         Async::_Promise<int> promise;
 
-        f1 = promise.future();
-        f2 = promise.future();
-        f3 = promise.future();
+        f1 = Some(promise.future());
+        f2 = Some(promise.future());
+        f3 = Some(promise.future());
 
         promise.resolve(42);
     }

@@ -103,7 +103,7 @@ static bool _findBestMatch(Str text, Str pattern, usize ti, usize pi, Vec<usize>
 
 export Opt<Match> matchFuzzy(Str text, Str pattern) {
     if (text == pattern)
-        return Match{9999, {{0, text.len()}}};
+        return Some(Match{9999, {{0, text.len()}}});
 
     if (pattern.len() == 0)
         return NONE;
@@ -131,7 +131,7 @@ export Opt<Match> matchFuzzy(Str text, Str pattern) {
         result.ranges.pushBack(urange{start, len});
     }
 
-    return result;
+    return Some(result);
 }
 
 } // namespace Karm::Glob

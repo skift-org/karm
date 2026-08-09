@@ -22,7 +22,7 @@ export Ui::Child searchbar(String text, Ui::Send<String> onChange = Ui::SINK<Str
            Ui::box({
                .padding = {6, 12, 6, 12},
                .borderRadii = 4,
-               .backgroundFill = Ui::GRAY800,
+               .backgroundFill = Some(Ui::GRAY800),
            }) |
            Ui::minSize({Ui::UNCONSTRAINED, 32}) |
            Ui::focusable() |

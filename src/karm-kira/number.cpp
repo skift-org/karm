@@ -9,17 +9,17 @@ namespace Karm::Kira {
 export Ui::Child number(f64 value, Ui::Send<f64> onChange, f64 step) {
     return Ui::hflow(
                Ui::button(
-                   [onChange, value, step](auto& n) {
+                   Some([onChange, value, step](auto& n) {
                        onChange(n, value - step);
-                   },
+                   }),
                    Ui::ButtonStyle::subtle(),
                    Mdi::MINUS
                ),
                Ui::labelMedium("{:.02}", value) | Ui::insets({0, 4}) | Ui::center(),
                Ui::button(
-                   [onChange, value, step](auto& n) {
+                   Some([onChange, value, step](auto& n) {
                        onChange(n, value + step);
-                   },
+                   }),
                    Ui::ButtonStyle::subtle(),
                    Mdi::PLUS
                )
@@ -27,7 +27,7 @@ export Ui::Child number(f64 value, Ui::Send<f64> onChange, f64 step) {
            Ui::box({
                .borderRadii = 4,
                .borderWidth = 1,
-               .borderFill = Ui::GRAY800,
+               .borderFill = Some(Ui::GRAY800),
            }) |
            Ui::focusable();
 }

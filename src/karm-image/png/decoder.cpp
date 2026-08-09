@@ -140,7 +140,7 @@ export struct Decoder {
                 c.data = s.nextBytes(c.len);
                 c.crc32 = s.nextI32be();
 
-                return c;
+                return Some(c);
             }
         };
 

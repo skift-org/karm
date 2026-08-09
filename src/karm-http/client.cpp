@@ -98,7 +98,7 @@ export struct Client : Transport {
         auto req = makeRc<Request>();
         req->method = Method::POST;
         req->url = url;
-        req->body = body;
+        req->body = Some(body);
         req->header.put(Header::HOST, url.host.str());
 
         return doAsync(req, ct);
@@ -109,7 +109,7 @@ export struct Client : Transport {
         auto req = makeRc<Request>();
         req->method = Method::PUT;
         req->url = url;
-        req->body = body;
+        req->body = Some(body);
         req->header.put(Header::HOST, url.host.str());
 
         return doAsync(req, ct);

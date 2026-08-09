@@ -60,7 +60,7 @@ struct Node : App::Dispatch {
         return _key;
     }
 
-    virtual Opt<Child> reconcile(Child other) { return other; }
+    virtual Opt<Child> reconcile(Child other) { return Some(other); }
 
     virtual void paint(Gfx::Canvas&, Math::Recti) {}
 
@@ -120,7 +120,7 @@ struct LeafNode : Node {
             panic("reconcile() called on self, did you forget to wrap the node in a slot?");
 
         if (not other.is<Crtp>() or _key != other->key())
-            return other;
+            return Some(other);
 
         reconcile(other.unwrap<Crtp>());
         other->_consumed = true;

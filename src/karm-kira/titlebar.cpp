@@ -15,25 +15,25 @@ namespace Karm::Kira {
 export Ui::Child titlebarTitle(Gfx::Icon icon, String title, bool compact = false) {
     if (compact) {
         return Ui::button(
-            [=](Ui::Node& n) {
+            Some([=](Ui::Node& n) {
                 Ui::showDialog(n, aboutDialog(title));
-            },
+            }),
             Ui::ButtonStyle::subtle(),
             icon
         );
     }
 
     return Ui::button(
-        [=](auto& n) {
+        Some([=](auto& n) {
             Ui::showDialog(n, aboutDialog(title));
-        },
+        }),
         Ui::ButtonStyle::subtle(), icon, title
     );
 }
 
 export Ui::Child titlebarClose() {
     return Ui::button(
-        Ui::bindBubble<App::RequestCloseEvent>(),
+        Some(Ui::bindBubble<App::RequestCloseEvent>()),
         Ui::ButtonStyle::subtle(),
         Mdi::WINDOW_CLOSE
     );
@@ -54,14 +54,14 @@ export struct TitlebarContent {
                Ui::insets({0, 8}) |
                contextMenu([] {
                    return contextMenuContent({
-                       contextMenuItem(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::NONE), Mdi::WINDOW_RESTORE, "Restore"),
-                       contextMenuItem(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::FULL), Mdi::WINDOW_MAXIMIZE, "Maximize"),
-                       contextMenuItem(Ui::bindBubble<App::RequestMinimizeEvent>(), Mdi::WINDOW_MINIMIZE, "Minimize"),
+                       contextMenuItem(Some(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::NONE)), Some(Mdi::WINDOW_RESTORE), "Restore"),
+                       contextMenuItem(Some(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::FULL)), Some(Mdi::WINDOW_MAXIMIZE), "Maximize"),
+                       contextMenuItem(Some(Ui::bindBubble<App::RequestMinimizeEvent>()), Some(Mdi::WINDOW_MINIMIZE), "Minimize"),
                        separator(),
-                       contextMenuItem(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::LEFT), Mdi::DOCK_LEFT, "Snap Left"),
-                       contextMenuItem(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::RIGHT), Mdi::DOCK_RIGHT, "Snap Right"),
+                       contextMenuItem(Some(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::LEFT)), Some(Mdi::DOCK_LEFT), "Snap Left"),
+                       contextMenuItem(Some(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::RIGHT)), Some(Mdi::DOCK_RIGHT), "Snap Right"),
                        separator(),
-                       contextMenuItem(Ui::bindBubble<App::RequestCloseEvent>(), Mdi::WINDOW_CLOSE, "Close"),
+                       contextMenuItem(Some(Ui::bindBubble<App::RequestCloseEvent>()), Some(Mdi::WINDOW_CLOSE), "Close"),
                    });
                });
     }

@@ -95,7 +95,7 @@ export struct CpuCanvas : Canvas {
 
     // Begin drawing operations on the given pixels.
     void begin(MutPixels p) {
-        _pixels = p;
+        _pixels = Some(p);
         _stack.pushBack({
             .clip = pixels().bound(),
         });
@@ -291,7 +291,7 @@ export struct CpuCanvas : Canvas {
             newClipMask->mutPixels().store(frag.xy - clipBound.xy, Color::fromRgb(Math::roundi(parentPixel * frag.a), 0, 0));
         });
 
-        current().clipMask = newClipMask;
+        current().clipMask = Some(newClipMask);
         current().clipBound = clipBound;
     }
 
@@ -404,7 +404,7 @@ export struct CpuCanvas : Canvas {
             maskPixels.store(frag.xy - bound.xy, Color::fromRgb(Math::roundi(frag.a * 255), 0, 0));
         });
 
-        return {font.fontface, mask, bound.xy};
+        return {font.fontface, Some(mask), bound.xy};
     }
 
     void _blitGlyph(CachedGlyph const& cached, Math::Vec2i baseline) {

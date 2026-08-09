@@ -29,7 +29,7 @@ struct [[nodiscard, clang::coro_return_type, clang::coro_lifetimebound]] _Task {
         }
 
         void return_value(T value) {
-            _resume->value = std::move(value);
+            _resume->value = Some(std::move(value));
         }
 
         template <typename U>

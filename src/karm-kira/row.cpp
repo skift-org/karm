@@ -87,10 +87,10 @@ export Ui::Child pressableRow(Opt<Ui::Send<>> onPress, Opt<Ui::Child> leading, S
 
 export Ui::Child buttonRow(Opt<Ui::Send<>> onPress, Gfx::Icon i, String title, Opt<String> subtitle, String action) {
     return rowContent(
-        Ui::icon(i, 24),
+        Some(Ui::icon(i, 24)),
         title,
         subtitle,
-        Ui::button(onPress, action) | Ui::insets({0, 0, 0, 12})
+        Some(Ui::button(onPress, action) | Ui::insets({0, 0, 0, 12}))
     );
 }
 
@@ -99,7 +99,7 @@ export Ui::Child buttonRow(Opt<Ui::Send<>> onPress, String title, Opt<String> su
         NONE,
         title,
         subtitle,
-        Ui::button(onPress, action) | Ui::insets({0, 0, 0, 12})
+        Some(Ui::button(onPress, action) | Ui::insets({0, 0, 0, 12}))
     );
 }
 
@@ -108,7 +108,7 @@ export Ui::Child toggleRow(bool value, Ui::Send<bool> onChange, String title) {
         NONE,
         title,
         NONE,
-        toggle(value, std::move(onChange))
+        Some(toggle(value, std::move(onChange)))
     );
 }
 
@@ -117,13 +117,13 @@ export Ui::Child checkboxRow(bool value, Ui::Send<bool> onChange, String title) 
         NONE,
         title,
         NONE,
-        checkbox(value, std::move(onChange))
+        Some(checkbox(value, std::move(onChange)))
     );
 }
 
 export Ui::Child radioRow(bool value, Ui::Send<bool> onChange, String title) {
     return rowContent(
-        radio(value, std::move(onChange)),
+        Some(radio(value, std::move(onChange))),
         title,
         NONE,
         NONE
@@ -135,10 +135,13 @@ export Ui::Child sliderRow(f64 value, Ui::Send<f64> onChange, String title) {
         NONE,
         title,
         NONE,
-        Kira::slider(
-            value,
-            onChange
-        ) | Ui::minSize({128, Ui::UNCONSTRAINED})
+        Some(
+            Kira::slider(
+                value,
+                Some(onChange)
+            ) |
+            Ui::minSize({128, Ui::UNCONSTRAINED})
+        )
     );
 }
 
@@ -147,7 +150,7 @@ export Ui::Child selectRow(Ui::Child value, Ui::Slots options, String title) {
         NONE,
         title,
         NONE,
-        select(std::move(value), std::move(options))
+        Some(select(std::move(value), std::move(options)))
     );
 }
 
@@ -156,7 +159,7 @@ export Ui::Child colorRow(Gfx::Color c, Ui::Send<Gfx::Color> onChange, String ti
         NONE,
         title,
         NONE,
-        colorInput(c, std::move(onChange))
+        Some(colorInput(c, std::move(onChange)))
     );
 }
 
@@ -165,7 +168,7 @@ export Ui::Child numberRow(f64 value, Ui::Send<f64> onChange, f64 step, String t
         NONE,
         title,
         NONE,
-        number(value, std::move(onChange), step)
+        Some(number(value, std::move(onChange), step))
     );
 }
 
@@ -174,15 +177,11 @@ export Ui::Child treeRow(Opt<Ui::Slot> leading, String title, Opt<String> subtit
         return vflow(
             0,
             pressableRow(
-                bind(not state),
+                Some(bind(not state)),
                 leading(),
                 title,
                 subtitle,
-                Ui::icon(
-                    state ? Mdi::CHEVRON_UP
-                          : Mdi::CHEVRON_DOWN,
-                    24
-                )
+                Some(Ui::icon(state ? Mdi::CHEVRON_UP : Mdi::CHEVRON_DOWN, 24))
             ),
             state ? insets(
                         {0, 0, 0, 0},

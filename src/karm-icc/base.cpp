@@ -59,9 +59,9 @@ export struct ColorSpace {
     u8 _ncomp = 3;
 
     static Opt<ColorSpace> fromSignature(Bytes signature) {
-#define COLORSPACE(NAME, SIG, NCOMP)           \
-    if (signature == SIG ""_bytes) {           \
-        return ColorSpace{_Name::NAME, NCOMP}; \
+#define COLORSPACE(NAME, SIG, NCOMP)                 \
+    if (signature == SIG ""_bytes) {                 \
+        return Some(ColorSpace{_Name::NAME, NCOMP}); \
     };
 #include "defs/colorspace.inc"
 #include "defs/device-colorspace.inc"
@@ -167,9 +167,9 @@ export struct ProfileClass {
     _Name _name;
 
     static Opt<ProfileClass> fromSignature(Bytes signature) {
-#define PROFILE_CLASS(NAME, SIG)          \
-    if (signature == SIG ""_bytes) {      \
-        return ProfileClass{_Name::NAME}; \
+#define PROFILE_CLASS(NAME, SIG)                \
+    if (signature == SIG ""_bytes) {            \
+        return Some(ProfileClass{_Name::NAME}); \
     };
 #include "defs/profile-class.inc"
 
@@ -233,7 +233,7 @@ export struct ProfileHeader {
         // FIXME: Handle special case for DeviceLink profile
         if (space != ColorSpace::XYZ and space != ColorSpace::LAB)
             return NONE;
-        return space;
+        return Some(space);
     }
 
     DateTime creationTime() const {
@@ -303,7 +303,7 @@ struct MultiLocalizedUnicodeType : Io::BChunk {
                 auto record = scan.peek<Record>();
                 scan.skip(recordSize);
                 numberOfRecord--;
-                return record;
+                return Some(record);
             }
         };
 
@@ -392,7 +392,7 @@ export struct Parser : Io::BChunk {
 
     ProfileHeader header() {
         if (not _header)
-            _header = begin().next<ProfileHeader>();
+            _header = Some(begin().next<ProfileHeader>());
         return *_header;
     }
 
@@ -414,10 +414,7 @@ export struct Parser : Io::BChunk {
                         .skip(entry.off)
                         .nextBytes(entry.len);
                 n--;
-                return Tag{
-                    entry.sig,
-                    tagTypeFrom(type)
-                };
+                return Some(Tag{entry.sig, tagTypeFrom(type)});
             }
         };
 

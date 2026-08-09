@@ -88,7 +88,7 @@ export struct Parser {
                     knowCmap.type == table.type and
                     knowCmap.score > bestScore) {
 
-                    bestCmap = table;
+                    bestCmap = Some(table);
                     bestScore = knowCmap.score;
                 }
             }
@@ -182,7 +182,7 @@ export struct Parser {
                 table.length = scan.nextU32be();
 
                 i++;
-                return table;
+                return Some(table);
             }
         };
 

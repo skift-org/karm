@@ -77,7 +77,7 @@ struct Lru {
     Opt<V> tryGet(K const& key) {
         auto item = _lookup(key);
         if (item) {
-            return item->value;
+            return Some(item->value);
         }
         return NONE;
     }

@@ -85,7 +85,7 @@ export struct [[nodiscard]] Error {
     constexpr Error(Code code, String msg) : _code(code), _msg(msg) {}
 
     constexpr Error(Code code, Union<Str, String> msg, Error cause)
-        : _code(code), _msg(msg), _cause(makeBox(std::move(cause))) {}
+        : _code(code), _msg(msg), _cause(Some(makeBox(std::move(cause)))) {}
 
     constexpr Code code() const { return _code; }
 
@@ -93,7 +93,7 @@ export struct [[nodiscard]] Error {
 
     constexpr Opt<Error const&> cause() const {
         if (auto const& [cause] = _cause)
-            return cause.unwrap();
+            return Some(cause.unwrap());
         return NONE;
     }
 

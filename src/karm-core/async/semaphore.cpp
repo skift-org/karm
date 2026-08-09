@@ -159,7 +159,7 @@ export struct Semaphore {
     Opt<Scope> tryLockScope() {
         if (not tryAcquire())
             return NONE;
-        return Scope{*this};
+        return Some(Scope{*this});
     }
 
     ~Semaphore() {

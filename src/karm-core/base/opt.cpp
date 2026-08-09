@@ -9,6 +9,7 @@ import :base.niche;
 import :base.panic;
 import :base.try_;
 import :base.ok;
+import :base.some;
 import :meta.callable;
 import :meta.traits;
 import :base.hash;
@@ -185,23 +186,21 @@ struct [[nodiscard]] Opt {
     always_inline constexpr Opt(None) {}
 
     template <typename U = T>
-    always_inline constexpr Opt(U const& value)
+    always_inline constexpr Opt(Some<U> const& value)
         requires(
-            not AnyOpt<Meta::RemoveConstVolatileRef<U>> and
             (Meta::CopyConstructible<T, U> or Meta::LvalueRef<T>)
         )
     {
-        _store.emplace(value);
+        _store.emplace(value.take());
     }
 
     template <typename U = T>
-    always_inline constexpr Opt(U&& value)
+    always_inline constexpr Opt(Some<U>&& value)
         requires(
-            not AnyOpt<Meta::RemoveConstVolatileRef<U>> and
             (Meta::MoveConstructible<T, U> or Meta::LvalueRef<T>)
         )
     {
-        _store.emplace(std::forward<U>(value));
+        _store.emplace(value.take());
     }
 
     always_inline constexpr Opt(Opt const& other)
@@ -245,18 +244,17 @@ struct [[nodiscard]] Opt {
 
     template <typename U = T>
         requires(
-            not AnyOpt<Meta::RemoveConstVolatileRef<U>> and
             (Meta::Convertible<U, T> or Meta::LvalueRef<T>)
         )
-    always_inline constexpr Opt& operator=(U& value) {
-        _store.emplace(value);
+    always_inline constexpr Opt& operator=(Some<U>& value) {
+        _store.emplace(value.take());
         return *this;
     }
 
     template <typename U = T>
-        requires(not AnyOpt<Meta::RemoveConstVolatileRef<U>> and Meta::MoveConstructible<T, U>)
-    always_inline constexpr Opt& operator=(U&& value) {
-        _store.emplace(std::forward<U>(value));
+        requires(Meta::MoveConstructible<T, U>)
+    always_inline constexpr Opt& operator=(Some<U>&& value) {
+        _store.emplace(value.take());
         return *this;
     }
 
@@ -447,7 +445,7 @@ struct [[nodiscard]] Opt {
                 return OptRet{NONE};
             }
 
-            return OptRet{unwrap()(std::forward<Args>(args)...)};
+            return OptRet{Some(unwrap()(std::forward<Args>(args)...))};
         }
     }
 
@@ -506,7 +504,7 @@ struct [[nodiscard]] Opt {
 };
 
 export template <typename T>
-Opt(T) -> Opt<T>;
+Opt(Some<T>) -> Opt<T>;
 
 } // namespace Karm
 

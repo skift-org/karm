@@ -159,13 +159,13 @@ struct _Vec {
     constexpr Opt<T&> index(usize i) lifetimebound {
         if (i >= len())
             return NONE;
-        return _buf[i];
+        return Some(_buf[i]);
     }
 
     constexpr Opt<T const&> index(usize i) const lifetimebound {
         if (i >= len())
             return NONE;
-        return _buf[i];
+        return Some(_buf[i]);
     }
 
     constexpr explicit operator bool() const { return len(); }

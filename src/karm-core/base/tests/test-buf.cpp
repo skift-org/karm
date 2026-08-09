@@ -12,11 +12,11 @@ test$("buf-niche") {
     expectEq$(sizeof(test), sizeof(Buf<int>));
     expectEq$(test.has(), false);
     expectEq$(test, NONE);
-    test = Buf<int>::init(5, 0);
+    test = Some(Buf<int>::init(5, 0));
     expectEq$(test.unwrap(), comp);
     expectEq$(test.take(), comp);
     expectEq$(test, NONE);
-    test = Buf<int>::init(0);
+    test = Some(Buf<int>::init(0));
     expectEq$(test.has(), true);
 
     return Ok();

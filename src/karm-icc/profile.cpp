@@ -40,7 +40,7 @@ export struct ColorProfile {
                 .okOr(Error::invalidData("unknow or invalid profile connection space"))
         );
 
-        profile->_data = data;
+        profile->_data = Some(data);
 
         return Ok(profile);
     }

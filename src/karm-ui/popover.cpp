@@ -40,7 +40,7 @@ struct PopoverLayer : ProxyNode<PopoverLayer> {
     void _showPopover(Child child, Math::Vec2i at) {
         // We need to defer showing the dialog until the next frame,
         // otherwise replacing the dialog might cause some use after free down the tree
-        _shouldPopover = child;
+        _shouldPopover = Some(child);
         _popoverAt = at;
         shouldLayout(*this);
     }
@@ -118,7 +118,7 @@ struct PopoverLayer : ProxyNode<PopoverLayer> {
             if (_popover)
                 (*_popover)->detach(this);
 
-            _popover = _shouldPopover;
+            _popover = Some(*_shouldPopover);
             (*_popover)->attach(this);
             _shouldPopover = NONE;
         }

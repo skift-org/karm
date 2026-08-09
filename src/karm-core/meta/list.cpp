@@ -21,8 +21,7 @@ struct _AnotherList {};
 template <typename From, template <typename...> typename To>
 struct _ListRename;
 
-template <template <typename...> typename From, typename... Ts,
-          template <typename...> typename To>
+template <template <typename...> typename From, typename... Ts, template <typename...> typename To>
 struct _ListRename<From<Ts...>, To> {
     using Type = To<Ts...>;
 };
@@ -108,7 +107,6 @@ template <template <typename...> typename L, typename T>
 struct _ListDecay<L<T>> {
     using Type = T;
 };
-
 
 export template <typename U>
 using ListDecay = _ListDecay<U>::Type;

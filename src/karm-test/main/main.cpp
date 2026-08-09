@@ -8,13 +8,13 @@ using namespace Karm::Literals;
 
 Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken ct) {
     auto globArg = Cli::option<Str>(
-        'g',
+        Some('g'),
         "glob"s,
         "Run tests matching this glob pattern"s,
         "*"s
     );
     auto fastArg = Cli::flag(
-        'f',
+        Some('f'),
         "fast"s,
         "Stop on first failure"s
     );

@@ -25,7 +25,7 @@ export Ui::Child badge(Gfx::Color color, String t) {
     Ui::BoxStyle boxStyle = {
         .padding = {2, 6},
         .borderRadii = 99,
-        .backgroundFill = color.withOpacity(0.2),
+        .backgroundFill = Some(color.withOpacity(0.2)),
         .foregroundFill = color,
     };
 

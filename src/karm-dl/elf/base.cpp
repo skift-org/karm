@@ -63,7 +63,7 @@ export Res<ElfAbi> sniffAbi(Bytes buf) {
 
     return ElfAbi::any([&]<typename Abi> -> Opt<ElfAbi> {
                if (ident.ei_class == Abi::CLASS and ident.ei_data == Abi::DATA)
-                   return Abi{};
+                   return Some(Abi{});
                return NONE;
            })
         .okOr(Error::invalidData("invalid or unsupported elf abi"));

@@ -72,7 +72,7 @@ struct Sieve {
         auto item = _lookup(key);
         if (item) {
             item->visited = true;
-            return item->value;
+            return Some(item->value);
         }
         return NONE;
     }

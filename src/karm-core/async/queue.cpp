@@ -43,7 +43,7 @@ struct Queue {
     Opt<T> tryDequeue() {
         if (not _sem.tryAcquire())
             return NONE;
-        return _buf.popFront();
+        return Some(_buf.popFront());
     }
 };
 

@@ -201,7 +201,7 @@ export Res<Mmap> mmap(Opt<Rc<Fd>> fd = NONE, MmapProps props = {}) {
 }
 
 export Res<Mmap> mmap(AsFd auto& what, MmapProps props = {}) {
-    return mmap(what.fd(), props);
+    return mmap(Some(what.fd()), props);
 }
 
 export Res<MutMmap> mutMmap(Opt<Rc<Fd>> fd = NONE, MmapProps props = {}) {
@@ -215,7 +215,7 @@ export Res<MutMmap> mutMmap(Opt<Rc<Fd>> fd = NONE, MmapProps props = {}) {
 }
 
 export Res<MutMmap> mutMmap(AsFd auto& what, MmapProps props = {}) {
-    return mutMmap(what.fd(), props);
+    return mutMmap(Some(what.fd()), props);
 }
 
 } // namespace Karm::Sys

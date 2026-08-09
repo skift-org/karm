@@ -87,13 +87,13 @@ export struct Server {
     Async::Task<Rc<Request>> _recvRequestAsync(Rc<Sys::TcpConnection> conn, Async::CancellationToken ct) {
         auto request = co_trya$(Request::readAsync(*conn, ct));
         if (auto contentLength = request.header.contentLength()) {
-            request.body = makeRc<ContentBody>(conn, contentLength.unwrap());
+            request.body = Some(makeRc<ContentBody>(conn, contentLength.unwrap()));
         } else if (auto transferEncoding = request.header.lookup(Header::TRANSFER_ENCODING)) {
             logWarn("Transfer-Encoding: {} not supported", transferEncoding);
         } else {
             // NOTE: When there is no content length, and no transfer encoding,
             //       we read until the client closes the socket.
-            request.body = makeRc<ContentBody>(conn, Limits<usize>::MAX);
+            request.body = Some(makeRc<ContentBody>(conn, Limits<usize>::MAX));
         }
 
         co_return Ok(makeRc<Request>(std::move(request)));

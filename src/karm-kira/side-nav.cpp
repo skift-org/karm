@@ -18,7 +18,7 @@ export Ui::Child sidenavTree(Gfx::Icon icon, String title, Ui::Slot child) {
     return Ui::state(true, [=, child = std::move(child)](bool state, auto bind) {
         return Ui::vflow(
             Ui::button(
-                bind(not state),
+                Some(bind(not state)),
                 Ui::ButtonStyle::subtle(),
                 Ui::hflow(
                     Ui::empty(8),
@@ -45,13 +45,13 @@ export Ui::Child sidenavItem(bool selected, Opt<Ui::Send<>> onPress, Ui::Child c
 
     buttonStyle.idleStyle = {
         .borderRadii = 4,
-        .backgroundFill = selected ? Ui::GRAY700 : Gfx::ALPHA,
+        .backgroundFill = Some(selected ? Ui::GRAY700 : Gfx::ALPHA),
     };
 
-    auto indicator = box(
+    auto indicator = Ui::box(
         {
             .borderRadii = 99,
-            .backgroundFill = selected ? Ui::ACCENT600 : Gfx::ALPHA,
+            .backgroundFill = Some(selected ? Ui::ACCENT600 : Gfx::ALPHA),
         },
         Ui::empty(2)
     );

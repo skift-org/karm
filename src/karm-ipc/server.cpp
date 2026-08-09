@@ -59,7 +59,7 @@ export struct Server : Meta::NoCopy {
 
     Rc<_State> _state;
     Rc<Handler> _handler;
-    Opt<bool> _active = true; // HACK: Abuse the fact that when an Opt is moved from, it becomes NONE
+    Opt<bool> _active = Some(true); // HACK: Abuse the fact that when an Opt is moved from, it becomes NONE
 
     static Async::Task<Server> createAsync(Ref::Url url, Rc<Handler> handler) {
         auto listener = co_try$(Sys::IpcListener::listen(url));
@@ -93,7 +93,7 @@ export struct Server : Meta::NoCopy {
                 co_try$(send(connection, SEQ_HELLO, Error::invalidData("expected client hello")));
                 co_return hello.none();
             }
-            url = hello.take().url;
+            url = Some(hello.take().url);
         }
 
         auto maybeSession = co_await handler->acceptSessionAsync(connection, url.take(), ct);

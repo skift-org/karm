@@ -27,7 +27,7 @@ Opt<u8> _parseDigit(Rune rune, AtoxOptions options = {}) {
     if (result >= options.base)
         return NONE;
 
-    return result;
+    return Some(result);
 }
 
 template <StaticEncoding E>
@@ -57,7 +57,7 @@ Opt<usize> atou(_SScan<E>& s, AtoxOptions options = {}) {
     if (not isNum)
         return NONE;
 
-    return result;
+    return Some(result);
 }
 
 export template <StaticEncoding E>
@@ -86,7 +86,7 @@ Opt<isize> atoi(_SScan<E>& s, AtoxOptions options = {}) {
         result = -result;
 
     rollback.disarm();
-    return result;
+    return Some(result);
 }
 
 #ifndef __ck_freestanding__
@@ -105,7 +105,7 @@ Opt<f64> atof(_SScan<E>& s, AtoxOptions const& options = {}) {
         neg = s.skip('-');
 
     if (s.peek(0) != '.' and _parseDigit(s.peek(0), options)) {
-        ipart = try$(atoi(s, options));
+        ipart = Some(try$(atoi(s, options)));
     }
 
     if (s.skip('.')) {
@@ -134,7 +134,7 @@ Opt<f64> atof(_SScan<E>& s, AtoxOptions const& options = {}) {
         result = -result;
 
     rollback.disarm();
-    return result;
+    return Some(result);
 }
 
 #endif

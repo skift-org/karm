@@ -37,7 +37,7 @@ struct Single {
     constexpr auto next() -> Opt<T> {
         if (not value)
             return NONE;
-        return value.take();
+        return Some(value.take());
     }
 };
 
@@ -50,7 +50,7 @@ struct Repeat {
         if (count == 0)
             return NONE;
         count--;
-        return value;
+        return Some(value);
     }
 };
 
@@ -72,7 +72,7 @@ struct Iota {
             return NONE;
         auto value = start;
         start += step;
-        return value;
+        return Some(value);
     }
 };
 
@@ -99,7 +99,7 @@ struct [[nodiscard, clang::coro_return_type, clang::coro_lifetimebound]] Yield {
 
         template <Meta::Convertible<T> From>
         std::suspend_always yield_value(From&& from) {
-            _value = std::forward<From>(from);
+            _value = Some(std::forward<From>(from));
             return {};
         }
 
@@ -148,7 +148,7 @@ struct [[nodiscard, clang::coro_return_type, clang::coro_lifetimebound]] Yield {
         if (_coro.done())
             return NONE;
         _full = false;
-        return _coro.promise()._value.take();
+        return Some(_coro.promise()._value.take());
     }
 };
 
@@ -236,7 +236,7 @@ struct Select {
 
             auto next() -> Opt<decltype(f(*iter.next()))> {
                 while (auto value = iter.next())
-                    return f(*value);
+                    return Some(f(*value));
                 return NONE;
             }
         };
@@ -262,7 +262,7 @@ struct Selecti {
 
             auto next() -> Opt<decltype(f(*iter.next(), index))> {
                 while (auto value = iter.next())
-                    return f(*value, index++);
+                    return Some(f(*value, index++));
                 return NONE;
             }
         };
@@ -281,7 +281,7 @@ export struct Index {
 
             auto next() -> Opt<decltype(Tuple(*iter.next(), index))> {
                 while (auto value = iter.next())
-                    return Tuple(*value, index++);
+                    return Some(Tuple(*value, index++));
                 return NONE;
             }
         };
@@ -398,7 +398,7 @@ export struct Max {
         Opt<T> max;
         while (auto value = iter.next())
             if (not max or *value > *max)
-                max = *value;
+                max = Some(*value);
         return max;
     }
 };
@@ -411,7 +411,7 @@ export struct Min {
         Opt<T> min;
         while (auto value = iter.next())
             if (not min or *value < *min)
-                min = *value;
+                min = Some(*value);
         return min;
     }
 };

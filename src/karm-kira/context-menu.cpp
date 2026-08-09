@@ -62,9 +62,9 @@ export Ui::Child contextMenuContent(Ui::Children children) {
                .margin = 4,
                .borderRadii = 6,
                .borderWidth = 1,
-               .borderFill = Ui::GRAY800,
-               .backgroundFill = Ui::GRAY900,
-               .shadowStyle = Gfx::BoxShadow::elevated(4),
+               .borderFill = Some(Ui::GRAY800),
+               .backgroundFill = Some(Ui::GRAY900),
+               .shadowStyle = Some(Gfx::BoxShadow::elevated(4)),
            }) |
            Ui::scaleIn();
 }
@@ -79,10 +79,10 @@ export Ui::Child contextMenuItem(Opt<Ui::Send<>> onPress, Opt<Gfx::Icon> i, Str 
            Ui::insets({6, 6, 6, 10}) |
            Ui::minSize({Ui::UNCONSTRAINED, 32}) |
            Ui::button(
-               onPress ? [onPress = std::move(onPress)](auto& n) {
+               onPress ? Opt<Ui::Send<>>(Some([onPress = std::move(onPress)](auto& n) {
                    onPress(n);
                    Ui::closePopover(n);
-               }
+               }))
                        : Ui::DISABLED<>,
                Ui::ButtonStyle::subtle()
            ) |
@@ -99,10 +99,10 @@ export Ui::Child contextMenuCheck(Opt<Ui::Send<>> onPress, bool checked, Str t) 
            Ui::insets({6, 6, 6, 10}) |
            Ui::minSize({Ui::UNCONSTRAINED, 32}) |
            Ui::button(
-               [onPress = std::move(onPress)](auto& n) {
+               Some([onPress = std::move(onPress)](auto& n) {
                    onPress(n);
                    Ui::closePopover(n);
-               },
+               }),
                Ui::ButtonStyle::subtle()
            ) |
            Ui::insets(4);
@@ -119,10 +119,10 @@ export Ui::Child contextMenuDock(Ui::Children children) {
 
 export Ui::Child contextMenuIcon(Opt<Ui::Send<>> onPress, Gfx::Icon i) {
     if (onPress) {
-        onPress = [onPress = std::move(onPress)](auto& n) {
+        onPress = Some([onPress = std::move(onPress)](auto& n) {
             onPress(n);
             Ui::closePopover(n);
-        };
+        });
     }
 
     return Ui::button(

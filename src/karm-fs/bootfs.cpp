@@ -13,7 +13,7 @@ namespace Karm::Fs {
 
 export Async::Task<Rc<Node>> mountBootfsAsync(Rc<Sys::Fd> fd) {
     auto fsRoot = co_trya$(createAsync<VDir>());
-    auto fsMmap = co_try$(Sys::mmap(fd));
+    auto fsMmap = co_try$(Sys::mmap(Some(fd)));
 
     auto const* header = reinterpret_cast<bootfs_header_t const*>(fsMmap.bytes().buf());
     bootfs_iter_t iter = bootfs_iter(header);
@@ -27,9 +27,9 @@ export Async::Task<Rc<Node>> mountBootfsAsync(Rc<Sys::Fd> fd) {
                 alignUp(dirent->length, Sys::pageSize()),
             }));
 
-            auto fileMmap = co_try$(Sys::mmap(sliceFd));
+            auto fileMmap = co_try$(Sys::mmap(Some(sliceFd)));
 
-            auto fileNode = co_trya$(createAsync<VFileMmap>(std::move(fileMmap), dirent->length, sliceFd));
+            auto fileNode = co_trya$(createAsync<VFileMmap>(std::move(fileMmap), dirent->length, Some(sliceFd)));
 
             co_trya$(fileParent->linkAsync(filePath.basename(), fileNode));
         } else {

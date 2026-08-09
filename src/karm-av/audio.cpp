@@ -184,7 +184,7 @@ struct FramesIter {
     Opt<Frame> next() {
         if (index >= _self.len())
             return NONE;
-        return _self[index++];
+        return Some(_self[index++]);
     }
 };
 
@@ -227,7 +227,7 @@ struct Device {
     virtual ~Device() = default;
 
     void play(Rc<Stream> stream) {
-        _stream = stream;
+        _stream = Some(stream);
     }
 
     virtual void pause(bool on) = 0;
@@ -386,7 +386,7 @@ export struct Player : Stream {
         return Duration::fromSecs(0);
     }
 
-    void play(Rc<Audio> audio) { _audio = audio; }
+    void play(Rc<Audio> audio) { _audio = Some(audio); }
 
     void stop() { _audio = NONE; }
 

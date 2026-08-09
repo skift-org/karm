@@ -172,7 +172,7 @@ export struct Cmap : Io::BChunk {
                 t.slice = sub(cmap->_slice, offset, cmap->_slice.len());
                 t.type = Io::BScan{t.slice}.nextU16be();
 
-                return t;
+                return Some(t);
             }
         };
 

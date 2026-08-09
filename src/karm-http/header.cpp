@@ -141,7 +141,7 @@ export struct Header : Map<Symbol, String> {
 
     Opt<Ref::Uti> contentType() const {
         if (auto value = lookup(CONTENT_TYPE))
-            return Ref::Uti::fromMime(Ref::Mime{value->str()});
+            return Some(Ref::Uti::fromMime(Ref::Mime{value->str()}));
         return NONE;
     }
 };

@@ -21,7 +21,7 @@ struct State {
     void set(T value) {
         if (_value.has()) [[unlikely]]
             panic("promise already resolved");
-        _value = std::move(value);
+        _value = Some(std::move(value));
         wake();
     }
 
@@ -100,7 +100,7 @@ export template <typename T>
 struct _Promise : Meta::NoCopy {
     Opt<Rc<State<T>>> _state;
 
-    _Promise() : _state{makeRc<State<T>>()} {}
+    _Promise() : _state{Some(makeRc<State<T>>())} {}
 
     void resolve(T value) {
         if (not _state.has()) [[unlikely]]

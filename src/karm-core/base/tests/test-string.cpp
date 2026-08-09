@@ -54,11 +54,11 @@ test$("string-niche") {
     expectEq$(sizeof(test), sizeof(String));
     expectEq$(test.has(), false);
     expectEq$(test, NONE);
-    test = "test"s;
+    test = Some("test"s);
     expectEq$(test.unwrap(), comp);
     expectEq$(test.take(), comp);
     expectEq$(test, NONE);
-    test = ""s;
+    test = Some(""s);
     expectEq$(test.has(), true);
 
     return Ok();
@@ -72,11 +72,11 @@ test$("str-niche") {
     expectEq$(sizeof(test), sizeof(Str));
     expectEq$(test.has(), false);
     expectEq$(test, NONE);
-    test = "test"s;
+    test = Some("test"s);
     expectEq$(test.unwrap(), comp);
     expectEq$(test.take(), comp);
     expectEq$(test, NONE);
-    test = ""s;
+    test = Some(""s);
     expectEq$(test.has(), true);
 
     return Ok();

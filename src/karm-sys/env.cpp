@@ -51,7 +51,7 @@ export struct Env {
     Opt<Str> getVar(Str name) const {
         for (auto [k, v] : iterVars())
             if (k == name)
-                return v;
+                return Some(v);
         return NONE;
     }
 

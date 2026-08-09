@@ -160,10 +160,10 @@ export struct Path {
 
                 i++;
 
-                return _Contour{
+                return Some(_Contour{
                     sub(self._verts, self._contours[i - 1].start, self._contours[i - 1].end),
                     self._contours[i - 1].close,
-                };
+                });
             }
         };
 
@@ -182,7 +182,7 @@ export struct Path {
         Rectf rect = {_verts[0], 0};
         for (auto& p : _verts)
             rect = rect.mergeWith(p);
-        _bound = rect;
+        _bound = Some(rect);
         return rect;
     }
 
@@ -588,10 +588,10 @@ export struct Path {
     // MARK: Svg ---------------------------------------------------------------
 
     Opt<Vec2f> _nextVec2f(Io::SScan& s) {
-        return Vec2f{
+        return Some(Vec2f{
             try$(Io::atof(s)),
             try$(Io::atof(s)),
-        };
+        });
     }
 
     static Opt<Op> parseOp(Io::SScan& s, Rune opcode) {
@@ -606,42 +606,42 @@ export struct Path {
 
         auto nextCoord = [&] -> Opt<f64> {
             nextSep();
-            return try$(Io::atof(s));
+            return Io::atof(s);
         };
 
         auto nextCoordPair = [&] -> Opt<Vec2f> {
             auto r = Vec2f{try$(nextCoord()), try$(nextCoord())};
             nextSep();
-            return r;
+            return Some(r);
         };
 
         switch (opcode) {
         case 'm': // move to
-            return Op{MOVE_TO, try$(nextCoordPair()), options};
+            return Some(Op{MOVE_TO, try$(nextCoordPair()), options});
 
         case 'z': // close
-            return Op{CLOSE, options};
+            return Some(Op{CLOSE, options});
 
         case 'l': // line to
-            return Op{LINE_TO, try$(nextCoordPair()), options};
+            return Some(Op{LINE_TO, try$(nextCoordPair()), options});
 
         case 'h': // horizontal line to
-            return Op{HLINE_TO, try$(nextCoord()), options};
+            return Some(Op{HLINE_TO, try$(nextCoord()), options});
 
         case 'v': // vertical line to
-            return Op{VLINE_TO, try$(nextCoord()), options};
+            return Some(Op{VLINE_TO, try$(nextCoord()), options});
 
         case 'c': // cubic to
-            return Op{CUBIC_TO, try$(nextCoordPair()), try$(nextCoordPair()), try$(nextCoordPair()), options};
+            return Some(Op{CUBIC_TO, try$(nextCoordPair()), try$(nextCoordPair()), try$(nextCoordPair()), options});
 
         case 's': // smooth cubic to
-            return Op{CUBIC_TO, {}, try$(nextCoordPair()), try$(nextCoordPair()), options | SMOOTH};
+            return Some(Op{CUBIC_TO, {}, try$(nextCoordPair()), try$(nextCoordPair()), options | SMOOTH});
 
         case 'q': // quad to
-            return Op{QUAD_TO, try$(nextCoordPair()), try$(nextCoordPair()), options};
+            return Some(Op{QUAD_TO, try$(nextCoordPair()), try$(nextCoordPair()), options});
 
         case 't': // smooth quad to
-            return Op{QUAD_TO, {}, try$(nextCoordPair()), options | SMOOTH};
+            return Some(Op{QUAD_TO, {}, try$(nextCoordPair()), options | SMOOTH});
 
         case 'a': // arc to
         {
@@ -656,7 +656,7 @@ export struct Path {
                 options |= SWEEP;
 
             auto p = try$(nextCoordPair());
-            return Op{ARC_TO, radii, angle, p, options};
+            return Some(Op{ARC_TO, radii, angle, p, options});
         }
 
         default:

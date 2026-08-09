@@ -67,7 +67,7 @@ Ui::Task<Action> reduce(State& state, Action action) {
             state.filter();
         },
         [&](SelectIcon a) {
-            state.selected = a.index;
+            state.selected = Some(a.index);
         }
     );
     return NONE;
@@ -83,7 +83,7 @@ Ui::Child iconGrid(State const& s) {
                           Ui::center() |
                           Ui::bound() |
                           Ui::button(
-                              Model::bind<SelectIcon>(index),
+                              Some(Model::bind<SelectIcon>(index)),
                               index == s.selected ? Ui::ButtonStyle::regular() : Ui::ButtonStyle::subtle()
                           );
                }) | Collect<Ui::Children>()

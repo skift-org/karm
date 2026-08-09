@@ -69,7 +69,7 @@ struct Set {
 
     [[nodiscard]] Opt<T const&> lookup(Meta::Equatable<T> auto const& key) const lifetimebound {
         if (auto it = _items.lookup(key); it and it->state == Items::USED)
-            return it->unwrap();
+            return Some(it->unwrap());
         return NONE;
     }
 

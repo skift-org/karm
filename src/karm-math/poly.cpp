@@ -23,7 +23,7 @@ struct Poly {
         Rect<T> res = _edges[0].bound();
         for (auto const& edge : *this)
             res = res.mergeWith(edge.bound());
-        _bound = res;
+        _bound = Some(res);
         return *_bound;
     }
 

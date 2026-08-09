@@ -290,7 +290,7 @@ struct ValueParser<Opt<T>> {
     static Res<Opt<T>> parse(Cursor<Token>& c) {
         if (c.ended() or c->kind != Token::OPERAND)
             return Ok(NONE);
-        return ValueParser<T>::parse(c);
+        return Ok(Some(try$(ValueParser<T>::parse(c))));
     }
 };
 
@@ -496,9 +496,9 @@ export struct Command : Meta::Pinned {
     Vec<Rc<Command>> _commands;
     Command* _parent = nullptr;
 
-    Option<bool> _help = flag('h', "help"s, "Show this help message and exit."s);
-    Option<bool> _usage = flag('u', "usage"s, "Show usage message and exit."s);
-    Option<bool> _version = flag('v', "version"s, "Show version information and exit."s);
+    Option<bool> _help = flag(Some('h'), "help"s, "Show this help message and exit."s);
+    Option<bool> _usage = flag(Some('u'), "usage"s, "Show usage message and exit."s);
+    Option<bool> _version = flag(Some('v'), "version"s, "Show version information and exit."s);
     Option<Vec<DebugFlagDescriptor>> _debug = option<Vec<DebugFlagDescriptor>>(
         NONE,
         "debug"s,

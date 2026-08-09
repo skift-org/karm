@@ -17,7 +17,7 @@ export struct Object {
 
     Object(Ref::Url url) : url(url) {}
 
-    Object(Ref::Url url, Ref::Uti type) : url(url), type(type) {}
+    Object(Ref::Url url, Ref::Uti type) : url(url), type(Some(type)) {}
 };
 
 export struct Intent {

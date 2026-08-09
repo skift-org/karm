@@ -28,7 +28,7 @@ struct Site : Http::Handler {
     String theme;
     String style;
 
-    static Res<Rc<Site>> load(Ref::Url baseurl, Opt<Str> theme = "default"s) {
+    static Res<Rc<Site>> load(Ref::Url baseurl, Opt<Str> theme = Some("default"s)) {
         auto site = makeRc<Site>();
         site->baseurl = baseurl;
         auto json = try$(Json::parse(try$(Sys::readAllText<Utf8>(baseurl / "site.json"))));
@@ -161,7 +161,7 @@ struct Site : Http::Handler {
 Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken ct) {
     auto inputArg = Cli::operand<Ref::Url>("input"s, "Path to the directory containing the site"s, "bundle://catserve/public/site"_url);
     auto themeArg = Cli::option<Str>(NONE, "theme"s, "Theme to use."s, "default");
-    auto portArg = Cli::option<isize>('p', "port"s, "TCP Port to serve the website on."s, 8080);
+    auto portArg = Cli::option<isize>(Some('p'), "port"s, "TCP Port to serve the website on."s, 8080);
 
     Cli::Command cmd{
         "catserve"s,
@@ -179,7 +179,7 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken ct) {
         co_return Ok();
 
     logInfo("{} starting...", CAT);
-    auto site = co_try$(Site::load(inputArg, themeArg.value()));
+    auto site = co_try$(Site::load(inputArg, Some(themeArg.value())));
     co_return co_await Http::serveAsync(
         site,
         {

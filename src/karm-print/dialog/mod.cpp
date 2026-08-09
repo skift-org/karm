@@ -108,8 +108,8 @@ Ui::Child _printSelect(State const& s, usize index) {
                .padding = Math::Insetsi{6, 12, 6, 6},
                .borderRadii = 9,
                .borderWidth = 1,
-               .borderFill = Ui::GRAY800,
-               .backgroundFill = Ui::GRAY900,
+               .borderFill = Some(Ui::GRAY800),
+               .backgroundFill = Some(Ui::GRAY900),
            });
 }
 
@@ -133,8 +133,8 @@ Ui::Child _printPaper(State const& s, usize index) {
                    }
                ) | Ui::box({
                        .borderWidth = 1,
-                       .borderFill = Ui::GRAY50.withOpacity(0.1),
-                       .backgroundFill = Gfx::WHITE,
+                       .borderFill = Some(Ui::GRAY50.withOpacity(0.1)),
+                       .backgroundFill = Some(Gfx::WHITE),
                    }),
                _printSelect(s, index) | Ui::align(Math::Align::BOTTOM_END)
            ) |
@@ -192,17 +192,17 @@ Ui::Child _destinationSelect() {
             return {
                 Kr::selectGroup({
                     Kr::selectLabel("Save as"s),
-                    Kr::selectItem(Ui::SINK<>, "Save as PDF"s),
-                    Kr::selectItem(Ui::SINK<>, "Save as Image"s),
+                    Kr::selectItem(Some(Ui::SINK<>), "Save as PDF"s),
+                    Kr::selectItem(Some(Ui::SINK<>), "Save as Image"s),
                 }),
                 Kr::separator(),
                 Kr::selectGroup({
                     Kr::selectLabel("Printers"s),
-                    Kr::selectItem(Ui::SINK<>, "Epson ET-8550"s),
-                    Kr::selectItem(Ui::SINK<>, "HP DeskJet 2700"s),
+                    Kr::selectItem(Some(Ui::SINK<>), "Epson ET-8550"s),
+                    Kr::selectItem(Some(Ui::SINK<>), "HP DeskJet 2700"s),
                 }),
                 Kr::separator(),
-                Kr::selectItem(Ui::SINK<>, "Add printer..."s)
+                Kr::selectItem(Some(Ui::SINK<>), "Add printer..."s)
             };
         }
     );
@@ -217,7 +217,7 @@ Ui::Child _paperSelect(State const& s) {
             Vec<Ui::Child> items;
             items.pushBack(Kr::selectLabel(serie.name));
             for (auto const& stock : serie.stocks) {
-                items.pushBack(Kr::selectItem(Model::bind<ChangePaper>(stock), stock.name));
+                items.pushBack(Kr::selectItem(Some(Model::bind<ChangePaper>(stock)), stock.name));
             }
 
             if (not first)
@@ -239,17 +239,17 @@ Ui::Child _printSettings(State const& s) {
                 NONE,
                 "Destination"s,
                 NONE,
-                _destinationSelect()
+                Some(_destinationSelect())
             ),
             Kr::selectRow(
                 Kr::selectValue("1"s),
                 [] -> Ui::Children {
                     return {
-                        Kr::selectItem(Ui::SINK<>, "1"s),
-                        Kr::selectItem(Ui::SINK<>, "2"s),
-                        Kr::selectItem(Ui::SINK<>, "3"s),
-                        Kr::selectItem(Ui::SINK<>, "4"s),
-                        Kr::selectItem(Ui::SINK<>, "5"s),
+                        Kr::selectItem(Some(Ui::SINK<>), "1"s),
+                        Kr::selectItem(Some(Ui::SINK<>), "2"s),
+                        Kr::selectItem(Some(Ui::SINK<>), "3"s),
+                        Kr::selectItem(Some(Ui::SINK<>), "4"s),
+                        Kr::selectItem(Some(Ui::SINK<>), "5"s),
                     };
                 },
                 "Copies"s
@@ -258,10 +258,10 @@ Ui::Child _printSettings(State const& s) {
                 Kr::selectValue("All"s),
                 [] -> Ui::Children {
                     return {
-                        Kr::selectItem(Ui::SINK<>, "All"s),
-                        Kr::selectItem(Ui::SINK<>, "Odd pages only"s),
-                        Kr::selectItem(Ui::SINK<>, "Even pages only"s),
-                        Kr::selectItem(Ui::SINK<>, "Custom"s),
+                        Kr::selectItem(Some(Ui::SINK<>), "All"s),
+                        Kr::selectItem(Some(Ui::SINK<>), "Odd pages only"s),
+                        Kr::selectItem(Some(Ui::SINK<>), "Even pages only"s),
+                        Kr::selectItem(Some(Ui::SINK<>), "Custom"s),
                     };
                 },
                 "Pages"s
@@ -274,8 +274,8 @@ Ui::Child _printSettings(State const& s) {
                 ),
                 [] -> Ui::Children {
                     return {
-                        Kr::selectItem(Model::bind<ChangeOrientation>(Orientation::PORTRAIT), "Portrait"s),
-                        Kr::selectItem(Model::bind<ChangeOrientation>(Orientation::LANDSCAPE), "Landscape"s),
+                        Kr::selectItem(Some(Model::bind<ChangeOrientation>(Orientation::PORTRAIT)), "Portrait"s),
+                        Kr::selectItem(Some(Model::bind<ChangeOrientation>(Orientation::LANDSCAPE)), "Landscape"s),
 
                     };
                 },
@@ -292,18 +292,18 @@ Ui::Child _printSettings(State const& s) {
                         NONE,
                         "Paper"s,
                         NONE,
-                        _paperSelect(s)
+                        Some(_paperSelect(s))
                     ),
                     Kr::selectRow(
                         Kr::selectValue("1"s),
                         [] -> Ui::Children {
                             return {
-                                Kr::selectItem(Ui::SINK<>, "1"s),
-                                Kr::selectItem(Ui::SINK<>, "2"s),
-                                Kr::selectItem(Ui::SINK<>, "4"s),
-                                Kr::selectItem(Ui::SINK<>, "6"s),
-                                Kr::selectItem(Ui::SINK<>, "9"s),
-                                Kr::selectItem(Ui::SINK<>, "16"s),
+                                Kr::selectItem(Some(Ui::SINK<>), "1"s),
+                                Kr::selectItem(Some(Ui::SINK<>), "2"s),
+                                Kr::selectItem(Some(Ui::SINK<>), "4"s),
+                                Kr::selectItem(Some(Ui::SINK<>), "6"s),
+                                Kr::selectItem(Some(Ui::SINK<>), "9"s),
+                                Kr::selectItem(Some(Ui::SINK<>), "16"s),
                             };
                         },
                         "Page per sheet"s
@@ -312,10 +312,10 @@ Ui::Child _printSettings(State const& s) {
                         Kr::selectValue(Io::format("{}", Io::cased(s.settings.margins, Io::Case::CAPITAL))),
                         [] -> Ui::Children {
                             return {
-                                Kr::selectItem(Model::bind<ChangeMargin>(MarginOption::NONE), "None"s),
-                                Kr::selectItem(Model::bind<ChangeMargin>(MarginOption::MINIMUM), "Minimum"s),
-                                Kr::selectItem(Model::bind<ChangeMargin>(MarginOption::DEFAULT), "Default"s),
-                                Kr::selectItem(Model::bind<ChangeMargin>(Math::InsetsAu{}), "Custom"s),
+                                Kr::selectItem(Some(Model::bind<ChangeMargin>(MarginOption::NONE)), "None"s),
+                                Kr::selectItem(Some(Model::bind<ChangeMargin>(MarginOption::MINIMUM)), "Minimum"s),
+                                Kr::selectItem(Some(Model::bind<ChangeMargin>(MarginOption::DEFAULT)), "Default"s),
+                                Kr::selectItem(Some(Model::bind<ChangeMargin>(Math::InsetsAu{})), "Custom"s),
                             };
                         },
                         "Margins"s
@@ -371,7 +371,7 @@ Ui::Child _printDialog(State const& s) {
             Kr::dialogFooter({
                 Ui::grow(NONE),
                 Kr::dialogCancel(),
-                Kr::dialogAction(Model::bind(PrintAction::PRINT), "Print"s),
+                Kr::dialogAction(Some(Model::bind(PrintAction::PRINT)), "Print"s),
             })
         ) | Ui::maxSize({Ui::UNCONSTRAINED, 500}) |
             Ui::grow(),
@@ -392,7 +392,7 @@ Ui::Child _printDialogMobile(State const& s) {
         Kr::separator(),
         Kr::dialogFooter({
             Kr::dialogCancel(),
-            Kr::dialogAction(Model::bind(PrintAction::PRINT), "Print"s),
+            Kr::dialogAction(Some(Model::bind(PrintAction::PRINT)), "Print"s),
         }),
     });
 }

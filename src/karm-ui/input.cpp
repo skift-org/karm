@@ -105,18 +105,18 @@ export struct ButtonStyle {
         return {
             .idleStyle = {
                 .borderRadii = RADIUS,
-                .backgroundFill = ramp[8],
+                .backgroundFill = Some(ramp[8]),
             },
             .hoverStyle = {
                 .borderRadii = RADIUS,
                 .borderWidth = 1,
-                .backgroundFill = ramp[7],
+                .backgroundFill = Some(ramp[7]),
             },
             .pressStyle = {
                 .borderRadii = RADIUS,
                 .borderWidth = 1,
-                .borderFill = ramp[7],
-                .backgroundFill = ramp[8],
+                .borderFill = Some(ramp[7]),
+                .backgroundFill = Some(ramp[8]),
             },
         };
     }
@@ -125,18 +125,18 @@ export struct ButtonStyle {
         return {
             .idleStyle = {
                 .borderRadii = RADIUS,
-                .backgroundFill = GRAY900,
+                .backgroundFill = Some(GRAY900),
             },
             .hoverStyle = {
                 .borderRadii = RADIUS,
                 .borderWidth = 1,
-                .backgroundFill = GRAY800,
+                .backgroundFill = Some(GRAY800),
             },
             .pressStyle = {
                 .borderRadii = RADIUS,
                 .borderWidth = 1,
-                .borderFill = GRAY800,
-                .backgroundFill = GRAY900,
+                .borderFill = Some(GRAY800),
+                .backgroundFill = Some(GRAY900),
             },
         };
     }
@@ -145,20 +145,20 @@ export struct ButtonStyle {
         return {
             .idleStyle = {
                 .borderRadii = RADIUS,
-                .backgroundFill = ACCENT500,
+                .backgroundFill = Some(ACCENT500),
                 .foregroundFill = Gfx::WHITE,
             },
             .hoverStyle = {
                 .borderRadii = RADIUS,
                 .borderWidth = 1,
-                .backgroundFill = ACCENT400,
+                .backgroundFill = Some(ACCENT400),
                 .foregroundFill = Gfx::WHITE,
             },
             .pressStyle = {
                 .borderRadii = RADIUS,
                 .borderWidth = 1,
-                .borderFill = ACCENT400,
-                .backgroundFill = ACCENT500,
+                .borderFill = Some(ACCENT400),
+                .backgroundFill = Some(ACCENT500),
                 .foregroundFill = Gfx::WHITE,
             },
         };
@@ -169,18 +169,18 @@ export struct ButtonStyle {
             .idleStyle = {
                 .borderRadii = RADIUS,
                 .borderWidth = 1,
-                .borderFill = GRAY800,
+                .borderFill = Some(GRAY800),
             },
             .hoverStyle = {
                 .borderRadii = RADIUS,
                 .borderWidth = 1,
-                .backgroundFill = GRAY700,
+                .backgroundFill = Some(GRAY700),
             },
             .pressStyle = {
                 .borderRadii = RADIUS,
                 .borderWidth = 1,
-                .borderFill = GRAY700,
-                .backgroundFill = GRAY800,
+                .borderFill = Some(GRAY700),
+                .backgroundFill = Some(GRAY800),
             },
         };
     }
@@ -193,13 +193,13 @@ export struct ButtonStyle {
             .hoverStyle = {
                 .borderRadii = RADIUS,
                 .borderWidth = 1,
-                .backgroundFill = GRAY700,
+                .backgroundFill = Some(GRAY700),
             },
             .pressStyle = {
                 .borderRadii = RADIUS,
                 .borderWidth = 1,
-                .borderFill = GRAY700,
-                .backgroundFill = GRAY800,
+                .borderFill = Some(GRAY700),
+                .backgroundFill = Some(GRAY800),
             },
         };
     }
@@ -224,13 +224,13 @@ export struct ButtonStyle {
             .hoverStyle = {
                 .borderRadii = RADIUS,
                 .borderWidth = 1,
-                .backgroundFill = Gfx::RED600,
+                .backgroundFill = Some(Gfx::RED600),
             },
             .pressStyle = {
                 .borderRadii = RADIUS,
                 .borderWidth = 1,
-                .borderFill = Gfx::RED600,
-                .backgroundFill = Gfx::RED700,
+                .borderFill = Some(Gfx::RED600),
+                .backgroundFill = Some(Gfx::RED700),
             },
         };
     }
@@ -450,7 +450,7 @@ struct Input : View<Input> {
     Gfx::Prose& _ensureText() {
         if (not _text) {
             _style.collapseEmptyLines = false;
-            _text = makeRc<Gfx::Prose>(_style, _style);
+            _text = Some(makeRc<Gfx::Prose>(_style, _style));
             (*_text)->append(_model->runes());
         }
         return **_text;
@@ -570,14 +570,14 @@ struct SimpleInput : View<SimpleInput> {
 
     TextModel& _ensureModel() {
         if (not _model)
-            _model = TextModel(_text);
+            _model = Some(TextModel(_text));
         return *_model;
     }
 
     Gfx::Prose& _ensureText() {
         if (not _prose) {
             _style.collapseEmptyLines = false;
-            _prose = makeRc<Gfx::Prose>(_style, _style);
+            _prose = Some(makeRc<Gfx::Prose>(_style, _style));
             (*_prose)->append(_ensureModel().runes());
         }
         return **_prose;

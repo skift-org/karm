@@ -41,7 +41,7 @@ bool matchesProfileFilter(ProfileItem const& profile, Opt<Icc::ProfileClass> fil
 Opt<usize> firstVisibleProfile(State const& state) {
     for (usize index = 0; index < state.profiles.len(); index++) {
         if (matchesProfileFilter(state.profiles[index], state.filter))
-            return index;
+            return Some(index);
     }
 
     return NONE;
@@ -130,8 +130,8 @@ Res<Vec<ProfileItem>> loadAll() {
 Ui::Child profileNavitem(State const& s, ProfileItem const& profile, usize index) {
     return Kr::sidenavItem(
         s.selected == index,
-        Model::bind<SelectProfile>(index),
-        profileIcon(profile.profile->profileDeviceClass()),
+        Some(Model::bind<SelectProfile>(index)),
+        profileIcon(Some(profile.profile->profileDeviceClass())),
         profile.name
     );
 }
@@ -174,15 +174,15 @@ Ui::Child profileNavbar(State const& s) {
             Kr::selectValue(profileFilterText(s.filter)),
             [] -> Ui::Children {
                 return {
-                    Kr::selectItem(Model::bind<SetProfileFilter>(NONE), profileFilterText(NONE)),
+                    Kr::selectItem(Some(Model::bind<SetProfileFilter>(NONE)), profileFilterText(NONE)),
                     Kr::separator(),
-                    Kr::selectItem(Model::bind<SetProfileFilter>(Icc::ProfileClass::INPUT_DEVICE), profileFilterText(Icc::ProfileClass::INPUT_DEVICE)),
-                    Kr::selectItem(Model::bind<SetProfileFilter>(Icc::ProfileClass::DISPLAY_DEVICE), "Display Device"s),
-                    Kr::selectItem(Model::bind<SetProfileFilter>(Icc::ProfileClass::OUTPUT_DEVICE), "Output Device"s),
-                    Kr::selectItem(Model::bind<SetProfileFilter>(Icc::ProfileClass::DEVICE_LINK), "Device Link"s),
-                    Kr::selectItem(Model::bind<SetProfileFilter>(Icc::ProfileClass::COLOR_SPACE), "Color Space"s),
-                    Kr::selectItem(Model::bind<SetProfileFilter>(Icc::ProfileClass::ABSTRACT), "Abstract"s),
-                    Kr::selectItem(Model::bind<SetProfileFilter>(Icc::ProfileClass::NAMED_COLOR), "Named Color"s),
+                    Kr::selectItem(Some(Model::bind<SetProfileFilter>(Some(Icc::ProfileClass::INPUT_DEVICE))), profileFilterText(Some(Icc::ProfileClass::INPUT_DEVICE))),
+                    Kr::selectItem(Some(Model::bind<SetProfileFilter>(Some(Icc::ProfileClass::DISPLAY_DEVICE))), profileFilterText(Some(Icc::ProfileClass::DISPLAY_DEVICE))),
+                    Kr::selectItem(Some(Model::bind<SetProfileFilter>(Some(Icc::ProfileClass::OUTPUT_DEVICE))), profileFilterText(Some(Icc::ProfileClass::OUTPUT_DEVICE))),
+                    Kr::selectItem(Some(Model::bind<SetProfileFilter>(Some(Icc::ProfileClass::DEVICE_LINK))), profileFilterText(Some(Icc::ProfileClass::DEVICE_LINK))),
+                    Kr::selectItem(Some(Model::bind<SetProfileFilter>(Some(Icc::ProfileClass::COLOR_SPACE))), profileFilterText(Some(Icc::ProfileClass::COLOR_SPACE))),
+                    Kr::selectItem(Some(Model::bind<SetProfileFilter>(Some(Icc::ProfileClass::ABSTRACT))), profileFilterText(Some(Icc::ProfileClass::ABSTRACT))),
+                    Kr::selectItem(Some(Model::bind<SetProfileFilter>(Some(Icc::ProfileClass::NAMED_COLOR))), profileFilterText(Some(Icc::ProfileClass::NAMED_COLOR))),
                 };
             }
         )
@@ -248,9 +248,9 @@ Ui::Child app(Vec<ProfileItem> profiles) {
         return Kr::scaffold({
             .icon = Mdi::PALETTE,
             .title = "Color Profiles"s,
-            .sidebar = [&] {
+            .sidebar = Some([&] {
                 return profileNavbar(s);
-            },
+            }),
             .body = [&] {
                 return appContent(s) | Kr::scaffoldContent();
             },

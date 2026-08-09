@@ -112,14 +112,14 @@ static Ui::Child _sliderThumb(Gfx::Color color) {
            Ui::box({
                .borderRadii = 99,
                .borderWidth = 2,
-               .borderFill = Gfx::WHITE,
-               .backgroundFill = color,
+               .borderFill = Some(Gfx::WHITE),
+               .backgroundFill = Some(color),
            }) |
            Ui::box({
                .padding = 1,
                .borderRadii = 99,
                .borderWidth = 1,
-               .borderFill = Gfx::BLACK.withOpacity(0.25),
+               .borderFill = Some(Gfx::BLACK.withOpacity(0.25)),
            }) |
            Ui::dragRegion();
 }
@@ -142,8 +142,8 @@ export Ui::Child hsvValueSlider(Gfx::Hsv hsv, Ui::Send<Gfx::Hsv> onChange) {
                .padding = 1,
                .borderRadii = 99,
                .borderWidth = 1,
-               .borderFill = Ui::GRAY100.withOpacity(0.2),
-               .backgroundFill = background,
+               .borderFill = Some(Ui::GRAY100.withOpacity(0.2)),
+               .backgroundFill = Some(background),
            }) |
            Ui::maxSize({Ui::UNCONSTRAINED, 18});
 }
@@ -174,8 +174,8 @@ export Ui::Child hsvSaturationSlider(Gfx::Hsv hsv, Ui::Send<Gfx::Hsv> onChange) 
                .padding = 1,
                .borderRadii = 99,
                .borderWidth = 1,
-               .borderFill = Ui::GRAY100.withOpacity(0.2),
-               .backgroundFill = background,
+               .borderFill = Some(Ui::GRAY100.withOpacity(0.2)),
+               .backgroundFill = Some(background),
            }) |
            Ui::maxSize({Ui::UNCONSTRAINED, 18});
 }
@@ -190,8 +190,8 @@ export Ui::Child hsvHueSlider(Gfx::Hsv hsv, Ui::Send<Gfx::Hsv> onChange) {
                .padding = 1,
                .borderRadii = 99,
                .borderWidth = 1,
-               .borderFill = Ui::GRAY100.withOpacity(0.2),
-               .backgroundFill = Gfx::Gradient::hsv().bake(),
+               .borderFill = Some(Ui::GRAY100.withOpacity(0.2)),
+               .backgroundFill = Some(Gfx::Gradient::hsv().bake()),
            }) |
            Ui::maxSize({Ui::UNCONSTRAINED, 18});
 }
@@ -256,9 +256,9 @@ export Ui::Child colorPickerDialog() {
                 Ui::box({
                     .borderRadii = 6,
                     .borderWidth = 1,
-                    .borderFill = Ui::GRAY100.withOpacity(0.1),
-                    .backgroundFill = Gfx::hsvToRgb(s.hsv),
-                    .shadowStyle = Gfx::BoxShadow::elevated(16, Gfx::hsvToRgb(s.hsv).withOpacity(0.5)),
+                    .borderFill = Some(Ui::GRAY100.withOpacity(0.1)),
+                    .backgroundFill = Some(Gfx::hsvToRgb(s.hsv)),
+                    .shadowStyle = Some(Gfx::BoxShadow::elevated(16, Gfx::hsvToRgb(s.hsv).withOpacity(0.5))),
                 });
 
             auto content =
@@ -285,7 +285,7 @@ export Ui::Child colorPickerDialog() {
                 dialogFooter({
                     Ui::grow(NONE),
                     dialogCancel(),
-                    dialogAction(Ui::SINK<>, "Ok"s),
+                    dialogAction(Some(Ui::SINK<>), "Ok"s),
                 }),
             });
         }
@@ -301,8 +301,8 @@ export Ui::Child colorInput(Gfx::Color color, Ui::Send<Gfx::Color>) {
             .margin = 4,
             .borderRadii = 2,
             .borderWidth = 1,
-            .borderFill = Gfx::GRAY50.withOpacity(0.1),
-            .backgroundFill = color,
+            .borderFill = Some(Gfx::GRAY50.withOpacity(0.1)),
+            .backgroundFill = Some(color),
         });
 
     auto hexPreview =
@@ -312,9 +312,9 @@ export Ui::Child colorInput(Gfx::Color color, Ui::Send<Gfx::Color>) {
            Ui::insets({6, 12, 6, 6}) |
            Ui::minSize({Ui::UNCONSTRAINED, 32}) |
            button(
-               [](auto& n) {
+               Some([](auto& n) {
                    Ui::showDialog(n, colorPickerDialog());
-               },
+               }),
                Ui::ButtonStyle::outline()
            );
 }

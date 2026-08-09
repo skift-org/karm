@@ -143,7 +143,7 @@ export Child grow(Opt<Child> child) {
 
 export auto grow() {
     return [](Child child) {
-        return grow(child);
+        return grow(Some(child));
     };
 }
 
@@ -158,7 +158,7 @@ export Child grow(isize grow, Opt<Child> child) {
 
 export auto grow(isize g) {
     return [g](Child child) {
-        return grow(g, child);
+        return grow(g, Some(child));
     };
 }
 

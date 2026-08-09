@@ -195,11 +195,11 @@ test$("slice-niche") {
     expectEq$(sizeof(test), sizeof(Slice<char>));
     expectEq$(test.has(), false);
     expectEq$(test, NONE);
-    test = Slice<char>("test", 5);
+    test = Some(Slice<char>("test", 5));
     expectEq$(test.unwrap(), comp);
     expectEq$(test.take(), comp);
     expectEq$(test, NONE);
-    test = Slice<char>("", 1);
+    test = Some(Slice<char>("", 1));
     expectEq$(test.has(), true);
 
     return Ok();
@@ -213,13 +213,13 @@ test$("mutslice-niche") {
     expectEq$(sizeof(test), sizeof(MutSlice<char>));
     expectEq$(test.has(), false);
     expectEq$(test, NONE);
-    test = MutSlice<char>(new char[5], 5);
+    test = Some(MutSlice<char>(new char[5], 5));
     copy(comp, test.unwrap());
     expectEq$(test.unwrap(), comp);
     delete[] test.take().buf();
     expectEq$(test, NONE);
 
-    test = MutSlice<char>(new char[5], 5);
+    test = Some(MutSlice<char>(new char[5], 5));
     expectEq$(test.has(), true);
     delete[] test->buf();
 

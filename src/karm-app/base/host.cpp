@@ -54,18 +54,15 @@ export Opt<Direction> resizeDirectionFromPos(Math::Vec2i pos, Math::Recti rect, 
         y = 1;
 
     if (x == -1)
-        return y == -1  ? Direction::NORTH_WEST
-               : y == 1 ? Direction::SOUTH_WEST
-                        : Direction::WEST;
+        return Some(y == -1 ? Direction::NORTH_WEST : y == 1 ? Direction::SOUTH_WEST
+                                                             : Direction::WEST);
     if (x == 1)
-        return y == -1
-                   ? Direction::NORTH_EAST
-               : y == 1 ? Direction::SOUTH_EAST
-                        : Direction::EAST;
+        return Some(y == -1 ? Direction::NORTH_EAST : y == 1 ? Direction::SOUTH_EAST
+                                                             : Direction::EAST);
     if (y == -1)
-        return Direction::NORTH;
+        return Some(Direction::NORTH);
     if (y == 1)
-        return Direction::SOUTH;
+        return Some(Direction::SOUTH);
 
     return NONE;
 }

@@ -39,7 +39,7 @@ export struct Body : Aio::Reader {
             }
 
             Opt<usize> contentLength() const override {
-                return _buf.len();
+                return Some(_buf.len());
             }
         };
 
@@ -59,7 +59,7 @@ export struct Body : Aio::Reader {
             }
 
             Opt<usize> contentLength() const override {
-                return _blob->len();
+                return Some(_blob->len());
             }
         };
 

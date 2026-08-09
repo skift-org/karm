@@ -383,7 +383,7 @@ struct SdlApplication : Application {
     }
 
     Async::Task<> runAsync(Rc<Handler> handler, Async::CancellationToken ct) override {
-        _handler = handler;
+        _handler = Some(handler);
         Defer _ = [&] {
             _handler = NONE;
         };

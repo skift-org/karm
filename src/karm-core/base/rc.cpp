@@ -262,14 +262,14 @@ struct _Rc {
     constexpr Opt<_Rc<I, U>> cast() {
         if (not is<U>())
             return NONE;
-        return _Rc<I, U>(MOVE, _cell);
+        return Some(_Rc<I, U>(MOVE, _cell));
     }
 
     template <typename U>
     constexpr Opt<_Rc<I, U>> cast() const {
         if (not is<U>())
             return NONE;
-        return _Rc<I, U>(MOVE, _cell);
+        return Some(_Rc<I, U>(MOVE, _cell));
     }
 
     template <typename UI, Meta::Comparable<T> U>
@@ -371,7 +371,7 @@ struct _Weak {
     Opt<_Rc<I, T>> upgrade() const {
         if (not _cell or _cell->_strong == 0)
             return NONE;
-        return _Rc<I, T>(MOVE, _cell);
+        return Some(_Rc<I, T>(MOVE, _cell));
     }
 };
 

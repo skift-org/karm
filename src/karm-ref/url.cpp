@@ -92,7 +92,7 @@ export struct Url {
     static Url data(Mime mime, Bytes data) {
         Url url;
         url.scheme = "data"_sym;
-        url.blob = makeRc<Blob>(Uti::fromMime(mime), data);
+        url.blob = Some(makeRc<Blob>(Uti::fromMime(mime), data));
         return url;
     }
 
@@ -339,7 +339,7 @@ export struct Url {
 
 export Url parseUrlOrPath(Str str, Url baseUrl) {
     if (Url::isUrl(str))
-        return Url::parse(str, baseUrl);
+        return Url::parse(str, Some(baseUrl));
 
     baseUrl.path = baseUrl.path.join(Path::parse(str));
     return baseUrl;

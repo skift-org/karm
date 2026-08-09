@@ -27,7 +27,7 @@ test$("weak-self") {
     };
 
     auto foo = makeRc<Foo>();
-    foo->_self = foo;
+    foo->_self = Some(foo);
     auto foo2 = foo->self();
 
     expectEq$(foo.strong(), 2uz);
@@ -43,11 +43,11 @@ test$("rc-niche") {
     expectEq$(sizeof(test), sizeof(Rc<int>));
     expectEq$(test.has(), false);
     expectEq$(test, NONE);
-    test = makeRc<int>(5);
+    test = Some(makeRc<int>(5));
     expectEq$(test.unwrap(), 5);
     expectEq$(test.take(), 5);
     expectEq$(test, NONE);
-    test = makeRc<int>();
+    test = Some(makeRc<int>());
     expectEq$(test.has(), true);
 
     return Ok();

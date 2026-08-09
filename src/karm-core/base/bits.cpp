@@ -89,7 +89,7 @@ export struct MutBits {
 
             if (range.size == count) {
                 set(range, true);
-                return range;
+                return Some(range);
             }
         }
 

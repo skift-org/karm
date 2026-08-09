@@ -10,11 +10,11 @@ test$("box-niche") {
     expectEq$(sizeof(test), sizeof(Box<int>));
     expectEq$(test.has(), false);
     expectEq$(test, NONE);
-    test = makeBox<int>(5);
+    test = Some(makeBox<int>(5));
     expectEq$(test.unwrap(), 5);
     expectEq$(test.take(), 5);
     expectEq$(test, NONE);
-    test = makeBox<int>();
+    test = Some(makeBox<int>());
     expectEq$(test.has(), true);
 
     return Ok();

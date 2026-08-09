@@ -121,7 +121,7 @@ struct Range {
                 if (start >= end)
                     return NONE;
                 auto value = --end;
-                return value;
+                return Some(value);
             }
         };
 
@@ -134,7 +134,7 @@ struct Range {
         auto value = start;
         start += 1;
         size -= 1;
-        return value;
+        return Some(value);
     }
 
     template <typename U>
@@ -154,7 +154,7 @@ struct Range {
         if (not aligned(size, alignment))
             return NONE;
 
-        return true;
+        return Some(true);
     }
 
     std::strong_ordering operator<=>(Range const& other) const {

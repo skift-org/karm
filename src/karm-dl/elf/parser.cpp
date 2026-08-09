@@ -59,7 +59,7 @@ struct ElfSymTabSection : ElfSection<Abi> {
                     return NONE;
                 auto sym = s.peek<ElfSym<Abi>>();
                 s.skip(entsize);
-                return sym;
+                return Some(sym);
             }
         };
 
@@ -102,7 +102,7 @@ struct ElfDynamicSection : ElfSection<Abi> {
                     return NONE;
                 auto sym = s.peek<ElfDyn<Abi>>();
                 s.skip(entsize);
-                return sym;
+                return Some(sym);
             }
         };
 
@@ -112,7 +112,7 @@ struct ElfDynamicSection : ElfSection<Abi> {
     Opt<ElfDyn<Abi>> dyn(Elf::ElfDynTag tag) {
         for (ElfDyn dyn : iterDyn())
             if (dyn.tag() == tag)
-                return dyn;
+                return Some(dyn);
 
         return NONE;
     }
@@ -162,7 +162,7 @@ struct ElfObject : Io::BChunk {
     Opt<Str> interp() const {
         for (ElfProgram pg : iterProgram()) {
             if (pg.type() == ElfPhdrType::PT_INTERP) {
-                return Str{sub(pg.data, 0, pg.data.len() - 1).template cast<char>()};
+                return Some(Str{sub(pg.data, 0, pg.data.len() - 1).template cast<char>()});
             }
         }
         return NONE;

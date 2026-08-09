@@ -311,7 +311,7 @@ struct Serde<Opt<T>> {
     static Res<Opt<T>> deserialize(Deserializer& de) {
         if (auto res = de.deserializeUnit<T>({Type::SOME})) {
             auto [_, val] = res.take();
-            return Ok(std::move(val));
+            return Ok(Some(std::move(val)));
         }
 
         try$(de.deserializeUnit({Type::NIL}));
@@ -367,7 +367,7 @@ struct Serde<Union<Ts...>> {
             return scope.serializeUnit<T>(
                 {
                     .kind = Type::UNION_ITEM,
-                    .index = u.index(),
+                    .index = Some(u.index()),
                 },
                 v
             );
@@ -382,7 +382,7 @@ struct Serde<Union<Ts...>> {
         auto res = try$(Meta::any<Ts...>([&]<typename T> -> Res<Union<Ts...>> {
             auto [_, value] = try$(scope.deserializeUnit<T>({
                 .kind = Type::UNION_ITEM,
-                .index = index++,
+                .index = Some(index++),
             }));
             return Ok(std::move(value));
         }));
@@ -402,7 +402,7 @@ struct Serde<T> {
         try$(scope.serializeUnit(
             {
                 .kind = Type::ENUM_ITEM,
-                .tag = Symbol::from(nameOf(v)),
+                .tag = Some(Symbol::from(nameOf(v))),
             },
             toUnderlyingType(v)
         ));
@@ -418,7 +418,7 @@ struct Serde<T> {
         for (auto i : enumItems<T>()) {
             if (auto res = de.deserializeUnit<Meta::UnderlyingType<T>>({
                     .kind = Type::ENUM_ITEM,
-                    .tag = Symbol::from(i.name),
+                    .tag = Some(Symbol::from(i.name)),
                 })) {
                 try$(scope.end());
                 return Ok(static_cast<T>(res.unwrap().v1));
@@ -566,7 +566,10 @@ struct Serde<Array<T, N>> {
 export template <typename T>
 struct Serde<Vec<T>> {
     static Res<> serialize(Serializer& ser, Vec<T> const& v) {
-        auto scope = try$(ser.beginScope({.kind = Type::VEC, .len = v.len()}));
+        auto scope = try$(ser.beginScope({
+            .kind = Type::VEC,
+            .len = Some(v.len()),
+        }));
         for (auto& i : v) {
             try$(scope.serialize(i));
         }

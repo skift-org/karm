@@ -38,7 +38,7 @@ struct Handler : App::Handler {
         cmd->beginRenderPass({
             .colorAttachments = {
                 Gpu::RenderAttachment{
-                    .texture = windowTexture,
+                    .texture = Some(windowTexture),
                     .loadOp = Gpu::LoadOp::CLEAR,
                     .storeOp = Gpu::StoreOp::STORE,
                     .clearColor = {1.0, 0.0, 0.0, 1.0},

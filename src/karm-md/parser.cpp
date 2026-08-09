@@ -102,7 +102,7 @@ Opt<_ListMarker> _listMarker(Io::SScan s) {
     if (s.ahead('-') or s.ahead('*') or s.ahead('+')) {
         s.next();
         if (s.ahead(' ') or s.ahead('\t'))
-            return _ListMarker{.ordered = false, .width = 1};
+            return Some(_ListMarker{.ordered = false, .width = 1});
     }
 
     usize width = 0;
@@ -115,7 +115,7 @@ Opt<_ListMarker> _listMarker(Io::SScan s) {
         return NONE;
 
     if (s.skip('.') and (s.ahead(' ') or s.ahead('\t')))
-        return _ListMarker{.ordered = true, .width = width + 1};
+        return Some(_ListMarker{.ordered = true, .width = width + 1});
 
     return NONE;
 }

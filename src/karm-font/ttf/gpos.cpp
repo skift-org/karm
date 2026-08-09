@@ -64,7 +64,7 @@ export struct Gpos : Io::BChunk {
             // 4. Inspect the featureTag of each feature, and select the feature
             //    tables to apply to an input glyph string.
             if (featureTable.tag == "kern") {
-                kernFeatureTable = featureTable;
+                kernFeatureTable = Some(featureTable);
                 break;
             }
         }

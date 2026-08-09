@@ -312,6 +312,7 @@ void dispatch(V visitor, T&& t, Ts&&... ts) {
         );
     }
 }
+
 export template <typename... Ts>
     requires(sizeof...(Ts) <= 254)
 struct Niche<Union<Ts...>> {

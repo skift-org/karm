@@ -46,8 +46,8 @@ Res<> ls(Slice<Str> paths, Options const& options) {
 } // namespace Ls
 
 Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
-    auto allFlag = Cli::flag('a', "all"s, "Do not ignore entries starting with ."s);
-    auto listFlag = Cli::flag('l', "list"s, "Use a long listing format."s);
+    auto allFlag = Cli::flag(Some('a'), "all"s, "Do not ignore entries starting with ."s);
+    auto listFlag = Cli::flag(Some('l'), "list"s, "Use a long listing format."s);
     auto argsOperands = Cli::operand<Vec<Str>>("paths"s, "Directories to list."s);
 
     Cli::Command cmd{

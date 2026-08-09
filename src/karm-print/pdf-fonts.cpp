@@ -80,7 +80,7 @@ export struct TtfGlyphInfoAdapter {
             auto gliyphAdvInEm = _font->advance(glyph);
             currGroupW.pushBack(gliyphAdvInEm * 1000);
 
-            prevCid = cid;
+            prevCid = Some(cid);
         }
 
         flushCollectedWidths();

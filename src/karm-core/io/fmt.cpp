@@ -577,6 +577,26 @@ struct Formatter<bool> {
 };
 
 export template <typename T>
+struct Formatter<Some<T>> {
+    Formatter<Meta::RemoveConstVolatileRef<T>> formatter;
+
+    void parse(SScan& scan) {
+        if constexpr (requires() {
+                          formatter.parse(scan);
+                      }) {
+            formatter.parse(scan);
+        }
+    }
+
+    Res<> format(TextWriter& writer, Some<T> const& val) {
+        if constexpr (Meta::Same<T, None>)
+            return writer.writeStr("Some"s);
+        else
+            return formatter.format(writer, val.unwrap());
+    }
+};
+
+export template <typename T>
 struct Formatter<Opt<T>> {
     Formatter<Meta::RemoveConstVolatileRef<T>> formatter;
 

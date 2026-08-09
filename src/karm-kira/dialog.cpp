@@ -15,13 +15,13 @@ export Ui::Child dialogContent(Ui::Children children) {
     Ui::BoxStyle const boxStyle = {
         .borderRadii = 8,
         .borderWidth = 1,
-        .borderFill = Ui::GRAY800,
-        .backgroundFill = Ui::GRAY900,
-        .shadowStyle = Gfx::BoxShadow::elevated(16)
+        .borderFill = Some(Ui::GRAY800),
+        .backgroundFill = Some(Ui::GRAY900),
+        .shadowStyle = Some(Gfx::BoxShadow::elevated(16))
     };
 
     return Ui::vflow(children) |
-           box(boxStyle) |
+           Ui::box(boxStyle) |
            Ui::dragRegion() |
            Ui::align(Math::Align::CENTER | Math::Align::CLAMP) |
            Ui::insets(16);
@@ -31,7 +31,7 @@ export Ui::Child dialogTitleBar(String title) {
     return Ui::hflow(
                Ui::titleSmall(title) | Ui::vcenter(),
                Ui::grow(NONE),
-               Ui::button(Ui::closeDialog, Ui::ButtonStyle::subtle(), Mdi::CLOSE)
+               Ui::button(Some(Ui::closeDialog), Ui::ButtonStyle::subtle(), Mdi::CLOSE)
            ) |
            Ui::insets({4, 4, 4, 16});
 }
@@ -70,10 +70,10 @@ export Ui::Child dialogFooter(Ui::Children children) {
 
 export Ui::Child dialogAction(Opt<Ui::Send<>> onPress, String text) {
     return Ui::button(
-               [onPress = std::move(onPress)](auto& n) {
+               Some([onPress = std::move(onPress)](auto& n) {
                    onPress(n);
                    Ui::closeDialog(n);
-               },
+               }),
                Ui::ButtonStyle::primary(),
                text
            ) |
@@ -82,7 +82,7 @@ export Ui::Child dialogAction(Opt<Ui::Send<>> onPress, String text) {
 
 export Ui::Child dialogCancel() {
     return Ui::button(
-        Ui::closeDialog,
+        Some(Ui::closeDialog),
         "Cancel"
     );
 }
@@ -95,7 +95,7 @@ export Ui::Child alertDialog(String title, String description) {
         }),
         dialogFooter({
             Ui::grow(NONE),
-            dialogAction(Ui::SINK<>, "Ok"s),
+            dialogAction(Some(Ui::SINK<>), "Ok"s),
         }),
     });
 }

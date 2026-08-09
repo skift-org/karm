@@ -240,7 +240,7 @@ export struct Canvas : Gfx::Canvas {
                         inArray = false;
                     }
                     currentColor = style.color;
-                    currentFont = style.font;
+                    currentFont = Some(style.font);
                     fillStyle(*currentColor);
                     _e.ln(
                         "/F{} {} Tf",

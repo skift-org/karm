@@ -146,7 +146,7 @@ export struct CoverageTable : Io::BChunk {
             for (auto i : urange::zeroTo(len())) {
                 auto glyph = s.nextU16be();
                 if (glyph == glyphId) {
-                    return i;
+                    return Some(i);
                 }
             }
         }
@@ -158,7 +158,7 @@ export struct CoverageTable : Io::BChunk {
                 auto end = s.nextU16be();
                 auto index = s.nextU16be();
                 if (start <= glyphId and glyphId <= end) {
-                    return index + glyphId - start;
+                    return Some(index + glyphId - start);
                 }
             }
         }
@@ -263,7 +263,7 @@ export struct GlyphPairAdjustment : LookupSubtableBase {
             if (secondGlyph == curr) {
                 ValueRecord value1 = ValueRecord::read(pairSetTable, valueFormat1);
                 ValueRecord value2 = ValueRecord::read(pairSetTable, valueFormat2);
-                return Pair<ValueRecord>{value1, value2};
+                return Some(Pair<ValueRecord>{value1, value2});
             }
 
             pairSetTable.skip(value1len + value2len);
@@ -283,7 +283,7 @@ export struct ClassDef : Io::BChunk {
             auto startGlyph = s.nextU16be();
             auto glyphCount = s.nextU16be();
             if (startGlyph <= glyphId and glyphId < startGlyph + glyphCount) {
-                return s.skip((glyphId - startGlyph) * 2).nextU16be();
+                return Some(s.skip((glyphId - startGlyph) * 2).nextU16be());
             }
         }
 
@@ -295,7 +295,7 @@ export struct ClassDef : Io::BChunk {
                 auto endGlyph = s.nextU16be();
                 auto glyphClass = s.nextU16be();
                 if (startGlyph <= glyphId and glyphId <= endGlyph) {
-                    return glyphClass;
+                    return Some(glyphClass);
                 }
             }
         }
@@ -337,7 +337,7 @@ export struct ClassPairAdjustment : LookupSubtableBase {
         ValueRecord value1 = ValueRecord::read(s, valueFormat1);
         ValueRecord value2 = ValueRecord::read(s, valueFormat2);
 
-        return Pair<ValueRecord>{value1, value2};
+        return Some(Pair<ValueRecord>{value1, value2});
     }
 };
 

@@ -236,7 +236,7 @@ auto iterRunes(S const& slice) {
             }
 
             Rune r;
-            return E::decodeUnit(r, cursor) ? Opt<Rune>(r) : Opt<Rune>(NONE);
+            return E::decodeUnit(r, cursor) ? Opt<Rune>(Some(r)) : Opt<Rune>(NONE);
         }
     };
 

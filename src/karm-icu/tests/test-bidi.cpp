@@ -96,7 +96,7 @@ struct TestCase {
                     auto level = atoi(scan, {.base = 10});
                     if (not level)
                         return NONE;
-                    testCase.levels.pushBack(*level);
+                    testCase.levels.pushBack(Some(*level));
                 }
             }
         }
@@ -117,7 +117,7 @@ struct TestCase {
             }
         }
 
-        return testCase;
+        return Some(std::move(testCase));
     }
 };
 
@@ -138,7 +138,7 @@ test$("bidiTestFileLevels") {
     [[maybe_unused]] usize correct = 0;
     for (auto testCase : testCasesFromFile(mmap)) {
         auto const& inputParagraph = testCase.runes;
-        auto [levels, _] = Bidi::computeLevels(inputParagraph, testCase.paragraphLevel);
+        auto [levels, _] = Bidi::computeLevels(inputParagraph, Some(testCase.paragraphLevel));
 
         expectEq$(levels.len(), testCase.levels.len());
         bool isOk = true;

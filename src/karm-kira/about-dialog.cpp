@@ -40,11 +40,14 @@ export Ui::Child aboutDialog(String name) {
         }),
         dialogFooter({
             Ui::grow(NONE),
-            button([](auto& n) {
-                showDialog(n, licenseDialog());
-            },
-                   Ui::ButtonStyle::regular(), "License"),
-            dialogAction(Ui::SINK<>, "Ok"s),
+            button(
+                Some([](auto& n) {
+                    showDialog(n, licenseDialog());
+                }),
+                Ui::ButtonStyle::regular(),
+                "License"
+            ),
+            dialogAction(Some(Ui::SINK<>), "Ok"s),
         }),
     });
 }

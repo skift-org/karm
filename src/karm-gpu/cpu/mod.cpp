@@ -269,7 +269,7 @@ struct SoftExecutionContext {
     }
 
     void execute(SoftCommandBuffer::PipelineCommand const& cmd) {
-        pipeline = cmd.pipeline;
+        pipeline = Some(cmd.pipeline);
     }
 
     void execute(SoftCommandBuffer::DepthStencilStateCommand const& cmd) {
@@ -281,7 +281,7 @@ struct SoftExecutionContext {
     }
 
     void execute(SoftCommandBuffer::ScissorCommand const& cmd) {
-        pipelineState.scissor = cmd.rect;
+        pipelineState.scissor = Some(cmd.rect);
     }
 
     void execute(SoftCommandBuffer::DispatchCommand const& cmd) {
@@ -295,7 +295,7 @@ struct SoftExecutionContext {
     }
 
     void execute(SoftCommandBuffer::BeginRenderPass const& cmd) {
-        renderPass = cmd.props;
+        renderPass = Some(cmd.props);
     }
 
     void execute(SoftCommandBuffer::EndRenderPass const& cmd) {

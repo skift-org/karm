@@ -542,7 +542,7 @@ void changeTypeGivenAdjacentAndTargetPreds(
 
     auto transformAdjacent = [&](usize i) {
         if (not prevValidIndex) {
-            prevValidIndex = i;
+            prevValidIndex = Some(i);
             return;
         }
 
@@ -550,7 +550,7 @@ void changeTypeGivenAdjacentAndTargetPreds(
             paragraph[i] = newType;
         }
 
-        prevValidIndex = i;
+        prevValidIndex = Some(i);
     };
 
     for (auto const& levelRun : isolatingRunSequence.levelRuns) {
@@ -579,7 +579,7 @@ void resolveWeakTypes(MutSlice<BidiClass> paragraph, IsolatingRunSequence const&
                 continue;
 
             if (paragraph[i] != BidiClass::NONSPACING_MARK) {
-                prevValidIndex = i;
+                prevValidIndex = Some(i);
                 continue;
             }
 
@@ -595,7 +595,7 @@ void resolveWeakTypes(MutSlice<BidiClass> paragraph, IsolatingRunSequence const&
                 paragraph[i] = paragraph[*prevValidIndex];
             }
 
-            prevValidIndex = i;
+            prevValidIndex = Some(i);
         }
     }
 
@@ -613,7 +613,7 @@ void resolveWeakTypes(MutSlice<BidiClass> paragraph, IsolatingRunSequence const&
                 paragraph[i] == BidiClass::LEFT_TO_RIGHT or
                 paragraph[i] == BidiClass::ARABIC_LETTER
             ) {
-                lastIndexOfInterest = i;
+                lastIndexOfInterest = Some(i);
             }
         }
     }
@@ -638,7 +638,7 @@ void resolveWeakTypes(MutSlice<BidiClass> paragraph, IsolatingRunSequence const&
 
             if (not prevPrevValidIndex) {
                 prevPrevValidIndex = prevValidIndex;
-                prevValidIndex = i;
+                prevValidIndex = Some(i);
                 continue;
             }
 
@@ -657,7 +657,7 @@ void resolveWeakTypes(MutSlice<BidiClass> paragraph, IsolatingRunSequence const&
             }
 
             prevPrevValidIndex = prevValidIndex;
-            prevValidIndex = i;
+            prevValidIndex = Some(i);
         }
     }
 
@@ -718,7 +718,7 @@ void resolveWeakTypes(MutSlice<BidiClass> paragraph, IsolatingRunSequence const&
                 paragraph[i] == BidiClass::RIGHT_TO_LEFT or
                 paragraph[i] == BidiClass::LEFT_TO_RIGHT
             ) {
-                lastIndexOfInterest = i;
+                lastIndexOfInterest = Some(i);
             }
         }
     }
@@ -1013,7 +1013,7 @@ Vec<Opt<usize>> computeMatchingPDIIndexes(Slice<BidiClass> paragraph) {
             matchingPDIIndices.pushBack(NONE);
         } else if (paragraph[i] == BidiClass::POP_DIRECTIONAL_ISOLATE) {
             if (activeIsolate.len()) {
-                matchingPDIIndices[last(activeIsolate)] = i;
+                matchingPDIIndices[last(activeIsolate)] = Some(i);
                 activeIsolate.popBack();
             } else {
                 // Otherwise, this PDI is unmatched.
@@ -1088,7 +1088,7 @@ void resetSomeEmbeddingsLevelsForL1(MutSlice<T> levels, auto levelFromLineEl, Sl
     for (usize i = 0; i < line.len(); i++) {
         if (isBidiClassToReset(line[i])) {
             if (not startOfSequenceToReset) {
-                startOfSequenceToReset = i;
+                startOfSequenceToReset = Some(i);
             }
         } else if (line[i] == BidiClass::SEGMENT_SEPARATOR or line[i] == BidiClass::PARAGRAPH_SEPARATOR) {
             // 1. Segment separators,

@@ -209,7 +209,7 @@ export struct Uti {
     Opt<Str> primarySuffix() const {
         if (not _registration->suffixes)
             return NONE;
-        return _registration->suffixes[0];
+        return Some(_registration->suffixes[0]);
     }
 
     Mime primaryMimeType() const {
@@ -235,7 +235,7 @@ export struct Uti {
             auto specificity = Uti{c}.specificity() + 1;
             best = max(best, specificity);
         }
-        _registration->_specificity = best;
+        _registration->_specificity = Some(best);
         return best;
     }
 

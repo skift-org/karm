@@ -50,8 +50,8 @@ export struct Pipeline {
             Sys::Command cmd = {
                 .exe = c.segments[0],
                 .args = next(c.segments, 1),
-                .in = prev,
-                .out = in.fd(),
+                .in = Some(prev),
+                .out = Some(out.fd()),
             };
             procs.pushBack(try$(cmd.spawn()));
             prev = out.fd();
@@ -61,8 +61,8 @@ export struct Pipeline {
         Sys::Command cmd = {
             .exe = c.segments[0],
             .args = next(c.segments, 1),
-            .in = prev,
-            .out = Sys::out().fd(),
+            .in = Some(prev),
+            .out = Some(Sys::out().fd()),
         };
 
         procs.pushBack(try$(cmd.spawn()));

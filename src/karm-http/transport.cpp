@@ -253,18 +253,18 @@ struct HttpTransport : Transport {
         auto response = co_trya$(Response::readAsync(*conn, ct));
 
         if (auto contentLength = response.header.contentLength()) {
-            response.body = makeRc<ContentBody>(conn, contentLength.unwrap());
+            response.body = Some(makeRc<ContentBody>(conn, contentLength.unwrap()));
         } else if (auto transferEncoding = response.header.lookup(Header::TRANSFER_ENCODING)) {
             // For now we only support plain "chunked".
             if (*transferEncoding == "chunked") {
-                response.body = makeRc<ChunkedBody>(conn);
+                response.body = Some(makeRc<ChunkedBody>(conn));
             } else {
                 logWarn("Transfer-Encoding: {} not supported", *transferEncoding);
             }
         } else {
             // NOTE: When there is no content length, and no transfer encoding,
             //       we read until the server closes the socket.
-            response.body = makeRc<ContentBody>(conn, Limits<usize>::MAX);
+            response.body = Some(makeRc<ContentBody>(conn, Limits<usize>::MAX));
         }
 
         co_return Ok(makeRc<Response>(std::move(response)));
@@ -325,9 +325,9 @@ struct PipeTransport : Transport {
     Async::Task<Rc<Response>> _recvResponse(Async::CancellationToken ct) {
         auto response = co_trya$(Response::readAsync(Sys::in(), ct));
         if (auto contentLength = response.header.contentLength()) {
-            response.body = makeRc<PipeBody>(contentLength.unwrap());
+            response.body = Some(makeRc<PipeBody>(contentLength.unwrap()));
         } else {
-            response.body = makeRc<PipeBody>();
+            response.body = Some(makeRc<PipeBody>());
         }
 
         co_return Ok(makeRc<Response>(std::move(response)));
@@ -411,7 +411,7 @@ struct LocalTransport : Transport {
         if (request->method == GET) {
             auto [body, type] = co_try$(_load(request->url));
             response->code = OK;
-            response->body = body;
+            response->body = Some(body);
             response->header.put(Header::CONTENT_TYPE, type.primaryMimeType().str());
             co_return Ok(response);
         } else if (request->method == PUT) {

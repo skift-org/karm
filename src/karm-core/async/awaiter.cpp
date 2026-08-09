@@ -25,11 +25,11 @@ struct [[nodiscard]] Awaiter :
         Continuation<typename S::Inner>& _c;
 
         void recv(Inline, typename S::Inner t) {
-            _c.value = std::move(t);
+            _c.value = Some(std::move(t));
         }
 
         void recv(Later, typename S::Inner t) {
-            _c.value = std::move(t);
+            _c.value = Some(std::move(t));
             _c.resume();
         }
     };

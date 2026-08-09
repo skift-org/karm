@@ -12,11 +12,11 @@ test$("array-niche") {
     expectEq$(sizeof(test), sizeof(Test));
     expectEq$(test.has(), false);
     expectEq$(test, NONE);
-    test = Test{true, false};
+    test = Some(Test{true, false});
     expectEq$(test.unwrap(), value);
     expectEq$(test.take(), value);
     expectEq$(test, NONE);
-    test = Test{0, 0};
+    test = Some(Test{0, 0});
     expectEq$(test.has(), true);
 
     return Ok();

@@ -526,10 +526,10 @@ constexpr auto iterSplit(S const& slice, typename S::Inner const& sep) {
                 i++;
             }
 
-            return Slice{
+            return Some(Slice{
                 slice.buf() + start,
                 end - start,
-            };
+            });
         }
     };
 
@@ -683,13 +683,13 @@ export template <Sliceable T, typename U = T::Inner>
 always_inline constexpr Opt<usize> indexOf(T const& slice, Meta::Equatable<U> auto const& needle) {
     for (usize i = 0; i < slice.len(); i++)
         if (slice[i] == needle)
-            return i;
+            return Some(i);
     return NONE;
 }
 
 export always_inline constexpr Opt<usize> indexOf(Sliceable auto const& slice, Sliceable auto const& needle, auto const cmp) {
     if (needle.len() == 0)
-        return 0;
+        return Some(0);
 
     if (slice.len() < needle.len())
         return NONE;
@@ -703,7 +703,7 @@ export always_inline constexpr Opt<usize> indexOf(Sliceable auto const& slice, S
             }
         }
         if (found)
-            return i;
+            return Some(i);
     }
 
     return NONE;
@@ -771,7 +771,7 @@ export template <Sliceable T, typename U = T::Inner>
 always_inline constexpr Opt<usize> lastIndexOf(T const& slice, Meta::Equatable<U> auto const& needle) {
     for (usize i = slice.len(); i > 0; i--)
         if (slice[i - 1] == needle)
-            return i - 1;
+            return Some(i - 1);
     return NONE;
 }
 
@@ -794,7 +794,7 @@ export always_inline Opt<usize> search(Sliceable auto const& slice, auto const& 
         auto result = cmp(slice[mid]);
 
         if (result == 0)
-            return mid;
+            return Some(mid);
 
         if (result < 0) {
             left = mid + 1;
@@ -814,7 +814,7 @@ export always_inline Opt<usize> searchLowerBound(Sliceable auto const& slice, au
         return NONE;
 
     if (cmp(slice[slice.len() - 1]) < 0)
-        return slice.len() - 1;
+        return Some(slice.len() - 1);
 
     usize left = 0;
     usize right = slice.len() - 1;
@@ -825,7 +825,7 @@ export always_inline Opt<usize> searchLowerBound(Sliceable auto const& slice, au
         auto result = cmp(slice[mid]);
 
         if (result == 0)
-            return mid;
+            return Some(mid);
 
         if (result < 0) {
             left = mid + 1;
@@ -834,7 +834,7 @@ export always_inline Opt<usize> searchLowerBound(Sliceable auto const& slice, au
         }
     }
 
-    return left - 1;
+    return Some(left - 1);
 }
 
 export always_inline Opt<usize> searchUpperBound(Sliceable auto const& slice, auto const& cmp) {
@@ -842,7 +842,7 @@ export always_inline Opt<usize> searchUpperBound(Sliceable auto const& slice, au
         return NONE;
 
     if (cmp(slice[0]) >= 0)
-        return 0;
+        return Some(0);
 
     if (cmp(slice[slice.len() - 1]) < 0)
         return NONE;
@@ -856,7 +856,7 @@ export always_inline Opt<usize> searchUpperBound(Sliceable auto const& slice, au
         auto result = cmp(slice[mid]);
 
         if (result == 0)
-            return mid;
+            return Some(mid);
 
         if (result <= 0) {
             left = mid + 1;
@@ -865,7 +865,7 @@ export always_inline Opt<usize> searchUpperBound(Sliceable auto const& slice, au
         }
     }
 
-    return left;
+    return Some(left);
 }
 
 /// Enumerates the possible results of a match.

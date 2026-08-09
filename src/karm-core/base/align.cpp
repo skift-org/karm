@@ -27,7 +27,7 @@ export constexpr bool aligned(usize addr, usize align) {
 export constexpr Opt<bool> ensureAlign(usize addr, usize align) {
     if (not aligned(addr, align))
         return NONE;
-    return true;
+    return Some(true);
 }
 
 } // namespace Karm

@@ -139,11 +139,11 @@ test$("fmt-optionals") {
     try$(testCase("1", Ok(1)));
 
     try$(testCase("None", Opt<usize>{}));
-    try$(testCase("123", Opt<usize>{123}));
+    try$(testCase("123", Opt<usize>{Some(123)}));
     try$(testCase("None", Opt<usize>{}, "d"));
-    try$(testCase("123", Opt<usize>{123}, "d"));
+    try$(testCase("123", Opt<usize>{Some(123)}, "d"));
     try$(testCase("None", Opt<usize>{}, "x"));
-    try$(testCase("7b", Opt<usize>{123}, "x"));
+    try$(testCase("7b", Opt<usize>{Some(123)}, "x"));
 
     return Ok();
 }
@@ -181,7 +181,7 @@ test$("fmt-references") {
     auto number = makeRc<int>(123);
     try$(testCase("123", number));
 
-    Opt str = makeRc<Str>("test");
+    Opt str = Some(makeRc<Str>("test"));
     try$(testCase("test", str));
 
     Weak<Str> weakStr = *str;

@@ -48,6 +48,7 @@ export import :base.sieve;
 export import :base.simd;
 export import :base.size;
 export import :base.slice;
+export import :base.some;
 export import :base.std;
 export import :base.string;
 export import :base.symbol;

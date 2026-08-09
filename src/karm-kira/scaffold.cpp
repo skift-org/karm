@@ -62,7 +62,7 @@ static Ui::Child _mobileScaffold(Scaffold::State const& s, Scaffold const& scaff
     if (scaffold.sidebar)
         tools.pushBack(
             Ui::button(
-                Scaffold::Model::bind<Scaffold::ToggleSidebar>(),
+                Some(Scaffold::Model::bind<Scaffold::ToggleSidebar>()),
                 Ui::ButtonStyle::subtle(),
                 s.sidebarOpen
                     ? Mdi::MENU_OPEN
@@ -98,7 +98,7 @@ static Ui::Child _desktopScaffoldToolbar(Scaffold::State const& s, Scaffold cons
     if (scaffold.sidebar)
         tools.pushBack(
             button(
-                Scaffold::Model::bind<Scaffold::ToggleSidebar>(),
+                Some(Scaffold::Model::bind<Scaffold::ToggleSidebar>()),
                 Ui::ButtonStyle::subtle(),
                 s.sidebarOpen ? Mdi::MENU_OPEN : Mdi::MENU
             ) |
@@ -136,14 +136,14 @@ static Ui::Child _desktopScaffoldHeader(Scaffold::State const& s, Scaffold const
            Ui::doubleClick(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::FULL)) |
            contextMenu([] {
                return contextMenuContent({
-                   contextMenuItem(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::NONE), Mdi::WINDOW_RESTORE, "Restore"),
-                   contextMenuItem(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::FULL), Mdi::WINDOW_MAXIMIZE, "Maximize"),
-                   contextMenuItem(Ui::bindBubble<App::RequestMinimizeEvent>(), Mdi::WINDOW_MINIMIZE, "Minimize"),
+                   contextMenuItem(Some(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::NONE)), Some(Mdi::WINDOW_RESTORE), "Restore"),
+                   contextMenuItem(Some(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::FULL)), Some(Mdi::WINDOW_MAXIMIZE), "Maximize"),
+                   contextMenuItem(Some(Ui::bindBubble<App::RequestMinimizeEvent>()), Some(Mdi::WINDOW_MINIMIZE), "Minimize"),
                    separator(),
-                   contextMenuItem(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::LEFT), Mdi::DOCK_LEFT, "Snap Left"),
-                   contextMenuItem(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::RIGHT), Mdi::DOCK_RIGHT, "Snap Right"),
+                   contextMenuItem(Some(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::LEFT)), Some(Mdi::DOCK_LEFT), "Snap Left"),
+                   contextMenuItem(Some(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::RIGHT)), Some(Mdi::DOCK_RIGHT), "Snap Right"),
                    separator(),
-                   contextMenuItem(Ui::bindBubble<App::RequestCloseEvent>(), Mdi::WINDOW_CLOSE, "Close"),
+                   contextMenuItem(Some(Ui::bindBubble<App::RequestCloseEvent>()), Some(Mdi::WINDOW_CLOSE), "Close"),
                });
            }) |
            Ui::dragRegion();
@@ -193,8 +193,8 @@ export auto scaffoldContent() {
                Ui::box({
                    .borderRadii = 6,
                    .borderWidth = 1,
-                   .borderFill = Ui::GRAY800,
-                   .backgroundFill = Ui::GRAY950,
+                   .borderFill = Some(Ui::GRAY800),
+                   .backgroundFill = Some(Ui::GRAY950),
                    .overflow = Ui::BoxOverflow::HIDDEN,
                });
     };

@@ -23,7 +23,7 @@ struct CacheTransport : Transport {
         auto response = makeRc<Response>();
         response->version = request->version;
         response->code = OK;
-        response->body = Body::from(blob);
+        response->body = Some(Body::from(blob));
         response->header.put(Header::CONTENT_TYPE, blob->type.primaryMimeType().str());
 
         return response;

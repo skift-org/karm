@@ -135,21 +135,21 @@ export struct Key {
 
     Opt<KeyMod> toMod() const {
         if (_code == LSHIFT)
-            return KeyMod::LSHIFT;
+            return Some(KeyMod::LSHIFT);
         if (_code == RSHIFT)
-            return KeyMod::RSHIFT;
+            return Some(KeyMod::RSHIFT);
         if (_code == LCTRL)
-            return KeyMod::LCTRL;
+            return Some(KeyMod::LCTRL);
         if (_code == RCTRL)
-            return KeyMod::RCTRL;
+            return Some(KeyMod::RCTRL);
         if (_code == LALT)
-            return KeyMod::LALT;
+            return Some(KeyMod::LALT);
         if (_code == RALT)
-            return KeyMod::RALT;
+            return Some(KeyMod::RALT);
         if (_code == LSUPER)
-            return KeyMod::LSUPER;
+            return Some(KeyMod::LSUPER);
         if (_code == RSUPER)
-            return KeyMod::RSUPER;
+            return Some(KeyMod::RSUPER);
         return NONE;
     }
 };

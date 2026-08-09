@@ -131,7 +131,7 @@ export struct Diagnostic {
     }
 
     Diagnostic& withHelp(Str helpText) {
-        help = String{helpText};
+        help = Some(String{helpText});
         return *this;
     }
 };

@@ -25,7 +25,7 @@ export struct ImagePrinter : FilePrinter {
 
         if (_canvas)
             _canvas->end();
-        _canvas = Gfx::CpuCanvas{};
+        _canvas = Some(Gfx::CpuCanvas{});
         _canvas->begin(*last(_pages));
         _canvas->scale(_density);
         _canvas->clear(Gfx::ALPHA);

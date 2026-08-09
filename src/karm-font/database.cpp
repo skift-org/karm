@@ -269,7 +269,7 @@ export struct Database {
                                           attrs.weight == query.weight and
                                           attrs.stretch == query.stretch and
                                           attrs.style == query.style)
-                return info.face;
+                return Some(info.face);
         }
 
         return NONE;
@@ -323,7 +323,7 @@ export struct Database {
             if (attrs.weight != currWeight)
                 continue;
 
-            matchingFace = info.face;
+            matchingFace = Some(info.face);
             matchingFamily = currFamily;
             matchingStretch = currStretch;
             matchingStyle = currStyle;

@@ -10,13 +10,13 @@ test$("f64-niche") {
     expectEq$(sizeof(test), sizeof(f64));
     expectEq$(test.has(), false);
     expectEq$(test, NONE);
-    test = 5;
+    test = Some(5);
     expectEq$(test.unwrap(), 5);
     expectEq$(test.take(), 5);
     expectEq$(test, NONE);
-    test = Math::NAN;
+    test = Some(Math::NAN);
     expectEq$(test.has(), true);
-    test = -Math::NAN;
+    test = Some(-Math::NAN);
     expectEq$(test.has(), true);
 
     return Ok();
@@ -28,7 +28,7 @@ test$("f32-niche") {
     expectEq$(sizeof(test), sizeof(f32));
     expectEq$(test.has(), false);
     expectEq$(test, NONE);
-    test = 5;
+    test = Some(5);
     expectEq$(test.unwrap(), 5);
     expectEq$(test.take(), 5);
     expectEq$(test, NONE);
@@ -49,7 +49,7 @@ test$("f32-niche") {
         INF / NEG_INF,
     };
     for (auto val : values) {
-        test = val;
+        test = Some(val);
         expectEq$(test.has(), true);
     }
 

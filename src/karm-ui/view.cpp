@@ -35,7 +35,7 @@ static Opt<Rc<Gfx::Fontface>> _regularFontface = NONE;
 
 Rc<Gfx::Fontface> regularFontface() {
     if (not _regularFontface) {
-        _regularFontface = Font::loadFontfaceOrFallback("bundle://fonts.inter/fonts/Inter-Regular.ttf"_url).unwrap();
+        _regularFontface = Some(Font::loadFontfaceOrFallback("bundle://fonts.inter/fonts/Inter-Regular.ttf"_url).unwrap());
     }
     return *_regularFontface;
 }
@@ -44,7 +44,7 @@ static Opt<Rc<Gfx::Fontface>> _mediumFontface = NONE;
 
 Rc<Gfx::Fontface> mediumFontface() {
     if (not _mediumFontface) {
-        _mediumFontface = Font::loadFontfaceOrFallback("bundle://fonts.inter/fonts/Inter-Medium.ttf"_url).unwrap();
+        _mediumFontface = Some(Font::loadFontfaceOrFallback("bundle://fonts.inter/fonts/Inter-Medium.ttf"_url).unwrap());
     }
     return *_mediumFontface;
 }
@@ -53,7 +53,7 @@ static Opt<Rc<Gfx::Fontface>> _boldFontface = NONE;
 
 Rc<Gfx::Fontface> boldFontface() {
     if (not _boldFontface) {
-        _boldFontface = Font::loadFontfaceOrFallback("bundle://fonts.inter/fonts/Inter-Bold.ttf"_url).unwrap();
+        _boldFontface = Some(Font::loadFontfaceOrFallback("bundle://fonts.inter/fonts/Inter-Bold.ttf"_url).unwrap());
     }
     return *_boldFontface;
 }
@@ -62,7 +62,7 @@ static Opt<Rc<Gfx::Fontface>> _italicFontface = NONE;
 
 Rc<Gfx::Fontface> italicFontface() {
     if (not _italicFontface) {
-        _italicFontface = Font::loadFontfaceOrFallback("bundle://fonts.inter/fonts/Inter-Italic.ttf"_url).unwrap();
+        _italicFontface = Some(Font::loadFontfaceOrFallback("bundle://fonts.inter/fonts/Inter-Italic.ttf"_url).unwrap());
     }
     return *_italicFontface;
 }
@@ -71,7 +71,7 @@ static Opt<Rc<Gfx::Fontface>> _codeFontface = NONE;
 
 Rc<Gfx::Fontface> codeFontface() {
     if (not _codeFontface) {
-        _codeFontface = Font::loadFontfaceOrFallback("bundle://fonts.fira-code/fonts/FiraCode-Regular.ttf"_url).unwrap();
+        _codeFontface = Some(Font::loadFontfaceOrFallback("bundle://fonts.fira-code/fonts/FiraCode-Regular.ttf"_url).unwrap());
     }
     return *_codeFontface;
 }
@@ -303,7 +303,7 @@ Child text(Str format, Args&&... args) {
     export Child STYLE(Str text) { return Karm::Ui::text(TextStyles::STYLE(), text); } \
     export Child STYLE(Gfx::Color color, Str text) {                                   \
         auto style = TextStyles::STYLE();                                              \
-        style.color = color;                                                           \
+        style.color = Some(color);                                                     \
         return Karm::Ui::text(style, text);                                            \
     }                                                                                  \
     export template <typename... Args>                                                 \
@@ -313,7 +313,7 @@ Child text(Str format, Args&&... args) {
     export template <typename... Args>                                                 \
     inline Child STYLE(Gfx::Color color, Str format, Args&&... args) {                 \
         auto style = TextStyles::STYLE();                                              \
-        style.color = color;                                                           \
+        style.color = Some(color);                                                     \
         return text(style, format, std::forward<Args>(args)...);                       \
     }
 

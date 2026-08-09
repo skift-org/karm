@@ -9,7 +9,7 @@ Ui::Child card(Ui::Child child) {
     return Ui::box(
         {
             .borderRadii = 4,
-            .backgroundFill = Ui::GRAY900,
+            .backgroundFill = Some(Ui::GRAY900),
         },
         child
     );

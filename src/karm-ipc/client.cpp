@@ -30,7 +30,7 @@ export struct Client : Meta::NoCopy {
     };
 
     Rc<_State> _state;
-    Opt<bool> _active = true; // HACK: Abuse the fact that when an Opt is moved from it become NONE
+    Opt<bool> _active = Some(true); // HACK: Abuse the fact that when an Opt is moved from it become NONE
 
     static Async::Task<Client> connectAsync(Sys::IpcConnection connection, Ref::Url url, Async::CancellationToken ct) {
         // When a broker established the connection, it already delivered the

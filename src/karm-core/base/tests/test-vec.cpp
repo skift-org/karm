@@ -89,11 +89,11 @@ test$("vec-niche") {
     expectEq$(sizeof(test), sizeof(Vec<int>));
     expectEq$(test.has(), false);
     expectEq$(test, NONE);
-    test = Vec<int>{5, 0, 2};
+    test = Some(Vec<int>{5, 0, 2});
     expectEq$(test.unwrap(), comp);
     expectEq$(test.take(), comp);
     expectEq$(test, NONE);
-    test = Vec<int>{};
+    test = Some(Vec<int>{});
     expectEq$(test.has(), true);
 
     return Ok();

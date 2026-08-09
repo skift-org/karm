@@ -254,7 +254,7 @@ static Opt<Rc<Node>> _parseTextNode(Io::SScan& s) {
     auto text = s.end();
     if (not text)
         return NONE;
-    return makeRc<TextNode>(text);
+    return Some(makeRc<TextNode>(text));
 }
 
 static Res<Str> _parseIdent(Io::SScan& s) {
