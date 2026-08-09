@@ -153,10 +153,10 @@ test$("effect-destroyed-while-queued-does-not-run") {
     Signal n{1};
     usize runs = 0;
 
-    Opt<Effect> e = [&] {
+    Opt<Effect> e = Some([&] {
         runs++;
         (void)n.value();
-    };
+    });
 
     batch([&] {
         n.update(2);
