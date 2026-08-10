@@ -14,8 +14,14 @@ export struct CpuRast {
         f64 a;
     };
 
-    Vec<f64> _scanline{};
-    Vec<isize> _activeEdges{};
+    struct ActiveEdge {
+        Math::Vec2f start, delta;
+        f64 invDy;
+        f64 yBot;
+    };
+
+    Vec<f32> _scanline{};
+    Vec<ActiveEdge> _activeEdges{};
 
     void _accumulate(isize xOffset, isize width, Math::Vec2f p0, Math::Vec2f p1) {
         f64 dy = p1.y - p0.y;
@@ -56,41 +62,45 @@ export struct CpuRast {
 
         usize nextEdgeIdx = 0;
         _activeEdges.clear();
+        Math::Vec2f invSize = {1.0 / polyBound.width, 1.0 / polyBound.height};
 
         for (isize y = clipBound.top(); y < clipBound.bottom(); y++) {
-            zeroFill<f64>(mutSub(_scanline, 0, clipBound.width + 1));
+            zeroFill(mutSub(_scanline, 0, clipBound.width + 1));
 
             f64 yTop = y;
             f64 yBot = y + 1.0;
 
             while (nextEdgeIdx < poly.len() and poly[nextEdgeIdx].top() < yBot) {
-                _activeEdges.pushBack(nextEdgeIdx);
-                nextEdgeIdx++;
+                auto& e = poly[nextEdgeIdx++];
+                auto d = e.delta();
+
+                if (Math::epsilonEq(d.y, 0.0))
+                    continue;
+
+                _activeEdges.pushBack(ActiveEdge{
+                    e.start,
+                    d,
+                    1.0 / d.y,
+                    max(e.start.y, e.start.y + d.y),
+                });
             }
 
             for (usize i = 0; i < _activeEdges.len();) {
-                auto& edge = poly[_activeEdges[i]];
+                auto& edge = _activeEdges[i];
 
-                if (edge.bound().bottom() <= yTop) {
+                if (edge.yBot <= yTop) {
                     _activeEdges.removeUnordered(i);
                     continue;
                 }
 
-                auto d = edge.delta();
-
-                if (Math::epsilonEq(d.y, 0.0)) {
-                    i++;
-                    continue;
-                }
-
-                f64 t0 = clamp01((yTop - edge.start.y) / d.y);
-                f64 t1 = clamp01((yBot - edge.start.y) / d.y);
+                f64 t0 = clamp01((yTop - edge.start.y) * edge.invDy);
+                f64 t1 = clamp01((yBot - edge.start.y) * edge.invDy);
 
                 if (t0 > t1)
                     std::swap(t0, t1);
 
-                Math::Vec2f p0 = edge.start + d * t0;
-                Math::Vec2f p1 = edge.start + d * t1;
+                Math::Vec2f p0 = edge.start + edge.delta * t0;
+                Math::Vec2f p1 = edge.start + edge.delta * t1;
 
                 f64 xDir = (p1.x > p0.x) ? 1.0 : -1.0;
                 Math::Vec2f cursor = p0;
@@ -119,6 +129,8 @@ export struct CpuRast {
                 i++;
             }
 
+            f64 v = (y - polyBound.y) * invSize.y;
+            f64 u = (clipBound.x - polyBound.x) * invSize.x;
             f64 accumulator = 0;
             for (isize x = 0; x < clipBound.width; x++) {
                 accumulator += _scanline[x];
@@ -135,10 +147,11 @@ export struct CpuRast {
 
                 if (coverage > Limits<f64>::EPSILON) {
                     Math::Vec2i pos = {clipBound.x + x, y};
-                    Math::Vec2f uv = (pos.cast<f64>() - polyBound.topStart()) / polyBound.size();
 
-                    cb(Frag{pos, uv, coverage});
+                    cb(Frag{pos, {u, v}, coverage});
                 }
+
+                u += invSize.x;
             }
         }
     }
