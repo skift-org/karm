@@ -11,7 +11,7 @@ struct Cow {
     static Rc<T> default_() {
         static Opt<Rc<T>> _base = NONE;
         if (not _base)
-            _base = makeRc<T>();
+            _base = Some(makeRc<T>());
         return _base.unwrap();
     }
 

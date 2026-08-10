@@ -25,14 +25,6 @@ struct Some {
         return true;
     }
 
-    always_inline constexpr auto operator<=>(Some const&) const
-        requires Meta::Comparable<T>
-    = default;
-
-    always_inline constexpr bool operator==(Some const&) const
-        requires Meta::Equatable<T>
-    = default;
-
     always_inline constexpr T take() {
         return std::move(_inner);
     }
@@ -55,18 +47,6 @@ struct Some<T&> {
 
     always_inline explicit operator bool() const {
         return true;
-    }
-
-    always_inline constexpr auto operator<=>(Some const&) const
-        requires Meta::Comparable<T>
-    {
-        return *_inner <=> *_inner;
-    }
-
-    always_inline constexpr bool operator==(Some const&) const
-        requires Meta::Equatable<T>
-    {
-        return *_inner == *_inner;
     }
 
     always_inline constexpr T& take() {

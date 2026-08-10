@@ -126,7 +126,7 @@ constexpr Opt<E> valueOf(Str name) {
     auto items = enumItems<E>();
     for (auto& i : items) {
         if (i.name == name)
-            return E(i.value);
+            return Some(E(i.value));
     }
     return NONE;
 }
@@ -136,7 +136,7 @@ constexpr Opt<E> valueOfCi(Str name) {
     auto items = enumItems<E>();
     for (auto& i : items) {
         if (eqCi(i.name, name))
-            return E(i.value);
+            return Some(E(i.value));
     }
     return NONE;
 }

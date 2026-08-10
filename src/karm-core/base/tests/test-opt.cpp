@@ -62,7 +62,7 @@ test$("opt-take") {
 test$("opt-equal") {
     Opt<int> opt = NONE;
     expectEq$(opt, NONE);
-    expectNe$(opt, Some(42));
+    expectNe$(opt, 42);
 
     opt = Some(42);
     expectEq$(opt, 42);
