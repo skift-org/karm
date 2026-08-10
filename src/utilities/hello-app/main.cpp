@@ -47,11 +47,10 @@ struct Triangle {
     }
 
     always_inline constexpr Math::Vec3f xyBarycentricCoordinates(Math::Vec2f p) const {
-        auto area = xySignedArea();
         return {
-            Math::Tri2f{p, b.xy, c.xy}.signedArea() / area,
-            Math::Tri2f{p, c.xy, a.xy}.signedArea() / area,
-            Math::Tri2f{p, a.xy, b.xy}.signedArea() / area,
+            Math::Tri2f{p, b.xy, c.xy}.signedArea(),
+            Math::Tri2f{p, c.xy, a.xy}.signedArea(),
+            Math::Tri2f{p, a.xy, b.xy}.signedArea(),
         };
     }
 };
@@ -60,13 +59,17 @@ template <typename D>
 struct PrimitiveData {
     D a, b, c;
 
-    template <auto D::* Field>
-    always_inline auto loadInterpolated(Math::Vec3f coords) const {
+    always_inline Math::Vec3f perspectiveWeights(Math::Vec3f coords) const {
         auto ia = coords.x / a.position.w;
         auto ib = coords.y / b.position.w;
         auto ic = coords.z / c.position.w;
+        auto invSum = 1.0 / (ia + ib + ic);
+        return {ia * invSum, ib * invSum, ic * invSum};
+    }
 
-        return (a.*Field * ia + b.*Field * ib + c.*Field * ic) / (ia + ib + ic);
+    template <auto D::* Field>
+    always_inline auto loadInterpolated(Math::Vec3f weights) const {
+        return a.*Field * weights.x + b.*Field * weights.y + c.*Field * weights.z;
     }
 
     template <auto D::* Field>
@@ -281,17 +284,18 @@ struct VertexData {
     Math::Vec2f uv;
 
     static VertexData interpolate(PrimitiveData<VertexData> const& primitive, Math::Vec3f coords) {
+        auto w = primitive.perspectiveWeights(coords);
         return {
-            primitive.loadInterpolated<&VertexData::position>(coords),
-            primitive.loadInterpolated<&VertexData::normal>(coords),
-            primitive.loadInterpolated<&VertexData::uv>(coords),
+            primitive.loadInterpolated<&VertexData::position>(w),
+            primitive.loadInterpolated<&VertexData::normal>(w),
+            primitive.loadInterpolated<&VertexData::uv>(w),
         };
     }
 };
 
 struct FragmentData {
     Math::Vec4f color;
-    Opt<f64> depth = NONE;
+    f64 depth = 0.;
     bool discard = false;
 };
 
@@ -310,10 +314,7 @@ struct Pipeline {
     }
 
     auto fragment(FragmentData& out, VertexData const& in) const {
-        out = {
-            .color = texture.sample(in.uv).vec4(),
-            .discard = false
-        };
+        out.color = texture.sample(in.uv).vec4();
     }
 };
 
@@ -364,36 +365,36 @@ void drawPrimitive(Gpu::PipelineState const& pipelineState, Gfx::MutPixels px, M
     if (cullPrimitive(pipelineState, triangle))
         return;
 
+    auto invArena = 1 / triangle.xySignedArea();
     for (auto y : irange::fromStartEnd(bound.top(), bound.bottom())) {
         for (auto x : irange::fromStartEnd(bound.start(), bound.end())) {
             Math::Vec2i p = {x, y};
-            auto coords = triangle.xyBarycentricCoordinates(p.cast<f64>());
+            auto coords = triangle.xyBarycentricCoordinates(p.cast<f64>()) * invArena;
             if (coords.x < 0 or coords.y < 0 or coords.z < 0)
                 continue;
 
-            auto fragDepth = triangle.a.z * coords.x +
+            FragmentData fragment;
+            fragment.depth = triangle.a.z * coords.x +
                              triangle.b.z * coords.y +
                              triangle.c.z * coords.z;
-
-            FragmentData fragment;
-            VertexData interpolated = VertexData::interpolate(primitive, coords);
-            pipeline.fragment(fragment, VertexData::interpolate(primitive, coords));
-            if (fragment.discard) [[unlikely]]
-                continue;
-
-            if (fragment.depth) [[unlikely]]
-                fragDepth = fragment.depth.unwrap();
 
             // https://docs.vulkan.org/spec/latest/chapters/fragops.html#fragops-depth
             if (depth and pipelineState.depthStencil.depthMode.has(Gpu::DepthFlags::READ)) {
                 auto& d = depth[y * px.width() + x];
 
                 // https://docs.vulkan.org/spec/latest/chapters/fragops.html#fragops-depth-comparison
-                if (not Gpu::compare(pipelineState.depthStencil.depthTest, fragDepth, d))
+                if (not Gpu::compare(pipelineState.depthStencil.depthTest, fragment.depth, d))
                     continue;
-                if (pipelineState.depthStencil.depthMode.has(Gpu::DepthFlags::WRITE))
-                    d = fragDepth;
             }
+
+            VertexData interpolated = VertexData::interpolate(primitive, coords);
+            pipeline.fragment(fragment, interpolated);
+
+            if (fragment.discard) [[unlikely]]
+                continue;
+
+            if (depth and pipelineState.depthStencil.depthMode.has(Gpu::DepthFlags::WRITE))
+                depth[y * px.width() + x] = fragment.depth;
 
             px.storeUnsafe(p, Gfx::Color::fromFloats(fragment.color));
         }
