@@ -84,17 +84,6 @@ export enum struct QueueType : u8 {
     _LEN,
 };
 
-/// Bit width of the indices in an index buffer.
-export enum struct IndexType : u8 {
-    U16,
-    U32,
-
-    _LEN,
-};
-
-/// An RGBA color value.
-export using Color = Math::Vec4f;
-
 /// Options used when creating a device.
 export struct DeviceProps {
     Opt<Str> preferredBackend = NONE;
@@ -235,15 +224,6 @@ export struct MultiDrawIndirectInfo {
     DevicePtr drawCountGpu;
     u32 maxDraws;
     IndexType type = IndexType::U16;
-};
-
-/// GPU-side layout of the arguments consumed by an indirect indexed draw.
-export struct DrawIndexedIndirectGpuArgs {
-    u32 indexCount;
-    u32 instanceCount;
-    u32 firstIndex;
-    i32 vertexOffset;
-    u32 firstInstance;
 };
 
 /// A logical GPU device, entry point for creating all other GPU resources.

@@ -9,6 +9,9 @@ import Karm.Math;
 
 namespace Karm::Gpu {
 
+/// An RGBA color value.
+export using Color = Math::Vec4f;
+
 /// Operations for color/alpha blending.
 export enum struct Blend : u8 {
     ADD,
@@ -181,6 +184,25 @@ export struct SamplerProps {
     SamplerFilter filter = SamplerFilter::NEAREST;
     SamplerAddressing address = SamplerAddressing::CLAMP_TO_EDGE;
     f32 maxAnisotropy = 1.0f;
+};
+
+// MARK: Draw ------------------------------------------------------------------
+
+/// Bit width of the indices in an index buffer.
+export enum struct IndexType : u8 {
+    U16,
+    U32,
+
+    _LEN,
+};
+
+/// GPU-side layout of the arguments consumed by an indirect indexed draw.
+export struct DrawIndexedIndirectGpuArgs {
+    u32 indexCount;
+    u32 instanceCount;
+    u32 firstIndex;
+    i32 vertexOffset;
+    u32 firstInstance;
 };
 
 } // namespace Karm::Gpu

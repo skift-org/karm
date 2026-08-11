@@ -19,78 +19,6 @@ using namespace Karm::Re::Literals;
 
 namespace Example {
 
-struct Triangle {
-    Math::Vec4f a, b, c;
-
-    always_inline constexpr Math::Tri2f xy() const {
-        return Math::Tri2f(
-            a.xy,
-            b.xy,
-            c.xy
-        );
-    }
-
-    always_inline constexpr Math::Vec4f min() const {
-        return a.min(b).min(c);
-    }
-
-    always_inline constexpr Math::Vec4f max() const {
-        return a.max(b).max(c);
-    }
-
-    always_inline constexpr f64 xySignedArea() const {
-        return xy().signedArea();
-    }
-
-    always_inline constexpr Math::Rectf xyBound() const {
-        return Math::Rectf::fromTwoPoint(min().xy, max().xy);
-    }
-
-    always_inline constexpr Math::Vec3f xyBarycentricCoordinates(Math::Vec2f p) const {
-        return {
-            Math::Tri2f{p, b.xy, c.xy}.signedArea(),
-            Math::Tri2f{p, c.xy, a.xy}.signedArea(),
-            Math::Tri2f{p, a.xy, b.xy}.signedArea(),
-        };
-    }
-};
-
-template <typename D>
-struct PrimitiveData {
-    D a, b, c;
-
-    always_inline Math::Vec3f perspectiveWeights(Math::Vec3f coords) const {
-        auto ia = coords.x / a.position.w;
-        auto ib = coords.y / b.position.w;
-        auto ic = coords.z / c.position.w;
-        auto invSum = 1.0 / (ia + ib + ic);
-        return {ia * invSum, ib * invSum, ic * invSum};
-    }
-
-    template <auto D::* Field>
-    always_inline auto loadInterpolated(Math::Vec3f weights) const {
-        return a.*Field * weights.x + b.*Field * weights.y + c.*Field * weights.z;
-    }
-
-    template <auto D::* Field>
-    always_inline auto loadInterpolatedNoPerspective(Math::Vec3f coords) const {
-        return a.*Field * coords.x + b.*Field * coords.y + c.*Field * coords.z;
-    }
-
-    template <auto D::* Field>
-    always_inline auto loadFlat() const {
-        return a.*Field;
-    }
-
-    always_inline Triangle triangle() const {
-        return {
-            a.position,
-            b.position,
-            c.position,
-        };
-    }
-};
-
 struct Vertex {
     Math::Vec3f position;
     Math::Vec3f normal;
@@ -278,145 +206,38 @@ Res<Mesh> loadObj(Io::SScan& s) {
     return Ok(std::move(mesh));
 }
 
+struct ShaderArgs {
+    Mesh const& mesh;
+    Gfx::Pixels texture;
+    Math::Mat4f const& local;
+};
+
 struct VertexData {
     Math::Vec4f position;
     Math::Vec3f normal;
     Math::Vec2f uv;
-
-    static VertexData interpolate(PrimitiveData<VertexData> const& primitive, Math::Vec3f coords) {
-        auto w = primitive.perspectiveWeights(coords);
-        return {
-            primitive.loadInterpolated<&VertexData::position>(w),
-            primitive.loadInterpolated<&VertexData::normal>(w),
-            primitive.loadInterpolated<&VertexData::uv>(w),
-        };
-    }
 };
 
-struct FragmentData {
-    Math::Vec4f color;
-    f64 depth = 0.;
-    bool discard = false;
-};
+void vertMain(ShaderArgs* args, VertexData* out, Gpu::VertexSystemValue* sv) {
+    auto const& v = args->mesh[sv->vertexId];
+    out->position = args->local * Math::Vec4f{v.position, 1};
+    out->normal = v.normal;
+    out->uv = v.uv;
+}
 
-struct Pipeline {
-    Mesh const& _mesh;
-    Gfx::Pixels texture;
-    Math::Mat4f const& _local;
+void fragMain(ShaderArgs* args, Gpu::Color* out, VertexData* in, Gpu::FragmentSystemValue*) {
+    out[0] = args->texture.sample(in->uv).vec4();
+}
 
-    auto vertex(VertexData& out, usize vertexId) const {
-        auto const& v = _mesh[vertexId];
-        out = {
-            _local * Math::Vec4f{v.position, 1},
-            v.normal,
-            v.uv
-        };
-    }
-
-    auto fragment(FragmentData& out, VertexData const& in) const {
-        out.color = texture.sample(in.uv).vec4();
+static Gpu::RasterizerPipeline pipeline{
+    .vertex = {
+        .len = sizeof(VertexData) / sizeof(f64),
+        .main = reinterpret_cast<Gpu::RasterizerVertexShaderBlob::Main>(vertMain),
+    },
+    .fragment = {
+        .main = reinterpret_cast<Gpu::RasterizerFragmentShaderBlob::Main>(fragMain),
     }
 };
-
-bool cullPrimitive(Gpu::PipelineState const& pipelineState, Triangle const& triangle) {
-    if (pipelineState.cullMode == Gpu::Cull::NONE)
-        return false;
-
-    auto area = (pipelineState.frontFace == Gpu::FrontFace::COUNTER_CLOCKWISE ? 1 : -1) * triangle.xySignedArea();
-    if ((pipelineState.cullMode == Gpu::Cull::BACK and area < 0) or
-        (pipelineState.cullMode == Gpu::Cull::FRONT and area > 0))
-        return true;
-
-    return false;
-}
-
-void drawPrimitive(Gpu::PipelineState const& pipelineState, Gfx::MutPixels px, MutSlice<f64> depth, Pipeline const& pipeline, PrimitiveData<VertexData> primitive) {
-    Triangle triangle = primitive.triangle();
-
-    constexpr f64 NEAR_EPSILON = 1e-6;
-    if (triangle.a.w <= NEAR_EPSILON or
-        triangle.b.w <= NEAR_EPSILON or
-        triangle.c.w <= NEAR_EPSILON)
-        return;
-
-    triangle.a = triangle.a / triangle.a.w;
-    triangle.b = triangle.b / triangle.b.w;
-    triangle.c = triangle.c / triangle.c.w;
-
-    // https://docs.vulkan.org/spec/latest/chapters/vertexpostproc.html#vertexpostproc-viewport
-    triangle.a.x = (pipelineState.viewport.bound.width / 2) * triangle.a.x + pipelineState.viewport.bound.center().x;
-    triangle.a.y = (pipelineState.viewport.bound.height / 2) * triangle.a.y + pipelineState.viewport.bound.center().y;
-    triangle.a.z = (pipelineState.viewport.maxDepth - pipelineState.viewport.minDepth) * triangle.a.z + pipelineState.viewport.minDepth;
-
-    triangle.b.x = (pipelineState.viewport.bound.width / 2) * triangle.b.x + pipelineState.viewport.bound.center().x;
-    triangle.b.y = (pipelineState.viewport.bound.height / 2) * triangle.b.y + pipelineState.viewport.bound.center().y;
-    triangle.b.z = (pipelineState.viewport.maxDepth - pipelineState.viewport.minDepth) * triangle.b.z + pipelineState.viewport.minDepth;
-
-    triangle.c.x = (pipelineState.viewport.bound.width / 2) * triangle.c.x + pipelineState.viewport.bound.center().x;
-    triangle.c.y = (pipelineState.viewport.bound.height / 2) * triangle.c.y + pipelineState.viewport.bound.center().y;
-    triangle.c.z = (pipelineState.viewport.maxDepth - pipelineState.viewport.minDepth) * triangle.c.z + pipelineState.viewport.minDepth;
-
-    auto bound = triangle.xyBound().ceil().cast<isize>();
-    if (not px.bound().collide(bound))
-        return;
-    bound = bound.clipTo(px.bound());
-
-    // https://docs.vulkan.org/spec/latest/chapters/primsrast.html#primsrast-polygons-basic
-    if (cullPrimitive(pipelineState, triangle))
-        return;
-
-    auto invArena = 1 / triangle.xySignedArea();
-    for (auto y : irange::fromStartEnd(bound.top(), bound.bottom())) {
-        for (auto x : irange::fromStartEnd(bound.start(), bound.end())) {
-            Math::Vec2i p = {x, y};
-            auto coords = triangle.xyBarycentricCoordinates(p.cast<f64>()) * invArena;
-            if (coords.x < 0 or coords.y < 0 or coords.z < 0)
-                continue;
-
-            FragmentData fragment;
-            fragment.depth = triangle.a.z * coords.x +
-                             triangle.b.z * coords.y +
-                             triangle.c.z * coords.z;
-
-            // https://docs.vulkan.org/spec/latest/chapters/fragops.html#fragops-depth
-            if (depth and pipelineState.depthStencil.depthMode.has(Gpu::DepthFlags::READ)) {
-                auto& d = depth[y * px.width() + x];
-
-                // https://docs.vulkan.org/spec/latest/chapters/fragops.html#fragops-depth-comparison
-                if (not Gpu::compare(pipelineState.depthStencil.depthTest, fragment.depth, d))
-                    continue;
-            }
-
-            VertexData interpolated = VertexData::interpolate(primitive, coords);
-            pipeline.fragment(fragment, interpolated);
-
-            if (fragment.discard) [[unlikely]]
-                continue;
-
-            if (depth and pipelineState.depthStencil.depthMode.has(Gpu::DepthFlags::WRITE))
-                depth[y * px.width() + x] = fragment.depth;
-
-            px.storeUnsafe(p, Gfx::Color::fromFloats(fragment.color));
-        }
-    }
-}
-
-void draw(Gpu::PipelineState const& pipelineState, Gfx::MutPixels pixels, MutSlice<f64> depths, Pipeline const& pipeline, usize vertexCount) {
-    for (auto vertexId : Iota<isize>(0, vertexCount, 3)) {
-        PrimitiveData<VertexData> primitive{};
-        pipeline.vertex(primitive.a, vertexId + 0);
-        pipeline.vertex(primitive.b, vertexId + 1);
-        pipeline.vertex(primitive.c, vertexId + 2);
-
-        drawPrimitive(
-            pipelineState,
-            pixels,
-            depths,
-            pipeline,
-            primitive
-        );
-    }
-}
 
 struct Camera {
     Math::Vec3f position{0, 0, 0};
@@ -548,29 +369,67 @@ struct Handler : App::Handler {
         animation += 0.01;
         auto [buffer, _] = swapChain->acquire();
         auto pixels = Gfx::MutPixels::from(buffer);
-        pixels.clear(Gfx::BLUE800);
-        depths.clear();
         depths.resize(pixels.width() * pixels.height(), 1);
 
         Math::Mat4f t =
             Math::Mat4f::perspective(Math::PI / 2, pixels.width() / (f64)pixels.height(), 0.1, 1000) *
             camera.view();
 
-        Pipeline p{model, stone.unwrap()->pixels(), t};
-        Gpu::PipelineState pipelineState;
-        pipelineState.viewport = {
+        Gpu::RasterizerState state;
+        state.viewport = {
             .bound = {0, 0, (f64)pixels.width(), (f64)pixels.height()},
             .minDepth = 0,
             .maxDepth = 1,
         };
-        pipelineState.frontFace = Gpu::FrontFace::CLOCKWISE;
-        pipelineState.cullMode = Gpu::Cull::BACK;
-        pipelineState.depthStencil.depthTest = Gpu::Op::LESS;
-        pipelineState.depthStencil.depthMode = {Gpu::DepthFlags::READ, Gpu::DepthFlags::WRITE};
-        draw(pipelineState, pixels, depths, p, model.len());
+        state.frontFace = Gpu::FrontFace::CLOCKWISE;
+        state.cullMode = Gpu::Cull::BACK;
+        state.depthStencil.depthTest = Gpu::Op::LESS;
+        state.depthStencil.depthMode = {Gpu::DepthFlags::READ, Gpu::DepthFlags::WRITE};
 
-        Pipeline p1{ground, grass.unwrap()->pixels(), t};
-        draw(pipelineState, pixels, depths, p1, ground.len());
+        Gpu::RasterizerAttachment attachment{
+            pixels,
+            Gpu::LoadOp::CLEAR,
+            Gpu::StoreOp::STORE,
+            Gfx::BLUE800.vec4()
+        };
+
+        Gpu::RasterizerPass pass;
+        pass.attachments = {&attachment, 1};
+
+        pass.depth.data = depths;
+        pass.depth.loadOp = Gpu::LoadOp::CLEAR;
+        pass.depth.storeOp = Gpu::StoreOp::STORE;
+        pass.depth.clearColor = {1};
+
+        ShaderArgs a{model, stone.unwrap()->pixels(), t};
+        Gpu::beginPass(pass);
+        Gpu::drawPrimitives(
+            state,
+            pass,
+            pipeline,
+            &a,
+            &a,
+            model.len(),
+            1,
+            0,
+            0
+        );
+
+        ShaderArgs b{ground, stone.unwrap()->pixels(), t};
+
+        Gpu::drawPrimitives(
+            state,
+            pass,
+            pipeline,
+            &b,
+            &b,
+            ground.len(),
+            1,
+            0,
+            0
+
+        );
+
         swapChain->present(buffer);
     }
 
