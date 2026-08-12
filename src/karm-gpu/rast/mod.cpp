@@ -9,9 +9,9 @@ import Karm.Math;
 import Karm.Gfx.Pixels;
 import Karm.Gpu.Base;
 
-namespace Karm::Gpu {
+namespace Karm::Gpu::Rasterizer {
 
-export struct RasterizerState {
+export struct State {
     DepthStencilProps depthStencil = {};
     Viewport viewport;
     Opt<Math::Recti> scissor;
@@ -19,7 +19,7 @@ export struct RasterizerState {
     Cull cullMode;
 };
 
-export struct RasterizerAttachment {
+export struct Attachment {
     Gfx::MutPixels data = {
         nullptr,
         0,
@@ -31,24 +31,24 @@ export struct RasterizerAttachment {
     Color clearColor = {};
 };
 
-export struct RasterizerDepth {
+export struct Depth {
     MutSlice<f64> data;
     LoadOp loadOp = LoadOp::CLEAR;
     StoreOp storeOp = StoreOp::STORE;
     Color clearColor = {};
 };
 
-export struct RasterizerStencil {
+export struct Stencil {
     MutSlice<u8> data;
     LoadOp loadOp = LoadOp::CLEAR;
     StoreOp storeOp = StoreOp::STORE;
     Color clearColor = {};
 };
 
-export struct RasterizerPass {
-    MutSlice<RasterizerAttachment> attachments;
-    RasterizerDepth depth;
-    RasterizerStencil stencil;
+export struct Pass {
+    MutSlice<Attachment> attachments;
+    Depth depth;
+    Stencil stencil;
 };
 
 export struct VertexSystemValue {
@@ -68,7 +68,7 @@ enum struct Interpolation : u8 {
     FLAT,
 };
 
-export struct RasterizerVertexShaderBlob {
+export struct VertexShaderBlob {
     static constexpr u32 MAGIC = 0x5E515E51;
     using Main = void (*)(void* args, f64* vertex, VertexSystemValue* sv);
 
@@ -80,7 +80,7 @@ export struct RasterizerVertexShaderBlob {
     Main main = nullptr;
 };
 
-export struct RasterizerFragmentShaderBlob {
+export struct FragmentShaderBlob {
     static constexpr u32 MAGIC = 0xF4A6F4A6;
     using Main = void (*)(void* args, Color* target, f64* interpolated, FragmentSystemValue* sv);
 
@@ -89,12 +89,12 @@ export struct RasterizerFragmentShaderBlob {
     Main main = nullptr;
 };
 
-export struct RasterizerPipeline {
-    RasterizerVertexShaderBlob vertex;
-    RasterizerFragmentShaderBlob fragment;
+export struct Pipeline {
+    VertexShaderBlob vertex;
+    FragmentShaderBlob fragment;
 };
 
-struct RasterizerPrimitive {
+struct Primitive {
     Math::Vec4f a, b, c;
 
     always_inline constexpr Math::Tri2f xy() const {
@@ -142,7 +142,7 @@ struct RasterizerPrimitive {
     }
 };
 
-export void beginPass(RasterizerPass& pass) {
+export void beginPass(Pass& pass) {
     for (auto& a : pass.attachments) {
         if (a.loadOp == LoadOp::CLEAR)
             a.data.clear(Gfx::Color::fromFloats(a.clearColor));
@@ -160,12 +160,12 @@ export void beginPass(RasterizerPass& pass) {
 }
 
 export void fillPrimitives(
-    RasterizerState& state,
-    RasterizerPass& pass,
-    RasterizerPipeline& pipeline,
+    State& state,
+    Pass& pass,
+    Pipeline& pipeline,
     void* fragmentArgs,
     f64* vertexData,
-    RasterizerPrimitive& primitive
+    Primitive& primitive
 ) {
     constexpr f64 NEAR_EPSILON = 1e-6;
     if (primitive.a.w <= NEAR_EPSILON or
@@ -275,9 +275,9 @@ export void fillPrimitives(
 }
 
 export void drawPrimitives(
-    RasterizerState& state,
-    RasterizerPass& pass,
-    RasterizerPipeline& pipeline,
+    State& state,
+    Pass& pass,
+    Pipeline& pipeline,
     void* vertexArgs,
     void* fragmentArgs,
     usize vertexCount,
@@ -287,7 +287,7 @@ export void drawPrimitives(
 ) {
     VertexSystemValue sv{};
     Array<f64, 64 * 3> data = {};
-    RasterizerPrimitive primitive;
+    Primitive primitive;
 
     for (auto instanceId : urange::fromStartEnd(firstInstance, firstInstance + instanceCount)) {
         sv.instanceId = instanceId;
@@ -334,9 +334,9 @@ export void drawPrimitives(
 }
 
 // export void drawIndexed(
-//     RasterizerState& state,
-//     RasterizerPass& pass,
-//     RasterizerPipeline& pipeline,
+//     State& state,
+//     Pass& pass,
+//     Pipeline& pipeline,
 //     void* vertexArgs,
 //     void* fragmentArgs,
 //     void* indices,
@@ -350,9 +350,9 @@ export void drawPrimitives(
 // }
 //
 // export void drawIndirect(
-//     RasterizerState& state,
-//     RasterizerPass& pass,
-//     RasterizerPipeline& pipeline,
+//     State& state,
+//     Pass& pass,
+//     Pipeline& pipeline,
 //     void* vertexArgs,
 //     void* fragmentArgs,
 //     void* indices,
@@ -372,4 +372,4 @@ export void drawPrimitives(
 //         );
 // }
 
-} // namespace Karm::Gpu
+} // namespace Karm::Gpu::Rasterizer

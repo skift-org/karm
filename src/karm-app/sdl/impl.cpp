@@ -38,19 +38,18 @@ struct SdlSwapChain : SwapChain {
     SDL_Window* _window;
     SDL_Surface* _surface = nullptr;
 
-    SdlSwapChain(SDL_Window* window)
-        : _window(window) {}
+    SdlSwapChain(SDL_Window* window, SDL_Surface* surface)
+        : _window(window), _surface(surface) {
+        size = Math::Vec2i{_surface->w, _surface->h}.cast<usize>();
+    }
 
     AcquiredBuffer acquire() override {
-        _surface = SDL_GetWindowSurface(_window);
-        if (not _surface)
-            panic("Failed to get window surface");
         SDL_LockSurface(_surface);
         return {
             makeRc<SdlBuffer>(
                 static_cast<u8*>(_surface->pixels),
                 Sdl::bridge(_surface->format),
-                Math::Vec2i{_surface->w, _surface->h}.cast<usize>(),
+                size,
                 static_cast<usize>(_surface->pitch)
             ),
             0
@@ -60,7 +59,6 @@ struct SdlSwapChain : SwapChain {
     void present(Rc<Drm::Buffer>, Slice<Math::Recti>) override {
         SDL_UpdateWindowSurface(_window);
         SDL_UnlockSurface(_surface);
-        _surface = nullptr;
     }
 };
 
@@ -92,7 +90,7 @@ struct SdlWindow : Window {
     }
 
     Res<Rc<SwapChain>> createSwapChain(SwapChainProps const&) override {
-        return Ok(makeRc<SdlSwapChain>(_sdlWindow));
+        return Ok(makeRc<SdlSwapChain>(_sdlWindow, SDL_GetWindowSurface(_sdlWindow)));
     }
 
     void drag() override {

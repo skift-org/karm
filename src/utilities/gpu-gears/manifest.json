@@ -1,13 +1,11 @@
 {
     "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
-    "id": "hello-app",
+    "id": "gpu-gears",
     "type": "exe",
     "requires": [
         "karm-app",
         "karm-sys",
-        "karm-image",
-        "karm-gfx.pixels",
-        "karm-gpu.base",
-        "karm-gpu.rast"
+        "karm-gpu.rast",
+        "karm-scene3d"
     ]
 }

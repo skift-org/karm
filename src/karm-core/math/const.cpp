@@ -26,4 +26,7 @@ export f64 const INF = 1.0 / 0.0;
 
 export f64 const NEG_INF = -1.0 / 0.0;
 
+export f64 const DEG2RAD = 0.01745329;
+export f64 const RAD2DEG = 1 / DEG2RAD;
+
 } // namespace Karm::Math

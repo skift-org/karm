@@ -306,6 +306,34 @@ union Mat4 {
         );
     }
 
+    static Mat4 frustum(T left, T right, T bottom, T top, T zNear, T zFar) {
+        return Mat4(
+            Vec4<T>(2 * zNear / (right - left), 0, 0, 0),
+            Vec4<T>(0, -2 * zNear / (top - bottom), 0, 0),
+            Vec4<T>(
+                (right + left) / (right - left),
+                -(top + bottom) / (top - bottom),
+                zFar / (zNear - zFar),
+                -1
+            ),
+            Vec4<T>(0, 0, (zFar * zNear) / (zNear - zFar), 0)
+        );
+    }
+
+    static Mat4 frustumReverseZ(T left, T right, T bottom, T top, T zNear, T zFar) {
+        return Mat4(
+            Vec4<T>(2 * zNear / (right - left), 0, 0, 0),
+            Vec4<T>(0, -2 * zNear / (top - bottom), 0, 0),
+            Vec4<T>(
+                (right + left) / (right - left),
+                -(top + bottom) / (top - bottom),
+                zNear / (zFar - zNear),
+                -1
+            ),
+            Vec4<T>(0, 0, (zNear * zFar) / (zFar - zNear), 0)
+        );
+    }
+
     static Mat4 orthographic(T left, T right, T bottom, T top, T zNear, T zFar) {
         return Mat4(
             Vec4<T>(2 / (right - left), 0, 0, 0),
