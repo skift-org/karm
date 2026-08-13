@@ -11,6 +11,8 @@ import Karm.Gpu.Base;
 
 namespace Karm::Gpu::Rasterizer {
 
+static constexpr usize MAX_PER_VERTEX_DATA = 64;
+
 export struct State {
     DepthStencilProps depthStencil = {};
     Viewport viewport;
@@ -52,8 +54,8 @@ export struct Pass {
 };
 
 export struct VertexSystemValue {
-    usize vertexId;
-    usize instanceId;
+    u32 vertexId;
+    u32 instanceId;
 };
 
 export struct FragmentSystemValue {
@@ -73,10 +75,10 @@ export struct VertexShaderBlob {
     using Main = void (*)(void* args, f64* vertex, VertexSystemValue* sv);
 
     u32 magic = MAGIC;
-    usize flags = {};
-    Array<Interpolation, 64> interp = {};
+    u32 flags = {};
+    Array<Interpolation, MAX_PER_VERTEX_DATA> interp = {};
     u32 positionLocation = 0;
-    usize len = 4;
+    u32 len = 4;
     Main main = nullptr;
 };
 
@@ -85,7 +87,7 @@ export struct FragmentShaderBlob {
     using Main = void (*)(void* args, Color* target, f64* interpolated, FragmentSystemValue* sv);
 
     u32 magic = MAGIC;
-    usize flags = {};
+    u32 flags = {};
     Main main = nullptr;
 };
 
@@ -164,9 +166,30 @@ export void fillPrimitives(
     Pass& pass,
     Pipeline& pipeline,
     void* fragmentArgs,
-    f64* vertexData,
+    f64* a, f64* b, f64* c,
     Primitive& primitive
 ) {
+    primitive.a = {
+        a[pipeline.vertex.positionLocation + 0],
+        a[pipeline.vertex.positionLocation + 1],
+        a[pipeline.vertex.positionLocation + 2],
+        a[pipeline.vertex.positionLocation + 3],
+    };
+
+    primitive.b = {
+        b[pipeline.vertex.positionLocation + 0],
+        b[pipeline.vertex.positionLocation + 1],
+        b[pipeline.vertex.positionLocation + 2],
+        b[pipeline.vertex.positionLocation + 3],
+    };
+
+    primitive.c = {
+        c[pipeline.vertex.positionLocation + 0],
+        c[pipeline.vertex.positionLocation + 1],
+        c[pipeline.vertex.positionLocation + 2],
+        c[pipeline.vertex.positionLocation + 3],
+    };
+
     constexpr f64 NEAR_EPSILON = 1e-6;
     if (primitive.a.w <= NEAR_EPSILON or
         primitive.b.w <= NEAR_EPSILON or
@@ -206,7 +229,7 @@ export void fillPrimitives(
     auto invArena = 1 / primitive.xySignedArea();
 
     FragmentSystemValue sv = {};
-    Array<f64, 64> interpolated = {};
+    Array<f64, MAX_PER_VERTEX_DATA> interpolated = {};
     Array<Color, 8> targets = {};
 
     for (auto y : irange::fromStartEnd(primitiveBound.top(), primitiveBound.bottom())) {
@@ -230,13 +253,9 @@ export void fillPrimitives(
                 auto& d = pass.depth.data[y * targetBound.width + x];
 
                 // https://docs.vulkan.org/spec/latest/chapters/fragops.html#fragops-depth-comparison
-                if (not Gpu::compare(state.depthStencil.depthTest, sv.depth, d))
+                if (not depthStencilTest(state.depthStencil.depthTest, sv.depth, d))
                     continue;
             }
-
-            f64* a = vertexData + pipeline.vertex.len * 0;
-            f64* b = vertexData + pipeline.vertex.len * 1;
-            f64* c = vertexData + pipeline.vertex.len * 2;
 
             for (auto i : Iota(pipeline.vertex.len)) {
                 switch (pipeline.vertex.interp[i]) {
@@ -280,96 +299,139 @@ export void drawPrimitives(
     Pipeline& pipeline,
     void* vertexArgs,
     void* fragmentArgs,
-    usize vertexCount,
-    usize instanceCount,
-    usize firstVertex,
-    usize firstInstance
+    u32 vertexCount,
+    u32 instanceCount,
+    u32 firstVertex,
+    u32 firstInstance
 ) {
     VertexSystemValue sv{};
-    Array<f64, 64 * 3> data = {};
+    Array<f64, MAX_PER_VERTEX_DATA * 3> data = {};
     Primitive primitive;
 
-    for (auto instanceId : urange::fromStartEnd(firstInstance, firstInstance + instanceCount)) {
+    for (auto instanceId : Iota(firstInstance, firstInstance + instanceCount)) {
         sv.instanceId = instanceId;
 
-        for (auto vertexId : Iota<usize>(firstVertex, firstVertex + vertexCount, 3)) {
+        for (auto vertexId : Iota(firstVertex, firstVertex + vertexCount, 3u)) {
             sv.vertexId = vertexId;
-
-            pipeline.vertex.main(vertexArgs, &data[pipeline.vertex.len * 0], &sv);
-            primitive.a = {
-                data[pipeline.vertex.positionLocation + pipeline.vertex.len * 0 + 0],
-                data[pipeline.vertex.positionLocation + pipeline.vertex.len * 0 + 1],
-                data[pipeline.vertex.positionLocation + pipeline.vertex.len * 0 + 2],
-                data[pipeline.vertex.positionLocation + pipeline.vertex.len * 0 + 3],
-            };
+            auto a = &data[pipeline.vertex.len * 0];
+            pipeline.vertex.main(vertexArgs, a, &sv);
 
             sv.vertexId = vertexId + 1;
-            pipeline.vertex.main(vertexArgs, &data[pipeline.vertex.len * 1], &sv);
-            primitive.b = {
-                data[pipeline.vertex.positionLocation + pipeline.vertex.len * 1 + 0],
-                data[pipeline.vertex.positionLocation + pipeline.vertex.len * 1 + 1],
-                data[pipeline.vertex.positionLocation + pipeline.vertex.len * 1 + 2],
-                data[pipeline.vertex.positionLocation + pipeline.vertex.len * 1 + 3],
-            };
+            auto b = &data[pipeline.vertex.len * 1];
+            pipeline.vertex.main(vertexArgs, b, &sv);
 
             sv.vertexId = vertexId + 2;
-            pipeline.vertex.main(vertexArgs, &data[pipeline.vertex.len * 2], &sv);
-            primitive.c = {
-                data[pipeline.vertex.positionLocation + pipeline.vertex.len * 2 + 0],
-                data[pipeline.vertex.positionLocation + pipeline.vertex.len * 2 + 1],
-                data[pipeline.vertex.positionLocation + pipeline.vertex.len * 2 + 2],
-                data[pipeline.vertex.positionLocation + pipeline.vertex.len * 2 + 3],
-            };
+            auto c = &data[pipeline.vertex.len * 2];
+            pipeline.vertex.main(vertexArgs, c, &sv);
 
             fillPrimitives(
                 state,
                 pass,
                 pipeline,
                 fragmentArgs,
-                &data[pipeline.vertex.len * 0],
+                a, b, c,
                 primitive
             );
         }
     }
 }
 
-// export void drawIndexed(
-//     State& state,
-//     Pass& pass,
-//     Pipeline& pipeline,
-//     void* vertexArgs,
-//     void* fragmentArgs,
-//     void* indices,
-//     IndexType indexType,
-//     DrawIndexedIndirectGpuArgs& args
-// ) {
-//     for (auto instanceId : urange::fromStartEnd(args.firstInstance, args.instanceCount)) {
-//         for (auto vertexId : Iota<usize>(args.firstInstance, args.instanceCount, 3)) {
-//         }
-//     }
-// }
-//
-// export void drawIndirect(
-//     State& state,
-//     Pass& pass,
-//     Pipeline& pipeline,
-//     void* vertexArgs,
-//     void* fragmentArgs,
-//     void* indices,
-//     IndexType indexType,
-//     Slice<DrawIndexedIndirectGpuArgs> args
-// ) {
-//     for (auto arg : args)
-//         drawIndexed(
-//             state,
-//             pass,
-//             pipeline,
-//             vertexArgs,
-//             fragmentArgs,
-//             indices,
-//             indexType,
-//             arg
-//         );
-// }
+struct VertexCache {
+    static constexpr usize SLOTS = 16;
+    static constexpr u32 EMPTY = ~0u;
+
+    Array<u32, SLOTS> tags = {};
+    Array<f64, SLOTS * MAX_PER_VERTEX_DATA> data = {};
+
+    void access(VertexShaderBlob& shader, void* args, f64* vertex, VertexSystemValue* sv) {
+        auto slot = sv->vertexId % SLOTS;
+        f64* entry = &data[slot * MAX_PER_VERTEX_DATA];
+
+        if (tags[slot] != sv->vertexId) {
+            shader.main(args, entry, sv);
+            tags[slot] = sv->vertexId;
+        }
+
+        for (auto j : Iota(shader.len))
+            vertex[j] = entry[j];
+    }
+
+    void flush() {
+        for (auto& t : tags)
+            t = EMPTY;
+    }
+};
+
+export void drawIndexed(
+    State& state,
+    Pass& pass,
+    Pipeline& pipeline,
+    void* vertexArgs,
+    void* fragmentArgs,
+    void* indices,
+    IndexType indexType,
+    DrawIndexedIndirectGpuArgs& args
+) {
+    VertexCache cache;
+    VertexSystemValue sv{};
+    Array<f64, MAX_PER_VERTEX_DATA * 3> data;
+    Primitive primitive;
+
+    auto fetchId = [&](u32 index) {
+        return indexType == IndexType::U32
+                   ? static_cast<u32*>(indices)[index]
+                   : static_cast<u16*>(indices)[index] + args.vertexOffset;
+    };
+
+    for (auto instanceId : Iota(args.firstInstance, args.firstInstance + args.instanceCount)) {
+        cache.flush();
+        sv.instanceId = instanceId;
+        for (auto vertexIndex : Iota(args.firstIndex, args.firstIndex + args.indexCount, 3u)) {
+            sv.vertexId = fetchId(vertexIndex + 0);
+            auto a = &data[pipeline.vertex.len * 0];
+            cache.access(pipeline.vertex, vertexArgs, a, &sv);
+
+            sv.vertexId = fetchId(vertexIndex + 1);
+            auto b = &data[pipeline.vertex.len * 1];
+            cache.access(pipeline.vertex, vertexArgs, b, &sv);
+
+            sv.vertexId = fetchId(vertexIndex + 2);
+            auto c = &data[pipeline.vertex.len * 1];
+            cache.access(pipeline.vertex, vertexArgs, c, &sv);
+
+            fillPrimitives(
+                state,
+                pass,
+                pipeline,
+                fragmentArgs,
+                a, b, c,
+                primitive
+            );
+        }
+    }
+}
+
+export void drawIndirect(
+    State& state,
+    Pass& pass,
+    Pipeline& pipeline,
+    void* vertexArgs,
+    void* fragmentArgs,
+    void* indices,
+    IndexType indexType,
+    Slice<DrawIndexedIndirectGpuArgs> args
+) {
+    for (auto arg : args)
+        drawIndexed(
+            state,
+            pass,
+            pipeline,
+            vertexArgs,
+            fragmentArgs,
+            indices,
+            indexType,
+            arg
+        );
+}
 
 } // namespace Karm::Gpu::Rasterizer

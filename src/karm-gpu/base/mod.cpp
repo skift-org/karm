@@ -81,7 +81,7 @@ export enum struct Op : u8 {
 };
 
 export template <typename T>
-always_inline bool compare(Op op, T lhs, T rhs) {
+always_inline bool depthStencilTest(Op op, T lhs, T rhs) {
     switch (op) {
     case Op::NEVER:
         return false;
