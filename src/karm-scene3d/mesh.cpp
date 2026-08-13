@@ -17,7 +17,7 @@ export struct Mesh {
     Vec<Math::Vec2f> uvs;
     Vec<isize> indexes;
 
-    static Mesh plane(Math::Vec3f position, Math::Vec3f direction, f64 width, f64 height, usize widthSegments, usize heightSegments) {
+    static Mesh plane(Math::Vec3f position, Math::Vec3f direction, f32 width, f32 height, usize widthSegments, usize heightSegments) {
         Mesh mesh;
 
         widthSegments = max(widthSegments, usize{1});
@@ -34,14 +34,14 @@ export struct Mesh {
         auto v = n.cross(u);
 
         Math::Vec2f size{width, height};
-        Math::Vec2f segments{(f64)widthSegments, (f64)heightSegments};
+        Math::Vec2f segments{(f32)widthSegments, (f32)heightSegments};
 
         usize cols = widthSegments + 1;
         usize rows = heightSegments + 1;
 
         for (usize y = 0; y < rows; y++) {
             for (usize x = 0; x < cols; x++) {
-                auto st = Math::Vec2u{x, y}.cast<f64>() / segments; // parametric, +y follows +v
+                auto st = Math::Vec2u{x, y}.cast<f32>() / segments; // parametric, +y follows +v
                 auto offset = (st - 0.5) * size;
                 mesh.vertex(position + u * offset.x + v * offset.y, n, {st.x, 1 - st.y});
             }
@@ -62,6 +62,21 @@ export struct Mesh {
         return mesh;
     }
 
+    static Mesh cube(f32 size) {
+        Mesh mesh;
+        Array normals = {
+            Math::Vec3f{1, 0, 0},
+            Math::Vec3f{-1, 0, 0},
+            Math::Vec3f{0, 1, 0},
+            Math::Vec3f{0, -1, 0},
+            Math::Vec3f{0, 0, 1},
+            Math::Vec3f{0, 0, -1}
+        };
+        for (auto n : normals)
+            mesh.extend(plane(n * (size / 2), n, size, size, 1, 1));
+        return mesh;
+    }
+
     isize vertex(Math::Vec3f position, Math::Vec3f normal, Math::Vec2f uv) {
         positions.pushBack(position);
         normals.pushBack(normal);
@@ -73,6 +88,18 @@ export struct Mesh {
         indexes.pushBack(a);
         indexes.pushBack(b);
         indexes.pushBack(c);
+    }
+
+    void extend(Mesh const& other) {
+        isize offset = positions.len();
+        for (auto& p : other.positions)
+            positions.pushBack(p);
+        for (auto& n : other.normals)
+            normals.pushBack(n);
+        for (auto& uv : other.uvs)
+            uvs.pushBack(uv);
+        for (auto i : other.indexes)
+            indexes.pushBack(i + offset);
     }
 
     Vertex operator[](usize i) const {

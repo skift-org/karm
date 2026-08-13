@@ -80,71 +80,71 @@ struct Slice {
     T const* _buf{};
     usize _len{};
 
-    static constexpr Slice fromNullterminated(T const* buf) {
+    always_inline static constexpr Slice fromNullterminated(T const* buf) {
         usize len = 0;
         while (buf[len])
             len++;
         return {buf, len};
     }
 
-    static constexpr Slice fromNullterminated(T const* buf, usize maxLen) {
+    always_inline static constexpr Slice fromNullterminated(T const* buf, usize maxLen) {
         usize len = 0;
         while (buf[len] and len < maxLen)
             len++;
         return {buf, len};
     }
 
-    static constexpr Slice fromNullterminated(Slice<T> slice) {
+    always_inline static constexpr Slice fromNullterminated(Slice<T> slice) {
         usize len = 0;
         while (slice[len] and len < slice.len())
             len++;
         return {slice.buf(), len};
     }
 
-    constexpr Slice() = default;
+    always_inline constexpr Slice() = default;
 
-    constexpr Slice(T const& buf)
+    always_inline constexpr Slice(T const& buf)
         : _buf(&buf), _len(1) {}
 
-    constexpr Slice(T const* buf, usize len)
+    always_inline constexpr Slice(T const* buf, usize len)
         : _buf(buf), _len(len) {}
 
-    constexpr Slice(T const* begin, T const* end)
+    always_inline constexpr Slice(T const* begin, T const* end)
         : Slice(begin, end - begin) {}
 
-    constexpr Slice(std::initializer_list<T> v)
+    always_inline constexpr Slice(std::initializer_list<T> v)
         : Slice(v.begin(), v.size()) {}
 
-    constexpr Slice(Sliceable<T> auto const& other)
+    always_inline constexpr Slice(Sliceable<T> auto const& other)
         : Slice(other.buf(), other.len()) {}
 
-    constexpr Opt<T const&> index(usize i) const {
+    always_inline constexpr Opt<T const&> index(usize i) const {
         if (i >= _len)
             return NONE;
         return _buf[i];
     }
 
-    constexpr T const& operator[](usize i) const {
+    always_inline constexpr T const& operator[](usize i) const {
         if (i >= _len) {
             panic("index out of bounds");
         }
         return _buf[i];
     }
 
-    constexpr T const* buf() const { return _buf; }
+    always_inline constexpr T const* buf() const { return _buf; }
 
-    constexpr T const* begin() const { return _buf; }
+    always_inline constexpr T const* begin() const { return _buf; }
 
-    constexpr T const* end() const { return _buf + _len; }
+    always_inline constexpr T const* end() const { return _buf + _len; }
 
-    constexpr usize len() const { return _len; }
+    always_inline constexpr usize len() const { return _len; }
 
     template <typename U>
-    constexpr Slice<U> cast() const {
+    always_inline constexpr Slice<U> cast() const {
         return Slice<U>{(U*)_buf, _len * sizeof(T) / sizeof(U)};
     }
 
-    constexpr explicit operator bool() const {
+    always_inline constexpr explicit operator bool() const {
         return _len > 0;
     }
 };
@@ -156,70 +156,70 @@ struct MutSlice {
     T* _buf{};
     usize _len{};
 
-    static constexpr MutSlice fromNullterminated(T* buf) {
+    always_inline static constexpr MutSlice fromNullterminated(T* buf) {
         usize len = 0;
         while (buf[len])
             len++;
         return {buf, len};
     }
 
-    constexpr MutSlice() = default;
+    always_inline constexpr MutSlice() = default;
 
-    constexpr MutSlice(T* buf, usize len)
+    always_inline constexpr MutSlice(T* buf, usize len)
         : _buf(buf), _len(len) {}
 
-    constexpr MutSlice(T* begin, T* end)
+    always_inline constexpr MutSlice(T* begin, T* end)
         : MutSlice(begin, end - begin) {}
 
-    constexpr MutSlice(MutSliceable<T> auto& other)
+    always_inline constexpr MutSlice(MutSliceable<T> auto& other)
         : MutSlice(other.buf(), other.len()) {}
 
-    constexpr Opt<T&> index(usize i) {
+    always_inline constexpr Opt<T&> index(usize i) {
         if (i >= _len)
             return NONE;
         return _buf[i];
     }
 
-    constexpr Opt<T const&> index(usize i) const {
+    always_inline constexpr Opt<T const&> index(usize i) const {
         if (i >= _len)
             return NONE;
         return _buf[i];
     }
 
-    constexpr T& operator[](usize i) {
+    always_inline constexpr T& operator[](usize i) {
         if (i >= _len) {
             panic("index out of bounds");
         }
         return _buf[i];
     }
 
-    constexpr T const& operator[](usize i) const {
+    always_inline constexpr T const& operator[](usize i) const {
         if (i >= _len) {
             panic("index out of bounds");
         }
         return _buf[i];
     }
 
-    constexpr T* buf() { return _buf; }
+    always_inline constexpr T* buf() { return _buf; }
 
-    constexpr T const* buf() const { return _buf; }
+    always_inline constexpr T const* buf() const { return _buf; }
 
-    constexpr T* begin() { return _buf; }
+    always_inline constexpr T* begin() { return _buf; }
 
-    constexpr T* end() { return _buf + _len; }
+    always_inline constexpr T* end() { return _buf + _len; }
 
-    constexpr T const* begin() const { return _buf; }
+    always_inline constexpr T const* begin() const { return _buf; }
 
-    constexpr T const* end() const { return _buf + _len; }
+    always_inline constexpr T const* end() const { return _buf + _len; }
 
-    constexpr usize len() const { return _len; }
+    always_inline constexpr usize len() const { return _len; }
 
     template <typename U>
-    constexpr MutSlice<U> cast() const {
+    always_inline constexpr MutSlice<U> cast() const {
         return MutSlice<U>{(U*)_buf, _len * sizeof(T) / sizeof(U)};
     }
 
-    constexpr explicit operator bool() const {
+    always_inline constexpr explicit operator bool() const {
         return _len > 0;
     }
 };

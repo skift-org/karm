@@ -1,0 +1,12 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "gpu-cube",
+    "type": "exe",
+    "requires": [
+        "karm-app",
+        "karm-sys",
+        "karm-image",
+        "karm-gpu.rast",
+        "karm-scene3d"
+    ]
+}

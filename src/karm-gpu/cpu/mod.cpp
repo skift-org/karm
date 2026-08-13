@@ -246,7 +246,7 @@ struct SoftCommandBuffer : CommandBuffer {
 struct SoftExecutionContext {
     Opt<RenderPassProps> renderPass = NONE;
     Opt<Rc<Pipeline>> pipeline;
-    RasterizerState pipelineState;
+    Rasterizer::State pipelineState;
 
     void execute(SoftCommandBuffer::CopyBufferCommand const& cmd) {
         (void)cmd;
