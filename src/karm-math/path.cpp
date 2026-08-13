@@ -22,7 +22,7 @@ namespace Karm::Math {
 export using Karm::begin, Karm::end;
 
 export struct Path {
-    enum struct Code {
+    enum struct Code : u8 {
         NOP,
         CLEAR,
         CLOSE,
@@ -37,7 +37,7 @@ export struct Path {
 
     using enum Code;
 
-    enum struct Option {
+    enum struct Option : u8 {
         LARGE = 1 << 1,
         SWEEP = 1 << 2,
         SMOOTH = 1 << 3,
@@ -137,8 +137,8 @@ export struct Path {
     struct _Contour : Slice<Vec2f> {
         bool close;
 
-        _Contour(Slice<Vec2f> slice, bool close)
-            : Slice<Vec2f>(slice), close(close) {}
+        _Contour(Slice slice, bool close)
+            : Slice(slice), close(close) {}
 
         bool zeroLength() const {
             for (usize i = 1; i < len(); i++)

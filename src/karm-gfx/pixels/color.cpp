@@ -21,6 +21,22 @@ export struct Color {
         };
     }
 
+    always_inline static constexpr Color fromPacked(u32 hex) {
+        return {
+            static_cast<u8>((hex >> 24) & 0xFF),
+            static_cast<u8>((hex >> 16) & 0xFF),
+            static_cast<u8>((hex >> 8) & 0xFF),
+            static_cast<u8>((hex >> 0) & 0xFF),
+        };
+    }
+
+    always_inline constexpr u32 packed() {
+        return static_cast<u8>(red << 24) |
+               static_cast<u8>(green << 16) |
+               static_cast<u8>(blue << 8) |
+               static_cast<u8>(alpha << 0);
+    }
+
     always_inline static constexpr Color fromRgb(u8 red, u8 green, u8 blue) {
         return {red, green, blue, 255};
     }

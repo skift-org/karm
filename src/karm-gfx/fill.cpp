@@ -10,7 +10,7 @@ import Karm.Gfx.Pixels;
 
 namespace Karm::Gfx {
 
-export enum struct FillRule {
+export enum struct FillRule : u8 {
     NONZERO,
     EVENODD,
 };
