@@ -11,8 +11,8 @@ export struct Page {
     Math::Vec2f _size;
     Rc<Scene::Node> _content;
 
-    Page(Math::Vec2f paper, Opt<Rc<Scene::Node>> content = NONE)
-        : _size(paper), _content(content ? content.take() : makeRc<Scene::Stack>()) {}
+    Page(Math::Vec2f paper, Rc<Scene::Node> content)
+        : _size(paper), _content(content) {}
 
     Rc<Scene::Node> content() const {
         return makeRc<Scene::Viewbox>(_content, _size);

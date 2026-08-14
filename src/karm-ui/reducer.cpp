@@ -36,14 +36,14 @@ struct Model {
     static Opt<Send<>> bindIf(bool cond, Args... args) {
         if (not cond)
             return NONE;
-        return bindBubble<Action>(X{std::forward<Args>(args)...});
+        return Some(bindBubble<Action>(X{std::forward<Args>(args)...}));
     }
 
     template <typename X>
     static Opt<Send<>> bindIf(bool cond, X value) {
         if (not cond)
             return NONE;
-        return bindBubble<Action>(value);
+        return Some(bindBubble<Action>(value));
     }
 
     template <typename X>

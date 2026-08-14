@@ -33,10 +33,14 @@ union Vec2 {
         : _els{} {}
 
     constexpr Vec2(T x, T y)
-        : _els{x, y} {}
+        : _els{T(x), T(y)} {}
 
     constexpr Vec2(T value)
-        : _els{value, value} {}
+        : _els{T(value), T(value)} {}
+
+    template <Meta::Convertible<T> U>
+    constexpr Vec2(Vec2<U> const& other)
+        : _els{T{other.x}, T{other.y}} {}
 
     constexpr Vec2(Vec2 const& other)
         : _els{other._els} {}
@@ -243,7 +247,10 @@ union Vec2 {
 
     template <typename U>
     constexpr Vec2<U> cast() const {
-        return {static_cast<U>(x), static_cast<U>(y)};
+        return {
+            static_cast<U>(x),
+            static_cast<U>(y),
+        };
     }
 
     template <typename U>
@@ -389,6 +396,10 @@ union Vec3 {
 
     constexpr Vec3(Vec2<T> vec, T z)
         : _els{vec.x, vec.y, z} {}
+
+    template <Meta::Convertible<T> U>
+    constexpr Vec3(Vec3<U> const& other)
+        : _els{other._els} {}
 
     constexpr Vec3(Vec3 const& other)
         : _els{other._els} {}
@@ -696,6 +707,10 @@ union Vec4 {
 
     constexpr Vec4(Vec3<T> vec, T w)
         : _els{vec.x, vec.y, vec.z, w} {}
+
+    template <Meta::Convertible<T> U>
+    constexpr Vec4(Vec4<U> const& other)
+        : _els{other._els} {}
 
     constexpr Vec4(Vec4 const& other)
         : _els{other._els} {}

@@ -401,7 +401,7 @@ struct [[nodiscard]] Opt {
 
     always_inline constexpr auto map(auto f) const -> Opt<decltype(f(unwrap()))> {
         if (_store.has())
-            return {f(unwrap())};
+            return {Some(f(unwrap()))};
         return {NONE};
     }
 

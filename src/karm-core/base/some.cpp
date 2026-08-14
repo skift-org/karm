@@ -17,14 +17,17 @@ export template <typename T>
 struct Some {
     T _inner;
 
-    template <typename... Args>
-    always_inline constexpr Some(Args&&... args)
-        : _inner(std::forward<Args>(args)...) {}
+    always_inline constexpr Some()
+        : _inner() {}
+
+    always_inline constexpr Some(T args)
+        : _inner(std::move(args)) {}
 
     always_inline explicit operator bool() const {
         return true;
     }
 
+    [[clang::coro_wrapper]]
     always_inline constexpr T take() {
         return std::move(_inner);
     }
