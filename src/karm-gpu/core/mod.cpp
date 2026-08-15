@@ -321,7 +321,7 @@ export struct Semaphore {
     virtual ~Semaphore() = default;
 
     /// Block the CPU until the semaphore reaches the given value.
-    virtual void wait(Rc<Semaphore> sema, u64 value) = 0;
+    virtual void wait(u64 value) = 0;
 };
 
 /// Records GPU commands for later submission to a queue.
@@ -405,9 +405,6 @@ export struct Queue {
 
     /// Discard recorded command buffers without executing them.
     virtual void cancel(Slice<Rc<CommandBuffer>> commandBuffers) = 0;
-
-    /// Invoke a callback once all currently submitted work has completed.
-    virtual void onCompleted(Func<void()> fn) = 0;
 
     /// Begin recording a new command buffer on this queue.
     virtual Rc<CommandBuffer> startCommandRecording() = 0;
