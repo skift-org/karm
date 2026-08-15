@@ -24,7 +24,9 @@ struct Func<Out(In...)> {
         Wrap(F&& f) : _f(std::move(f)) {}
 
         [[clang::coro_wrapper]]
-        Out operator()(In... in) const override { return _f(std::forward<In>(in)...); }
+        Out operator()(In... in) const override {
+            return _f(std::forward<In>(in)...);
+        }
     };
 
     Box<_Wrap> _wrap;
@@ -96,7 +98,9 @@ struct SharedFunc<Out(In...)> {
         Wrap(F&& f) : _f(std::move(f)) {}
 
         [[clang::coro_wrapper]]
-        Out operator()(In... in) const override { return _f(std::forward<In>(in)...); }
+        Out operator()(In... in) const override {
+            return _f(std::forward<In>(in)...);
+        }
     };
 
     Rc<_Wrap> _wrap;

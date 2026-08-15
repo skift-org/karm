@@ -83,7 +83,7 @@ struct Node : App::Dispatch {
 
 export auto key(auto const& key) {
     return [key](Child child) {
-        child->_key = hash(key);
+        child->_key = Some(hash(key));
         return child;
     };
 }

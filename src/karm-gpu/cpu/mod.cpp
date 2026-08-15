@@ -366,10 +366,6 @@ struct SoftQueue : Queue {
         return makeRc<SoftCommandBuffer>();
     }
 
-    void onCompleted(Func<void()> fn) override {
-        (void)fn;
-    }
-
     void cancel(Slice<Rc<CommandBuffer>> commandBuffers) override {
         (void)commandBuffers;
     }

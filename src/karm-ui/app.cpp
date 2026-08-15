@@ -82,6 +82,7 @@ struct RootNode : ProxyNode<RootNode> {
 
     void event(App::Event& event) override {
         if (auto e = event.is<App::ResizeEvent>()) {
+            _swapChain = _window->createSwapChain().unwrap("could not re-create swapchain");
             _shouldLayout = true;
             event.accept();
         }
