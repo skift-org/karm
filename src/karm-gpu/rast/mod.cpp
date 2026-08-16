@@ -396,7 +396,7 @@ export void drawIndexed(
             cache.access(pipeline.vertex, vertexArgs, b, &sv);
 
             sv.vertexId = fetchId(vertexIndex + 2);
-            auto c = &data[pipeline.vertex.len * 1];
+            auto c = &data[pipeline.vertex.len * 2];
             cache.access(pipeline.vertex, vertexArgs, c, &sv);
 
             fillPrimitives(
