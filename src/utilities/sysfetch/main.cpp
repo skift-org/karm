@@ -31,9 +31,9 @@ auto title(Str text) {
 
 Res<> dumpUserInfo() {
     auto userinfo = try$(Sys::userinfo());
-    Sys::println("{}: {} {}", title("User"), userinfo.name);
-    Sys::println("{}: {} {}", title("Home"), userinfo.home);
-    Sys::println("{}: {} {}", title("Shell"), userinfo.shell);
+    Sys::println("{}: {}", title("User"), userinfo.name);
+    Sys::println("{}: {}", title("Home"), userinfo.home);
+    Sys::println("{}: {}", title("Shell"), userinfo.shell);
     return Ok();
 }
 
