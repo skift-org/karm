@@ -59,14 +59,12 @@ export Ui::Child sidenavItem(bool selected, Opt<Ui::Send<>> onPress, Ui::Child c
     return Ui::button(
         std::move(onPress),
         buttonStyle,
-        Ui::insets(
-            {8, 12, 8, 0},
-            hflow(
-                indicator,
-                Ui::empty(8),
-                content
-            )
-        )
+        Ui::hflow(
+            indicator,
+            Ui::empty(8),
+            content
+        ) |
+            Ui::insets({8, 12, 8, 0})
     );
 }
 

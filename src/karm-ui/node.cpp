@@ -90,7 +90,7 @@ export auto key(auto const& key) {
 
 export template <typename T>
 concept Decorator = requires(T& t, Child& c) {
-    { t(c) } -> Meta::Same<Child>;
+    { t(c) } -> Meta::Convertible<Child>;
 };
 
 export Child operator|(Child child, Decorator auto decorator) {

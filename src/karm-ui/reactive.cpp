@@ -222,7 +222,7 @@ auto bind(Signals::Signal<T> sig) {
 
 export template <typename T>
 auto bind(Signals::Signal<T> sig, auto value) {
-    return [=](auto&, ...) mutable {
+    return [=](auto&...) mutable {
         sig.update(value);
     };
 }

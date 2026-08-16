@@ -48,19 +48,15 @@ export Ui::Child rowContent(Opt<Ui::Child> leading, String title, Opt<String> su
                            Ui::sizing(26, {Ui::UNCONSTRAINED, 26})
                      : Ui::empty();
 
-    return minSize(
-        {Ui::UNCONSTRAINED, 48},
-        insets(
-            {0, 16},
-            hflow(
-                0,
-                Math::Align::VCENTER | Math::Align::HFILL,
-                lead,
-                t | Ui::grow(),
-                trail
-            )
-        )
-    );
+    return Ui::hflow(
+               0,
+               Math::Align::VCENTER | Math::Align::HFILL,
+               lead,
+               t | Ui::grow(),
+               trail
+           ) |
+           Ui::insets({0, 16}) |
+           Ui::minSize({Ui::UNCONSTRAINED, 64});
 }
 
 export Ui::Child titleRow(String t) {
@@ -183,10 +179,9 @@ export Ui::Child treeRow(Opt<Ui::Slot> leading, String title, Opt<String> subtit
                 subtitle,
                 Some(Ui::icon(state ? Mdi::CHEVRON_UP : Mdi::CHEVRON_DOWN, 24))
             ),
-            state ? insets(
-                        {0, 0, 0, 0},
-                        child()
-                    ) | slideIn(Ui::SlideFrom::TOP) |
+            state ? child() |
+                        Ui::insets({0, 0, 0, 0}) |
+                        slideIn(Ui::SlideFrom::TOP) |
                         Ui::grow()
                   : Ui::empty()
         );

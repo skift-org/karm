@@ -35,15 +35,11 @@ export Child empty(Math::Vec2i size = {}) {
     return makeRc<Empty>(size);
 }
 
-export Child cond(bool cond, Child child) {
-    if (cond)
-        return child;
-    return empty();
-}
-
 export auto cond(bool c) {
     return [c](Child child) {
-        return cond(c, child);
+        if (c)
+            return child;
+        return empty();
     };
 }
 
@@ -69,13 +65,9 @@ struct Bound : ProxyNode<Bound> {
     }
 };
 
-export Child bound(Child child) {
-    return makeRc<Bound>(child);
-}
-
 export auto bound() {
     return [](Child child) {
-        return bound(child);
+        return makeRc<Bound>(child);
     };
 }
 
@@ -88,7 +80,7 @@ struct Placed : ProxyNode<Placed> {
 
     void reconcile(Placed& o) override {
         _place = o._place;
-        ProxyNode<Placed>::reconcile(o);
+        ProxyNode::reconcile(o);
     }
 
     Math::Recti bound() override {
@@ -107,13 +99,9 @@ struct Placed : ProxyNode<Placed> {
     }
 };
 
-export Child placed(Math::Recti place, Child child) {
-    return makeRc<Placed>(place, child);
-}
-
 export auto placed(Math::Recti bound) {
     return [bound](Child child) {
-        return placed(bound, child);
+        return makeRc<Placed>(bound, child);
     };
 }
 
@@ -133,32 +121,26 @@ struct Grow : ProxyNode<Grow> {
     }
 };
 
-export Child grow(Opt<Child> child) {
-    return makeRc<Grow>(
-        child.unwrapOrElse([] {
-            return empty();
-        })
-    );
+export Child grow(None) {
+    return makeRc<Grow>(empty());
 }
 
 export auto grow() {
     return [](Child child) {
-        return grow(Some(child));
+        return makeRc<Grow>(child);
     };
 }
 
-export Child grow(isize grow, Opt<Child> child) {
+export Child grow(isize grow, None) {
     return makeRc<Grow>(
         grow,
-        child.unwrapOrElse([] {
-            return empty();
-        })
+        empty()
     );
 }
 
 export auto grow(isize g) {
     return [g](Child child) {
-        return grow(g, Some(child));
+        return makeRc<Grow>(g, child);
     };
 }
 
@@ -191,104 +173,46 @@ struct Align : ProxyNode<Align> {
     }
 };
 
-export Child align(Math::Align align, Child child) {
-    return makeRc<Align>(align, child);
-}
-
 export auto align(Math::Align a) {
     return [a](Child child) {
-        return align(a, child);
+        return makeRc<Align>(a, child);
     };
-}
-
-export Child center(Child child) {
-    return align(Math::Align::CENTER, child);
 }
 
 export auto center() {
-    return [](Child child) {
-        return center(child);
-    };
-}
-
-export Child start(Child child) {
-    return align(Math::Align::START | Math::Align::VFILL, child);
+    return align(Math::Align::CENTER);
 }
 
 export auto start() {
-    return [](Child child) {
-        return start(child);
-    };
-}
-
-export Child end(Child child) {
-    return align(Math::Align::END | Math::Align::VFILL, child);
+    return align(Math::Align::START | Math::Align::VFILL);
 }
 
 export auto end() {
-    return [](Child child) {
-        return end(child);
-    };
-}
-
-export Child fit(Child child) {
-    return align(Math::Align::FIT, child);
+    return align(Math::Align::END | Math::Align::VFILL);
 }
 
 export auto fit() {
-    return [](Child child) {
-        return fit(child);
-    };
-}
-
-export Child cover(Child child) {
-    return align(Math::Align::COVER, child);
+    return align(Math::Align::FIT);
 }
 
 export auto cover() {
-    return [](Child child) {
-        return cover(child);
-    };
-}
-
-export Child hcenter(Child child) {
-    return align(Math::Align::HCENTER | Math::Align::TOP, child);
+    return align(Math::Align::COVER);
 }
 
 export auto hcenter() {
-    return [](Child child) {
-        return hcenter(child);
-    };
-}
-
-export Child vcenter(Child child) {
-    return align(Math::Align::VCENTER | Math::Align::START, child);
+    return align(Math::Align::HCENTER | Math::Align::TOP);
 }
 
 export auto vcenter() {
-    return [](Child child) {
-        return vcenter(child);
-    };
-}
-
-export Child hcenterFill(Child child) {
-    return align(Math::Align::HCENTER | Math::Align::VFILL, child);
+    return align(Math::Align::VCENTER | Math::Align::START);
 }
 
 export auto hcenterFill() {
-    return [](Child child) {
-        return hcenterFill(child);
-    };
-}
-
-export Child vcenterFill(Child child) {
-    return align(Math::Align::VCENTER | Math::Align::HFILL, child);
+    return align(Math::Align::HCENTER | Math::Align::VFILL);
 }
 
 export auto vcenterFill() {
-    return [](Child child) {
-        return vcenterFill(child);
-    };
+    return align(Math::Align::VCENTER | Math::Align::HFILL);
 }
 
 // MARK: Sizing ----------------------------------------------------------------
@@ -347,74 +271,22 @@ struct Sizing : ProxyNode<Sizing> {
     }
 };
 
-export Child sizing(Math::Vec2i min, Math::Vec2i max, Child child) {
-    return makeRc<Sizing>(min, max, child);
-}
-
 export auto sizing(Math::Vec2i min, Math::Vec2i max) {
     return [min, max](Child child) {
-        return sizing(min, max, child);
+        return makeRc<Sizing>(min, max, child);
     };
-}
-
-export Child minSize(Math::Vec2i size, Child child) {
-    return makeRc<Sizing>(size, UNCONSTRAINED, child);
 }
 
 export auto minSize(Math::Vec2i size) {
-    return [size](Child child) {
-        return minSize(size, child);
-    };
-}
-
-export Child minSize(isize size, Child child) {
-    return minSize(Math::Vec2i{size}, child);
-}
-
-export auto minSize(isize size) {
-    return [size](Child child) {
-        return minSize(size, child);
-    };
-}
-
-export Child maxSize(Math::Vec2i size, Child child) {
-    return makeRc<Sizing>(UNCONSTRAINED, size, child);
+    return sizing(size, UNCONSTRAINED);
 }
 
 export auto maxSize(Math::Vec2i size) {
-    return [size](Child child) {
-        return maxSize(size, child);
-    };
-}
-
-export Child maxSize(isize size, Child child) {
-    return maxSize(Math::Vec2i{size}, child);
-}
-
-export auto maxSize(isize size) {
-    return [size](Child child) {
-        return maxSize(size, child);
-    };
-}
-
-export Child pinSize(Math::Vec2i size, Child child) {
-    return makeRc<Sizing>(size, size, child);
+    return sizing(UNCONSTRAINED, size);
 }
 
 export auto pinSize(Math::Vec2i size) {
-    return [size](Child child) {
-        return pinSize(size, child);
-    };
-}
-
-export Child pinSize(isize size, Child child) {
-    return pinSize(Math::Vec2i{size}, child);
-}
-
-export auto pinSize(isize size) {
-    return [size](Child child) {
-        return pinSize(size, child);
-    };
+    return sizing(size, size);
 }
 
 // MARK: Insets ---------------------------------------------------------------
@@ -447,13 +319,9 @@ struct Insets : ProxyNode<Insets> {
     }
 };
 
-export Child insets(Math::Insetsi s, Child child) {
-    return makeRc<Insets>(s, child);
-}
-
 export auto insets(Math::Insetsi s) {
     return [s](Child child) {
-        return insets(s, child);
+        return makeRc<Insets>(s, child);
     };
 }
 
@@ -486,13 +354,9 @@ struct AspectRatio : ProxyNode<AspectRatio> {
     }
 };
 
-export Child aspectRatio(f64 ratio, Child child) {
-    return makeRc<AspectRatio>(ratio, child);
-}
-
 export auto aspectRatio(f64 ratio) {
     return [ratio](Child child) {
-        return aspectRatio(ratio, child);
+        return makeRc<AspectRatio>(ratio, child);
     };
 }
 
@@ -771,23 +635,15 @@ struct Cell : ProxyNode<Cell> {
     }
 };
 
-export Child cell(Math::Vec2i pos, Child child) {
-    return makeRc<Cell>(pos, pos, child);
-}
-
 export auto cell(Math::Vec2i pos) {
     return [pos](Child child) {
-        return cell(pos, child);
+        return makeRc<Cell>(pos, pos, child);
     };
-}
-
-export Child cell(Math::Vec2i start, Math::Vec2i end, Child child) {
-    return makeRc<Cell>(start, end, child);
 }
 
 export auto cell(Math::Vec2i start, Math::Vec2i end) {
     return [start, end](Child child) {
-        return cell(start, end, child);
+        return makeRc<Cell>(start, end, child);
     };
 }
 
