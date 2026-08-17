@@ -6,14 +6,8 @@ module;
 #include <fcntl.h>
 #include <netdb.h>
 #include <netinet/in.h>
-#ifdef __ck_sys_freebsd__
-#    include <libutil.h>
-#elifdef __ck_sys_darwin__
-#    include <util.h>
-#else
-#    include <pty.h>
-#endif
 #include <signal.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
 #include <sys/socket.h>
@@ -24,6 +18,14 @@ module;
 #include <sys/wait.h>
 #include <time.h>
 #include <unistd.h>
+
+#ifdef __ck_sys_freebsd__
+#    include <libutil.h>
+#elifdef __ck_sys_darwin__
+#    include <util.h>
+#else
+#    include <pty.h>
+#endif
 
 //
 #include <karm/macros>
@@ -205,6 +207,58 @@ Res<Stat> stat(Ref::Url const& url) {
     if (::stat(str.buf(), &buf) < 0)
         return Posix::fromLastErrno();
     return Ok(Posix::fromStat(buf));
+}
+
+Res<> rename(Ref::Url const& from, Ref::Url const& to) {
+    String fromStr = try$(Posix::resolve(from)).str();
+    String toStr = try$(Posix::resolve(to)).str();
+    if (::rename(fromStr.buf(), toStr.buf()) < 0)
+        return Posix::fromLastErrno();
+    return Ok();
+}
+
+Res<> touch(Ref::Url const& url, Opt<SystemTime> const&) {
+    String str = try$(Posix::resolve(url)).str();
+    int fd = ::open(str.buf(), O_WRONLY | O_CREAT, 0666);
+    if (fd < 0)
+        return Posix::fromLastErrno();
+    Defer _ = [&] {
+        close(fd);
+    };
+    if (::utimensat(fd, nullptr, nullptr, 0) < 0)
+        return Posix::fromLastErrno();
+    return Ok();
+}
+
+Res<> remove(Ref::Url const& url, Flags<RemoveOption> options) {
+    String str = try$(Posix::resolve(url)).str();
+    struct stat buf;
+    if (::stat(str.buf(), &buf) < 0)
+        return Posix::fromLastErrno();
+
+    if (S_ISDIR(buf.st_mode)) {
+        if (options.has({RemoveOption::DIRECTORY, RemoveOption::RECURSIVE})) {
+            if (::unlink(str.buf()) < 0)
+                return Posix::fromLastErrno();
+            return Ok();
+        }
+
+        if (options.has({RemoveOption::DIRECTORY})) {
+            if (::rmdir(str.buf()) < 0)
+                return Posix::fromLastErrno();
+            return Ok();
+        }
+
+        return Error::isADirectory();
+    }
+
+    if (options.has({RemoveOption::FILE})) {
+        if (::unlink(str.buf()) < 0)
+            return Posix::fromLastErrno();
+        return Ok();
+    } else {
+        return Error::notFound();
+    }
 }
 
 // MARK: User interactions -----------------------------------------------------

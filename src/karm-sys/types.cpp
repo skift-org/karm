@@ -19,6 +19,12 @@ export enum struct MmapOption : u64 {
     PREFETCH = 1 << 7,
 };
 
+export enum struct RemoveOption : u64 {
+    FILE = 1 << 0,
+    DIRECTORY = 1 << 1,
+    RECURSIVE = 1 << 2,
+};
+
 export enum struct OpenOption : u64 {
     READ = 1 << 0,
     WRITE = 1 << 1,

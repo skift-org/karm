@@ -48,6 +48,12 @@ export Res<Vec<DirEntry>> readDirOrCreate(Ref::Url const& url);
 
 export Res<Stat> stat(Ref::Url const& url);
 
+export Res<> rename(Ref::Url const& from, Ref::Url const& to);
+
+export Res<> touch(Ref::Url const& url, Opt<SystemTime> const& time);
+
+export Res<> remove(Ref::Url const& url, Flags<RemoveOption> options);
+
 // MARK: User interactions -----------------------------------------------------
 
 export Res<> launch(Intent intent);

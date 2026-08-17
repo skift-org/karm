@@ -124,20 +124,58 @@ export struct File :
     Rc<Fd> fd() {
         return _fd;
     }
+
+    template <StaticEncoding E = Utf8>
+    Res<_String<E>> readAllText() {
+        return Io::readAllText<E>(*this);
+    }
+
+    template <StaticEncoding E = Utf8>
+    Res<> writeAllText(Str buf) {
+        Io::TextEncoder<E> enc{*this};
+        try$(enc.writeStr(buf));
+        return Ok();
+    }
+
+    Res<Vec<u8>> readAll() {
+        Io::BufferWriter bw;
+        try$(Io::copy(*this, bw));
+        return Ok(bw.take());
+    }
+
+    Res<> writeAll(Bytes buf) {
+        Io::BufReader br{buf};
+        try$(Io::copy(br, *this));
+        return Ok();
+    }
 };
 
-/// Read the entire file as a UTF-8 string.
-export template <StaticEncoding E>
+export template <StaticEncoding E = Utf8>
 Res<_String<E>> readAllText(Ref::Url const& url) {
     auto file = try$(Sys::File::open(url));
-    return Io::readAllText<E>(file);
+    return file.readAllText<E>();
+}
+
+export template <StaticEncoding E = Utf8>
+Res<> writeAllText(Ref::Url const& url, Str buf) {
+    auto file = try$(Sys::File::openOrCreate(url));
+    return file.writeAllText(buf);
 }
 
 export Res<Vec<u8>> readAll(Ref::Url const& url) {
     auto file = try$(Sys::File::open(url));
-    Io::BufferWriter bw;
-    try$(Io::copy(file, bw));
-    return Ok(bw.take());
+    return file.readAll();
+}
+
+export Res<> writeAll(Ref::Url const& url, Bytes buf) {
+    auto file = try$(File::openOrCreate(url));
+    return file.writeAll(buf);
+}
+
+export Res<usize> copy(Ref::Url const& from, Ref::Url const& to) {
+    auto fromFile = try$(File::open(from));
+    auto toFile = try$(File::create(to));
+    return Io::copy(fromFile, toFile);
 }
 
 } // namespace Karm::Sys
