@@ -24,7 +24,7 @@ export struct Text : Node {
 
         g.push();
         g.origin(_origin);
-        g.fill(*_prose);
+        g.fill(_prose);
         g.pop();
     }
 

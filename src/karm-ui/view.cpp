@@ -262,7 +262,7 @@ struct Text : View<Text> {
     void paint(Gfx::Canvas& g, Math::Recti) override {
         g.push();
         g.origin(bound().xy.cast<f64>());
-        g.fill(*_prose);
+        g.fill(_prose);
         g.pop();
     }
 
@@ -451,46 +451,39 @@ export Child canvas(OnPaint onPaint) {
 }
 
 struct SceneCanvas : View<SceneCanvas> {
-    Rc<Scene::Node> _scene;
+    Gfx::Snapshot _snapshot;
     Scene::PaintOptions _options;
 
-    SceneCanvas(Rc<Scene::Node> scene, Scene::PaintOptions options)
-        : _scene(std::move(scene)), _options(options) {}
+    SceneCanvas(Gfx::Snapshot snapshot, Scene::PaintOptions options)
+        : _snapshot(std::move(snapshot)), _options(options) {}
 
     void reconcile(SceneCanvas& o) override {
-        _scene = o._scene;
+        _snapshot = o._snapshot;
         _options = o._options;
         View<SceneCanvas>::reconcile(o);
     }
 
     void paint(Gfx::Canvas& g, Math::Recti rect) override {
         g.push();
-        g.clip(_bound);
+        g.clip(_bound.clipTo(rect));
 
         auto transform =
             Math::Trans2f::translate(_bound.xy.cast<f64>())
-                .scaled(_bound.size().cast<f64>() / _scene->bound().size().cast<f64>());
+                .scaled(_bound.size().cast<f64>() / _snapshot.size().cast<f64>());
         g.transform(transform);
-
-        auto clip =
-            transform
-                .inverse()
-                .apply(rect.cast<f64>())
-                .bound();
-        _scene->paint(g, clip, _options);
-
+        _snapshot.replay(g).unwrap();
         g.pop();
     }
 
     Math::Vec2i size(Math::Vec2i, Hint hint) override {
         if (hint == Hint::MIN)
             return 0;
-        return _scene->bound().size().ceil().cast<isize>();
+        return _snapshot.size().ceil().cast<isize>();
     }
 };
 
-export Child canvas(Rc<Scene::Node> child, Scene::PaintOptions options) {
-    return makeRc<SceneCanvas>(std::move(child), options);
+export Child canvas(Gfx::Snapshot snapshot, Scene::PaintOptions options) {
+    return makeRc<SceneCanvas>(std::move(snapshot), options);
 }
 
 // MARK: Blur ------------------------------------------------------------------

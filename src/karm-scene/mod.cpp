@@ -12,3 +12,4 @@ export import :stack;
 export import :text;
 export import :transform;
 export import :viewbox;
+export import :snapshot;

@@ -27,6 +27,11 @@ export struct Env {
             _globalEnv = this;
     }
 
+    ~Env() {
+        if (_globalEnv == this)
+            _globalEnv = nullptr;
+    }
+
     Str self() const {
         return _argv[0];
     }

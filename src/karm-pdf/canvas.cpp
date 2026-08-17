@@ -206,7 +206,8 @@ export struct Canvas : Gfx::Canvas {
             _e.ln("f*");
     }
 
-    void fill(Gfx::Prose& prose) override {
+    void fill(Rc<Gfx::Prose> p) override {
+        auto& prose = *p;
         push();
 
         _e.ln("BT");

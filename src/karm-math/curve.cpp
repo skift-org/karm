@@ -33,6 +33,9 @@ union Curve {
     constexpr Curve()
         : _els{} {}
 
+    constexpr Curve(T ax, T ay, T bx, T by, T cx, T cy, T dx, T dy)
+        : _els{ax, ay, bx, by, cx, cy, dx, dy} {}
+
     constexpr Curve(Vec2<T> a, Vec2<T> b, Vec2<T> c, Vec2<T> d)
         : a(a), b(b), c(c), d(d) {}
 

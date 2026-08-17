@@ -447,13 +447,13 @@ struct Input : View<Input> {
         _text = NONE;
     }
 
-    Gfx::Prose& _ensureText() {
+    Rc<Gfx::Prose> _ensureText() {
         if (not _text) {
             _style.collapseEmptyLines = false;
             _text = Some(makeRc<Gfx::Prose>(_style, _style));
             (*_text)->append(_model->runes());
         }
-        return **_text;
+        return *_text;
     }
 
     void paint(Gfx::Canvas& g, Math::Recti) override {
@@ -461,12 +461,12 @@ struct Input : View<Input> {
         g.clip(bound());
         g.origin(bound().xy.cast<f64>());
 
-        auto& text = _ensureText();
+        auto text = _ensureText();
 
         if (_focus) {
             g.push();
-            _paintSelection(g, text, _model->_cur.head, _model->_cur.tail, ACCENT500.withOpacity(0.5));
-            _paintCaret(g, text, _model->_cur.head, _style.color.unwrapOr(GRAY100));
+            _paintSelection(g, *text, _model->_cur.head, _model->_cur.tail, ACCENT500.withOpacity(0.5));
+            _paintCaret(g, *text, _model->_cur.head, _style.color.unwrapOr(GRAY100));
             g.pop();
         }
 
@@ -482,9 +482,9 @@ struct Input : View<Input> {
             if (me->type == App::MouseEvent::PRESS and
                 me->button == App::MouseButton::LEFT and
                 bound().contains(me->pos)) {
-                _ensureText().layout(Au{bound().width});
+                _ensureText()->layout(Au{bound().width});
                 auto local = me->pos - bound().xy;
-                auto pos = _ensureText().hitTest({Au{local.x}, Au{local.y}});
+                auto pos = _ensureText()->hitTest({Au{local.x}, Au{local.y}});
                 _mouseDown = true;
                 _selectionBoundary =
                     me->clicks == 1
@@ -494,9 +494,9 @@ struct Input : View<Input> {
                 _onChange(*this, TextAction::moveTo(pos, _selectionBoundary));
                 e.accept();
             } else if (me->type == App::MouseEvent::MOVE and _mouseDown) {
-                _ensureText().layout(Au{bound().width});
+                _ensureText()->layout(Au{bound().width});
                 auto local = me->pos - bound().xy;
-                auto pos = _ensureText().hitTest({Au{local.x}, Au{local.y}});
+                auto pos = _ensureText()->hitTest({Au{local.x}, Au{local.y}});
                 _onChange(*this, TextAction::selectTo(pos, _selectionBoundary));
                 e.accept();
             } else if (me->type == App::MouseEvent::RELEASE and me->button == App::MouseButton::LEFT) {
@@ -514,12 +514,12 @@ struct Input : View<Input> {
     }
 
     void layout(Math::Recti bound) override {
-        _ensureText().layout(Au{bound.width});
+        _ensureText()->layout(Au{bound.width});
         View<Input>::layout(bound);
     }
 
     Math::Vec2i size(Math::Vec2i s, Hint) override {
-        auto size = _ensureText().layout(Au{s.width});
+        auto size = _ensureText()->layout(Au{s.width});
         // NOTE: Ensure the input is always at least 1 pixel wide to show the caret.
         size.x = max(size.x, Au{1});
         return size.ceil().cast<isize>();
@@ -574,13 +574,13 @@ struct SimpleInput : View<SimpleInput> {
         return *_model;
     }
 
-    Gfx::Prose& _ensureText() {
+    Rc<Gfx::Prose> _ensureText() {
         if (not _prose) {
             _style.collapseEmptyLines = false;
             _prose = Some(makeRc<Gfx::Prose>(_style, _style));
             (*_prose)->append(_ensureModel().runes());
         }
-        return **_prose;
+        return *_prose;
     }
 
     void paint(Gfx::Canvas& g, Math::Recti) override {
@@ -588,12 +588,12 @@ struct SimpleInput : View<SimpleInput> {
         g.clip(bound());
         g.origin(bound().xy.cast<f64>());
 
-        auto& text = _ensureText();
+        auto text = _ensureText();
 
         if (_focus) {
             g.push();
-            _paintSelection(g, text, _model->_cur.head, _model->_cur.tail, ACCENT500.withOpacity(0.5));
-            _paintCaret(g, text, _ensureModel()._cur.head, _style.color.unwrapOr(GRAY100));
+            _paintSelection(g, *text, _model->_cur.head, _model->_cur.tail, ACCENT500.withOpacity(0.5));
+            _paintCaret(g, *text, _ensureModel()._cur.head, _style.color.unwrapOr(GRAY100));
             g.pop();
         }
 
@@ -609,9 +609,9 @@ struct SimpleInput : View<SimpleInput> {
             if (me->type == App::MouseEvent::PRESS and
                 me->button == App::MouseButton::LEFT and
                 bound().contains(me->pos)) {
-                _ensureText().layout(Au{bound().width});
+                _ensureText()->layout(Au{bound().width});
                 auto local = me->pos - bound().xy;
-                auto pos = _ensureText().hitTest({Au{local.x}, Au{local.y}});
+                auto pos = _ensureText()->hitTest({Au{local.x}, Au{local.y}});
                 _mouseDown = true;
                 _selectionBoundary =
                     me->clicks == 1
@@ -622,9 +622,9 @@ struct SimpleInput : View<SimpleInput> {
                 e.accept();
                 shouldRepaint(*this);
             } else if (me->type == App::MouseEvent::MOVE and _mouseDown) {
-                _ensureText().layout(Au{bound().width});
+                _ensureText()->layout(Au{bound().width});
                 auto local = me->pos - bound().xy;
-                auto pos = _ensureText().hitTest({Au{local.x}, Au{local.y}});
+                auto pos = _ensureText()->hitTest({Au{local.x}, Au{local.y}});
                 _ensureModel().reduce(TextAction::selectTo(pos, _selectionBoundary));
                 e.accept();
                 shouldRepaint(*this);
@@ -648,12 +648,12 @@ struct SimpleInput : View<SimpleInput> {
     }
 
     void layout(Math::Recti bound) override {
-        _ensureText().layout(Au{bound.width});
+        _ensureText()->layout(Au{bound.width});
         View::layout(bound);
     }
 
     Math::Vec2i size(Math::Vec2i s, Hint) override {
-        auto size = _ensureText().layout(Au{s.width});
+        auto size = _ensureText()->layout(Au{s.width});
         // NOTE: Ensure the input is always at least 1 pixel wide to show the caret.
         size.x = max(size.x, Au{1});
         return size.ceil().cast<isize>();

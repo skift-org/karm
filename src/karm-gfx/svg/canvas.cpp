@@ -357,7 +357,8 @@ export struct SvgCanvas : Canvas {
         }
     }
 
-    void fill(Prose& prose) override {
+    void fill(Rc<Prose> p) override {
+        auto& prose = *p;
         emitPath();
         _sb.append("  <g"s);
         if (any(_state.transform.str())) {

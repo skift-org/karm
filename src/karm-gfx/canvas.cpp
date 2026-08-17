@@ -20,6 +20,7 @@ export struct Canvas : Meta::NoCopy {
     Canvas() = default;
 
     Canvas(Canvas&&) = default;
+
     Canvas& operator=(Canvas&&) = default;
 
     virtual ~Canvas() = default;
@@ -304,12 +305,12 @@ export struct Canvas : Meta::NoCopy {
     }
 
     // Fill a run of text
-    virtual void fill(Prose& prose) {
+    virtual void fill(Rc<Prose> prose) {
         push();
 
-        for (auto const& line : prose._lines) {
-            for (auto const& block : line.blocks(prose)) {
-                for (auto const& cell : block.cells(prose)) {
+        for (auto const& line : prose->_lines) {
+            for (auto const& block : line.blocks(*prose)) {
+                for (auto const& cell : block.cells(*prose)) {
                     if (cell.type() == Prose::CellType::STRUT)
                         continue;
 

@@ -776,8 +776,7 @@ export struct Prose : Meta::Pinned {
         };
     }
 
-    Math::Vec2Au
-    queryPosition(usize runeIndex) const {
+    Math::Vec2Au queryPosition(usize runeIndex) const {
         auto [pos, _, _] = queryCaret(runeIndex);
         return pos;
     }

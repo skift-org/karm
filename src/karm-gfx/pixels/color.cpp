@@ -30,11 +30,11 @@ export struct Color {
         };
     }
 
-    always_inline constexpr u32 packed() {
-        return static_cast<u8>(red << 24) |
-               static_cast<u8>(green << 16) |
-               static_cast<u8>(blue << 8) |
-               static_cast<u8>(alpha << 0);
+    always_inline constexpr u32 packed() const {
+        return (static_cast<u32>(red) << 24) |
+               (static_cast<u32>(green) << 16) |
+               (static_cast<u32>(blue) << 8) |
+               (static_cast<u32>(alpha) << 0);
     }
 
     always_inline static constexpr Color fromRgb(u8 red, u8 green, u8 blue) {

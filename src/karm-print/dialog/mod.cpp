@@ -16,12 +16,12 @@ namespace Karm::Print {
 
 // MARK: Model -----------------------------------------------------------------
 
-export using PrintPreview = SharedFunc<Vec<Page>(Settings const&)>;
+export using PrintPreview = SharedFunc<Vec<Gfx::Snapshot>(Settings const&)>;
 
 struct State {
     PrintPreview preview;
     Settings settings = {};
-    Vec<Page> pages = preview(settings);
+    Vec<Gfx::Snapshot> pages = preview(settings);
 };
 
 struct ChangePaper {
@@ -127,7 +127,7 @@ Ui::Child _printPaper(State const& s, usize index) {
 
     return Ui::stack(
                Ui::canvas(
-                   s.pages[index].content(),
+                   s.pages[index],
                    {
                        .showBackgroundGraphics = s.settings.backgroundGraphics,
                    }
@@ -175,12 +175,7 @@ void _printPDF(State const& s) {
     auto printer = FilePrinter::create(Ref::Uti::PUBLIC_PDF).unwrap();
     for (usize i = 0; i < s.pages.len(); ++i) {
         auto page = s.pages[i];
-        page.print(
-            *printer,
-            {
-                s.settings.backgroundGraphics,
-            }
-        );
+        page.replay(printer->beginPage(page.size().cast<f64>())).unwrap();
     }
     printer->save(Ref::parseUrlOrPath("./output.pdf", Sys::globalEnv().cwd())).unwrap();
 }
