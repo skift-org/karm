@@ -112,6 +112,12 @@ export struct Snapshot {
         return recorder.finalize();
     }
 
+    static Snapshot from(Math::Vec2i size, Color color) {
+        Recorder recorder{size};
+        recorder.clear(color);
+        return recorder.finalize();
+    }
+
     Snapshot(Math::Vec2i size, Rc<_State> state)
         : _size(size), _state(state) {}
 
