@@ -7,6 +7,8 @@ export module Karm.Gfx:snapshot;
 import Karm.Core;
 import Karm.Math;
 import :canvas;
+import :cpu.canvas;
+import :svg.canvas;
 
 namespace Karm::Gfx {
 
@@ -323,6 +325,25 @@ export struct Snapshot {
             }
             e("\n");
         }
+    }
+
+    Res<Rc<Image>> rasterize(f64 density = 1) const {
+        auto image = Image::alloc(
+            _size * density,
+            RGBA8888
+        );
+        CpuCanvas g;
+        g.begin(*image);
+        try$(replay(g));
+        g.end();
+        return Ok(image);
+    }
+
+    Res<String> svg() const {
+        SvgCanvas g;
+        g.begin(_size.cast<f64>());
+        try$(replay(g));
+        return Ok(g.finalize());
     }
 
     [[gnu::flatten]] Res<> replay(Canvas& g) const {
