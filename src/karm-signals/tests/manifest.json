@@ -3,7 +3,8 @@
     "id": "karm-siganls.tests",
     "type": "lib",
     "requires": [
-        "karm-signals"
+        "karm-core",
+        "karm-test"
     ],
     "injects": [
         "__tests__"
