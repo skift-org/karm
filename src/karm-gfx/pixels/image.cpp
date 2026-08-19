@@ -4,6 +4,8 @@ module;
 
 export module Karm.Gfx.Pixels:image;
 
+import Karm.Core;
+
 import :pixels;
 
 namespace Karm::Gfx {
@@ -41,6 +43,28 @@ export struct Image {
         return mutPixels();
     }
 
+    Bytes bytes() const {
+        return _buf.visit(
+            [](MutBytes const& b) -> Bytes {
+                return b;
+            },
+            [](Vec<u8> const& b) -> Bytes {
+                return Karm::bytes(b);
+            }
+        );
+    }
+
+    MutBytes mutBytes() {
+        return _buf.visit(
+            [](MutBytes& b) -> MutBytes {
+                return b;
+            },
+            [](Vec<u8>& b) -> MutBytes {
+                return Karm::mutBytes(b);
+            }
+        );
+    }
+
     u8* buf() {
         return _buf.visit([](auto& b) {
             return b.buf();
@@ -51,6 +75,10 @@ export struct Image {
         return _buf.visit([](auto& b) {
             return b.buf();
         });
+    }
+
+    always_inline Format format() const {
+        return _format;
     }
 
     always_inline Pixels pixels() const {
@@ -71,6 +99,10 @@ export struct Image {
 
     always_inline Math::Vec2i size() const {
         return _size;
+    }
+
+    always_inline isize stride() const {
+        return _stride;
     }
 
     always_inline Math::Recti bound() const {

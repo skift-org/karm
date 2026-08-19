@@ -61,6 +61,9 @@ export struct SwapChain {
     Drm::Format format;
     Math::Vec2u size;
 
+    SwapChain(Drm::Format format, Math::Vec2u size)
+        : format(format), size(size) {}
+
     virtual ~SwapChain() = default;
 
     virtual AcquiredBuffer acquire() = 0;

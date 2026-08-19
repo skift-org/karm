@@ -19,6 +19,10 @@ export enum struct Format {
     XBGR2101010, // X:B:G:R, 2:10:10:10
 };
 
+export usize bytesPerPixels(Format) {
+    return 4;
+}
+
 export struct Buffer {
     Format format;
     Math::Vec2u size;
@@ -29,10 +33,24 @@ export struct Buffer {
 
     virtual ~Buffer() = default;
 
-    // Allow a simple fallback copy case
-    virtual MutBytes mutBytes() const { return {}; }
+    virtual MutBytes mutBytes() { return {}; }
 
     virtual Bytes bytes() const { return {}; }
+};
+
+export struct ViewBuffer : Buffer {
+    MutBytes _buf;
+
+    ViewBuffer(Format format, Math::Vec2u size, usize stride, MutBytes buf)
+        : Buffer(format, size, stride), _buf(buf) {}
+
+    MutBytes mutBytes() override {
+        return _buf;
+    }
+
+    Bytes bytes() const override {
+        return _buf;
+    }
 };
 
 export struct Sync {

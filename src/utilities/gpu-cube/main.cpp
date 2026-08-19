@@ -53,7 +53,7 @@ void fragMain(ShaderArgs* args, Gpu::Color* out, VertexData* in, Gpu::Rasterizer
         clamp(c.x, 0.0f, 1.0f),
         clamp(c.y, 0.0f, 1.0f),
         clamp(c.z, 0.0f, 1.0f),
-        c.w,
+        1,
     };
 }
 
@@ -76,8 +76,9 @@ struct Handler : App::Handler {
     float animation = 0;
 
     Handler(Rc<App::Window> win, Rc<Gfx::Image> image)
-        : image(image), win(win), swapChain(win->createSwapChain().unwrap()) {
-
+        : image(image),
+          win(win),
+          swapChain(win->createSwapChain().unwrap()) {
         depths.resize(swapChain->size.width * swapChain->size.height);
         cube = Scene3d::Mesh::cube(2);
     }
@@ -109,7 +110,7 @@ struct Handler : App::Handler {
             pixels,
             Gpu::LoadOp::CLEAR,
             Gpu::StoreOp::STORE,
-            {0.2}
+            {0.2, 0.2, 0.2, 1}
         };
 
         Gpu::Rasterizer::Pass pass;

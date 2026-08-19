@@ -29,6 +29,8 @@ export struct Rgba8888 {
     always_inline static constexpr usize bpp() {
         return 4;
     }
+
+    bool operator==(Rgba8888 const&) const = default;
 };
 
 export Rgba8888 RGBA8888;
@@ -50,6 +52,8 @@ export struct Bgra8888 {
     always_inline static constexpr usize bpp() {
         return 4;
     }
+
+    bool operator==(Bgra8888 const&) const = default;
 };
 
 export Bgra8888 BGRA8888;
@@ -68,6 +72,8 @@ export struct Greyscale8 {
     always_inline static constexpr usize bpp() {
         return 1;
     }
+
+    bool operator==(Greyscale8 const&) const = default;
 };
 
 export Greyscale8 GREYSCALE8;
@@ -107,6 +113,16 @@ export Format bridge(Drm::Format format) {
     case Drm::Format::XBGR8888:
         return RGBA8888;
     default:
+        notImplemented();
+    }
+}
+
+export Drm::Format bridge(Format format) {
+    if (format == BGRA8888) {
+        return Drm::Format::ARGB8888;
+    } else if (format == RGBA8888) {
+        return Drm::Format::ABGR8888;
+    } else {
         notImplemented();
     }
 }

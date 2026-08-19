@@ -249,7 +249,7 @@ export void fillPrimitives(
             }();
 
             // https://docs.vulkan.org/spec/latest/chapters/fragops.html#fragops-depth
-            if (pass.depth.data and state.depthStencil.depthMode.has(Gpu::DepthFlags::READ)) {
+            if (pass.depth.data and state.depthStencil.depthMode.has(DepthFlags::READ)) {
                 auto& d = pass.depth.data[y * targetBound.width + x];
 
                 // https://docs.vulkan.org/spec/latest/chapters/fragops.html#fragops-depth-comparison

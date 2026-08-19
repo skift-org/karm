@@ -26,9 +26,9 @@ struct SdlBuffer : Drm::Buffer {
         };
     }
 
-    MutBytes mutBytes() const override {
+    MutBytes mutBytes() override {
         return {
-            static_cast<u8*>(_pixel),
+            _pixel,
             stride * size.height,
         };
     }
@@ -39,8 +39,11 @@ struct SdlSwapChain : SwapChain {
     SDL_Surface* _surface = nullptr;
 
     SdlSwapChain(SDL_Window* window, SDL_Surface* surface)
-        : _window(window), _surface(surface) {
-        size = Math::Vec2i{_surface->w, _surface->h}.cast<usize>();
+        : SwapChain(
+              Sdl::bridge(surface->format),
+              Math::Vec2i{surface->w, surface->h}.cast<usize>()
+          ),
+          _window(window), _surface(surface) {
     }
 
     AcquiredBuffer acquire() override {
