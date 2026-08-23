@@ -23,7 +23,7 @@ export struct FocusEvent {
 export struct FocusListener {
     bool _focused = false;
 
-    void event(Ui::Node& n, App::Event& e) {
+    void event(Node& n, App::Event& e) {
         if (auto fe = e.is<FocusEvent>()) {
             if (fe->type == FocusEvent::ENTER) {
                 _focused = true;
@@ -53,12 +53,12 @@ struct Focusable : ProxyNode<Focusable> {
     bool _focused = false;
     FocusableProps _props;
 
-    Focusable(Ui::Child child, FocusableProps props)
-        : ProxyNode<Focusable>(std::move(child)), _props(props) {
+    Focusable(Child child, FocusableProps props)
+        : ProxyNode(std::move(child)), _props(props) {
     }
 
     void paint(Gfx::Canvas& g, Math::Recti r) override {
-        ProxyNode<Focusable>::paint(g, r);
+        ProxyNode::paint(g, r);
 
         if (_props.visual and _focused) {
             g.strokeStyle(Gfx::stroke(ACCENT500).withWidth(2).withAlign(Gfx::INSIDE_ALIGN));
@@ -113,12 +113,12 @@ struct Focusable : ProxyNode<Focusable> {
     }
 };
 
-export Ui::Child focusable(Ui::Child child, FocusableProps props = {}) {
+export Child focusable(Child child, FocusableProps props = {}) {
     return makeRc<Focusable>(std::move(child), props);
 }
 
 export auto focusable(FocusableProps props = {}) {
-    return [props](Ui::Child child) {
+    return [props](Child child) {
         return focusable(std::move(child), props);
     };
 }

@@ -19,7 +19,7 @@ export struct Slider : Ui::View<Slider> {
     static constexpr auto THUMP_RADIUS = 10;
 
     double _value = 0.0;
-    Origin _origin = Origin::ZERO;
+    Origin _origin = ZERO;
     Opt<Ui::Send<double>> _onChange;
     Ui::MouseListener _mouseListener;
 
@@ -79,7 +79,7 @@ export struct Slider : Ui::View<Slider> {
             auto p = _mouseListener.pos();
             double full = static_cast<double>(bound().width) - THUMP_RADIUS * 2;
 
-            if (_origin == Origin::ZERO) {
+            if (_origin == ZERO) {
                 _value = (p.x - THUMP_RADIUS) / full;
             } else {
                 _value = 0.5 + ((p.x - THUMP_RADIUS) - full / 2) / full;
@@ -100,29 +100,6 @@ export struct Slider : Ui::View<Slider> {
 
 export Ui::Child slider(double value, Opt<Ui::Send<double>> onChange, Slider::Origin origin = Slider::Origin::ZERO) {
     return makeRc<Slider>(value, std::move(onChange), origin);
-}
-
-export Ui::Child slider(f64 value, Ui::Send<f64> onChange, Gfx::Icon icon, Str text) {
-    return Ui::hflow(
-               0,
-               Math::Align::CENTER,
-               Ui::icon(icon) |
-                   Ui::center() |
-                   Ui::aspectRatio(1) |
-                   Ui::bound(),
-               Ui::labelMedium(text)
-           ) |
-           Ui::box({
-               .borderRadii = 6,
-               .backgroundFill = Some(Ui::ACCENT600),
-           }) |
-           Ui::dragRegion() |
-           Ui::slider(value, std::move(onChange)) |
-           Ui::box({
-               .borderRadii = 6,
-               .backgroundFill = Some(Ui::GRAY900),
-           }) |
-           Ui::maxSize({Ui::UNCONSTRAINED, 32});
 }
 
 export template <typename T>

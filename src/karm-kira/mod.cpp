@@ -27,7 +27,6 @@ export import :sideNav;
 export import :sidePanel;
 export import :slider;
 export import :tabbar;
-export import :titlebar;
 export import :toggle;
 export import :toolbar;
 

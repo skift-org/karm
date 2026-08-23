@@ -6,8 +6,9 @@ import Karm.Ui;
 import Karm.Gfx;
 import Karm.Math;
 
-import :titlebar;
 import :toolbar;
+import :aboutDialog;
+import :contextMenu;
 
 namespace Karm::Kira {
 
@@ -93,6 +94,14 @@ static Ui::Child _mobileScaffold(Scaffold::State const& s, Scaffold const& scaff
            Ui::popoverLayer();
 }
 
+static Ui::Child titlebarClose() {
+    return Ui::button(
+        Some(Ui::bindBubble<App::RequestCloseEvent>()),
+        Ui::ButtonStyle::subtle(),
+        Mdi::WINDOW_CLOSE
+    );
+}
+
 static Ui::Child _desktopScaffoldToolbar(Scaffold::State const& s, Scaffold const& scaffold) {
     Ui::Children tools;
     if (scaffold.sidebar)
@@ -134,8 +143,16 @@ static Ui::Child _desktopScaffoldToolbar(Scaffold::State const& s, Scaffold cons
 static Ui::Child _desktopScaffoldHeader(Scaffold::State const& s, Scaffold const& scaffold) {
     return _desktopScaffoldToolbar(s, scaffold) |
            Ui::doubleClick(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::FULL)) |
-           contextMenu([] {
+           contextMenu([&] {
                return contextMenuContent({
+                   contextMenuItem(
+                       Some([&](Ui::Node& n) {
+                           Ui::showDialog(n, aboutDialog(scaffold.title));
+                       }),
+                       Some(scaffold.icon),
+                       scaffold.title
+                   ),
+                   separator(),
                    contextMenuItem(Some(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::NONE)), Some(Mdi::WINDOW_RESTORE), "Restore"),
                    contextMenuItem(Some(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::FULL)), Some(Mdi::WINDOW_MAXIMIZE), "Maximize"),
                    contextMenuItem(Some(Ui::bindBubble<App::RequestMinimizeEvent>()), Some(Mdi::WINDOW_MINIMIZE), "Minimize"),

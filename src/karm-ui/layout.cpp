@@ -335,7 +335,7 @@ struct AspectRatio : ProxyNode<AspectRatio> {
 
     void reconcile(AspectRatio& o) override {
         _ratio = o._ratio;
-        ProxyNode<AspectRatio>::reconcile(o);
+        ProxyNode::reconcile(o);
     }
 
     void paint(Gfx::Canvas& g, Math::Recti r) override {

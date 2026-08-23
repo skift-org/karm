@@ -120,7 +120,7 @@ struct ResizeHandle : Ui::View<ResizeHandle> {
                 Ui::shouldRepaint(*this);
             } else if (_hover and it->type == App::MouseEvent::MOVE) {
                 bubble<App::RequestCursorEvent>(*this, _cursor);
-            } else if (it->type == App::MouseEvent::RELEASE) {
+            } else if (_pressed and it->type == App::MouseEvent::RELEASE) {
                 _pressed = false;
                 Ui::shouldRepaint(*this);
             }

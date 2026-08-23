@@ -274,7 +274,7 @@ struct Button : _Box<Button> {
     MouseListener _mouseListener;
 
     Button(Opt<Send<>> onPress, ButtonStyle style, Child child)
-        : _Box<Button>(child),
+        : _Box(child),
           _onPress(std::move(onPress)),
           _buttonStyle(style) {}
 
