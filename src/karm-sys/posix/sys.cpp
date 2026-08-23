@@ -217,15 +217,24 @@ Res<> rename(Ref::Url const& from, Ref::Url const& to) {
     return Ok();
 }
 
-Res<> touch(Ref::Url const& url, Opt<SystemTime> const&) {
+Res<> touch(Ref::Url const& url, Opt<SystemTime> const& time) {
     String str = try$(Posix::resolve(url)).str();
-    int fd = ::open(str.buf(), O_WRONLY | O_CREAT, 0666);
+    int fd = ::open(str.buf(), O_WRONLY | O_CREAT | O_NOCTTY | O_NONBLOCK, 0666);
     if (fd < 0)
         return Posix::fromLastErrno();
     Defer _ = [&] {
         close(fd);
     };
-    if (::utimensat(fd, nullptr, nullptr, 0) < 0)
+
+    struct timespec times[2];
+    if (time) {
+        auto ts = Posix::toTimespec(*time);
+        times[0] = times[1] = ts;
+    } else {
+        times[0] = times[1] = {0, UTIME_NOW};
+    }
+
+    if (::utimensat(fd, nullptr, times, 0) < 0)
         return Posix::fromLastErrno();
     return Ok();
 }
