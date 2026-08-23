@@ -38,12 +38,12 @@ export struct Slider : Ui::View<Slider> {
         g.push();
 
         double full = bound().width - THUMP_RADIUS * 2;
-        double v = (_origin == Origin::ZERO)
+        double v = (_origin == ZERO)
                        ? full * _value
                        : full * (_value - 0.5);
 
         auto base = bound().startCenter().cast<double>() + Math::Vec2f{THUMP_RADIUS, 0};
-        auto thumbCenter = base + Math::Vec2f{(_origin == Origin::ZERO ? v : v + full / 2), 0};
+        auto thumbCenter = base + Math::Vec2f{(_origin == ZERO ? v : v + full / 2), 0};
 
         // full track
         g.strokeStyle(Gfx::stroke(Ui::GRAY600).withWidth(4).withAlign(Gfx::CENTER_ALIGN).withCap(Gfx::ROUND_CAP));
@@ -53,9 +53,14 @@ export struct Slider : Ui::View<Slider> {
         g.stroke();
 
         // active track
-        g.strokeStyle(Gfx::stroke(_mouseListener.isHover() ? Ui::ACCENT400 : Ui::ACCENT500).withWidth(4).withAlign(Gfx::CENTER_ALIGN).withCap(Gfx::ROUND_CAP));
+        g.strokeStyle(
+            Gfx::stroke(_mouseListener.isHover() ? Ui::ACCENT400 : Ui::ACCENT500)
+                .withWidth(4)
+                .withAlign(Gfx::CENTER_ALIGN)
+                .withCap(Gfx::ROUND_CAP)
+        );
         g.beginPath();
-        g.moveTo(base + Math::Vec2f{_origin == Origin::ZERO ? 0 : full / 2, 0});
+        g.moveTo(base + Math::Vec2f{_origin == ZERO ? 0 : full / 2, 0});
         g.lineTo(thumbCenter);
         g.stroke();
 
@@ -102,15 +107,29 @@ export Ui::Child slider(double value, Opt<Ui::Send<double>> onChange, Slider::Or
     return makeRc<Slider>(value, std::move(onChange), origin);
 }
 
+export Ui::Child slider(f64 value, Ui::Send<f64> onChange, Gfx::Icon icon) {
+    return Ui::hflow(
+               8,
+               Math::Align::VCENTER | Math::Align::HFILL | Math::Align::TOP_START,
+               {
+                   Ui::icon(icon) |
+                       Ui::center() |
+                       Ui::bound(),
+                   Kira::slider(value, Some(std::move(onChange))) | Ui::grow(),
+               }
+           ) |
+           Ui::insets({4, 12, 4, 10}) |
+           Ui::minSize({Ui::UNCONSTRAINED, 32});
+}
+
 export template <typename T>
-Ui::Child slider(T value, Range<T> range, Ui::Send<T> onChange, Gfx::Icon icon, Str text) {
+Ui::Child slider(T value, Range<T> range, Ui::Send<T> onChange, Gfx::Icon icon) {
     return slider(
         (value - range.start) / (f64)(range.end() - range.start),
         [=](Ui::Node& n, f64 v) {
             onChange(n, range.start + v * (range.end() - range.start));
         },
-        icon,
-        text
+        icon
     );
 }
 
