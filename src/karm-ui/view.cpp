@@ -1,7 +1,6 @@
 export module Karm.Ui:view;
 
 import Karm.Core;
-import Karm.Scene;
 import Karm.Image;
 import Karm.Font;
 import Karm.Ref;
@@ -421,21 +420,28 @@ export Child image(Rc<Gfx::Image> image, Opt<Math::Radiif> radii = NONE) {
 export using OnPaint = Func<void(Gfx::Canvas& g, Math::Vec2i size)>;
 
 struct Canvas : View<Canvas> {
-    OnPaint _onPaint;
+    Union<Gfx::Snapshot, OnPaint> _onPaint;
 
-    Canvas(OnPaint onPaint)
+    Canvas(Union<Gfx::Snapshot, OnPaint> onPaint)
         : _onPaint(std::move(onPaint)) {}
 
     void reconcile(Canvas& o) override {
         _onPaint = std::move(o._onPaint);
-        View<Canvas>::reconcile(o);
+        View::reconcile(o);
     }
 
     void paint(Gfx::Canvas& g, Math::Recti) override {
         g.push();
         g.clip(_bound);
         g.origin(_bound.xy.cast<f64>());
-        _onPaint(g, _bound.wh);
+        _onPaint.visit(
+            [&](Gfx::Snapshot& s) {
+                (void)s.replay(g);
+            },
+            [&](OnPaint& p) {
+                p(g, _bound.wh);
+            }
+        );
         g.pop();
     }
 
@@ -452,15 +458,13 @@ export Child canvas(OnPaint onPaint) {
 
 struct SceneCanvas : View<SceneCanvas> {
     Gfx::Snapshot _snapshot;
-    Scene::PaintOptions _options;
 
-    SceneCanvas(Gfx::Snapshot snapshot, Scene::PaintOptions options)
-        : _snapshot(std::move(snapshot)), _options(options) {}
+    SceneCanvas(Gfx::Snapshot snapshot)
+        : _snapshot(std::move(snapshot)) {}
 
     void reconcile(SceneCanvas& o) override {
         _snapshot = o._snapshot;
-        _options = o._options;
-        View<SceneCanvas>::reconcile(o);
+        View::reconcile(o);
     }
 
     void paint(Gfx::Canvas& g, Math::Recti rect) override {
@@ -482,8 +486,8 @@ struct SceneCanvas : View<SceneCanvas> {
     }
 };
 
-export Child canvas(Gfx::Snapshot snapshot, Scene::PaintOptions options) {
-    return makeRc<SceneCanvas>(std::move(snapshot), options);
+export Child canvas(Gfx::Snapshot snapshot) {
+    return makeRc<SceneCanvas>(std::move(snapshot));
 }
 
 // MARK: Blur ------------------------------------------------------------------

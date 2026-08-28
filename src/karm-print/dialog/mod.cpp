@@ -127,10 +127,7 @@ Ui::Child _printPaper(State const& s, usize index) {
 
     return Ui::stack(
                Ui::canvas(
-                   s.pages[index],
-                   {
-                       .showBackgroundGraphics = s.settings.backgroundGraphics,
-                   }
+                   s.pages[index]
                ) | Ui::box({
                        .borderWidth = 1,
                        .borderFill = Some(Ui::GRAY50.withOpacity(0.1)),

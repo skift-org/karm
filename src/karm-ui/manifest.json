@@ -8,7 +8,6 @@
         "karm-font",
         "karm-gfx",
         "karm-app",
-        "karm-scene",
         "karm-signals"
     ]
 }
