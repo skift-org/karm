@@ -234,7 +234,7 @@ Res<> touch(Ref::Url const& url, Opt<SystemTime> const& time) {
         times[0] = times[1] = {0, UTIME_NOW};
     }
 
-    if (::utimensat(fd, nullptr, times, 0) < 0)
+    if (::futimens(fd, times) < 0)
         return Posix::fromLastErrno();
     return Ok();
 }
@@ -265,9 +265,9 @@ Res<> remove(Ref::Url const& url, Flags<RemoveOption> options) {
         if (::unlink(str.buf()) < 0)
             return Posix::fromLastErrno();
         return Ok();
-    } else {
-        return Error::notFound();
     }
+
+    return Error::notFound();
 }
 
 // MARK: User interactions -----------------------------------------------------
