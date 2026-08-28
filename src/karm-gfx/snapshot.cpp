@@ -614,6 +614,12 @@ export struct Snapshot {
         Math::Vec2i _size;
         Rc<_State> _state;
 
+        using Canvas::fill;
+        using Canvas::clip;
+        using Canvas::clear;
+        using Canvas::plot;
+        using Canvas::blit;
+
         Recorder(Math::Vec2i size)
             : _size(size), _state(makeRc<_State>()) {}
 
