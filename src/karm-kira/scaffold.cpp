@@ -10,6 +10,8 @@ import :toolbar;
 import :aboutDialog;
 import :contextMenu;
 
+using namespace Karm::Fmt::Literals;
+
 namespace Karm::Kira {
 
 export struct Scaffold : Meta::NoCopy {
@@ -150,7 +152,7 @@ static Ui::Child _desktopScaffoldHeader(Scaffold::State const& s, Scaffold const
                            Ui::showDialog(n, aboutDialog(scaffold.title));
                        }),
                        Some(scaffold.icon),
-                       scaffold.title
+                       "About {}..."_f(scaffold.title)
                    ),
                    separator(),
                    contextMenuItem(Some(Ui::bindBubble<App::RequestSnapeEvent>(App::Snap::NONE)), Some(Mdi::WINDOW_RESTORE), "Restore"),
