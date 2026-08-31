@@ -107,38 +107,116 @@ export struct BlurFilter {
     }
 };
 
-export struct SaturationFilter {
-    static constexpr auto NAME = "saturation";
-    static constexpr frange RANGE = frange::fromStartEnd(0, 1);
-    static constexpr f64 DEFAULT = 1;
+export struct ColorMatrix {
+    Math::Mat4f matrix;
+    Math::Vec4f bias;
 
-    f64 amount = DEFAULT;
+    static constexpr ColorMatrix identity() {
+        return ColorMatrix{
+            .matrix = Math::Mat4f::identity(),
+            .bias = Math::Vec4f{},
+        };
+    }
 
-    void apply(MutPixels p) const {
-        auto b = p.bound();
+    // Rec. 709
+    static constexpr Math::Vec3f LUMA = {0.2126, 0.7152, 0.0722};
 
-        for (isize y = 0; y < b.height; y++) {
-            for (isize x = 0; x < b.width; x++) {
-                auto color = p.load({b.x + x, b.y + y});
+    static ColorMatrix grayscale() {
+        return {
+            .matrix = {
+                {LUMA.x, LUMA.x, LUMA.x, 0},
+                {LUMA.y, LUMA.y, LUMA.y, 0},
+                {LUMA.z, LUMA.z, LUMA.z, 0},
+                {0, 0, 0, 1},
+            },
+            .bias = {},
+        };
+    }
 
-                // weights from CCIR 601 spec
-                // https://stackoverflow.com/questions/13806483/increase-or-decrease-color-saturation
-                auto gray = 0.2989 * color.red + 0.5870 * color.green + 0.1140 * color.blue;
+    static ColorMatrix lerp(ColorMatrix const& a, ColorMatrix const& b, f64 t) {
+        return {
+            .matrix = a.matrix * (1 - t) + b.matrix * t,
+            .bias = a.bias * (1 - t) + b.bias * t,
+        };
+    }
 
-                u8 red = min(gray * amount + color.red * (1 - amount), 255);
-                u8 green = min(gray * amount + color.green * (1 - amount), 255);
-                u8 blue = min(gray * amount + color.blue * (1 - amount), 255);
+    static ColorMatrix saturation(f64 a) {
+        return lerp(identity(), grayscale(), a);
+    }
 
-                color = Color::fromRgba(red, green, blue, color.alpha);
+    static ColorMatrix brightness(f64 a) {
+        return {.matrix = Math::Mat4f::scaling(a, a, a), .bias = {}};
+    }
 
-                p.store({b.x + x, b.y + y}, color);
-            }
-        }
+    static ColorMatrix tint(Math::Vec4f c) {
+        return {
+            .matrix = {
+                {c.x, 0, 0, 0},
+                {0, c.y, 0, 0},
+                {0, 0, c.z, 0},
+                {0, 0, 0, c.w},
+            },
+            .bias = {},
+        };
+    }
+
+    static ColorMatrix contrast(f64 a) {
+        f64 f = a + 1;
+        f64 o = 0.5 * (1 - f);
+        return {.matrix = Math::Mat4f::scaling(f, f, f), .bias = {o, o, o, 0}};
+    }
+
+    static ColorMatrix sepia(f64 a) {
+        auto s = tint({1.0, 0.8905, 0.6936, 1}) * grayscale();
+        return lerp(identity(), s, a);
+    }
+
+    static ColorMatrix invert() {
+        return {
+            .matrix = Math::Mat4f::scaling(-1, -1, -1),
+            .bias = {1, 1, 1, 0},
+        };
+    }
+
+    static ColorMatrix opacity(f64 a) {
+        return {
+            .matrix = {
+                {1, 0, 0, 0},
+                {0, 1, 0, 0},
+                {0, 0, 1, 0},
+                {0, 0, 0, a},
+            },
+            .bias = {},
+        };
+    }
+
+    static ColorMatrix hueRotate(f64 rad) {
+        f64 c = Math::cos(rad), s = Math::sin(rad);
+        return {
+            .matrix = {
+                {0.213 + c * 0.787 - s * 0.213, 0.213 - c * 0.213 + s * 0.143, 0.213 - c * 0.213 - s * 0.787, 0},
+                {0.715 - c * 0.715 - s * 0.715, 0.715 + c * 0.285 + s * 0.140, 0.715 - c * 0.715 + s * 0.715, 0},
+                {0.072 - c * 0.072 + s * 0.928, 0.072 - c * 0.072 - s * 0.283, 0.072 + c * 0.928 + s * 0.072, 0},
+                {0, 0, 0, 1},
+            },
+            .bias = {},
+        };
+    }
+
+    ColorMatrix operator*(ColorMatrix const& other) const {
+        return ColorMatrix{
+            .matrix = matrix * other.matrix,
+            .bias = matrix * other.bias + bias,
+        };
+    }
+
+    Math::Vec4f apply(Math::Vec4f color) const {
+        return matrix * color + bias;
     }
 };
 
-export struct GrayscaleFilter {
-    static constexpr auto NAME = "grayscale";
+export struct ColorMatrixFilter {
+    ColorMatrix colorMatrix;
 
     void apply(MutPixels p) const {
         auto b = p.bound();
@@ -146,71 +224,7 @@ export struct GrayscaleFilter {
         for (isize y = 0; y < b.height; y++) {
             for (isize x = 0; x < b.width; x++) {
                 auto color = p.load({b.x + x, b.y + y});
-
-                // weights from CCIR 601 spec
-                // https://stackoverflow.com/questions/13806483/increase-or-decrease-color-saturation
-                f64 gray = 0.2989 * color.red + 0.5870 * color.green + 0.1140 * color.blue;
-                color = Color::fromRgba(gray, gray, gray, color.alpha);
-                p.store({b.x + x, b.y + y}, color);
-            }
-        }
-    }
-};
-
-export struct ContrastFilter {
-    static constexpr auto NAME = "contrast";
-    static constexpr frange RANGE = frange::fromStartEnd(-0.5, 0.5);
-    static constexpr f64 DEFAULT = 0;
-
-    f64 amount = DEFAULT;
-
-    void apply(MutPixels p) const {
-        auto b = p.bound();
-
-        f64 const factor = (259 * ((amount * 255) + 255)) / (255 * (259 - (amount * 255)));
-
-        for (isize y = 0; y < b.height; y++) {
-            for (isize x = 0; x < b.width; x++) {
-                auto color = p.load({b.x + x, b.y + y});
-
-                color = Color::fromRgba(
-                    clamp(factor * (color.red - 128) + 128, 0, 255),
-                    clamp(factor * (color.green - 128) + 128, 0, 255),
-                    clamp(factor * (color.blue - 128) + 128, 0, 255),
-                    color.alpha
-                );
-
-                p.store({b.x + x, b.y + y}, color);
-            }
-        }
-    }
-};
-
-export struct BrightnessFilter {
-    static constexpr auto NAME = "brightness";
-    static constexpr frange RANGE = {0, 2};
-    static constexpr f64 DEFAULT = 1;
-
-    f64 amount = DEFAULT;
-
-    void apply(MutPixels p) const {
-        if (Math::epsilonEq(amount, 1.0))
-            return;
-
-        auto b = p.bound();
-
-        for (isize y = 0; y < b.height; y++) {
-            for (isize x = 0; x < b.width; x++) {
-                auto color = p.load({b.x + x, b.y + y});
-
-                color = Color::fromRgba(
-                    min(color.red * amount, 255),
-                    min(color.green * amount, 255),
-                    min(color.blue * amount, 255),
-                    color.alpha
-                );
-
-                p.store({b.x + x, b.y + y}, color);
+                p.store({b.x + x, b.y + y}, Color::fromFloats(colorMatrix.apply(color.vec4())));
             }
         }
     }
@@ -236,62 +250,6 @@ export struct NoiseFilter {
                     {b.x + x, b.y + y},
                     Color::fromRgba(noise, noise, noise, alpha)
                 );
-            }
-        }
-    }
-};
-
-export struct SepiaFilter {
-    static constexpr auto NAME = "sepia";
-    static constexpr frange RANGE = frange::fromStartEnd(0, 1);
-    static constexpr f64 DEFAULT = 0.5;
-
-    f64 amount = DEFAULT;
-
-    void apply(MutPixels p) const {
-        if (Math::epsilonEq(amount, 0.0))
-            return;
-
-        auto b = p.bound();
-
-        for (isize y = 0; y < b.height; y++) {
-            for (isize x = 0; x < b.width; x++) {
-                auto color = p.load({b.x + x, b.y + y});
-
-                auto sepiaColor = Color::fromRgba(
-                    min((color.red * 0.393) + (color.green * 0.769) + (color.blue * 0.189), 255u),
-                    min((color.red * 0.349) + (color.green * 0.686) + (color.blue * 0.168), 255u),
-                    min((color.red * 0.272) + (color.green * 0.534) + (color.blue * 0.131), 255u),
-                    color.alpha
-                );
-
-                p.store({b.x + x, b.y + y}, color.lerpWith(sepiaColor, amount));
-            }
-        }
-    }
-};
-
-export struct TintFilter {
-    static constexpr auto NAME = "tint";
-    static constexpr Color DEFAULT = Color::fromHex(0xffffff);
-
-    Color amount = DEFAULT;
-
-    void apply(MutPixels p) const {
-        auto b = p.bound();
-
-        for (isize y = 0; y < b.height; y++) {
-            for (isize x = 0; x < b.width; x++) {
-                auto color = p.load({b.x + x, b.y + y});
-
-                auto tintColor = Color::fromRgba(
-                    (color.red * amount.red) / 255,
-                    (color.green * amount.green) / 255,
-                    (color.blue * amount.blue) / 255,
-                    (color.alpha * amount.alpha) / 255
-                );
-
-                p.store({b.x + x, b.y + y}, tintColor);
             }
         }
     }
@@ -329,13 +287,8 @@ export struct FilterChain {
 using _Filters = Union<
     Unfiltered,
     BlurFilter,
-    SaturationFilter,
-    GrayscaleFilter,
-    ContrastFilter,
-    BrightnessFilter,
+    ColorMatrixFilter,
     NoiseFilter,
-    SepiaFilter,
-    TintFilter,
     OverlayFilter>;
 
 export struct Filter : _Filters {

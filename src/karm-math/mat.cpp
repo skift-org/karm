@@ -30,7 +30,7 @@ union Mat2 {
         };
     }
 
-    Mat2() = default;
+    Mat2() : _els{} {}
 
     Mat2(T m00, T m01, T m10, T m11)
         : _els{m00, m01, m10, m11} {}
@@ -77,7 +77,7 @@ union Mat3 {
         );
     }
 
-    Mat3() = default;
+    Mat3() : _els{} {}
 
     Mat3(T m00, T m01, T m02, T m10, T m11, T m12, T m20, T m21, T m22)
         : _els{m00, m01, m02, m10, m11, m12, m20, m21, m22} {}
@@ -169,7 +169,7 @@ union Mat4 {
     Array<Vec4<T>, 4> cols;
     Array<T, 4 * 4> _els;
 
-    Mat4() = default;
+    Mat4() : _els{} {}
 
     Mat4(T m00, T m01, T m02, T m03, T m10, T m11, T m12, T m13, T m20, T m21, T m22, T m23, T m30, T m31, T m32, T m33)
         : _els{m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33} {}
