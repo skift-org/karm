@@ -417,60 +417,20 @@ export Child image(Rc<Gfx::Image> image, Opt<Math::Radiif> radii = NONE) {
 
 // MARK: Canvas ----------------------------------------------------------------
 
-export using OnPaint = Func<void(Gfx::Canvas& g, Math::Vec2i size)>;
-
 struct Canvas : View<Canvas> {
-    Union<Gfx::Snapshot, OnPaint> _onPaint;
+    Gfx::Snapshot _snapshot;
 
-    Canvas(Union<Gfx::Snapshot, OnPaint> onPaint)
-        : _onPaint(std::move(onPaint)) {}
+    Canvas(Gfx::Snapshot snapshot)
+        : _snapshot(std::move(snapshot)) {}
 
     void reconcile(Canvas& o) override {
-        _onPaint = std::move(o._onPaint);
+        _snapshot = std::move(o._snapshot);
         View::reconcile(o);
     }
 
     void paint(Gfx::Canvas& g, Math::Recti) override {
         g.push();
         g.clip(_bound);
-        g.origin(_bound.xy.cast<f64>());
-        _onPaint.visit(
-            [&](Gfx::Snapshot& s) {
-                (void)s.replay(g);
-            },
-            [&](OnPaint& p) {
-                p(g, _bound.wh);
-            }
-        );
-        g.pop();
-    }
-
-    Math::Vec2i size(Math::Vec2i, Hint hint) override {
-        if (hint == Hint::MIN)
-            return 0;
-        return _bound.wh;
-    }
-};
-
-export Child canvas(OnPaint onPaint) {
-    return makeRc<Canvas>(std::move(onPaint));
-}
-
-struct SceneCanvas : View<SceneCanvas> {
-    Gfx::Snapshot _snapshot;
-
-    SceneCanvas(Gfx::Snapshot snapshot)
-        : _snapshot(std::move(snapshot)) {}
-
-    void reconcile(SceneCanvas& o) override {
-        _snapshot = o._snapshot;
-        View::reconcile(o);
-    }
-
-    void paint(Gfx::Canvas& g, Math::Recti rect) override {
-        g.push();
-        g.clip(_bound.clipTo(rect));
-
         auto transform =
             Math::Trans2f::translate(_bound.xy.cast<f64>())
                 .scaled(_bound.size().cast<f64>() / _snapshot.size().cast<f64>());
@@ -481,13 +441,13 @@ struct SceneCanvas : View<SceneCanvas> {
 
     Math::Vec2i size(Math::Vec2i, Hint hint) override {
         if (hint == Hint::MIN)
-            return 0;
-        return _snapshot.size().ceil().cast<isize>();
+            return {0, 0};
+        return _bound.wh;
     }
 };
 
 export Child canvas(Gfx::Snapshot snapshot) {
-    return makeRc<SceneCanvas>(std::move(snapshot));
+    return makeRc<Canvas>(std::move(snapshot));
 }
 
 // MARK: Blur ------------------------------------------------------------------
@@ -496,12 +456,12 @@ struct BackgroundFilter : ProxyNode<BackgroundFilter> {
     Gfx::Filter _filter;
 
     BackgroundFilter(Gfx::Filter filter, Child child)
-        : ProxyNode<BackgroundFilter>(std::move(child)),
+        : ProxyNode(std::move(child)),
           _filter(filter) {}
 
     void reconcile(BackgroundFilter& o) override {
         _filter = o._filter;
-        ProxyNode<BackgroundFilter>::reconcile(o);
+        ProxyNode::reconcile(o);
     }
 
     void paint(Gfx::Canvas& g, Math::Recti r) override {
@@ -509,7 +469,7 @@ struct BackgroundFilter : ProxyNode<BackgroundFilter> {
         g.clip(bound());
         g.apply(_filter);
         g.pop();
-        ProxyNode<BackgroundFilter>::paint(g, r);
+        ProxyNode::paint(g, r);
     }
 };
 
