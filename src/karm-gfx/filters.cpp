@@ -210,6 +210,12 @@ export struct ColorMatrix {
         };
     }
 
+    ColorMatrix& operator*=(ColorMatrix const& other) {
+        matrix *= other.matrix;
+        bias = matrix * other.bias + bias;
+        return *this;
+    }
+
     Math::Vec4f apply(Math::Vec4f color) const {
         return matrix * color + bias;
     }
