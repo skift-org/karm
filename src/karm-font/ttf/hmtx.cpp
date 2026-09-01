@@ -25,7 +25,7 @@ export struct Hmtx : Io::BChunk {
                           (glyphId - hhea.numberOfHMetrics()) * SHORT_RECORD_SIZE;
 
         isize adv = begin().skip(advOffset).nextU16be();
-        isize lsb = begin().skip(lsbOffset).nextU16be();
+        isize lsb = begin().skip(lsbOffset).nextI16be();
 
         return {adv, lsb};
     }
