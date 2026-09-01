@@ -12,17 +12,17 @@ export struct Hasher {
 };
 
 // https://www.ietf.org/archive/id/draft-eastlake-fnv-21.html
-export struct FnvHasher : Hasher {
+export struct FnvHasher final : Hasher {
     u64 hash = 0xcbf29ce484222325;
 
-    void add(u8 const* buf, usize len) override {
+    constexpr void add(u8 const* buf, usize len) override {
         for (usize i = 0; i < len; i++) {
             hash ^= buf[i];
             hash *= 0x100000001b3;
         }
     }
 
-    u64 finish() override {
+    constexpr u64 finish() override {
         return hash;
     }
 };
