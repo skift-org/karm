@@ -23,8 +23,6 @@ struct _Cell {
 
     virtual ~_Cell() = default;
 
-    virtual void* _unwrap() lifetimebound = 0;
-
     virtual void clear() = 0;
 
     virtual Meta::Id id() = 0;
@@ -64,9 +62,7 @@ struct _Cell {
     }
 
     template <typename T>
-    T& unwrap() lifetimebound {
-        return *static_cast<T*>(_unwrap());
-    }
+    T& unwrap() lifetimebound;
 };
 
 export template <typename I, typename T>
@@ -78,10 +74,6 @@ struct Cell : _Cell<I> {
         _buf.ctor(std::forward<Args>(args)...);
     }
 
-    void* _unwrap() lifetimebound override {
-        return &_buf.unwrap();
-    }
-
     void clear() override {
         _buf.dtor();
     }
@@ -90,6 +82,13 @@ struct Cell : _Cell<I> {
         return Meta::idOf<T>();
     }
 };
+
+template <typename I>
+template <typename T>
+T& _Cell<I>::unwrap() lifetimebound {
+    using CellType = Cell<I, T>;
+    return reinterpret_cast<Manual<T>*>(reinterpret_cast<u8*>(this) + _sketchyOffsetOff(CellType, _buf))->unwrap();
+}
 
 /// A strong reference to an object of type  `T`.
 ///
@@ -105,7 +104,6 @@ struct _Rc {
 
     /// Get a strong reference back from a raw pointer.
     static _Rc fromRaw(T* ptr) {
-
         using CellType = Cell<I, T>;
         usize offset = _sketchyOffsetOff(CellType, _buf);
         auto cell = reinterpret_cast<_Cell<I>*>(reinterpret_cast<u8*>(ptr) - offset);
