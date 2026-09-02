@@ -114,6 +114,19 @@ Symbol Symbol::from(Str str) {
     })};
 }
 
+export template <>
+struct Niche<Symbol> {
+    struct Content {
+        void* ptr;
+
+        constexpr Content() : ptr(nullptr) {}
+
+        constexpr bool has() const {
+            return ptr != nullptr;
+        }
+    };
+};
+
 } // namespace Karm
 
 namespace Karm::Literals {
