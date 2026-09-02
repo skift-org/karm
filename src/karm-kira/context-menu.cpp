@@ -9,6 +9,14 @@ import :checkbox;
 
 namespace Karm::Kira {
 
+export void showContextMenu(Ui::Node& n, Math::Vec2i at, Ui::Child menu) {
+    if (App::formFactor == App::FormFactor::DESKTOP) {
+        Ui::showPopover(n, at, menu);
+    } else {
+        Ui::showDialog(n, menu | Ui::center());
+    }
+}
+
 struct ContextMenu : Ui::ProxyNode<ContextMenu> {
     Ui::Slot _menu;
 
@@ -32,11 +40,7 @@ struct ContextMenu : Ui::ProxyNode<ContextMenu> {
             if (e->type == App::MouseEvent::PRESS and
                 e->button == App::MouseButton::RIGHT and
                 bound().contains(e->pos)) {
-                if (App::formFactor == App::FormFactor::DESKTOP) {
-                    Ui::showPopover(*this, e->pos, _menu());
-                } else {
-                    Ui::showDialog(*this, _menu() | Ui::center());
-                }
+                showContextMenu(*this, e->pos, _menu());
                 event.accept();
             }
         }
