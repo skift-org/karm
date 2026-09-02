@@ -28,6 +28,7 @@ export struct SpanStyle {
     Math::Au marginRight = 0_au;
     Opt<Math::Au> lineHeight = NONE;
     bool wordwrap = true;
+    bool collapsibleWhitespace = false;
 
     SpanStyle& withFont(Font const& value) {
         font = value;
@@ -178,7 +179,10 @@ export struct Prose : Meta::Pinned {
         }
 
         void measureAdvance(Prose const& p) {
-            if (type() == CellType::SPACER) {
+            if (newline(p)) {
+                // A newline is a forced-break marker, not a visible inline glyph.
+                adv = 0_au;
+            } else if (type() == CellType::SPACER) {
                 // Nothing because adv is already set.
             } else if (type() == CellType::STRUT) {
                 adv = strut(p)->size.x;
@@ -207,6 +211,10 @@ export struct Prose : Meta::Pinned {
             if (not r)
                 return false;
             return last(r) == '\n' or isAsciiSpace(last(r));
+        }
+
+        bool collapsibleSpace(Prose const& p) const {
+            return style().collapsibleWhitespace and space(p) and not newline(p);
         }
 
         Opt<StrutCell&> strut(Prose& p) {
@@ -256,6 +264,17 @@ export struct Prose : Meta::Pinned {
             return last(cells(p)).space(p);
         }
 
+        bool onlyCollapsibleSpaces(Prose const& p) const {
+            if (empty())
+                return false;
+
+            for (auto const& cell : cells(p))
+                if (not cell.collapsibleSpace(p))
+                    return false;
+
+            return true;
+        }
+
         bool newline(Prose& p) const {
             if (empty())
                 return false;
@@ -292,10 +311,38 @@ export struct Prose : Meta::Pinned {
         }
     };
 
+    struct LineMetrics {
+        Math::Au advance = 0_au;
+        Math::Au leadingTrim = 0_au;
+        Math::Au width = 0_au;
+        bool hasVisualContent = false;
+
+        void append(Prose const& p, Block const& block) {
+            for (auto const& cell : block.cells(p)) {
+                // Collapsible spaces do not define visual line edges. Their width
+                // still shifts later blocks, so internal spaces remain included.
+                if (cell.newline(p) or cell.collapsibleSpace(p))
+                    continue;
+
+                Math::Au cellStart = advance + cell.pos;
+
+                if (not hasVisualContent) {
+                    leadingTrim = cellStart;
+                    hasVisualContent = true;
+                }
+
+                width = cellStart + cell.adv - leadingTrim;
+            }
+
+            advance += block.width;
+        }
+    };
+
     struct Line {
         urange runeRange;
         urange blockRange;
         Math::Au baseline = 0_au; // Baseline of the line within the text
+        Math::Au leadingTrim = 0_au;
         Math::Au width = 0_au;
         Math::Au ascent = 0_au;
         Math::Au descend = 0_au;
@@ -306,6 +353,18 @@ export struct Prose : Meta::Pinned {
 
         MutSlice<Block> blocks(Prose& p) {
             return mutSub(p._blocks, blockRange);
+        }
+
+        void resolveWhitespace(Prose& p) {
+            LineMetrics metrics;
+
+            for (auto& block : blocks(p)) {
+                block.pos = metrics.advance;
+                metrics.append(p, block);
+            }
+
+            leadingTrim = metrics.leadingTrim;
+            width = metrics.width;
         }
     };
 
@@ -384,6 +443,23 @@ export struct Prose : Meta::Pinned {
     }
 
     void append(Rune rune) {
+        bool isCollapsibleSpace =
+            _currentSpan->style.collapsibleWhitespace and
+            isAsciiSpace(rune) and
+            rune != '\n';
+
+        if (any(_cells) and last(_cells).collapsibleSpace(*this)) {
+            if (rune == '\n') {
+                _cells.popBack();
+                _runes.popBack();
+                last(_blocks).cellRange.size--;
+                last(_blocks).runeRange.end(_runes.len());
+            } else if (isCollapsibleSpace) {
+                // TODO: Preserve the collapsed space's soft wrap opportunity.
+                return;
+            }
+        }
+
         if (
             any(_blocks) and
             (last(_blocks).newline(*this) or
@@ -511,7 +587,7 @@ export struct Prose : Meta::Pinned {
             bool first = true;
             Glyph prev = Glyph::TOFU;
             for (auto& cell : block.cells(*this)) {
-                if (not first)
+                if (not first and not cell.newline(*this))
                     adv += Math::Au{cell.style().font.kern(prev, cell.glyph)};
                 else
                     first = false;
@@ -530,39 +606,49 @@ export struct Prose : Meta::Pinned {
         _lines.clear();
 
         Line line{{}, {}};
-        bool first = true;
-        Math::Au adv = 0_au;
+        LineMetrics metrics;
+
         for (usize i = 0; i < _blocks.len(); i++) {
             auto& block = _blocks[i];
 
-            bool wordwrapAllowed = not first and _blocks[i - 1].allowsBreakAfter(*this);
+            bool wordwrapAllowed =
+                line.blockRange.any() and
+                _blocks[i - 1].allowsBreakAfter(*this);
 
-            if (adv + block.width > width and wordwrapAllowed) {
+            auto candidateMetrics = metrics;
+            candidateMetrics.append(*this, block);
+
+            if (candidateMetrics.width > width and wordwrapAllowed) {
                 _lines.pushBack(line);
                 line = {block.runeRange, {i, 1}};
-                adv = block.width;
+
+                metrics = {};
+                metrics.append(*this, block);
 
                 if (block.forcesBreakAfter(*this)) {
                     _lines.pushBack(line);
                     line = {{block.runeRange.end(), 0}, {i + 1, 0}};
-                    adv = 0_au;
+                    metrics = {};
                 }
             } else {
                 line.blockRange.size++;
                 line.runeRange.end(block.runeRange.end());
+                metrics = candidateMetrics;
 
                 if (block.forcesBreakAfter(*this)) {
                     _lines.pushBack(line);
                     line = {{block.runeRange.end(), 0}, {i + 1, 0}};
-                    adv = 0_au;
-                } else {
-                    adv += block.width;
+                    metrics = {};
                 }
             }
-            first = false;
         }
 
         _lines.pushBack(line);
+    }
+
+    void _resolveWhitespace() {
+        for (auto& line : _lines)
+            line.resolveWhitespace(*this);
     }
 
     Math::Au _layoutVerticaly() {
@@ -594,7 +680,19 @@ export struct Prose : Meta::Pinned {
                 maxDescend = fontDescend;
             }
 
-            for (auto const& block : line.blocks(*this)) {
+            auto lineBlocks = line.blocks(*this);
+            usize metricStart = 0;
+            usize metricEnd = lineBlocks.len();
+
+            // Collapsible whitespace alone must not create line height.
+            while (metricStart < metricEnd and lineBlocks[metricStart].onlyCollapsibleSpaces(*this))
+                metricStart++;
+
+            while (metricEnd > metricStart and lineBlocks[metricEnd - 1].onlyCollapsibleSpaces(*this))
+                metricEnd--;
+
+            auto metricBlocks = sub(lineBlocks, {metricStart, metricEnd - metricStart});
+            for (auto const& block : metricBlocks) {
                 if (auto const& [strut] = block.strut(*this)) {
                     Math::Au baseline{strut.baseline};
                     maxAscent = max(maxAscent, baseline);
@@ -620,31 +718,25 @@ export struct Prose : Meta::Pinned {
             if (not line.blockRange.any())
                 continue;
 
-            Math::Au pos = 0_au;
-            for (auto& block : line.blocks(*this)) {
-                block.pos = pos;
-                pos += block.width;
-            }
-
-            auto lastBlock = _blocks[line.blockRange.end() - 1];
-            line.width = lastBlock.pos + lastBlock.width;
             maxWidth = max(maxWidth, line.width);
             auto free = width - line.width;
+            Math::Au offset = 0_au - line.leadingTrim;
 
             switch (_style.align) {
             case TextAlign::LEFT:
                 break;
 
             case TextAlign::CENTER:
-                for (auto& block : line.blocks(*this))
-                    block.pos += free / 2;
+                offset += free / 2;
                 break;
 
             case TextAlign::RIGHT:
-                for (auto& block : line.blocks(*this))
-                    block.pos += free;
+                offset += free;
                 break;
             }
+
+            for (auto& block : line.blocks(*this))
+                block.pos += offset;
         }
 
         return maxWidth;
@@ -662,6 +754,7 @@ export struct Prose : Meta::Pinned {
         }
 
         _wrapLines(width);
+        _resolveWhitespace();
         auto textHeight = _layoutVerticaly();
         auto textWidth = _layoutHorizontaly(width);
         _size = {textWidth, textHeight};
