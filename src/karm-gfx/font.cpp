@@ -395,10 +395,14 @@ export struct FontFamily : Fontface {
 
     FontAdjust _adjust;
     Vec<Member> _members;
+    mutable Opt<FontMetrics> _cachedMetrics;
 
     FontFamily(Vec<Member> members) : _members(std::move(members)) {}
 
     FontMetrics metrics() const override {
+        if (_cachedMetrics.has())
+            return _cachedMetrics.unwrap();
+
         FontMetrics metrics = {};
 
         for (auto& member : _members) {
@@ -412,6 +416,7 @@ export struct FontFamily : Fontface {
             metrics = metrics.combine(m);
         }
 
+        _cachedMetrics.emplace(metrics);
         return metrics;
     }
 

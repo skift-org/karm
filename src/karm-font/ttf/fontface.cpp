@@ -19,6 +19,7 @@ export struct Fontface : Gfx::Fontface {
     mutable Map<Rune, Gfx::Glyph> _cachedEntries;
     mutable Map<Gfx::Glyph, f64> _cachedAdvances;
     mutable Map<Pair<Gfx::Glyph>, f64> _cachedKerns;
+    mutable Opt<Gfx::FontMetrics> _cachedMetrics;
     f64 _unitPerEm = 0;
 
     static Res<Rc<Fontface>> load(Sys::Mmap&& mmap) {
@@ -33,16 +34,20 @@ export struct Fontface : Gfx::Fontface {
     }
 
     Gfx::FontMetrics metrics() const override {
+        if (_cachedMetrics.has())
+            return _cachedMetrics.unwrap();
+
         auto m = _parser.metrics();
         auto xHeight = _parser.glyphMetrics(glyph('x')).y;
-        return {
+        _cachedMetrics.emplace(Gfx::FontMetrics{
             .ascend = m.ascend / _unitPerEm,
             .captop = m.ascend / _unitPerEm,
             .descend = m.descend / _unitPerEm,
             .linegap = m.linegap / _unitPerEm,
             .advance = 0,
             .xHeight = xHeight / _unitPerEm,
-        };
+        });
+        return _cachedMetrics.unwrap();
     }
 
     Gfx::FontAttrs attrs() const override {
