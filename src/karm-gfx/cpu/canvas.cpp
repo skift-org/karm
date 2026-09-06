@@ -494,14 +494,20 @@ export struct CpuCanvas : Canvas {
 
     // MARK: Plot Operations ---------------------------------------------------
 
-    void plot(Math::Vec2i point, Color color) override {
-        point = current().trans.apply(point.cast<f64>()).cast<isize>();
+    void _plot(Math::Vec2i point, Color color) {
         if (current().clip.contains(point)) {
             mutPixels().blend(point, color);
         }
     }
 
+    void plot(Math::Vec2i point, Color color) override {
+        point = current().trans.apply(point.cast<f64>()).cast<isize>();
+        _plot(point, color);
+    }
+
     void plot(Math::Edgei edge, Color color) override {
+        edge = current().trans.apply(edge.cast<f64>()).cast<isize>();
+
         isize dx = Math::abs(edge.ex - edge.sx);
         isize sx = edge.sx < edge.ex ? 1 : -1;
 
@@ -511,7 +517,7 @@ export struct CpuCanvas : Canvas {
         isize err = dx + dy, e2;
 
         for (;;) {
-            plot(edge.start, color);
+            _plot(edge.start, color);
             if (edge.sx == edge.ex and edge.sy == edge.ey)
                 break;
             e2 = 2 * err;
