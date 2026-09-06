@@ -217,6 +217,13 @@ struct Signal {
         flush();
     }
 
+    void reduce(auto f) {
+        auto& cell = *_state;
+        f(cell._value);
+        cell.notify();
+        flush();
+    }
+
     void mutate(auto f) {
         update(f(peek()));
     }
