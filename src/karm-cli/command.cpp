@@ -633,9 +633,9 @@ export struct Command : Meta::Pinned {
         }
 
         if (Karm::any(_commands)) {
-            try$(w.writeStr("Subcommands:\n"s));
+            try$(format(w, "{}:\n"s, "Subcommands"s | TTY_TITLE));
             for (auto& cmd : _commands) {
-                try$(format(w, "  {} - {}\n", cmd->_longName, cmd->_description));
+                try$(format(w, "  {}: {}\n", cmd->_longName | TTY_OPTION, cmd->_description));
             }
             try$(w.writeRune('\n'));
         }
