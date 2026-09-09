@@ -95,8 +95,9 @@ export struct Cmap : Io::BChunk {
                     }
                 } else {
                     for (usize code = startCode; code <= endCode; code++) {
+                        auto gs = s;
                         auto offset = idRangeOffset + (code - startCode) * 2;
-                        codeMappings.pushBack({(u16)code, s.skip(offset).nextU16be()});
+                        codeMappings.pushBack({(u16)code, gs.skip(offset).nextU16be()});
                     }
                 }
             }
