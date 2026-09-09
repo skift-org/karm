@@ -27,7 +27,7 @@ struct Cow {
         : _inner(makeRc<T>(std::move(inner))) {}
 
     T& cow() {
-        if (_inner.refs() > 1)
+        if (_inner.strong() > 1)
             _inner = makeRc<T>(_inner.unwrap());
         return _inner.unwrap();
     }
