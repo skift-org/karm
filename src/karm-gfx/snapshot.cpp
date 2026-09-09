@@ -105,8 +105,8 @@ export struct Snapshot {
         }
     };
 
-    Math::Vec2i _size;
     Rc<_State> _state;
+    Math::Vec2i _size;
 
     static Snapshot from(Rc<Image> img) {
         Recorder recorder{img->bound().size()};
@@ -121,7 +121,7 @@ export struct Snapshot {
     }
 
     Snapshot(Math::Vec2i size, Rc<_State> state)
-        : _size(size), _state(state) {}
+        : _state(state), _size(size) {}
 
     Math::Vec2i size() const {
         return _size;
@@ -882,3 +882,20 @@ export struct Snapshot {
 };
 
 } // namespace Karm::Gfx
+
+namespace Karm {
+
+export template <>
+struct Niche<Gfx::Snapshot> {
+    struct Content {
+        void* ptr;
+
+        constexpr Content() : ptr(nullptr) {}
+
+        constexpr bool has() const {
+            return ptr != nullptr;
+        }
+    };
+};
+
+} // namespace Karm
