@@ -206,7 +206,7 @@ export struct BitReader {
                 s.nextU8be();
                 _buf = s.nextU8be();
             } else {
-                logError("jpeg: invalid marker");
+                logError("jpeg: invalid marker {:02x}", marker);
                 return Error::invalidData("invalid marker");
             }
         }

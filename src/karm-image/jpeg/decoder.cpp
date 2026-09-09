@@ -501,6 +501,9 @@ export struct Decoder {
                 isize px = x * 8 + k % 8;
                 isize py = y * 8 + k / 8;
 
+                if (px >= _width or py >= _height)
+                    continue;
+
                 Gfx::YCbCr ycbcr{(float)yMcu[k], (float)cbMcu[k], (float)crMcu[k]};
                 pixels.storeUnsafe({px, py}, Gfx::yCbCrToRgb(ycbcr));
             }
