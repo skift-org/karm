@@ -435,4 +435,17 @@ struct Niche<_Rc<I, T>> {
     };
 };
 
+export template <typename I, typename T>
+struct Niche<_Weak<I, T>> {
+    struct Content {
+        void* ptr;
+
+        constexpr Content() : ptr(nullptr) {}
+
+        constexpr bool has() const {
+            return ptr != nullptr;
+        }
+    };
+};
+
 } // namespace Karm
