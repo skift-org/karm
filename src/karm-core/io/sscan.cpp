@@ -1,3 +1,7 @@
+module;
+
+#include <karm/macros>
+
 export module Karm.Core:io.sscan;
 
 import :base.string;
@@ -84,7 +88,7 @@ struct _SScan {
     }
 
     /// Returns the current rune.
-    Rune peek() {
+    always_inline Rune peek() {
         if (ended())
             return '\0';
         Rune r;
@@ -104,7 +108,7 @@ struct _SScan {
     }
 
     /// Return the current rune and advance the cursor.
-    Rune next() {
+    always_inline Rune next() {
         if (ended())
             return '\0';
         Rune r;
