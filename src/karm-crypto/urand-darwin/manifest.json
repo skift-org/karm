@@ -1,0 +1,13 @@
+{
+  "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+  "id": "karm-sys.urand.darwin",
+  "type": "lib",
+  "enableIf": {
+    "sys": [
+      "darwin"
+    ]
+  },
+  "provides": [
+    "karm-crypto.impl"
+  ]
+}

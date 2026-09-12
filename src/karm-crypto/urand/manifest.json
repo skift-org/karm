@@ -5,7 +5,6 @@
     "enableIf": {
         "sys": [
             "linux",
-            "darwin",
             "freebsd"
         ]
     },
