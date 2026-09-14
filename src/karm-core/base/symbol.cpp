@@ -11,87 +11,30 @@ import :base.string;
 
 namespace Karm {
 
-struct _SymbolBuf {
-    using Inner = char;
-    usize _len;
-    [[no_unique_address]] char _buf[0];
-
-    usize len() const {
-        return _len;
-    }
-
-    char const* buf() const {
-        return _buf;
-    }
-
-    char const& operator[](usize i) const {
-        if (i >= _len) [[unlikely]]
-            panic("index out of bounds");
-        return _buf[i];
-    }
-
-    char* buf() {
-        return _buf;
-    }
-
-    char& operator[](usize i) {
-        if (i >= _len) [[unlikely]]
-            panic("index out of bounds");
-        return _buf[i];
-    }
-
-    static Rc<_SymbolBuf> from(Str str) {
-        using _StorageCell = Cell<i32, _SymbolBuf>;
-        Rc<_SymbolBuf> buf = {
-            MOVE,
-            new (reinterpret_cast<_StorageCell*>(new u8[sizeof(_StorageCell) + str.len() + 1])) _StorageCell(str.len()),
-        };
-        copy(str, mutSub(*buf));
-        buf->_buf[str.len()] = 0;
-        return buf;
-    }
-
-    bool operator==(_SymbolBuf const& other) const {
-        return Str{*this} == Str{other};
-    }
-
-    bool operator==(Str const& other) const {
-        return Str(*this) == other;
-    }
-
-    bool operator==(String const& other) const {
-        return Str(*this) == other;
-    }
-
-    void hash(Meta::Derive<Hasher> auto& h) const {
-        Karm::hash(h, Str{*this});
-    }
-};
-
 /// A symbol is a unique string that is interned in a global registry.
 /// It is used to represent identifiers in a way that allows for fast comparisons and lookups.
 /// Symbols are immutable and can be compared by pointer equality.
 /// They are typically used for identifiers in languages, such as HTML tags, attributes, and other
 /// names that are used frequently and need to be compared often.
 export struct Symbol {
-    Rc<_SymbolBuf> _buf;
+    Str _str;
 
     static Symbol from(Str str);
 
     Str str() const {
-        return Str(*_buf);
+        return _str;
     }
 
     void hash(Meta::Derive<Hasher> auto& h) const {
-        Karm::hash(h, str());
+        Karm::hash(h, _str);
     }
 
     bool operator==(Symbol const& other) const {
-        return _buf._cell == other._buf._cell;
+        return _str.buf() == other._str.buf();
     }
 
     bool operator==(Str const& other) const {
-        return str() == other;
+        return _str == other;
     }
 
     auto operator<=>(Symbol const& other) const {
@@ -99,32 +42,23 @@ export struct Symbol {
     }
 
     explicit operator bool() const {
-        return str().len() > 0;
+        return _str.len() > 0;
     }
 };
 
-static Set<Rc<_SymbolBuf>>& _symboleRegistry() {
-    static Set<Rc<_SymbolBuf>> _registry;
+static Set<String>& _symboleRegistry() {
+    static Set<String> _registry;
     return _registry;
 }
 
 Symbol Symbol::from(Str str) {
-    return {_symboleRegistry().lookupOrAdd(str, [&] {
-        return _SymbolBuf::from(str);
+    return {_symboleRegistry().lookupOrAdd(str, [&] -> String {
+        return str;
     })};
 }
 
 export template <>
-struct Niche<Symbol> {
-    struct Content {
-        void* ptr;
-
-        constexpr Content() : ptr(nullptr) {}
-
-        constexpr bool has() const {
-            return ptr != nullptr;
-        }
-    };
+struct Niche<Symbol> : Niche<Str> {
 };
 
 } // namespace Karm
