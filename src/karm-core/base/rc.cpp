@@ -231,31 +231,31 @@ struct _Rc {
     }
 
     template <typename U>
-    constexpr MutCursor<U> is() {
+    constexpr Opt<U&> is() {
         if (not _cell)
-            return nullptr;
+            return NONE;
 
         if (not Meta::Same<T, U> and
             not Meta::Derive<T, U> and
             not(_cell->id() == Meta::idOf<U>())) {
-            return nullptr;
+            return NONE;
         }
 
-        return &_cell->template unwrap<U>();
+        return Some(_cell->template unwrap<U>());
     }
 
     template <typename U>
-    constexpr Cursor<U> is() const {
+    constexpr Opt<U const&> is() const {
         if (not _cell)
-            return nullptr;
+            return NONE;
 
         if (not Meta::Same<T, U> and
             not Meta::Derive<T, U> and
             not(_cell->id() == Meta::idOf<U>())) {
-            return nullptr;
+            return NONE;
         }
 
-        return &_cell->template unwrap<U>();
+        return Some(_cell->template unwrap<U>());
     }
 
     Meta::Id id() const {

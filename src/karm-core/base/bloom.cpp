@@ -80,47 +80,46 @@ struct Bloom {
     }
 };
 
-/// Bloom filter that supports removal, but is less space efficient than the normal one.
-export template <typename T, usize N = 4096>
+export template <typename T>
 struct CountingBloom {
-    static_assert((N & (N - 1)) == 0, "CountingBloom size must be a power of two");
-
-    static constexpr usize MASK = N - 1;
     static constexpr u8 SATURATED = ~u8{0};
 
-    Array<u8, N> _slots = {};
+    Vec<u8> _buf = {};
+
+    CountingBloom(usize size = 16_KiB) {
+        _buf.resize(size);
+    }
 
     void _increment(usize slot) {
-        if (_slots[slot] != SATURATED)
-            ++_slots[slot];
+        if (_buf[slot] != SATURATED)
+            ++_buf[slot];
     }
 
     void _decrement(usize slot) {
         // NOTE: Once a slot is saturated, we cannot remove from it anymore.
-        if (_slots[slot] != SATURATED)
-            --_slots[slot];
+        if (_buf[slot] != SATURATED)
+            --_buf[slot];
     }
 
     void add(Meta::Equatable<T> auto const& value) {
         auto [h1, h2] = _hashItemPair(value);
-        _increment(h1 & MASK);
-        _increment(h2 & MASK);
+        _increment(h1 % _buf.len());
+        _increment(h2 % _buf.len());
     }
 
     void remove(Meta::Equatable<T> auto const& value) {
         auto [h1, h2] = _hashItemPair(value);
-        _decrement(h1 & MASK);
-        _decrement(h2 & MASK);
+        _decrement(h1 % _buf.len());
+        _decrement(h2 % _buf.len());
     }
 
     bool maybeContains(Meta::Equatable<T> auto const& value) const {
         auto [h1, h2] = _hashItemPair(value);
-        return _slots[h1 & MASK] and _slots[h2 & MASK];
+        return _buf[h1 % _buf.len()] and _buf[h2 % _buf.len()];
     }
 
     void clear() {
-        for (usize i = 0; i < N; i++)
-            _slots[i] = 0;
+        zeroFill(mutSub(_buf));
     }
 };
 

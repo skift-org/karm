@@ -39,7 +39,7 @@ struct [[nodiscard]] Res {
         : _inner(other ? Inner{Ok<V>{other.unwrap()}} : Inner{other.none()}) {}
 
     always_inline constexpr explicit operator bool() const {
-        return _inner.template is<Ok<V>>();
+        return static_cast<bool>(_inner.template is<Ok<V>>());
     }
 
     always_inline constexpr Opt<V> ok() {
@@ -61,7 +61,7 @@ struct [[nodiscard]] Res {
     }
 
     always_inline constexpr bool has() const {
-        return _inner.template is<Ok<V>>();
+        return static_cast<bool>(_inner.template is<Ok<V>>());
     }
 
     always_inline constexpr E const& none() const lifetimebound {

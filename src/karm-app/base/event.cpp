@@ -17,17 +17,17 @@ export struct Event {
     virtual void const* _unwrap() const = 0;
 
     template <typename T>
-    MutCursor<T> is() {
+    Opt<T&> is() {
         if (id() != Meta::idOf<T>())
-            return nullptr;
-        return &unwrap<T>();
+            return NONE;
+        return Some(unwrap<T>());
     }
 
     template <typename T>
-    Cursor<T> is() const {
+    Opt<T const&> is() const {
         if (id() != Meta::idOf<T>())
-            return nullptr;
-        return &unwrap<T>();
+            return NONE;
+        return Some(unwrap<T>());
     }
 
     template <typename T>

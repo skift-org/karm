@@ -44,7 +44,7 @@ test$("counting-bloom-nests") {
 }
 
 test$("counting-bloom-never-false-negative") {
-    CountingBloom<u64, 64> bloom;
+    CountingBloom<u64> bloom;
 
     for (u64 i = 0; i < 200; i++)
         bloom.add(i);

@@ -204,17 +204,17 @@ struct Union {
     }
 
     template <Meta::Contains<Ts...> T>
-    always_inline MutCursor<T> is() lifetimebound {
+    always_inline Opt<T&> is() lifetimebound {
         if (_index != Meta::indexOf<T, Ts...>())
-            return nullptr;
-        return (T*)_buf;
+            return NONE;
+        return Some(*(T*)_buf);
     }
 
     template <Meta::Contains<Ts...> T>
-    always_inline Cursor<T> is() const lifetimebound {
+    always_inline Opt<T const&> is() const lifetimebound {
         if (_index != Meta::indexOf<T, Ts...>())
-            return nullptr;
-        return (T const*)_buf;
+            return NONE;
+        return Some(*(T const*)_buf);
     }
 
     template <typename T>

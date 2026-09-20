@@ -110,33 +110,33 @@ export struct Value {
     }
 
     bool isNull() const {
-        return _store.is<None>();
+        return static_cast<bool>(_store.is<None>());
     }
 
     bool isArray() const {
-        return _store.is<Array>();
+        return static_cast<bool>(_store.is<Array>());
     }
 
     bool isObject() const {
-        return _store.is<Object>();
+        return static_cast<bool>(_store.is<Object>());
     }
 
     bool isStr() const {
-        return _store.is<String>();
+        return static_cast<bool>(_store.is<String>());
     }
 
     bool isInt() const {
-        return _store.is<Integer>();
+        return static_cast<bool>(_store.is<Integer>());
     }
 
 #ifndef __ck_freestanding__
     bool isFloat() const {
-        return _store.is<Number>();
+        return static_cast<bool>(_store.is<Number>());
     }
 #endif
 
     bool isBool() const {
-        return _store.is<bool>();
+        return static_cast<bool>(_store.is<bool>());
     }
 
     Array& asArray() {

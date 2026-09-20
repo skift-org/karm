@@ -73,9 +73,7 @@ struct PopoverLayer : ProxyNode<PopoverLayer> {
         if (e.accepted())
             return;
 
-        bool allowToGoDown = e.is<ShowDialogEvent>();
-
-        if (_popover and not allowToGoDown) {
+        if (_popover and not e.is<ShowDialogEvent>()) {
             (*_popover)->event(e);
 
             if (e.accepted())

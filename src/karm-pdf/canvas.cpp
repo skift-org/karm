@@ -48,13 +48,13 @@ export struct Canvas : Gfx::Canvas {
     Math::Vec2f _mediaBox{};
     Math::Vec2f _p{};
 
-    MutCursor<FontManager> _fontManager;
-    MutCursor<ImageManager> _imageManager;
+    FontManager& _fontManager;
+    ImageManager& _imageManager;
     Vec<GraphicalStateDict>& _graphicalStates;
 
     Vec<f64> _opacityStack;
 
-    Canvas(Io::Emit e, Math::Vec2f mediaBox, MutCursor<FontManager> fontManager, MutCursor<ImageManager> imageManager, Vec<GraphicalStateDict>& graphicalStates)
+    Canvas(Io::Emit e, Math::Vec2f mediaBox, FontManager& fontManager, ImageManager& imageManager, Vec<GraphicalStateDict>& graphicalStates)
         : _e{e}, _mediaBox{mediaBox}, _fontManager{fontManager}, _imageManager{imageManager}, _graphicalStates(graphicalStates) {
         _opacityStack.pushBack(1.0);
     }
@@ -245,7 +245,7 @@ export struct Canvas : Gfx::Canvas {
                     fillStyle(*currentColor);
                     _e.ln(
                         "/F{} {} Tf",
-                        _fontManager->getFontId(currentFont->fontface),
+                        _fontManager.getFontId(currentFont->fontface),
                         currentFont->fontsize
                     );
                 }
@@ -381,7 +381,7 @@ export struct Canvas : Gfx::Canvas {
 
         transform({destf.width, 0, 0, -destf.height, destf.x, destf.y + dest.height});
 
-        _e.ln("/Im{} Do", _imageManager->getImageId(image));
+        _e.ln("/Im{} Do", _imageManager.getImageId(image));
 
         pop();
     }
