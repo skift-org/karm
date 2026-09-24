@@ -6,6 +6,7 @@ export module Karm.Image:png.decoder;
 
 import Karm.Core;
 import Karm.Archive;
+import Karm.Crypto;
 import Karm.Debug;
 import Karm.Gfx.Pixels;
 import Karm.Math;
@@ -83,6 +84,7 @@ static constexpr Array<u8, 8> SIG = {
 
 static constexpr Str IHDR = "IHDR";
 static constexpr Str PLTE = "PLTE";
+static constexpr Str TRNS = "tRNS";
 static constexpr Str IDAT = "IDAT";
 static constexpr Str IEND = "IEND";
 
@@ -124,6 +126,11 @@ export struct Decoder {
             usize len;
             Bytes data;
             u32 crc32;
+            Bytes checked;
+
+            bool validCrc() const {
+                return Crypto::crc32(checked) == crc32;
+            }
         };
 
         struct Iter {
@@ -136,8 +143,10 @@ export struct Decoder {
                 Chunk c;
 
                 c.len = s.nextI32be();
+                auto checked = s;
                 c.sig = s.nextStr(4);
                 c.data = s.nextBytes(c.len);
+                c.checked = checked.nextBytes(4 + c.data.len());
                 c.crc32 = s.nextI32be();
 
                 return Some(c);
@@ -185,6 +194,10 @@ export struct Decoder {
 
     usize bytesPerPixel() const {
         return bitsPerPixel() / 8;
+    }
+
+    usize bytesPerScanline(usize passWidth) const {
+        return alignUp(bitsPerPixel() * passWidth, 8) / 8;
     }
 
     isize width() const {
@@ -242,6 +255,28 @@ export struct Decoder {
             u8 green = s.nextU8le();
             u8 blue = s.nextU8le();
             _palette.pushBack(Gfx::Color{red, green, blue});
+        }
+
+        return Ok();
+    }
+
+    // MARK: Transparency ------------------------------------------------------
+
+    Opt<Math::Vec3<u16>> _transparentKey;
+
+    // https://www.w3.org/TR/png-3/#11tRNS
+    Res<> _handleTrns(Io::BScan& s) {
+        if (_colorType == ColorType::INDEXED) {
+            for (usize i = 0; not s.ended() and i < _palette.len(); i++)
+                _palette[i].alpha = s.nextU8be();
+        } else if (_colorType == ColorType::GREYSCALE) {
+            u16 grey = s.nextU16be();
+            _transparentKey = Some(Math::Vec3<u16>{grey, grey, grey});
+        } else if (_colorType == ColorType::TRUECOLOR) {
+            u16 red = s.nextU16be();
+            u16 green = s.nextU16be();
+            u16 blue = s.nextU16be();
+            _transparentKey = Some(Math::Vec3<u16>{red, green, blue});
         }
 
         return Ok();
@@ -337,7 +372,7 @@ export struct Decoder {
             return Ok(Vec<u8>{});
 
         usize bytePerPixel = bitsPerPixel() < 8 ? 1 : bitsPerPixel() / 8;
-        usize bytesPerScan = bytePerPixel * passWidth;
+        usize bytesPerScan = bytesPerScanline(passWidth);
 
         Vec<u8> res;
         res.resize(bytesPerScan * passHeight);
@@ -366,28 +401,55 @@ export struct Decoder {
 
     // MARK: Decoding ----------------------------------------------------------
 
-    Res<> _decodeScanline(Io::BScan& s, Gfx::MutPixels out, usize passWidth, usize x0, usize y, usize dx) {
+    u16 _nextSample(Io::BScan& s) const {
+        if (_bitDepth == 16)
+            return s.nextU16be();
+        if (_bitDepth == 8)
+            return s.nextU8be();
+        return s.nextBitsbe(_bitDepth);
+    }
+
+    u8 _to8(u16 sample) const {
+        if (_bitDepth == 16)
+            return sample >> 8;
+        if (_bitDepth == 8)
+            return sample;
+        return sample * 255 / ((1u << _bitDepth) - 1);
+    }
+
+    Res<> _decodeScanline(Io::BScan s, Gfx::MutPixels out, usize passWidth, usize x0, usize y, usize dx) {
         for (usize i : urange::zeroTo(passWidth)) {
             usize x = x0 + i * dx;
-            if (_colorType == ColorType::GREYSCALE or
-                _colorType == ColorType::GREYSCALE_ALPHA) {
-                auto g = s.nextU8be();
-                u8 a = 255;
+            Gfx::Color color;
+
+            if (_colorType == ColorType::INDEXED) {
+                auto index = _nextSample(s);
+                if (index >= _palette.len())
+                    return Error::invalidData("palette index out of range");
+                color = _palette[index];
+            } else if (_colorType == ColorType::GREYSCALE or
+                       _colorType == ColorType::GREYSCALE_ALPHA) {
+                auto grey = _nextSample(s);
+                u8 alpha = 255;
                 if (_colorType == ColorType::GREYSCALE_ALPHA)
-                    a = s.nextU8be();
-                out.store(Math::Vec2u{x, y}.cast<isize>(), Gfx::Color{g, g, g, a});
-            } else if (_colorType == ColorType::INDEXED) {
-                auto i = s.nextU8be();
-                out.store(Math::Vec2u{x, y}.cast<isize>(), _palette[i]);
+                    alpha = _to8(_nextSample(s));
+                else if (_transparentKey == Math::Vec3<u16>{grey, grey, grey})
+                    alpha = 0;
+                auto g = _to8(grey);
+                color = Gfx::Color{g, g, g, alpha};
             } else {
-                auto r = s.nextU8be();
-                auto g = s.nextU8be();
-                auto b = s.nextU8be();
-                u8 a = 255;
+                auto red = _nextSample(s);
+                auto green = _nextSample(s);
+                auto blue = _nextSample(s);
+                u8 alpha = 255;
                 if (_colorType == ColorType::TRUECOLOR_ALPHA)
-                    a = s.nextU8be();
-                out.store(Math::Vec2u{x, y}.cast<isize>(), Gfx::Color{r, g, b, a});
+                    alpha = _to8(_nextSample(s));
+                else if (_transparentKey == Math::Vec3<u16>{red, green, blue})
+                    alpha = 0;
+                color = Gfx::Color{_to8(red), _to8(green), _to8(blue), alpha};
             }
+
+            out.store(Math::Vec2u{x, y}.cast<isize>(), color);
         }
         return Ok();
     }
@@ -402,19 +464,26 @@ export struct Decoder {
         usize dx,
         usize dy
     ) {
-        Io::BScan s = unfiltered;
-        for (usize row : urange::zeroTo(passHeight))
-            try$(_decodeScanline(s, out, passWidth, x0, y0 + row * dy, dx));
+        usize bytesPerScan = bytesPerScanline(passWidth);
+        for (usize row : urange::zeroTo(passHeight)) {
+            auto scanline = sub(unfiltered, row * bytesPerScan, row * bytesPerScan + bytesPerScan);
+            try$(_decodeScanline(scanline, out, passWidth, x0, y0 + row * dy, dx));
+        }
         return Ok();
     }
 
     Res<> decode(Gfx::MutPixels out) {
         for (auto chunk : iterChunks()) {
+            if (not chunk.validCrc())
+                return Error::invalidData("chunk checksum mismatch");
+
             Io::BScan data = chunk.data;
             if (chunk.sig == IHDR)
                 try$(_handleIhdr(data));
             else if (chunk.sig == PLTE)
                 try$(_handlePlte(data));
+            else if (chunk.sig == TRNS)
+                try$(_handleTrns(data));
             else if (chunk.sig == IDAT)
                 try$(_handleIdat(data));
             else if (chunk.sig == IEND)
@@ -428,7 +497,20 @@ export struct Decoder {
 
         logDebugIf(debugPng, "{}", *this);
 
-        if (_bitDepth != 8)
+        bool validBitDepth = false;
+        switch (_colorType) {
+        case ColorType::GREYSCALE:
+            validBitDepth = oneOf(_bitDepth, 1, 2, 4, 8, 16);
+            break;
+        case ColorType::INDEXED:
+            validBitDepth = oneOf(_bitDepth, 1, 2, 4, 8);
+            break;
+        default:
+            validBitDepth = oneOf(_bitDepth, 8, 16);
+            break;
+        }
+
+        if (not validBitDepth)
             return Error::invalidData("unsupported bit depth");
 
         if (_compressionMethod != CompressionMethod::DEFLATE)

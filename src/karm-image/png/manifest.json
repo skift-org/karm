@@ -5,6 +5,7 @@
     "description": "PNG image decoding and encoding",
     "requires": [
         "karm-gfx",
-        "karm-archive"
+        "karm-archive",
+        "karm-crypto"
     ]
 }
