@@ -52,14 +52,20 @@ export struct Glyf : Io::BChunk {
         return metrics(s, glyfOffset);
     }
 
-    void contour(Gfx::Canvas& g, usize glyfOffset, Loca const& loca, Head const& head) const {
+    static constexpr usize MAX_COMPOSITE_DEPTH = 16;
+
+    void contour(Gfx::Canvas& g, usize glyfOffset, Loca const& loca, Head const& head, Math::Trans2f trans = Math::Trans2f::identity(), usize depth = 0) const {
         auto s = begin();
         auto m = metrics(s, glyfOffset);
 
         if (m.numContours > 0) {
-            contourSimple(g, m, s);
+            contourSimple(g, m, s, trans);
         } else if (m.numContours < 0) {
-            contourComposite(g, s, loca, head);
+            if (depth >= MAX_COMPOSITE_DEPTH) {
+                logWarn("glyf: composite glyph nesting too deep");
+                return;
+            }
+            contourComposite(g, s, loca, head, trans, depth);
         }
     }
 
@@ -81,7 +87,7 @@ export struct Glyf : Io::BChunk {
         i16 y;
     };
 
-    void contourSimple(Gfx::Canvas& g, Metrics m, Io::BScan& s) const {
+    void contourSimple(Gfx::Canvas& g, Metrics m, Io::BScan& s, Math::Trans2f trans) const {
         auto endPtsOfContours = s;
         auto nPoints = s.peek(2 * (m.numContours - 1)).nextU16be() + 1u;
         u16 instructionLength = s.skip(m.numContours * 2).nextU16be();
@@ -142,20 +148,20 @@ export struct Glyf : Io::BChunk {
                 curr = curr + Math::Vec2f{(f64)x, (f64)-y};
 
                 if (i == start) {
-                    g.moveTo(curr);
+                    g.moveTo(trans.apply(curr));
                     startP = curr;
                 } else {
                     if (flags & ON_CURVE_POINT) {
                         if (wasCp) {
-                            g.quadTo(cp, curr);
+                            g.quadTo(trans.apply(cp), trans.apply(curr));
                         } else {
-                            g.lineTo(curr);
+                            g.lineTo(trans.apply(curr));
                         }
                         wasCp = false;
                     } else {
                         if (wasCp) {
                             auto p1 = (cp + curr) / 2;
-                            g.quadTo(cp, p1);
+                            g.quadTo(trans.apply(cp), trans.apply(p1));
                             cp = curr;
                             wasCp = true;
                         } else {
@@ -167,7 +173,7 @@ export struct Glyf : Io::BChunk {
             }
 
             if (wasCp) {
-                g.quadTo(cp, startP);
+                g.quadTo(trans.apply(cp), trans.apply(startP));
             }
 
             g.closePath();
@@ -188,7 +194,7 @@ export struct Glyf : Io::BChunk {
     static constexpr u16 USE_MY_METRICS = 0x0200;
     static constexpr u16 OVERLAP_COMPOUND = 0x0400; // ignore for rasterless outline
 
-    void contourComposite(Gfx::Canvas& g, Io::BScan& s, Loca const& loca, Head const& head) const {
+    void contourComposite(Gfx::Canvas& g, Io::BScan& s, Loca const& loca, Head const& head, Math::Trans2f parentTrans, usize depth) const {
         while (true) {
             u16 flags = s.nextU16be();
             u16 glyphIndex = s.nextU16be();
@@ -233,17 +239,13 @@ export struct Glyf : Io::BChunk {
                 d = (f64)s.nextI16be() / 16384.0;
             }
 
-            Math::Trans2f t{a, c, b, d, tx, ty};
+            // NOTE: TrueType maps x' = a*x + c*y and y' = b*x + d*y, in a y-up space.
+            //       Glyph outlines are emitted y-down, so the off-diagonal terms flip sign.
+            Math::Trans2f t{a, -b, -c, d, tx, ty};
 
-            // resolve and render child
-            if (usize subOff = loca.glyfOffset(glyphIndex, head)) {
-                g.push();
-                g.transform(t);
-                contour(g, subOff, loca, head);
-                g.pop();
-            } else {
-                logWarn("glyf: component {} has no offset", glyphIndex);
-            }
+            auto subOff = loca.glyfOffset(glyphIndex, head);
+            if (subOff != loca.glyfOffset(glyphIndex + 1, head))
+                contour(g, subOff, loca, head, t.multiply(parentTrans), depth + 1);
 
             // last component?
             if (!(flags & MORE_COMPONENTS)) {
