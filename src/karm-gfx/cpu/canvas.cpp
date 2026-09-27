@@ -379,7 +379,7 @@ export struct CpuCanvas : Canvas {
         push();
         current().trans = Math::Trans2f::scale(scale);
         beginPath();
-        font.fontface->contour(*this, glyph);
+        font.fontface->glyphContour(*this, glyph);
 
         _poly.clear();
         createSolid(_poly, _path);
@@ -449,6 +449,7 @@ export struct CpuCanvas : Canvas {
 
         bool cacheable =
             current().fill.is<Color>() and
+            not font.fontface->glyphAttr(glyph).has(GlyphAttr::COLORED) and
             trans.axisAligned() and
             trans.xx > 0 and
             trans.yy > 0;

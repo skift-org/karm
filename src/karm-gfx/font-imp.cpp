@@ -52,7 +52,7 @@ struct VgaFontface : Fontface {
         return 0;
     }
 
-    void contour(Gfx::Canvas& g, Glyph glyph) const override {
+    void glyphContour(Gfx::Canvas& g, Glyph glyph) const override {
         g.scale(1 / UNIT_PER_EM);
         for (isize y = 0; y < HEIGHT; y++) {
             for (isize x = 0; x < WIDTH; x++) {
@@ -76,19 +76,37 @@ Font Font::fallback() {
     };
 }
 
+// MARK: Fontface --------------------------------------------------------------
+
+void Fontface::paintGlyph(Canvas& g, Glyph glyph) const {
+    g.beginPath();
+    glyphContour(g, glyph);
+    g.fill();
+}
+
 // MARK: Font Family -----------------------------------------------------------
 
-void FontFamily::contour(Canvas& g, Glyph glyph) const {
+Flags<GlyphAttr> FontFamily::glyphAttr(Glyph glyph) const {
+    return _members[glyph.font].face->glyphAttr(glyph);
+}
+
+void FontFamily::paintGlyph(Canvas& g, Glyph glyph) const {
     auto& member = _members[glyph.font];
     g.scale(_adjust.sizeAdjust * member.adjust.sizeAdjust);
-    member.face->contour(g, glyph);
+    member.face->paintGlyph(g, glyph);
+}
+
+void FontFamily::glyphContour(Canvas& g, Glyph glyph) const {
+    auto& member = _members[glyph.font];
+    g.scale(_adjust.sizeAdjust * member.adjust.sizeAdjust);
+    member.face->glyphContour(g, glyph);
 }
 
 // MARK: Font ------------------------------------------------------------------
 
-void Font::contour(Canvas& g, Glyph glyph) const {
+void Font::glyphContour(Canvas& g, Glyph glyph) const {
     g.scale(fontsize);
-    fontface->contour(g, glyph);
+    fontface->glyphContour(g, glyph);
 }
 
 } // namespace Karm::Gfx

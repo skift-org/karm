@@ -4,6 +4,7 @@
     "type": "lib",
     "description": "TrueType font specification",
     "requires": [
-        "karm-gfx"
+        "karm-gfx",
+        "karm-image"
     ]
 }

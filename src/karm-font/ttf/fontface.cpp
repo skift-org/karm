@@ -8,6 +8,8 @@ export module Karm.Font.Ttf:fontface;
 import Karm.Core;
 import Karm.Sys;
 import Karm.Gfx;
+import Karm.Image;
+import Karm.Logger;
 
 import :parser;
 
@@ -20,6 +22,7 @@ export struct Fontface : Gfx::Fontface {
     mutable Map<Gfx::Glyph, f64> _cachedAdvances;
     mutable Map<Pair<Gfx::Glyph>, f64> _cachedKerns;
     mutable Opt<Gfx::FontMetrics> _cachedMetrics;
+    mutable Map<u16, Opt<Rc<Gfx::Image>>> _cachedBitmaps;
     f64 _unitPerEm = 0;
 
     static Res<Rc<Fontface>> load(Sys::Mmap&& mmap) {
@@ -102,9 +105,62 @@ export struct Fontface : Gfx::Fontface {
         return k;
     }
 
-    void contour(Gfx::Canvas& g, Gfx::Glyph glyph) const override {
+    void glyphContour(Gfx::Canvas& g, Gfx::Glyph glyph) const override {
         g.scale(1.0 / _unitPerEm);
         _parser.glyphContour(g, glyph);
+    }
+
+    Opt<Rc<Gfx::Image>> glyphBitmap(Gfx::Glyph glyph) const {
+        if (auto cached = _cachedBitmaps.lookup(glyph.index))
+            return cached.expect();
+
+        Opt<Rc<Gfx::Image>> image = NONE;
+        if (auto bitmap = _parser.glyphBitmap(glyph)) {
+            if (auto decoded = Image::load(bitmap->png))
+                image = Some(decoded.take());
+            else
+                logWarn("ttf: failed to decode bitmap for glyph {}", glyph.index);
+        }
+
+        _cachedBitmaps.put(glyph.index, image);
+        return image;
+    }
+
+    Flags<Gfx::GlyphAttr> glyphAttr(Gfx::Glyph glyph) const override {
+        Flags<Gfx::GlyphAttr> attrs = NONE;
+        if (_parser.glyphHasColor(glyph) or glyphBitmap(glyph).has())
+            attrs.set(Gfx::GlyphAttr::COLORED);
+        return attrs;
+    }
+
+    void paintGlyph(Gfx::Canvas& g, Gfx::Glyph glyph) const override {
+        if (_parser.glyphHasColor(glyph)) {
+            g.scale(1.0 / _unitPerEm);
+            _parser.glyphPaint(g, glyph);
+            return;
+        }
+
+        if (auto image = glyphBitmap(glyph)) {
+            // NOTE: Bitmap metrics are in pixels of the strike, one em is ppem pixels.
+            auto bitmap = _parser.glyphBitmap(glyph).expect();
+            f64 ppem = bitmap.ppem;
+            Math::Rectf bound = {
+                bitmap.bearingX / ppem,
+                -bitmap.bearingY / ppem,
+                bitmap.width / ppem,
+                bitmap.height / ppem,
+            };
+
+            g.push();
+            g.fillStyle(*image);
+            g.beginPath();
+            g.rect(bound);
+            g.fill();
+            g.pop();
+            return;
+        }
+
+        Gfx::Fontface::paintGlyph(g, glyph);
     }
 };
 

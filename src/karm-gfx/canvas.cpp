@@ -296,11 +296,9 @@ export struct Canvas : Meta::NoCopy {
     // Fill a single glyph of text
     virtual void fill(Font const& font, Glyph glyph, Math::Vec2f baseline) {
         push();
-        beginPath();
         origin(baseline);
         scale(font.fontsize);
-        font.fontface->contour(*this, glyph);
-        fill();
+        font.fontface->paintGlyph(*this, glyph);
         pop();
     }
 

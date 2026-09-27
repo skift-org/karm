@@ -10,6 +10,10 @@ namespace Karm::Gfx {
 
 export struct Canvas;
 
+export enum struct GlyphAttr : u8 {
+    COLORED = 1 << 0,
+};
+
 export struct Glyph {
     u16 index;
     u16 font;
@@ -365,7 +369,11 @@ export struct Fontface {
 
     virtual f64 kern(Glyph prev, Glyph curr) const = 0;
 
-    virtual void contour(Canvas& g, Glyph glyph) const = 0;
+    virtual void glyphContour(Canvas& g, Glyph glyph) const = 0;
+
+    virtual Flags<GlyphAttr> glyphAttr(Glyph) const { return NONE; }
+
+    virtual void paintGlyph(Canvas& g, Glyph glyph) const;
 };
 
 export struct FontAdjust {
@@ -472,7 +480,11 @@ export struct FontFamily : Fontface {
         return k * member.adjust.sizeAdjust * _adjust.sizeAdjust;
     }
 
-    void contour(Canvas& g, Glyph glyph) const override;
+    void glyphContour(Canvas& g, Glyph glyph) const override;
+
+    Flags<GlyphAttr> glyphAttr(Glyph glyph) const override;
+
+    void paintGlyph(Canvas& g, Glyph glyph) const override;
 };
 
 // MARK: Font ------------------------------------------------------------------
@@ -522,7 +534,7 @@ export struct Font {
         };
     }
 
-    void contour(Canvas& g, Glyph glyph) const;
+    void glyphContour(Canvas& g, Glyph glyph) const;
 
     // Metrics
 

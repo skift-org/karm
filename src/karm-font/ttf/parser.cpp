@@ -6,7 +6,10 @@ export module Karm.Font.Ttf:parser;
 
 import Karm.Logger;
 
+import :cbdt;
 import :cmap;
+import :colr;
+import :cpal;
 import :glyf;
 import :gpos;
 import :gsub;
@@ -62,6 +65,10 @@ export struct Parser {
     Name _name;
     Post _post;
     Os2 _os2;
+    Colr _colr;
+    Cpal _cpal;
+    Cblc _cblc;
+    Cbdt _cbdt;
 
     static Res<Cmap::Table> chooseCmap(Parser& font) {
         Opt<Cmap::Table> bestCmap = NONE;
@@ -119,8 +126,16 @@ export struct Parser {
         font._head = try$(font.requireTable<Head>());
         font._cmap = try$(font.requireTable<Cmap>());
         font._cmapTable = try$(chooseCmap(font));
-        font._glyf = try$(font.requireTable<Glyf>());
-        font._loca = try$(font.requireTable<Loca>());
+        // NOTE: Bitmap-only fonts (e.g. CBDT color emoji) have no outlines.
+        font._cblc = font.lookupTable<Cblc>();
+        font._cbdt = font.lookupTable<Cbdt>();
+        if (font._cblc.present() and font._cbdt.present()) {
+            font._glyf = font.lookupTable<Glyf>();
+            font._loca = font.lookupTable<Loca>();
+        } else {
+            font._glyf = try$(font.requireTable<Glyf>());
+            font._loca = try$(font.requireTable<Loca>());
+        }
         font._hhea = try$(font.requireTable<Hhea>());
         font._hmtx = try$(font.requireTable<Hmtx>());
         font._gpos = font.lookupTable<Gpos>();
@@ -133,6 +148,13 @@ export struct Parser {
         font._os2 = font.lookupTable<Os2>();
         if (not font._os2.present())
             logWarn("ttf: 'OS/2' table not found");
+
+        font._colr = font.lookupTable<Colr>();
+        font._cpal = font.lookupTable<Cpal>();
+        if (font._colr.present() and not font._cpal.present()) {
+            logWarn("ttf: 'COLR' table without 'CPAL' table, ignoring color glyphs");
+            font._colr = {};
+        }
 
         return Ok(font);
     }
@@ -218,9 +240,12 @@ export struct Parser {
     }
 
     GlyphMetrics glyphMetrics(Gfx::Glyph glyph) const {
+        auto hmtx = _hmtx.metrics(glyph.index, _hhea);
+        if (not _glyf.present() or not _loca.present())
+            return {0, 0, 0, 0, (f64)hmtx.lsb, (f64)hmtx.advanceWidth};
+
         auto glyfOffset = _loca.glyfOffset(glyph.index, _head);
         auto glyf = _glyf.metrics(glyfOffset);
-        auto hmtx = _hmtx.metrics(glyph.index, _hhea);
 
         return {
             (f64)glyf.xMin,
@@ -245,12 +270,31 @@ export struct Parser {
     }
 
     void glyphContour(Gfx::Canvas& g, Gfx::Glyph glyph) const {
+        if (not _glyf.present() or not _loca.present())
+            return;
+
         auto glyfOffset = _loca.glyfOffset(glyph.index, _head);
 
         if (glyfOffset == _loca.glyfOffset(glyph.index + 1, _head))
             return;
 
         _glyf.contour(g, glyfOffset, _loca, _head);
+    }
+
+    // MARK: Color Glyphs ----------------------------------------------------
+
+    Opt<BitmapGlyph> glyphBitmap(Gfx::Glyph glyph) const {
+        return _cblc.bitmap(_cbdt, glyph.index);
+    }
+
+    bool glyphHasColor(Gfx::Glyph glyph) const {
+        return _colr.layers(glyph.index).has();
+    }
+
+    void glyphPaint(Gfx::Canvas& g, Gfx::Glyph glyph) const {
+        _colr.paint(g, glyph.index, _cpal, [&](Gfx::Canvas& g, u16 layerGlyph) {
+            glyphContour(g, {layerGlyph, glyph.font});
+        });
     }
 
     Metrics metrics() const {

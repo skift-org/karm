@@ -1,7 +1,10 @@
 export module Karm.Font.Ttf;
 
 export import :base;
+export import :cbdt;
 export import :cmap;
+export import :colr;
+export import :cpal;
 export import :fontface;
 export import :glyf;
 export import :gpos;
