@@ -417,6 +417,40 @@ export Child image(Rc<Gfx::Image> image, Opt<Math::Radiif> radii = NONE) {
 
 // MARK: Canvas ----------------------------------------------------------------
 
+export using OnPaint = Func<void(Gfx::Canvas& g, Math::Vec2i size)>;
+
+struct OnPainView : View<OnPainView> {
+    OnPaint _onPaint;
+
+    OnPainView(OnPaint onPaint)
+        : _onPaint(std::move(onPaint)) {}
+
+    void reconcile(OnPainView& o) override {
+        _onPaint = std::move(o._onPaint);
+        View::reconcile(o);
+    }
+
+    void paint(Gfx::Canvas& g, Math::Recti) override {
+        g.push();
+        g.clip(_bound);
+        g.origin(_bound.xy.cast<f64>());
+        _onPaint(g, _bound.wh);
+        g.pop();
+    }
+
+    Math::Vec2i size(Math::Vec2i, Hint hint) override {
+        if (hint == Hint::MIN)
+            return 0;
+        return _bound.wh;
+    }
+};
+
+export Child onPaint(OnPaint onPaint) {
+    return makeRc<OnPainView>(std::move(onPaint));
+}
+
+// MARK: Canvas ----------------------------------------------------------------
+
 struct Canvas : View<Canvas> {
     Gfx::Snapshot _snapshot;
 
