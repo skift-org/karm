@@ -363,15 +363,15 @@ Res<Rc<Pid>> spawn(Command const& cmd) {
 
     int inFd = -1;
     if (cmd.in)
-        inFd = try$(Posix::ensurePosixFd(cmd.in.unwrap()))->_raw;
+        inFd = try$(Posix::ensurePosixFd(cmd.in.expect()))->_raw;
 
     int outFd = -1;
     if (cmd.out)
-        outFd = try$(Posix::ensurePosixFd(cmd.out.unwrap()))->_raw;
+        outFd = try$(Posix::ensurePosixFd(cmd.out.expect()))->_raw;
 
     int errFd = -1;
     if (cmd.err)
-        errFd = try$(Posix::ensurePosixFd(cmd.err.unwrap()))->_raw;
+        errFd = try$(Posix::ensurePosixFd(cmd.err.expect()))->_raw;
 
     pid_t pid = ::fork();
     if (pid < 0)

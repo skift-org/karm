@@ -19,13 +19,13 @@ struct HashTable {
         State state = State::FREE;
         Manual<T> _manual;
 
-        T& unwrap() {
+        T& expect() {
             if (state != State::USED)
                 panic("slot is free");
             return _manual.unwrap();
         }
 
-        T const& unwrap() const {
+        T const& expect() const {
             if (state != State::USED)
                 panic("slot is free");
             return _manual.unwrap();
@@ -58,7 +58,7 @@ struct HashTable {
         _slots = new Slot[_cap];
         for (usize i = 0; i < _cap; i++) {
             if (other._slots[i].state == State::USED) {
-                _slots[i]._manual.ctor(other._slots[i].unwrap());
+                _slots[i]._manual.ctor(other._slots[i].expect());
                 _slots[i].state = State::USED;
             } else {
                 _slots[i].state = other._slots[i].state;
@@ -126,7 +126,7 @@ struct HashTable {
             auto& old = oldSlots[i];
             if (old.state != State::USED)
                 continue;
-            put(lookup(old.unwrap()), old.take());
+            put(lookup(old.expect()), old.take());
         }
 
         delete[] oldSlots;
@@ -158,7 +158,7 @@ struct HashTable {
             auto& s = self._slots[i];
 
             if (s.state == State::USED and
-                s.unwrap() == u)
+                s.expect() == u)
                 return &s;
 
             if (s.state == State::DEAD and not deadSlot)
@@ -194,7 +194,7 @@ struct HashTable {
     template <typename... Args>
     bool put(Slot* slot, Args&&... args) {
         if (slot->state == State::USED) {
-            slot->unwrap() = T(std::forward<Args>(args)...);
+            slot->expect() = T(std::forward<Args>(args)...);
             return false;
         }
         _len++;

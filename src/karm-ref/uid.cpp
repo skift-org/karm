@@ -95,7 +95,7 @@ struct [[gnu::packed]] _Uid {
 
     void repr(Io::Emit& e) const {
         e("{:08x}-{:04x}-{:04x}-{:04x}-", timeLow, timeMid, timeHighAndVersion, clkSeqAndVariant);
-        Crypto::hexEncode(node, e).unwrap();
+        Crypto::hexEncode(node, e).expect();
     }
 
     String unparsed() const {
@@ -127,12 +127,12 @@ export Karm::Ref::Uuid operator""_uuid(char const* str, Karm::usize len) {
     auto res = Karm::Ref::Uuid::parse({str, len});
     if (not res.has())
         Karm::debug(res.none().msg());
-    return res.unwrap("invalid UUID");
+    return res.expect("invalid UUID");
 }
 
 /// <b>FUCK MICROSLOP</b>
 export Karm::Ref::Guid operator""_guid(char const* str, Karm::usize len) {
-    return Karm::Ref::Guid::parse({str, len}).unwrap("invalid GUID");
+    return Karm::Ref::Guid::parse({str, len}).expect("invalid GUID");
 }
 
 } // namespace Karm::Ref::Literals

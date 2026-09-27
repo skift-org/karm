@@ -17,14 +17,14 @@ test$("read-http-response-good-body") {
 
     auto response = try$(Response::read(br));
 
-    expectEq$(response.code, Code{200});
+    assertEq$(response.code, Code{200});
 
     auto expectedVersion = Version{Http::Protocol::HTTP, 1u, 1u};
-    expectEq$(response.version, expectedVersion);
+    assertEq$(response.version, expectedVersion);
 
-    expectEq$(response.header.len(), 2u);
-    expectEq$(response.header.lookup(Header::SERVER), "Apache"s);
-    expectEq$(response.header.lookup(Header::CONTENT_LENGTH), "3"s);
+    assertEq$(response.header.len(), 2u);
+    assertEq$(response.header.lookup(Header::SERVER), "Apache"s);
+    assertEq$(response.header.lookup(Header::CONTENT_LENGTH), "3"s);
 
     return Ok();
 }
@@ -39,13 +39,13 @@ test$("read-http-response-body-content-length-mismatch") {
 
     auto response = try$(Response::read(br));
 
-    expectEq$(response.code, Code{500});
+    assertEq$(response.code, Code{500});
 
     auto expectedVersion = Version{Http::Protocol::HTTP, 1u, 2u};
-    expectEq$(response.version, expectedVersion);
+    assertEq$(response.version, expectedVersion);
 
-    expectEq$(response.header.len(), 1u);
-    expectEq$(response.header.lookup(Header::CONTENT_LENGTH), "100"s);
+    assertEq$(response.header.len(), 1u);
+    assertEq$(response.header.lookup(Header::CONTENT_LENGTH), "100"s);
 
     return Ok();
 }
@@ -59,8 +59,8 @@ test$("read-http-response-body-empty-body") {
 
     auto response = try$(Response::read(br));
 
-    expectEq$(response.code, Http::Code::NOT_FOUND);
-    expectEq$(response.header.len(), 0u);
+    assertEq$(response.code, Http::Code::NOT_FOUND);
+    assertEq$(response.header.len(), 0u);
 
     return Ok();
 }

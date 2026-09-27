@@ -7,15 +7,15 @@ namespace Karm::Base::Tests {
 test$("box-niche") {
     Opt<Box<int>> test;
 
-    expectEq$(sizeof(test), sizeof(Box<int>));
-    expectEq$(test.has(), false);
-    expectEq$(test, NONE);
+    assertEq$(sizeof(test), sizeof(Box<int>));
+    assertEq$(test.has(), false);
+    assertEq$(test, NONE);
     test = Some(makeBox<int>(5));
-    expectEq$(test.unwrap(), 5);
-    expectEq$(test.take(), 5);
-    expectEq$(test, NONE);
+    assertEq$(test.expect(), 5);
+    assertEq$(test.take(), 5);
+    assertEq$(test, NONE);
     test = Some(makeBox<int>());
-    expectEq$(test.has(), true);
+    assertEq$(test.has(), true);
 
     return Ok();
 }
@@ -35,7 +35,7 @@ test$("box-deleter") {
     {
         Box<TestType, TestDeleter> testBox(MOVE, &test);
     }
-    expect$(test.deleted);
+    assert$(test.deleted);
 
     return Ok();
 }

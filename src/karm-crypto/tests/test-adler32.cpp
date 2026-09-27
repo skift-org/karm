@@ -7,7 +7,7 @@ namespace Karm::Crypto::Tests {
 test$("crypto-adler32") {
     auto testCase = [&](Str data, u32 expected) -> Res<> {
         auto adler = adler32(bytes(data));
-        expectEq$(adler, expected);
+        assertEq$(adler, expected);
         return Ok();
     };
 

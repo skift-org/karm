@@ -178,7 +178,7 @@ struct SoftCommandBuffer : CommandBuffer {
     }
 
     void depthStencilState(Rc<DepthStencilState> state) override {
-        auto s = state.cast<SoftDepthStencilState>().unwrap();
+        auto s = state.cast<SoftDepthStencilState>().expect();
         commands.emplaceBack(DepthStencilStateCommand{s});
     }
 
@@ -359,7 +359,7 @@ struct SoftQueue : Queue {
         (void)waitSemaphores;
         (void)signalSemaphores;
         for (auto& buf : commandBuffers)
-            ctx.execute(*buf.cast<SoftCommandBuffer>().unwrap("invalid command buffer type"));
+            ctx.execute(*buf.cast<SoftCommandBuffer>().expect("invalid command buffer type"));
     }
 
     Rc<CommandBuffer> startCommandRecording() override {

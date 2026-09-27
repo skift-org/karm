@@ -12,7 +12,7 @@ test$("promise-one-future") {
         promise.resolve(42);
     }
     auto res = Async::run(*future);
-    expectEq$(res, 42);
+    assertEq$(res, 42);
     return Ok();
 }
 
@@ -32,9 +32,9 @@ test$("promise-multiple-futures") {
     auto res2 = Async::run(*f2);
     auto res3 = Async::run(*f3);
 
-    expectEq$(res1, 42);
-    expectEq$(res2, 42);
-    expectEq$(res3, 42);
+    assertEq$(res1, 42);
+    assertEq$(res2, 42);
+    assertEq$(res3, 42);
 
     return Ok();
 }

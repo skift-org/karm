@@ -121,7 +121,7 @@ export struct Wal {
 
     Yield<Record> iter() {
         // FIXME: Handle errors properly
-        _file.seek(Io::Seek::fromBegin(sizeof(RawHeader))).unwrap("could not seek");
+        _file.seek(Io::Seek::fromBegin(sizeof(RawHeader))).expect("could not seek");
 
         while (true) {
             RawRecord record;
@@ -135,12 +135,12 @@ export struct Wal {
             }
 
             auto key = MutBlob::alloc(record.keylen);
-            _file.read(key.mutBytes()).unwrap("could not read key");
+            _file.read(key.mutBytes()).expect("could not read key");
             auto value = MutBlob::alloc(record.vallen);
-            _file.read(value.mutBytes()).unwrap("could not read value");
+            _file.read(value.mutBytes()).expect("could not read value");
 
             u32le crc;
-            _file.read({reinterpret_cast<u8*>(&crc), sizeof(crc)}).unwrap("could not read crc");
+            _file.read({reinterpret_cast<u8*>(&crc), sizeof(crc)}).expect("could not read crc");
 
             Crypto::Crc32 c;
             c.update(key.bytes());

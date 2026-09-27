@@ -207,7 +207,7 @@ struct [[nodiscard]] Opt {
         requires(Meta::CopyConstructible<T> or Meta::LvalueRef<T>)
     {
         if (other.has())
-            _store.emplace(other.unwrap());
+            _store.emplace(other.expect());
     }
 
     always_inline constexpr Opt(Opt&& other)
@@ -222,7 +222,7 @@ struct [[nodiscard]] Opt {
         requires(Meta::CopyConstructible<T> or Meta::LvalueRef<T>)
     {
         if (other.has())
-            _store.emplace(other.unwrap());
+            _store.emplace(other.expect());
     }
 
     template <typename U>
@@ -263,7 +263,7 @@ struct [[nodiscard]] Opt {
     {
         clear();
         if (other.has())
-            _store.emplace(other.unwrap());
+            _store.emplace(other.expect());
         return *this;
     }
 
@@ -283,7 +283,7 @@ struct [[nodiscard]] Opt {
     {
         clear();
         if (other.has())
-            _store.emplace(other.unwrap());
+            _store.emplace(other.expect());
         return *this;
     }
 
@@ -347,13 +347,13 @@ struct [[nodiscard]] Opt {
         return NONE;
     }
 
-    always_inline constexpr Value& unwrap(char const* msg = "unwrapping none") lifetimebound {
+    always_inline constexpr Value& expect(char const* msg = "expecting some, got none") lifetimebound {
         if (not _store.has()) [[unlikely]]
             panic(msg);
         return _store.unwrap();
     }
 
-    always_inline constexpr auto& unwrap(char const* msg = "unwrapping none") const lifetimebound {
+    always_inline constexpr auto& expect(char const* msg = "expecting some, got none") const lifetimebound {
         if (not _store.has()) [[unlikely]]
             panic(msg);
         return _store.unwrap();
@@ -375,7 +375,7 @@ struct [[nodiscard]] Opt {
     always_inline constexpr Res<T, E> okOr(E error) const {
         if (not has())
             return error;
-        return Ok(unwrap());
+        return Ok(expect());
     }
 
     [[clang::coro_wrapper]]
@@ -399,9 +399,9 @@ struct [[nodiscard]] Opt {
         return visitor(NONE);
     }
 
-    always_inline constexpr auto map(auto f) const -> Opt<decltype(f(unwrap()))> {
+    always_inline constexpr auto map(auto f) const -> Opt<decltype(f(expect()))> {
         if (_store.has())
-            return {Some(f(unwrap()))};
+            return {Some(f(expect()))};
         return {NONE};
     }
 
@@ -415,7 +415,7 @@ struct [[nodiscard]] Opt {
             if (not _store.has()) {
                 return false;
             }
-            unwrap()(std::forward<Args>(args)...);
+            expect()(std::forward<Args>(args)...);
             return true;
         } else {
             // Handle non-void return type
@@ -423,7 +423,7 @@ struct [[nodiscard]] Opt {
                 return OptRet{NONE};
             }
 
-            return OptRet{unwrap()(std::forward<Args>(args)...)};
+            return OptRet{expect()(std::forward<Args>(args)...)};
         }
     }
 
@@ -437,7 +437,7 @@ struct [[nodiscard]] Opt {
             if (not _store.has()) {
                 return false;
             }
-            unwrap()(std::forward<Args>(args)...);
+            expect()(std::forward<Args>(args)...);
             return true;
         } else {
             // Handle non-void return type
@@ -445,7 +445,7 @@ struct [[nodiscard]] Opt {
                 return OptRet{NONE};
             }
 
-            return OptRet{Some(unwrap()(std::forward<Args>(args)...))};
+            return OptRet{Some(expect()(std::forward<Args>(args)...))};
         }
     }
 
@@ -473,7 +473,7 @@ struct [[nodiscard]] Opt {
     always_inline constexpr bool operator==(Opt<U> const& other) const {
         if constexpr (Meta::Equatable<T, U>)
             if (has() and other.has())
-                return unwrap() == other.unwrap();
+                return expect() == other.expect();
         return not has() and not other.has();
     }
 
@@ -481,13 +481,13 @@ struct [[nodiscard]] Opt {
     always_inline constexpr std::partial_ordering operator<=>(Opt<U> const& other) const {
         if constexpr (Meta::Comparable<T, U>)
             if (has() and other.has())
-                return unwrap() <=> other.unwrap();
+                return expect() <=> other.expect();
         return std::partial_ordering::unordered;
     }
 
     void hash(Meta::Derive<Hasher> auto& h) const {
         if (has())
-            Karm::hash(h, unwrap());
+            Karm::hash(h, expect());
         else
             Karm::hash(h, NONE);
     }

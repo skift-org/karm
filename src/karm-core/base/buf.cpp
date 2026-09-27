@@ -384,7 +384,7 @@ struct InlineBuf {
     }
 
     constexpr T const& operator[](usize i) const lifetimebound {
-        return _buf[i].unwrap();
+        return _buf[i].expect();
     }
 
     void ensure(usize len) {
@@ -790,11 +790,11 @@ struct ViewBuf {
     }
 
     constexpr T& operator[](usize i) {
-        return _buf[i].unwrap();
+        return _buf[i].expect();
     }
 
     constexpr T const& operator[](usize i) const {
-        return _buf[i].unwrap();
+        return _buf[i].expect();
     }
 
     void ensure(usize cap) {
@@ -928,14 +928,14 @@ struct ViewBuf {
         if (_buf == nullptr)
             return nullptr;
 
-        return &_buf->unwrap();
+        return &_buf->expect();
     }
 
     T const* buf() const {
         if (_buf == nullptr)
             return nullptr;
 
-        return &_buf->unwrap();
+        return &_buf->expect();
     }
 
     usize len() const {

@@ -15,7 +15,7 @@ test$("template-eval") {
                 self
             )
         );
-        expectEq$(res, expected);
+        assertEq$(res, expected);
         return Ok();
     };
 

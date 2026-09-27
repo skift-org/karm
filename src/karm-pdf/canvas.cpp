@@ -17,7 +17,7 @@ export struct FontManager {
 
     usize getFontId(Rc<Gfx::Fontface> font) {
         if (auto id = mapping.lookup(font->attrs()))
-            return id.unwrap().v0;
+            return id.expect().v0;
 
         auto id = mapping.len() + 1;
         mapping.put(font->attrs(), Tuple{id, font});
@@ -30,7 +30,7 @@ export struct ImageManager {
 
     usize getImageId(Rc<Gfx::Image> image) {
         if (auto entry = mapping.lookup(reinterpret_cast<usize>(image._cell)))
-            return entry.unwrap().v0;
+            return entry.expect().v0;
 
         auto id = mapping.len() + 1;
         mapping.put(reinterpret_cast<usize>(image._cell), Tuple{id, image});
@@ -103,7 +103,7 @@ export struct Canvas : Gfx::Canvas {
     }
 
     void fillStyle(Gfx::Fill fill) override {
-        auto color = fill.unwrap<Gfx::Color>();
+        auto color = fill.expect<Gfx::Color>();
 
         _e.ln("{:.3} {:.3} {:.3} rg", color.red / 255.0, color.green / 255.0, color.blue / 255.0);
 
@@ -312,7 +312,7 @@ export struct Canvas : Gfx::Canvas {
     }
 
     void stroke(Gfx::Stroke style) override {
-        auto color = style.fill.unwrap<Gfx::Color>();
+        auto color = style.fill.expect<Gfx::Color>();
         _e.ln("{:.3} {:.3} {:.3} RG", color.red / 255., color.green / 255., color.blue / 255.);
 
         _e.ln("{:.2} w", style.width);

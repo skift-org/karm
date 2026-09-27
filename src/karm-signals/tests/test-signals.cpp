@@ -10,13 +10,13 @@ namespace Karm::Signals::Tests {
 test$("signal-get-and-set") {
     Signal n{40};
 
-    expectEq$(n.value(), 40);
-    expectEq$(*n, 40);
+    assertEq$(n.value(), 40);
+    assertEq$(*n, 40);
 
     n.update(42);
 
-    expectEq$(n.value(), 42);
-    expectEq$(n.peek(), 42);
+    assertEq$(n.value(), 42);
+    assertEq$(n.peek(), 42);
 
     return Ok();
 }
@@ -27,7 +27,7 @@ test$("signal-handles-share-one-cell") {
 
     b.update(2);
 
-    expectEq$(a.value(), 2);
+    assertEq$(a.value(), 2);
 
     return Ok();
 }
@@ -39,7 +39,7 @@ test$("signal-mutate") {
         return v + 22;
     });
 
-    expectEq$(n.value(), 42);
+    assertEq$(n.value(), 42);
 
     return Ok();
 }
@@ -55,7 +55,7 @@ test$("effect-runs-once-on-creation") {
         (void)n.value();
     };
 
-    expectEq$(runs, 1uz);
+    assertEq$(runs, 1uz);
 
     return Ok();
 }
@@ -70,10 +70,10 @@ test$("effect-reruns-on-write") {
     };
 
     n.update(2);
-    expectEq$(runs, 2uz);
+    assertEq$(runs, 2uz);
 
     n.update(3);
-    expectEq$(runs, 3uz);
+    assertEq$(runs, 3uz);
 
     return Ok();
 }
@@ -88,7 +88,7 @@ test$("effect-ignores-a-write-of-an-equal-value") {
     };
 
     n.update(1);
-    expectEq$(runs, 1uz);
+    assertEq$(runs, 1uz);
 
     return Ok();
 }
@@ -105,7 +105,7 @@ test$("effect-stops") {
     e.stop();
     n.update(2);
 
-    expectEq$(runs, 1uz);
+    assertEq$(runs, 1uz);
 
     return Ok();
 }
@@ -125,10 +125,10 @@ test$("effect-may-write-signals") {
 
     src.update(5);
 
-    expectEq$(mirror.value(), 10);
-    expectEq$(seen.len(), 2uz);
-    expectEq$(seen[0], 0);
-    expectEq$(seen[1], 10);
+    assertEq$(mirror.value(), 10);
+    assertEq$(seen.len(), 2uz);
+    assertEq$(seen[0], 0);
+    assertEq$(seen[1], 10);
 
     return Ok();
 }
@@ -144,7 +144,7 @@ test$("effect-captured-by-value-stays-callable") {
 
     n.update(2);
 
-    expectEq$(runs, 2uz);
+    assertEq$(runs, 2uz);
 
     return Ok();
 }
@@ -163,7 +163,7 @@ test$("effect-destroyed-while-queued-does-not-run") {
         e.take();
     });
 
-    expectEq$(runs, 1uz);
+    assertEq$(runs, 1uz);
 
     return Ok();
 }
@@ -179,16 +179,16 @@ test$("computed-is-lazy") {
         return n.value() * 2;
     }};
 
-    expectEq$(evals, 0uz);
+    assertEq$(evals, 0uz);
 
-    expectEq$(c.value(), 2);
-    expectEq$(evals, 1uz);
+    assertEq$(c.value(), 2);
+    assertEq$(evals, 1uz);
 
     n.update(5);
-    expectEq$(evals, 1uz);
+    assertEq$(evals, 1uz);
 
-    expectEq$(c.value(), 10);
-    expectEq$(evals, 2uz);
+    assertEq$(c.value(), 10);
+    assertEq$(evals, 2uz);
 
     return Ok();
 }
@@ -202,11 +202,11 @@ test$("computed-memoizes") {
         return n.value() * 2;
     }};
 
-    expectEq$(c.value(), 2);
-    expectEq$(c.value(), 2);
-    expectEq$(c.peek(), 2);
+    assertEq$(c.value(), 2);
+    assertEq$(c.value(), 2);
+    assertEq$(c.peek(), 2);
 
-    expectEq$(evals, 1uz);
+    assertEq$(evals, 1uz);
 
     return Ok();
 }
@@ -225,10 +225,10 @@ test$("computed-that-yields-an-equal-value-stops-propagation") {
     };
 
     m.update(6);
-    expectEq$(runs, 1uz);
+    assertEq$(runs, 1uz);
 
     m.update(7);
-    expectEq$(runs, 2uz);
+    assertEq$(runs, 2uz);
 
     return Ok();
 }
@@ -255,9 +255,9 @@ test$("computed-diamond-is-glitch-free") {
 
     n.update(2);
 
-    expectEq$(seen.len(), 2uz);
-    expectEq$(seen[0], 12);
-    expectEq$(seen[1], 23);
+    assertEq$(seen.len(), 2uz);
+    assertEq$(seen[0], 12);
+    assertEq$(seen[1], 23);
 
     return Ok();
 }
@@ -277,11 +277,11 @@ test$("computed-deep-chain") {
         }});
     }
 
-    expectEq$(chain[chain.len() - 1].peek(), 1001);
+    assertEq$(chain[chain.len() - 1].peek(), 1001);
 
     root.update(100);
 
-    expectEq$(chain[chain.len() - 1].peek(), 1100);
+    assertEq$(chain[chain.len() - 1].peek(), 1100);
 
     return Ok();
 }
@@ -299,7 +299,7 @@ test$("peek-does-not-subscribe") {
 
     n.update(2);
 
-    expectEq$(runs, 1uz);
+    assertEq$(runs, 1uz);
 
     return Ok();
 }
@@ -318,10 +318,10 @@ test$("untrack-does-not-subscribe") {
     };
 
     hidden.update(2);
-    expectEq$(runs, 1uz);
+    assertEq$(runs, 1uz);
 
     shown.update(2);
-    expectEq$(runs, 2uz);
+    assertEq$(runs, 2uz);
 
     return Ok();
 }
@@ -342,11 +342,11 @@ test$("dependencies-are-rediscovered-on-every-run") {
     left.update(3);
     right.update(300);
 
-    expectEq$(seen.len(), 4uz);
-    expectEq$(seen[0], 1);
-    expectEq$(seen[1], 2);
-    expectEq$(seen[2], 200);
-    expectEq$(seen[3], 300);
+    assertEq$(seen.len(), 4uz);
+    assertEq$(seen[0], 1);
+    assertEq$(seen[1], 2);
+    assertEq$(seen[2], 200);
+    assertEq$(seen[3], 300);
 
     return Ok();
 }
@@ -369,7 +369,7 @@ test$("batch-coalesces-writes") {
         b.update(20);
     });
 
-    expectEq$(runs, 2uz);
+    assertEq$(runs, 2uz);
 
     return Ok();
 }
@@ -391,10 +391,10 @@ test$("batch-defers-effects-but-not-reads") {
         n.update(3);
     });
 
-    expectEq$(readInside, 2);
-    expectEq$(seenInside, 1uz);
-    expectEq$(seen.len(), 2uz);
-    expectEq$(seen[1], 3);
+    assertEq$(readInside, 2);
+    assertEq$(seenInside, 1uz);
+    assertEq$(seen.len(), 2uz);
+    assertEq$(seen[1], 3);
 
     return Ok();
 }

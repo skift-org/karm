@@ -62,8 +62,8 @@ static Res<Ref::Url> _resolveConfigDir() {
 
 Prefs& globalPrefs() {
     if (not _globalPrefs) {
-        auto url = _resolveConfigDir().unwrap("could not resolve preferences directory");
-        Sys::Dir::openOrCreate(url).unwrap("could not create preferences directory");
+        auto url = _resolveConfigDir().expect("could not resolve preferences directory");
+        Sys::Dir::openOrCreate(url).expect("could not create preferences directory");
         _globalPrefs = Some(XdgConfigPrefs{url / "configs.json"});
     }
     return *_globalPrefs;

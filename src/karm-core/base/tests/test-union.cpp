@@ -7,15 +7,15 @@ namespace Karm::Base::Tests {
 test$("union-niche") {
     Opt<Union<float, int, double>> test;
 
-    expectEq$(sizeof(test), sizeof(Union<float, int, double>));
-    expectEq$(test.has(), false);
-    expectEq$(test, NONE);
+    assertEq$(sizeof(test), sizeof(Union<float, int, double>));
+    assertEq$(test.has(), false);
+    assertEq$(test, NONE);
     test = Some(2);
-    expectEq$(test.unwrap(), 2);
-    expectEq$(test.take(), 2);
-    expectEq$(test, NONE);
+    assertEq$(test.expect(), 2);
+    assertEq$(test.take(), 2);
+    assertEq$(test, NONE);
     test = Some(1.0f);
-    expectEq$(test.has(), true);
+    assertEq$(test.has(), true);
 
     return Ok();
 }

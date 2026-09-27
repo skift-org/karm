@@ -39,7 +39,7 @@ export struct Driver {
             Sys::err(
                 "Running {:#}… ",
                 Io::toNoCase(test->name)
-                    .unwrap()
+                    .expect()
             );
 
             auto result = co_await test->runAsync(*this, ct);

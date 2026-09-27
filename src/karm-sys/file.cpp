@@ -89,7 +89,7 @@ export struct File :
     Res<Ref::Uti> sniff() {
         auto old = try$(Io::tell(*this));
         Defer _ = [&] {
-            seek(Io::Seek::fromBegin(old)).unwrap();
+            seek(Io::Seek::fromBegin(old)).expect();
         };
         try$(seek(Io::Seek::fromBegin(0)));
         auto mime = try$(Ref::sniffReader(*this));

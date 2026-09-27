@@ -23,7 +23,7 @@ test$("fft-matches-naive-dft") {
     plan.forward(mutSub(got));
 
     for (usize i = 0; i < n; i++)
-        expect$((got[i] - expected[i]).magnitude() < 1e-3f);
+        assert$((got[i] - expected[i]).magnitude() < 1e-3f);
 
     return Ok();
 }
@@ -42,7 +42,7 @@ test$("fft-round-trip") {
     plan.inverse(mutSub(got));
 
     for (usize i = 0; i < n; i++)
-        expect$((got[i] - input[i]).magnitude() < 1e-4f);
+        assert$((got[i] - input[i]).magnitude() < 1e-4f);
 
     return Ok();
 }
@@ -64,10 +64,10 @@ test$("fft-tone-lands-in-one-bin") {
         if (input[i].magnitude() > input[peak].magnitude())
             peak = i;
 
-    expectEq$(peak, tone);
+    assertEq$(peak, tone);
 
     // Half of the energy goes to the mirror bin, thus the peak is 0.5.
-    expect$(Math::abs(input[peak].magnitude() / f32(n) - 0.5f) < 1e-3f);
+    assert$(Math::abs(input[peak].magnitude() / f32(n) - 0.5f) < 1e-3f);
 
     return Ok();
 }

@@ -6,24 +6,24 @@ namespace Karm::Icc::Tests {
 
 test$("karm-icc-srgb") {
     auto srgb = ColorProfile::srgb();
-    expectEq$(srgb->colorSpace(), ColorSpace::RGB);
-    expectEq$(srgb->colorSpace().components(), 3ul);
-    expectEq$(srgb->isDeviceDependent(), false);
+    assertEq$(srgb->colorSpace(), ColorSpace::RGB);
+    assertEq$(srgb->colorSpace().components(), 3ul);
+    assertEq$(srgb->isDeviceDependent(), false);
     return Ok();
 }
 
 test$("karm-icc-sgray") {
     auto sgray = ColorProfile::sgray();
-    expectEq$(sgray->colorSpace(), ColorSpace::GRAY);
-    expectEq$(sgray->colorSpace().components(), 1ul);
-    expectEq$(sgray->isDeviceDependent(), false);
+    assertEq$(sgray->colorSpace(), ColorSpace::GRAY);
+    assertEq$(sgray->colorSpace().components(), 1ul);
+    assertEq$(sgray->isDeviceDependent(), false);
     return Ok();
 }
 
 test$("karm-icc-device-dependent") {
-    expectEq$(ColorProfile::deviceRgb()->isDeviceDependent(), true);
-    expectEq$(ColorProfile::deviceCmyk()->isDeviceDependent(), true);
-    expectEq$(ColorProfile::deviceGray()->isDeviceDependent(), true);
+    assertEq$(ColorProfile::deviceRgb()->isDeviceDependent(), true);
+    assertEq$(ColorProfile::deviceCmyk()->isDeviceDependent(), true);
+    assertEq$(ColorProfile::deviceGray()->isDeviceDependent(), true);
     return Ok();
 }
 

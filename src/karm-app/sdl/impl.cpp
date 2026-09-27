@@ -196,7 +196,7 @@ struct SdlApplication : Application {
     }
 
     void detachWindow(SDL_WindowID id) {
-        _windows.remove(id).unwrap("detaching invalid window id");
+        _windows.remove(id).expect("detaching invalid window id");
     }
 
     void _translateEvent(Rc<Handler> handler, SDL_Event const& sdlEvent) {

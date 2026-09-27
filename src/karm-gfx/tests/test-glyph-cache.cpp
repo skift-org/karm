@@ -61,8 +61,8 @@ test$("karm-gfx-glyph-cache-matches-direct") {
         );
     });
 
-    expect$(_anyInk(cached->pixels()));
-    expectEq$(_maxChannelDiff(cached->pixels(), direct->pixels()), 0);
+    assert$(_anyInk(cached->pixels()));
+    assertEq$(_maxChannelDiff(cached->pixels(), direct->pixels()), 0);
 
     return Ok();
 }
@@ -81,8 +81,8 @@ test$("karm-gfx-glyph-cache-matches-direct-scaled") {
         );
     });
 
-    expect$(_anyInk(cached->pixels()));
-    expectEq$(_maxChannelDiff(cached->pixels(), direct->pixels()), 0);
+    assert$(_anyInk(cached->pixels()));
+    assertEq$(_maxChannelDiff(cached->pixels(), direct->pixels()), 0);
 
     return Ok();
 }
@@ -93,8 +93,8 @@ test$("karm-gfx-glyph-cache-replay-deterministic") {
     auto second = _renderText("hello", {4.25, 20}, [](CpuCanvas&) {
     });
 
-    expect$(_anyInk(first->pixels()));
-    expectEq$(_maxChannelDiff(first->pixels(), second->pixels()), 0);
+    assert$(_anyInk(first->pixels()));
+    assertEq$(_maxChannelDiff(first->pixels(), second->pixels()), 0);
 
     return Ok();
 }
@@ -107,15 +107,15 @@ test$("karm-gfx-glyph-cache-respects-clip") {
         g.clip(Math::Recti{0, 0, 10, 32});
     });
 
-    expect$(_anyInk(clipped->pixels()));
+    assert$(_anyInk(clipped->pixels()));
 
     for (isize y = 0; y < 32; y++) {
         for (isize x = 0; x < 64; x++) {
             auto c = clipped->pixels().loadUnsafe({x, y});
             if (x < 10)
-                expectEq$(c, unclipped->pixels().loadUnsafe({x, y}));
+                assertEq$(c, unclipped->pixels().loadUnsafe({x, y}));
             else
-                expectEq$(c, Gfx::BLACK);
+                assertEq$(c, Gfx::BLACK);
         }
     }
 

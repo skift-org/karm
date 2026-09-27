@@ -17,7 +17,7 @@ struct {
 test$("fmt-align") {
     for (auto [a, width, input, expected] : CASES) {
         auto result = format("{}", aligned(input, a, width));
-        expectEq$(result, expected);
+        assertEq$(result, expected);
     }
 
     return Ok();

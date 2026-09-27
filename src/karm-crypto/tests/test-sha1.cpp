@@ -32,9 +32,9 @@ test$("crypto-sha1") {
     auto testCase = [&](Str data, Array<u8, SHA1_BYTES> const& expected) -> Res<> {
         auto sha = sha1(bytes(data));
 
-        expectEq$(sha.len(), expected.len());
+        assertEq$(sha.len(), expected.len());
         for (usize idx = 0; idx < sha.len(); idx++) {
-            expectEq$(sha[idx], expected[idx]);
+            assertEq$(sha[idx], expected[idx]);
         }
         return Ok();
     };
@@ -49,9 +49,9 @@ test$("crypto-sha1") {
         nist3[idx] = 'a';
     }
     auto sha = sha1(nist3.bytes());
-    expectEq$(sha.len(), EXPECTED_NIST_3.len());
+    assertEq$(sha.len(), EXPECTED_NIST_3.len());
     for (usize idx = 0; idx < sha.len(); idx++) {
-        expectEq$(sha[idx], EXPECTED_NIST_3[idx]);
+        assertEq$(sha[idx], EXPECTED_NIST_3[idx]);
     }
 
     return Ok();

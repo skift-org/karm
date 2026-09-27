@@ -19,25 +19,25 @@ test$("karm-cli-args-tokenizer") {
     Vec<Token> tokens;
     tokenize(args, tokens);
 
-    expectEq$(tokens.len(), 6uz);
+    assertEq$(tokens.len(), 6uz);
 
-    expectEq$(tokens[0].kind, Token::OPERAND);
-    expectEq$(tokens[0].value, "ls"s);
+    assertEq$(tokens[0].kind, Token::OPERAND);
+    assertEq$(tokens[0].value, "ls"s);
 
-    expectEq$(tokens[1].kind, Token::FLAG);
-    expectEq$(tokens[1].flag, (Rune)'h');
+    assertEq$(tokens[1].kind, Token::FLAG);
+    assertEq$(tokens[1].flag, (Rune)'h');
 
-    expectEq$(tokens[2].kind, Token::OPTION);
-    expectEq$(tokens[2].value, "help"s);
+    assertEq$(tokens[2].kind, Token::OPTION);
+    assertEq$(tokens[2].value, "help"s);
 
-    expectEq$(tokens[3].kind, Token::FLAG);
-    expectEq$(tokens[3].flag, (Rune)'l');
+    assertEq$(tokens[3].kind, Token::FLAG);
+    assertEq$(tokens[3].flag, (Rune)'l');
 
-    expectEq$(tokens[4].kind, Token::FLAG);
-    expectEq$(tokens[4].flag, (Rune)'a');
+    assertEq$(tokens[4].kind, Token::FLAG);
+    assertEq$(tokens[4].flag, (Rune)'a');
 
-    expectEq$(tokens[5].kind, Token::OPERAND);
-    expectEq$(tokens[5].value, "/usr/bin"s);
+    assertEq$(tokens[5].kind, Token::OPERAND);
+    assertEq$(tokens[5].value, "/usr/bin"s);
 
     return Ok();
 }

@@ -398,8 +398,8 @@ export struct Prose : Meta::Pinned {
         Vec<Rc<Span const>> chain;
         Opt<Rc<Span const>> cur = Some(span);
         while (cur) {
-            chain.pushBack(cur.unwrap());
-            cur = cur.unwrap()->parent;
+            chain.pushBack(cur.expect());
+            cur = cur.expect()->parent;
         }
         reverse(mutSub(chain));
         return chain;
@@ -407,7 +407,7 @@ export struct Prose : Meta::Pinned {
 
     static Rc<Span> _findRoot(Rc<Span const> span) {
         while (span->parent)
-            span = span->parent.unwrap();
+            span = span->parent.expect();
         return span;
     }
 
@@ -561,7 +561,7 @@ export struct Prose : Meta::Pinned {
         if (_currentSpan->style.marginRight != 0_au)
             appendSpacer(_currentSpan->style.marginRight);
 
-        auto newCurr = _currentSpan->parent.unwrap();
+        auto newCurr = _currentSpan->parent.expect();
         _currentSpan = newCurr;
     }
 

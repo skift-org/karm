@@ -51,7 +51,7 @@ struct State : Meta::Pinned {
         if (not selectedName.value())
             return NONE;
         return iter(filtered.value()) | FindFirst([&](auto& i) {
-                   return i.name == selectedName.value().unwrap();
+                   return i.name == selectedName.value().expect();
                });
     };
 

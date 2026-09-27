@@ -12,8 +12,8 @@ test$("karm-queue-enqueue-dequeue") {
     auto res1 = Async::run(q.dequeueAsync(CancellationToken::uninterruptible()));
     auto res2 = Async::run(q.dequeueAsync(CancellationToken::uninterruptible()));
 
-    expectEq$(res1, 42);
-    expectEq$(res2, 69);
+    assertEq$(res1, 42);
+    assertEq$(res2, 69);
 
     return Ok();
 }
@@ -26,25 +26,25 @@ test$("karm-queue-dequeue-enqueue") {
     bool orderOk = false;
 
     Async::detach(q.dequeueAsync(CancellationToken::uninterruptible()), [&](Res<isize> res) {
-        res1 = res.unwrap();
+        res1 = res.expect();
     });
 
     Async::detach(q.dequeueAsync(CancellationToken::uninterruptible()), [&](Res<isize> res) {
         if (res1 == 42)
             orderOk = true;
-        res2 = res.unwrap();
+        res2 = res.expect();
     });
 
     q.enqueue(42);
     q.enqueue(69);
     q.enqueue(96);
 
-    expect$(orderOk);
-    expectEq$(res1, 42);
-    expectEq$(res2, 69);
+    assert$(orderOk);
+    assertEq$(res1, 42);
+    assertEq$(res2, 69);
 
-    expect$(not q.empty());
-    expectEq$(q.tryDequeue(), 96);
+    assert$(not q.empty());
+    assertEq$(q.tryDequeue(), 96);
 
     return Ok();
 }

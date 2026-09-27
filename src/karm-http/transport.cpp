@@ -253,7 +253,7 @@ struct HttpTransport : Transport {
         auto response = co_trya$(Response::readAsync(*conn, ct));
 
         if (auto contentLength = response.header.contentLength()) {
-            response.body = Some(makeRc<ContentBody>(conn, contentLength.unwrap()));
+            response.body = Some(makeRc<ContentBody>(conn, contentLength.expect()));
         } else if (auto transferEncoding = response.header.lookup(Header::TRANSFER_ENCODING)) {
             // For now we only support plain "chunked".
             if (*transferEncoding == "chunked") {
@@ -325,7 +325,7 @@ struct PipeTransport : Transport {
     Async::Task<Rc<Response>> _recvResponse(Async::CancellationToken ct) {
         auto response = co_trya$(Response::readAsync(Sys::in(), ct));
         if (auto contentLength = response.header.contentLength()) {
-            response.body = Some(makeRc<PipeBody>(contentLength.unwrap()));
+            response.body = Some(makeRc<PipeBody>(contentLength.expect()));
         } else {
             response.body = Some(makeRc<PipeBody>());
         }
@@ -447,7 +447,7 @@ struct MultiplexTransport : Transport {
         for (auto& transport : _transports) {
             auto res = co_await transport->doAsync(request, ct);
             if (res)
-                co_return res.unwrap();
+                co_return res.expect();
 
             if (res.none() != Error::UNSUPPORTED)
                 co_return res.none();

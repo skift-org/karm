@@ -117,7 +117,7 @@ export String base32Encode(Bytes in, Base32Props props = {}) {
     Io::BufReader br = in;
     Io::StringWriter sw{base32EncodedLen(in.len())};
     Io::Emit e{sw};
-    base32Encode(br, e, props).unwrap();
+    base32Encode(br, e, props).expect();
     return sw.take();
 }
 

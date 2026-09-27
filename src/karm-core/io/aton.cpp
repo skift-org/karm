@@ -51,7 +51,7 @@ Opt<usize> atou(_SScan<E>& s, AtoxOptions options = {}) {
         if (not maybeDigit)
             break;
         isNum = true;
-        result = result * options.base + maybeDigit.unwrap();
+        result = result * options.base + maybeDigit.expect();
     }
 
     if (not isNum)
@@ -76,7 +76,7 @@ Opt<isize> atoi(_SScan<E>& s, AtoxOptions options = {}) {
         if (not maybeDigit)
             break;
         isNum = true;
-        result = result * options.base + maybeDigit.unwrap();
+        result = result * options.base + maybeDigit.expect();
     }
 
     if (not isNum)
@@ -115,7 +115,7 @@ Opt<f64> atof(_SScan<E>& s, AtoxOptions const& options = {}) {
             if (not maybeDigit)
                 break;
             hasFpart = true;
-            fpart += maybeDigit.unwrap() * multiplier;
+            fpart += maybeDigit.expect() * multiplier;
             multiplier /= options.base;
         }
     }
@@ -123,7 +123,7 @@ Opt<f64> atof(_SScan<E>& s, AtoxOptions const& options = {}) {
     if (options.allowExp and (s.skip('e') or s.skip('E'))) {
         auto maybeExp = atoi(s, options);
         if (maybeExp)
-            exp = maybeExp.unwrap();
+            exp = maybeExp.expect();
     }
 
     if (not ipart and not hasFpart)

@@ -40,7 +40,7 @@ static void _callback(void* userdata, SDL_AudioStream* sdlStream, int additional
     SdlDevice* device = static_cast<SdlDevice*>(userdata);
     if (not device->_stream)
         return;
-    auto stream = device->_stream.unwrap();
+    auto stream = device->_stream.expect();
 
     Frames input;
     input.format = device->_options.input;

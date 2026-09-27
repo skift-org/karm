@@ -13,9 +13,9 @@ test$("ring-avoid-pop-back-underflow") {
     ring.pushBack(3);
     ring.pushBack(4);
 
-    expectEq$(ring._head, 0u);
+    assertEq$(ring._head, 0u);
     ring.popBack();
-    expectEq$(ring._head, 4u);
+    assertEq$(ring._head, 4u);
 
     return Ok();
 }

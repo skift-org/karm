@@ -13,13 +13,13 @@ enum struct Option : u8 {
 test$("flags-empty") {
     Flags<Option> flags;
 
-    expectEq$(flags.empty(), true);
-    expectEq$(flags.any(), false);
-    expectEq$(flags.raw(), 0);
+    assertEq$(flags.empty(), true);
+    assertEq$(flags.any(), false);
+    assertEq$(flags.raw(), 0);
 
-    expectEq$(flags.has(Option::FOO), false);
-    expectEq$(flags.has(Option::BAR), false);
-    expectEq$(flags.has(Option::BAZ), false);
+    assertEq$(flags.has(Option::FOO), false);
+    assertEq$(flags.has(Option::BAR), false);
+    assertEq$(flags.has(Option::BAZ), false);
 
     return Ok();
 }
@@ -27,13 +27,13 @@ test$("flags-empty") {
 test$("flags-all") {
     Flags<Option> flags{Option::FOO, Option::BAR, Option::BAZ};
 
-    expectEq$(flags.empty(), false);
-    expectEq$(flags.any(), true);
-    expectEq$(flags.raw(), 0b111);
+    assertEq$(flags.empty(), false);
+    assertEq$(flags.any(), true);
+    assertEq$(flags.raw(), 0b111);
 
-    expectEq$(flags.has(Option::FOO), true);
-    expectEq$(flags.has(Option::BAR), true);
-    expectEq$(flags.has(Option::BAZ), true);
+    assertEq$(flags.has(Option::FOO), true);
+    assertEq$(flags.has(Option::BAR), true);
+    assertEq$(flags.has(Option::BAZ), true);
 
     return Ok();
 }
@@ -43,13 +43,13 @@ test$("flags-union") {
     Flags<Option> b = {Option::BAZ};
     Flags<Option> c = a | b;
 
-    expectEq$(c.empty(), false);
-    expectEq$(c.any(), true);
-    expectEq$(c.raw(), 0b101);
+    assertEq$(c.empty(), false);
+    assertEq$(c.any(), true);
+    assertEq$(c.raw(), 0b101);
 
-    expectEq$(c.has(Option::FOO), true);
-    expectEq$(c.has(Option::BAR), false);
-    expectEq$(c.has(Option::BAZ), true);
+    assertEq$(c.has(Option::FOO), true);
+    assertEq$(c.has(Option::BAR), false);
+    assertEq$(c.has(Option::BAZ), true);
 
     return Ok();
 }
@@ -57,15 +57,15 @@ test$("flags-union") {
 test$("flags-clear") {
     Flags<Option> flags{Option::FOO, Option::BAR, Option::BAZ};
 
-    expectEq$(flags.empty(), false);
-    expectEq$(flags.any(), true);
-    expectEq$(flags.raw(), 0b111);
+    assertEq$(flags.empty(), false);
+    assertEq$(flags.any(), true);
+    assertEq$(flags.raw(), 0b111);
 
     flags.clear();
 
-    expectEq$(flags.empty(), true);
-    expectEq$(flags.any(), false);
-    expectEq$(flags.raw(), 0);
+    assertEq$(flags.empty(), true);
+    assertEq$(flags.any(), false);
+    assertEq$(flags.raw(), 0);
 
     return Ok();
 }

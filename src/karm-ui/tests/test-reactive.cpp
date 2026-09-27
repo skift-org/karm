@@ -16,13 +16,13 @@ test$("reactive-builds-lazily") {
         return empty();
     });
 
-    expectEq$(builds, 0uz);
+    assertEq$(builds, 0uz);
 
     node->layout({});
-    expectEq$(builds, 1uz);
+    assertEq$(builds, 1uz);
 
     node->layout({});
-    expectEq$(builds, 1uz);
+    assertEq$(builds, 1uz);
 
     return Ok();
 }
@@ -38,11 +38,11 @@ test$("reactive-rebuilds-when-a-signal-it-read-changes") {
     });
 
     node->layout({});
-    expectEq$(builds, 1uz);
+    assertEq$(builds, 1uz);
 
     n.update(1);
     node->layout({});
-    expectEq$(builds, 2uz);
+    assertEq$(builds, 2uz);
 
     return Ok();
 }
@@ -58,13 +58,13 @@ test$("reactive-does-not-rebuild-during-the-write") {
     });
 
     node->layout({});
-    expectEq$(builds, 1uz);
+    assertEq$(builds, 1uz);
 
     n.update(1);
-    expectEq$(builds, 1uz);
+    assertEq$(builds, 1uz);
 
     node->layout({});
-    expectEq$(builds, 2uz);
+    assertEq$(builds, 2uz);
 
     return Ok();
 }
@@ -88,7 +88,7 @@ test$("reactive-coalesces-several-writes-into-one-rebuild") {
     a.update(3);
 
     node->layout({});
-    expectEq$(builds, 2uz);
+    assertEq$(builds, 2uz);
 
     return Ok();
 }
@@ -108,11 +108,11 @@ test$("reactive-ignores-signals-it-did-not-read") {
 
     unread.update(1);
     node->layout({});
-    expectEq$(builds, 1uz);
+    assertEq$(builds, 1uz);
 
     read.update(1);
     node->layout({});
-    expectEq$(builds, 2uz);
+    assertEq$(builds, 2uz);
 
     return Ok();
 }
@@ -130,27 +130,27 @@ test$("reactive-resubscribes-on-every-build") {
     });
 
     node->layout({});
-    expectEq$(builds, 1uz);
+    assertEq$(builds, 1uz);
 
     right.update(200);
     node->layout({});
-    expectEq$(builds, 1uz);
+    assertEq$(builds, 1uz);
 
     left.update(2);
     node->layout({});
-    expectEq$(builds, 2uz);
+    assertEq$(builds, 2uz);
 
     useLeft.update(false);
     node->layout({});
-    expectEq$(builds, 3uz);
+    assertEq$(builds, 3uz);
 
     left.update(3);
     node->layout({});
-    expectEq$(builds, 3uz);
+    assertEq$(builds, 3uz);
 
     right.update(300);
     node->layout({});
-    expectEq$(builds, 4uz);
+    assertEq$(builds, 4uz);
 
     return Ok();
 }
@@ -170,15 +170,15 @@ test$("reactive-sees-a-computed-through-the-graph") {
     });
 
     node->layout({});
-    expectEq$(builds, 1uz);
+    assertEq$(builds, 1uz);
 
     n.update(6);
     node->layout({});
-    expectEq$(builds, 1uz);
+    assertEq$(builds, 1uz);
 
     n.update(7);
     node->layout({});
-    expectEq$(builds, 2uz);
+    assertEq$(builds, 2uz);
 
     return Ok();
 }
@@ -198,7 +198,7 @@ test$("reactive-unsubscribes-when-destroyed") {
 
     n.update(1);
 
-    expectEq$(builds, 1uz);
+    assertEq$(builds, 1uz);
 
     return Ok();
 }
@@ -212,12 +212,12 @@ test$("reactive-keeps-node-at-offset-zero") {
     });
 
     auto casted = node.cast<Reactive>();
-    expect$(casted.has());
+    assert$(casted.has());
 
-    auto& view = *casted.unwrap();
+    auto& view = *casted.expect();
 
-    expectEq$((void*)static_cast<Node*>(&view), (void*)&view);
-    expectNe$((void*)static_cast<Signals::Node*>(&view), (void*)&view);
+    assertEq$((void*)static_cast<Node*>(&view), (void*)&view);
+    assertNe$((void*)static_cast<Signals::Node*>(&view), (void*)&view);
 
     return Ok();
 }
@@ -242,13 +242,13 @@ test$("nested-reactive-tracks-each-level-separately") {
     });
 
     node->layout({});
-    expectEq$(outerBuilds, 1uz);
-    expectEq$(innerBuilds, 1uz);
+    assertEq$(outerBuilds, 1uz);
+    assertEq$(innerBuilds, 1uz);
 
     innerSig.update(1);
     node->layout({});
-    expectEq$(outerBuilds, 1uz);
-    expectEq$(innerBuilds, 2uz);
+    assertEq$(outerBuilds, 1uz);
+    assertEq$(innerBuilds, 2uz);
 
     return Ok();
 }
@@ -275,8 +275,8 @@ test$("outer-rebuild-drags-the-inner-with-it") {
     outerSig.update(1);
     node->layout({});
 
-    expectEq$(outerBuilds, 2uz);
-    expectEq$(innerBuilds, 2uz);
+    assertEq$(outerBuilds, 2uz);
+    assertEq$(innerBuilds, 2uz);
 
     return Ok();
 }
@@ -303,13 +303,13 @@ test$("nested-reactive-built-during-the-outer-build-still-tracks-separately") {
     });
 
     node->layout({});
-    expectEq$(outerBuilds, 1uz);
-    expectEq$(innerBuilds, 1uz);
+    assertEq$(outerBuilds, 1uz);
+    assertEq$(innerBuilds, 1uz);
 
     innerSig.update(1);
     node->layout({});
-    expectEq$(outerBuilds, 1uz);
-    expectEq$(innerBuilds, 2uz);
+    assertEq$(outerBuilds, 1uz);
+    assertEq$(innerBuilds, 2uz);
 
     return Ok();
 }
@@ -336,17 +336,17 @@ test$("a-reconciled-away-child-takes-its-subscriptions-with-it") {
     });
 
     node->layout({});
-    expectEq$(innerBuilds, 1uz);
+    assertEq$(innerBuilds, 1uz);
 
     outerSig.update(1);
     node->layout({});
-    expectEq$(outerBuilds, 2uz);
-    expectEq$(innerBuilds, 3uz);
+    assertEq$(outerBuilds, 2uz);
+    assertEq$(innerBuilds, 3uz);
 
     innerSig.update(1);
     node->layout({});
-    expectEq$(outerBuilds, 2uz);
-    expectEq$(innerBuilds, 4uz);
+    assertEq$(outerBuilds, 2uz);
+    assertEq$(innerBuilds, 4uz);
 
     return Ok();
 }

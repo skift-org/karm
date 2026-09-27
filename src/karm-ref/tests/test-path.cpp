@@ -12,100 +12,100 @@ test$("karm-ref-path-up-down") {
     auto path = "/a/b/c/d/e/f"_path;
 
     auto up = path.parent();
-    expectEq$(up.str(), "/a/b/c/d/e"s);
+    assertEq$(up.str(), "/a/b/c/d/e"s);
 
     auto up1 = path.parent(1);
-    expectEq$(up1.str(), "/a/b/c/d/e"s);
+    assertEq$(up1.str(), "/a/b/c/d/e"s);
 
     auto up2 = path.parent(2);
-    expectEq$(up2.str(), "/a/b/c/d"s);
+    assertEq$(up2.str(), "/a/b/c/d"s);
 
     auto up3 = path.parent(3);
-    expectEq$(up3.str(), "/a/b/c"s);
+    assertEq$(up3.str(), "/a/b/c"s);
 
     auto up4 = path.parent(4);
-    expectEq$(up4.str(), "/a/b"s);
+    assertEq$(up4.str(), "/a/b"s);
 
     auto up5 = path.parent(5);
-    expectEq$(up5.str(), "/a"s);
+    assertEq$(up5.str(), "/a"s);
 
     auto up6 = path.parent(6);
-    expectEq$(up6.str(), "/"s);
+    assertEq$(up6.str(), "/"s);
 
     return Ok();
 }
 
 test$("karm-ref-path-parent-of") {
-    expect$(""_path.parentOf(""_path));
-    expect$("/a"_path.parentOf("/a"_path));
-    expect$("/a"_path.parentOf("/a/b"_path));
-    expect$("/a/"_path.parentOf("/a/b"_path));
-    expect$("/a"_path.parentOf("/a/b/c"_path));
-    expect$("/a/b"_path.parentOf("/a/b/c"_path));
-    expectNot$("/a/c"_path.parentOf("/a/b/c"_path));
-    expect$("."_path.parentOf("."_path));
+    assert$(""_path.parentOf(""_path));
+    assert$("/a"_path.parentOf("/a"_path));
+    assert$("/a"_path.parentOf("/a/b"_path));
+    assert$("/a/"_path.parentOf("/a/b"_path));
+    assert$("/a"_path.parentOf("/a/b/c"_path));
+    assert$("/a/b"_path.parentOf("/a/b/c"_path));
+    assertNot$("/a/c"_path.parentOf("/a/b/c"_path));
+    assert$("."_path.parentOf("."_path));
 
     return Ok();
 }
 
 test$("karm-ref-path-str") {
-    expectEq$(""_path.str(), "."s);
-    expectEq$("/a/b/c"_path.str(), "/a/b/c"s);
-    expectEq$("a/b/c"_path.str(), "a/b/c"s);
+    assertEq$(""_path.str(), "."s);
+    assertEq$("/a/b/c"_path.str(), "/a/b/c"s);
+    assertEq$("a/b/c"_path.str(), "a/b/c"s);
 
-    expectEq$("a/b/c/"_path.str(), "a/b/c/"s);
-    expectEq$("a/b/c/."_path.str(), "a/b/c/."s);
-    expectEq$("a/b/c/.."_path.str(), "a/b/c/.."s);
-    expectEq$("a/b/c/../"_path.str(), "a/b/c/../"s);
+    assertEq$("a/b/c/"_path.str(), "a/b/c/"s);
+    assertEq$("a/b/c/."_path.str(), "a/b/c/."s);
+    assertEq$("a/b/c/.."_path.str(), "a/b/c/.."s);
+    assertEq$("a/b/c/../"_path.str(), "a/b/c/../"s);
 
     return Ok();
 }
 
 test$("karm-ref-path-basename-stem-suffix") {
     auto path = "file.txt"_path;
-    expectEq$(path.basename(), "file.txt"s);
-    expectEq$(path.stem(), "file"s);
-    expectEq$(path.suffix(), "txt"s);
+    assertEq$(path.basename(), "file.txt"s);
+    assertEq$(path.stem(), "file"s);
+    assertEq$(path.suffix(), "txt"s);
 
     auto path2 = "file"_path;
-    expectEq$(path2.basename(), "file"s);
-    expectEq$(path2.stem(), "file"s);
-    expectEq$(path2.suffix(), ""s);
+    assertEq$(path2.basename(), "file"s);
+    assertEq$(path2.stem(), "file"s);
+    assertEq$(path2.suffix(), ""s);
 
     auto path3 = "file."_path;
-    expectEq$(path3.basename(), "file."s);
-    expectEq$(path3.stem(), "file"s);
-    expectEq$(path3.suffix(), ""s);
+    assertEq$(path3.basename(), "file."s);
+    assertEq$(path3.stem(), "file"s);
+    assertEq$(path3.suffix(), ""s);
 
     auto path4 = "file.name.txt"_path;
-    expectEq$(path4.basename(), "file.name.txt"s);
-    expectEq$(path4.stem(), "file.name"s);
-    expectEq$(path4.suffix(), "txt"s);
+    assertEq$(path4.basename(), "file.name.txt"s);
+    assertEq$(path4.stem(), "file.name"s);
+    assertEq$(path4.suffix(), "txt"s);
 
     auto path5 = ""_path;
-    expectEq$(path5.basename(), ""s);
-    expectEq$(path5.stem(), ""s);
-    expectEq$(path5.suffix(), ""s);
+    assertEq$(path5.basename(), ""s);
+    assertEq$(path5.stem(), ""s);
+    assertEq$(path5.suffix(), ""s);
 
     auto path6 = "/"_path;
-    expectEq$(path6.basename(), ""s);
-    expectEq$(path6.stem(), ""s);
-    expectEq$(path6.suffix(), ""s);
+    assertEq$(path6.basename(), ""s);
+    assertEq$(path6.stem(), ""s);
+    assertEq$(path6.suffix(), ""s);
 
     auto path7 = "/dir/file"_path;
-    expectEq$(path7.basename(), "file"s);
-    expectEq$(path7.stem(), "file"s);
-    expectEq$(path7.suffix(), ""s);
+    assertEq$(path7.basename(), "file"s);
+    assertEq$(path7.stem(), "file"s);
+    assertEq$(path7.suffix(), ""s);
 
     auto path8 = "/dir/file.txt"_path;
-    expectEq$(path8.basename(), "file.txt"s);
-    expectEq$(path8.stem(), "file"s);
-    expectEq$(path8.suffix(), "txt"s);
+    assertEq$(path8.basename(), "file.txt"s);
+    assertEq$(path8.stem(), "file"s);
+    assertEq$(path8.suffix(), "txt"s);
 
     auto path9 = "/dir/subdir/"_path;
-    expectEq$(path9.basename(), ""s);
-    expectEq$(path9.stem(), ""s);
-    expectEq$(path9.suffix(), ""s);
+    assertEq$(path9.basename(), ""s);
+    assertEq$(path9.stem(), ""s);
+    assertEq$(path9.suffix(), ""s);
 
     return Ok();
 }

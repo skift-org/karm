@@ -29,8 +29,8 @@ testAsync$("async-cancellation") {
 
     // wait for the operation to get canceled
     co_trya$(Sys::globalSched().sleepAsync(Sys::instant() + Duration::fromMSecs(16), ct));
-    co_expect$(finished);
-    co_expect$(pass.unwrap());
+    co_assert$(finished);
+    co_assert$(pass.unwrap());
 
     co_return Ok();
 }

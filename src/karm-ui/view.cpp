@@ -34,7 +34,7 @@ static Opt<Rc<Gfx::Fontface>> _regularFontface = NONE;
 
 Rc<Gfx::Fontface> regularFontface() {
     if (not _regularFontface) {
-        _regularFontface = Some(Font::loadFontfaceOrFallback("bundle://fonts.inter/fonts/Inter-Regular.ttf"_url).unwrap());
+        _regularFontface = Some(Font::loadFontfaceOrFallback("bundle://fonts.inter/fonts/Inter-Regular.ttf"_url).expect());
     }
     return *_regularFontface;
 }
@@ -43,7 +43,7 @@ static Opt<Rc<Gfx::Fontface>> _mediumFontface = NONE;
 
 Rc<Gfx::Fontface> mediumFontface() {
     if (not _mediumFontface) {
-        _mediumFontface = Some(Font::loadFontfaceOrFallback("bundle://fonts.inter/fonts/Inter-Medium.ttf"_url).unwrap());
+        _mediumFontface = Some(Font::loadFontfaceOrFallback("bundle://fonts.inter/fonts/Inter-Medium.ttf"_url).expect());
     }
     return *_mediumFontface;
 }
@@ -52,7 +52,7 @@ static Opt<Rc<Gfx::Fontface>> _boldFontface = NONE;
 
 Rc<Gfx::Fontface> boldFontface() {
     if (not _boldFontface) {
-        _boldFontface = Some(Font::loadFontfaceOrFallback("bundle://fonts.inter/fonts/Inter-Bold.ttf"_url).unwrap());
+        _boldFontface = Some(Font::loadFontfaceOrFallback("bundle://fonts.inter/fonts/Inter-Bold.ttf"_url).expect());
     }
     return *_boldFontface;
 }
@@ -61,7 +61,7 @@ static Opt<Rc<Gfx::Fontface>> _italicFontface = NONE;
 
 Rc<Gfx::Fontface> italicFontface() {
     if (not _italicFontface) {
-        _italicFontface = Some(Font::loadFontfaceOrFallback("bundle://fonts.inter/fonts/Inter-Italic.ttf"_url).unwrap());
+        _italicFontface = Some(Font::loadFontfaceOrFallback("bundle://fonts.inter/fonts/Inter-Italic.ttf"_url).expect());
     }
     return *_italicFontface;
 }
@@ -70,7 +70,7 @@ static Opt<Rc<Gfx::Fontface>> _codeFontface = NONE;
 
 Rc<Gfx::Fontface> codeFontface() {
     if (not _codeFontface) {
-        _codeFontface = Some(Font::loadFontfaceOrFallback("bundle://fonts.fira-code/fonts/FiraCode-Regular.ttf"_url).unwrap());
+        _codeFontface = Some(Font::loadFontfaceOrFallback("bundle://fonts.fira-code/fonts/FiraCode-Regular.ttf"_url).expect());
     }
     return *_codeFontface;
 }
@@ -355,7 +355,7 @@ struct Icon : View<Icon> {
     void paint(Gfx::Canvas& g, Math::Recti) override {
         g.push();
         if (_color)
-            g.fillStyle(_color.unwrap());
+            g.fillStyle(_color.expect());
         _icon.fill(g, bound().topStart().cast<f64>(), _size);
         g.pop();
     }
@@ -408,7 +408,7 @@ struct Image : View<Image> {
 };
 
 export Child image(Ref::Url url, Opt<Math::Radiif> radii = NONE) {
-    return makeRc<Image>(Karm::Image::loadOrFallback(url).unwrap(), radii);
+    return makeRc<Image>(Karm::Image::loadOrFallback(url).expect(), radii);
 }
 
 export Child image(Rc<Gfx::Image> image, Opt<Math::Radiif> radii = NONE) {
@@ -435,7 +435,7 @@ struct Canvas : View<Canvas> {
             Math::Trans2f::translate(_bound.xy.cast<f64>())
                 .scaled(_bound.size().cast<f64>() / _snapshot.size().cast<f64>());
         g.transform(transform);
-        _snapshot.replay(g).unwrap();
+        _snapshot.replay(g).expect();
         g.pop();
     }
 

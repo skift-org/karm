@@ -27,7 +27,7 @@ test$("matmul") {
 
     auto out = Tensor::alloc(c.shape);
     Kernels::matMul(out, a, b);
-    expectEq$(c, out);
+    assertEq$(c, out);
     return Ok();
 }
 

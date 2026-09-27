@@ -31,7 +31,7 @@ export Res<> base64Decode(Io::SScan& s, Io::Writer& out, Base64Props props = {})
             isAsciiHexDigit(s.peek(1)) and
             isAsciiHexDigit(s.peek(1))) {
             s.next();
-            r = Io::atou(s.slice(2), {.base = 16}).unwrap();
+            r = Io::atou(s.slice(2), {.base = 16}).expect();
         } else {
             r = s.next();
         }
@@ -134,7 +134,7 @@ export String base64Encode(Bytes in) {
     Io::BufReader br = in;
     Io::StringWriter sw{base64EncodedLen(in.len())};
     Io::Emit e{sw};
-    base64Encode(br, e).unwrap();
+    base64Encode(br, e).expect();
     return sw.take();
 }
 

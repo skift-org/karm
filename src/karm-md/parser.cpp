@@ -328,7 +328,7 @@ _ParagraphBlock _parseParagraph(Io::SScan& s) {
 }
 
 _ListBlock _parseList(Io::SScan& s) {
-    auto firstMarker = _listMarker(s).unwrap();
+    auto firstMarker = _listMarker(s).expect();
     Vec<String> items;
 
     while (not s.ended()) {

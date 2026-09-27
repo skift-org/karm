@@ -214,7 +214,7 @@ export Res<> consumeErrno() {
 
 export sockaddr_in toSockAddr(Sys::SocketAddr addr) {
     struct sockaddr_in sockaddr;
-    auto addr4 = addr.addr.unwrap<Sys::Ip4>("only ipv4 supported");
+    auto addr4 = addr.addr.expect<Sys::Ip4>("only ipv4 supported");
     sockaddr.sin_family = AF_INET;
     sockaddr.sin_port = htons(addr.port);
     sockaddr.sin_addr.s_addr = addr4._raw._value;
@@ -223,7 +223,7 @@ export sockaddr_in toSockAddr(Sys::SocketAddr addr) {
 
 export Sys::SocketAddr fromSockAddr(struct sockaddr_in sockaddr) {
     Sys::SocketAddr addr{Sys::Ip4::unspecified(), 0};
-    addr.addr.unwrap<Sys::Ip4>("only ipv4 supported")._raw._value = sockaddr.sin_addr.s_addr;
+    addr.addr.expect<Sys::Ip4>("only ipv4 supported")._raw._value = sockaddr.sin_addr.s_addr;
     addr.port = ntohs(sockaddr.sin_port);
     return addr;
 }
@@ -354,7 +354,7 @@ export Res<Ref::Path> resolve(Ref::Url const& url) {
         if (url.host == "home")
             resolved = Ref::Path::parse(maybeHome).join(path);
         else
-            resolved = Ref::Path::parse(maybeHome).join(Io::toPascalCase(url.host.str()).unwrap()).join(path);
+            resolved = Ref::Path::parse(maybeHome).join(Io::toPascalCase(url.host.str()).expect()).join(path);
     } else {
         return Error::notFound("unknown url scheme");
     }

@@ -106,11 +106,11 @@ export struct Request {
     Async::Task<Serde::Value> readJsonAsync(Async::CancellationToken ct) {
         if (not body)
             co_return Error::invalidInput("request has no body");
-        co_return co_await body.unwrap()->readJsonAsync(ct);
+        co_return co_await body.expect()->readJsonAsync(ct);
     }
 
     void repr(Io::Emit& e) const {
-        unparse(e).unwrap();
+        unparse(e).expect();
     }
 };
 

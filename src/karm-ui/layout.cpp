@@ -433,7 +433,7 @@ struct FlowLayout : GroupNode<FlowLayout> {
 
         for (auto& child : children()) {
             if (child.is<Grow>()) {
-                grows += child.unwrap<Grow>().grow();
+                grows += child.expect<Grow>().grow();
             } else {
                 total += _style.flow.getX(child->size(r.size(), Hint::MIN));
             }
@@ -456,7 +456,7 @@ struct FlowLayout : GroupNode<FlowLayout> {
 
             inner = _style.flow.setStart(inner, (isize)start);
             if (child.is<Grow>()) {
-                inner = _style.flow.setWidth(inner, (isize)(growUnit * child.unwrap<Grow>().grow()));
+                inner = _style.flow.setWidth(inner, (isize)(growUnit * child.expect<Grow>().grow()));
             } else {
                 inner = _style.flow.setWidth(inner, _style.flow.getX(childSize));
             }
@@ -774,7 +774,7 @@ struct GridLayout : GroupNode<GridLayout> {
         isize index = 0;
         for (auto& child : children()) {
             if (child.is<Cell>()) {
-                auto& cell = child.unwrap<Cell>();
+                auto& cell = child.expect<Cell>();
                 auto start = cell.start();
                 auto end = cell.end();
                 place(child, start, end);

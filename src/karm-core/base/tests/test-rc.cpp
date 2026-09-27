@@ -20,9 +20,9 @@ test$("weak-self") {
 
         Rc<Foo> self() {
             return _self
-                .unwrap("self reference not binded")
+                .expect("self reference not binded")
                 .upgrade()
-                .unwrap();
+                .expect();
         }
     };
 
@@ -30,9 +30,9 @@ test$("weak-self") {
     foo->_self = Some(foo);
     auto foo2 = foo->self();
 
-    expectEq$(foo.strong(), 2uz);
-    expectEq$(foo2.strong(), 2uz);
-    expectEq$(foo2.weak(), 2uz);
+    assertEq$(foo.strong(), 2uz);
+    assertEq$(foo2.strong(), 2uz);
+    assertEq$(foo2.weak(), 2uz);
 
     return Ok();
 }
@@ -40,15 +40,15 @@ test$("weak-self") {
 test$("rc-niche") {
     Opt<Rc<int>> test;
 
-    expectEq$(sizeof(test), sizeof(Rc<int>));
-    expectEq$(test.has(), false);
-    expectEq$(test, NONE);
+    assertEq$(sizeof(test), sizeof(Rc<int>));
+    assertEq$(test.has(), false);
+    assertEq$(test, NONE);
     test = Some(makeRc<int>(5));
-    expectEq$(test.unwrap(), 5);
-    expectEq$(test.take(), 5);
-    expectEq$(test, NONE);
+    assertEq$(test.expect(), 5);
+    assertEq$(test.take(), 5);
+    assertEq$(test, NONE);
     test = Some(makeRc<int>());
-    expectEq$(test.has(), true);
+    assertEq$(test.has(), true);
 
     return Ok();
 }
@@ -58,9 +58,9 @@ test$("rc-same-instance") {
     auto b = makeRc(1);
     auto c = a;
 
-    expect$(a.sameInstance(c));
-    expect$(not a.sameInstance(b));
-    expect$(not c.sameInstance(b));
+    assert$(a.sameInstance(c));
+    assert$(not a.sameInstance(b));
+    assert$(not c.sameInstance(b));
 
     return Ok();
 }

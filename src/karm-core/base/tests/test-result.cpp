@@ -11,8 +11,8 @@ namespace Karm::Base::Tests {
 test$("res-ok-basic") {
     Res<int> r = Ok(123);
 
-    expect$(r.has());
-    expectEq$(r.unwrap(), 123);
+    assert$(r.has());
+    assertEq$(r.expect(), 123);
 
     return Ok();
 }
@@ -21,8 +21,8 @@ test$("res-err-basic") {
     Error e = Error::invalidInput("broken");
     Res<int> r = e;
 
-    expect$(not r.has());
-    expectEq$(r.none().msg(), "broken"s);
+    assert$(not r.has());
+    assertEq$(r.none().msg(), "broken"s);
 
     return Ok();
 }
@@ -32,7 +32,7 @@ test$("res-err-basic") {
 test$("res-unwrap-ok") {
     Res<int> r = Ok(7);
 
-    expectEq$(r.unwrap(), 7);
+    assertEq$(r.expect(), 7);
 
     return Ok();
 }
@@ -41,9 +41,9 @@ test$("res-take-ok") {
     Res<String> r = Ok<String>("hello");
 
     auto v = r.take();
-    expectEq$(v, "hello"s);
+    assertEq$(v, "hello"s);
     // NOTE: take() works like move, Res is in the moved-from Ok state
-    expect$(r.has());
+    assert$(r.has());
 
     return Ok();
 }
@@ -54,12 +54,12 @@ test$("res-ok-err-access") {
     Res<int> r1 = Ok(42);
     Res<int> r2 = Error::other("nope");
 
-    expect$(r1.ok().has());
-    expect$(not r1.error().has());
+    assert$(r1.ok().has());
+    assert$(not r1.error().has());
 
-    expect$(not r2.ok().has());
-    expect$(r2.error().has());
-    expectEq$(r2.error().unwrap().msg(), "nope"s);
+    assert$(not r2.ok().has());
+    assert$(r2.error().has());
+    assertEq$(r2.error().expect().msg(), "nope"s);
 
     return Ok();
 }
@@ -70,8 +70,8 @@ test$("res-unwrap-or") {
     Res<int> r1 = Ok(10);
     Res<int> r2 = Error::other("x");
 
-    expectEq$(r1.unwrapOr(99), 10);
-    expectEq$(r2.unwrapOr(99), 99);
+    assertEq$(r1.unwrapOr(99), 10);
+    assertEq$(r2.unwrapOr(99), 99);
 
     return Ok();
 }
@@ -80,11 +80,11 @@ test$("res-unwrap-or-else") {
     Res<int> r1 = Ok(5);
     Res<int> r2 = Error::other("dead");
 
-    expectEq$(r1.unwrapOrElse([] {
+    assertEq$(r1.unwrapOrElse([] {
         return 999;
     }),
               5);
-    expectEq$(r2.unwrapOrElse([] {
+    assertEq$(r2.unwrapOrElse([] {
         return 999;
     }),
               999);
@@ -101,8 +101,8 @@ test$("res-map-ok") {
         return v * 3;
     });
 
-    expect$(r2.has());
-    expectEq$(r2.unwrap(), 6);
+    assert$(r2.has());
+    assertEq$(r2.expect(), 6);
 
     return Ok();
 }
@@ -114,8 +114,8 @@ test$("res-map-err") {
         return v * 3;
     });
 
-    expect$(not r2.has());
-    expectEq$(r2.error().unwrap().msg(), "boom"s);
+    assert$(not r2.has());
+    assertEq$(r2.error().expect().msg(), "boom"s);
 
     return Ok();
 }
@@ -129,8 +129,8 @@ test$("res-map-err-transform") {
         return Error::other("new:old");
     });
 
-    expect$(not r2.has());
-    expectEq$(r2.error().unwrap().msg(), "new:old"s);
+    assert$(not r2.has());
+    assertEq$(r2.error().expect().msg(), "new:old"s);
 
     return Ok();
 }
@@ -143,8 +143,8 @@ test$("res-map-err-ok") {
         return Error::other("x");
     });
 
-    expect$(r2.has());
-    expectEq$(r2.unwrap(), 12);
+    assert$(r2.has());
+    assertEq$(r2.expect(), 12);
 
     return Ok();
 }
@@ -155,11 +155,11 @@ test$("ok-ref-basic") {
     int value = 123;
     Ok<int&> o{value};
 
-    expect$(bool(o));
-    expectEq$(o.unwrap(), 123);
+    assert$(bool(o));
+    assertEq$(o.unwrap(), 123);
 
     o.unwrap() = 999;
-    expectEq$(value, 999);
+    assertEq$(value, 999);
 
     return Ok();
 }
@@ -169,10 +169,10 @@ test$("ok-ref-take") {
     Ok<int&> o{value};
 
     int& r = o.take();
-    expectEq$(r, 10);
+    assertEq$(r, 10);
 
     r = 20;
-    expectEq$(value, 20);
+    assertEq$(value, 20);
 
     return Ok();
 }
@@ -183,11 +183,11 @@ test$("res-ref-ok") {
     int v = 7;
     Res<int&> r = Ok<int&>(v);
 
-    expect$(r.has());
-    expectEq$(r.unwrap(), 7);
+    assert$(r.has());
+    assertEq$(r.expect(), 7);
 
-    r.unwrap() = 42;
-    expectEq$(v, 42);
+    r.expect() = 42;
+    assertEq$(v, 42);
 
     return Ok();
 }
@@ -197,10 +197,10 @@ test$("res-ref-take") {
     Res<int&> r = Ok<int&>(v);
 
     int& ref = r.take();
-    expectEq$(ref, 5);
+    assertEq$(ref, 5);
 
     ref = 99;
-    expectEq$(v, 99);
+    assertEq$(v, 99);
 
     return Ok();
 }
@@ -212,12 +212,12 @@ test$("res-ref-unwrapOr") {
     Res<int&> r1 = Ok<int&>(v);
     Res<int&> r2 = Error::other("nope");
 
-    expectEq$(r1.unwrapOr(111), 1);
-    expectEq$(r2.unwrapOr(111), 111);
+    assertEq$(r1.unwrapOr(111), 1);
+    assertEq$(r2.unwrapOr(111), 111);
 
     // ensure unwrapOr doesn't modify original because it returns by value
     v = 20;
-    expectEq$(r1.unwrapOr(111), 20);
+    assertEq$(r1.unwrapOr(111), 20);
 
     return Ok();
 }
@@ -227,11 +227,11 @@ test$("res-ref-unwrapOrElse") {
     Res<int&> r1 = Ok<int&>(v);
     Res<int&> r2 = Error::other("err");
 
-    expectEq$(r1.unwrapOrElse([] {
+    assertEq$(r1.unwrapOrElse([] {
         return 500;
     }),
               10);
-    expectEq$(r2.unwrapOrElse([] {
+    assertEq$(r2.unwrapOrElse([] {
         return 500;
     }),
               500);
@@ -249,12 +249,12 @@ test$("res-ref-map") {
         return x * 4;
     });
 
-    expect$(r2.has());
-    expectEq$(r2.unwrap(), 12);
+    assert$(r2.has());
+    assertEq$(r2.expect(), 12);
 
     // check original still modifiable and referenced
     v = 7;
-    expectEq$(r.unwrap(), 7);
+    assertEq$(r.expect(), 7);
 
     return Ok();
 }
@@ -268,8 +268,8 @@ test$("res-ref-mapErr") {
         return Error::other("new:bad");
     });
 
-    expect$(not r2.has());
-    expectEq$(r2.error().unwrap().msg(), "new:bad"s);
+    assert$(not r2.has());
+    assertEq$(r2.error().expect().msg(), "new:bad"s);
 
     return Ok();
 }
@@ -282,11 +282,11 @@ test$("res-ref-conversion") {
 
     Res<int> r2 = r1; // should copy value
 
-    expect$(r2.has());
-    expectEq$(r2.unwrap(), 44);
+    assert$(r2.has());
+    assertEq$(r2.expect(), 44);
 
     v = 200;
-    expectEq$(r2.unwrap(), 44); // ensure decoupling
+    assertEq$(r2.expect(), 44); // ensure decoupling
 
     return Ok();
 }

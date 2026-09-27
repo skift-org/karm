@@ -21,10 +21,10 @@ test$("insets-map-order") {
         return (u8)x;
     });
 
-    expectEq$(oldInset.start, newInset.start);
-    expectEq$(oldInset.top, newInset.top);
-    expectEq$(oldInset.bottom, newInset.bottom);
-    expectEq$(oldInset.end, newInset.end);
+    assertEq$(oldInset.start, newInset.start);
+    assertEq$(oldInset.top, newInset.top);
+    assertEq$(oldInset.bottom, newInset.bottom);
+    assertEq$(oldInset.end, newInset.end);
 
     return Ok();
 }
@@ -44,10 +44,10 @@ test$("insets-cast-order") {
 
     auto newInset = oldInset.cast<u8>();
 
-    expectEq$(oldInset.start, newInset.start);
-    expectEq$(oldInset.top, newInset.top);
-    expectEq$(oldInset.bottom, newInset.bottom);
-    expectEq$(oldInset.end, newInset.end);
+    assertEq$(oldInset.start, newInset.start);
+    assertEq$(oldInset.top, newInset.top);
+    assertEq$(oldInset.bottom, newInset.bottom);
+    assertEq$(oldInset.end, newInset.end);
 
     return Ok();
 }

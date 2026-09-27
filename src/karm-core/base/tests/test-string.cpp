@@ -9,8 +9,8 @@ namespace Karm::Base::Tests {
 test$("string-default-constructed-inline") {
     InlineString<16> str;
 
-    expectEq$(str.len(), 0uz);
-    expectEq$(str, ""s);
+    assertEq$(str.len(), 0uz);
+    assertEq$(str, ""s);
 
     return Ok();
 }
@@ -18,8 +18,8 @@ test$("string-default-constructed-inline") {
 test$("string-value-constructed-inline") {
     InlineString<16> str("Hello, World!");
 
-    expectEq$(str.len(), 13uz);
-    expectEq$(str, "Hello, World!"s);
+    assertEq$(str.len(), 13uz);
+    assertEq$(str, "Hello, World!"s);
 
     return Ok();
 }
@@ -27,12 +27,12 @@ test$("string-value-constructed-inline") {
 test$("string-default-constructed") {
     String str;
 
-    expectEq$(str.len(), 0uz);
-    expectEq$(str, ""s);
+    assertEq$(str.len(), 0uz);
+    assertEq$(str, ""s);
     // We have to use _buf here because in the case of a default
     // constructed String, buf() will lie to us and return ""
     // but internally it is nullptr and no buffer has been allocated.
-    expectEq$(str._buf, nullptr);
+    assertEq$(str._buf, nullptr);
 
     return Ok();
 }
@@ -40,8 +40,8 @@ test$("string-default-constructed") {
 test$("string-value-constructed") {
     String str("Hello, World!");
 
-    expectEq$(str.len(), 13uz);
-    expectEq$(str, "Hello, World!"s);
+    assertEq$(str.len(), 13uz);
+    assertEq$(str, "Hello, World!"s);
 
     return Ok();
 }
@@ -51,15 +51,15 @@ test$("string-niche") {
 
     auto comp = String("test");
 
-    expectEq$(sizeof(test), sizeof(String));
-    expectEq$(test.has(), false);
-    expectEq$(test, NONE);
+    assertEq$(sizeof(test), sizeof(String));
+    assertEq$(test.has(), false);
+    assertEq$(test, NONE);
     test = Some("test"s);
-    expectEq$(test.unwrap(), comp);
-    expectEq$(test.take(), comp);
-    expectEq$(test, NONE);
+    assertEq$(test.expect(), comp);
+    assertEq$(test.take(), comp);
+    assertEq$(test, NONE);
     test = Some(""s);
-    expectEq$(test.has(), true);
+    assertEq$(test.has(), true);
 
     return Ok();
 }
@@ -69,15 +69,15 @@ test$("str-niche") {
 
     auto comp = Str("test");
 
-    expectEq$(sizeof(test), sizeof(Str));
-    expectEq$(test.has(), false);
-    expectEq$(test, NONE);
+    assertEq$(sizeof(test), sizeof(Str));
+    assertEq$(test.has(), false);
+    assertEq$(test, NONE);
     test = Some("test"s);
-    expectEq$(test.unwrap(), comp);
-    expectEq$(test.take(), comp);
-    expectEq$(test, NONE);
+    assertEq$(test.expect(), comp);
+    assertEq$(test.take(), comp);
+    assertEq$(test, NONE);
     test = Some(""s);
-    expectEq$(test.has(), true);
+    assertEq$(test.has(), true);
 
     return Ok();
 }

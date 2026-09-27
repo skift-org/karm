@@ -7,7 +7,7 @@ namespace Karm::Base::Tests {
 test$("opt-default-constructor") {
     Opt<int> opt{};
 
-    expect$(not opt.has());
+    assert$(not opt.has());
 
     return Ok();
 }
@@ -15,8 +15,8 @@ test$("opt-default-constructor") {
 test$("opt-constructed") {
     Opt<int> opt{Some(420)};
 
-    expect$(opt.has());
-    expectEq$(opt.unwrap(), 420);
+    assert$(opt.has());
+    assertEq$(opt.expect(), 420);
 
     return Ok();
 }
@@ -26,8 +26,8 @@ test$("opt-assign") {
 
     opt = Some(420);
 
-    expect$(opt.has());
-    expectEq$(opt.unwrap(), 420);
+    assert$(opt.has());
+    assertEq$(opt.expect(), 420);
 
     return Ok();
 }
@@ -37,7 +37,7 @@ test$("opt-assign-none") {
 
     opt = NONE;
 
-    expect$(not opt.has());
+    assert$(not opt.has());
 
     return Ok();
 }
@@ -45,7 +45,7 @@ test$("opt-assign-none") {
 test$("opt-unwrap") {
     Opt<int> opt{Some(420)};
 
-    expectEq$(opt.unwrap(), 420);
+    assertEq$(opt.expect(), 420);
 
     return Ok();
 }
@@ -53,20 +53,20 @@ test$("opt-unwrap") {
 test$("opt-take") {
     Opt<int> opt{Some(420)};
 
-    expectEq$(opt.take(), 420);
-    expect$(not opt.has());
+    assertEq$(opt.take(), 420);
+    assert$(not opt.has());
 
     return Ok();
 }
 
 test$("opt-equal") {
     Opt<int> opt = NONE;
-    expectEq$(opt, NONE);
-    expectNe$(opt, 42);
+    assertEq$(opt, NONE);
+    assertNe$(opt, 42);
 
     opt = Some(42);
-    expectEq$(opt, 42);
-    expectNe$(opt, NONE);
+    assertEq$(opt, 42);
+    assertNe$(opt, NONE);
 
     return Ok();
 }
@@ -74,17 +74,17 @@ test$("opt-equal") {
 test$("bool-niche") {
     Opt<bool> test;
 
-    expectEq$(sizeof(test), sizeof(bool));
-    expectEq$(test.has(), false);
-    expectEq$(test, NONE);
+    assertEq$(sizeof(test), sizeof(bool));
+    assertEq$(test.has(), false);
+    assertEq$(test, NONE);
     test = Some(true);
-    expectEq$(test.unwrap(), true);
-    expectEq$(test.take(), true);
-    expectEq$(test, NONE);
+    assertEq$(test.expect(), true);
+    assertEq$(test.take(), true);
+    assertEq$(test, NONE);
     test = Some(false);
-    expectEq$(test.has(), true);
+    assertEq$(test.has(), true);
     test = Some(2);
-    expectEq$(test.has(), true);
+    assertEq$(test.has(), true);
 
     return Ok();
 }
@@ -99,15 +99,15 @@ enum struct TestEnum {
 test$("bool-niche") {
     Opt<TestEnum> test;
 
-    expectEq$(sizeof(test), sizeof(TestEnum));
-    expectEq$(test.has(), false);
-    expectEq$(test, NONE);
+    assertEq$(sizeof(test), sizeof(TestEnum));
+    assertEq$(test.has(), false);
+    assertEq$(test, NONE);
     test = Some(TestEnum::A);
-    expectEq$(test.unwrap(), TestEnum::A);
-    expectEq$(test.take(), TestEnum::A);
-    expectEq$(test, NONE);
+    assertEq$(test.expect(), TestEnum::A);
+    assertEq$(test.take(), TestEnum::A);
+    assertEq$(test, NONE);
     test = Some(TestEnum::_LEN);
-    expectEq$(test.has(), true);
+    assertEq$(test.has(), true);
 
     return Ok();
 }
@@ -115,8 +115,8 @@ test$("bool-niche") {
 test$("opt-ref-default-constructor") {
     Opt<int&> opt{};
 
-    expect$(not opt.has());
-    expectEq$(opt, NONE);
+    assert$(not opt.has());
+    assertEq$(opt, NONE);
 
     return Ok();
 }
@@ -125,9 +125,9 @@ test$("opt-ref-constructed") {
     int value = 42;
     Opt<int&> opt{Some(value)};
 
-    expect$(opt.has());
-    expectEq$(opt.unwrap(), 42);
-    expectEq$(&opt.unwrap(), &value); // really is a reference to value
+    assert$(opt.has());
+    assertEq$(opt.expect(), 42);
+    assertEq$(&opt.expect(), &value); // really is a reference to value
 
     return Ok();
 }
@@ -137,18 +137,18 @@ test$("opt-ref-assign") {
     int b = 2;
 
     Opt<int&> opt{Some(a)};
-    expect$(opt.has());
-    expectEq$(&opt.unwrap(), &a);
-    expectEq$(opt.unwrap(), 1);
+    assert$(opt.has());
+    assertEq$(&opt.expect(), &a);
+    assertEq$(opt.expect(), 1);
 
     opt = Some(b);
-    expect$(opt.has());
-    expectEq$(&opt.unwrap(), &b);
-    expectEq$(opt.unwrap(), 2);
+    assert$(opt.has());
+    assertEq$(&opt.expect(), &b);
+    assertEq$(opt.expect(), 2);
 
     // Mutating via the opt mutates the underlying object.
-    opt.unwrap() = 10;
-    expectEq$(b, 10);
+    opt.expect() = 10;
+    assertEq$(b, 10);
 
     return Ok();
 }
@@ -157,12 +157,12 @@ test$("opt-ref-assign-none") {
     int value = 123;
     Opt<int&> opt{Some(value)};
 
-    expect$(opt.has());
+    assert$(opt.has());
 
     opt = NONE;
 
-    expect$(not opt.has());
-    expectEq$(opt, NONE);
+    assert$(not opt.has());
+    assertEq$(opt, NONE);
 
     return Ok();
 }
@@ -171,12 +171,12 @@ test$("opt-ref-unwrap") {
     int value = 7;
     Opt<int&> opt{Some(value)};
 
-    expectEq$(opt.unwrap(), 7);
-    expectEq$(&opt.unwrap(), &value);
+    assertEq$(opt.expect(), 7);
+    assertEq$(&opt.expect(), &value);
 
     // Changing the original is visible through the Opt.
     value = 9;
-    expectEq$(opt.unwrap(), 9);
+    assertEq$(opt.expect(), 9);
 
     return Ok();
 }
@@ -188,12 +188,12 @@ test$("opt-ref-take") {
     int& ref = opt.take();
 
     // still refers to the same object
-    expectEq$(&ref, &value);
-    expect$(not opt.has());
+    assertEq$(&ref, &value);
+    assert$(not opt.has());
 
     // take() should not destroy, only unbind
     ref = 321;
-    expectEq$(value, 321);
+    assertEq$(value, 321);
 
     return Ok();
 }
@@ -202,15 +202,15 @@ test$("opt-const-ref") {
     int value = 5;
     Opt<int const&> opt{Some(value)};
 
-    expect$(opt.has());
-    expectEq$(opt.unwrap(), 5);
+    assert$(opt.has());
+    assertEq$(opt.expect(), 5);
 
     // Aliasing semantics: changes in the original are seen through the const ref.
     value = 8;
-    expectEq$(opt.unwrap(), 8);
+    assertEq$(opt.expect(), 8);
 
     opt = NONE;
-    expect$(not opt.has());
+    assert$(not opt.has());
 
     return Ok();
 }
@@ -219,16 +219,16 @@ test$("opt-ref-operator-bool-and-clear") {
     int value = 1;
     Opt<int&> opt{};
 
-    expect$(not opt);
-    expect$(not opt.has());
+    assert$(not opt);
+    assert$(not opt.has());
 
     opt = Some(value);
-    expect$(opt);
-    expect$(opt.has());
+    assert$(opt);
+    assert$(opt.has());
 
     opt.clear();
-    expect$(not opt);
-    expect$(not opt.has());
+    assert$(not opt);
+    assert$(not opt.has());
 
     return Ok();
 }
@@ -239,9 +239,9 @@ test$("opt-ref-rebinding") {
     int bar = 2;
     foor = Some(bar);
 
-    expectEq$(foo, 1);
-    expectEq$(bar, 2);
-    expectEq$(foor.unwrap(), 2);
+    assertEq$(foo, 1);
+    assertEq$(bar, 2);
+    assertEq$(foor.expect(), 2);
 
     return Ok();
 }
@@ -252,12 +252,12 @@ test$("opt-ref-copy") {
 
     Opt<int&> optCopy = opt;
 
-    expect$(optCopy.has());
-    expectEq$(optCopy.unwrap(), 42);
-    expectEq$(&optCopy.unwrap(), &value);
+    assert$(optCopy.has());
+    assertEq$(optCopy.expect(), 42);
+    assertEq$(&optCopy.expect(), &value);
 
-    optCopy.unwrap() = 100;
-    expectEq$(value, 100);
+    optCopy.expect() = 100;
+    assertEq$(value, 100);
 
     return Ok();
 }
@@ -267,12 +267,12 @@ test$("opt-ref-copy-const") {
     Opt<int&> opt{Some(value)};
     Opt<int&> const optCopy = opt;
 
-    expect$(optCopy.has());
-    expectEq$(optCopy.unwrap(), 42);
-    expectEq$(&optCopy.unwrap(), &value);
+    assert$(optCopy.has());
+    assertEq$(optCopy.expect(), 42);
+    assertEq$(&optCopy.expect(), &value);
 
-    optCopy.unwrap() = 100;
-    expectEq$(value, 100);
+    optCopy.expect() = 100;
+    assertEq$(value, 100);
 
     return Ok();
 }
@@ -283,13 +283,13 @@ test$("opt-ref-move") {
 
     Opt<int&> optMoved = std::move(opt);
 
-    expect$(optMoved.has());
-    expect$(not opt.has());
-    expectEq$(optMoved.unwrap(), 42);
-    expectEq$(&optMoved.unwrap(), &value);
+    assert$(optMoved.has());
+    assert$(not opt.has());
+    assertEq$(optMoved.expect(), 42);
+    assertEq$(&optMoved.expect(), &value);
 
-    optMoved.unwrap() = 100;
-    expectEq$(value, 100);
+    optMoved.expect() = 100;
+    assertEq$(value, 100);
 
     return Ok();
 }

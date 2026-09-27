@@ -248,7 +248,7 @@ struct Computed {
                 return _f();
             });
 
-            bool changed = not _value.has() or not diff(_value.unwrap(), next);
+            bool changed = not _value.has() or not diff(_value.expect(), next);
             _value = Some(std::move(next));
 
             if (changed)
@@ -264,12 +264,12 @@ struct Computed {
     T const& value() const lifetimebound {
         _state->update();
         trackDependency(_state);
-        return _state->_value.unwrap();
+        return _state->_value.expect();
     }
 
     T const& peek() const lifetimebound {
         _state->update();
-        return _state->_value.unwrap();
+        return _state->_value.expect();
     }
 
     T const& operator*() const lifetimebound {

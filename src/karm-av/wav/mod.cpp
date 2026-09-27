@@ -64,7 +64,7 @@ struct Decoder {
         if (not _format.is<PcmFormat>())
             return Error::invalidData("only pcm data supported");
 
-        auto format = _format.unwrap<PcmFormat>();
+        auto format = _format.expect<PcmFormat>();
 
         if (format.bitsPerSample != 16)
             return Error::invalidData("only pcm data supported");

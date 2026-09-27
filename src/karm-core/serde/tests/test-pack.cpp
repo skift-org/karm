@@ -16,7 +16,7 @@ test$("pack-unpack-primitives") {
         PackDeserializer de{scan};
         auto actual = try$(de.deserialize<T>());
 
-        expectEq$(expected, actual);
+        assertEq$(expected, actual);
 
         return Ok();
     };

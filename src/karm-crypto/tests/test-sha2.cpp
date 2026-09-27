@@ -15,9 +15,9 @@ test$("crypto-sha224") {
     auto testCase = [&](Str data, Array<u8, SHA224_BYTES> const& expected) -> Res<> {
         auto sha = sha224(bytes(data));
 
-        expectEq$(sha.len(), expected.len());
+        assertEq$(sha.len(), expected.len());
         for (usize idx = 0; idx < sha.len(); idx++) {
-            expectEq$(sha[idx], expected[idx]);
+            assertEq$(sha[idx], expected[idx]);
         }
         return Ok();
     };
@@ -52,9 +52,9 @@ test$("crypto-sha256") {
     auto testCase = [&](Str data, Array<u8, SHA256_BYTES> const& expected) -> Res<> {
         auto sha = sha256(bytes(data));
 
-        expectEq$(sha.len(), expected.len());
+        assertEq$(sha.len(), expected.len());
         for (usize idx = 0; idx < sha.len(); idx++) {
-            expectEq$(sha[idx], expected[idx]);
+            assertEq$(sha[idx], expected[idx]);
         }
         return Ok();
     };
@@ -68,9 +68,9 @@ test$("crypto-sha256") {
         nist3[idx] = 'a';
     }
     auto sha = sha256(nist3.bytes());
-    expectEq$(sha.len(), EXPECTED_NIST_3.len());
+    assertEq$(sha.len(), EXPECTED_NIST_3.len());
     for (usize idx = 0; idx < sha.len(); idx++) {
-        expectEq$(sha[idx], EXPECTED_NIST_3[idx]);
+        assertEq$(sha[idx], EXPECTED_NIST_3[idx]);
     }
     return Ok();
 }
@@ -97,9 +97,9 @@ test$("crypto-sha384") {
     auto testCase = [&](Str data, Array<u8, SHA384_BYTES> const& expected) -> Res<> {
         auto sha = sha384(bytes(data));
 
-        expectEq$(sha.len(), expected.len());
+        assertEq$(sha.len(), expected.len());
         for (usize idx = 0; idx < sha.len(); idx++) {
-            expectEq$(sha[idx], expected[idx]);
+            assertEq$(sha[idx], expected[idx]);
         }
         return Ok();
     };
@@ -147,9 +147,9 @@ test$("crypto-sha512") {
     auto testCase = [&](Str data, Array<u8, SHA512_BYTES> const& expected) -> Res<> {
         auto sha = sha512(bytes(data));
 
-        expectEq$(sha.len(), expected.len());
+        assertEq$(sha.len(), expected.len());
         for (usize idx = 0; idx < sha.len(); idx++) {
-            expectEq$(sha[idx], expected[idx]);
+            assertEq$(sha[idx], expected[idx]);
         }
         return Ok();
     };

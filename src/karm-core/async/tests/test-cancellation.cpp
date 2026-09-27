@@ -15,20 +15,20 @@ test$("test-cancellation"s) {
 
     auto childCt = childCancellation.token();
 
-    expect$(not ct.cancelled());
-    expect$(not childCt.cancelled());
+    assert$(not ct.cancelled());
+    assert$(not childCt.cancelled());
 
     childCancellation.cancel();
-    expect$(not ct.cancelled());
-    expect$(childCt.cancelled());
+    assert$(not ct.cancelled());
+    assert$(childCt.cancelled());
 
     childCancellation.reset();
-    expect$(not ct.cancelled());
-    expect$(not childCt.cancelled());
+    assert$(not ct.cancelled());
+    assert$(not childCt.cancelled());
 
     cancellation.cancel();
-    expect$(ct.cancelled());
-    expect$(childCt.cancelled());
+    assert$(ct.cancelled());
+    assert$(childCt.cancelled());
 
     return Ok();
 }

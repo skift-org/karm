@@ -36,7 +36,7 @@ export struct RoutePattern {
     Vec<Segment> _segments;
 
     static RoutePattern parse(Io::SScan& s) {
-        auto method = parseMethod(s).unwrap("invalid pattern method");
+        auto method = parseMethod(s).expect("invalid pattern method");
         return parse(method, s);
     }
 

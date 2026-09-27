@@ -160,7 +160,7 @@ struct ValueParser<DataSize> {
             return Error::other("expected integer");
 
         auto s = scan.remStr();
-        auto val = result.unwrap();
+        auto val = result.expect();
 
         if (s == "TiB" or s == "T")
             return Ok(DataSize::fromTiB(val));
@@ -350,7 +350,7 @@ export struct _OptionImpl {
         if (kind == OptionKind::OPTION) {
             try$(w.writeRune('['));
             if (shortName)
-                try$(format(w, "-{:c},", shortName.unwrap()));
+                try$(format(w, "-{:c},", shortName.expect()));
             try$(format(w, "--{}", longName));
             try$(w.writeRune(']'));
         } else if (kind == OptionKind::OPERAND) {
@@ -620,7 +620,7 @@ export struct Command : Meta::Pinned {
 
                         try$(w.writeStr("  "s));
                         if (opt->shortName)
-                            try$(format(w, "{}, ", "-{:c}"_f(opt->shortName.unwrap()) | TTY_OPTION));
+                            try$(format(w, "{}, ", "-{:c}"_f(opt->shortName.expect()) | TTY_OPTION));
 
                         try$(format(w, "{}: {}\n", "--{}"_f(opt->longName) | TTY_OPTION, opt->description));
                     }
@@ -654,7 +654,7 @@ export struct Command : Meta::Pinned {
                 if (opt->kind != OptionKind::OPTION)
                     continue;
 
-                bool shortNameMatch = opt->shortName and c->flag == opt->shortName.unwrap();
+                bool shortNameMatch = opt->shortName and c->flag == opt->shortName.expect();
                 bool longNameMatch = c->value == opt->longName;
 
                 if (not(shortNameMatch or longNameMatch))

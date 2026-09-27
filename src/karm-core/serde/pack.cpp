@@ -32,7 +32,7 @@ export struct PackSerializer : Serializer {
             break;
 
         case Type::UNION_ITEM:
-            try$(_emit.writeFrom<u8>(type.index.unwrap()));
+            try$(_emit.writeFrom<u8>(type.index.expect()));
             break;
 
         case Type::ENUM:
@@ -44,14 +44,14 @@ export struct PackSerializer : Serializer {
             break;
 
         case Type::VEC:
-            try$(serializeUnsigned(type.len.unwrap(), SizeHint::AUTO));
+            try$(serializeUnsigned(type.len.expect(), SizeHint::AUTO));
             break;
 
         case Type::MAP:
-            try$(serializeUnsigned(type.len.unwrap(), SizeHint::AUTO));
+            try$(serializeUnsigned(type.len.expect(), SizeHint::AUTO));
             break;
         case Type::MAP_ITEM:
-            try$(serializeString(type.tag.unwrap().str()));
+            try$(serializeString(type.tag.expect().str()));
             break;
 
         case Type::OBJECT:

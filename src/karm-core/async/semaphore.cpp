@@ -75,7 +75,7 @@ export struct Semaphore {
             }
 
             // Should only fail if ct is cancelled, which should be caught before, so we panic.
-            attach(_ct).unwrap();
+            attach(_ct).expect();
 
             if (_s._currentCount < _count or not _s._listeners.empty()) {
                 _s._listeners.append(this, _s._listeners.tail());

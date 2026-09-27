@@ -160,7 +160,7 @@ export template <typename... Ts>
 String format(Str format, Ts&&... ts) {
     StringWriter writer{};
     Args<Ts...> args{std::forward<Ts>(ts)...};
-    _format(writer, format, args).unwrap("formating string");
+    _format(writer, format, args).expect("formating string");
     return writer.take();
 }
 
@@ -174,7 +174,7 @@ String toStr(T const& t, Str format = "") {
         SScan scan{format};
         formatter.parse(scan);
     }
-    formatter.format(writer, t).unwrap("formating string");
+    formatter.format(writer, t).expect("formating string");
     return writer.take();
 }
 
@@ -592,7 +592,7 @@ struct Formatter<Some<T>> {
         if constexpr (Meta::Same<T, None>)
             return writer.writeStr("Some"s);
         else
-            return formatter.format(writer, val.unwrap());
+            return formatter.format(writer, val.expect());
     }
 };
 
@@ -643,7 +643,7 @@ struct Formatter<Error> {
         try$(writer.writeStr(val.msg()));
         if (val.cause()) {
             try$(writer.writeStr(": "s));
-            try$(format(writer, val.cause().unwrap()));
+            try$(format(writer, val.cause().expect()));
         }
         return Ok();
     }
@@ -670,7 +670,7 @@ struct Formatter<Res<T, E>> {
 
     Res<> format(TextWriter& writer, Res<T, E> const& val) {
         if (val)
-            return _fmtOk.format(writer, val.unwrap());
+            return _fmtOk.format(writer, val.expect());
         return _fmtErr.format(writer, val.none());
     }
 };
@@ -765,7 +765,7 @@ struct Formatter<Weak<T>> {
         auto inner = val.upgrade();
         if (not inner)
             return writer.writeStr("None"s);
-        return formatter.format(writer, inner.unwrap().unwrap());
+        return formatter.format(writer, inner.expect().unwrap());
     }
 };
 

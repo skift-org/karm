@@ -348,7 +348,7 @@ export struct Regex {
         Io::SScan s = pattern;
         return {
             _parsePattern(s)
-                .unwrap("invalid regex pattern"),
+                .expect("invalid regex pattern"),
             options,
         };
     }

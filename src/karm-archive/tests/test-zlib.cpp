@@ -7,7 +7,7 @@ namespace Karm::Archive::Tests {
 test$("zlib-decompress") {
     auto testCase = [&](Bytes input, Str expected) -> Res<> {
         auto res = try$(zlibDecompress(input));
-        expectEq$(res, bytes(expected));
+        assertEq$(res, bytes(expected));
         return Ok();
     };
 
@@ -24,7 +24,7 @@ test$("zlib-empty-uncompressed") {
         (u8)0x78, 0x9C, 0x01, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00,
         0x01
     };
-    expectEq$(try$(zlibDecompress(input)).len(), 0uz);
+    assertEq$(try$(zlibDecompress(input)).len(), 0uz);
     return Ok();
 }
 
@@ -32,7 +32,7 @@ test$("zlib-empty-fixed") {
     Array input = {
         (u8)0x78, 0x9C, 0x03, 0x00, 0x00, 0x00, 0x00, 0x01
     };
-    expectEq$(try$(zlibDecompress(input)).len(), 0uz);
+    assertEq$(try$(zlibDecompress(input)).len(), 0uz);
     return Ok();
 }
 
@@ -41,7 +41,7 @@ test$("zlib-empty-dynamic") {
         (u8)0x78, 0x9C, 0x05, 0xC1, 0x81, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x10, 0xFF, 0xD5, 0x08, 0x00, 0x00, 0x00, 0x01
     };
-    expectEq$(try$(zlibDecompress(input)).len(), 0uz);
+    assertEq$(try$(zlibDecompress(input)).len(), 0uz);
     return Ok();
 }
 
@@ -51,8 +51,8 @@ test$("zlib-one-byte-raw") {
         0x00, 0x01
     };
     auto out = try$(zlibDecompress(input));
-    expectEq$(out.len(), 1uz);
-    expectEq$(out[0], 0);
+    assertEq$(out.len(), 1uz);
+    assertEq$(out[0], 0);
 
     return Ok();
 }
@@ -62,8 +62,8 @@ test$("zlib-one-byte-fixed") {
         (u8)0x78, 0x9C, 0x63, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01
     };
     auto out = try$(zlibDecompress(input));
-    expectEq$(out.len(), 1uz);
-    expectEq$(out[0], 0);
+    assertEq$(out.len(), 1uz);
+    assertEq$(out[0], 0);
 
     return Ok();
 }
@@ -74,8 +74,8 @@ test$("zlib-one-byte-dynamic") {
         0x10, 0xFF, 0xD5, 0x10, 0x00, 0x01, 0x00, 0x01
     };
     auto out = try$(zlibDecompress(input));
-    expectEq$(out.len(), 1uz);
-    expectEq$(out[0], 0);
+    assertEq$(out.len(), 1uz);
+    assertEq$(out[0], 0);
 
     return Ok();
 }
@@ -87,9 +87,9 @@ test$("zlib-zeroes") {
     };
 
     auto out = try$(zlibDecompress(input));
-    expectEq$(out.len(), 256uz);
+    assertEq$(out.len(), 256uz);
     for (usize i : urange::zeroTo(256)) {
-        expectEq$(out[i], 0);
+        assertEq$(out[i], 0);
     }
 
     return Ok();
@@ -99,7 +99,7 @@ test$("zlib-compress-roundtrip") {
     auto roundtrip = [&](Str input) -> Res<> {
         auto compressed = try$(zlibCompress(bytes(input)));
         auto decompressed = try$(zlibDecompress(compressed));
-        expectEq$(decompressed, bytes(input));
+        assertEq$(decompressed, bytes(input));
         return Ok();
     };
 
@@ -125,7 +125,7 @@ test$("zlib-compress-roundtrip-long") {
 
     auto compressed = try$(zlibCompress(input));
     auto decompressed = try$(zlibDecompress(compressed));
-    expectEq$(decompressed, input);
+    assertEq$(decompressed, input);
 
     return Ok();
 }
@@ -142,10 +142,10 @@ test$("zlib-compress-incompressible") {
 
     auto compressed = try$(zlibCompress(input));
     // 2 bytes of header, 5 per stored block and 4 of checksum.
-    expectLteq$(compressed.len(), input.len() + 16);
+    assertLteq$(compressed.len(), input.len() + 16);
 
     auto decompressed = try$(zlibDecompress(compressed));
-    expectEq$(decompressed, input);
+    assertEq$(decompressed, input);
 
     return Ok();
 }
@@ -153,14 +153,14 @@ test$("zlib-compress-incompressible") {
 test$("zlib-compress-header-and-adler") {
     auto compressed = try$(zlibCompress(bytes(Str{"Hello World!"})));
 
-    expectEq$(compressed[0], 0x78);
-    expectEq$((compressed[0] * 256 + compressed[1]) % 31, 0);
+    assertEq$(compressed[0], 0x78);
+    assertEq$((compressed[0] * 256 + compressed[1]) % 31, 0);
 
     // Adler-32 of "Hello World!", stored big-endian.
-    expectEq$(compressed[compressed.len() - 4], 0x1c);
-    expectEq$(compressed[compressed.len() - 3], 0x49);
-    expectEq$(compressed[compressed.len() - 2], 0x04);
-    expectEq$(compressed[compressed.len() - 1], 0x3e);
+    assertEq$(compressed[compressed.len() - 4], 0x1c);
+    assertEq$(compressed[compressed.len() - 3], 0x49);
+    assertEq$(compressed[compressed.len() - 2], 0x04);
+    assertEq$(compressed[compressed.len() - 1], 0x3e);
 
     return Ok();
 }

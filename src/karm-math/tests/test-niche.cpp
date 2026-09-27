@@ -7,17 +7,17 @@ namespace Karm::Math::Tests {
 test$("f64-niche") {
     Opt<f64> test;
 
-    expectEq$(sizeof(test), sizeof(f64));
-    expectEq$(test.has(), false);
-    expectEq$(test, NONE);
+    assertEq$(sizeof(test), sizeof(f64));
+    assertEq$(test.has(), false);
+    assertEq$(test, NONE);
     test = Some(5);
-    expectEq$(test.unwrap(), 5);
-    expectEq$(test.take(), 5);
-    expectEq$(test, NONE);
+    assertEq$(test.expect(), 5);
+    assertEq$(test.take(), 5);
+    assertEq$(test, NONE);
     test = Some(Math::NAN);
-    expectEq$(test.has(), true);
+    assertEq$(test.has(), true);
     test = Some(-Math::NAN);
-    expectEq$(test.has(), true);
+    assertEq$(test.has(), true);
 
     return Ok();
 }
@@ -25,13 +25,13 @@ test$("f64-niche") {
 test$("f32-niche") {
     Opt<f32> test;
 
-    expectEq$(sizeof(test), sizeof(f32));
-    expectEq$(test.has(), false);
-    expectEq$(test, NONE);
+    assertEq$(sizeof(test), sizeof(f32));
+    assertEq$(test.has(), false);
+    assertEq$(test, NONE);
     test = Some(5);
-    expectEq$(test.unwrap(), 5);
-    expectEq$(test.take(), 5);
-    expectEq$(test, NONE);
+    assertEq$(test.expect(), 5);
+    assertEq$(test.take(), 5);
+    assertEq$(test, NONE);
 
     f32 const NAN = 0.0f / 0.0f;
     f32 const INF = 1.0f / 0.0f;
@@ -50,7 +50,7 @@ test$("f32-niche") {
     };
     for (auto val : values) {
         test = Some(val);
-        expectEq$(test.has(), true);
+        assertEq$(test.has(), true);
     }
 
     return Ok();

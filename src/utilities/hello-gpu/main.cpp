@@ -18,11 +18,11 @@ struct Handler : App::Handler {
         : _device(device),
           _pipeline(pipeline),
           _window(window),
-          _swapChain(window->createSwapChain().unwrap()) {}
+          _swapChain(window->createSwapChain().expect()) {}
 
     void handle(App::WindowId, App::Event& e) override {
         if (e.is<App::ResizeEvent>())
-            _swapChain = _window->createSwapChain().unwrap();
+            _swapChain = _window->createSwapChain().expect();
     }
 
     void update() override {

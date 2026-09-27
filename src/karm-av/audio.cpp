@@ -365,10 +365,10 @@ export struct Player : Stream {
 
     void seek(Duration offset) {
         if (_audio.has()) {
-            auto fmt = _audio.unwrap()->format;
+            auto fmt = _audio.expect()->format;
             f64 secs = offset.toUSecs() / static_cast<f64>(Duration::fromSecs(1).toUSecs());
             usize frame = static_cast<usize>(secs * static_cast<f64>(fmt.rate));
-            _currentFrame.store(clamp(frame, 0uz, _audio.unwrap()->frames().len()));
+            _currentFrame.store(clamp(frame, 0uz, _audio.expect()->frames().len()));
         }
     }
 
@@ -376,13 +376,13 @@ export struct Player : Stream {
         if (not _audio)
             return Duration::fromSecs(0);
 
-        auto fmt = _audio.unwrap()->format;
+        auto fmt = _audio.expect()->format;
         return fmt.toDuration(_currentFrame.load());
     }
 
     Duration duration() const {
         if (_audio.has())
-            return _audio.unwrap()->duration();
+            return _audio.expect()->duration();
         return Duration::fromSecs(0);
     }
 
@@ -405,7 +405,7 @@ export struct Player : Stream {
     Status status() const {
         if (not _audio)
             return Status::STOPPED;
-        if (_currentFrame.load() >= _audio.unwrap()->frames().len())
+        if (_currentFrame.load() >= _audio.expect()->frames().len())
             return Status::ENDED;
         if (_pause)
             return Status::PAUSED;
@@ -418,7 +418,7 @@ export struct Player : Stream {
                 f.mono(0);
         } else {
             auto curr = _currentFrame.load();
-            _currentFrame.store(curr + _audio.unwrap()->fill(curr, output));
+            _currentFrame.store(curr + _audio.expect()->fill(curr, output));
             for (auto f : output.iter())
                 f.mono(f.mono());
 

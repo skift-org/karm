@@ -8,37 +8,37 @@ using namespace Karm::Regex::Literals;
 namespace Karm::Regex::Tests {
 
 test$("regex-atom") {
-    expect$("a"_regex.contains("a"));
-    expectNot$("a"_regex.contains("b"));
-    expect$("\\"_regex.contains("\\"));
+    assert$("a"_regex.contains("a"));
+    assertNot$("a"_regex.contains("b"));
+    assert$("\\"_regex.contains("\\"));
 
     return Ok();
 }
 
 test$("regex-chain") {
-    expect$("ab"_regex.contains("ab"));
-    expect$("abc"_regex.contains("abc"));
-    expectNot$("abc"_regex.contains("cba"));
+    assert$("ab"_regex.contains("ab"));
+    assert$("abc"_regex.contains("abc"));
+    assertNot$("abc"_regex.contains("cba"));
 
     return Ok();
 }
 
 test$("regex-disjunction") {
     auto re = "a|b|c"_regex;
-    expect$(re.contains("a"));
-    expect$(re.contains("b"));
-    expect$(re.contains("c"));
-    expectNot$(re.contains("d"));
+    assert$(re.contains("a"));
+    assert$(re.contains("b"));
+    assert$(re.contains("c"));
+    assertNot$(re.contains("d"));
 
     return Ok();
 }
 
 test$("regex-group") {
     auto re = "(ab)+"_regex;
-    expect$(re.wholeMatch("ab") != NONE);
-    expect$(re.wholeMatch("abababababab") != NONE);
-    expectNot$(re.wholeMatch("abababababa") != NONE);
-    expectNot$(re.contains(""));
+    assert$(re.wholeMatch("ab") != NONE);
+    assert$(re.wholeMatch("abababababab") != NONE);
+    assertNot$(re.wholeMatch("abababababa") != NONE);
+    assertNot$(re.contains(""));
 
     return Ok();
 }

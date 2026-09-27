@@ -35,7 +35,7 @@ bool matchesProfileFilter(ProfileItem const& profile, Opt<Icc::ProfileClass> fil
         return true;
 
     auto profileClass = profile.profile->profileDeviceClass();
-    return profileClass._name == filter.unwrap();
+    return profileClass._name == filter.expect();
 }
 
 Opt<usize> firstVisibleProfile(State const& state) {
@@ -62,7 +62,7 @@ Ui::Task<Action> reduce(State& state, Action action) {
                 return;
 
             if (auto first = firstVisibleProfile(state))
-                state.selected = first.unwrap();
+                state.selected = first.expect();
         }
     );
     return NONE;
@@ -104,11 +104,11 @@ Res<Vec<ProfileItem>> loadAll() {
         auto maybeDir = Sys::Dir::open(bundle.url() / "/public/color-profiles");
         if (not maybeDir)
             continue;
-        for (auto& entry : maybeDir.unwrap().entries()) {
+        for (auto& entry : maybeDir.expect().entries()) {
             if (entry.type != Sys::Type::FILE)
                 continue;
 
-            auto profileUrl = maybeDir.unwrap().url() / entry.name;
+            auto profileUrl = maybeDir.expect().url() / entry.name;
             if (profileUrl.path.suffix() != "icc")
                 continue;
 
@@ -120,7 +120,7 @@ Res<Vec<ProfileItem>> loadAll() {
 
             profiles.pushBack({
                 .name = Io::format("{}", Ref::Path::parse(entry.name).basename()),
-                .profile = res.unwrap(),
+                .profile = res.expect(),
             });
         }
     }
@@ -164,7 +164,7 @@ String profileClassText(Icc::ProfileClass profileClass) {
 String profileFilterText(Opt<Icc::ProfileClass> profileClass) {
     if (profileClass == NONE)
         return "All color profiles"s;
-    return profileClassText(profileClass.unwrap());
+    return profileClassText(profileClass.expect());
 }
 
 Ui::Child profileNavbar(State const& s) {

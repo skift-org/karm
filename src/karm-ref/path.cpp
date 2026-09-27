@@ -216,7 +216,7 @@ export struct Path {
 
     String str() const {
         Io::StringWriter writer;
-        unparse(writer).unwrap("unparse error");
+        unparse(writer).expect("unparse error");
         return writer.str();
     }
 

@@ -12,7 +12,7 @@ struct Cow {
         static Opt<Rc<T>> _base = NONE;
         if (not _base)
             _base = Some(makeRc<T>());
-        return _base.unwrap();
+        return _base.expect();
     }
 
     Cow() = default;
@@ -33,7 +33,7 @@ struct Cow {
     }
 
     bool defaulted() const {
-        return &_inner.unwrap() == &default_().unwrap();
+        return &_inner.expect() == &default_().expect();
     }
 
     constexpr T const* operator->() const {

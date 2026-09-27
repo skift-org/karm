@@ -9,7 +9,7 @@ namespace Karm::Crypto::Tests {
 test$("crypto-crc32") {
     auto testCase = [&](Str data, u32 expected) -> Res<> {
         auto crc = crc32(bytes(data));
-        expectEq$(crc, expected);
+        assertEq$(crc, expected);
         return Ok();
     };
 
@@ -21,9 +21,9 @@ test$("crypto-crc32") {
 }
 
 test$("crypto-crc32-check") {
-    expect$(crc32check(bytes(Array<u8, 4>{0, 0, 0, 0})));
-    expect$(crc32check("The quick brown fox jumps over the lazy dog\x39\xA3\x4F\x41"_bytes));
-    expect$(crc32check("various CRC algorithms input data\xAE\x66\xD3\x9B"_bytes));
+    assert$(crc32check(bytes(Array<u8, 4>{0, 0, 0, 0})));
+    assert$(crc32check("The quick brown fox jumps over the lazy dog\x39\xA3\x4F\x41"_bytes));
+    assert$(crc32check("various CRC algorithms input data\xAE\x66\xD3\x9B"_bytes));
     return Ok();
 }
 

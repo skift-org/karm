@@ -152,7 +152,7 @@ struct Union {
     }
 
     template <Meta::Contains<Ts...> T>
-    always_inline T& unwrap(char const* msg = "unwrapping wrong type") lifetimebound {
+    always_inline T& expect(char const* msg = "expecting T, got another type") lifetimebound {
         if (_index != Meta::indexOf<T, Ts...>()) [[unlikely]]
             panic(msg);
 
@@ -160,7 +160,7 @@ struct Union {
     }
 
     template <Meta::Contains<Ts...> T>
-    always_inline T const& unwrap(char const* msg = "unwrapping wrong type") const lifetimebound {
+    always_inline T const& expect(char const* msg = "expecting T, got another type") const lifetimebound {
         if (_index != Meta::indexOf<T, Ts...>()) [[unlikely]]
             panic(msg);
 
@@ -236,7 +236,7 @@ struct Union {
     std::partial_ordering operator<=>(T const& other) const {
         if constexpr (Meta::Comparable<T>)
             if (is<T>())
-                return unwrap<T>() <=> other;
+                return expect<T>() <=> other;
         return std::partial_ordering::unordered;
     }
 
@@ -244,7 +244,7 @@ struct Union {
         requires Meta::Equatable<T>
     bool operator==(T const& other) const {
         if (is<T>())
-            return unwrap<T>() == other;
+            return expect<T>() == other;
         return false;
     }
 
@@ -253,7 +253,7 @@ struct Union {
             return visit(
                 [&]<typename T>(T const& ptr) {
                     if constexpr (Meta::Comparable<T>)
-                        return ptr <=> other.unwrap<T>();
+                        return ptr <=> other.expect<T>();
                     return std::partial_ordering::unordered;
                 }
             );
@@ -264,7 +264,7 @@ struct Union {
         if (_index == other._index)
             return visit(
                 [&]<typename T>(T const& ptr) {
-                    return ptr == other.unwrap<T>();
+                    return ptr == other.expect<T>();
                 }
             );
         return false;

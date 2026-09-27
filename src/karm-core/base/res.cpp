@@ -36,7 +36,7 @@ struct [[nodiscard]] Res {
 
     template <typename U>
     always_inline constexpr Res(Res<U, E> other)
-        : _inner(other ? Inner{Ok<V>{other.unwrap()}} : Inner{other.none()}) {}
+        : _inner(other ? Inner{Ok<V>{other.expect()}} : Inner{other.none()}) {}
 
     always_inline constexpr explicit operator bool() const {
         return static_cast<bool>(_inner.template is<Ok<V>>());
@@ -45,19 +45,19 @@ struct [[nodiscard]] Res {
     always_inline constexpr Opt<V> ok() {
         if (_inner.template is<E>()) [[unlikely]]
             return NONE;
-        return Some(_inner.template unwrap<Ok<V>>().unwrap());
+        return Some(_inner.template expect<Ok<V>>().unwrap());
     }
 
     always_inline constexpr Opt<V> ok() const {
         if (_inner.template is<E>()) [[unlikely]]
             return NONE;
-        return _inner.template unwrap<Ok<V>>().unwrap();
+        return _inner.template expect<Ok<V>>().unwrap();
     }
 
     always_inline constexpr Opt<E> error() const {
         if (not _inner.template is<E>()) [[unlikely]]
             return NONE;
-        return Some(_inner.template unwrap<E>());
+        return Some(_inner.template expect<E>());
     }
 
     always_inline constexpr bool has() const {
@@ -68,31 +68,31 @@ struct [[nodiscard]] Res {
         if (not _inner.template is<E>()) [[unlikely]]
             panic("none() called on an ok");
 
-        return _inner.template unwrap<E>();
+        return _inner.template expect<E>();
     }
 
-    always_inline constexpr V& unwrap(char const* msg = "unwraping an error") lifetimebound {
+    always_inline constexpr V& expect(char const* msg = "expecting ok, got an error") lifetimebound {
         if (not _inner.template is<Ok<V>>()) [[unlikely]]
             panic(msg);
 
-        return _inner.template unwrap<Ok<V>>().unwrap();
+        return _inner.template expect<Ok<V>>().unwrap();
     }
 
-    always_inline constexpr V const& unwrap(char const* msg = "unwraping an error") const lifetimebound {
+    always_inline constexpr V const& expect(char const* msg = "expecting ok, got an error") const lifetimebound {
         if (not _inner.template is<Ok<V>>()) [[unlikely]]
             panic(msg);
-        return _inner.template unwrap<Ok<V>>().unwrap();
+        return _inner.template expect<Ok<V>>().unwrap();
     }
 
     always_inline constexpr Value unwrapOr(Value other) const {
         if (_inner.template is<Ok<V>>())
-            return _inner.template unwrap<Ok<V>>().unwrap();
+            return _inner.template expect<Ok<V>>().unwrap();
         return other;
     }
 
     always_inline constexpr Value unwrapOrElse(auto f) const {
         if (_inner.template is<Ok<V>>())
-            return _inner.template unwrap<Ok<V>>().unwrap();
+            return _inner.template expect<Ok<V>>().unwrap();
         return f();
     }
 
@@ -100,42 +100,42 @@ struct [[nodiscard]] Res {
         if (not _inner.template is<Ok<V>>()) [[unlikely]]
             panic(msg);
 
-        return _inner.template unwrap<Ok<V>>().take();
+        return _inner.template expect<Ok<V>>().take();
     }
 
     template <typename U = E>
     always_inline constexpr Res<V, U> mapErr(auto f) {
         if (_inner.template is<Ok<V>>())
-            return _inner.template unwrap<Ok<V>>();
-        return f(_inner.template unwrap<E>());
+            return _inner.template expect<Ok<V>>();
+        return f(_inner.template expect<E>());
     }
 
     template <typename U>
     always_inline constexpr Res<V, U> mapErr() {
         if (_inner.template is<Ok<V>>())
-            return _inner.template unwrap<Ok<V>>();
+            return _inner.template expect<Ok<V>>();
         return U{};
     }
 
     template <typename... Args>
     always_inline constexpr Res<V, E> wrapErr(Args&&... args) {
         if (_inner.template is<Ok<V>>())
-            return _inner.template unwrap<Ok<V>>();
-        return _inner.template unwrap<E>().wrap(std::forward<Args>(args)...);
+            return _inner.template expect<Ok<V>>();
+        return _inner.template expect<E>().wrap(std::forward<Args>(args)...);
     }
 
     template <typename U>
     always_inline constexpr Res<U, E> map(auto f) {
         if (_inner.template is<Ok<V>>())
-            return Ok(f(_inner.template unwrap<Ok<V>>().unwrap()));
-        return _inner.template unwrap<E>();
+            return Ok(f(_inner.template expect<Ok<V>>().unwrap()));
+        return _inner.template expect<E>();
     }
 
     template <typename U>
     always_inline constexpr Res<U, E> map() {
         if (_inner.template is<Ok<V>>())
-            return Ok(_inner.template unwrap<Ok<V>>().unwrap());
-        return _inner.template unwrap<E>();
+            return Ok(_inner.template expect<Ok<V>>().unwrap());
+        return _inner.template expect<E>();
     }
 
     always_inline auto operator<=>(Res const&) const

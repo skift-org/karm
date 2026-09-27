@@ -396,7 +396,7 @@ export struct Decoder {
                 return Error::invalidData("undefined component id");
             }
 
-            auto& c = _scanComponents[cid].unwrap();
+            auto& c = _scanComponents[cid].expect();
 
             // logDebug("jpeg: decoding using huffman table (dc: {}, ac: {})", c.dcHuffId, c.acHuffId);
 
@@ -405,14 +405,14 @@ export struct Decoder {
                 return Error::invalidData("undefined dc huffman table id");
             }
 
-            auto& dcHuff = _dcHuff[c.dcHuffId].unwrap();
+            auto& dcHuff = _dcHuff[c.dcHuffId].expect();
 
             if (not _acHuff[c.acHuffId]) {
                 logError("jpeg: undefined ac huffman table id: {}", c.acHuffId);
                 return Error::invalidData("undefined ac huffman table id");
             }
 
-            auto& acHuff = _acHuff[c.acHuffId].unwrap();
+            auto& acHuff = _acHuff[c.acHuffId].expect();
 
             u8 len = try$(dcHuff.next(bs));
 
@@ -488,7 +488,7 @@ export struct Decoder {
                     return Error::invalidData("undefined quantization table id");
                 }
 
-                auto& quant = _quant[_components[j]->quantId].unwrap();
+                auto& quant = _quant[_components[j]->quantId].expect();
                 dequantize(mcu, quant);
                 idct(mcu);
             }

@@ -34,7 +34,7 @@ struct CacheTransport : Transport {
             co_return co_await _next->doAsync(request, ct);
 
         if (auto maybeBlob = _cached.lookup(request->url)) {
-            auto response = _createResponse(request, maybeBlob.unwrap());
+            auto response = _createResponse(request, maybeBlob.expect());
             response->header.put("X-Karm-Cache"_sym, "hit"s);
             co_return Ok(response);
         }

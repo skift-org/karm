@@ -50,7 +50,7 @@ export struct Client : Transport {
                 co_return maybeResp.none();
             }
 
-            auto response = maybeResp.unwrap();
+            auto response = maybeResp.expect();
             co_try$(_logRequest(*request, *response));
 
             // 10.3.4 303 See Other

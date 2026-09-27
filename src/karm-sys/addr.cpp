@@ -125,13 +125,13 @@ export struct Ip : Union<Ip4, Ip6> {
         auto maybeV6 = Ip6::parse(s);
 
         if (maybeV6)
-            return Ok(maybeV6.unwrap());
+            return Ok(maybeV6.expect());
 
         s = saved;
         auto maybeV4 = Ip4::parse(s);
 
         if (maybeV4)
-            return Ok(maybeV4.unwrap());
+            return Ok(maybeV4.expect());
 
         return Error::invalidInput("invalid IP address");
     }
@@ -188,10 +188,10 @@ Res<Ip4> Ip4::parse(Io::SScan& s) {
         if (not n)
             return Error::invalidInput("invalid ip address");
 
-        if (n.unwrap() > 255)
+        if (n.expect() > 255)
             return Error::invalidInput("invalid ip address");
 
-        addr.bytes[i] = n.unwrap();
+        addr.bytes[i] = n.expect();
 
         if (i < 3) {
             if (not s.skip('.'))

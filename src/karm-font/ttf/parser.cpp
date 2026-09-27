@@ -241,7 +241,7 @@ export struct Parser {
         if (not positioning)
             return 0;
 
-        return positioning.unwrap().v0.xAdvance;
+        return positioning.expect().v0.xAdvance;
     }
 
     void glyphContour(Gfx::Canvas& g, Gfx::Glyph glyph) const {

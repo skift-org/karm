@@ -23,7 +23,7 @@ export struct Client : Meta::NoCopy {
         u64 seq = 1;
 
         void failAllPending(Error error) {
-            auto msg = Message::packReq<Error>(SEQ_EVENT, error).unwrap();
+            auto msg = Message::packReq<Error>(SEQ_EVENT, error).expect();
             for (auto& v : pending.mutIterValue())
                 v.resolve(msg);
         }
@@ -76,7 +76,7 @@ export struct Client : Meta::NoCopy {
                 co_return res.none();
             }
 
-            auto& msg = res.unwrap();
+            auto& msg = res.expect();
             auto header = msg->_header;
 
             if (state->pending.contains(header.seq)) {

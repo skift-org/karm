@@ -16,18 +16,18 @@ test$("readline-ends-with-delim-len-1") {
         auto [read, untilDel] = try$(
             readLine(bufReader, bufWriter, bytes("\n"s))
         );
-        expectEq$(bufWriter.take(), bytes("hello\n"s));
-        expectEq$(read, 5u);
-        expect$(untilDel);
+        assertEq$(bufWriter.take(), bytes("hello\n"s));
+        assertEq$(read, 5u);
+        assert$(untilDel);
     }
 
     {
         auto [read, untilDel] = try$(readLine(
             bufReader, bufWriter, bytes("\n"s)
         ));
-        expectEq$(bufWriter.take(), bytes("worldd\n"s));
-        expectEq$(read, 6u);
-        expect$(untilDel);
+        assertEq$(bufWriter.take(), bytes("worldd\n"s));
+        assertEq$(read, 6u);
+        assert$(untilDel);
     }
 
     return Ok();
@@ -43,19 +43,19 @@ test$("readline-ends-with-stream") {
         auto [read, untilDel] = try$(readLine(
             bufReader, bufWriter, bytes("\n"s)
         ));
-        expectEq$(bufWriter.take(), bytes("hello\n"s));
+        assertEq$(bufWriter.take(), bytes("hello\n"s));
 
-        expectEq$(read, 5u);
-        expect$(untilDel);
+        assertEq$(read, 5u);
+        assert$(untilDel);
     }
 
     {
         auto [read, untilDel] = try$(readLine(
             bufReader, bufWriter, bytes("\n"s)
         ));
-        expectEq$(bufWriter.take(), bytes("wrld"s));
-        expectEq$(read, 4u);
-        expectNot$(untilDel);
+        assertEq$(bufWriter.take(), bytes("wrld"s));
+        assertEq$(read, 4u);
+        assertNot$(untilDel);
     }
 
     return Ok();
@@ -71,27 +71,27 @@ test$("readline-ends-with-delim-len-5") {
         auto [read, untilDel] = try$(readLine(
             bufReader, bufWriter, bytes("12345"s)
         ));
-        expectEq$(bufWriter.take(), bytes("hello12345"s));
-        expectEq$(read, 5u);
-        expect$(untilDel);
+        assertEq$(bufWriter.take(), bytes("hello12345"s));
+        assertEq$(read, 5u);
+        assert$(untilDel);
     }
 
     {
         auto [read, untilDel] = try$(readLine(
             bufReader, bufWriter, bytes("12345"s)
         ));
-        expectEq$(bufWriter.take(), bytes("worlds12345"s));
-        expectEq$(read, 6u);
-        expect$(untilDel);
+        assertEq$(bufWriter.take(), bytes("worlds12345"s));
+        assertEq$(read, 6u);
+        assert$(untilDel);
     }
 
     {
         auto [read, untilDel] = try$(readLine(
             bufReader, bufWriter, bytes("12345"s)
         ));
-        expectEq$(bufWriter.take(), bytes("he12345"s));
-        expectEq$(read, 2u);
-        expect$(untilDel);
+        assertEq$(bufWriter.take(), bytes("he12345"s));
+        assertEq$(read, 2u);
+        assert$(untilDel);
     }
 
     return Ok();

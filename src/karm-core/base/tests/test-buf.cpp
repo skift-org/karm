@@ -9,15 +9,15 @@ test$("buf-niche") {
 
     auto comp = Buf<int>::init(5, 0);
 
-    expectEq$(sizeof(test), sizeof(Buf<int>));
-    expectEq$(test.has(), false);
-    expectEq$(test, NONE);
+    assertEq$(sizeof(test), sizeof(Buf<int>));
+    assertEq$(test.has(), false);
+    assertEq$(test, NONE);
     test = Some(Buf<int>::init(5, 0));
-    expectEq$(test.unwrap(), comp);
-    expectEq$(test.take(), comp);
-    expectEq$(test, NONE);
+    assertEq$(test.expect(), comp);
+    assertEq$(test.take(), comp);
+    assertEq$(test, NONE);
     test = Some(Buf<int>::init(0));
-    expectEq$(test.has(), true);
+    assertEq$(test.has(), true);
 
     return Ok();
 }

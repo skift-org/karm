@@ -5,8 +5,8 @@ import Karm.Sys;
 namespace Karm::Sys::Tests {
 
 test$("ip4-eq") {
-    expectEq$(Ip4::localhost(), Ip4::localhost());
-    expectEq$(Ip4::localhost(80), Ip4::localhost(80));
+    assertEq$(Ip4::localhost(), Ip4::localhost());
+    assertEq$(Ip4::localhost(80), Ip4::localhost(80));
     return Ok();
 }
 

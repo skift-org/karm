@@ -69,7 +69,7 @@ struct Map {
 
     [[nodiscard]] Opt<V> remove(Meta::Equatable<K> auto const& key) {
         if (auto* slot = _items.lookup(key); slot and slot->state == Items::USED) {
-            V res = std::move(slot->unwrap().value);
+            V res = std::move(slot->expect().value);
             _items.clear(slot);
             return Some(std::move(res));
         }
@@ -79,7 +79,7 @@ struct Map {
     bool removeValue(Meta::Equatable<V> auto const& v) {
         bool res = false;
         for (auto& slot : _items.mutIterUsed()) {
-            if (slot.unwrap().value == v) {
+            if (slot.expect().value == v) {
                 _items.clear(&slot);
                 res = true;
             }
@@ -94,21 +94,21 @@ struct Map {
     [[nodiscard]] Opt<V&> lookup(Meta::Equatable<K> auto const& key) lifetimebound {
         if (auto* slot = _items.lookup(key);
             slot and slot->state == Items::USED)
-            return Some(slot->unwrap().value);
+            return Some(slot->expect().value);
         return NONE;
     }
 
     [[nodiscard]] Opt<V const&> lookup(Meta::Equatable<K> auto const& key) const lifetimebound {
         if (auto* slot = _items.lookup(key);
             slot and slot->state == Items::USED)
-            return Some(slot->unwrap().value);
+            return Some(slot->expect().value);
         return NONE;
     }
 
     [[nodiscard]] V& lookupOrPut(Meta::Equatable<K> auto const& key, Meta::Callable<> auto&& build) lifetimebound {
         auto* slot = _items.lookup(key);
         if (slot and slot->state == Items::USED) {
-            return slot->unwrap().value;
+            return slot->expect().value;
         }
 
         if (not slot) {
@@ -117,7 +117,7 @@ struct Map {
         }
 
         _items.put(slot, key, build());
-        return slot->unwrap().value;
+        return slot->expect().value;
     }
 
     [[nodiscard]] V& lookupOrPutDefault(Meta::Equatable<K> auto const& key) lifetimebound {
@@ -135,7 +135,7 @@ struct Map {
     [[nodiscard]] V& lookupOrPutDefault(Meta::Equatable<K> auto const& key, Meta::Convertible<V> auto&& defaultValue = V{}) lifetimebound {
         auto* slot = _items.lookup(key);
         if (slot and slot->state == Items::USED) {
-            return slot->unwrap().value;
+            return slot->expect().value;
         }
 
         if (not slot) {
@@ -144,41 +144,41 @@ struct Map {
         }
 
         _items.put(slot, key, std::forward<decltype(defaultValue)>(defaultValue));
-        return slot->unwrap().value;
+        return slot->expect().value;
     }
 
     [[nodiscard]] auto iter() const lifetimebound {
         return _items.iterUsed() |
                Select([](auto const& s) -> auto const& {
-                   return s.unwrap().key;
+                   return s.expect().key;
                });
     }
 
     [[nodiscard]] auto mutIterValue() lifetimebound {
         return _items.mutIterUsed() |
                Select([](auto& s) -> auto& {
-                   return s.unwrap().value;
+                   return s.expect().value;
                });
     }
 
     [[nodiscard]] auto iterValue() const lifetimebound {
         return _items.iterUsed() |
                Select([](auto const& s) -> auto const& {
-                   return s.unwrap().value;
+                   return s.expect().value;
                });
     }
 
     [[nodiscard]] auto iterItems() const lifetimebound {
         return _items.iterUsed() |
                Select([](auto const& s) -> auto const& {
-                   return s.unwrap();
+                   return s.expect();
                });
     }
 
     [[nodiscard]] auto iterMutItems() lifetimebound {
         return _items.mutIterUsed() |
                Select([](auto& s) -> auto& {
-                   return s.unwrap();
+                   return s.expect();
                });
     }
 
@@ -199,7 +199,7 @@ struct Map {
 
         for (auto const& [k, v] : iterItems()) {
             auto it = other.lookup(k);
-            if (not it or it.unwrap() != v) {
+            if (not it or it.expect() != v) {
                 return false;
             }
         }

@@ -33,7 +33,7 @@ export struct Node {
     }
 
     Async::Task<Rc<Node>> lookupAsync(Ref::Path const& path) {
-        auto res = co_try$(_self.unwrap("node not self bound").upgrade());
+        auto res = co_try$(_self.expect("node not self bound").upgrade());
         for (auto const& i : path.iter())
             res = co_trya$(res->lookupAsync(i));
         co_return Ok(res);
@@ -72,7 +72,7 @@ export struct Node {
     }
 
     virtual Async::Task<Rc<Node>> openAsync() {
-        co_return Ok(co_try$(_self.unwrap("node not self bound").upgrade()));
+        co_return Ok(co_try$(_self.expect("node not self bound").upgrade()));
     }
 
     virtual Async::Task<Vec<Sys::DirEntry>> listAsync() {

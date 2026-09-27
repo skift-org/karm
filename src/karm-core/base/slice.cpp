@@ -725,8 +725,8 @@ Yield<Slice<U>> split(T const& slice, Meta::Equatable<U> auto const delim) {
         auto end = indexOf(curr, delim);
         if (not end)
             break;
-        co_yield sub(curr, 0, end.unwrap());
-        curr = next(curr, end.unwrap() + 1);
+        co_yield sub(curr, 0, end.expect());
+        curr = next(curr, end.expect() + 1);
     }
     co_yield curr;
 }

@@ -68,7 +68,7 @@ export struct TtfGlyphInfoAdapter {
         Opt<u16> prevCid;
         for (auto const& [cid, gid] : iter(codeMappings)) {
 
-            if (prevCid and prevCid.unwrap() + 1 != cid)
+            if (prevCid and prevCid.expect() + 1 != cid)
                 flushCollectedWidths();
 
             if (currGroupW.len() == 0)

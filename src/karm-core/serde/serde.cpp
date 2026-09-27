@@ -305,7 +305,7 @@ struct Serde<Opt<T>> {
     static Res<> serialize(Serializer& ser, Opt<T> const& v) {
         if (not v)
             return ser.serializeUnit({Type::NIL});
-        return ser.serializeUnit({Type::SOME}, v.unwrap());
+        return ser.serializeUnit({Type::SOME}, v.expect());
     }
 
     static Res<Opt<T>> deserialize(Deserializer& de) {
@@ -346,7 +346,7 @@ struct Serde<Res<V, E>> {
     static Res<> serialize(Serializer& ser, Res<V, E> const& v) {
         if (not v)
             return ser.serializeUnit<E>({Type::NIL}, v.none());
-        return ser.serializeUnit<V>({Type::SOME}, v.unwrap());
+        return ser.serializeUnit<V>({Type::SOME}, v.expect());
     }
 
     static Res<Res<V, E>> deserialize(Deserializer& de) {
@@ -421,7 +421,7 @@ struct Serde<T> {
                     .tag = Some(Symbol::from(i.name)),
                 })) {
                 try$(scope.end());
-                return Ok(static_cast<T>(res.unwrap().v1));
+                return Ok(static_cast<T>(res.expect().v1));
             }
         }
 
@@ -609,7 +609,7 @@ struct Serde<Map<String, T>> {
             auto [type, value] = try$(scope.deserializeUnit<T>({
                 .kind = Type::MAP_ITEM,
             }));
-            res.put(type.tag.unwrap(), value);
+            res.put(type.tag.expect(), value);
         }
         try$(scope.end());
         return Ok(std::move(res));

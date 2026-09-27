@@ -28,9 +28,9 @@ test$("crypto-md5") {
     auto testCase = [&](Str data, Array<u8, MD5_BYTES> const& expected) -> Res<> {
         auto md = md5(bytes(data));
 
-        expectEq$(md.len(), expected.len());
+        assertEq$(md.len(), expected.len());
         for (usize idx = 0; idx < md.len(); idx++) {
-            expectEq$(md[idx], expected[idx]);
+            assertEq$(md[idx], expected[idx]);
         }
         return Ok();
     };

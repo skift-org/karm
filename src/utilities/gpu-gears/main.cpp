@@ -237,7 +237,7 @@ struct Handler : App::Handler {
     float animation = 0;
 
     Handler(Rc<App::Window> win)
-        : win(win), swapChain(win->createSwapChain().unwrap()) {
+        : win(win), swapChain(win->createSwapChain().expect()) {
 
         depths.resize(swapChain->size.width * swapChain->size.height);
         gear0 = gear(1.0, 4.0, 1.0, 20, 0.7);
@@ -349,7 +349,7 @@ struct Handler : App::Handler {
 
     void handle(App::WindowId, App::Event& e) override {
         if (e.is<App::ResizeEvent>()) {
-            swapChain = win->createSwapChain().unwrap();
+            swapChain = win->createSwapChain().expect();
             depths.resize(swapChain->size.width * swapChain->size.height);
             e.accept();
         }

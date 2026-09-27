@@ -69,14 +69,14 @@ struct Set {
 
     [[nodiscard]] Opt<T const&> lookup(Meta::Equatable<T> auto const& key) const lifetimebound {
         if (auto it = _items.lookup(key); it and it->state == Items::USED)
-            return Some(it->unwrap());
+            return Some(it->expect());
         return NONE;
     }
 
     [[nodiscard]] T const& lookupOrAdd(Meta::Equatable<T> auto const& key, Meta::Callable<> auto&& build) lifetimebound {
         auto* slot = _items.lookup(key);
         if (slot and slot->state == Items::USED) {
-            return slot->unwrap();
+            return slot->expect();
         }
 
         if (not slot) {
@@ -85,13 +85,13 @@ struct Set {
         }
 
         _items.put(slot, build());
-        return slot->unwrap();
+        return slot->expect();
     }
 
     [[nodiscard]] auto iter() const lifetimebound {
         return _items.iterUsed() |
                Select([](auto const& s) -> auto const& {
-                   return s.unwrap();
+                   return s.expect();
                });
     }
 

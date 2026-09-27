@@ -8,19 +8,19 @@ test$("karm-ui-model-moves") {
     TextModel mdl{"foo bar baz"};
 
     mdl.moveStart();
-    expectEq$(mdl._cur.head, 0uz);
+    assertEq$(mdl._cur.head, 0uz);
 
     mdl.moveNext();
-    expectEq$(mdl._cur.head, 1uz);
+    assertEq$(mdl._cur.head, 1uz);
 
     mdl.movePrev();
-    expectEq$(mdl._cur.head, 0uz);
+    assertEq$(mdl._cur.head, 0uz);
 
     mdl.moveEnd();
-    expectEq$(mdl._cur.head, 11uz);
+    assertEq$(mdl._cur.head, 11uz);
 
     mdl.moveStart();
-    expectEq$(mdl._cur.head, 0uz);
+    assertEq$(mdl._cur.head, 0uz);
 
     return Ok();
 }

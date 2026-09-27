@@ -401,7 +401,7 @@ export struct FontFamily : Fontface {
 
     FontMetrics metrics() const override {
         if (_cachedMetrics.has())
-            return _cachedMetrics.unwrap();
+            return _cachedMetrics.expect();
 
         FontMetrics metrics = {};
 

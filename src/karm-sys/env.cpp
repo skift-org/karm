@@ -75,8 +75,8 @@ export struct Env {
             }
 
             co_yield Pair<Str>{
-                sub(env, 0, index.unwrap()),
-                sub(env, index.unwrap() + 1, env.len())
+                sub(env, 0, index.expect()),
+                sub(env, index.expect() + 1, env.len())
             };
         }
     }

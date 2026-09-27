@@ -36,10 +36,10 @@ struct State {
         return _value.has();
     }
 
-    T& unwrap() {
+    T& expect() {
         if (not _value.has()) [[unlikely]]
             panic("promise not resolved");
-        return _value.unwrap();
+        return _value.expect();
     }
 
     void attach(Listener& listener) {
@@ -73,12 +73,12 @@ struct _Future {
         }
 
         void resume() {
-            _r.recv(Async::LATER, _state->unwrap());
+            _r.recv(Async::LATER, _state->expect());
         }
 
         bool start() {
             if (_state->has()) {
-                _r.recv(Async::INLINE, _state->unwrap());
+                _r.recv(Async::INLINE, _state->expect());
                 return true;
             }
 
@@ -109,7 +109,7 @@ struct _Promise : Meta::NoCopy {
     }
 
     _Future<T> future() {
-        return {_state.unwrap()};
+        return {_state.expect()};
     }
 };
 

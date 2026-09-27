@@ -111,7 +111,7 @@ export struct Response {
     }
 
     void repr(Io::Emit& e) const {
-        unparse(e).unwrap();
+        unparse(e).expect();
     }
 };
 

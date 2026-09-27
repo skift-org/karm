@@ -65,7 +65,7 @@ export String urlEncode(Io::SScan& s) {
                 sw.append(c);
             } else {
                 sw.append('%');
-                Io::format(sw, "{:02X}", static_cast<u8>(c)).unwrap();
+                Io::format(sw, "{:02X}", static_cast<u8>(c)).expect();
             }
         }
     }
@@ -158,7 +158,7 @@ export struct Url {
         if (not baseUrl)
             return url;
 
-        auto resolvedRef = resolveReference(baseUrl.unwrap(), url);
+        auto resolvedRef = resolveReference(baseUrl.expect(), url);
         return resolvedRef.unwrapOr(url);
     }
 
@@ -228,7 +228,7 @@ export struct Url {
             try$(writer.writeStr(host.str()));
 
         if (port)
-            try$(Io::format(writer, ":{}", port.unwrap()));
+            try$(Io::format(writer, ":{}", port.expect()));
 
         if (path.absolute() or path.len() > 0)
             try$(path.unparse(writer));
@@ -244,7 +244,7 @@ export struct Url {
 
     String str() const {
         Io::StringWriter writer;
-        unparse(writer).unwrap("unparse error");
+        unparse(writer).expect("unparse error");
         return writer.str();
     }
 

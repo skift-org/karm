@@ -105,7 +105,7 @@ export struct Uti {
         void registerCommonUti();
 
         static Rc<Registration> createDynamic() {
-            auto name = Symbol::from(Io::format("dynamic.{}", Uuid::v4().unwrap()));
+            auto name = Symbol::from(Io::format("dynamic.{}", Uuid::v4().expect()));
             return makeRc<Registration>(name);
         }
 
@@ -120,7 +120,7 @@ export struct Uti {
         }
 
         Rc<Registration> lookup(Common name) {
-            return _common.lookup(name).unwrap();
+            return _common.lookup(name).expect();
         }
 
         Rc<Registration> lookupByName(Symbol name) {
@@ -229,7 +229,7 @@ export struct Uti {
 
     u64 specificity() const {
         if (_registration->_specificity)
-            return _registration->_specificity.unwrap();
+            return _registration->_specificity.expect();
         u64 best = 0;
         for (auto& c : _registration->conformsTo) {
             auto specificity = Uti{c}.specificity() + 1;

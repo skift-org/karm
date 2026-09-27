@@ -169,12 +169,12 @@ Ui::Child _printPreview(State const& s) {
 }
 
 void _printPDF(State const& s) {
-    auto printer = FilePrinter::create(Ref::Uti::PUBLIC_PDF).unwrap();
+    auto printer = FilePrinter::create(Ref::Uti::PUBLIC_PDF).expect();
     for (usize i = 0; i < s.pages.len(); ++i) {
         auto page = s.pages[i];
-        page.replay(printer->beginPage(page.size().cast<f64>())).unwrap();
+        page.replay(printer->beginPage(page.size().cast<f64>())).expect();
     }
-    printer->save(Ref::parseUrlOrPath("./output.pdf", Sys::globalEnv().cwd())).unwrap();
+    printer->save(Ref::parseUrlOrPath("./output.pdf", Sys::globalEnv().cwd())).expect();
 }
 
 Ui::Child _destinationSelect() {

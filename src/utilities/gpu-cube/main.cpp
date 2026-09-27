@@ -78,7 +78,7 @@ struct Handler : App::Handler {
     Handler(Rc<App::Window> win, Rc<Gfx::Image> image)
         : image(image),
           win(win),
-          swapChain(win->createSwapChain().unwrap()) {
+          swapChain(win->createSwapChain().expect()) {
         depths.resize(swapChain->size.width * swapChain->size.height);
         cube = Scene3d::Mesh::cube(2);
     }
@@ -147,7 +147,7 @@ struct Handler : App::Handler {
 
     void handle(App::WindowId, App::Event& e) override {
         if (e.is<App::ResizeEvent>()) {
-            swapChain = win->createSwapChain().unwrap();
+            swapChain = win->createSwapChain().expect();
             depths.resize(swapChain->size.width * swapChain->size.height);
             e.accept();
         }

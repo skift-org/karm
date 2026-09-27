@@ -107,7 +107,7 @@ void emit(Chunk& out, Instruction const& ir) {
     ir.visit([&](Infix const& i) {
         if (i.op == Infix::ADD) {
             if (i.lhs.is<Arg>()) {
-                auto idx = i.lhs.unwrap<Arg>().index;
+                auto idx = i.lhs.expect<Arg>().index;
                 if (idx == 0) {
                     // MOV RAX, RDI (Arg 0)
                     out.emit(0x48);
@@ -123,13 +123,13 @@ void emit(Chunk& out, Instruction const& ir) {
                 // MOV RAX, Imm64
                 out.emit(0x48);
                 out.emit(0xB8);
-                u64 v = i.lhs.unwrap<Imm>().value;
+                u64 v = i.lhs.expect<Imm>().value;
                 for (int b = 0; b < 8; b++)
                     out.emit((v >> (b * 8)) & 0xFF);
             }
 
             if (i.rhs.is<Arg>()) {
-                auto idx = i.rhs.unwrap<Arg>().index;
+                auto idx = i.rhs.expect<Arg>().index;
                 if (idx == 1) {
                     out.emit(0x48);
                     out.emit(0x01);
@@ -142,7 +142,7 @@ void emit(Chunk& out, Instruction const& ir) {
             } else if (i.rhs.is<Imm>()) {
                 out.emit(0x48);
                 out.emit(0x05);
-                u32 v = (u32)i.rhs.unwrap<Imm>().value;
+                u32 v = (u32)i.rhs.expect<Imm>().value;
                 for (int b = 0; b < 4; b++)
                     out.emit((v >> (b * 8)) & 0xFF);
             }

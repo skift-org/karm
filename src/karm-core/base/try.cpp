@@ -14,7 +14,7 @@ concept Takeable = requires(T t) {
 
 export template <typename T>
 concept Unwrapable = requires(T t) {
-    { t.unwrap() };
+    { t.expect() };
 };
 
 // MARK: Tryable ---------------------------------------------------------------

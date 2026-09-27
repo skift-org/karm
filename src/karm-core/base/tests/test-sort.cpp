@@ -24,11 +24,11 @@ test$("sort") {
 
     sort(arr);
 
-    expectEq$(arr[0].value, 1);
-    expectEq$(arr[1].value, 2);
-    expectEq$(arr[2].value, 3);
-    expectEq$(arr[3].value, 4);
-    expectEq$(arr[4].value, 5);
+    assertEq$(arr[0].value, 1);
+    assertEq$(arr[1].value, 2);
+    assertEq$(arr[2].value, 3);
+    assertEq$(arr[3].value, 4);
+    assertEq$(arr[4].value, 5);
 
     return Ok();
 }
@@ -44,11 +44,11 @@ test$("stable-sort") {
 
     stableSort(arr);
 
-    expectEq$(arr[0].value, 1);
-    expectEq$(arr[1].value, 5);
-    expectEq$(arr[2].value, 2);
-    expectEq$(arr[3].value, 4);
-    expectEq$(arr[4].value, 3);
+    assertEq$(arr[0].value, 1);
+    assertEq$(arr[1].value, 5);
+    assertEq$(arr[2].value, 2);
+    assertEq$(arr[3].value, 4);
+    assertEq$(arr[4].value, 3);
 
     return Ok();
 }
@@ -61,8 +61,8 @@ test$("stable-sort-small") {
 
     stableSort(arr);
 
-    expectEq$(arr[0], 1);
-    expectEq$(arr[1], 2);
+    assertEq$(arr[0], 1);
+    assertEq$(arr[1], 2);
 
     return Ok();
 }

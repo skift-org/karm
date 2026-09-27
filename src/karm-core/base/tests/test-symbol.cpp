@@ -12,8 +12,8 @@ test$("symbol-equality") {
     Symbol sym2 = "test but different"_sym;
     Symbol sym3 = "test but different"_sym;
 
-    expectEq$(sym0, sym1);
-    expectEq$(sym2, sym3);
+    assertEq$(sym0, sym1);
+    assertEq$(sym2, sym3);
 
     return Ok();
 }

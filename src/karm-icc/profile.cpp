@@ -56,14 +56,14 @@ export struct ColorProfile {
 
     static Rc<ColorProfile> srgb() {
         static auto srgbProfile =
-            from("bundle://karm-icc/public/color-profiles/sRGB-v4.icc"_url).unwrap();
+            from("bundle://karm-icc/public/color-profiles/sRGB-v4.icc"_url).expect();
         return srgbProfile;
     }
 
     static Rc<ColorProfile> sgray() {
         static auto sgrayProfile =
             from("bundle://karm-icc/public/color-profiles/sGrey-v4.icc"_url)
-                .unwrap();
+                .expect();
 
         return sgrayProfile;
     }

@@ -140,7 +140,7 @@ test$("bidiTestFileLevels") {
         auto const& inputParagraph = testCase.runes;
         auto [levels, _] = Bidi::computeLevels(inputParagraph, Some(testCase.paragraphLevel));
 
-        expectEq$(levels.len(), testCase.levels.len());
+        assertEq$(levels.len(), testCase.levels.len());
         bool isOk = true;
         for (usize i = 0; i < levels.len(); i++) {
             if (not testCase.levels[i])
@@ -150,7 +150,7 @@ test$("bidiTestFileLevels") {
                 isOk = false;
                 logDebug("Test case {} failed at index {}: expected {}, got {}", testCount, i, *testCase.levels[i], levels[i]);
                 logDebug("Test case: {}, Output: {}", testCase, levels);
-                expectEq$(levels[i], *testCase.levels[i]);
+                assertEq$(levels[i], *testCase.levels[i]);
                 break;
             }
         }
@@ -162,7 +162,7 @@ test$("bidiTestFileLevels") {
 
     if (testCount != 91707) {
         logWarn("Expected 91707 test cases, but found {}", testCount);
-        expectEq$(testCount, 91707u);
+        assertEq$(testCount, 91707u);
     }
 
     return Ok();
@@ -192,7 +192,7 @@ test$("bidiTestFileReorder") {
                 isOk = false;
                 logDebug("Test case {} failed at index {}: expected {}, got {}", testCount, i, testCase.ordering[i], levels[i].v0);
                 logDebug("Test case: {}, Output: {}", testCase, levels);
-                expectEq$(levels[i].v0, testCase.ordering[i]);
+                assertEq$(levels[i].v0, testCase.ordering[i]);
                 break;
             }
         }
@@ -204,7 +204,7 @@ test$("bidiTestFileReorder") {
 
     if (testCount != 91707) {
         logWarn("Expected 91707 test cases, but found {}", testCount);
-        expectEq$(testCount, 91707u);
+        assertEq$(testCount, 91707u);
     }
 
     return Ok();

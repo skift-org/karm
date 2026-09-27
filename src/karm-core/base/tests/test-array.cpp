@@ -9,15 +9,15 @@ test$("array-niche") {
     Test value = Test{true, false};
     Opt<Test> test;
 
-    expectEq$(sizeof(test), sizeof(Test));
-    expectEq$(test.has(), false);
-    expectEq$(test, NONE);
+    assertEq$(sizeof(test), sizeof(Test));
+    assertEq$(test.has(), false);
+    assertEq$(test, NONE);
     test = Some(Test{true, false});
-    expectEq$(test.unwrap(), value);
-    expectEq$(test.take(), value);
-    expectEq$(test, NONE);
+    assertEq$(test.expect(), value);
+    assertEq$(test.take(), value);
+    assertEq$(test, NONE);
     test = Some(Test{0, 0});
-    expectEq$(test.has(), true);
+    assertEq$(test.has(), true);
 
     return Ok();
 }

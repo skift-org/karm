@@ -10,15 +10,15 @@ test$("karm-semaphore-acquire-release") {
     auto res1 = Async::run(sem.acquireAsync(CancellationToken::uninterruptible()));
     auto res2 = Async::run(sem.acquireAsync(CancellationToken::uninterruptible()));
 
-    expect$(res1);
-    expect$(res2);
-    expectEq$(sem._currentCount, 0uz);
+    assert$(res1);
+    assert$(res2);
+    assertEq$(sem._currentCount, 0uz);
 
     sem.release();
-    expectEq$(sem._currentCount, 1uz);
+    assertEq$(sem._currentCount, 1uz);
 
     sem.release();
-    expectEq$(sem._currentCount, 2uz);
+    assertEq$(sem._currentCount, 2uz);
 
     return Ok();
 }
@@ -26,11 +26,11 @@ test$("karm-semaphore-acquire-release") {
 test$("karm-semaphore-release-no-waiters") {
     Semaphore sem{1, 5};
 
-    expectEq$(sem._currentCount, 1uz);
+    assertEq$(sem._currentCount, 1uz);
 
     sem.release(3);
 
-    expectEq$(sem._currentCount, 4uz);
+    assertEq$(sem._currentCount, 4uz);
 
     return Ok();
 }
@@ -40,7 +40,7 @@ test$("karm-semaphore-release-up-to-max") {
 
     sem.release(3);
 
-    expectEq$(sem._currentCount, 3uz);
+    assertEq$(sem._currentCount, 3uz);
 
     return Ok();
 }
@@ -66,17 +66,17 @@ test$("karm-semaphore-wait-then-release") {
         res2Done = true;
     });
 
-    expect$(not res1Done);
-    expect$(not res2Done);
+    assert$(not res1Done);
+    assert$(not res2Done);
 
     sem.release(2);
 
-    expect$(orderOk);
-    expect$(res1Done);
-    expect$(res2Done);
-    expect$(res1Ok);
-    expect$(res2Ok);
-    expectEq$(sem._currentCount, 0uz);
+    assert$(orderOk);
+    assert$(res1Done);
+    assert$(res2Done);
+    assert$(res1Ok);
+    assert$(res2Ok);
+    assertEq$(sem._currentCount, 0uz);
 
     return Ok();
 }
@@ -99,18 +99,18 @@ test$("karm-semaphore-partial-release") {
 
     sem.release(2);
 
-    expectEq$(completedCount, 2);
-    expectEq$(firstOrder, 0);
-    expectEq$(secondOrder, 1);
-    expectEq$(thirdOrder, -1); // third waiter still queued
-    expectEq$(sem._currentCount, 0uz);
+    assertEq$(completedCount, 2);
+    assertEq$(firstOrder, 0);
+    assertEq$(secondOrder, 1);
+    assertEq$(thirdOrder, -1); // third waiter still queued
+    assertEq$(sem._currentCount, 0uz);
 
     // Releasing the remainder should now unblock the third waiter.
     sem.release(1);
 
-    expectEq$(completedCount, 3);
-    expectEq$(thirdOrder, 2);
-    expectEq$(sem._currentCount, 0uz);
+    assertEq$(completedCount, 3);
+    assertEq$(thirdOrder, 2);
+    assertEq$(sem._currentCount, 0uz);
 
     return Ok();
 }
@@ -127,15 +127,15 @@ test$("karm-semaphore-cancel-while-waiting") {
         wasError = not res;
     });
 
-    expect$(not completed);
+    assert$(not completed);
 
     cts.cancel();
 
-    expect$(completed);
-    expect$(wasError);
+    assert$(completed);
+    assert$(wasError);
 
     sem.release();
-    expectEq$(sem._currentCount, 1uz);
+    assertEq$(sem._currentCount, 1uz);
 
     return Ok();
 }
@@ -148,8 +148,8 @@ test$("karm-semaphore-already-cancelled-token") {
 
     auto res = Async::run(sem.acquireAsync(cts.token()));
 
-    expect$(not res);
-    expectEq$(sem._currentCount, 0uz);
+    assert$(not res);
+    assertEq$(sem._currentCount, 0uz);
 
     return Ok();
 }
@@ -170,14 +170,14 @@ test$("karm-semaphore-destructor-cancels-pending-waiters") {
             res2Err = not res;
         });
 
-        expect$(not res1Done);
-        expect$(not res2Done);
+        assert$(not res1Done);
+        assert$(not res2Done);
     }
 
-    expect$(res1Done);
-    expect$(res2Done);
-    expect$(res1Err);
-    expect$(res2Err);
+    assert$(res1Done);
+    assert$(res2Done);
+    assert$(res1Err);
+    assert$(res2Err);
 
     return Ok();
 }
@@ -187,13 +187,13 @@ test$("karm-semaphore-try-lock-scope") {
 
     {
         auto scope = sem.tryLockScope();
-        expect$(scope.has());
-        expectEq$(sem._currentCount, 0uz);
+        assert$(scope.has());
+        assertEq$(sem._currentCount, 0uz);
 
-        expect$(not sem.tryAcquire());
+        assert$(not sem.tryAcquire());
     }
 
-    expectEq$(sem._currentCount, 1uz);
+    assertEq$(sem._currentCount, 1uz);
 
     return Ok();
 }
@@ -203,10 +203,10 @@ test$("karm-semaphore-lock-scope-async") {
 
     {
         auto scope = Async::run(sem.lockScopeAsync(CancellationToken::uninterruptible()));
-        expectEq$(sem._currentCount, 0uz);
+        assertEq$(sem._currentCount, 0uz);
     }
 
-    expectEq$(sem._currentCount, 1uz);
+    assertEq$(sem._currentCount, 1uz);
 
     return Ok();
 }
@@ -219,8 +219,8 @@ test$("karm-semaphore-lock-scope-async-cancelled") {
 
     auto res = Async::run(sem.lockScopeAsync(cts.token()));
 
-    expect$(not res);
-    expectEq$(sem._currentCount, 1uz);
+    assert$(not res);
+    assertEq$(sem._currentCount, 1uz);
 
     return Ok();
 }
@@ -230,13 +230,13 @@ test$("karm-semaphore-lock-scope-move-disarms-source") {
 
     {
         auto maybeScope1 = sem.tryLockScope();
-        expect$(maybeScope1.has());
-        expectEq$(sem._currentCount, 0uz);
+        assert$(maybeScope1.has());
+        assertEq$(sem._currentCount, 0uz);
 
         auto scope2 = maybeScope1.take();
-        expectEq$(sem._currentCount, 0uz);
+        assertEq$(sem._currentCount, 0uz);
     }
-    expectEq$(sem._currentCount, 1uz);
+    assertEq$(sem._currentCount, 1uz);
 
     return Ok();
 }
@@ -245,12 +245,12 @@ test$("karm-semaphore-acquire-multiple-sync") {
     Semaphore sem{5, 5};
 
     auto res1 = Async::run(sem.acquireAsync(3, CancellationToken::uninterruptible()));
-    expect$(res1);
-    expectEq$(sem._currentCount, 2uz);
+    assert$(res1);
+    assertEq$(sem._currentCount, 2uz);
 
     auto res2 = Async::run(sem.acquireAsync(2, CancellationToken::uninterruptible()));
-    expect$(res2);
-    expectEq$(sem._currentCount, 0uz);
+    assert$(res2);
+    assertEq$(sem._currentCount, 0uz);
 
     return Ok();
 }
@@ -258,14 +258,14 @@ test$("karm-semaphore-acquire-multiple-sync") {
 test$("karm-semaphore-try-acquire-multiple") {
     Semaphore sem{5, 5};
 
-    expect$(sem.tryAcquire(3));
-    expectEq$(sem._currentCount, 2uz);
+    assert$(sem.tryAcquire(3));
+    assertEq$(sem._currentCount, 2uz);
 
-    expect$(not sem.tryAcquire(3));
-    expectEq$(sem._currentCount, 2uz);
+    assert$(not sem.tryAcquire(3));
+    assertEq$(sem._currentCount, 2uz);
 
-    expect$(sem.tryAcquire(2));
-    expectEq$(sem._currentCount, 0uz);
+    assert$(sem.tryAcquire(2));
+    assertEq$(sem._currentCount, 0uz);
 
     return Ok();
 }
@@ -281,16 +281,16 @@ test$("karm-semaphore-acquire-multiple-waits-for-enough") {
         ok = bool(res);
     });
 
-    expect$(not done);
+    assert$(not done);
 
     sem.release(3);
-    expect$(not done);
-    expectEq$(sem._currentCount, 3uz);
+    assert$(not done);
+    assertEq$(sem._currentCount, 3uz);
 
     sem.release(2);
-    expect$(done);
-    expect$(ok);
-    expectEq$(sem._currentCount, 0uz);
+    assert$(done);
+    assert$(ok);
+    assertEq$(sem._currentCount, 0uz);
 
     return Ok();
 }
@@ -305,15 +305,15 @@ test$("karm-semaphore-try-acquire-blocked-by-queued-listener") {
     });
 
     sem.release(3);
-    expect$(not done);
-    expectEq$(sem._currentCount, 3uz);
+    assert$(not done);
+    assertEq$(sem._currentCount, 3uz);
 
-    expect$(not sem.tryAcquire(2));
-    expectEq$(sem._currentCount, 3uz);
+    assert$(not sem.tryAcquire(2));
+    assertEq$(sem._currentCount, 3uz);
 
     sem.release(2);
-    expect$(done);
-    expectEq$(sem._currentCount, 0uz);
+    assert$(done);
+    assertEq$(sem._currentCount, 0uz);
 
     return Ok();
 }
@@ -333,18 +333,18 @@ test$("karm-semaphore-fifo-blocks-smaller-later-request") {
     });
 
     sem.release(2);
-    expect$(not firstDone);
-    expect$(not secondDone);
-    expectEq$(sem._currentCount, 2uz);
+    assert$(not firstDone);
+    assert$(not secondDone);
+    assertEq$(sem._currentCount, 2uz);
 
     sem.release(1);
-    expect$(firstDone);
-    expect$(not secondDone);
-    expectEq$(sem._currentCount, 0uz);
+    assert$(firstDone);
+    assert$(not secondDone);
+    assertEq$(sem._currentCount, 0uz);
 
     sem.release(1);
-    expect$(secondDone);
-    expectEq$(sem._currentCount, 0uz);
+    assert$(secondDone);
+    assertEq$(sem._currentCount, 0uz);
 
     return Ok();
 }

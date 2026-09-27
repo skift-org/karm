@@ -45,7 +45,7 @@ export struct Version {
     }
 
     void repr(Io::Emit& e) const {
-        unparse(e).unwrap();
+        unparse(e).expect();
     }
 
     bool operator==(Version const& other) const = default;

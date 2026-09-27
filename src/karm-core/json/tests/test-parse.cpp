@@ -9,18 +9,18 @@ namespace Karm::Json::Tests {
 
 test$("json-parse-null") {
     auto val = "null"_json;
-    expect$(val.isNull());
+    assert$(val.isNull());
     return Ok();
 }
 
 test$("json-parse-array") {
     auto val = "[1, 2, 3]"_json;
 
-    expect$(val.isArray());
-    expectEq$(val.len(), 3uz);
-    expectEq$(val.get(0).asInt(), 1);
-    expectEq$(val.get(1).asInt(), 2);
-    expectEq$(val.get(2).asInt(), 3);
+    assert$(val.isArray());
+    assertEq$(val.len(), 3uz);
+    assertEq$(val.get(0).asInt(), 1);
+    assertEq$(val.get(1).asInt(), 2);
+    assertEq$(val.get(2).asInt(), 3);
 
     return Ok();
 }
@@ -28,58 +28,58 @@ test$("json-parse-array") {
 test$("json-parse-object") {
     auto val = R"({"a": 1, "b": 2, "c": 3})"_json;
 
-    expect$(val.isObject());
-    expectEq$(val.len(), 3uz);
-    expectEq$(val.get("a").asInt(), 1);
-    expectEq$(val.get("b").asInt(), 2);
-    expectEq$(val.get("c").asInt(), 3);
+    assert$(val.isObject());
+    assertEq$(val.len(), 3uz);
+    assertEq$(val.get("a").asInt(), 1);
+    assertEq$(val.get("b").asInt(), 2);
+    assertEq$(val.get("c").asInt(), 3);
 
     return Ok();
 }
 
 test$("json-parse-string") {
     auto val = R"("hello")"_json;
-    expect$(val.isStr());
-    expectEq$(val.asStr(), "hello"s);
+    assert$(val.isStr());
+    assertEq$(val.asStr(), "hello"s);
     return Ok();
 }
 
 test$("json-parse-integer") {
     auto val = "42"_json;
-    expect$(val.isInt());
-    expectEq$(val.asInt(), 42);
-    expectEq$(val.asBool(), true);
+    assert$(val.isInt());
+    assertEq$(val.asInt(), 42);
+    assertEq$(val.asBool(), true);
     return Ok();
 }
 
 test$("json-parse-float") {
     auto val = "3.14"_json;
-    expect$(val.isFloat());
-    expect$(Math::epsilonEq(val.asFloat(), 3.14, 0.001));
-    expectEq$(val.asBool(), true);
+    assert$(val.isFloat());
+    assert$(Math::epsilonEq(val.asFloat(), 3.14, 0.001));
+    assertEq$(val.asBool(), true);
     return Ok();
 }
 
 test$("json-parse-bool") {
     auto val = "true"_json;
-    expect$(val.isBool());
-    expectEq$(val.asBool(), true);
+    assert$(val.isBool());
+    assertEq$(val.asBool(), true);
 
     val = "false"_json;
-    expect$(val.isBool());
-    expectEq$(val.asBool(), false);
+    assert$(val.isBool());
+    assertEq$(val.asBool(), false);
 
     return Ok();
 }
 
 test$("json-parse-escaped-unicode") {
     auto val = "\"\\u0041\""_json;
-    expect$(val.isStr());
-    expectEq$(val.asStr(), "A"s);
+    assert$(val.isStr());
+    assertEq$(val.asStr(), "A"s);
 
     val = "\"\\uD83E\\uDD21\""_json;
-    expect$(val.isStr());
-    expectEq$(val.asStr(), "🤡"s);
+    assert$(val.isStr());
+    assertEq$(val.asStr(), "🤡"s);
 
     return Ok();
 }

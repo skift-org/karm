@@ -678,7 +678,7 @@ export struct Path {
                     return false;
                 }
 
-                evalOp(maybeOp.unwrap());
+                evalOp(maybeOp.expect());
                 s.skip(Re::zeroOrMore(Re::space()));
 
                 opcode = opcode == 'M' ? 'L' : opcode;

@@ -10,7 +10,7 @@ Async::_Task<int> taskValue() {
 
 test$("task-value") {
     auto res = Async::run(taskValue());
-    expectEq$(res, 42);
+    assertEq$(res, 42);
     return Ok();
 }
 
@@ -20,7 +20,7 @@ Async::_Task<int> taskOuter() {
 
 test$("task-outer") {
     auto res = Async::run(taskOuter());
-    expectEq$(res, 42);
+    assertEq$(res, 42);
     return Ok();
 }
 
@@ -29,7 +29,7 @@ test$("task-detach") {
     Async::detach(taskValue(), [&](int r) {
         res = r;
     });
-    expectEq$(res, 42);
+    assertEq$(res, 42);
     return Ok();
 }
 

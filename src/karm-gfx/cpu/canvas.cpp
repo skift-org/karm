@@ -111,12 +111,12 @@ export struct CpuCanvas : Canvas {
 
     // Get the pixels being drawn on.
     MutPixels mutPixels() {
-        return _pixels.unwrap("no pixels");
+        return _pixels.expect("no pixels");
     }
 
     // Get the pixels being drawn on.
     Pixels pixels() const {
-        return _pixels.unwrap("no pixels");
+        return _pixels.expect("no pixels");
     }
 
     // Get the current scope.
@@ -169,7 +169,7 @@ export struct CpuCanvas : Canvas {
     void _fillImpl(auto fill, auto format, FillRule fillRule) {
         auto opacity = current().opacity;
         if (current().clipMask.has()) {
-            auto& clipMask = *current().clipMask.unwrap();
+            auto& clipMask = *current().clipMask.expect();
             _rast.fill(_poly, current().clip, fillRule, [&](CpuRast::Frag frag) {
                 u8 const mask = clipMask.pixels().loadUnsafe(frag.xy - current().clipBound.xy).red;
 
@@ -287,7 +287,7 @@ export struct CpuCanvas : Canvas {
 
         current().clip = clipBound;
         _rast.fill(_poly, current().clip, rule, [&](CpuRast::Frag frag) {
-            u8 const parentPixel = current().clipMask.has() ? current().clipMask.unwrap()->pixels().load(frag.xy - current().clipBound.xy).red : 255;
+            u8 const parentPixel = current().clipMask.has() ? current().clipMask.expect()->pixels().load(frag.xy - current().clipBound.xy).red : 255;
             newClipMask->mutPixels().store(frag.xy - clipBound.xy, Color::fromRgb(Math::roundi(parentPixel * frag.a), 0, 0));
         });
 
@@ -331,7 +331,7 @@ export struct CpuCanvas : Canvas {
             current().opacity > 0.99;
 
         if (isSuitableForFastFill) {
-            _fillRect(r, current().fill.unwrap<Color>());
+            _fillRect(r, current().fill.expect<Color>());
         } else {
             fill(FillRule::NONZERO);
         }
@@ -408,12 +408,12 @@ export struct CpuCanvas : Canvas {
     }
 
     void _blitGlyph(CachedGlyph const& cached, Math::Vec2i baseline) {
-        auto color = current().fill.unwrap<Color>();
+        auto color = current().fill.expect<Color>();
         auto opacity = current().opacity;
         if (opacity < 0.001)
             return;
 
-        auto src = cached.mask.unwrap()->pixels();
+        auto src = cached.mask.expect()->pixels();
         auto destRect = Math::Recti{baseline + cached.origin, src.size()};
         auto clipped = current().clip.clipTo(destRect);
         if (clipped.width <= 0 or clipped.height <= 0)
@@ -429,7 +429,7 @@ export struct CpuCanvas : Canvas {
 
                     f64 factor = opacity;
                     if (current().clipMask.has())
-                        factor *= current().clipMask.unwrap()->pixels().loadUnsafe(pos - current().clipBound.xy).red / 255.0;
+                        factor *= current().clipMask.expect()->pixels().loadUnsafe(pos - current().clipBound.xy).red / 255.0;
 
                     auto* px = mutPixels().pixelUnsafe(pos);
                     auto c = format.load(px);

@@ -87,7 +87,7 @@ export struct Server {
     Async::Task<Rc<Request>> _recvRequestAsync(Rc<Sys::TcpConnection> conn, Async::CancellationToken ct) {
         auto request = co_trya$(Request::readAsync(*conn, ct));
         if (auto contentLength = request.header.contentLength()) {
-            request.body = Some(makeRc<ContentBody>(conn, contentLength.unwrap()));
+            request.body = Some(makeRc<ContentBody>(conn, contentLength.expect()));
         } else if (auto transferEncoding = request.header.lookup(Header::TRANSFER_ENCODING)) {
             logWarn("Transfer-Encoding: {} not supported", transferEncoding);
         } else {

@@ -87,8 +87,8 @@ test$("reaction-runs-on-adoption") {
     Signal n{1};
     Counter c{n};
 
-    expectEq$(c.runs(), 1uz);
-    expectEq$(c.last(), 1);
+    assertEq$(c.runs(), 1uz);
+    assertEq$(c.last(), 1);
 
     return Ok();
 }
@@ -99,14 +99,14 @@ test$("reaction-tracks-what-it-reads") {
     Counter c{n};
 
     n.update(2);
-    expectEq$(c.runs(), 2uz);
-    expectEq$(c.last(), 2);
+    assertEq$(c.runs(), 2uz);
+    assertEq$(c.last(), 2);
 
     n.update(2);
-    expectEq$(c.runs(), 2uz);
+    assertEq$(c.runs(), 2uz);
 
     other.update(9);
-    expectEq$(c.runs(), 2uz);
+    assertEq$(c.runs(), 2uz);
 
     return Ok();
 }
@@ -118,8 +118,8 @@ test$("reaction-stops") {
     c.stop();
     n.update(2);
 
-    expectEq$(c.runs(), 1uz);
-    expectEq$(c.last(), 1);
+    assertEq$(c.runs(), 1uz);
+    assertEq$(c.last(), 1);
 
     return Ok();
 }
@@ -142,11 +142,11 @@ test$("reaction-can-be-observed-by-a-computed") {
     n.update(99);
     n.update(-4);
 
-    expectEq$(seen.len(), 4uz);
-    expectEq$(seen[0], 2);
-    expectEq$(seen[1], 10);
-    expectEq$(seen[2], 20);
-    expectEq$(seen[3], 0);
+    assertEq$(seen.len(), 4uz);
+    assertEq$(seen[0], 2);
+    assertEq$(seen[1], 10);
+    assertEq$(seen[2], 20);
+    assertEq$(seen[3], 0);
 
     return Ok();
 }
@@ -163,12 +163,12 @@ test$("reaction-unlinks-itself-when-destroyed") {
     {
         Counter tmp{n};
         n.update(2);
-        expectEq$(tmp.runs(), 2uz);
+        assertEq$(tmp.runs(), 2uz);
     }
 
     n.update(3);
 
-    expectEq$(live, 3uz);
+    assertEq$(live, 3uz);
 
     return Ok();
 }

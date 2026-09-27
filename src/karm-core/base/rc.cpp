@@ -213,19 +213,19 @@ struct _Rc {
     }
 
     template <Meta::Derive<T> U>
-    constexpr U const& unwrap() const lifetimebound {
+    constexpr U const& expect() const lifetimebound {
         ensure();
         if (not is<U>()) [[unlikely]]
-            panic("unwrapping T as U");
+            panic("expecting U, got T");
 
         return _cell->template unwrap<U>();
     }
 
     template <Meta::Derive<T> U>
-    constexpr U& unwrap() lifetimebound {
+    constexpr U& expect() lifetimebound {
         ensure();
         if (not is<U>()) [[unlikely]]
-            panic("unwrapping T as U");
+            panic("expecting U, got T");
 
         return _cell->template unwrap<U>();
     }

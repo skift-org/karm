@@ -42,7 +42,7 @@ export struct Mmap :
     }
 
     ~Mmap() {
-        unmap().unwrap("unmap failed");
+        unmap().expect("unmap failed");
     }
 
     Res<> unmap() {
@@ -118,7 +118,7 @@ export struct MutMmap :
     }
 
     ~MutMmap() {
-        unmap().unwrap("unmap failed");
+        unmap().expect("unmap failed");
     }
 
     Res<> unmap() {
@@ -194,7 +194,7 @@ export Res<Mmap> mmap(Opt<Rc<Fd>> fd = NONE, MmapProps props = {}) {
     props.options |= MmapOption::READ;
     MmapResult result;
     if (fd)
-        result = try$(_Embed::memMap(props, fd.unwrap()));
+        result = try$(_Embed::memMap(props, fd.expect()));
     else
         result = try$(_Embed::memMap(props));
     return Ok(Mmap{result.paddr, (void*)result.vaddr, result.size});
@@ -208,7 +208,7 @@ export Res<MutMmap> mutMmap(Opt<Rc<Fd>> fd = NONE, MmapProps props = {}) {
     props.options |= MmapOption::WRITE;
     MmapResult result;
     if (fd)
-        result = try$(_Embed::memMap(props, fd.unwrap()));
+        result = try$(_Embed::memMap(props, fd.expect()));
     else
         result = try$(_Embed::memMap(props));
     return Ok(MutMmap{result.paddr, (void*)result.vaddr, result.size});

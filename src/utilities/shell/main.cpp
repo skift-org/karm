@@ -40,7 +40,7 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
             co_return Error::invalidInput("parser error");
         }
 
-        auto evalRes = parseRes.unwrap().eval();
+        auto evalRes = parseRes.expect().eval();
         if (not evalRes) {
             Sys::errln("runtime error {}: {}", scriptArg.value(), evalRes);
             co_return Error::invalidInput("runtime error");
@@ -61,7 +61,7 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
             continue;
         }
 
-        auto evalRes = parseRes.unwrap().eval();
+        auto evalRes = parseRes.expect().eval();
         if (not evalRes)
             Sys::errln("runtime error {}: {}", scriptArg.value(), evalRes);
     }

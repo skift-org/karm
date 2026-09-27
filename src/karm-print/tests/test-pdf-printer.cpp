@@ -36,7 +36,7 @@ test$("pdf-printer-generate") {
     try$(printer.write(bw));
 
     auto bytes = bw.bytes();
-    expectEq$(sub(bytes, 0, 8), Karm::bytes(Str{"%PDF-2.0"}));
+    assertEq$(sub(bytes, 0, 8), Karm::bytes(Str{"%PDF-2.0"}));
 
     return Ok();
 }

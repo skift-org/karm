@@ -140,19 +140,19 @@ export struct Value {
     }
 
     Array& asArray() {
-        return _store.unwrap<Array>();
+        return _store.expect<Array>();
     }
 
     Array const& asArray() const {
-        return _store.unwrap<Array>();
+        return _store.expect<Array>();
     }
 
     Object& asObject() {
-        return _store.unwrap<Object>();
+        return _store.expect<Object>();
     }
 
     Object const& asObject() const {
-        return _store.unwrap<Object>();
+        return _store.expect<Object>();
     }
 
     String asStr() const {

@@ -49,11 +49,11 @@ static Ui::Child _mobileScaffold(Scaffold::State const& s, Scaffold const& scaff
     Ui::Children body;
 
     if (scaffold.middleTools)
-        body.pushBack(toolbar(scaffold.middleTools().unwrap()));
+        body.pushBack(toolbar(scaffold.middleTools().expect()));
 
     if (s.sidebarOpen and scaffold.sidebar) {
         body.pushBack(
-            (scaffold.sidebar().unwrap()) |
+            (scaffold.sidebar().expect()) |
             Ui::grow()
         );
     } else {
@@ -76,7 +76,7 @@ static Ui::Child _mobileScaffold(Scaffold::State const& s, Scaffold const& scaff
 
     if (scaffold.startTools)
         tools.pushBack(
-            hflow(4, scaffold.startTools().unwrap())
+            hflow(4, scaffold.startTools().expect())
         );
 
     if (scaffold.startTools and scaffold.endTools)
@@ -84,7 +84,7 @@ static Ui::Child _mobileScaffold(Scaffold::State const& s, Scaffold const& scaff
 
     if (scaffold.endTools)
         tools.pushBack(
-            hflow(4, scaffold.endTools().unwrap())
+            hflow(4, scaffold.endTools().expect())
         );
 
     if (tools.len())
@@ -118,12 +118,12 @@ static Ui::Child _desktopScaffoldToolbar(Scaffold::State const& s, Scaffold cons
 
     if (scaffold.startTools)
         tools.pushBack(
-            hflow(4, scaffold.startTools().unwrap())
+            hflow(4, scaffold.startTools().expect())
         );
 
     if (scaffold.middleTools)
         tools.pushBack(
-            hflow(4, scaffold.middleTools().unwrap()) | Ui::grow()
+            hflow(4, scaffold.middleTools().expect()) | Ui::grow()
         );
     else {
         tools.pushBack(Ui::labelMedium(scaffold.title) | Ui::center() | Ui::grow());
@@ -131,7 +131,7 @@ static Ui::Child _desktopScaffoldToolbar(Scaffold::State const& s, Scaffold cons
 
     if (scaffold.endTools)
         tools.pushBack(
-            hflow(4, scaffold.endTools().unwrap())
+            hflow(4, scaffold.endTools().expect())
         );
 
     tools.pushBack(titlebarClose());
@@ -175,7 +175,7 @@ static Ui::Child _desktopScaffold(Scaffold::State const& s, Scaffold const& scaf
     if (s.sidebarOpen and scaffold.sidebar) {
         body.pushBack(
             hflow(
-                scaffold.sidebar().unwrap(),
+                scaffold.sidebar().expect(),
                 Ui::reactive(scaffold.body) | Ui::insets({0, 4, 4, 0}) | Ui::grow()
             ) |
             Ui::grow()

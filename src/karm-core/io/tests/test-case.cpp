@@ -41,7 +41,7 @@ struct {
 test$("case-change") {
     for (auto [c, input, expected] : CASES) {
         auto result = try$(changeCase(input, c));
-        expectEq$(result, expected);
+        assertEq$(result, expected);
     }
 
     return Ok();

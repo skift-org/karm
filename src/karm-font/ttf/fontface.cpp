@@ -35,7 +35,7 @@ export struct Fontface : Gfx::Fontface {
 
     Gfx::FontMetrics metrics() const override {
         if (_cachedMetrics.has())
-            return _cachedMetrics.unwrap();
+            return _cachedMetrics.expect();
 
         auto m = _parser.metrics();
         auto xHeight = _parser.glyphMetrics(glyph('x')).y;
@@ -47,7 +47,7 @@ export struct Fontface : Gfx::Fontface {
             .advance = 0,
             .xHeight = xHeight / _unitPerEm,
         });
-        return _cachedMetrics.unwrap();
+        return _cachedMetrics.expect();
     }
 
     Gfx::FontAttrs attrs() const override {
@@ -77,7 +77,7 @@ export struct Fontface : Gfx::Fontface {
     Gfx::Glyph glyph(Rune rune) const override {
         auto glyph = _cachedEntries.lookup(rune);
         if (glyph.has())
-            return glyph.unwrap();
+            return glyph.expect();
         auto g = _parser.glyph(rune);
         _cachedEntries.put(rune, g);
         return g;
@@ -86,7 +86,7 @@ export struct Fontface : Gfx::Fontface {
     f64 advance(Gfx::Glyph glyph) const override {
         auto advance = _cachedAdvances.lookup(glyph);
         if (advance.has())
-            return advance.unwrap();
+            return advance.expect();
         auto a = _parser.glyphMetrics(glyph).advance / _unitPerEm;
         _cachedAdvances.put(glyph, a);
         return a;
@@ -95,7 +95,7 @@ export struct Fontface : Gfx::Fontface {
     f64 kern(Gfx::Glyph prev, Gfx::Glyph curr) const override {
         auto kern = _cachedKerns.lookup(Tuple{prev, curr});
         if (kern.has())
-            return kern.unwrap();
+            return kern.expect();
 
         auto k = _parser.glyphKern(prev, curr) / _unitPerEm;
         _cachedKerns.put(Tuple{prev, curr}, k);

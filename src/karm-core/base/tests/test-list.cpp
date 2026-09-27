@@ -11,15 +11,15 @@ test$("list-push-and-pop") {
     list.pushBack(2);
     list.pushBack(3);
 
-    expectEq$(list.len(), 3uz);
+    assertEq$(list.len(), 3uz);
 
-    expectEq$(list[0], 1);
-    expectEq$(list[1], 2);
-    expectEq$(list[2], 3);
+    assertEq$(list[0], 1);
+    assertEq$(list[1], 2);
+    assertEq$(list[2], 3);
 
-    expectEq$(list.popBack(), 3);
-    expectEq$(list.popBack(), 2);
-    expectEq$(list.popBack(), 1);
+    assertEq$(list.popBack(), 3);
+    assertEq$(list.popBack(), 2);
+    assertEq$(list.popBack(), 1);
 
     return Ok();
 }
@@ -31,17 +31,17 @@ test$("list-requeue") {
     list.pushBack(2);
     list.pushBack(3);
 
-    expectEq$(list.len(), 3uz);
+    assertEq$(list.len(), 3uz);
 
-    expectEq$(list[0], 1);
-    expectEq$(list[1], 2);
-    expectEq$(list[2], 3);
+    assertEq$(list[0], 1);
+    assertEq$(list[1], 2);
+    assertEq$(list[2], 3);
 
     list.requeue();
 
-    expectEq$(list[0], 2);
-    expectEq$(list[1], 3);
-    expectEq$(list[2], 1);
+    assertEq$(list[0], 2);
+    assertEq$(list[1], 3);
+    assertEq$(list[2], 1);
 
     return Ok();
 }
@@ -53,16 +53,16 @@ test$("list-trunc") {
     list.pushBack(2);
     list.pushBack(3);
 
-    expectEq$(list.len(), 3uz);
+    assertEq$(list.len(), 3uz);
 
-    expectEq$(list[0], 1);
-    expectEq$(list[1], 2);
-    expectEq$(list[2], 3);
+    assertEq$(list[0], 1);
+    assertEq$(list[1], 2);
+    assertEq$(list[2], 3);
 
     list.trunc(1);
 
-    expectEq$(list.len(), 1uz);
-    expectEq$(list[0], 1);
+    assertEq$(list.len(), 1uz);
+    assertEq$(list[0], 1);
 
     return Ok();
 }
@@ -74,15 +74,15 @@ test$("list-clear") {
     list.pushBack(2);
     list.pushBack(3);
 
-    expectEq$(list.len(), 3uz);
+    assertEq$(list.len(), 3uz);
 
-    expectEq$(list[0], 1);
-    expectEq$(list[1], 2);
-    expectEq$(list[2], 3);
+    assertEq$(list[0], 1);
+    assertEq$(list[1], 2);
+    assertEq$(list[2], 3);
 
     list.clear();
 
-    expectEq$(list.len(), 0uz);
+    assertEq$(list.len(), 0uz);
 
     return Ok();
 }
@@ -94,20 +94,20 @@ test$("list-insert") {
     list.pushBack(2);
     list.pushBack(3);
 
-    expectEq$(list.len(), 3uz);
+    assertEq$(list.len(), 3uz);
 
-    expectEq$(list[0], 1);
-    expectEq$(list[1], 2);
-    expectEq$(list[2], 3);
+    assertEq$(list[0], 1);
+    assertEq$(list[1], 2);
+    assertEq$(list[2], 3);
 
     list.insert(1, 4);
 
-    expectEq$(list.len(), 4uz);
+    assertEq$(list.len(), 4uz);
 
-    expectEq$(list[0], 1);
-    expectEq$(list[1], 4);
-    expectEq$(list[2], 2);
-    expectEq$(list[3], 3);
+    assertEq$(list[0], 1);
+    assertEq$(list[1], 4);
+    assertEq$(list[2], 2);
+    assertEq$(list[3], 3);
 
     return Ok();
 }
@@ -119,18 +119,18 @@ test$("list-remove") {
     list.pushBack(2);
     list.pushBack(3);
 
-    expectEq$(list.len(), 3uz);
+    assertEq$(list.len(), 3uz);
 
-    expectEq$(list[0], 1);
-    expectEq$(list[1], 2);
-    expectEq$(list[2], 3);
+    assertEq$(list[0], 1);
+    assertEq$(list[1], 2);
+    assertEq$(list[2], 3);
 
     list.remove(1);
 
-    expectEq$(list.len(), 2uz);
+    assertEq$(list.len(), 2uz);
 
-    expectEq$(list[0], 2);
-    expectEq$(list[1], 3);
+    assertEq$(list[0], 2);
+    assertEq$(list[1], 3);
 
     return Ok();
 }
@@ -142,18 +142,18 @@ test$("list-remove-at") {
     list.pushBack(2);
     list.pushBack(3);
 
-    expectEq$(list.len(), 3uz);
+    assertEq$(list.len(), 3uz);
 
-    expectEq$(list[0], 1);
-    expectEq$(list[1], 2);
-    expectEq$(list[2], 3);
+    assertEq$(list[0], 1);
+    assertEq$(list[1], 2);
+    assertEq$(list[2], 3);
 
     list.removeAt(1);
 
-    expectEq$(list.len(), 2uz);
+    assertEq$(list.len(), 2uz);
 
-    expectEq$(list[0], 1);
-    expectEq$(list[1], 3);
+    assertEq$(list[0], 1);
+    assertEq$(list[1], 3);
 
     return Ok();
 }
@@ -165,15 +165,15 @@ test$("list-iter") {
     list.pushBack(2);
     list.pushBack(3);
 
-    expectEq$(list.len(), 3uz);
+    assertEq$(list.len(), 3uz);
 
-    expectEq$(list[0], 1);
-    expectEq$(list[1], 2);
-    expectEq$(list[2], 3);
+    assertEq$(list[0], 1);
+    assertEq$(list[1], 2);
+    assertEq$(list[2], 3);
 
     int i = 0;
     for (auto& el : list.iter()) {
-        expectEq$(el, i + 1);
+        assertEq$(el, i + 1);
         i++;
     }
 
@@ -187,15 +187,15 @@ test$("list-iter-rev") {
     list.pushBack(2);
     list.pushBack(3);
 
-    expectEq$(list.len(), 3uz);
+    assertEq$(list.len(), 3uz);
 
-    expectEq$(list[0], 1);
-    expectEq$(list[1], 2);
-    expectEq$(list[2], 3);
+    assertEq$(list[0], 1);
+    assertEq$(list[1], 2);
+    assertEq$(list[2], 3);
 
     int i = 3;
     for (auto& el : list.iterRev()) {
-        expectEq$(el, i);
+        assertEq$(el, i);
         i--;
     }
 

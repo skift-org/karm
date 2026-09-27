@@ -21,7 +21,7 @@ export Res<> sleepUntil(Instant until) {
 
 export [[noreturn]] void exit(Res<> res) {
     _Embed::exit(res ? 0 : -toUnderlyingType(res.none().code()))
-        .unwrap();
+        .expect();
     unreachable();
 }
 

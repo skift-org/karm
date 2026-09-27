@@ -122,7 +122,7 @@ struct LeafNode : Node {
         if (not other.is<Crtp>() or _key != other->key())
             return Some(other);
 
-        reconcile(other.unwrap<Crtp>());
+        reconcile(other.expect<Crtp>());
         other->_consumed = true;
 
         return NONE;

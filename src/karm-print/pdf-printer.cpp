@@ -55,7 +55,7 @@ export struct PdfPrinter : FilePrinter {
             }
 
             TrueTypeFontAdapter ttfAdapter{
-                fontFace.cast<Font::Ttf::Fontface>().unwrap(),
+                fontFace.cast<Font::Ttf::Fontface>().expect(),
                 alloc
             };
 
