@@ -83,7 +83,7 @@ struct PieCountDown : Ui::View<PieCountDown> {
         auto radii = min(bound().width / 2., bound().height / 2.);
         auto center = bound().cast<f64>().center();
 
-        g.fill(Ui::ACCENT500.withOpacity(0.25));
+        g.fillStyle(Ui::ACCENT500.withOpacity(0.25));
         g.fill(Math::Ellipsef{center, radii});
 
         g.beginPath();

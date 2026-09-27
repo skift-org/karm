@@ -556,11 +556,20 @@ export struct Path {
     }
 
     void arc(Arcf arc) {
+        f64 delta = arc.end - arc.start;
+
         moveTo(arc.eval(0.0));
-        for (auto t = 0.0; t < 1.0; t += 0.1) {
-            auto p = arc.eval(t);
-            lineTo(p);
-        }
+
+        if (epsilonEq(delta, 0.0, 1e-9))
+            return;
+
+        usize segments = (usize)ceil(abs(delta) / PI);
+
+        Flags<Option> options{};
+        options.set(SWEEP, delta > 0);
+
+        for (usize i = 1; i <= segments; i++)
+            arcTo(arc.radii, 0, arc.eval(i / (f64)segments), options);
     }
 
     void path(Path const& path) {
