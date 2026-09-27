@@ -98,7 +98,7 @@ struct Ring {
         if (index >= _len) [[unlikely]]
             panic("peek out of bounds");
 
-        return _buf[(_tail + index) % _cap].expect();
+        return _buf[(_tail + index) % _cap].unwrap();
     }
 
     T const& peekFront(usize index) const {

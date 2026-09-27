@@ -790,7 +790,7 @@ struct ViewBuf {
     }
 
     constexpr T& operator[](usize i) {
-        return _buf[i].expect();
+        return _buf[i].unwrap();
     }
 
     constexpr T const& operator[](usize i) const {
