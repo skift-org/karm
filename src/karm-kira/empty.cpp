@@ -1,4 +1,4 @@
-export module Karm.Kira:errorPage;
+export module Karm.Kira:empty;
 
 import Karm.Ui;
 import Karm.Gfx;
@@ -9,7 +9,7 @@ using namespace Karm::Literals;
 
 namespace Karm::Kira {
 
-export Ui::Child errorPageTitle(Gfx::Icon icon, String text) {
+export Ui::Child emptyTitle(Gfx::Icon icon, String text) {
     return Ui::vflow(
         0,
         Math::Align::CENTER,
@@ -18,15 +18,15 @@ export Ui::Child errorPageTitle(Gfx::Icon icon, String text) {
     );
 }
 
-export Ui::Child errorPageSubTitle(String text) {
+export Ui::Child emptySubTitle(String text) {
     return Ui::titleMedium(text);
 }
 
-export Ui::Child errorPageBody(String text) {
+export Ui::Child emptyBody(String text) {
     return Ui::bodyMedium(text);
 }
 
-export Ui::Child errorPageContent(Ui::Children children) {
+export Ui::Child emptyContent(Ui::Children children) {
     return Ui::vflow(
                6,
                Math::Align::CENTER,
@@ -39,16 +39,16 @@ export Ui::Child errorPageContent(Ui::Children children) {
     ;
 }
 
-export Ui::Child errorPageFooter(Ui::Children children) {
+export Ui::Child emptyFooter(Ui::Children children) {
     return Ui::hflow(16, children) |
            Ui::insets({8, 0, 0, 0});
 }
 
-export Ui::Child errorPage(Gfx::Icon icon, String text, String body) {
-    return errorPageContent({
-        errorPageTitle(icon, "An error occurred."s),
-        errorPageSubTitle(text),
-        errorPageBody(body),
+export Ui::Child emptyError(Gfx::Icon icon, String text, String body) {
+    return emptyContent({
+        emptyTitle(icon, "An error occurred."s),
+        emptySubTitle(text),
+        emptyBody(body),
     });
 }
 
