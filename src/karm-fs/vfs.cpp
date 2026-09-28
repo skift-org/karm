@@ -40,8 +40,10 @@ export struct VFileMmap : Node {
         co_return Ok(read);
     }
 
-    Res<Rc<Sys::Fd>> underlying() override {
-        return _fd.okOr(Error::unsupported("no underlying fd"));
+    Res<Underlying> underlying() override {
+        if (not _fd)
+            return Error::unsupported("no underlying fd");
+        return Ok<Underlying>(_fd.expect(), _len);
     }
 };
 

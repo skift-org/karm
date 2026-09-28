@@ -10,6 +10,11 @@ import Karm.Ref;
 
 namespace Karm::Fs {
 
+export struct Underlying {
+    Rc<Sys::Fd> fd;
+    usize len;
+};
+
 export struct Node {
     Opt<Weak<Node>> _self;
 
@@ -94,7 +99,7 @@ export struct Node {
         co_return Ok();
     }
 
-    virtual Res<Rc<Sys::Fd>> underlying() {
+    virtual Res<Underlying> underlying() {
         return Error::unsupported();
     }
 };
