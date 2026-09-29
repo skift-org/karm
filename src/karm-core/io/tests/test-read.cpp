@@ -97,4 +97,13 @@ test$("readline-ends-with-delim-len-5") {
     return Ok();
 }
 
+test$("read-all-text-strips-utf8-bom") {
+    BufReader bufReader{"\xef\xbb\xbfhello"_bytes};
+
+    auto text = try$(readAllText<Utf8>(bufReader));
+    assertEq$(text, "hello"s);
+
+    return Ok();
+}
+
 } // namespace Karm::Io::Tests

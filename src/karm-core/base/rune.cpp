@@ -97,7 +97,7 @@ concept DecodeInput = requires(T t, U u) {
 export struct Utf8 {
     using Unit = char;
     using One = _Multiple<Unit, 4>;
-    static constexpr Array PREAMBLE = {0xef, 0xbb, 0xbf};
+    static constexpr Array<Unit, 3> PREAMBLE = {'\xef', '\xbb', '\xbf'};
 
     always_inline static constexpr usize unitLen(Unit first) {
         if ((first & 0xf8) == 0xf0)
