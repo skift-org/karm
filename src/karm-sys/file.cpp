@@ -50,7 +50,7 @@ export struct File :
             return Ok<File>(fd, url);
         }
 
-        if (url.scheme == "bundle" and options.any({OpenOption::WRITE, OpenOption::CREATE}))
+        if (url.scheme == "bundle" and options.any({OpenOption::WRITE, OpenOption::CREATE, OpenOption::TRUNCATE}))
             return Error::invalidInput("cannot write in bundle.");
 
         Str action =
@@ -158,8 +158,8 @@ Res<_String<E>> readAllText(Ref::Url const& url) {
 
 export template <StaticEncoding E = Utf8>
 Res<> writeAllText(Ref::Url const& url, Str buf) {
-    auto file = try$(Sys::File::openOrCreate(url));
-    return file.writeAllText(buf);
+    auto file = try$(Sys::File::openWith(url, {OpenOption::CREATE, OpenOption::TRUNCATE}));
+    return file.writeAllText<E>(buf);
 }
 
 export Res<Vec<u8>> readAll(Ref::Url const& url) {
@@ -168,7 +168,7 @@ export Res<Vec<u8>> readAll(Ref::Url const& url) {
 }
 
 export Res<> writeAll(Ref::Url const& url, Bytes buf) {
-    auto file = try$(File::openOrCreate(url));
+    auto file = try$(File::openWith(url, {OpenOption::CREATE, OpenOption::TRUNCATE}));
     return file.writeAll(buf);
 }
 
