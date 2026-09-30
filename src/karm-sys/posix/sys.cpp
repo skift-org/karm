@@ -318,27 +318,6 @@ Async::Task<> launchAsync(Intent intent) {
 
 // MARK: Process ---------------------------------------------------------------
 
-struct PosixPid : Sys::Pid {
-    pid_t _pid;
-
-    PosixPid(pid_t pid) : Pid(), _pid(pid) {}
-
-    Res<> kill() override {
-        if (::kill(_pid, SIGKILL) == -1)
-            return Posix::fromLastErrno();
-        return Ok();
-    }
-
-    Res<> wait() override {
-        int status = 0;
-        if (::waitpid(_pid, &status, 0) < 0)
-            return Posix::fromLastErrno();
-        if (WIFEXITED(status) and WEXITSTATUS(status) == 0)
-            return Ok();
-        return Error::other("process exited with non-zero status");
-    }
-};
-
 Res<Rc<Pid>> spawn(Command const& cmd) {
     if (not cmd.exe or cmd.exe.len() == 0)
         return Error::invalidInput("no executable provided");
@@ -410,7 +389,7 @@ Res<Rc<Pid>> spawn(Command const& cmd) {
     }
 
     // Parent
-    return Ok(makeRc<PosixPid>(pid));
+    return Ok(makeRc<Posix::Pid>(pid));
 }
 
 Res<Tuple<Rc<Pid>, Rc<Fd>>> spawnPty(Command const& cmd) {
@@ -462,7 +441,7 @@ Res<Tuple<Rc<Pid>, Rc<Fd>>> spawnPty(Command const& cmd) {
 
     deferClose.disarm();
     return Ok<Tuple<Rc<Pid>, Rc<Fd>>>(
-        makeRc<PosixPid>(pid),
+        makeRc<Posix::Pid>(pid),
         makeRc<Posix::Fd>(pty)
     );
 }
