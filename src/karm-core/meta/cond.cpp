@@ -15,4 +15,12 @@ struct _Cond<false, TTrue, TFalse> {
 export template <bool cond, typename TTrue, typename TFalse>
 using Cond = typename _Cond<cond, TTrue, TFalse>::Type;
 
+template <typename T>
+struct _Identity {
+    using Type = T;
+};
+
+export template <typename T>
+using Identity = typename _Identity<T>::Type;
+
 } // namespace Karm::Meta
