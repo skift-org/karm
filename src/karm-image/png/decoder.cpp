@@ -427,8 +427,7 @@ export struct Decoder {
                 if (index >= _palette.len())
                     return Error::invalidData("palette index out of range");
                 color = _palette[index];
-            } else if (_colorType == ColorType::GREYSCALE or
-                       _colorType == ColorType::GREYSCALE_ALPHA) {
+            } else if (_colorType == ColorType::GREYSCALE or _colorType == ColorType::GREYSCALE_ALPHA) {
                 auto grey = _nextSample(s);
                 u8 alpha = 255;
                 if (_colorType == ColorType::GREYSCALE_ALPHA)
