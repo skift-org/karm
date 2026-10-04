@@ -31,7 +31,7 @@ export struct Command {
             next(segments, 1),
         };
         auto proc = try$(c.spawn());
-        return proc.wait();
+        return proc->wait();
     }
 
     void repr(Io::Emit& e) const {
@@ -43,7 +43,7 @@ export struct Pipeline {
     Vec<Command> commands;
 
     Res<> eval() {
-        Vec<Sys::Process> procs;
+        Vec<Rc<Sys::Process>> procs;
         Rc<Sys::Fd> prev = Sys::in().fd();
         for (auto& c : mutSub(commands, 0, commands.len() - 1)) {
             auto [in, out] = try$(Sys::Pipe::create());
@@ -67,7 +67,7 @@ export struct Pipeline {
 
         procs.pushBack(try$(cmd.spawn()));
 
-        return last(procs).wait();
+        return last(procs)->wait();
     }
 
     void repr(Io::Emit& e) const {

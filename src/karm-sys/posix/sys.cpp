@@ -36,6 +36,8 @@ import Karm.Core;
 import Karm.Ref;
 import Karm.Sys.Posix;
 
+using namespace Karm::Re::Literals;
+
 namespace Karm::Sys::_Embed {
 
 // MARK: Fd --------------------------------------------------------------------
@@ -316,136 +318,6 @@ Async::Task<> launchAsync(Intent intent) {
     co_return _Embed::launch(intent);
 }
 
-// MARK: Process ---------------------------------------------------------------
-
-Res<Rc<Pid>> spawn(Command const& cmd) {
-    if (not cmd.exe or cmd.exe.len() == 0)
-        return Error::invalidInput("no executable provided");
-
-    auto buildArgv = [&](Vec<char*>& argv) {
-        argv.pushBack(const_cast<char*>(cmd.exe.buf())); // argv[0]
-        for (auto const& arg : cmd.args)
-            argv.pushBack(const_cast<char*>(arg.buf()));
-        argv.pushBack(nullptr);
-    };
-
-    auto buildEnvp = [&](Vec<String>& kvStore, Vec<char*>& envp) {
-        kvStore.clear();
-        envp.clear();
-        for (auto const& [key, val] : cmd.env.iterItems()) {
-            kvStore.pushBack(Io::format("{}={}", key, val));
-        }
-        for (auto& kv : kvStore)
-            envp.pushBack(const_cast<char*>(kv.buf()));
-        envp.pushBack(nullptr);
-    };
-
-    int inFd = -1;
-    if (cmd.in)
-        inFd = try$(Posix::ensurePosixFd(cmd.in.expect()))->_raw;
-
-    int outFd = -1;
-    if (cmd.out)
-        outFd = try$(Posix::ensurePosixFd(cmd.out.expect()))->_raw;
-
-    int errFd = -1;
-    if (cmd.err)
-        errFd = try$(Posix::ensurePosixFd(cmd.err.expect()))->_raw;
-
-    pid_t pid = ::fork();
-    if (pid < 0)
-        return Posix::fromLastErrno();
-
-    if (pid == 0) {
-        // Child
-        if (cmd.in) {
-            if (::dup2(inFd, STDIN_FILENO) < 0)
-                _exit(127);
-        }
-
-        if (cmd.out) {
-            if (::dup2(outFd, STDOUT_FILENO) < 0)
-                _exit(127);
-        }
-
-        if (cmd.err) {
-            if (::dup2(errFd, STDERR_FILENO) < 0)
-                _exit(127);
-        }
-
-        Vec<char*> argv;
-        buildArgv(argv);
-
-        if (cmd.env.len()) {
-            Vec<String> kvStore;
-            Vec<char*> envp;
-            buildEnvp(kvStore, envp);
-            ::execve(cmd.exe.buf(), argv.buf(), envp.buf());
-        } else {
-            ::execvp(cmd.exe.buf(), argv.buf());
-        }
-
-        _exit(127); // exec failed
-    }
-
-    // Parent
-    return Ok(makeRc<Posix::Pid>(pid));
-}
-
-Res<Tuple<Rc<Pid>, Rc<Fd>>> spawnPty(Command const& cmd) {
-    if (not cmd.exe or cmd.exe.len() == 0)
-        return Error::invalidInput("no executable provided");
-
-    auto buildArgv = [&](Vec<char*>& argv) {
-        argv.pushBack(const_cast<char*>(cmd.exe.buf())); // argv[0]
-        for (auto const& arg : cmd.args)
-            argv.pushBack(const_cast<char*>(arg.buf()));
-        argv.pushBack(nullptr);
-    };
-
-    auto buildEnvp = [&](Vec<String>& kvStore, Vec<char*>& envp) {
-        kvStore.clear();
-        envp.clear();
-        for (auto const& [key, val] : cmd.env.iterItems()) {
-            kvStore.pushBack(Io::format("{}={}", key, val));
-        }
-        for (auto& kv : kvStore)
-            envp.pushBack(const_cast<char*>(kv.buf()));
-        envp.pushBack(nullptr);
-    };
-
-    int pty = -1;
-    pid_t pid = ::forkpty(&pty, nullptr, nullptr, nullptr);
-    Defer deferClose = [&] {
-        if (pty != -1)
-            close(pty);
-    };
-    if (pid < 0)
-        return Posix::fromLastErrno();
-
-    if (pid == 0) {
-        Vec<char*> argv;
-        buildArgv(argv);
-
-        if (cmd.env.len()) {
-            Vec<String> kvStore;
-            Vec<char*> envp;
-            buildEnvp(kvStore, envp);
-            ::execve(cmd.exe.buf(), argv.buf(), envp.buf());
-        } else {
-            ::execvp(cmd.exe.buf(), argv.buf());
-        }
-
-        _exit(127); // exec failed
-    }
-
-    deferClose.disarm();
-    return Ok<Tuple<Rc<Pid>, Rc<Fd>>>(
-        makeRc<Posix::Pid>(pid),
-        makeRc<Posix::Fd>(pty)
-    );
-}
-
 // MARK: Sockets ---------------------------------------------------------------
 
 Res<Rc<Fd>> listenUdp(SocketAddr addr) {
@@ -637,12 +509,62 @@ Res<> populate(SysInfo& infos) {
     return Ok();
 }
 
-Res<> populate(MemInfo&) {
-    return Error::notImplemented();
+Res<> populate(MemInfo& infos) {
+    auto memInfo = try$(Sys::readAllText("file:/proc/meminfo"_url));
+    Io::SScan s{memInfo};
+
+    while (not s.ended()) {
+        auto key = s.token(Re::oneOrMore(Re::alnum() | '_'_re));
+        s.skip(Re::separator(':'_re));
+
+        if (key == "MemTotal"s) {
+            infos.physicalTotal = Io::atou(s).unwrapOr(0) * 1024;
+        } else if (key == "MemAvailable"s) {
+            infos.physicalFree = Io::atou(s).unwrapOr(0) * 1024;
+        } else if (key == "SwapTotal"s) {
+            infos.swapTotal = Io::atou(s).unwrapOr(0) * 1024;
+        } else if (key == "SwapFree"s) {
+            infos.swapFree = Io::atou(s).unwrapOr(0) * 1024;
+        }
+
+        s.skip(Re::untilAndConsume("\n"_re | Re::eof()));
+    }
+
+    return Ok();
 }
 
-Res<> populate(Vec<CpuInfo>&) {
-    return Error::notImplemented();
+Res<> populate(Vec<Cpu>& cpus) {
+    auto procStat = try$(Sys::readAllText("file:/proc/stat"_url));
+    Io::SScan s{procStat};
+
+    while (not s.ended()) {
+        if (s.skip("cpu")) {
+            auto num = Io::atoi(s);
+            if (num) {
+                s.skip(Re::space());
+                auto userTime = Sys::Ticks{Io::atou(s).unwrapOr(0)}; // utime
+                s.skip(Re::space());
+                (void)Io::atou(s); // nice
+                s.skip(Re::space());
+                auto systemTime = Sys::Ticks{Io::atou(s).unwrapOr(0)}; // stime
+                s.skip(Re::space());
+                auto idleTime = Sys::Ticks{Io::atou(s).unwrapOr(0)}; // idle
+
+                cpus.pushBack({
+                    .name = ""s,
+                    .brand = ""s,
+                    .vendor = ""s,
+                    .userTime = userTime,
+                    .systemTime = systemTime,
+                    .idleTime = idleTime,
+                    .freq = 0,
+                });
+            }
+        }
+        s.skip(Re::untilAndConsume("\n"_re | Re::eof()));
+    }
+
+    return Ok();
 }
 
 Res<> populate(UserInfo& infos) {
@@ -664,6 +586,149 @@ Res<> populate(Vec<UserInfo>& infos) {
 }
 
 // MARK: Process Managment -----------------------------------------------------
+
+Res<Rc<Process>> spawn(Command const& cmd) {
+    if (not cmd.exe or cmd.exe.len() == 0)
+        return Error::invalidInput("no executable provided");
+
+    auto buildArgv = [&](Vec<char*>& argv) {
+        argv.pushBack(const_cast<char*>(cmd.exe.buf())); // argv[0]
+        for (auto const& arg : cmd.args)
+            argv.pushBack(const_cast<char*>(arg.buf()));
+        argv.pushBack(nullptr);
+    };
+
+    auto buildEnvp = [&](Vec<String>& kvStore, Vec<char*>& envp) {
+        kvStore.clear();
+        envp.clear();
+        for (auto const& [key, val] : cmd.env.iterItems()) {
+            kvStore.pushBack(Io::format("{}={}", key, val));
+        }
+        for (auto& kv : kvStore)
+            envp.pushBack(const_cast<char*>(kv.buf()));
+        envp.pushBack(nullptr);
+    };
+
+    int inFd = -1;
+    if (cmd.in)
+        inFd = try$(Posix::ensurePosixFd(cmd.in.expect()))->_raw;
+
+    int outFd = -1;
+    if (cmd.out)
+        outFd = try$(Posix::ensurePosixFd(cmd.out.expect()))->_raw;
+
+    int errFd = -1;
+    if (cmd.err)
+        errFd = try$(Posix::ensurePosixFd(cmd.err.expect()))->_raw;
+
+    pid_t pid = ::fork();
+    if (pid < 0)
+        return Posix::fromLastErrno();
+
+    if (pid == 0) {
+        // Child
+        if (cmd.in) {
+            if (::dup2(inFd, STDIN_FILENO) < 0)
+                _exit(127);
+        }
+
+        if (cmd.out) {
+            if (::dup2(outFd, STDOUT_FILENO) < 0)
+                _exit(127);
+        }
+
+        if (cmd.err) {
+            if (::dup2(errFd, STDERR_FILENO) < 0)
+                _exit(127);
+        }
+
+        Vec<char*> argv;
+        buildArgv(argv);
+
+        if (cmd.env.len()) {
+            Vec<String> kvStore;
+            Vec<char*> envp;
+            buildEnvp(kvStore, envp);
+            ::execve(cmd.exe.buf(), argv.buf(), envp.buf());
+        } else {
+            ::execvp(cmd.exe.buf(), argv.buf());
+        }
+
+        _exit(127); // exec failed
+    } else {
+        // Parent
+        return Ok(makeRc<Posix::Process>(pid));
+    }
+}
+
+Res<Tuple<Rc<Process>, Rc<Fd>>> spawnPty(Command const& cmd) {
+    if (not cmd.exe or cmd.exe.len() == 0)
+        return Error::invalidInput("no executable provided");
+
+    auto buildArgv = [&](Vec<char*>& argv) {
+        argv.pushBack(const_cast<char*>(cmd.exe.buf())); // argv[0]
+        for (auto const& arg : cmd.args)
+            argv.pushBack(const_cast<char*>(arg.buf()));
+        argv.pushBack(nullptr);
+    };
+
+    auto buildEnvp = [&](Vec<String>& kvStore, Vec<char*>& envp) {
+        kvStore.clear();
+        envp.clear();
+        for (auto const& [key, val] : cmd.env.iterItems()) {
+            kvStore.pushBack(Io::format("{}={}", key, val));
+        }
+        for (auto& kv : kvStore)
+            envp.pushBack(const_cast<char*>(kv.buf()));
+        envp.pushBack(nullptr);
+    };
+
+    int pty = -1;
+    pid_t pid = ::forkpty(&pty, nullptr, nullptr, nullptr);
+    Defer deferClose = [&] {
+        if (pty != -1)
+            close(pty);
+    };
+    if (pid < 0)
+        return Posix::fromLastErrno();
+
+    if (pid == 0) {
+        Vec<char*> argv;
+        buildArgv(argv);
+
+        if (cmd.env.len()) {
+            Vec<String> kvStore;
+            Vec<char*> envp;
+            buildEnvp(kvStore, envp);
+            ::execve(cmd.exe.buf(), argv.buf(), envp.buf());
+        } else {
+            ::execvp(cmd.exe.buf(), argv.buf());
+        }
+
+        _exit(127); // exec failed
+    }
+
+    deferClose.disarm();
+    return Ok<Tuple<Rc<Process>, Rc<Fd>>>(
+        makeRc<Posix::Process>(pid),
+        makeRc<Posix::Fd>(pty)
+    );
+}
+
+Res<Vec<Rc<Process>>> listProcess() {
+    auto dir = try$(Sys::Dir::open("file:/proc"_url));
+    Vec<Rc<Process>> procs;
+    for (auto const& e : dir.entries()) {
+        auto pid = Io::atou(e.name.str());
+        if (pid == NONE)
+            continue;
+        procs.pushBack(makeRc<Posix::Process>(pid.expect()));
+    }
+    sort(procs, [](auto const& a, auto const& b) {
+        return a->id() <=> b->id();
+    });
+    return Ok(std::move(procs));
+}
 
 Res<> sleep(Duration span) {
     timespec ts;

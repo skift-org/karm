@@ -30,13 +30,19 @@ export Res<SysInfo> sysinfo() {
 
 export struct MemInfo {
     usize physicalTotal;
-    usize physicalUsed;
+    usize physicalFree;
 
-    usize virtualTotal;
-    usize virtualUsed;
+    usize physicalUsed() const {
+        return physicalTotal - physicalFree;
+    }
 
     usize swapTotal;
-    usize swapUsed;
+    usize swapFree;
+
+    usize swapUsed() const {
+        return swapTotal - swapFree;
+    }
+
 };
 
 export Res<MemInfo> meminfo() {
@@ -45,20 +51,23 @@ export Res<MemInfo> meminfo() {
     return Ok(infos);
 }
 
-export struct CpuInfo {
+export struct Cpu {
     String name;
     String brand;
     String vendor;
 
-    usize usage;
-    usize freq;
-};
+    Ticks userTime;
+    Ticks systemTime;
+    Ticks idleTime;
 
-export Res<Vec<CpuInfo>> cpusinfo() {
-    Vec<CpuInfo> infos;
-    try$(_Embed::populate(infos));
-    return Ok(infos);
-}
+    usize freq;
+
+    static Res<Vec<Cpu>> list() {
+        Vec<Cpu> infos;
+        try$(_Embed::populate(infos));
+        return Ok(std::move(infos));
+    }
+};
 
 export struct UserInfo {
     String name;

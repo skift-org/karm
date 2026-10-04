@@ -12,11 +12,11 @@ namespace Karm::Sys {
 export struct Intent;
 export struct Fd;
 export struct _Connected;
-export struct Pid;
+export struct Process;
 export struct Sched;
 export struct SysInfo;
 export struct MemInfo;
-export struct CpuInfo;
+export struct Cpu;
 export struct UserInfo;
 export struct Command;
 
@@ -60,12 +60,6 @@ export Res<> launch(Intent intent);
 
 export Async::Task<> launchAsync(Intent intent);
 
-// MARK: Process ---------------------------------------------------------------
-
-export Res<Rc<Pid>> spawn(Command const&);
-
-export Res<Tuple<Rc<Pid>, Rc<Fd>>> spawnPty(Command const&);
-
 // MARK: Sockets ---------------------------------------------------------------
 
 export Res<Rc<Fd>> listenUdp(SocketAddr addr);
@@ -104,13 +98,19 @@ export Res<> populate(SysInfo&);
 
 export Res<> populate(MemInfo&);
 
-export Res<> populate(Vec<CpuInfo>&);
+export Res<> populate(Vec<Cpu>&);
 
 export Res<> populate(UserInfo&);
 
 export Res<> populate(Vec<UserInfo>&);
 
 // MARK: Process Management ----------------------------------------------------
+
+export Res<Vec<Rc<Process>>> listProcess();
+
+export Res<Rc<Process>> spawn(Command const&);
+
+export Res<Tuple<Rc<Process>, Rc<Fd>>> spawnPty(Command const&);
 
 export Res<> sleep(Duration);
 

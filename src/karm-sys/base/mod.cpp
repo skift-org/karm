@@ -5,6 +5,8 @@ import Karm.Ref;
 
 namespace Karm::Sys {
 
+export using Ticks = Distinct<usize, struct _TicksTag>;
+
 export enum struct Type {
     DIR,
     FILE,

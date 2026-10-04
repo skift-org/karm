@@ -48,18 +48,15 @@ Res<> dumpSysInfo() {
 
 Res<> dumpMemInfo() {
     auto meminfo = try$(Sys::meminfo());
-    Sys::println("{}: {} / {}", title("Memory"), meminfo.physicalUsed, meminfo.physicalTotal);
-    Sys::println("{}: {} / {}", title("Swap"), meminfo.swapUsed, meminfo.swapTotal);
+    Sys::println("{}: {} / {}", title("Memory"), DataSize{meminfo.physicalUsed()}, DataSize{meminfo.physicalTotal});
+    Sys::println("{}: {} / {}", title("Swap"), DataSize{meminfo.swapUsed()}, DataSize{meminfo.swapTotal});
     return Ok();
 }
 
 Res<> dumpCpusInfo() {
-    auto cpusinfo = try$(Sys::cpusinfo());
-
-    for (auto& cpu : cpusinfo) {
+    auto cpusinfo = try$(Sys::Cpu::list());
+    for (auto& cpu : cpusinfo)
         Sys::println("{}: {} {} {} MHz", title("CPU"), cpu.name, cpu.brand, cpu.freq);
-    }
-
     return Ok();
 }
 

@@ -14,7 +14,6 @@ export import :launch;
 export import :lookup;
 export import :mmap;
 export import :mutex;
-export import :pid;
 export import :pipe;
 export import :proc;
 export import :pty;
