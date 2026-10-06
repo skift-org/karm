@@ -219,18 +219,19 @@ export struct ButtonStyle {
         return {
             .idleStyle = {
                 .borderRadii = RADIUS,
-                .foregroundFill = Gfx::RED500,
+                .backgroundFill = Some(Gfx::RED950),
+                .foregroundFill = Gfx::RED300,
             },
             .hoverStyle = {
                 .borderRadii = RADIUS,
                 .borderWidth = 1,
-                .backgroundFill = Some(Gfx::RED600),
+                .backgroundFill = Some(Gfx::RED900),
             },
             .pressStyle = {
                 .borderRadii = RADIUS,
                 .borderWidth = 1,
                 .borderFill = Some(Gfx::RED600),
-                .backgroundFill = Some(Gfx::RED700),
+                .backgroundFill = Some(Gfx::RED800),
             },
         };
     }

@@ -12,7 +12,6 @@ export import :dialog;
 export import :empty;
 export import :handle;
 export import :input;
-export import :navbar;
 export import :number;
 export import :progress;
 export import :radio;
