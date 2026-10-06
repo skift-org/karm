@@ -318,7 +318,7 @@ export struct Canvas : Meta::NoCopy {
                     }
 
                     push();
-                    if (auto [color] = cell.style().color)
+                    if (auto& [color] = cell.style().color)
                         fillStyle(color);
                     fill(cell.style().font, cell.glyph, Math::Vec2Au{block.pos + cell.pos, line.baseline}.cast<f64>());
                     pop();

@@ -202,7 +202,7 @@ struct ResizeRegion : ProxyNode<ResizeRegion> {
     void event(App::Event& event) override {
         if (auto it = event.is<App::MouseEvent>();
             it and not event.accepted() and bound().contains(it->pos)) {
-            if (auto [dir] = App::resizeDirectionFromPos(it->pos, bound(), _grip)) {
+            if (auto const& [dir] = App::resizeDirectionFromPos(it->pos, bound(), _grip)) {
                 if (it->type == App::MouseEvent::MOVE) {
                     bubble<App::RequestCursorEvent>(*this, App::cursorFromDirection(dir));
                 } else if (it->type == App::MouseEvent::PRESS and it->button == App::MouseButton::LEFT) {

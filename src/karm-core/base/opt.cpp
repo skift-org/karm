@@ -493,7 +493,7 @@ struct [[nodiscard]] Opt {
     }
 
     template <usize>
-    constexpr T& get() {
+    constexpr T& get() & {
         return _store.unwrap();
     }
 
