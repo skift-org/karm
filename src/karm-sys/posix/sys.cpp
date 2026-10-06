@@ -715,6 +715,10 @@ Res<Tuple<Rc<Process>, Rc<Fd>>> spawnPty(Command const& cmd) {
     );
 }
 
+Res<Rc<Process>> openProcess(usize id) {
+    return Ok(makeRc<Posix::Process>(id));
+}
+
 Res<Vec<Rc<Process>>> listProcess() {
     auto dir = try$(Sys::Dir::open("file:/proc"_url));
     Vec<Rc<Process>> procs;

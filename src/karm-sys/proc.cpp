@@ -77,6 +77,10 @@ export struct ProcessStat {
 };
 
 export struct Process {
+    static Res<Rc<Process>> open(usize id) {
+        return _Embed::openProcess(id);
+    }
+
     static Res<Vec<Rc<Process>>> list() {
         return _Embed::listProcess();
     }

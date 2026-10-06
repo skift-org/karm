@@ -106,6 +106,8 @@ export Res<> populate(Vec<UserInfo>&);
 
 // MARK: Process Management ----------------------------------------------------
 
+export Res<Rc<Process>> openProcess(usize id);
+
 export Res<Vec<Rc<Process>>> listProcess();
 
 export Res<Rc<Process>> spawn(Command const&);
