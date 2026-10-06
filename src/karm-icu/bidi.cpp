@@ -144,8 +144,8 @@ Vec<usize> explicitLevelsAndDirections(
     auto checkIfValidNewLevelAndCounts = [&](usize newEmbeddingLevel) {
         // If this new level would be valid, and the overflow isolate count and overflow embedding count
         // are both zero, then (...) is valid
-        return newEmbeddingLevel <= MAX_DEPTH &&
-               overflowIsolateCount == 0 &&
+        return newEmbeddingLevel <= MAX_DEPTH and
+               overflowIsolateCount == 0 and
                overflowEmbeddingCount == 0;
     };
 
@@ -747,7 +747,8 @@ void runN0ForBracketPair(
             ((
                  Properties::of(input[i + 1]).bidiClass() == BidiClass::NONSPACING_MARK and paragraph[i + 1] == BidiClass::OTHER_NEUTRAL
              ) or
-             Properties::of(input[i + 1]).bidiClass() == BidiClass::BOUNDARY_NEUTRAL)) {
+             Properties::of(input[i + 1]).bidiClass() == BidiClass::BOUNDARY_NEUTRAL)
+        ) {
             paragraph[i + 1] = newType;
             i++;
         }
