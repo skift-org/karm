@@ -878,6 +878,15 @@ export enum struct NumericType {
     _LEN,
 };
 
+
+export struct NumericValue {
+    i64 numerator;
+    u16 denominator;   // 0 => NaN
+    static const NumericValue NAN;
+    bool operator==(NumericValue const&) const = default;
+};
+constexpr NumericValue NumericValue::NAN = {1, 0};
+
 export enum struct SentenceBreak {
     ATERM,
     CLOSE,
@@ -1231,6 +1240,7 @@ export enum struct WordBreak {
 #include "defs/tables/nfkd-inert.inc"
 #include "defs/tables/nfkd-quick-check.inc"
 #include "defs/tables/numeric-type.inc"
+#include "defs/tables/numeric-value.inc"
 #include "defs/tables/pattern-syntax.inc"
 #include "defs/tables/pattern-white-space.inc"
 #include "defs/tables/prepended-concatenation-mark.inc"
@@ -1623,7 +1633,9 @@ export struct Properties {
         return static_cast<NumericType>(_NumericTypePages[(_NumericTypeIndirect[_rune >> 8] << 8) + (_rune & 255)]);
     }
 
-    // TODO: Ignored property NumericValue
+    NumericValue numericValue() const {
+        return _NumericValueValues[_NumericValuePages[(_NumericValueIndirect[_rune >> 8] << 8) + (_rune & 255)]];
+    }
 
     bool patternSyntax() const {
         return (_PatternSyntaxPages[(_PatternSyntaxIndirect[_rune >> 8] << 4) + ((_rune & 255) >> 4)] >> (_rune & 15)) & 1;

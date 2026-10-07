@@ -242,8 +242,56 @@ class BoolProperty(Property):
             file=out)
         print("    }\n", file=out)
 
+class NumericProperty(Property):
+    @staticmethod
+    def parseNumber(s : str) -> tuple[int, int]:
+        if "/" in s:
+            n, d = s.split("/")
+            return int(n), int(d)
+        elif s == "NaN":
+            return (1, 0)
+        else:
+            return int(s), 1
+
+    def emitTable(self, database: Database, out):
+        values = set()
+        for cp in range(0, 0x10FFFF):
+            v = database.codepoints[cp].get(self.descriptor.key, "NaN")
+            values.add(self.parseNumber(v))
+        values = list(values)
+
+        pages, indirect = paginateProperty(database, self.descriptor, lambda v: values.index(self.parseNumber(v)), "NaN")
+        longname = self.descriptor.name
+        tabName = f"defs/tables/{change_case.to_param_case(longname)}.inc"
+        with open(f"src/karm-icu/{tabName}", "w") as tabOut:
+            print(
+                f"static constexpr NumericValue _{self.descriptor.name}Values[] = {{{", ".join(f"{{{x[0]}, {x[1]}}}" for x in values)}}};\n",
+                file=tabOut)
+            print(
+                f"static constexpr u8 _{self.descriptor.name}Pages[] = {{{", ".join(str(x) for x in pages)}}};\n",
+                file=tabOut)
+            print(
+                f"static constexpr u8 _{self.descriptor.name}Indirect[] = {{{", ".join(str(x) for x in indirect)}}};\n",
+                file=tabOut)
+        print(f'#include "{tabName}"', file=out)
+
+    def emitAccessor(self, out):
+        name = change_case.to_camel_case(self.descriptor.name)
+
+        lookupIndirect = f"(_{self.descriptor.name}Indirect[_rune >> 8] << 8) + (_rune & 255)"
+        lookupPage = f"_{self.descriptor.name}Pages[{lookupIndirect}]"
+        loolupValue = f"_{self.descriptor.name}Values[{lookupPage}]"
+
+        print(f"    NumericValue {name}() const {{", file=out)
+        print(
+            f"        return {loolupValue};",
+            file=out)
+        print("    }\n", file=out)
 
 class UnknowProperty(Property):
+    def emitTable(self, database: Database, out):
+        print("(skipped)")
+
     def emitAccessor(self, out):
         print(f"    // TODO: Ignored property {self.descriptor.name}\n", file=out)
 
@@ -254,10 +302,22 @@ def propertyFor(descriptor: PropertyDescriptor) -> Property:
             return EnumProperty(descriptor)
         case ("Binary", _):
             return BoolProperty(descriptor)
+        case ("Numeric", _):
+            return NumericProperty(descriptor)
         case (_, "BidiMirroringGlyph"):
             return RuneProperty(descriptor)
         case _:
             return UnknowProperty(descriptor)
+
+NUMERIC_VALUE = """
+export struct NumericValue {
+    i64 numerator;
+    u16 denominator;   // 0 => NaN
+    static const NumericValue NAN;
+    bool operator==(NumericValue const&) const = default;
+};
+constexpr NumericValue NumericValue::NAN = {1, 0};
+"""
 
 def emitTypeDeclaration(ty : PropertyType, out):
     if ty.type in ("Catalog", "Enumerated"):
@@ -270,6 +330,9 @@ def emitTypeDeclaration(ty : PropertyType, out):
         print("", file=out)
         print("    _LEN,", file=out)
         print("};\n", file=out)
+    elif ty.type in "Numeric":
+        print(NUMERIC_VALUE, file=out)
+
 
 database = Database.load()
 
