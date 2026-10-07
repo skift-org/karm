@@ -4,7 +4,7 @@ import Karm.Crypto;
 
 namespace Karm::Crypto::Tests {
 
-test$("crypto-adler32") {
+test$("adler32-checksum") {
     auto testCase = [&](Str data, u32 expected) -> Res<> {
         auto adler = adler32(bytes(data));
         assertEq$(adler, expected);

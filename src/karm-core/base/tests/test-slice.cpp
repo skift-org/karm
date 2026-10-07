@@ -10,7 +10,7 @@ auto needle(isize value) {
     };
 }
 
-test$("search") {
+test$("slice-search") {
     Array arr{1, 5, 10};
 
     assertEq$(search(arr, needle(0)), NONE);
@@ -31,7 +31,7 @@ test$("search") {
     return Ok();
 }
 
-test$("search-lower-bound") {
+test$("slice-search-lower-bound") {
     Array arr{1, 5, 10};
 
     assertEq$(searchLowerBound(arr, needle(0)), NONE);
@@ -52,7 +52,7 @@ test$("search-lower-bound") {
     return Ok();
 }
 
-test$("search-upper-bound") {
+test$("slice-search-upper-bound") {
     Array arr{1, 5, 10};
 
     assertEq$(searchUpperBound(arr, needle(0)), 0uz);

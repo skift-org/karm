@@ -8,7 +8,7 @@ import :database;
 
 namespace Karm::Font::Tests {
 
-test$("karm-font-common-family") {
+test$("book-common-family") {
     assertEq$(_commonFamily("Noto"_sym, "Noto"_sym), "Noto"_sym);
     assertEq$(_commonFamily("Not"_sym, "Noto"_sym), ""_sym);
     assertEq$(_commonFamily("Noto"_sym, "Arial"_sym), ""_sym);

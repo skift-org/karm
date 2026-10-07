@@ -4,7 +4,7 @@ import Karm.Gfx;
 
 namespace Karm::Gfx::Tests {
 
-test$("karm-test-hsl-rgb-conversion-basic") {
+test$("hsl-rgb-conversion-basic") {
     assertEq$(Gfx::hslToRgb(Gfx::Hsl{0, 0, 0}), Gfx::BLACK);
     assertEq$(Gfx::hslToRgb(Gfx::Hsl{0, 0, 1}), Gfx::WHITE);
     assertEq$(Gfx::hslToRgb(Gfx::Hsl{0, 1, .5}), Gfx::Color::fromRgb(255, 0, 0));
@@ -20,7 +20,7 @@ test$("karm-test-hsl-rgb-conversion-basic") {
     return Ok();
 }
 
-test$("karm-test-hsl-rgb-conversion-arbitrary") {
+test$("hsl-rgb-conversion-arbitrary") {
     assertEq$(Gfx::hslToRgb(Gfx::rgbToHsl(Gfx::Color::fromRgb(1, 123, 32))), Gfx::Color::fromRgb(1, 123, 32));
     assertEq$(Gfx::hslToRgb(Gfx::rgbToHsl(Gfx::Color::fromRgb(119, 172, 235))), Gfx::Color::fromRgb(119, 172, 235));
     assertEq$(Gfx::hslToRgb(Gfx::rgbToHsl(Gfx::Color::fromRgb(31, 253, 29))), Gfx::Color::fromRgb(31, 253, 29));

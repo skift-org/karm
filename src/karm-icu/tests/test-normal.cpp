@@ -175,25 +175,25 @@ Res<> checkFormAgainstTestFile(auto& _driver, FormSpec const& spec) {
 
 } // namespace
 
-test$("normQuickCheckNFD") {
+test$("norm-quick-check-nfd") {
     return checkFormAgainstTestFile(_driver, FORMS[0]);
 }
 
-test$("normQuickCheckNFC") {
+test$("norm-quick-check-nfc") {
     return checkFormAgainstTestFile(_driver, FORMS[1]);
 }
 
-test$("normQuickCheckNFKD") {
+test$("norm-quick-check-nfkd") {
     return checkFormAgainstTestFile(_driver, FORMS[2]);
 }
 
-test$("normQuickCheckNFKC") {
+test$("norm-quick-check-nfkc") {
     return checkFormAgainstTestFile(_driver, FORMS[3]);
 }
 
 // UAX #15: every code point NOT listed in Part 1 is invariant under all four
 // forms, so quickCheck must never return NO for it as a single-rune string.
-test$("normQuickCheckUnlistedCodepoints") {
+test$("norm-quick-check-unlisted-codepoints") {
     auto file = try$(Sys::File::open("bundle://karm-icu.tests/NormalizationTest.txt"_url));
     auto mmap = try$(Sys::mmap(file));
 

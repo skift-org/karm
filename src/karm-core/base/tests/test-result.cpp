@@ -207,7 +207,7 @@ test$("res-ref-take") {
 
 // unwrapOr / unwrapOrElse should still return a *value*, not a ref -----------
 
-test$("res-ref-unwrapOr") {
+test$("res-ref-unwrap-or") {
     int v = 1;
     Res<int&> r1 = Ok<int&>(v);
     Res<int&> r2 = Error::other("nope");
@@ -222,7 +222,7 @@ test$("res-ref-unwrapOr") {
     return Ok();
 }
 
-test$("res-ref-unwrapOrElse") {
+test$("res-ref-unwrap-or-else") {
     int v = 10;
     Res<int&> r1 = Ok<int&>(v);
     Res<int&> r2 = Error::other("err");
@@ -261,7 +261,7 @@ test$("res-ref-map") {
 
 // mapErr() should pass through Error unchanged -------------------------------
 
-test$("res-ref-mapErr") {
+test$("res-ref-map-err") {
     Res<int&> r = Error::invalidInput("bad");
 
     auto r2 = r.mapErr<Error>([](auto const&) {

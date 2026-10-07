@@ -4,7 +4,7 @@ import Karm.Core;
 
 namespace Karm::Async::Tests {
 
-test$("karm-queue-enqueue-dequeue") {
+test$("queue-enqueue-dequeue") {
     Queue<isize> q;
     q.enqueue(42);
     q.enqueue(69);
@@ -18,7 +18,7 @@ test$("karm-queue-enqueue-dequeue") {
     return Ok();
 }
 
-test$("karm-queue-dequeue-enqueue") {
+test$("queue-dequeue-enqueue") {
     Queue<isize> q;
 
     isize res1 = 0;

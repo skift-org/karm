@@ -4,7 +4,7 @@ import Karm.Ui;
 
 namespace Karm::Ui::Tests {
 
-test$("karm-ui-model-moves") {
+test$("model-moves") {
     TextModel mdl{"foo bar baz"};
 
     mdl.moveStart();

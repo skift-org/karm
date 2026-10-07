@@ -8,7 +8,7 @@ using namespace Karm::Ref::Literals;
 
 namespace Karm::Ref::Tests {
 
-test$("karm-ref-path-up-down") {
+test$("path-up-down") {
     auto path = "/a/b/c/d/e/f"_path;
 
     auto up = path.parent();
@@ -35,7 +35,7 @@ test$("karm-ref-path-up-down") {
     return Ok();
 }
 
-test$("karm-ref-path-parent-of") {
+test$("path-parent-of") {
     assert$(""_path.parentOf(""_path));
     assert$("/a"_path.parentOf("/a"_path));
     assert$("/a"_path.parentOf("/a/b"_path));
@@ -48,7 +48,7 @@ test$("karm-ref-path-parent-of") {
     return Ok();
 }
 
-test$("karm-ref-path-str") {
+test$("path-str") {
     assertEq$(""_path.str(), "."s);
     assertEq$("/a/b/c"_path.str(), "/a/b/c"s);
     assertEq$("a/b/c"_path.str(), "a/b/c"s);
@@ -61,7 +61,7 @@ test$("karm-ref-path-str") {
     return Ok();
 }
 
-test$("karm-ref-path-basename-stem-suffix") {
+test$("path-basename-stem-suffix") {
     auto path = "file.txt"_path;
     assertEq$(path.basename(), "file.txt"s);
     assertEq$(path.stem(), "file"s);

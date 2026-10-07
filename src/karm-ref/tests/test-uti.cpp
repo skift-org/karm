@@ -7,7 +7,7 @@ using namespace Karm::Ref::Literals;
 
 namespace Karm::Ref::Tests {
 
-test$("karm-ref-uti-basic-properties") {
+test$("uti-basic-properties") {
     Uti text{Uti::PUBLIC_TEXT};
 
     assertEq$(text.name(), "public.text"_sym);
@@ -24,7 +24,7 @@ test$("karm-ref-uti-basic-properties") {
     return Ok();
 }
 
-test$("karm-ref-uti-from-extension") {
+test$("uti-from-extension") {
     // Known extension
     auto htmlUti = Uti::fromSuffix("html");
     assertEq$(htmlUti.name(), "public.html"_sym);
@@ -39,7 +39,7 @@ test$("karm-ref-uti-from-extension") {
     return Ok();
 }
 
-test$("karm-ref-uti-from-mime") {
+test$("uti-from-mime") {
     // Known mime type
     auto jpegUti = Uti::fromMime("image/jpeg"_mime);
     assertEq$(jpegUti.name(), "public.jpeg"_sym);
@@ -53,7 +53,7 @@ test$("karm-ref-uti-from-mime") {
     return Ok();
 }
 
-test$("karm-ref-uti-from-uti-or-mime") {
+test$("uti-from-uti-or-mime") {
     auto nameUti = Uti::fromUtiOrMime("public.png");
     assertEq$(nameUti.name(), "public.png"_sym);
 
@@ -67,7 +67,7 @@ test$("karm-ref-uti-from-uti-or-mime") {
     return Ok();
 }
 
-test$("karm-ref-uti-conformance") {
+test$("uti-conformance") {
     Uti html{Uti::PUBLIC_HTML};
     Uti text{Uti::PUBLIC_TEXT};
     Uti data{Uti::PUBLIC_DATA};
@@ -91,7 +91,7 @@ test$("karm-ref-uti-conformance") {
     return Ok();
 }
 
-test$("karm-ref-uti-equality-and-udl") {
+test$("uti-equality-and-udl") {
     auto literalUti = "public.json"_uti;
     Uti enumUti{Uti::PUBLIC_JSON};
 

@@ -6,7 +6,7 @@ using namespace Karm::Literals;
 
 namespace Karm::Crypto::Tests {
 
-test$("crypto-crc32") {
+test$("crc32-checksum") {
     auto testCase = [&](Str data, u32 expected) -> Res<> {
         auto crc = crc32(bytes(data));
         assertEq$(crc, expected);
@@ -20,7 +20,7 @@ test$("crypto-crc32") {
     return Ok();
 }
 
-test$("crypto-crc32-check") {
+test$("crc32-check") {
     assert$(crc32check(bytes(Array<u8, 4>{0, 0, 0, 0})));
     assert$(crc32check("The quick brown fox jumps over the lazy dog\x39\xA3\x4F\x41"_bytes));
     assert$(crc32check("various CRC algorithms input data\xAE\x66\xD3\x9B"_bytes));

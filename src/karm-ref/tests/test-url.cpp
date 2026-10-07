@@ -8,7 +8,7 @@ using namespace Karm::Ref::Literals;
 
 namespace Karm::Ref::Tests {
 
-test$("karm-ref-url-parse") {
+test$("url-parse") {
     auto url = "http://example.com:1234/home"_url;
 
     assertEq$(url.scheme, "http"s);
@@ -52,13 +52,13 @@ test$("karm-ref-url-parse") {
     return Ok();
 }
 
-test$("karm-ref-url-unparse") {
+test$("url-unparse") {
     assertEq$("http://smnx.sh/"_url.str(), "http://smnx.sh/"s);
     assertEq$("http://smnx.sh"_url.str(), "http://smnx.sh"s);
     return Ok();
 }
 
-test$("karm-ref-url-parent-of") {
+test$("url-parent-of") {
     assert$("http://example.com/"_url.parentOf("http://example.com/"_url));
     assert$("http://example.com"_url.parentOf("http://example.com/a"_url));
     assert$("http://example.com"_url.parentOf("http://example.com/a/b"_url));
@@ -69,7 +69,7 @@ test$("karm-ref-url-parent-of") {
     return Ok();
 }
 
-test$("karm-ref-url-resolution-reference") {
+test$("url-resolution-reference") {
     auto base = "http://a/b/c/d;p?q"_url;
 
     // https://datatracker.ietf.org/doc/html/rfc3986#section-5.4.1

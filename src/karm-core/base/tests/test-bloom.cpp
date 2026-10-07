@@ -4,7 +4,7 @@ import Karm.Core;
 
 namespace Karm::Base::Tests {
 
-test$("bloom") {
+test$("bloom-basic") {
     Bloom<int> bloom;
 
     bloom.add(42);

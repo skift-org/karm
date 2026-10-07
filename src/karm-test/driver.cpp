@@ -36,11 +36,7 @@ export struct Driver {
             if (not Glob::matchGlob(options.glob, test->name))
                 continue;
 
-            Sys::err(
-                "Running {:#}… ",
-                Io::toNoCase(test->name)
-                    .expect()
-            );
+            Sys::err("Running {}:{}: {}… ", test->sourceLocation.file | Tty::WHITE, test->sourceLocation.line, test->name | Tty::BLUE_LIGHT);
 
             auto result = co_await test->runAsync(*this, ct);
 

@@ -130,7 +130,7 @@ Yield<TestCase> testCasesFromFile(Sys::Mmap& file) {
     }
 }
 
-test$("bidiTestFileLevels") {
+test$("bidi-test-file-levels") {
     auto file = try$(Sys::File::open("bundle://karm-icu.tests/BidiCharacterTest.txt"_url));
     auto mmap = try$(Sys::mmap(file));
 
@@ -168,7 +168,7 @@ test$("bidiTestFileLevels") {
     return Ok();
 }
 
-test$("bidiTestFileReorder") {
+test$("bidi-test-file-reorder") {
     auto file = try$(Sys::File::open("bundle://karm-icu.tests/BidiCharacterTest.txt"_url));
     auto mmap = try$(Sys::mmap(file));
 

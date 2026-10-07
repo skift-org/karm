@@ -4,7 +4,7 @@ import Karm.Core;
 
 namespace Karm::Async::Tests {
 
-test$("karm-semaphore-acquire-release") {
+test$("semaphore-acquire-release") {
     Semaphore sem{2, 2};
 
     auto res1 = Async::run(sem.acquireAsync(CancellationToken::uninterruptible()));
@@ -23,7 +23,7 @@ test$("karm-semaphore-acquire-release") {
     return Ok();
 }
 
-test$("karm-semaphore-release-no-waiters") {
+test$("semaphore-release-no-waiters") {
     Semaphore sem{1, 5};
 
     assertEq$(sem._currentCount, 1uz);
@@ -35,7 +35,7 @@ test$("karm-semaphore-release-no-waiters") {
     return Ok();
 }
 
-test$("karm-semaphore-release-up-to-max") {
+test$("semaphore-release-up-to-max") {
     Semaphore sem{0, 3};
 
     sem.release(3);
@@ -45,7 +45,7 @@ test$("karm-semaphore-release-up-to-max") {
     return Ok();
 }
 
-test$("karm-semaphore-wait-then-release") {
+test$("semaphore-wait-then-release") {
     Semaphore sem{0, 2};
 
     bool res1Ok = false;
@@ -81,7 +81,7 @@ test$("karm-semaphore-wait-then-release") {
     return Ok();
 }
 
-test$("karm-semaphore-partial-release") {
+test$("semaphore-partial-release") {
     Semaphore sem{0, 3};
 
     int completedCount = 0;
@@ -115,7 +115,7 @@ test$("karm-semaphore-partial-release") {
     return Ok();
 }
 
-test$("karm-semaphore-cancel-while-waiting") {
+test$("semaphore-cancel-while-waiting") {
     Semaphore sem{0, 1};
 
     Cancellation cts;
@@ -140,7 +140,7 @@ test$("karm-semaphore-cancel-while-waiting") {
     return Ok();
 }
 
-test$("karm-semaphore-already-cancelled-token") {
+test$("semaphore-already-cancelled-token") {
     Semaphore sem{0, 1};
 
     Cancellation cts;
@@ -154,7 +154,7 @@ test$("karm-semaphore-already-cancelled-token") {
     return Ok();
 }
 
-test$("karm-semaphore-destructor-cancels-pending-waiters") {
+test$("semaphore-destructor-cancels-pending-waiters") {
     bool res1Done = false, res1Err = false;
     bool res2Done = false, res2Err = false;
 
@@ -182,7 +182,7 @@ test$("karm-semaphore-destructor-cancels-pending-waiters") {
     return Ok();
 }
 
-test$("karm-semaphore-try-lock-scope") {
+test$("semaphore-try-lock-scope") {
     Semaphore sem{1, 1};
 
     {
@@ -198,7 +198,7 @@ test$("karm-semaphore-try-lock-scope") {
     return Ok();
 }
 
-test$("karm-semaphore-lock-scope-async") {
+test$("semaphore-lock-scope-async") {
     Semaphore sem{1, 1};
 
     {
@@ -211,7 +211,7 @@ test$("karm-semaphore-lock-scope-async") {
     return Ok();
 }
 
-test$("karm-semaphore-lock-scope-async-cancelled") {
+test$("semaphore-lock-scope-async-cancelled") {
     Semaphore sem{1, 1};
 
     Cancellation cts;
@@ -225,7 +225,7 @@ test$("karm-semaphore-lock-scope-async-cancelled") {
     return Ok();
 }
 
-test$("karm-semaphore-lock-scope-move-disarms-source") {
+test$("semaphore-lock-scope-move-disarms-source") {
     Semaphore sem{1, 1};
 
     {
@@ -241,7 +241,7 @@ test$("karm-semaphore-lock-scope-move-disarms-source") {
     return Ok();
 }
 
-test$("karm-semaphore-acquire-multiple-sync") {
+test$("semaphore-acquire-multiple-sync") {
     Semaphore sem{5, 5};
 
     auto res1 = Async::run(sem.acquireAsync(3, CancellationToken::uninterruptible()));
@@ -255,7 +255,7 @@ test$("karm-semaphore-acquire-multiple-sync") {
     return Ok();
 }
 
-test$("karm-semaphore-try-acquire-multiple") {
+test$("semaphore-try-acquire-multiple") {
     Semaphore sem{5, 5};
 
     assert$(sem.tryAcquire(3));
@@ -270,7 +270,7 @@ test$("karm-semaphore-try-acquire-multiple") {
     return Ok();
 }
 
-test$("karm-semaphore-acquire-multiple-waits-for-enough") {
+test$("semaphore-acquire-multiple-waits-for-enough") {
     Semaphore sem{0, 10};
 
     bool done = false;
@@ -295,7 +295,7 @@ test$("karm-semaphore-acquire-multiple-waits-for-enough") {
     return Ok();
 }
 
-test$("karm-semaphore-try-acquire-blocked-by-queued-listener") {
+test$("semaphore-try-acquire-blocked-by-queued-listener") {
     Semaphore sem{0, 10};
 
     bool done = false;
@@ -318,7 +318,7 @@ test$("karm-semaphore-try-acquire-blocked-by-queued-listener") {
     return Ok();
 }
 
-test$("karm-semaphore-fifo-blocks-smaller-later-request") {
+test$("semaphore-fifo-blocks-smaller-later-request") {
     Semaphore sem{0, 10};
 
     bool firstDone = false;

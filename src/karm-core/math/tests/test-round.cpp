@@ -4,7 +4,7 @@ import Karm.Core;
 
 namespace Karm::Math::Tests {
 
-test$("floori") {
+test$("round-floori") {
     assertEq$(0, floori(0.0));
     assertEq$(0, floori(0.1));
     assertEq$(0, floori(0.5));
@@ -17,7 +17,7 @@ test$("floori") {
     return Ok();
 }
 
-test$("ceili") {
+test$("round-ceili") {
     assertEq$(0, ceili(0.0));
     assertEq$(1, ceili(0.1));
     assertEq$(1, ceili(0.5));
@@ -30,7 +30,7 @@ test$("ceili") {
     return Ok();
 }
 
-test$("roundi") {
+test$("round-roundi") {
     assertEq$(0, roundi(0.0));
 
     assertEq$(0, roundi(0.1));

@@ -4,7 +4,7 @@ import Karm.Icc;
 
 namespace Karm::Icc::Tests {
 
-test$("karm-icc-srgb") {
+test$("icc-srgb") {
     auto srgb = ColorProfile::srgb();
     assertEq$(srgb->colorSpace(), ColorSpace::RGB);
     assertEq$(srgb->colorSpace().components(), 3ul);
@@ -12,7 +12,7 @@ test$("karm-icc-srgb") {
     return Ok();
 }
 
-test$("karm-icc-sgray") {
+test$("icc-sgray") {
     auto sgray = ColorProfile::sgray();
     assertEq$(sgray->colorSpace(), ColorSpace::GRAY);
     assertEq$(sgray->colorSpace().components(), 1ul);
@@ -20,7 +20,7 @@ test$("karm-icc-sgray") {
     return Ok();
 }
 
-test$("karm-icc-device-dependent") {
+test$("icc-device-dependent") {
     assertEq$(ColorProfile::deviceRgb()->isDeviceDependent(), true);
     assertEq$(ColorProfile::deviceCmyk()->isDeviceDependent(), true);
     assertEq$(ColorProfile::deviceGray()->isDeviceDependent(), true);

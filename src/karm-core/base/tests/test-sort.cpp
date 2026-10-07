@@ -13,7 +13,7 @@ struct Foo {
     }
 };
 
-test$("sort") {
+test$("sort-basic") {
     Array arr{
         Foo{1, 1},
         Foo{2, 2},

@@ -6,7 +6,7 @@ using namespace Karm::Literals;
 
 namespace Karm::Crypto::Tests {
 
-test$("crypto-hotp") {
+test$("hotp-generate") {
     // Appendix D - HOTP Algorithm: Test Values
     // https://datatracker.ietf.org/doc/html/rfc4226#appendix-B.3
     static Str SECRET = "\x31\x32\x33\x34\x35\x36\x37\x38\x39\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x30";
@@ -19,7 +19,7 @@ test$("crypto-hotp") {
     return Ok();
 }
 
-test$("crypto-totp") {
+test$("totp-generate") {
     // Appendix B.  Test Vectors
     // https://datatracker.ietf.org/doc/html/rfc6238#appendix-B
     static Str SECRET_SHA1 = "12345678901234567890";

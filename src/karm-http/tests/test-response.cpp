@@ -6,7 +6,7 @@ using namespace Karm::Literals;
 
 namespace Karm::Http::Tests {
 
-test$("read-http-response-good-body") {
+test$("response-read-good-body") {
     auto rawResponse =
         "HTTP/1.1 200 OK\r\n"
         "Server: Apache\r\n"
@@ -29,7 +29,7 @@ test$("read-http-response-good-body") {
     return Ok();
 }
 
-test$("read-http-response-body-content-length-mismatch") {
+test$("response-read-body-content-length-mismatch") {
     auto rawResponse =
         "HTTP/1.2 500 Internal Server Error\r\n"
         "Content-Length: 100\r\n"
@@ -50,7 +50,7 @@ test$("read-http-response-body-content-length-mismatch") {
     return Ok();
 }
 
-test$("read-http-response-body-empty-body") {
+test$("response-read-body-empty-body") {
     auto rawResponse =
         "HTTP/1.1 404 Not Found\r\n"
         "\r\n"s;

@@ -6,7 +6,7 @@ using namespace Karm::Literals;
 
 namespace Karm::Async::Tests {
 
-test$("test-cancellation"s) {
+test$("cancellation-attach-and-reset"s) {
     Cancellation cancellation;
     auto ct = cancellation.token();
 

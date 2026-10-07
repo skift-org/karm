@@ -7,7 +7,7 @@ using namespace Karm::Literals;
 
 namespace Karm::Cli::Tests {
 
-test$("karm-cli-args-tokenizer") {
+test$("args-tokenizer") {
     Array args = {
         "ls"s,
         "-h"s,
@@ -42,7 +42,7 @@ test$("karm-cli-args-tokenizer") {
     return Ok();
 }
 
-testAsync$("karm-cli-args-simple-command") {
+testAsync$("args-simple-command") {
     Command cmd{
         "test"s,
     };
@@ -56,7 +56,7 @@ testAsync$("karm-cli-args-simple-command") {
     co_return Ok();
 }
 
-testAsync$("karm-cli-args-nested-command") {
+testAsync$("args-nested-command") {
     Command cmd{
         "test"s,
     };

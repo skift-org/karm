@@ -49,7 +49,7 @@ test$("sieve-len") {
     return Ok();
 }
 
-test$("seive-evict") {
+test$("sieve-evict") {
     Sieve<int, int> cache{10};
 
     for (int i = 0; i < 10; i++) {

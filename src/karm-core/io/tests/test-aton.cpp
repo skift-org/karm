@@ -6,7 +6,7 @@ using namespace Karm::Literals;
 
 namespace Karm::Io::Tests {
 
-test$("atoi") {
+test$("aton-atoi") {
     assertEq$(Io::atoi("0"s), 0);
     assertEq$(Io::atoi("1"s), 1);
     assertEq$(Io::atoi("2"s), 2);
@@ -27,7 +27,7 @@ test$("atoi") {
     return Ok();
 }
 
-test$("atof") {
+test$("aton-atof") {
     assert$(Math::epsilonEq(try$(Io::atof("0.0"s)), 0.0));
     assert$(Math::epsilonEq(try$(Io::atof("0.1"s)), 0.1));
     assert$(Math::epsilonEq(try$(Io::atof("0.5"s)), 0.5));

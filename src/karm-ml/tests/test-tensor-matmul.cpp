@@ -4,7 +4,7 @@ import Karm.Ml;
 
 namespace Karm::Ml::Tests {
 
-test$("matmul") {
+test$("tensor-matmul") {
     Tensor a = {
         {1, 0, 1},
         {2, 1, 1},

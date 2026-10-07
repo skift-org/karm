@@ -6,7 +6,7 @@ using namespace Karm::Literals;
 
 namespace Karm::Crypto::Tests {
 
-test$("crypto-hmac") {
+test$("hmac-sha2") {
     assertEq$(
         hmacSha256("key"_bytes, "The quick brown fox jumps over the lazy dog"_bytes),
         "\xf7\xbc\x83\xf4\x30\x53\x84\x24\xb1\x32\x98\xe6\xaa\x6f\xb1\x43\xef\x4d\x59\xa1\x49\x46\x17\x59\x97\x47\x9d\xbc\x2d\x1a\x3c\xd8"_bytes

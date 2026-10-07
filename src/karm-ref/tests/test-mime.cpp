@@ -7,7 +7,7 @@ using namespace Karm::Ref::Literals;
 
 namespace Karm::Ref::Tests {
 
-test$("karm-ref-mime-parse") {
+test$("mime-parse") {
     auto mime = "text/plain"_mime;
     assertEq$(mime.type(), "text"s);
     assertEq$(mime.subtype(), "plain"s);

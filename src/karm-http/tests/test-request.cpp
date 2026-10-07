@@ -8,7 +8,7 @@ using namespace Karm::Ref::Literals;
 
 namespace Karm::Http::Tests {
 
-test$("parse-unparse-http-request-no-header") {
+test$("request-parse-unparse-no-header") {
     auto rawRequest =
         "GET / HTTP/1.1\r\n"
         "\r\n"s;
@@ -30,7 +30,7 @@ test$("parse-unparse-http-request-no-header") {
     return Ok();
 }
 
-test$("parse-unparse-http-request-with-header") {
+test$("request-parse-unparse-with-header") {
     auto rawRequest =
         "POST / HTTP/1.2\r\n"
         "Host: odoo.com\r\n"

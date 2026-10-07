@@ -96,7 +96,7 @@ enum struct TestEnum {
     _LEN,
 };
 
-test$("bool-niche") {
+test$("enum-niche") {
     Opt<TestEnum> test;
 
     assertEq$(sizeof(test), sizeof(TestEnum));

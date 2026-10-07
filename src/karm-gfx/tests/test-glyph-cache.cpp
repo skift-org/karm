@@ -49,7 +49,7 @@ static bool _anyInk(Pixels p) {
     return false;
 }
 
-test$("karm-gfx-glyph-cache-matches-direct") {
+test$("glyph-cache-matches-direct") {
     auto cached = _renderText("skift", {4, 20}, [](CpuCanvas&) {
     });
 
@@ -67,7 +67,7 @@ test$("karm-gfx-glyph-cache-matches-direct") {
     return Ok();
 }
 
-test$("karm-gfx-glyph-cache-matches-direct-scaled") {
+test$("glyph-cache-matches-direct-scaled") {
     auto cached = _renderText("skift", {4, 20}, [](CpuCanvas& g) {
         g.scale(1.5);
     });
@@ -87,7 +87,7 @@ test$("karm-gfx-glyph-cache-matches-direct-scaled") {
     return Ok();
 }
 
-test$("karm-gfx-glyph-cache-replay-deterministic") {
+test$("glyph-cache-replay-deterministic") {
     auto first = _renderText("hello", {4.25, 20}, [](CpuCanvas&) {
     });
     auto second = _renderText("hello", {4.25, 20}, [](CpuCanvas&) {
@@ -99,7 +99,7 @@ test$("karm-gfx-glyph-cache-replay-deterministic") {
     return Ok();
 }
 
-test$("karm-gfx-glyph-cache-respects-clip") {
+test$("glyph-cache-respects-clip") {
     auto unclipped = _renderText("mm", {4, 20}, [](CpuCanvas&) {
     });
 
