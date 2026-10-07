@@ -65,7 +65,7 @@ export struct Client : Transport {
                 request->url.scheme = scheme;
                 if (not oneOf(request->method, GET, HEAD))
                     request->method = GET;
-                if (auto [body] = response->body)
+                if (auto &[body] = response->body)
                     co_trya$(body->closeAsync(ct));
             } else {
                 co_return Ok(response);

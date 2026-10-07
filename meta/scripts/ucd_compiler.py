@@ -151,12 +151,17 @@ class EnumProperty(Property):
         type = "u8"
         if len(ty.values) > 0xff:
             type = "u16"
-        print(
-            f"static constexpr {type} _{self.descriptor.name}Pages[] = {{{", ".join(str(x) for x in pages)}}};\n",
-            file=out)
-        print(
-            f"static constexpr u8 _{self.descriptor.name}Indirect[] = {{{", ".join(str(x) for x in indirect)}}};\n",
-            file=out)
+
+        longname = self.descriptor.name
+        tabName = f"defs/tables/{change_case.to_param_case(longname)}.inc"
+        with open(f"src/karm-icu/{tabName}", "w") as tabOut:
+            print(
+                f"static constexpr {type} _{self.descriptor.name}Pages[] = {{{", ".join(str(x) for x in pages)}}};\n",
+                file=tabOut)
+            print(
+                f"static constexpr u8 _{self.descriptor.name}Indirect[] = {{{", ".join(str(x) for x in indirect)}}};\n",
+                file=tabOut)
+        print(f'#include "{tabName}"', file=out)
 
     def emitAccessor(self, out):
         name = change_case.to_camel_case(self.descriptor.name)
@@ -173,13 +178,18 @@ class EnumProperty(Property):
 
 class RuneProperty(Property):
     def emitTable(self, database: Database, out):
+        longname = self.descriptor.name
+        tabName = f"defs/tables/{change_case.to_param_case(longname)}.inc"
         pages, indirect = paginateProperty(database, self.descriptor, lambda v: int(v, 16), "0")
-        print(
-            f"static constexpr Rune _{self.descriptor.name}Pages[] = {{{", ".join(str(x) for x in pages)}}};\n",
-            file=out)
-        print(
-            f"static constexpr u8 _{self.descriptor.name}Indirect[] = {{{", ".join(str(x) for x in indirect)}}};\n",
-            file=out)
+        with open(f"src/karm-icu/{tabName}", "w") as tabOut:
+            print(
+                f"static constexpr Rune _{self.descriptor.name}Pages[] = {{{", ".join(str(x) for x in pages)}}};\n",
+                file=tabOut)
+            print(
+                f"static constexpr u8 _{self.descriptor.name}Indirect[] = {{{", ".join(str(x) for x in indirect)}}};\n",
+                file=tabOut)
+        print(f'#include "{tabName}"', file=out)
+
 
     def emitAccessor(self, out):
         name = change_case.to_camel_case(self.descriptor.name)
@@ -207,14 +217,17 @@ class BoolProperty(Property):
                     val |= (1 << bit_idx)
             packed_pages.append(val)
 
-        longname = self.descriptor.name
 
-        print(
-            f"static constexpr u16 _{longname}Pages[] = {{{', '.join(hex(x) for x in packed_pages)}}};\n",
-            file=out)
-        print(
-            f"static constexpr u8 _{longname}Indirect[] = {{{', '.join(str(x) for x in indirect)}}};\n",
-            file=out)
+        longname = self.descriptor.name
+        tabName = f"defs/tables/{change_case.to_param_case(longname)}.inc"
+        with open(f"src/karm-icu/{tabName}", "w") as tabOut:
+            print(
+                f"static constexpr u16 _{longname}Pages[] = {{{', '.join(hex(x) for x in packed_pages)}}};\n",
+                file=tabOut)
+            print(
+                f"static constexpr u8 _{longname}Indirect[] = {{{', '.join(str(x) for x in indirect)}}};\n",
+                file=tabOut)
+        print(f'#include "{tabName}"', file=out)
 
     def emitAccessor(self, out):
         longname = self.descriptor.name
