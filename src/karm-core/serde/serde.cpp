@@ -642,19 +642,23 @@ export template <Meta::Aggregate T>
 struct Serde<T> {
     static Res<> serialize(Serializer& ser, T const& v) {
         auto scope = try$(ser.beginScope({.kind = Type::ARRAY}));
-        try$(Meta::visit(v, [&]<typename I>(I const& i) -> Res<> {
-            return ser.serialize<I>(i);
-        }));
+        if constexpr (Meta::len<T>() > 0) {
+            try$(Meta::visit(v, [&]<typename I>(I const& i) -> Res<> {
+                return ser.serialize<I>(i);
+            }));
+        }
         return scope.end();
     }
 
     static Res<T> deserialize(Deserializer& de) {
         auto scope = try$(de.beginScope({.kind = Type::ARRAY}));
         T res;
-        try$(Meta::visit(res, [&]<typename I>(I& i) -> Res<> {
-            i = try$(de.deserialize<I>());
-            return Ok();
-        }));
+        if constexpr (Meta::len<T>() > 0) {
+            try$(Meta::visit(res, [&]<typename I>(I& i) -> Res<> {
+                i = try$(de.deserialize<I>());
+                return Ok();
+            }));
+        }
         try$(scope.end());
         return Ok(std::move(res));
     }

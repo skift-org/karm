@@ -70,6 +70,16 @@ test$("pack-unpack-primitives") {
 
     try$(packUnpack(foo));
 
+    struct Empty {
+        bool operator==(Empty const&) const = default;
+
+        void repr(Io::Emit& e) const {
+            e("(empty)");
+        }
+    };
+
+    try$(packUnpack(Empty{}));
+
     return Ok();
 }
 
