@@ -2,8 +2,10 @@
     "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
     "id": "karm-cpp",
     "type": "lib",
+    "description": "C/C++ frontend: lexer, preprocessor, parser and AST",
     "requires": [
         "karm-core",
+        "karm-gc",
         "karm-diag",
         "karm-ir"
     ]

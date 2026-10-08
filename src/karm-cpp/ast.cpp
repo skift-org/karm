@@ -1,31 +1,9 @@
-export module Karm.Cc;
+export module Karm.Cpp:ast;
 
 import Karm.Core;
 import Karm.Gc;
 
-namespace Karm::Cc {
-
-export struct Base {
-    virtual ~Base() = default;
-
-    virtual bool is(Meta::Id id) const {
-        return id == Meta::idOf<Base>();
-    }
-
-    template <Meta::Derive<Base> T>
-    Opt<T&> as() {
-        if (is(Meta::idOf<T>()))
-            return Some(static_cast<T&>(*this));
-        return NONE;
-    }
-
-    template <Meta::Derive<Base> T>
-    Opt<T const&> as() const {
-        if (is(Meta::idOf<T>()))
-            return Some(static_cast<T const&>(*this));
-        return NONE;
-    }
-};
+namespace Karm::Cpp {
 
 // MARK: Expr ------------------------------------------------------------------
 
@@ -37,7 +15,7 @@ export struct IdentExpr {};
 
 export struct PrefixExpr {};
 
-export struct PosfixExpr {};
+export struct PostfixExpr {};
 
 export struct InfixExpr {};
 
@@ -49,28 +27,57 @@ export struct TernaryExpr {};
 
 // MARK: Stmt ------------------------------------------------------------------
 
+// https://eel.is/c++draft/stmt
 export struct Stmt {};
 
-export struct DeclStmt : Stmt {};
+// https://eel.is/c++draft/stmt.label
+export struct LabelStmt : Stmt {};
 
+// https://eel.is/c++draft/stmt.expr
 export struct ExprStmt : Stmt {};
 
+// https://eel.is/c++draft/stmt.block
 export struct BlockStmt : Stmt {};
 
+// https://eel.is/c++draft/stmt.if
 export struct IfStmt : Stmt {};
 
-export struct ForStmt : Stmt {};
-
-export struct WhileStmt : Stmt {};
-
-export struct DoStmt : Stmt {};
-
+// https://eel.is/c++draft/stmt.switch
 export struct SwitchStmt : Stmt {};
 
+export struct CaseStmt : Stmt {};
+
+// https://eel.is/c++draft/stmt.while
+export struct WhileStmt : Stmt {};
+
+// https://eel.is/c++draft/stmt.do
+export struct DoStmt : Stmt {};
+
+// https://eel.is/c++draft/stmt.for
+export struct ForStmt : Stmt {};
+
+// https://eel.is/c++draft/stmt.ranged
+export struct RangeForStmt : Stmt {};
+
+// https://eel.is/c++draft/stmt.expand
+export struct ExpandStmts : Stmt {};
+
+// https://eel.is/c++draft/stmt.break
+export struct BreakStmt : Stmt {};
+
+// https://eel.is/c++draft/stmt.cont
+export struct ContinueStmt : Stmt {};
+
+// https://eel.is/c++draft/stmt.return
 export struct ReturnStmt : Stmt {};
 
-export struct CaseStmt : Stmt {
-};
+// https://eel.is/c++draft/stmt.return.coroutine
+export struct CoReturnStmt : Stmt {};
+
+// https://eel.is/c++draft/stmt.goto
+export struct GotoStmt : Stmt {};
+
+export struct DeclStmt : Stmt {};
 
 // MARK: Type ------------------------------------------------------------------
 
@@ -171,4 +178,4 @@ export struct FuncDecl : Decl {
     Gc::Ref<FuncType> type;
 };
 
-} // namespace Karm::Cc
+} // namespace Karm::Cpp
