@@ -33,9 +33,9 @@ with open("src/karm-icu/res/emoji-test.txt", "r") as f:
                 components, qualified = [s.strip() for s in prefix.split(";", 1)]
                 pass
             else:
-                print("unknow line type: " + line)
+                print("unknown line type: " + line)
         except Exception as e:
-            print("Failled to process: " + line)
+            print("Failed to process: " + line)
             raise e
 
     print("export module Karm.Icu:emoji;\n")

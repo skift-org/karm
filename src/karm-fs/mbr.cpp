@@ -19,7 +19,7 @@ export struct Mbr : Node {
     };
 
     struct Header {
-        Array<u8, 446> boostrap = {};
+        Array<u8, 446> bootstrap = {};
         Array<Entry, 4> entries;
         Array<u8, 2> magic = MAGIC;
     };

@@ -8,7 +8,7 @@ export bool matchGlob(Io::SScan& glob, Io::SScan& in);
 
 bool _matchWildCard(Io::SScan& glob, Io::SScan& in);
 
-bool _matchGroupe(Io::SScan& glob, Rune curr) {
+bool _matchGroup(Io::SScan& glob, Rune curr) {
     bool neg = glob.skip('^');
 
     while (not glob.ended() and
@@ -78,7 +78,7 @@ export bool matchGlob(Io::SScan& glob, Io::SScan& in) {
             break;
 
         case '[':
-            if (not _matchGroupe(glob, in.next()))
+            if (not _matchGroup(glob, in.next()))
                 return false;
             break;
 

@@ -144,8 +144,8 @@ struct Site : Http::Handler {
                 co_return co_await resp->writeFileAsync(url, ct);
             }
 
-            auto rewriten = url.parent(1) / "{}.md"_f(url.path.stem());
-            auto result = renderPage(rewriten);
+            auto rewritten = url.parent(1) / "{}.md"_f(url.path.stem());
+            auto result = renderPage(rewritten);
 
             if (not result)
                 co_return co_await resp->notFoundAsync(ct);

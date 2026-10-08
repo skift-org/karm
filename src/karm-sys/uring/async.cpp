@@ -340,7 +340,7 @@ struct UringSched : Sys::Sched {
                 unsigned pollMask = 0;
                 if (_events.has(Poll::READABLE))
                     pollMask |= POLLIN;
-                if (_events.has(Poll::WRITEABLE))
+                if (_events.has(Poll::WRITABLE))
                     pollMask |= POLLOUT;
                 io_uring_prep_poll_add(sqe, _fd->_raw, pollMask);
             }
@@ -354,7 +354,7 @@ struct UringSched : Sys::Sched {
                     if (cqe->res & POLLIN)
                         events.set(Poll::READABLE);
                     if (cqe->res & POLLOUT)
-                        events.set(Poll::WRITEABLE);
+                        events.set(Poll::WRITABLE);
                     _promise.resolve(Ok(events));
                 }
             }

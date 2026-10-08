@@ -351,16 +351,16 @@ struct TextType : Io::BChunk {
     }
 };
 
-struct UnknowType : Io::BChunk {
+struct UnknownType : Io::BChunk {
     void repr(Io::Emit& e) const {
-        e("unknow tag {:#}", begin().nextStr(4));
+        e("unknown tag {:#}", begin().nextStr(4));
     }
 };
 
 using TagType = Union<
     MultiLocalizedUnicodeType,
     TextType,
-    UnknowType>;
+    UnknownType>;
 
 bool tagTypeMatch(Str query, Str sig) {
     // NOTE: "mluc" can be referred as "desc" in earlier specs.
@@ -371,7 +371,7 @@ bool tagTypeMatch(Str query, Str sig) {
 
 TagType tagTypeFrom(Bytes bytes) {
     auto query = Io::BScan{bytes}.nextStr(4);
-    TagType result = UnknowType{bytes};
+    TagType result = UnknownType{bytes};
     TagType::any([&]<typename T>() {
         if constexpr (requires { T::SIG; })
             if (tagTypeMatch(query, T::SIG))

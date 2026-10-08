@@ -427,7 +427,7 @@ Duration uptime() {
     return fromTimeSpec(ts);
 }
 
-// MARK: Memory Managment ------------------------------------------------------
+// MARK: Memory Management -----------------------------------------------------
 
 isize _mmapPropsToProt(MmapProps const& options) {
     isize prot = 0;
@@ -585,7 +585,7 @@ Res<> populate(Vec<UserInfo>& infos) {
     return Ok();
 }
 
-// MARK: Process Managment -----------------------------------------------------
+// MARK: Process Management ----------------------------------------------------
 
 Res<Rc<Process>> spawn(Command const& cmd) {
     if (not cmd.exe or cmd.exe.len() == 0)

@@ -156,7 +156,7 @@ export struct ScrollListener {
                 shouldRepaint(*n.parent(), vTrack());
         }
 
-        if (auto ke = e.is<App::KeyboardEvent>(); ke and (ke->type == App::KeyboardEvent::PRESS or ke->type == App::KeyboardEvent::REPEATE)) {
+        if (auto ke = e.is<App::KeyboardEvent>(); ke and (ke->type == App::KeyboardEvent::PRESS or ke->type == App::KeyboardEvent::REPEAT)) {
             if (ke->key == App::Key::PGUP) {
                 scroll((_targetScroll + Math::Vec2f{0., (f64)containerBound().height}).cast<isize>());
                 shouldAnimate(n);

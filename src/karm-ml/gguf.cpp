@@ -132,7 +132,7 @@ Serde::Value _loadMetadataValue(Io::BScan& s, ValueType type) {
         return _loadMetaDataArray(s);
 
     default:
-        panic("unknow value type");
+        panic("unknown value type");
     }
 }
 

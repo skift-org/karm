@@ -46,13 +46,13 @@ export struct Symbol {
     }
 };
 
-static Set<String>& _symboleRegistry() {
+static Set<String>& _symbolRegistry() {
     static Set<String> _registry;
     return _registry;
 }
 
 Symbol Symbol::from(Str str) {
-    return {_symboleRegistry().lookupOrAdd(str, [&] -> String {
+    return {_symbolRegistry().lookupOrAdd(str, [&] -> String {
         return str;
     })};
 }

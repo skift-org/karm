@@ -110,7 +110,7 @@ struct EpollSched : Sys::Sched {
         unsigned pollMask = 0;
         if (events.has(Poll::READABLE))
             pollMask |= EPOLLIN;
-        if (events.has(Poll::WRITEABLE))
+        if (events.has(Poll::WRITABLE))
             pollMask |= EPOLLOUT;
 
         int rawFd = co_try$(Posix::ensurePosixFd(fd))->_raw;

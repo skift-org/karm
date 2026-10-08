@@ -152,7 +152,7 @@ Res<> inflateNoCompression(Io::BitReader& r, Window& out) {
     u16 len = try$(r.readBytes<u16>(2));
     u16 nlen = try$(r.readBytes<u16>(2));
 
-    // NOTE: The code bellow has seemingly useless `& 0xffff` because of Integer promotions
+    // NOTE: The code below has seemingly useless `& 0xffff` because of Integer promotions
     //       (See https://en.cppreference.com/w/c/language/conversion.html#Integer_promotions)
     if ((nlen & 0xffff) != (~len & 0xffff))
         return Error::invalidData("invalid block len");

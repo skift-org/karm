@@ -1,4 +1,4 @@
-export module Karm.Core:meta.signess;
+export module Karm.Core:meta.signedness;
 
 namespace Karm::Meta {
 

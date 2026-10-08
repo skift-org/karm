@@ -158,7 +158,7 @@ export struct KeyboardEvent {
     enum {
         PRESS,
         RELEASE,
-        REPEATE,
+        REPEAT,
 
         _LEN,
     } type;

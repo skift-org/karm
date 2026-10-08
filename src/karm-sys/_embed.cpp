@@ -80,7 +80,7 @@ export Instant instant();
 
 export Duration uptime();
 
-// MARK: Memory Managment ------------------------------------------------------
+// MARK: Memory Management -----------------------------------------------------
 
 export Res<MmapResult> memMap(MmapProps const& options);
 

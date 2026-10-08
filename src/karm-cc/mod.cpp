@@ -138,7 +138,7 @@ export struct FuncType : Type {
 
     Gc::Ref<Type> ret;
 
-    Vec<Argument> argments;
+    Vec<Argument> arguments;
 };
 
 // MARK: Decl ------------------------------------------------------------------

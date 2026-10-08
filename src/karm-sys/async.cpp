@@ -9,7 +9,7 @@ namespace Karm::Sys {
 
 export enum struct Poll {
     READABLE = 1 << 0,
-    WRITEABLE = 1 << 1
+    WRITABLE = 1 << 1
 };
 
 export struct Sched :

@@ -261,7 +261,7 @@ static Res<Rc<Matcher>> _parseAtomEscape(Io::SScan& s) {
     }
 }
 
-static Res<Rc<Matcher>> _parseGroupe(Io::SScan& s) {
+static Res<Rc<Matcher>> _parseGroup(Io::SScan& s) {
     Vec<Rc<Matcher>> matchers;
     while (not s.ahead(")"))
         matchers.pushBack(try$(_parseTerm(s)));
@@ -279,7 +279,7 @@ _parseAtom(Io::SScan& s) {
     } else if (s.skip("\\")) {
         return _parseAtomEscape(s);
     } else if (s.skip("(")) {
-        return _parseGroupe(s);
+        return _parseGroup(s);
     } else {
         return Error::invalidData("expected atom");
     }

@@ -106,7 +106,7 @@ LockProtected(T, L&) -> LockProtected<T, L>;
 
 export struct RwLock : Meta::Pinned {
     Lock _lock;
-    Atomic<isize> _pendings{};
+    Atomic<isize> _pending{};
     isize _readers{};
     isize _writers{};
 
@@ -122,7 +122,7 @@ export struct RwLock : Meta::Pinned {
     bool tryAcquireRead() {
         LockScope scope(_lock);
 
-        if (_pendings.load())
+        if (_pending.load())
             return false;
 
         if (_writers)
@@ -143,14 +143,14 @@ export struct RwLock : Meta::Pinned {
     void acquireWrite() {
         _Embed::enterCritical();
 
-        _pendings.inc();
+        _pending.inc();
 
         while (not tryAcquireWrite()) {
             _Embed::relaxe();
             memoryBarier();
         }
 
-        _pendings.dec();
+        _pending.dec();
     }
 
     bool tryAcquireWrite() {

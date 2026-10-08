@@ -651,7 +651,7 @@ export struct Prose : Meta::Pinned {
             line.resolveWhitespace(*this);
     }
 
-    Math::Au _layoutVerticaly() {
+    Math::Au _layoutVertically() {
         // FIXME: Use each span's metrics.
         auto m = _rootSpan->style.font.metrics();
 
@@ -712,7 +712,7 @@ export struct Prose : Meta::Pinned {
         return currHeight;
     }
 
-    Math::Au _layoutHorizontaly(Math::Au width) {
+    Math::Au _layoutHorizontally(Math::Au width) {
         Math::Au maxWidth = 0_au;
         for (auto& line : _lines) {
             if (not line.blockRange.any())
@@ -755,8 +755,8 @@ export struct Prose : Meta::Pinned {
 
         _wrapLines(width);
         _resolveWhitespace();
-        auto textHeight = _layoutVerticaly();
-        auto textWidth = _layoutHorizontaly(width);
+        auto textHeight = _layoutVertically();
+        auto textWidth = _layoutHorizontally(width);
         _size = {textWidth, textHeight};
         return {textWidth, textHeight};
     }

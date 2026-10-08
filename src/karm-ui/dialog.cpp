@@ -78,7 +78,7 @@ struct DialogLayer : LeafNode<DialogLayer> {
 
         if (_dialog) {
             g.push();
-            // change the orgin to the center of the screen
+            // change the origin to the center of the screen
             g.translate(bound().center().cast<f64>());
             auto scale = Math::lerp(0.9, 1.0, _visibility.value());
             g.scale(scale);

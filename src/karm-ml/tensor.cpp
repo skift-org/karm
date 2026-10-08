@@ -158,7 +158,7 @@ void add(Tensor& out, Tensor const& a, Tensor const& b) {
         out.elements()[i] = a.elements()[i] + b.elements()[i];
 }
 
-/// Element-wise substraction
+/// Element-wise subtraction
 void sub(Tensor& out, Tensor const& a, Tensor const& b) {
     for (auto i : urange::zeroTo(a.elements().len()))
         out.elements()[i] = a.elements()[i] - b.elements()[i];

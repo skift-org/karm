@@ -97,8 +97,8 @@ export struct Decoder {
 
         _bpp = s.nextI16le();
 
-        auto comporession = s.nextI32le();
-        if (comporession != RGB and comporession != RLE8 and comporession != RLE4) {
+        auto compression = s.nextI32le();
+        if (compression != RGB and compression != RLE8 and compression != RLE4) {
             return Error::invalidData("invalid compression");
         }
 

@@ -105,13 +105,13 @@ struct Box {
 
     constexpr T const& unwrap() const lifetimebound {
         if (not _ptr) [[unlikely]]
-            panic("deferencing moved from Box<T>");
+            panic("dereferencing moved from Box<T>");
         return *_ptr;
     }
 
     constexpr T& unwrap() lifetimebound {
         if (not _ptr) [[unlikely]]
-            panic("deferencing moved from Box<T>");
+            panic("dereferencing moved from Box<T>");
         return *_ptr;
     }
 

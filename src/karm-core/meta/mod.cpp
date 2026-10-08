@@ -9,6 +9,6 @@ export import :meta.id;
 export import :meta.list;
 export import :meta.nocopy;
 export import :meta.pack;
-export import :meta.signess;
+export import :meta.signedness;
 export import :meta.traits;
 export import :meta.visit;

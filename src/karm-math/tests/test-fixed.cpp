@@ -9,7 +9,7 @@ import Karm.Math;
 
 namespace Karm::Math::Tests {
 
-test$("fixed-arithmethic-negation") {
+test$("fixed-arithmetic-negation") {
     using P = i24f8;
 
     assertEq$(P(-13.125), -P(13.125));
@@ -18,7 +18,7 @@ test$("fixed-arithmethic-negation") {
     return Ok();
 }
 
-test$("fixed-arithmethic-addition") {
+test$("fixed-arithmetic-addition") {
     using P = i24f8;
 
     assertEq$(P(10.75), P(3.5) + P(7.25));
@@ -26,7 +26,7 @@ test$("fixed-arithmethic-addition") {
     return Ok();
 }
 
-test$("fixed-arithmethic-subtraction") {
+test$("fixed-arithmetic-subtraction") {
     using P = i24f8;
 
     assertEq$(P(-3.75), P(3.5) - P(7.25));
@@ -34,7 +34,7 @@ test$("fixed-arithmethic-subtraction") {
     return Ok();
 }
 
-test$("fixed-arithmethic-multiplication") {
+test$("fixed-arithmetic-multiplication") {
     using P = i24f8;
 
     assertEq$(P(-25.375), P(3.5) * P(-7.25));
@@ -42,7 +42,7 @@ test$("fixed-arithmethic-multiplication") {
     return Ok();
 }
 
-test$("fixed-arithmethic-division") {
+test$("fixed-arithmetic-division") {
     using P = i24f8;
 
     assertEq$(P(3.5 / 7.25), P(3.5) / P(7.25));
@@ -53,7 +53,7 @@ test$("fixed-arithmethic-division") {
     return Ok();
 }
 
-test$("fixed-arithmethic-division-range") {
+test$("fixed-arithmetic-division-range") {
     using P = Fixed<i32, 12>;
 
     // These calculation will overflow and produce

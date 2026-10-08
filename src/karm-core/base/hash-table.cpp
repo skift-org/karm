@@ -134,7 +134,7 @@ struct HashTable {
 
     void ensure(usize len) {
         if (len) {
-            // NOTE: 60% utilization is ideal for lookup speed and avoiding colision
+            // NOTE: 60% utilization is ideal for lookup speed and avoiding collision
             len = (len * 10) / 6;
             if (len > _cap)
                 rehash(len);

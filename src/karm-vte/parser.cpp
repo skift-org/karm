@@ -143,7 +143,7 @@ struct Parser {
 
     Slice<usize> params() const { return _params; }
 
-    void injest(u8 b, auto sink) {
+    void ingest(u8 b, auto sink) {
         auto [action, toState] = _transition(_state, b);
 
         if (toState != State::NONE) {

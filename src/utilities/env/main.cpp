@@ -9,7 +9,7 @@ using namespace Karm::Literals;
 Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
     Cli::Command cmd{
         "env"s,
-        "Do things with environement variables."s,
+        "Do things with environment variables."s,
     };
 
     Cli::Command& dump = cmd.subCommand(

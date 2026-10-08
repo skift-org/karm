@@ -217,7 +217,7 @@ struct SdlApplication : Application {
 
         case SDL_EVENT_KEY_DOWN: {
             auto ev = Sdl::fromSdlKeyboardEvent(sdlEvent.key);
-            ev.type = sdlEvent.key.repeat ? KeyboardEvent::REPEATE : KeyboardEvent::PRESS;
+            ev.type = sdlEvent.key.repeat ? KeyboardEvent::REPEAT : KeyboardEvent::PRESS;
             handler->handle<KeyboardEvent>(WindowId{sdlEvent.key.windowID}, ev);
             break;
         }

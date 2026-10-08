@@ -488,7 +488,7 @@ export struct Decoder {
             else if (chunk.sig == IEND)
                 try$(_handleIend(data));
             else
-                logWarnIf(debugPng, "unknow chunk {:#}", chunk.sig);
+                logWarnIf(debugPng, "unknown chunk {:#}", chunk.sig);
         }
 
         if (not _ended)
@@ -513,10 +513,10 @@ export struct Decoder {
             return Error::invalidData("unsupported bit depth");
 
         if (_compressionMethod != CompressionMethod::DEFLATE)
-            return Error::invalidData("unsupported compression methode");
+            return Error::invalidData("unsupported compression method");
 
         if (_filterMethod != FilterMethod::STANDARD)
-            return Error::invalidData("unsupported filter methode");
+            return Error::invalidData("unsupported filter method");
 
         if (not oneOf(
                 _colorType,
@@ -555,7 +555,7 @@ export struct Decoder {
                 ));
             }
         } else {
-            return Error::invalidData("unsupported interlacing methode");
+            return Error::invalidData("unsupported interlacing method");
         }
 
         return Ok();

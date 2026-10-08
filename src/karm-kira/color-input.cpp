@@ -200,7 +200,7 @@ export Ui::Child hsvHueSlider(Gfx::Hsv hsv, Ui::Send<Gfx::Hsv> onChange) {
 
 enum struct Page {
     HSV,
-    PALLETE,
+    PALETTE,
 };
 
 struct State {

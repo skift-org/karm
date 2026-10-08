@@ -160,7 +160,7 @@ export template <typename... Ts>
 String format(Str format, Ts&&... ts) {
     StringWriter writer{};
     Args<Ts...> args{std::forward<Ts>(ts)...};
-    _format(writer, format, args).expect("formating string");
+    _format(writer, format, args).expect("formatting string");
     return writer.take();
 }
 
@@ -174,7 +174,7 @@ String toStr(T const& t, Str format = "") {
         SScan scan{format};
         formatter.parse(scan);
     }
-    formatter.format(writer, t).expect("formating string");
+    formatter.format(writer, t).expect("formatting string");
     return writer.take();
 }
 

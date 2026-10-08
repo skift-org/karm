@@ -149,7 +149,7 @@ struct Fixed {
         return fromRaw(ival);
     }
 
-    constexpr Fixed loosyDiv(Fixed const& rhs) const {
+    constexpr Fixed lossyDiv(Fixed const& rhs) const {
         if (rhs._val == 0)
             panic("division by zero");
 
@@ -197,7 +197,7 @@ struct Frac {
         : _num(num), _deno(deno) {}
 
     constexpr operator T() const {
-        return _num.loosyDiv(_deno);
+        return _num.lossyDiv(_deno);
     }
 };
 

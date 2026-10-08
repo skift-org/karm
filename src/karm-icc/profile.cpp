@@ -30,14 +30,14 @@ export struct ColorProfile {
 
         auto profile = makeRc<ColorProfile>();
 
-        profile->_profileDeviceClass = try$(header.profileDeviceClass().okOr(Error::invalidData("unknow or invalid profile class")));
+        profile->_profileDeviceClass = try$(header.profileDeviceClass().okOr(Error::invalidData("unknown or invalid profile class")));
         profile->_dataColorSpace = try$(
             header.dataColorSpace()
-                .okOr(Error::invalidData("unknow or invalid data color space"))
+                .okOr(Error::invalidData("unknown or invalid data color space"))
         );
         profile->_profileConnectionSpace = try$(
             header.profileConnectionSpace()
-                .okOr(Error::invalidData("unknow or invalid profile connection space"))
+                .okOr(Error::invalidData("unknown or invalid profile connection space"))
         );
 
         profile->_data = Some(data);

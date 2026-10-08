@@ -372,7 +372,7 @@ export struct Terminal {
 
     void write(Bytes buf) {
         for (auto& b : buf) {
-            _parser.injest(b, [&](Parser::Action act, u8 b) {
+            _parser.ingest(b, [&](Parser::Action act, u8 b) {
                 if (act == Parser::Action::PRINT) {
                     // FIXME: Do utf-8 decoding
                     _buffer.append(b, _attrs);

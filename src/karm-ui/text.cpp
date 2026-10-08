@@ -86,13 +86,13 @@ export struct TextAction {
     static Opt<TextAction> fromEvent(App::Event& e) {
         if (
             auto ke = e.is<App::KeyboardEvent>();
-            ke and (ke->type == App::KeyboardEvent::PRESS or ke->type == App::KeyboardEvent::REPEATE)
+            ke and (ke->type == App::KeyboardEvent::PRESS or ke->type == App::KeyboardEvent::REPEAT)
         ) {
             bool shift = App::match(ke->mods, App::KeyMod::SHIFT);
             bool ctrl = App::match(ke->mods, App::KeyMod::CTRL);
             bool alt = App::match(ke->mods, App::KeyMod::ALT);
             bool nomod = not(shift or ctrl or alt);
-            bool optionalyShift = (nomod or shift);
+            bool optionallyShift = (nomod or shift);
 
             if (ke->key == App::Key::HOME and ctrl and shift)
                 return Some(SELECT_START);
@@ -156,9 +156,9 @@ export struct TextAction {
             else if (ke->key == App::Key::ENTER and nomod)
                 return Some(NEWLINE);
 
-            else if (ke->key == App::Key::BKSPC and optionalyShift)
+            else if (ke->key == App::Key::BKSPC and optionallyShift)
                 return Some(BACKSPACE);
-            else if (ke->key == App::Key::DELETE and optionalyShift)
+            else if (ke->key == App::Key::DELETE and optionallyShift)
                 return Some(DELETE);
             else if (ke->rune)
                 return Some(TextAction{TYPE, ke->rune});

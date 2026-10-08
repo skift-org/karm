@@ -64,12 +64,12 @@ struct Ranges {
     }
 
     void _compress(usize i) {
-        while (i + 1 < _r.len() and _r[i].contigous(_r[i + 1])) {
+        while (i + 1 < _r.len() and _r[i].contiguous(_r[i + 1])) {
             _r[i] = _r[i].merge(_r[i + 1]);
             _r.removeAt(i + 1);
         }
 
-        while (i > 0 and _r[i].contigous(_r[i - 1])) {
+        while (i > 0 and _r[i].contiguous(_r[i - 1])) {
             _r[i] = _r[i].merge(_r[i - 1]);
             _r.removeAt(i - 1);
             i--;
@@ -78,7 +78,7 @@ struct Ranges {
 
     void add(R range) {
         for (usize i = 0; i < _r.len(); i++) {
-            if (_r[i].contigous(range)) {
+            if (_r[i].contiguous(range)) {
                 _r[i] = _r[i].merge(range);
                 _compress(i);
                 return;

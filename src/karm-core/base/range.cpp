@@ -61,7 +61,7 @@ struct Range {
         return start <= other.start and other.end() <= end();
     }
 
-    constexpr bool contigous(Range other) const {
+    constexpr bool contiguous(Range other) const {
         return end() == other.start or start == other.end();
     }
 

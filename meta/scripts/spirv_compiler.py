@@ -2,12 +2,12 @@ import json
 import change_case
 
 
-def loadGramar():
+def loadGrammar():
     with open("src/karm-ir/spirv/res/spirv.core.grammar.json", "r") as f:
         return json.load(f)
 
 
-grammar = loadGramar()
+grammar = loadGrammar()
 
 # strip instruction without a version or "None" version
 grammar["instructions"] = [

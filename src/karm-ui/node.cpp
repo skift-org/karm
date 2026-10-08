@@ -112,7 +112,7 @@ struct LeafNode : Node {
     Opt<Child> reconcile(Child other) override {
         // NOTE: Nodes should never be part of a state, to
         //       ensure this we check that nodes are not
-        //       reused accross rebuilds
+        //       reused across rebuilds
         if (other->_consumed)
             panic("reconcile() called on consumed node, did you forget to wrap the node in a slot?");
 
