@@ -81,7 +81,7 @@ export struct DeclStmt : Stmt {};
 
 // MARK: Type ------------------------------------------------------------------
 
-export struct Type : Base {
+export struct Type {
     enum struct Attr {
         CONST,
         MUTABLE,
@@ -151,7 +151,7 @@ export struct FuncType : Type {
 // MARK: Decl ------------------------------------------------------------------
 
 // https://eel.is/c++draft/dcl#decl
-export struct Decl : Base {
+export struct Decl {
     enum struct Attr {
         AUTO,
         STATIC,

@@ -4,6 +4,7 @@ export import :aboutDialog;
 export import :avatar;
 export import :badge;
 export import :card;
+export import :chart;
 export import :checkbox;
 export import :clock;
 export import :colorInput;
