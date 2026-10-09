@@ -69,4 +69,14 @@ export Ui::Child checkbox(bool value, Ui::Send<bool> onChange) {
     return makeRc<Checkbox>(value, std::move(onChange));
 }
 
+export Ui::Child checkbox(bool value, Ui::Send<bool> onChange, String label) {
+    return Ui::hflow(
+        4,
+        Math::Align::CENTER,
+        checkbox(value, onChange),
+        Ui::labelMedium(label),
+        Ui::empty(2)
+    );
+}
+
 } // namespace Karm::Kira

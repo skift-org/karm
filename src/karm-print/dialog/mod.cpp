@@ -268,7 +268,6 @@ Ui::Child _printSettings(State const& s) {
                     return {
                         Kr::selectItem(Some(Model::bind<ChangeOrientation>(Orientation::PORTRAIT)), "Portrait"s),
                         Kr::selectItem(Some(Model::bind<ChangeOrientation>(Orientation::LANDSCAPE)), "Landscape"s),
-
                     };
                 },
                 "Orientation"s

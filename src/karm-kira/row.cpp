@@ -12,6 +12,7 @@ import :radio;
 import :select;
 import :slider;
 import :toggle;
+import :tabbar;
 
 namespace Karm::Kira {
 
@@ -165,6 +166,15 @@ export Ui::Child numberRow(f64 value, Ui::Send<f64> onChange, f64 step, String t
         title,
         NONE,
         Some(number(value, std::move(onChange), step))
+    );
+}
+
+export Ui::Child tabRow(String title, Ui::Children tabs) {
+    return rowContent(
+        NONE,
+        title,
+        NONE,
+        Some(tabbarContent(std::move(tabs)))
     );
 }
 
