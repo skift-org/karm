@@ -101,13 +101,22 @@ struct ResizeHandle : Ui::View<ResizeHandle> {
 
     void paint(Gfx::Canvas& g, Math::RectAu) override {
         g.push();
+        auto b = bound().cast<f64>();
         if (_pressed) {
             g.fillStyle(Ui::ACCENT700);
-            g.fill(bound().cast<f64>(), 99);
+            g.fill(b, 99);
         } else if (_hover) {
             g.fillStyle(Ui::GRAY600);
-            g.fill(bound().cast<f64>(), 99);
+            g.fill(b, 99);
         }
+
+        Math::Vec2f axis = _cursor == App::CursorStyle::RESIZE_EW
+                               ? Math::Vec2f{0, 1}
+                               : Math::Vec2f{1, 0};
+        g.fillStyle(_pressed or _hover ? Ui::GRAY50 : Ui::GRAY600);
+        for (isize i = -1; i <= 1; i++)
+            g.fill(Math::Ellipsef{b.center() + axis * (i * 4.0), 1.5});
+
         g.pop();
     }
 
