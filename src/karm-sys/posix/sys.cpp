@@ -609,6 +609,10 @@ Res<Rc<Process>> spawn(Command const& cmd) {
         envp.pushBack(nullptr);
     };
 
+    Opt<String> cwd = NONE;
+    if (cmd.cwd)
+        cwd = Some(try$(Posix::resolve(cmd.cwd.expect())).str());
+
     int inFd = -1;
     if (cmd.in)
         inFd = try$(Posix::ensurePosixFd(cmd.in.expect()))->_raw;
@@ -641,6 +645,9 @@ Res<Rc<Process>> spawn(Command const& cmd) {
             if (::dup2(errFd, STDERR_FILENO) < 0)
                 _exit(127);
         }
+
+        if (cwd and ::chdir(cwd->buf()) < 0)
+            _exit(127);
 
         Vec<char*> argv;
         buildArgv(argv);
@@ -683,6 +690,10 @@ Res<Tuple<Rc<Process>, Rc<Fd>>> spawnPty(Command const& cmd) {
         envp.pushBack(nullptr);
     };
 
+    Opt<String> cwd = NONE;
+    if (cmd.cwd)
+        cwd = Some(try$(Posix::resolve(cmd.cwd.expect())).str());
+
     int pty = -1;
     pid_t pid = ::forkpty(&pty, nullptr, nullptr, nullptr);
     Defer deferClose = [&] {
@@ -693,6 +704,9 @@ Res<Tuple<Rc<Process>, Rc<Fd>>> spawnPty(Command const& cmd) {
         return Posix::fromLastErrno();
 
     if (pid == 0) {
+        if (cwd and ::chdir(cwd->buf()) < 0)
+            _exit(127);
+
         Vec<char*> argv;
         buildArgv(argv);
 

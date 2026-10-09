@@ -100,6 +100,7 @@ export struct Command {
     String exe = ""s;
     Vec<String> args = {};
     Map<String, String> env = {};
+    Opt<Ref::Url> cwd = NONE;
     Opt<Rc<Fd>> in = NONE, out = NONE, err = NONE;
 
     Res<Rc<Process>> spawn() {
