@@ -6,6 +6,8 @@ import Karm.Gfx;
 import Karm.Math;
 import Karm.App;
 
+using namespace Karm::Math::Literals;
+
 namespace Karm::Kira {
 
 struct SelectionSet {
@@ -20,7 +22,7 @@ struct SelectionSet {
 };
 
 struct SelectionUpdateEvent {
-    Math::Recti rect;
+    Math::RectAu rect;
 };
 
 export void paintSelection(Gfx::Canvas& g, Math::Rectf selection) {
@@ -35,17 +37,17 @@ export void paintSelection(Gfx::Canvas& g, Math::Rectf selection) {
 struct SelectionArea : Ui::ProxyNode<SelectionArea> {
     Ui::MouseListener _listener;
     bool _selecting = false;
-    Math::Vec2i _startPos = {};
-    Math::Vec2i _endPos = {};
+    Math::Vec2Au _startPos = {};
+    Math::Vec2Au _endPos = {};
 
     explicit SelectionArea(Ui::Child const& child)
         : ProxyNode(child) {}
 
-    Math::Recti selectionRect() const {
-        return Math::Recti::fromTwoPoint(_startPos, _endPos);
+    Math::RectAu selectionRect() const {
+        return Math::RectAu::fromTwoPoint(_startPos, _endPos);
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti r) override {
+    void paint(Gfx::Canvas& g, Math::RectAu r) override {
         ProxyNode::paint(g, r);
 
         if (_selecting) {
@@ -69,7 +71,7 @@ struct SelectionArea : Ui::ProxyNode<SelectionArea> {
 
                 if (mouseEvent->type == App::MouseEvent::MOVE) {
                     Ui::shouldRepaint(*this, selectionRect().clipTo(bound()));
-                    _endPos = mouseEvent->pos;
+                    _endPos = mouseEvent->pos.cast<Math::Au>();
                     Ui::shouldRepaint(*this, selectionRect().clipTo(bound()));
 
                     auto selectionChange = App::makeEvent<SelectionUpdateEvent>(selectionRect());
@@ -78,10 +80,10 @@ struct SelectionArea : Ui::ProxyNode<SelectionArea> {
             } else {
                 if (mouseEvent->type == App::MouseEvent::PRESS and
                     mouseEvent->button == App::MouseButton::LEFT and
-                    bound().contains(mouseEvent->pos)) {
+                    bound().contains(mouseEvent->pos.cast<Math::Au>())) {
                     _selecting = true;
-                    _startPos = mouseEvent->pos;
-                    _endPos = mouseEvent->pos;
+                    _startPos = mouseEvent->pos.cast<Math::Au>();
+                    _endPos = mouseEvent->pos.cast<Math::Au>();
                     e.accept();
 
                     auto selectionChange = App::makeEvent<SelectionUpdateEvent>(selectionRect());
@@ -125,11 +127,11 @@ struct SelectionItem : Ui::ProxyNode<SelectionItem> {
         ProxyNode::event(e);
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti r) override {
+    void paint(Gfx::Canvas& g, Math::RectAu r) override {
         if (_selected) {
             g.push();
             g.fillStyle(Ui::GRAY500.withOpacity(0.2));
-            g.fill(bound(), 4);
+            g.fill(bound().cast<f64>(), 4);
             g.pop();
         }
         ProxyNode::paint(g, r);

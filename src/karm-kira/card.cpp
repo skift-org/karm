@@ -1,7 +1,10 @@
 export module Karm.Kira:card;
 
 import Karm.Core;
+import Karm.Math;
 import Karm.Ui;
+
+using namespace Karm::Math::Literals;
 
 namespace Karm::Kira {
 

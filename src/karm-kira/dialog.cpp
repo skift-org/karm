@@ -7,6 +7,7 @@ import Karm.Gfx;
 import Karm.Math;
 import Mdi;
 
+using namespace Karm::Math::Literals;
 using namespace Karm::Literals;
 
 namespace Karm::Kira {
@@ -24,7 +25,7 @@ export Ui::Child dialogContent(Ui::Children children) {
            Ui::box(boxStyle) |
            Ui::dragRegion() |
            Ui::align(Math::Align::CENTER | Math::Align::CLAMP) |
-           Ui::insets(16);
+           Ui::insets(16_au);
 }
 
 export Ui::Child dialogTitleBar(String title) {
@@ -33,17 +34,17 @@ export Ui::Child dialogTitleBar(String title) {
                Ui::grow(NONE),
                Ui::button(Some(Ui::closeDialog), Ui::ButtonStyle::subtle(), Mdi::CLOSE)
            ) |
-           Ui::insets({4, 4, 4, 16});
+           Ui::insets({4_au, 4_au, 4_au, 16_au});
 }
 
 export Ui::Child dialogHeader(Ui::Children children) {
-    return Ui::vflow(8, children) |
-           Ui::insets({16, 16, 8, 16});
+    return Ui::vflow(8_au, children) |
+           Ui::insets({16_au, 16_au, 8_au, 16_au});
 }
 
 export Ui::Child dialogBody(Ui::Children children) {
-    return Ui::vflow(8, children) |
-           Ui::insets({8, 16, 8, 16});
+    return Ui::vflow(8_au, children) |
+           Ui::insets({8_au, 16_au, 8_au, 16_au});
 }
 
 export Ui::Child dialogTitle(String text) {
@@ -52,7 +53,7 @@ export Ui::Child dialogTitle(String text) {
 
 export Ui::Child dialogDescription(String text) {
     return Ui::bodySmall(Ui::GRAY400, text) |
-           Ui::pinSize({380, Ui::UNCONSTRAINED});
+           Ui::pinSize({380_au, Ui::UNCONSTRAINED});
 }
 
 export Ui::Child dialogFooter(Ui::Children children) {
@@ -61,11 +62,11 @@ export Ui::Child dialogFooter(Ui::Children children) {
                {
                    isMobile ? Math::Flow::TOP_TO_BOTTOM : Math::Flow::LEFT_TO_RIGHT,
                    Math::Align::FILL,
-                   4,
+                   4_au,
                },
                children
            ) |
-           Ui::insets({4, 8, 8, 8});
+           Ui::insets({4_au, 8_au, 8_au, 8_au});
 }
 
 export Ui::Child dialogAction(Opt<Ui::Send<>> onPress, String text) {

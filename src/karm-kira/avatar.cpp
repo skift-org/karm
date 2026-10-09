@@ -1,13 +1,16 @@
 export module Karm.Kira:avatar;
 
 import Karm.Core;
+import Karm.Math;
 import Karm.Ui;
 import Karm.Gfx;
 import Mdi;
 
+using namespace Karm::Math::Literals;
+
 namespace Karm::Kira {
 
-export Ui::Child avatar(Union<None, String, Gfx::Icon, Rc<Gfx::Image>> icon = NONE, usize size = 32) {
+export Ui::Child avatar(Union<None, String, Gfx::Icon, Rc<Gfx::Image>> icon = NONE, Math::Au size = 32_au) {
     Ui::BoxStyle boxStyle = {
         .borderRadii = 99,
         .borderWidth = 2,
@@ -16,8 +19,8 @@ export Ui::Child avatar(Union<None, String, Gfx::Icon, Rc<Gfx::Image>> icon = NO
         .foregroundFill = Ui::GRAY400,
     };
 
-    auto innerSize = Math::ceili(size * 0.56);
-    auto textSize = Math::ceili(size * 0.4);
+    auto innerSize = size * 0.56;
+    auto textSize = Math::ceili(size.cast<f64>() * 0.4);
 
     Ui::Child inner = icon.visit(
         [&](None) {
@@ -42,7 +45,7 @@ export Ui::Child avatar(Union<None, String, Gfx::Icon, Rc<Gfx::Image>> icon = NO
 }
 
 export Ui::Child avatarGroup(Ui::Children avatars) {
-    return Ui::hflow(-12, std::move(avatars));
+    return Ui::hflow(-12_au, std::move(avatars));
 }
 
 } // namespace Karm::Kira

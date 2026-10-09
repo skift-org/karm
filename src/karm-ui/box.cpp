@@ -14,8 +14,8 @@ export enum struct BoxOverflow {
 };
 
 export struct BoxStyle {
-    Math::Insetsi margin{};
-    Math::Insetsi padding{};
+    Math::InsetsAu margin{};
+    Math::InsetsAu padding{};
 
     Math::Radiif borderRadii{};
     f64 borderWidth{};
@@ -26,13 +26,13 @@ export struct BoxStyle {
     Opt<Gfx::BoxShadow> shadowStyle{};
     BoxOverflow overflow{BoxOverflow::VISIBLE};
 
-    BoxStyle withMargin(Math::Insetsi margin) const {
+    BoxStyle withMargin(Math::InsetsAu margin) const {
         auto copy = *this;
         copy.margin = margin;
         return copy;
     }
 
-    BoxStyle withPadding(Math::Insetsi padding) const {
+    BoxStyle withPadding(Math::InsetsAu padding) const {
         auto copy = *this;
         copy.padding = padding;
         return copy;
@@ -74,16 +74,16 @@ export struct BoxStyle {
         return copy;
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti bound, auto inner) {
+    void paint(Gfx::Canvas& g, Math::RectAu bound, auto inner) {
         bound = bound.grow(padding);
 
         g.push();
         if (shadowStyle)
-            shadowStyle->paint(g, bound);
+            shadowStyle->paint(g, bound.cast<isize>());
 
         if (backgroundFill) {
             g.fillStyle(*backgroundFill);
-            g.fill(bound, borderRadii);
+            g.fill(bound.cast<f64>(), borderRadii);
         }
 
         g.push();
@@ -103,13 +103,13 @@ export struct BoxStyle {
                     .withWidth(borderWidth)
                     .withAlign(Gfx::INSIDE_ALIGN)
             );
-            g.stroke(bound, borderRadii);
+            g.stroke(bound.cast<f64>(), borderRadii);
         }
 
         g.pop();
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti bound) {
+    void paint(Gfx::Canvas& g, Math::RectAu bound) {
         paint(g, bound, [&] {
         });
     }
@@ -122,20 +122,20 @@ struct _Box : ProxyNode<Crtp> {
 
     virtual BoxStyle& boxStyle() = 0;
 
-    void paint(Gfx::Canvas& g, Math::Recti r) override {
+    void paint(Gfx::Canvas& g, Math::RectAu r) override {
         boxStyle().paint(g, ProxyNode<Crtp>::_child->bound(), [&] {
             ProxyNode<Crtp>::paint(g, r);
         });
     }
 
-    void layout(Math::Recti rect) override {
+    void layout(Math::RectAu rect) override {
         rect = rect.shrink(boxStyle().margin);
         rect = rect.shrink(boxStyle().padding);
 
         ProxyNode<Crtp>::child().layout(rect);
     }
 
-    Math::Vec2i size(Math::Vec2i s, Hint hint) override {
+    Math::Vec2Au size(Math::Vec2Au s, Hint hint) override {
         s = s - boxStyle().margin.all();
         s = s - boxStyle().padding.all();
 
@@ -147,7 +147,7 @@ struct _Box : ProxyNode<Crtp> {
         return s;
     }
 
-    Math::Recti bound() override {
+    Math::RectAu bound() override {
         auto bound = ProxyNode<Crtp>::child().bound();
 
         bound = bound.grow(boxStyle().padding);

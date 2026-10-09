@@ -56,7 +56,7 @@ export void shouldRepaint(Node& n) {
     bubble<Node::PaintEvent>(n, n.bound());
 }
 
-export void shouldRepaint(Node& n, Math::Recti bound) {
+export void shouldRepaint(Node& n, Math::RectAu bound) {
     bubble<Node::PaintEvent>(n, bound);
 }
 

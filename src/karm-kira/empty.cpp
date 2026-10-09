@@ -5,15 +5,16 @@ import Karm.Gfx;
 import Karm.Math;
 import Karm.Core;
 
+using namespace Karm::Math::Literals;
 using namespace Karm::Literals;
 
 namespace Karm::Kira {
 
 export Ui::Child emptyTitle(Gfx::Icon icon, String text) {
     return Ui::vflow(
-        0,
+        0_au,
         Math::Align::CENTER,
-        Ui::icon(icon, 48) | Ui::insets(16),
+        Ui::icon(icon, 48_au) | Ui::insets(16_au),
         Ui::titleLarge(text)
     );
 }
@@ -28,7 +29,7 @@ export Ui::Child emptyBody(String text) {
 
 export Ui::Child emptyContent(Ui::Children children) {
     return Ui::vflow(
-               6,
+               6_au,
                Math::Align::CENTER,
                children
            ) |
@@ -40,8 +41,8 @@ export Ui::Child emptyContent(Ui::Children children) {
 }
 
 export Ui::Child emptyFooter(Ui::Children children) {
-    return Ui::hflow(16, children) |
-           Ui::insets({8, 0, 0, 0});
+    return Ui::hflow(16_au, children) |
+           Ui::insets({8_au, 0_au, 0_au, 0_au});
 }
 
 export Ui::Child emptyError(Gfx::Icon icon, String text, String body) {

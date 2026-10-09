@@ -10,6 +10,7 @@ import Karm.Math;
 import :node;
 
 using namespace Karm::Ref::Literals;
+using namespace Karm::Math::Literals;
 
 namespace Karm::Ui {
 
@@ -17,13 +18,13 @@ namespace Karm::Ui {
 
 export template <typename Crtp>
 struct View : LeafNode<Crtp> {
-    Math::Recti _bound;
+    Math::RectAu _bound;
 
-    Math::Recti bound() override {
+    Math::RectAu bound() override {
         return _bound;
     }
 
-    void layout(Math::Recti bound) override {
+    void layout(Math::RectAu bound) override {
         _bound = bound;
     }
 };
@@ -258,21 +259,20 @@ struct Text : View<Text> {
         _prose = std::move(o._prose);
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti) override {
+    void paint(Gfx::Canvas& g, Math::RectAu) override {
         g.push();
         g.origin(bound().xy.cast<f64>());
         g.fill(_prose);
         g.pop();
     }
 
-    void layout(Math::Recti bound) override {
-        _prose->layout(Au{bound.width});
+    void layout(Math::RectAu bound) override {
+        _prose->layout(bound.width);
         View<Text>::layout(bound);
     }
 
-    Math::Vec2i size(Math::Vec2i s, Hint) override {
-        auto size = _prose->layout(Au{s.width});
-        return size.ceil().cast<isize>();
+    Math::Vec2Au size(Math::Vec2Au s, Hint) override {
+        return _prose->layout(s.width);
     }
 };
 
@@ -341,10 +341,10 @@ DEF_STYLE(codeSmall)
 
 struct Icon : View<Icon> {
     Gfx::Icon _icon;
-    isize _size;
+    Au _size;
     Opt<Gfx::Color> _color;
 
-    Icon(Gfx::Icon icon, isize size, Opt<Gfx::Color> color = NONE)
+    Icon(Gfx::Icon icon, Au size, Opt<Gfx::Color> color = NONE)
         : _icon(icon), _size(size), _color(color) {}
 
     void reconcile(Icon& o) override {
@@ -352,24 +352,24 @@ struct Icon : View<Icon> {
         _color = o._color;
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti) override {
+    void paint(Gfx::Canvas& g, Math::RectAu) override {
         g.push();
         if (_color)
             g.fillStyle(_color.expect());
-        _icon.fill(g, bound().topStart().cast<f64>(), _size);
+        _icon.fill(g, bound().topStart().cast<f64>(), _size.cast<isize>());
         g.pop();
     }
 
-    Math::Vec2i size(Math::Vec2i, Hint) override {
-        return Math::Vec2i{_size, _size};
+    Math::Vec2Au size(Math::Vec2Au, Hint) override {
+        return Math::Vec2Au{_size, _size};
     }
 };
 
 export Child icon(Gfx::Icon icon, Opt<Gfx::Color> color = NONE) {
-    return makeRc<Icon>(icon, 18, color);
+    return makeRc<Icon>(icon, 18_au, color);
 }
 
-export Child icon(Gfx::Icon i, isize size, Opt<Gfx::Color> color = NONE) {
+export Child icon(Gfx::Icon i, Au size, Opt<Gfx::Color> color = NONE) {
     return makeRc<Icon>(i, size, color);
 }
 
@@ -387,23 +387,23 @@ struct Image : View<Image> {
         _radii = other._radii;
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti) override {
+    void paint(Gfx::Canvas& g, Math::RectAu) override {
         g.push();
 
         if (_radii) {
             g.fillStyle(_image);
-            g.fill(bound(), *_radii);
+            g.fill(bound().cast<f64>(), *_radii);
         } else {
-            g.blit(bound(), _image);
+            g.blit(bound().cast<isize>(), _image);
         }
 
         g.pop();
     }
 
-    Math::Vec2i size(Math::Vec2i size, Hint hint) override {
+    Math::Vec2Au size(Math::Vec2Au size, Hint hint) override {
         if (hint == Hint::MIN)
-            return _image->bound().fit(Math::Recti{size}).size();
-        return _image->bound().size().cast<isize>();
+            return _image->bound().cast<f64>().fit(Math::Rectf{size.cast<f64>()}).size().cast<Au>();
+        return _image->bound().size().cast<Au>();
     }
 };
 
@@ -417,7 +417,7 @@ export Child image(Rc<Gfx::Image> image, Opt<Math::Radiif> radii = NONE) {
 
 // MARK: Canvas ----------------------------------------------------------------
 
-export using OnPaint = Func<void(Gfx::Canvas& g, Math::Vec2i size)>;
+export using OnPaint = Func<void(Gfx::Canvas& g, Math::Vec2Au size)>;
 
 struct OnPainView : View<OnPainView> {
     OnPaint _onPaint;
@@ -430,17 +430,17 @@ struct OnPainView : View<OnPainView> {
         View::reconcile(o);
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti) override {
+    void paint(Gfx::Canvas& g, Math::RectAu) override {
         g.push();
-        g.clip(_bound);
+        g.clip(_bound.cast<f64>());
         g.origin(_bound.xy.cast<f64>());
         _onPaint(g, _bound.wh);
         g.pop();
     }
 
-    Math::Vec2i size(Math::Vec2i, Hint hint) override {
+    Math::Vec2Au size(Math::Vec2Au, Hint hint) override {
         if (hint == Hint::MIN)
-            return 0;
+            return 0_au;
         return _bound.wh;
     }
 };
@@ -462,9 +462,9 @@ struct Canvas : View<Canvas> {
         View::reconcile(o);
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti) override {
+    void paint(Gfx::Canvas& g, Math::RectAu) override {
         g.push();
-        g.clip(_bound);
+        g.clip(_bound.cast<f64>());
         auto transform =
             Math::Trans2f::translate(_bound.xy.cast<f64>())
                 .scaled(_bound.size().cast<f64>() / _snapshot.size().cast<f64>());
@@ -473,9 +473,9 @@ struct Canvas : View<Canvas> {
         g.pop();
     }
 
-    Math::Vec2i size(Math::Vec2i, Hint hint) override {
+    Math::Vec2Au size(Math::Vec2Au, Hint hint) override {
         if (hint == Hint::MIN)
-            return {0, 0};
+            return {0_au, 0_au};
         return _bound.wh;
     }
 };
@@ -498,9 +498,9 @@ struct BackgroundFilter : ProxyNode<BackgroundFilter> {
         ProxyNode::reconcile(o);
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti r) override {
+    void paint(Gfx::Canvas& g, Math::RectAu r) override {
         g.push();
-        g.clip(bound());
+        g.clip(bound().cast<f64>());
         g.apply(_filter);
         g.pop();
         ProxyNode::paint(g, r);
@@ -529,10 +529,10 @@ struct ForegroundFilter : ProxyNode<ForegroundFilter> {
         ProxyNode<ForegroundFilter>::reconcile(o);
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti r) override {
+    void paint(Gfx::Canvas& g, Math::RectAu r) override {
         ProxyNode<ForegroundFilter>::paint(g, r);
         g.push();
-        g.clip(bound());
+        g.clip(bound().cast<f64>());
         g.apply(_filter);
         g.pop();
     }

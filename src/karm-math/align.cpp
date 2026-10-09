@@ -61,10 +61,10 @@ export struct Align {
             inner = flow.setY(inner, flow.getBottom(outer) - flow.getHeight(inner));
 
         if (_value & HCLAMP)
-            inner = flow.setWidth(inner, clamp(flow.getWidth(inner), 0, flow.getWidth(outer)));
+            inner = flow.setWidth(inner, clamp(flow.getWidth(inner), T{}, flow.getWidth(outer)));
 
         if (_value & VCLAMP)
-            inner = flow.setHeight(inner, clamp(flow.getHeight(inner), 0, flow.getHeight(outer)));
+            inner = flow.setHeight(inner, clamp(flow.getHeight(inner), T{}, flow.getHeight(outer)));
 
         if (_value & HSTRETCH)
             inner = flow.setWidth(inner, flow.getWidth(outer));

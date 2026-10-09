@@ -183,15 +183,15 @@ union Rect {
     }
 
     always_inline constexpr Rect fit(Rect r) const {
-        auto scale = (r.size() / size().template cast<f64>()).min();
-        Rect result{0, 0, static_cast<T>(width * scale), static_cast<T>(height * scale)};
+        f64 scale = (r.size().template cast<f64>() / size().template cast<f64>()).min();
+        Rect result{T{}, T{}, static_cast<T>(width * scale), static_cast<T>(height * scale)};
         result.xy = r.center() - result.center();
         return result;
     }
 
     always_inline constexpr Rect cover(Rect r) const {
-        f64 scale = (r.size() / size().template cast<f64>()).max();
-        Rect result{0, 0, static_cast<T>(width * scale), static_cast<T>(height * scale)};
+        f64 scale = (r.size().template cast<f64>() / size().template cast<f64>()).max();
+        Rect result{T{}, T{}, static_cast<T>(width * scale), static_cast<T>(height * scale)};
         result.xy = r.center() - result.center();
         return result;
     }

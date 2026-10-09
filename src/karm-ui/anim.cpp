@@ -7,6 +7,8 @@ import Karm.Math;
 import :funcs;
 import :node;
 
+using namespace Karm::Math::Literals;
+
 namespace Karm::Ui {
 
 export template <typename T>
@@ -209,13 +211,13 @@ struct SlideIn : ProxyNode<SlideIn> {
     }
 
     auto translation() {
-        return lerp(outside(), Math::Vec2f{}, _slide.value()).cast<isize>();
+        return lerp(outside(), Math::Vec2f{}, _slide.value()).cast<Au>();
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti r) override {
+    void paint(Gfx::Canvas& g, Math::RectAu r) override {
         g.push();
 
-        g.clip(bound());
+        g.clip(bound().cast<f64>());
         auto anim = translation();
         g.origin(anim.cast<f64>());
         r.xy = r.xy - anim;
@@ -266,9 +268,9 @@ export struct ScaleIn : ProxyNode<ScaleIn> {
         return Math::Vec2f{0.9} + Math::Vec2f{_scale.value() * 0.1};
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti r) override {
+    void paint(Gfx::Canvas& g, Math::RectAu r) override {
         g.push();
-        g.clip(bound());
+        g.clip(bound().cast<f64>());
         g.origin(bound().center().cast<f64>());
         g.scale(scale());
         g.origin(-bound().center().cast<f64>());
@@ -318,16 +320,16 @@ struct Carousel : GroupNode<Carousel> {
         }
     }
 
-    Math::Vec2i translation() {
+    Math::Vec2Au translation() {
         return {
-            (int)(-_slide.value() * bound().width),
-            0,
+            -bound().width * _slide.value(),
+            0_au,
         };
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti r) override {
+    void paint(Gfx::Canvas& g, Math::RectAu r) override {
         g.push();
-        g.clip(bound());
+        g.clip(bound().cast<f64>());
         auto anim = translation();
         g.origin(anim.cast<f64>());
         for (auto& child : children()) {
@@ -344,11 +346,11 @@ struct Carousel : GroupNode<Carousel> {
         GroupNode::event(e);
     }
 
-    void layout(Math::Recti r) override {
+    void layout(Math::RectAu r) override {
         _bound = r;
         for (auto& child : children()) {
             child->layout(r);
-            r = r.offset({r.width, 0});
+            r = r.offset({r.width, 0_au});
         }
     }
 };

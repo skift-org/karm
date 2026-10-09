@@ -5,9 +5,11 @@ module;
 export module Karm.Kira:badge;
 
 import Karm.Core;
+import Karm.Math;
 import Karm.Ui;
 import Karm.Gfx;
 
+using namespace Karm::Math::Literals;
 using namespace Karm::Literals;
 
 namespace Karm::Kira {
@@ -23,7 +25,7 @@ export enum struct BadgeStyle {
 
 export Ui::Child badge(Gfx::Color color, String t) {
     Ui::BoxStyle boxStyle = {
-        .padding = {2, 6},
+        .padding = {2_au, 6_au},
         .borderRadii = 99,
         .backgroundFill = Some(color.withOpacity(0.2)),
         .foregroundFill = color,
@@ -58,7 +60,7 @@ export Ui::Child versionBadge() {
 #else
     badges.pushBack(badge(Gfx::EMERALD, "Dev"s));
 #endif
-    return Ui::hflow(4, badges);
+    return Ui::hflow(4_au, badges);
 }
 
 } // namespace Karm::Kira

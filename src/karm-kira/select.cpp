@@ -7,6 +7,8 @@ import Karm.Math;
 import Karm.Core;
 import Mdi;
 
+using namespace Karm::Math::Literals;
+
 namespace Karm::Kira {
 
 export Ui::Child select(Ui::Child value, Ui::Slots slots) {
@@ -31,25 +33,25 @@ export Ui::Child select(Ui::Child value, Ui::Slots slots) {
                     n,
                     n.bound().bottomStart(),
                     popover |
-                        Ui::sizing({n.bound().width, Ui::UNCONSTRAINED}, {Ui::UNCONSTRAINED, 160})
+                        Ui::sizing({n.bound().width, Ui::UNCONSTRAINED}, {Ui::UNCONSTRAINED, 160_au})
                 );
             } else {
                 Ui::showDialog(
                     n,
                     popover |
-                        Ui::sizing({240, Ui::UNCONSTRAINED}, {Ui::UNCONSTRAINED, 320}) |
+                        Ui::sizing({240_au, Ui::UNCONSTRAINED}, {Ui::UNCONSTRAINED, 320_au}) |
                         Ui::center()
                 );
             }
         }),
         Ui::ButtonStyle::outline(),
         Ui::hflow(
-            8,
+            8_au,
             Math::Align::CENTER,
             value | Ui::grow(),
             Ui::icon(Mdi::CHEVRON_DOWN)
-        ) | Ui::insets({6, 12, 6, 16}) |
-            Ui::minSize({Ui::UNCONSTRAINED, 32})
+        ) | Ui::insets({6_au, 12_au, 6_au, 16_au}) |
+            Ui::minSize({Ui::UNCONSTRAINED, 32_au})
     );
 }
 
@@ -59,17 +61,17 @@ export Ui::Child selectValue(String text) {
 
 export Ui::Child selectLabel(String text) {
     return Ui::labelMedium(Ui::GRAY400, text) |
-           Ui::insets({12, 6, 3, 14});
+           Ui::insets({12_au, 6_au, 3_au, 14_au});
 }
 
 export Ui::Child selectItem(Opt<Ui::Send<>> onPress, String t) {
     return Ui::hflow(
-               12,
+               12_au,
                Math::Align::CENTER,
                Ui::text(t)
            ) |
-           Ui::insets({6, 6, 6, 10}) |
-           Ui::minSize({Ui::UNCONSTRAINED, 28}) |
+           Ui::insets({6_au, 6_au, 6_au, 10_au}) |
+           Ui::minSize({Ui::UNCONSTRAINED, 28_au}) |
            Ui::button(
                Some([onPress = std::move(onPress)](auto& n) {
                    onPress(n);
@@ -77,7 +79,7 @@ export Ui::Child selectItem(Opt<Ui::Send<>> onPress, String t) {
                }),
                Ui::ButtonStyle::subtle()
            ) |
-           Ui::insets(4);
+           Ui::insets(4_au);
 }
 
 export Ui::Child selectGroup(Ui::Children children) {

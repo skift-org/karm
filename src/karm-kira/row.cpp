@@ -14,55 +14,57 @@ import :slider;
 import :toggle;
 import :tabbar;
 
+using namespace Karm::Math::Literals;
+
 namespace Karm::Kira {
 
 export Ui::Child rowContent(Ui::Child child) {
     return child |
            Ui::align(Math::Align::VCENTER | Math::Align::START | Math::Align::HSTRETCH) |
-           Ui::insets(16) |
-           Ui::minSize({Ui::UNCONSTRAINED, 64});
+           Ui::insets(16_au) |
+           Ui::minSize({Ui::UNCONSTRAINED, 64_au});
 }
 
 export Ui::Child rowSpacer() {
-    return Ui::empty(8);
+    return Ui::empty(8_au);
 }
 
 export Ui::Child rowContent(Opt<Ui::Child> leading, String title, Opt<String> subtitle, Opt<Ui::Child> trailing) {
     auto lead = leading
                     ? *leading |
                           Ui::center() |
-                          Ui::sizing(26, {Ui::UNCONSTRAINED, 26}) |
-                          Ui::insets({0, 12, 0, 0})
+                          Ui::sizing(26_au, {Ui::UNCONSTRAINED, 26_au}) |
+                          Ui::insets({0_au, 12_au, 0_au, 0_au})
                     : Ui::empty();
 
     auto t = subtitle
                  ? Ui::vflow(
-                       2,
+                       2_au,
                        Ui::labelMedium(title),
                        Ui::labelSmall(Ui::GRAY400, *subtitle)
-                   ) | Ui::insets({6, 0})
+                   ) | Ui::insets({6_au, 0_au})
                  : Ui::labelMedium(title);
 
     auto trail = trailing
                      ? *trailing |
                            Ui::center() |
-                           Ui::sizing(26, {Ui::UNCONSTRAINED, 26})
+                           Ui::sizing(26_au, {Ui::UNCONSTRAINED, 26_au})
                      : Ui::empty();
 
     return Ui::hflow(
-               0,
+               0_au,
                Math::Align::VCENTER | Math::Align::HFILL,
                lead,
                t | Ui::grow(),
                trail
            ) |
-           Ui::insets({0, 16}) |
-           Ui::minSize({Ui::UNCONSTRAINED, 64});
+           Ui::insets({0_au, 16_au}) |
+           Ui::minSize({Ui::UNCONSTRAINED, 64_au});
 }
 
 export Ui::Child titleRow(String t) {
     return Ui::titleMedium(t) |
-           Ui::insets({16, 12, 8, 12});
+           Ui::insets({16_au, 12_au, 8_au, 12_au});
 }
 
 export Ui::Child labelRow(String t) {
@@ -84,10 +86,10 @@ export Ui::Child pressableRow(Opt<Ui::Send<>> onPress, Opt<Ui::Child> leading, S
 
 export Ui::Child buttonRow(Opt<Ui::Send<>> onPress, Gfx::Icon i, String title, Opt<String> subtitle, String action) {
     return rowContent(
-        Some(Ui::icon(i, 24)),
+        Some(Ui::icon(i, 24_au)),
         title,
         subtitle,
-        Some(Ui::button(onPress, action) | Ui::insets({0, 0, 0, 12}))
+        Some(Ui::button(onPress, action) | Ui::insets({0_au, 0_au, 0_au, 12_au}))
     );
 }
 
@@ -96,7 +98,7 @@ export Ui::Child buttonRow(Opt<Ui::Send<>> onPress, String title, Opt<String> su
         NONE,
         title,
         subtitle,
-        Some(Ui::button(onPress, action) | Ui::insets({0, 0, 0, 12}))
+        Some(Ui::button(onPress, action) | Ui::insets({0_au, 0_au, 0_au, 12_au}))
     );
 }
 
@@ -137,7 +139,7 @@ export Ui::Child sliderRow(f64 value, Ui::Send<f64> onChange, String title) {
                 value,
                 Some(onChange)
             ) |
-            Ui::minSize({128, Ui::UNCONSTRAINED})
+            Ui::minSize({128_au, Ui::UNCONSTRAINED})
         )
     );
 }
@@ -181,16 +183,16 @@ export Ui::Child tabRow(String title, Ui::Children tabs) {
 export Ui::Child treeRow(Opt<Ui::Slot> leading, String title, Opt<String> subtitle, Ui::Slot child) {
     return Ui::state(false, [=](bool state, auto bind) {
         return vflow(
-            0,
+            0_au,
             pressableRow(
                 Some(bind(not state)),
                 leading(),
                 title,
                 subtitle,
-                Some(Ui::icon(state ? Mdi::CHEVRON_UP : Mdi::CHEVRON_DOWN, 24))
+                Some(Ui::icon(state ? Mdi::CHEVRON_UP : Mdi::CHEVRON_DOWN, 24_au))
             ),
             state ? child() |
-                        Ui::insets({0, 0, 0, 0}) |
+                        Ui::insets({0_au, 0_au, 0_au, 0_au}) |
                         slideIn(Ui::SlideFrom::TOP) |
                         Ui::grow()
                   : Ui::empty()

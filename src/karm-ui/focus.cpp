@@ -57,7 +57,7 @@ struct Focusable : ProxyNode<Focusable> {
         : ProxyNode(std::move(child)), _props(props) {
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti r) override {
+    void paint(Gfx::Canvas& g, Math::RectAu r) override {
         ProxyNode::paint(g, r);
 
         if (_props.visual and _focused) {
@@ -85,9 +85,9 @@ struct Focusable : ProxyNode<Focusable> {
         } else if (auto me = e.is<App::MouseEvent>()) {
             passthrough = true;
             if (me->type == App::MouseEvent::PRESS) {
-                if (bound().contains(me->pos) and not _focused) {
+                if (bound().contains(me->pos.cast<Au>()) and not _focused) {
                     _stealFocus();
-                } else if (not bound().contains(me->pos) and _focused) {
+                } else if (not bound().contains(me->pos.cast<Au>()) and _focused) {
                     _focused = false;
                     shouldRepaint(*this);
                     event<FocusEvent>(*_child, FocusEvent::LEAVE);
@@ -108,7 +108,7 @@ struct Focusable : ProxyNode<Focusable> {
         }
     }
 
-    App::HitResult hitTest(Math::Vec2i) override {
+    App::HitResult hitTest(Math::Vec2Au) override {
         return App::HitResult::HIT;
     }
 };

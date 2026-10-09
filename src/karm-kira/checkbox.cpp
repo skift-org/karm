@@ -8,6 +8,8 @@ import Karm.Core;
 
 import Mdi;
 
+using namespace Karm::Math::Literals;
+
 namespace Karm::Kira {
 
 struct Checkbox : Ui::View<Checkbox> {
@@ -24,12 +26,12 @@ struct Checkbox : Ui::View<Checkbox> {
         _onChange = std::move(o._onChange);
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti) override {
+    void paint(Gfx::Canvas& g, Math::RectAu) override {
         g.push();
 
         if (_value) {
             g.fillStyle(_mouseListener.isHover() ? Ui::ACCENT400 : Ui::ACCENT500);
-            g.fill(bound(), 4);
+            g.fill(bound().cast<f64>(), 4);
 
             g.fillStyle(Gfx::GRAY50);
             Gfx::Icon{Mdi::CHECK_BOLD}.fill(g, bound().topStart().cast<f64>(), 18);
@@ -40,7 +42,7 @@ struct Checkbox : Ui::View<Checkbox> {
             }
         } else {
             g.fillStyle(_mouseListener.isHover() ? Ui::GRAY600 : Ui::GRAY700);
-            g.fill(bound(), 4);
+            g.fill(bound().cast<f64>(), 4);
 
             if (_mouseListener.isPress()) {
                 g.strokeStyle(Gfx::stroke(Ui::GRAY600).withWidth(1).withAlign(Gfx::INSIDE_ALIGN));
@@ -60,8 +62,8 @@ struct Checkbox : Ui::View<Checkbox> {
         }
     }
 
-    Math::Vec2i size(Math::Vec2i, Ui::Hint) override {
-        return {18, 18};
+    Math::Vec2Au size(Math::Vec2Au, Ui::Hint) override {
+        return {18_au, 18_au};
     }
 };
 
@@ -71,11 +73,11 @@ export Ui::Child checkbox(bool value, Ui::Send<bool> onChange) {
 
 export Ui::Child checkbox(bool value, Ui::Send<bool> onChange, String label) {
     return Ui::hflow(
-        4,
+        4_au,
         Math::Align::CENTER,
         checkbox(value, onChange),
         Ui::labelMedium(label),
-        Ui::empty(2)
+        Ui::empty(2_au)
     );
 }
 

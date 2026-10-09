@@ -6,11 +6,13 @@ import Karm.Gfx;
 import Karm.Math;
 import Karm.Core;
 
+using namespace Karm::Math::Literals;
+
 namespace Karm::Kira {
 
 export struct Toggle : Ui::View<Toggle> {
-    static constexpr auto PADDING = 3;
-    static constexpr auto SIZE = 18;
+    static constexpr Math::Au PADDING = 3_au;
+    static constexpr Math::Au SIZE = 18_au;
 
     bool _value = false;
     Ui::Easedf _anim;
@@ -30,11 +32,11 @@ export struct Toggle : Ui::View<Toggle> {
         _onChange = std::move(o._onChange);
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti) override {
+    void paint(Gfx::Canvas& g, Math::RectAu) override {
         g.push();
 
-        Math::Recti thumb = {
-            bound().x + (isize)(PADDING + SIZE * _anim.value()),
+        Math::RectAu thumb = {
+            bound().x + PADDING + SIZE * _anim.value(),
             bound().y + PADDING,
             SIZE - PADDING * 2,
             SIZE - PADDING * 2,
@@ -44,13 +46,13 @@ export struct Toggle : Ui::View<Toggle> {
         auto activeBackground = (_mouseListener.isHover() ? Ui::ACCENT400 : Ui::ACCENT500);
 
         g.fillStyle(inactiveBackground.lerpWith(activeBackground, _anim.value()));
-        g.fill(bound(), 999);
+        g.fill(bound().cast<f64>(), 999);
 
         auto inactiveForeground = (_mouseListener.isHover() ? Ui::GRAY400 : Ui::GRAY500);
         auto activeForeground = Gfx::WHITE;
 
         g.fillStyle(inactiveForeground.lerpWith(activeForeground, _anim.value()));
-        g.fill(thumb, 999);
+        g.fill(thumb.cast<f64>(), 999);
 
         if (_mouseListener.isPress()) {
             auto inactivePressed = Ui::GRAY600;
@@ -78,7 +80,7 @@ export struct Toggle : Ui::View<Toggle> {
         }
     }
 
-    Math::Vec2i size(Math::Vec2i, Ui::Hint) override {
+    Math::Vec2Au size(Math::Vec2Au, Ui::Hint) override {
         return {SIZE * 2, SIZE};
     }
 };

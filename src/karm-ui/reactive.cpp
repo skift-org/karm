@@ -75,7 +75,7 @@ export struct Reactive :
         _shouldRebuild = true;
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti r) override {
+    void paint(Gfx::Canvas& g, Math::RectAu r) override {
         ensureBuild();
         (*_child)->paint(g, r);
     }
@@ -85,22 +85,22 @@ export struct Reactive :
         (*_child)->event(e);
     }
 
-    void layout(Math::Recti r) override {
+    void layout(Math::RectAu r) override {
         ensureBuild();
         (*_child)->layout(r);
     }
 
-    Math::Vec2i size(Math::Vec2i s, Hint hint) override {
+    Math::Vec2Au size(Math::Vec2Au s, Hint hint) override {
         ensureBuild();
         return (*_child)->size(s, hint);
     }
 
-    Math::Recti bound() override {
+    Math::RectAu bound() override {
         ensureBuild();
         return (*_child)->bound();
     }
 
-    App::HitResult hitTest(Math::Vec2i p) override {
+    App::HitResult hitTest(Math::Vec2Au p) override {
         ensureBuild();
         return (*_child)->hitTest(p);
     }
@@ -177,7 +177,7 @@ struct Stateful :
         _shouldRebuild = true;
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti r) override {
+    void paint(Gfx::Canvas& g, Math::RectAu r) override {
         ensureBuild();
         (*_child)->paint(g, r);
     }
@@ -187,22 +187,22 @@ struct Stateful :
         (*_child)->event(e);
     }
 
-    void layout(Math::Recti r) override {
+    void layout(Math::RectAu r) override {
         ensureBuild();
         (*_child)->layout(r);
     }
 
-    Math::Vec2i size(Math::Vec2i s, Hint hint) override {
+    Math::Vec2Au size(Math::Vec2Au s, Hint hint) override {
         ensureBuild();
         return (*_child)->size(s, hint);
     }
 
-    Math::Recti bound() override {
+    Math::RectAu bound() override {
         ensureBuild();
         return (*_child)->bound();
     }
 
-    App::HitResult hitTest(Math::Vec2i p) override {
+    App::HitResult hitTest(Math::Vec2Au p) override {
         ensureBuild();
         return (*_child)->hitTest(p);
     }

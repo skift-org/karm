@@ -2,12 +2,14 @@
 
 import Mdi;
 import Karm.Kira;
+import Karm.Math;
 import Karm.Ui;
 import Karm.Icc;
 import Karm.Logger;
 
 using namespace Karm;
 using namespace Karm::Literals;
+using namespace Karm::Math::Literals;
 
 struct ProfileItem {
     String name;
@@ -218,13 +220,13 @@ Ui::Child infoRow(String title, String value) {
 Ui::Child profileDetails(Rc<Icc::ColorProfile> const& profile) {
     return Ui::vflow(
                Ui::titleMedium("Profile Information"s),
-               Ui::empty(8),
+               Ui::empty(8_au),
                infoRow("Profile Type"s, profileClassText(profile->profileDeviceClass())),
                infoRow("Color Space"s, Io::format("{}", profile->colorSpace())),
                infoRow("Connection Space"s, Io::format("{}", profile->profileConnectionSpace())),
                infoRow("Device Dependent"s, profile->isDeviceDependent() ? "Yes"s : "No"s)
            ) |
-           Ui::insets(16);
+           Ui::insets(16_au);
 }
 
 Ui::Child appContent(State const& s) {

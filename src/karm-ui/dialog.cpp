@@ -66,13 +66,13 @@ struct DialogLayer : LeafNode<DialogLayer> {
         _child->attach(this);
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti r) override {
+    void paint(Gfx::Canvas& g, Math::RectAu r) override {
         _child->paint(g, r);
 
         if (_visibility.value() > 0.001) {
             g.push();
             g.fillStyle(Ui::GRAY950.withOpacity(0.8 * _visibility.value()));
-            g.fill(bound());
+            g.fill(bound().cast<f64>());
             g.pop();
         }
 
@@ -127,7 +127,7 @@ struct DialogLayer : LeafNode<DialogLayer> {
         LeafNode<DialogLayer>::bubble(e);
     }
 
-    void layout(Math::Recti r) override {
+    void layout(Math::RectAu r) override {
         if (_shouldDialogClose) {
             if (_dialog) {
                 (*_dialog)->detach(this);
@@ -151,15 +151,15 @@ struct DialogLayer : LeafNode<DialogLayer> {
             (*_dialog)->layout(r);
     }
 
-    Math::Vec2i size(Math::Vec2i s, Hint hint) override {
+    Math::Vec2Au size(Math::Vec2Au s, Hint hint) override {
         return _child->size(s, hint);
     }
 
-    Math::Recti bound() override {
+    Math::RectAu bound() override {
         return _child->bound();
     }
 
-    App::HitResult hitTest(Math::Vec2i p) override {
+    App::HitResult hitTest(Math::Vec2Au p) override {
         if (auto& [dialog] = _dialog)
             return dialog->hitTest(p);
         return _child->hitTest(p);

@@ -65,7 +65,7 @@ export auto keyboardShortcut(App::Key key, Flags<App::KeyMod> mods = {}) {
 export auto doubleClick(Send<> onDoubleClick) {
     return intent([=](Ui::Node& n, App::Event& e) {
         if (auto me = e.is<App::MouseEvent>();
-            me and n.bound().contains(me->pos) and me->type == App::MouseEvent::PRESS and me->clicks == 2) {
+            me and n.bound().contains(me->pos.cast<Au>()) and me->type == App::MouseEvent::PRESS and me->clicks == 2) {
             onDoubleClick(n);
             e.accept();
         }

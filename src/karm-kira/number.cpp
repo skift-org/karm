@@ -1,8 +1,11 @@
 export module Karm.Kira:number;
 
 import Karm.Core;
+import Karm.Math;
 import Karm.Ui;
 import Mdi;
+
+using namespace Karm::Math::Literals;
 
 namespace Karm::Kira {
 
@@ -15,7 +18,7 @@ export Ui::Child number(f64 value, Ui::Send<f64> onChange, f64 step) {
                    Ui::ButtonStyle::subtle(),
                    Mdi::MINUS
                ),
-               Ui::labelMedium("{:.02}", value) | Ui::insets({0, 4}) | Ui::center(),
+               Ui::labelMedium("{:.02}", value) | Ui::insets({0_au, 4_au}) | Ui::center(),
                Ui::button(
                    Some([onChange, value, step](auto& n) {
                        onChange(n, value + step);

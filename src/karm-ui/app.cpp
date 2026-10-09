@@ -12,6 +12,8 @@ import Karm.Logger;
 import :node;
 import :atoms;
 
+using namespace Karm::Math::Literals;
+
 namespace Karm::Ui {
 
 export auto FRAME_RATE = 60;
@@ -30,7 +32,7 @@ struct RootNode : ProxyNode<RootNode> {
     RootNode(Child child, Rc<App::Window> window)
         : ProxyNode(child), _window(window), _swapChain(window->createSwapChain().expect()) {}
 
-    void paint(Gfx::Canvas& g, Math::Recti r) override {
+    void _paintPhysical(Gfx::Canvas& g, Math::Recti r) {
         g.push();
         g.clip(r);
         g.clear(GRAY900);
@@ -39,7 +41,7 @@ struct RootNode : ProxyNode<RootNode> {
             Math::Trans2f::scale(1.0 / _window->scaleFactor())
                 .apply(r.cast<f64>())
                 .bound()
-                .cast<isize>();
+                .cast<Au>();
         child().paint(g, logicalClip);
         g.pop();
     }
@@ -55,7 +57,7 @@ struct RootNode : ProxyNode<RootNode> {
             _shouldLayout = false;
             _shouldAnimate = true;
 
-            child().layout(_window->bound().size());
+            child().layout(_window->bound().size().cast<Au>());
 
             auto s = _window->scaleFactor();
 
@@ -71,7 +73,7 @@ struct RootNode : ProxyNode<RootNode> {
             auto pixels = Gfx::MutPixels::from(buffer);
             _g.begin(pixels);
             for (auto& d : _dirty) {
-                paint(_g, d);
+                _paintPhysical(_g, d);
             }
             _g.end();
         }
@@ -158,13 +160,13 @@ struct Handler : App::Handler {
     }
 
     App::HitResult hitTest(App::WindowId, Math::Vec2i pos) override {
-        return _root->hitTest(pos);
+        return _root->hitTest(pos.cast<Au>());
     }
 };
 
 export Async::Task<> runAsync(Sys::Env& env, Child child, Async::CancellationToken ct) {
     auto app = co_trya$(App::Application::createAsync(env, {}, ct));
-    auto size = child->size({1024, 720}, Hint::MIN);
+    auto size = child->size({1024_au, 720_au}, Hint::MIN).ceili();
     auto win = co_trya$(app->createWindowAsync(
         {
             .size = size,

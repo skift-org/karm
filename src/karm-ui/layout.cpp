@@ -8,30 +8,32 @@ import :node;
 import :view;
 import :atoms;
 
+using namespace Karm::Math::Literals;
+
 namespace Karm::Ui {
 
-export constexpr auto UNCONSTRAINED = -1;
+export constexpr Au UNCONSTRAINED = -1_au;
 
 // MARK: Empty -----------------------------------------------------------------
 
 struct Empty : View<Empty> {
-    Math::Vec2i _size;
+    Math::Vec2Au _size;
 
-    Empty(Math::Vec2i size)
+    Empty(Math::Vec2Au size)
         : _size(size) {}
 
     void reconcile(Empty& o) override {
         _size = o._size;
     }
 
-    Math::Vec2i size(Math::Vec2i, Hint) override {
+    Math::Vec2Au size(Math::Vec2Au, Hint) override {
         return _size;
     }
 
-    void paint(Gfx::Canvas&, Math::Recti) override {}
+    void paint(Gfx::Canvas&, Math::RectAu) override {}
 };
 
-export Child empty(Math::Vec2i size = {}) {
+export Child empty(Math::Vec2Au size = {}) {
     return makeRc<Empty>(size);
 }
 
@@ -46,21 +48,21 @@ export auto cond(bool c) {
 // MARK: Bound -----------------------------------------------------------------
 
 struct Bound : ProxyNode<Bound> {
-    Math::Recti _bound;
+    Math::RectAu _bound;
 
     Bound(Child child)
         : ProxyNode(child) {}
 
-    Math::Recti bound() override {
+    Math::RectAu bound() override {
         return _bound;
     }
 
-    void layout(Math::Recti bound) override {
+    void layout(Math::RectAu bound) override {
         _bound = bound;
         child().layout(bound);
     }
 
-    Math::Vec2i size(Math::Vec2i s, Hint hint) override {
+    Math::Vec2Au size(Math::Vec2Au s, Hint hint) override {
         return child().size(s, hint);
     }
 };
@@ -72,10 +74,10 @@ export auto bound() {
 }
 
 struct Placed : ProxyNode<Placed> {
-    Math::Recti _bound;
-    Math::Recti _place;
+    Math::RectAu _bound;
+    Math::RectAu _place;
 
-    Placed(Math::Recti place, Child child)
+    Placed(Math::RectAu place, Child child)
         : ProxyNode(child), _place(place) {}
 
     void reconcile(Placed& o) override {
@@ -83,23 +85,23 @@ struct Placed : ProxyNode<Placed> {
         ProxyNode::reconcile(o);
     }
 
-    Math::Recti bound() override {
+    Math::RectAu bound() override {
         return _bound;
     }
 
-    void layout(Math::Recti bound) override {
+    void layout(Math::RectAu bound) override {
         _bound = bound;
         auto place = _place;
         place.xy = place.xy + _bound.xy;
         child().layout(place);
     }
 
-    Math::Vec2i size(Math::Vec2i s, Hint) override {
+    Math::Vec2Au size(Math::Vec2Au s, Hint) override {
         return s;
     }
 };
 
-export auto placed(Math::Recti bound) {
+export auto placed(Math::RectAu bound) {
     return [bound](Child child) {
         return makeRc<Placed>(bound, child);
     };
@@ -151,7 +153,7 @@ struct Align : ProxyNode<Align> {
 
     Align(Math::Align align, Child child) : ProxyNode(child), _align(align) {}
 
-    void layout(Math::Recti bound) override {
+    void layout(Math::RectAu bound) override {
         auto childSize = child().size(
             bound.size(), _child.is<Grow>()
                               ? Hint::MAX
@@ -159,14 +161,14 @@ struct Align : ProxyNode<Align> {
         );
 
         child()
-            .layout(_align.apply<isize>(
+            .layout(_align.apply<Au>(
                 Math::Flow::LEFT_TO_RIGHT,
                 childSize,
                 bound
             ));
     };
 
-    Math::Vec2i size(Math::Vec2i s, Hint hint) override {
+    Math::Vec2Au size(Math::Vec2Au s, Hint hint) override {
         if (hint == Hint::MAX)
             return _align.maxSize(child().size(s, hint), s);
         return _align.minSize(child().size(s, hint));
@@ -218,14 +220,14 @@ export auto vcenterFill() {
 // MARK: Sizing ----------------------------------------------------------------
 
 struct Sizing : ProxyNode<Sizing> {
-    Math::Vec2i _min;
-    Math::Vec2i _max;
-    Math::Recti _rect;
+    Math::Vec2Au _min;
+    Math::Vec2Au _max;
+    Math::RectAu _rect;
 
-    Sizing(Math::Vec2i min, Math::Vec2i max, Child child)
+    Sizing(Math::Vec2Au min, Math::Vec2Au max, Child child)
         : ProxyNode(child), _min(min), _max(max) {}
 
-    Math::Recti bound() override {
+    Math::RectAu bound() override {
         return _rect;
     }
 
@@ -235,12 +237,12 @@ struct Sizing : ProxyNode<Sizing> {
         ProxyNode<Sizing>::reconcile(o);
     }
 
-    void layout(Math::Recti bound) override {
+    void layout(Math::RectAu bound) override {
         _rect = bound;
         child().layout(bound);
     }
 
-    Math::Vec2i size(Math::Vec2i s, Hint hint) override {
+    Math::Vec2Au size(Math::Vec2Au s, Hint hint) override {
         if (_max.x != UNCONSTRAINED) {
             s.x = min(s.x, _max.x);
         }
@@ -271,30 +273,30 @@ struct Sizing : ProxyNode<Sizing> {
     }
 };
 
-export auto sizing(Math::Vec2i min, Math::Vec2i max) {
+export auto sizing(Math::Vec2Au min, Math::Vec2Au max) {
     return [min, max](Child child) {
         return makeRc<Sizing>(min, max, child);
     };
 }
 
-export auto minSize(Math::Vec2i size) {
+export auto minSize(Math::Vec2Au size) {
     return sizing(size, UNCONSTRAINED);
 }
 
-export auto maxSize(Math::Vec2i size) {
+export auto maxSize(Math::Vec2Au size) {
     return sizing(UNCONSTRAINED, size);
 }
 
-export auto pinSize(Math::Vec2i size) {
+export auto pinSize(Math::Vec2Au size) {
     return sizing(size, size);
 }
 
 // MARK: Insets ---------------------------------------------------------------
 
 struct Insets : ProxyNode<Insets> {
-    Math::Insetsi _insets;
+    Math::InsetsAu _insets;
 
-    Insets(Math::Insetsi insets, Child child)
+    Insets(Math::InsetsAu insets, Child child)
         : ProxyNode(child), _insets(insets) {}
 
     void reconcile(Insets& o) override {
@@ -302,24 +304,24 @@ struct Insets : ProxyNode<Insets> {
         ProxyNode<Insets>::reconcile(o);
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti r) override {
+    void paint(Gfx::Canvas& g, Math::RectAu r) override {
         child().paint(g, r);
     }
 
-    void layout(Math::Recti rect) override {
+    void layout(Math::RectAu rect) override {
         child().layout(rect.shrink(_insets));
     }
 
-    Math::Vec2i size(Math::Vec2i s, Hint hint) override {
+    Math::Vec2Au size(Math::Vec2Au s, Hint hint) override {
         return child().size(s - _insets.all(), hint) + _insets.all();
     }
 
-    Math::Recti bound() override {
+    Math::RectAu bound() override {
         return child().bound().grow(_insets);
     }
 };
 
-export auto insets(Math::Insetsi s) {
+export auto insets(Math::InsetsAu s) {
     return [s](Child child) {
         return makeRc<Insets>(s, child);
     };
@@ -338,18 +340,18 @@ struct AspectRatio : ProxyNode<AspectRatio> {
         ProxyNode::reconcile(o);
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti r) override {
+    void paint(Gfx::Canvas& g, Math::RectAu r) override {
         child().paint(g, r);
     }
 
-    Math::Vec2i size(Math::Vec2i s, Hint) override {
+    Math::Vec2Au size(Math::Vec2Au s, Hint) override {
         if (s.x < s.y)
-            return {s.x, (isize)(s.x * _ratio)};
+            return {s.x, s.x * _ratio};
 
-        return {(isize)(s.y * _ratio), s.y};
+        return {s.y * _ratio, s.y};
     }
 
-    Math::Recti bound() override {
+    Math::RectAu bound() override {
         return child().bound();
     }
 };
@@ -376,9 +378,9 @@ struct StackLayout : GroupNode<StackLayout> {
         }
     }
 
-    Math::Vec2i size(Math::Vec2i s, Hint hint) override {
-        isize w{};
-        isize h{};
+    Math::Vec2Au size(Math::Vec2Au s, Hint hint) override {
+        Au w{};
+        Au h{};
 
         for (auto& child : children()) {
             auto childSize = child->size(s, hint);
@@ -403,13 +405,13 @@ export Child stack(auto... children) {
 struct FlowStyle {
     Math::Flow flow = Math::Flow::LEFT_TO_RIGHT;
     Math::Align align = Math::Align::FILL;
-    isize gaps{};
+    Au gaps{};
 
-    static FlowStyle horizontal(isize gaps = 0, Math::Align align = Math::Align::FILL) {
+    static FlowStyle horizontal(Au gaps = 0_au, Math::Align align = Math::Align::FILL) {
         return FlowStyle{Math::Flow::LEFT_TO_RIGHT, align, gaps};
     }
 
-    static FlowStyle vertical(isize gaps = 0, Math::Align align = Math::Align::FILL) {
+    static FlowStyle vertical(Au gaps = 0_au, Math::Align align = Math::Align::FILL) {
         return FlowStyle{Math::Flow::TOP_TO_BOTTOM, align, gaps};
     }
 };
@@ -427,9 +429,9 @@ struct FlowLayout : GroupNode<FlowLayout> {
         GroupNode::reconcile(o);
     }
 
-    f64 _computeGrowUnit(Math::Recti r) {
-        f64 total = 0;
-        f64 grows = 0;
+    Au _computeGrowUnit(Math::RectAu r) {
+        Au total = 0_au;
+        isize grows = 0;
 
         for (auto& child : children()) {
             if (child.is<Grow>()) {
@@ -439,24 +441,24 @@ struct FlowLayout : GroupNode<FlowLayout> {
             }
         }
 
-        f64 all = _style.flow.getWidth(r) - _style.gaps * (max(1uz, children().len()) - 1);
-        f64 growTotal = max(0, all - total);
-        return (growTotal) / max(1, grows);
+        Au all = _style.flow.getWidth(r) - _style.gaps * (max(1uz, children().len()) - 1);
+        Au growTotal = max(0_au, all - total);
+        return growTotal / max(1, grows);
     }
 
-    void layout(Math::Recti r) override {
+    void layout(Math::RectAu r) override {
         _bound = r;
 
-        f64 growUnit = _computeGrowUnit(r);
-        f64 start = _style.flow.getStart(r);
+        Au growUnit = _computeGrowUnit(r);
+        Au start = _style.flow.getStart(r);
 
         for (auto& child : children()) {
-            Math::Recti inner = {};
+            Math::RectAu inner = {};
             auto childSize = child->size(r.size(), Hint::MIN);
 
-            inner = _style.flow.setStart(inner, (isize)start);
+            inner = _style.flow.setStart(inner, start);
             if (child.is<Grow>()) {
-                inner = _style.flow.setWidth(inner, (isize)(growUnit * child.expect<Grow>().grow()));
+                inner = _style.flow.setWidth(inner, growUnit * child.expect<Grow>().grow());
             } else {
                 inner = _style.flow.setWidth(inner, _style.flow.getX(childSize));
             }
@@ -464,14 +466,14 @@ struct FlowLayout : GroupNode<FlowLayout> {
             inner = _style.flow.setTop(inner, _style.flow.getTop(r));
             inner = _style.flow.setBottom(inner, _style.flow.getBottom(r));
 
-            child->layout(_style.align.apply(_style.flow, Math::Recti{childSize}, inner));
+            child->layout(_style.align.apply(_style.flow, Math::RectAu{childSize}, inner));
             start += _style.flow.getWidth(inner) + _style.gaps;
         }
     }
 
-    Math::Vec2i size(Math::Vec2i s, Hint hint) override {
-        isize w{};
-        isize h{hint == Hint::MAX ? _style.flow.getY(s) : 0};
+    Math::Vec2Au size(Math::Vec2Au s, Hint hint) override {
+        Au w{};
+        Au h{hint == Hint::MAX ? _style.flow.getY(s) : 0_au};
         bool grow = false;
 
         for (auto& child : children()) {
@@ -489,8 +491,8 @@ struct FlowLayout : GroupNode<FlowLayout> {
         }
 
         return _style.flow.orien() == Math::Orien::HORIZONTAL
-                   ? Math::Vec2i{w, h}
-                   : Math::Vec2i{h, w};
+                   ? Math::Vec2Au{w, h}
+                   : Math::Vec2Au{h, w};
     }
 };
 
@@ -502,11 +504,11 @@ export Child hflow(Meta::Convertible<Child> auto... children) {
     return flow({.flow = Math::Flow::LEFT_TO_RIGHT}, {children...});
 }
 
-export Child hflow(isize gaps, Meta::Convertible<Child> auto... children) {
+export Child hflow(Au gaps, Meta::Convertible<Child> auto... children) {
     return flow({.flow = Math::Flow::LEFT_TO_RIGHT, .gaps = gaps}, {children...});
 }
 
-export Child hflow(isize gaps, Math::Align align, Meta::Convertible<Child> auto... children) {
+export Child hflow(Au gaps, Math::Align align, Meta::Convertible<Child> auto... children) {
     return flow({.flow = Math::Flow::LEFT_TO_RIGHT, .align = align, .gaps = gaps}, {children...});
 }
 
@@ -514,11 +516,11 @@ export Child hflow(Children children) {
     return flow({.flow = Math::Flow::LEFT_TO_RIGHT}, children);
 }
 
-export Child hflow(isize gaps, Children children) {
+export Child hflow(Au gaps, Children children) {
     return flow({.flow = Math::Flow::LEFT_TO_RIGHT, .gaps = gaps}, children);
 }
 
-export Child hflow(isize gaps, Math::Align align, Children children) {
+export Child hflow(Au gaps, Math::Align align, Children children) {
     return flow({.flow = Math::Flow::LEFT_TO_RIGHT, .align = align, .gaps = gaps}, children);
 }
 
@@ -526,11 +528,11 @@ export Child vflow(Meta::Convertible<Child> auto... children) {
     return flow({.flow = Math::Flow::TOP_TO_BOTTOM}, {children...});
 }
 
-export Child vflow(isize gaps, Meta::Convertible<Child> auto... children) {
+export Child vflow(Au gaps, Meta::Convertible<Child> auto... children) {
     return flow({.flow = Math::Flow::TOP_TO_BOTTOM, .gaps = gaps}, {children...});
 }
 
-export Child vflow(isize gaps, Math::Align align, Meta::Convertible<Child> auto... children) {
+export Child vflow(Au gaps, Math::Align align, Meta::Convertible<Child> auto... children) {
     return flow({.flow = Math::Flow::TOP_TO_BOTTOM, .align = align, .gaps = gaps}, {children...});
 }
 
@@ -538,11 +540,11 @@ export Child vflow(Children children) {
     return flow({.flow = Math::Flow::TOP_TO_BOTTOM}, children);
 }
 
-export Child vflow(isize gaps, Children children) {
+export Child vflow(Au gaps, Children children) {
     return flow({.flow = Math::Flow::TOP_TO_BOTTOM, .gaps = gaps}, children);
 }
 
-export Child vflow(isize gaps, Math::Align align, Children children) {
+export Child vflow(Au gaps, Math::Align align, Children children) {
     return flow({.flow = Math::Flow::TOP_TO_BOTTOM, .align = align, .gaps = gaps}, children);
 }
 
@@ -556,21 +558,23 @@ export struct GridUnit {
     };
 
     _Unit unit;
-    isize value;
+    Au size = 0_au;
+    isize factor = 0;
 
     static GridUnit auto_() {
-        return {AUTO, 0};
+        return {AUTO};
     }
 
-    static GridUnit fixed(isize value) {
-        return {FIXED, value};
+    static GridUnit fixed(Au size) {
+        return {FIXED, size};
     }
 
-    static GridUnit grow(isize value = 1) {
-        return {GROW, value};
+    static GridUnit grow(isize factor = 1) {
+        return {GROW, 0_au, factor};
     }
 
-    GridUnit(_Unit unit, isize value) : unit(unit), value(value) {}
+    GridUnit(_Unit unit, Au size = 0_au, isize factor = 0)
+        : unit(unit), size(size), factor(factor) {}
 
     Vec<GridUnit> repeated(usize count) {
         Vec<GridUnit> units{};
@@ -584,11 +588,11 @@ export struct GridStyle {
     Vec<GridUnit> rows;
     Vec<GridUnit> columns;
 
-    Math::Vec2i gaps;
+    Math::Vec2Au gaps;
     Math::Flow flow = Math::Flow::LEFT_TO_RIGHT;
     Math::Align align = Math::Align::FILL;
 
-    static GridStyle simpleGrow(isize rows, isize columns, Math::Vec2i gaps = 0) {
+    static GridStyle simpleGrow(isize rows, isize columns, Math::Vec2Au gaps = 0_au) {
         return GridStyle{
             GridUnit::grow().repeated(rows),
             GridUnit::grow().repeated(columns),
@@ -598,7 +602,7 @@ export struct GridStyle {
         };
     }
 
-    static GridStyle simpleFixed(Pair<isize, isize> rows, Pair<isize, isize> columns, Math::Vec2i gaps = {}) {
+    static GridStyle simpleFixed(Pair<isize, Au> rows, Pair<isize, Au> columns, Math::Vec2Au gaps = {}) {
         return GridStyle{
             GridUnit::fixed(rows.v1).repeated(rows.v0),
             GridUnit::fixed(columns.v1).repeated(columns.v0),
@@ -608,7 +612,7 @@ export struct GridStyle {
         };
     }
 
-    static GridStyle simpleAuto(isize rows, isize columns, Math::Vec2i gaps = 0) {
+    static GridStyle simpleAuto(isize rows, isize columns, Math::Vec2Au gaps = 0_au) {
         return GridStyle{
             GridUnit::auto_().repeated(rows),
             GridUnit::auto_().repeated(columns),
@@ -649,10 +653,10 @@ export auto cell(Math::Vec2i start, Math::Vec2i end) {
 
 struct GridLayout : GroupNode<GridLayout> {
     struct _Dim {
-        isize start;
-        isize size;
+        Au start;
+        Au size;
 
-        isize end() const {
+        Au end() const {
             return start + size;
         }
     };
@@ -671,48 +675,48 @@ struct GridLayout : GroupNode<GridLayout> {
         GroupNode::reconcile(o);
     }
 
-    isize computeGapsRows() {
+    Au computeGapsRows() {
         return _style.gaps.y * (max(1uz, _style.rows.len()) - 1);
     }
 
-    isize computeGapsColumns() {
+    Au computeGapsColumns() {
         return _style.gaps.x * (max(1uz, _style.columns.len()) - 1);
     }
 
-    isize computeGrowUnitRows(Math::Recti r) {
-        isize total = 0;
+    Au computeGrowUnitRows(Math::RectAu r) {
+        Au total = 0_au;
         isize grows = 0;
 
         for (auto& row : _style.rows) {
             if (row.unit == GridUnit::GROW) {
-                grows += row.value;
+                grows += row.factor;
             } else {
-                total += row.value;
+                total += row.size;
             }
         }
 
-        isize all = _style.flow.getHeight(r) - computeGapsRows();
-        isize growTotal = max(0, all - total);
+        Au all = _style.flow.getHeight(r) - computeGapsRows();
+        Au growTotal = max(0_au, all - total);
 
-        return (growTotal) / max(1, grows);
+        return growTotal / max(1, grows);
     }
 
-    isize computeGrowUnitColumns(Math::Recti r) {
-        isize total = 0;
+    Au computeGrowUnitColumns(Math::RectAu r) {
+        Au total = 0_au;
         isize grows = 0;
 
         for (auto& column : _style.columns) {
             if (column.unit == GridUnit::GROW) {
-                grows += column.value;
+                grows += column.factor;
             } else {
-                total += column.value;
+                total += column.size;
             }
         }
 
-        isize all = _style.flow.getWidth(r) - computeGapsColumns();
-        isize growTotal = max(0, all - total);
+        Au all = _style.flow.getWidth(r) - computeGapsColumns();
+        Au growTotal = max(0_au, all - total);
 
-        return (growTotal) / max(1, grows);
+        return growTotal / max(1, grows);
     }
 
     void place(Child child, Math::Vec2i pos) {
@@ -726,7 +730,7 @@ struct GridLayout : GroupNode<GridLayout> {
         auto endRow = _rows[end.y];
         auto endColumn = _columns[end.x];
 
-        auto childRect = Math::Recti{
+        auto childRect = Math::RectAu{
             startColumn.start,
             startRow.start,
             endColumn.end() - startColumn.start,
@@ -736,35 +740,35 @@ struct GridLayout : GroupNode<GridLayout> {
         child->layout(childRect);
     }
 
-    void layout(Math::Recti r) override {
+    void layout(Math::RectAu r) override {
         _bound = r;
 
         // compute the dimensions of the grid
         _rows.clear();
-        isize growUnitRows = computeGrowUnitRows(r);
-        isize row = _style.flow.getTop(r);
+        Au growUnitRows = computeGrowUnitRows(r);
+        Au row = _style.flow.getTop(r);
         for (auto& r : _style.rows) {
             if (r.unit == GridUnit::GROW) {
-                _rows.pushBack({_Dim{row, growUnitRows * r.value}});
-                row += growUnitRows * r.value;
+                _rows.pushBack({_Dim{row, growUnitRows * r.factor}});
+                row += growUnitRows * r.factor;
             } else {
-                _rows.pushBack({_Dim{row, r.value}});
-                row += r.value;
+                _rows.pushBack({_Dim{row, r.size}});
+                row += r.size;
             }
 
             row += _style.gaps.y;
         }
 
         _columns.clear();
-        isize growUnitColumns = computeGrowUnitColumns(r);
-        isize column = _style.flow.getStart(r);
+        Au growUnitColumns = computeGrowUnitColumns(r);
+        Au column = _style.flow.getStart(r);
         for (auto& c : _style.columns) {
             if (c.unit == GridUnit::GROW) {
-                _columns.pushBack({_Dim{column, growUnitColumns * c.value}});
-                column += growUnitColumns * c.value;
+                _columns.pushBack({_Dim{column, growUnitColumns * c.factor}});
+                column += growUnitColumns * c.factor;
             } else {
-                _columns.pushBack({_Dim{column, c.value}});
-                column += c.value;
+                _columns.pushBack({_Dim{column, c.size}});
+                column += c.size;
             }
 
             column += _style.gaps.x;
@@ -789,16 +793,16 @@ struct GridLayout : GroupNode<GridLayout> {
         }
     }
 
-    Math::Vec2i size(Math::Vec2i s, Hint hint) override {
-        isize row = 0;
+    Math::Vec2Au size(Math::Vec2Au s, Hint hint) override {
+        Au row = 0_au;
         bool rowGrow = false;
-        isize growUnitRows = computeGrowUnitRows(Math::Recti{0, s});
+        Au growUnitRows = computeGrowUnitRows(Math::RectAu{0_au, s});
         for (auto& r : _style.rows) {
             if (r.unit == GridUnit::GROW) {
-                row += growUnitRows * r.value;
+                row += growUnitRows * r.factor;
                 rowGrow = true;
             } else {
-                row += r.value;
+                row += r.size;
             }
         }
 
@@ -808,15 +812,15 @@ struct GridLayout : GroupNode<GridLayout> {
             row = max(_style.flow.getY(s), row);
         }
 
-        isize column = 0;
+        Au column = 0_au;
         bool columnGrow = false;
-        isize growUnitColumns = computeGrowUnitColumns(Math::Recti{0, s});
+        Au growUnitColumns = computeGrowUnitColumns(Math::RectAu{0_au, s});
         for (auto& c : _style.columns) {
             if (c.unit == GridUnit::GROW) {
-                column += growUnitColumns * c.value;
+                column += growUnitColumns * c.factor;
                 columnGrow = true;
             } else {
-                column += c.value;
+                column += c.size;
             }
         }
 
@@ -826,7 +830,7 @@ struct GridLayout : GroupNode<GridLayout> {
             column = max(_style.flow.getX(s), column);
         }
 
-        return Math::Vec2i{column, row};
+        return Math::Vec2Au{column, row};
     }
 };
 

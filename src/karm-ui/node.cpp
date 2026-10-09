@@ -43,7 +43,7 @@ struct Node : App::Dispatch {
     bool _consumed = false;
 
     struct PaintEvent {
-        Math::Recti bound;
+        Math::RectAu bound;
     };
 
     struct LayoutEvent {
@@ -62,15 +62,15 @@ struct Node : App::Dispatch {
 
     virtual Opt<Child> reconcile(Child other) { return Some(other); }
 
-    virtual void paint(Gfx::Canvas&, Math::Recti) {}
+    virtual void paint(Gfx::Canvas&, Math::RectAu) {}
 
-    virtual void layout(Math::Recti) {}
+    virtual void layout(Math::RectAu) {}
 
-    virtual Math::Vec2i size(Math::Vec2i s, Hint) { return s; }
+    virtual Math::Vec2Au size(Math::Vec2Au s, Hint) { return s; }
 
-    virtual Math::Recti bound() { panic("bound() not implemented"); }
+    virtual Math::RectAu bound() { panic("bound() not implemented"); }
 
-    virtual App::HitResult hitTest([[maybe_unused]] Math::Vec2i p) {
+    virtual App::HitResult hitTest([[maybe_unused]] Math::Vec2Au p) {
         return App::HitResult::NORMAL;
     }
 
@@ -149,7 +149,7 @@ struct LeafNode : Node {
             _parent = nullptr;
     }
 
-    App::HitResult hitTest(Math::Vec2i) override {
+    App::HitResult hitTest(Math::Vec2Au) override {
         return App::HitResult::NORMAL;
     }
 };
@@ -159,7 +159,7 @@ struct LeafNode : Node {
 export template <typename Crtp>
 struct GroupNode : LeafNode<Crtp> {
     Children _children;
-    Math::Recti _bound{};
+    Math::RectAu _bound{};
 
     GroupNode() = default;
 
@@ -207,7 +207,7 @@ struct GroupNode : LeafNode<Crtp> {
         us.trunc(them.len());
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti r) override {
+    void paint(Gfx::Canvas& g, Math::RectAu r) override {
         for (auto& child : children()) {
             if (not child->bound().collide(r))
                 continue;
@@ -227,18 +227,18 @@ struct GroupNode : LeafNode<Crtp> {
         }
     }
 
-    void layout(Math::Recti r) override {
+    void layout(Math::RectAu r) override {
         _bound = r;
 
         for (auto& child : children())
             child->layout(r);
     }
 
-    Math::Recti bound() override {
+    Math::RectAu bound() override {
         return _bound;
     }
 
-    App::HitResult hitTest(Math::Vec2i p) override {
+    App::HitResult hitTest(Math::Vec2Au p) override {
         for (auto& child : children()) {
             if (not child->bound().contains(p))
                 continue;
@@ -278,7 +278,7 @@ struct ProxyNode : LeafNode<Crtp> {
         LeafNode<Crtp>::reconcile(o);
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti r) override {
+    void paint(Gfx::Canvas& g, Math::RectAu r) override {
         child().paint(g, r);
     }
 
@@ -289,19 +289,19 @@ struct ProxyNode : LeafNode<Crtp> {
         child().event(e);
     }
 
-    void layout(Math::Recti r) override {
+    void layout(Math::RectAu r) override {
         child().layout(r);
     }
 
-    Math::Vec2i size(Math::Vec2i s, Hint hint) override {
+    Math::Vec2Au size(Math::Vec2Au s, Hint hint) override {
         return child().size(s, hint);
     }
 
-    Math::Recti bound() override {
+    Math::RectAu bound() override {
         return child().bound();
     }
 
-    App::HitResult hitTest(Math::Vec2i p) override {
+    App::HitResult hitTest(Math::Vec2Au p) override {
         if (not child().bound().contains(p))
             return App::HitResult::NORMAL;
         return child().hitTest(p);

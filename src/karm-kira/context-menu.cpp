@@ -7,9 +7,11 @@ import Karm.Math;
 
 import :checkbox;
 
+using namespace Karm::Math::Literals;
+
 namespace Karm::Kira {
 
-export void showContextMenu(Ui::Node& n, Math::Vec2i at, Ui::Child menu) {
+export void showContextMenu(Ui::Node& n, Math::Vec2Au at, Ui::Child menu) {
     if (App::formFactor == App::FormFactor::DESKTOP) {
         Ui::showPopover(n, at, menu);
     } else {
@@ -39,8 +41,8 @@ struct ContextMenu : Ui::ProxyNode<ContextMenu> {
         if (auto e = event.is<App::MouseEvent>()) {
             if (e->type == App::MouseEvent::PRESS and
                 e->button == App::MouseButton::RIGHT and
-                bound().contains(e->pos)) {
-                showContextMenu(*this, e->pos, _menu());
+                bound().contains(e->pos.cast<Math::Au>())) {
+                showContextMenu(*this, e->pos.cast<Math::Au>(), _menu());
                 event.accept();
             }
         }
@@ -61,9 +63,9 @@ export Ui::Child contextMenuContent(Ui::Children children) {
     return Ui::vflow(
                children
            ) |
-           Ui::minSize({200, Ui::UNCONSTRAINED}) |
+           Ui::minSize({200_au, Ui::UNCONSTRAINED}) |
            Ui::box({
-               .margin = 4,
+               .margin = 4_au,
                .borderRadii = 6,
                .borderWidth = 1,
                .borderFill = Some(Ui::GRAY800),
@@ -75,13 +77,13 @@ export Ui::Child contextMenuContent(Ui::Children children) {
 
 export Ui::Child contextMenuItem(Opt<Ui::Send<>> onPress, Opt<Gfx::Icon> i, Str t) {
     return Ui::hflow(
-               12,
+               12_au,
                Math::Align::CENTER,
-               i ? Ui::icon(*i) : Ui::empty(18),
+               i ? Ui::icon(*i) : Ui::empty(18_au),
                Ui::text(t)
            ) |
-           Ui::insets({6, 6, 6, 10}) |
-           Ui::minSize({Ui::UNCONSTRAINED, 32}) |
+           Ui::insets({6_au, 6_au, 6_au, 10_au}) |
+           Ui::minSize({Ui::UNCONSTRAINED, 32_au}) |
            Ui::button(
                onPress ? Opt<Ui::Send<>>(Some([onPress = std::move(onPress)](auto& n) {
                    onPress(n);
@@ -90,18 +92,18 @@ export Ui::Child contextMenuItem(Opt<Ui::Send<>> onPress, Opt<Gfx::Icon> i, Str 
                        : Ui::DISABLED<>,
                Ui::ButtonStyle::subtle()
            ) |
-           Ui::insets(4);
+           Ui::insets(4_au);
 }
 
 export Ui::Child contextMenuCheck(Opt<Ui::Send<>> onPress, bool checked, Str t) {
     return Ui::hflow(
-               12,
+               12_au,
                Math::Align::CENTER,
                checkbox(checked, Ui::SINK<bool>),
                Ui::text(t)
            ) |
-           Ui::insets({6, 6, 6, 10}) |
-           Ui::minSize({Ui::UNCONSTRAINED, 32}) |
+           Ui::insets({6_au, 6_au, 6_au, 10_au}) |
+           Ui::minSize({Ui::UNCONSTRAINED, 32_au}) |
            Ui::button(
                Some([onPress = std::move(onPress)](auto& n) {
                    onPress(n);
@@ -109,16 +111,16 @@ export Ui::Child contextMenuCheck(Opt<Ui::Send<>> onPress, bool checked, Str t) 
                }),
                Ui::ButtonStyle::subtle()
            ) |
-           Ui::insets(4);
+           Ui::insets(4_au);
 }
 
 export Ui::Child contextMenuDock(Ui::Children children) {
     return Ui::hflow(
-               2,
+               2_au,
                Math::Align::CENTER,
                children
            ) |
-           Ui::insets(4);
+           Ui::insets(4_au);
 }
 
 export Ui::Child contextMenuIcon(Opt<Ui::Send<>> onPress, Gfx::Icon i) {

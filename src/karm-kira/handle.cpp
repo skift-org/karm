@@ -1,17 +1,20 @@
 export module Karm.Kira:handle;
 
 import Karm.Core;
+import Karm.Math;
 import Karm.Ui;
+
+using namespace Karm::Math::Literals;
 
 namespace Karm::Kira {
 
 export Ui::Child handle() {
-    return Ui::empty({128, 4}) |
+    return Ui::empty({128_au, 4_au}) |
            Ui::box({
                .borderRadii = 999,
                .backgroundFill = Some(Ui::GRAY50),
            }) |
-           Ui::insets(12) |
+           Ui::insets(12_au) |
            Ui::center();
 }
 

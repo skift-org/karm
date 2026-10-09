@@ -6,13 +6,15 @@ import Karm.Ui;
 import Karm.Gfx;
 import Karm.Math;
 
+using namespace Karm::Math::Literals;
+
 namespace Karm::Kira {
 
 struct IndeterminedProgress : Ui::View<IndeterminedProgress> {
-    isize _size;
+    Math::Au _size;
     f64 _spin = 0;
 
-    IndeterminedProgress(isize size)
+    IndeterminedProgress(Math::Au size)
         : _size(size) {
     }
 
@@ -20,24 +22,25 @@ struct IndeterminedProgress : Ui::View<IndeterminedProgress> {
         _size = o._size;
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti) override {
+    void paint(Gfx::Canvas& g, Math::RectAu) override {
         g.push();
-        g.clip(bound());
+        g.clip(bound().cast<f64>());
 
-        g.translate(bound().center().cast<f64>());
+        auto b = bound().cast<f64>();
+        g.translate(b.center());
         g.rotate(_spin);
 
         g.beginPath();
         g.arc({
             {0, 0},
-            min(bound().width / 2., bound().height / 2.),
+            min(b.width / 2., b.height / 2.),
             0,
             Math::PI * 1.25,
         });
 
         g.stroke(
             Gfx::stroke(Ui::ACCENT500)
-                .withWidth(bound().width / 8.)
+                .withWidth(b.width / 8.)
                 .withAlign(Gfx::INSIDE_ALIGN)
                 .withCap(Gfx::ROUND_CAP)
         );
@@ -55,20 +58,20 @@ struct IndeterminedProgress : Ui::View<IndeterminedProgress> {
         Ui::View<IndeterminedProgress>::event(e);
     }
 
-    Math::Vec2i size(Math::Vec2i, Ui::Hint) override {
+    Math::Vec2Au size(Math::Vec2Au, Ui::Hint) override {
         return _size;
     }
 };
 
-export Ui::Child indeterminedProgress(isize size = 16) {
+export Ui::Child indeterminedProgress(Math::Au size = 16_au) {
     return makeRc<IndeterminedProgress>(size);
 }
 
 struct PieCountDown : Ui::View<PieCountDown> {
     f64 _value;
-    isize _size;
+    Math::Au _size;
 
-    PieCountDown(f64 value, isize size)
+    PieCountDown(f64 value, Math::Au size)
         : _value(value), _size(size) {
     }
 
@@ -76,12 +79,13 @@ struct PieCountDown : Ui::View<PieCountDown> {
         _value = o._value;
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti) override {
+    void paint(Gfx::Canvas& g, Math::RectAu) override {
         g.push();
-        g.clip(bound());
+        g.clip(bound().cast<f64>());
 
-        auto radii = min(bound().width / 2., bound().height / 2.);
-        auto center = bound().cast<f64>().center();
+        auto b = bound().cast<f64>();
+        auto radii = min(b.width / 2., b.height / 2.);
+        auto center = b.center();
 
         g.fillStyle(Ui::ACCENT500.withOpacity(0.25));
         g.fill(Math::Ellipsef{center, radii});
@@ -100,12 +104,12 @@ struct PieCountDown : Ui::View<PieCountDown> {
         g.pop();
     }
 
-    Math::Vec2i size(Math::Vec2i, Ui::Hint) override {
+    Math::Vec2Au size(Math::Vec2Au, Ui::Hint) override {
         return _size;
     }
 };
 
-export Ui::Child pieCountDown(f64 value, isize size) {
+export Ui::Child pieCountDown(f64 value, Math::Au size) {
     return makeRc<PieCountDown>(value, size);
 }
 

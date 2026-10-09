@@ -7,6 +7,8 @@ import Karm.Math;
 
 import :dialog;
 
+using namespace Karm::Math::Literals;
+
 namespace Karm::Kira {
 
 // MARK: Hsv Input -------------------------------------------------------------
@@ -43,29 +45,29 @@ struct HsvSquare : Ui::View<HsvSquare> {
         return surf;
     }
 
-    Gfx::Hsv sampleHsv(Math::Vec2i pos) {
+    Gfx::Hsv sampleHsv(Math::Vec2Au pos) {
         return {
             _value.hue,
-            (pos.x / (f64)bound().width),
-            1 - (pos.y / (f64)bound().height),
+            pos.x / bound().width,
+            1 - pos.y / bound().height,
         };
     }
 
-    Gfx::Color sampleColor(Math::Vec2i pos) {
+    Gfx::Color sampleColor(Math::Vec2Au pos) {
         return Gfx::hsvToRgb(sampleHsv(pos));
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti) override {
+    void paint(Gfx::Canvas& g, Math::RectAu) override {
         g.push();
-        g.clip(bound());
+        g.clip(bound().cast<f64>());
 
         auto hsv = makeHsvSquare();
 
-        g.blit(bound(), hsv);
+        g.blit(bound().cast<isize>(), hsv);
 
-        Math::Vec2i pos = {
-            bound().x + (isize)(_value.saturation * bound().width),
-            bound().y + (isize)((1 - _value.value) * bound().height),
+        Math::Vec2Au pos = {
+            bound().x + bound().width * _value.saturation,
+            bound().y + bound().height * (1 - _value.value),
         };
 
         g.fillStyle(Gfx::WHITE);
@@ -96,8 +98,8 @@ struct HsvSquare : Ui::View<HsvSquare> {
         }
     }
 
-    Math::Vec2i size(Math::Vec2i, Ui::Hint) override {
-        return {256, 256};
+    Math::Vec2Au size(Math::Vec2Au, Ui::Hint) override {
+        return {256_au, 256_au};
     }
 };
 
@@ -116,7 +118,7 @@ static Ui::Child _sliderThumb(Gfx::Color color) {
                .backgroundFill = Some(color),
            }) |
            Ui::box({
-               .padding = 1,
+               .padding = 1_au,
                .borderRadii = 99,
                .borderWidth = 1,
                .borderFill = Some(Gfx::BLACK.withOpacity(0.25)),
@@ -139,13 +141,13 @@ export Ui::Child hsvValueSlider(Gfx::Hsv hsv, Ui::Send<Gfx::Hsv> onChange) {
                onChange(n, hsv.withValue(v));
            }) |
            Ui::box({
-               .padding = 1,
+               .padding = 1_au,
                .borderRadii = 99,
                .borderWidth = 1,
                .borderFill = Some(Ui::GRAY100.withOpacity(0.2)),
                .backgroundFill = Some(background),
            }) |
-           Ui::maxSize({Ui::UNCONSTRAINED, 18});
+           Ui::maxSize({Ui::UNCONSTRAINED, 18_au});
 }
 
 export Ui::Child hsvSaturationSlider(Gfx::Hsv hsv, Ui::Send<Gfx::Hsv> onChange) {
@@ -171,13 +173,13 @@ export Ui::Child hsvSaturationSlider(Gfx::Hsv hsv, Ui::Send<Gfx::Hsv> onChange) 
                onChange(n, hsv.withSaturation(v));
            }) |
            Ui::box({
-               .padding = 1,
+               .padding = 1_au,
                .borderRadii = 99,
                .borderWidth = 1,
                .borderFill = Some(Ui::GRAY100.withOpacity(0.2)),
                .backgroundFill = Some(background),
            }) |
-           Ui::maxSize({Ui::UNCONSTRAINED, 18});
+           Ui::maxSize({Ui::UNCONSTRAINED, 18_au});
 }
 
 export Ui::Child hsvHueSlider(Gfx::Hsv hsv, Ui::Send<Gfx::Hsv> onChange) {
@@ -187,13 +189,13 @@ export Ui::Child hsvHueSlider(Gfx::Hsv hsv, Ui::Send<Gfx::Hsv> onChange) {
                onChange(n, hsv.withHue(v * 360));
            }) |
            Ui::box({
-               .padding = 1,
+               .padding = 1_au,
                .borderRadii = 99,
                .borderWidth = 1,
                .borderFill = Some(Ui::GRAY100.withOpacity(0.2)),
                .backgroundFill = Some(Gfx::Gradient::hsv().bake()),
            }) |
-           Ui::maxSize({Ui::UNCONSTRAINED, 18});
+           Ui::maxSize({Ui::UNCONSTRAINED, 18_au});
 }
 
 // MARK: Color Picker ----------------------------------------------------------
@@ -252,7 +254,7 @@ export Ui::Child colorPickerDialog() {
             auto preview =
                 Ui::codeLarge(pickColor(c), "#{:02x}{:02x}{:02x}", c.red, c.green, c.blue) |
                 Ui::center() |
-                Ui::minSize(96) |
+                Ui::minSize(96_au) |
                 Ui::box({
                     .borderRadii = 6,
                     .borderWidth = 1,
@@ -263,7 +265,7 @@ export Ui::Child colorPickerDialog() {
 
             auto content =
                 Ui::vflow(
-                    8,
+                    8_au,
                     preview,
                     hsvHueSlider(
                         s.hsv,
@@ -278,10 +280,10 @@ export Ui::Child colorPickerDialog() {
                         Model::map<UpdateHsv>()
                     )
                 ) |
-                Ui::minSize({256, Ui::UNCONSTRAINED});
+                Ui::minSize({256_au, Ui::UNCONSTRAINED});
             return dialogContent({
                 dialogTitleBar("Color Picker"s),
-                content | Ui::insets({8, 16}),
+                content | Ui::insets({8_au, 16_au}),
                 dialogFooter({
                     Ui::grow(NONE),
                     dialogCancel(),
@@ -296,9 +298,9 @@ export Ui::Child colorPickerDialog() {
 
 export Ui::Child colorInput(Gfx::Color color, Ui::Send<Gfx::Color>) {
     auto colorPreview =
-        Ui::empty({18, 18}) |
+        Ui::empty({18_au, 18_au}) |
         Ui::box({
-            .margin = 4,
+            .margin = 4_au,
             .borderRadii = 2,
             .borderWidth = 1,
             .borderFill = Some(Gfx::GRAY50.withOpacity(0.1)),
@@ -308,9 +310,9 @@ export Ui::Child colorInput(Gfx::Color color, Ui::Send<Gfx::Color>) {
     auto hexPreview =
         Ui::codeMedium("#{:02x}{:02x}{:02x}", color.red, color.green, color.blue) | Ui::vcenter();
 
-    return hflow(8, Math::Align::CENTER, colorPreview, hexPreview) |
-           Ui::insets({6, 12, 6, 6}) |
-           Ui::minSize({Ui::UNCONSTRAINED, 32}) |
+    return hflow(8_au, Math::Align::CENTER, colorPreview, hexPreview) |
+           Ui::insets({6_au, 12_au, 6_au, 6_au}) |
+           Ui::minSize({Ui::UNCONSTRAINED, 32_au}) |
            button(
                Some([](auto& n) {
                    Ui::showDialog(n, colorPickerDialog());

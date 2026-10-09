@@ -6,6 +6,8 @@ import Karm.Gfx;
 import Karm.Math;
 import Karm.Core;
 
+using namespace Karm::Math::Literals;
+
 namespace Karm::Kira {
 
 export struct Slider : Ui::View<Slider> {
@@ -34,10 +36,10 @@ export struct Slider : Ui::View<Slider> {
         _onChange = std::move(o._onChange);
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti) override {
+    void paint(Gfx::Canvas& g, Math::RectAu) override {
         g.push();
 
-        double full = bound().width - THUMP_RADIUS * 2;
+        double full = bound().width.cast<f64>() - THUMP_RADIUS * 2;
         double v = (_origin == ZERO)
                        ? full * _value
                        : full * (_value - 0.5);
@@ -82,12 +84,12 @@ export struct Slider : Ui::View<Slider> {
 
         if (_mouseListener.isPress() and e.is<App::MouseEvent>()) {
             auto p = _mouseListener.pos();
-            double full = static_cast<double>(bound().width) - THUMP_RADIUS * 2;
+            double full = bound().width.cast<f64>() - THUMP_RADIUS * 2;
 
             if (_origin == ZERO) {
-                _value = (p.x - THUMP_RADIUS) / full;
+                _value = (p.x.cast<f64>() - THUMP_RADIUS) / full;
             } else {
-                _value = 0.5 + ((p.x - THUMP_RADIUS) - full / 2) / full;
+                _value = 0.5 + ((p.x.cast<f64>() - THUMP_RADIUS) - full / 2) / full;
             }
 
             _value = clamp01(_value);
@@ -98,8 +100,8 @@ export struct Slider : Ui::View<Slider> {
         }
     }
 
-    Math::Vec2i size(Math::Vec2i, Ui::Hint) override {
-        return {128, 26};
+    Math::Vec2Au size(Math::Vec2Au, Ui::Hint) override {
+        return {128_au, 26_au};
     }
 };
 
@@ -109,7 +111,7 @@ export Ui::Child slider(double value, Opt<Ui::Send<double>> onChange, Slider::Or
 
 export Ui::Child slider(f64 value, Ui::Send<f64> onChange, Gfx::Icon icon) {
     return Ui::hflow(
-               8,
+               8_au,
                Math::Align::VCENTER | Math::Align::HFILL | Math::Align::TOP_START,
                {
                    Ui::icon(icon) |
@@ -118,8 +120,8 @@ export Ui::Child slider(f64 value, Ui::Send<f64> onChange, Gfx::Icon icon) {
                    Kira::slider(value, Some(std::move(onChange))) | Ui::grow(),
                }
            ) |
-           Ui::insets({4, 12, 4, 10}) |
-           Ui::minSize({Ui::UNCONSTRAINED, 32});
+           Ui::insets({4_au, 12_au, 4_au, 10_au}) |
+           Ui::minSize({Ui::UNCONSTRAINED, 32_au});
 }
 
 export template <typename T>

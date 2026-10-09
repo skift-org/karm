@@ -25,7 +25,7 @@ export struct MouseListener {
     };
 
     MouseState _state = IDLE;
-    Math::Vec2i _pos = {0, 0};
+    Math::Vec2Au _pos = {0_au, 0_au};
 
     auto state() const {
         return _state;
@@ -52,7 +52,7 @@ export struct MouseListener {
         MouseState state = _state;
 
         if (auto e = event.is<App::MouseEvent>()) {
-            if (not node.bound().contains(e->pos)) {
+            if (not node.bound().contains(e->pos.cast<Au>())) {
                 if (state != PRESS or e->type == App::MouseEvent::RELEASE)
                     state = IDLE;
             } else {
@@ -60,7 +60,7 @@ export struct MouseListener {
                     state = HOVER;
                 }
 
-                _pos = e->pos - node.bound().topStart();
+                _pos = e->pos.cast<Au>() - node.bound().topStart();
 
                 if (e->type == App::MouseEvent::PRESS and
                     e->button == App::MouseButton::LEFT) {
@@ -252,7 +252,7 @@ export struct ButtonStyle {
         };
     }
 
-    ButtonStyle withPadding(Math::Insetsi insets) const {
+    ButtonStyle withPadding(Math::InsetsAu insets) const {
         return {
             idleStyle.withPadding(insets),
             hoverStyle.withPadding(insets),
@@ -260,7 +260,7 @@ export struct ButtonStyle {
         };
     }
 
-    ButtonStyle withMargin(Math::Insetsi insets) const {
+    ButtonStyle withMargin(Math::InsetsAu insets) const {
         return {
             idleStyle.withMargin(insets),
             hoverStyle.withMargin(insets),
@@ -313,7 +313,7 @@ struct Button : _Box<Button> {
         }
     };
 
-    App::HitResult hitTest(Math::Vec2i) override {
+    App::HitResult hitTest(Math::Vec2Au) override {
         return App::HitResult::HIT;
     }
 };
@@ -330,24 +330,24 @@ export auto button(Opt<Send<>> onPress, ButtonStyle style) {
 
 export Child button(Opt<Send<>> onPress, ButtonStyle style, Str t) {
     return text(t) |
-           insets({4, 14}) |
+           insets({4_au, 14_au}) |
            center() |
-           minSize({UNCONSTRAINED, 32}) |
+           minSize({UNCONSTRAINED, 32_au}) |
            button(std::move(onPress), style);
 }
 
 export Child button(Opt<Send<>> onPress, ButtonStyle style, Gfx::Icon i) {
     return icon(i) |
-           insets(4) |
+           insets(4_au) |
            center() |
-           minSize({32, 32}) |
+           minSize({32_au, 32_au}) |
            button(std::move(onPress), style);
 }
 
 export Child button(Opt<Send<>> onPress, ButtonStyle style, Gfx::Icon i, Str t) {
-    return hflow(8, Math::Align::CENTER, icon(i), text(t)) |
-           insets({4, 14, 4, 10}) |
-           minSize({UNCONSTRAINED, 32}) |
+    return hflow(8_au, Math::Align::CENTER, icon(i), text(t)) |
+           insets({4_au, 14_au, 4_au, 10_au}) |
+           minSize({UNCONSTRAINED, 32_au}) |
            button(std::move(onPress), style);
 }
 
@@ -457,9 +457,9 @@ struct Input : View<Input> {
         return *_text;
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti) override {
+    void paint(Gfx::Canvas& g, Math::RectAu) override {
         g.push();
-        g.clip(bound());
+        g.clip(bound().cast<f64>());
         g.origin(bound().xy.cast<f64>());
 
         auto text = _ensureText();
@@ -482,10 +482,9 @@ struct Input : View<Input> {
         if (auto me = e.is<App::MouseEvent>()) {
             if (me->type == App::MouseEvent::PRESS and
                 me->button == App::MouseButton::LEFT and
-                bound().contains(me->pos)) {
-                _ensureText()->layout(Au{bound().width});
-                auto local = me->pos - bound().xy;
-                auto pos = _ensureText()->hitTest({Au{local.x}, Au{local.y}});
+                bound().contains(me->pos.cast<Au>())) {
+                _ensureText()->layout(bound().width);
+                auto pos = _ensureText()->hitTest(me->pos.cast<Au>() - bound().xy);
                 _mouseDown = true;
                 _selectionBoundary =
                     me->clicks == 1
@@ -495,9 +494,8 @@ struct Input : View<Input> {
                 _onChange(*this, TextAction::moveTo(pos, _selectionBoundary));
                 e.accept();
             } else if (me->type == App::MouseEvent::MOVE and _mouseDown) {
-                _ensureText()->layout(Au{bound().width});
-                auto local = me->pos - bound().xy;
-                auto pos = _ensureText()->hitTest({Au{local.x}, Au{local.y}});
+                _ensureText()->layout(bound().width);
+                auto pos = _ensureText()->hitTest(me->pos.cast<Au>() - bound().xy);
                 _onChange(*this, TextAction::selectTo(pos, _selectionBoundary));
                 e.accept();
             } else if (me->type == App::MouseEvent::RELEASE and me->button == App::MouseButton::LEFT) {
@@ -514,19 +512,19 @@ struct Input : View<Input> {
         }
     }
 
-    void layout(Math::Recti bound) override {
-        _ensureText()->layout(Au{bound.width});
+    void layout(Math::RectAu bound) override {
+        _ensureText()->layout(bound.width);
         View<Input>::layout(bound);
     }
 
-    Math::Vec2i size(Math::Vec2i s, Hint) override {
-        auto size = _ensureText()->layout(Au{s.width});
+    Math::Vec2Au size(Math::Vec2Au s, Hint) override {
+        auto size = _ensureText()->layout(s.width);
         // NOTE: Ensure the input is always at least 1 pixel wide to show the caret.
-        size.x = max(size.x, Au{1});
-        return size.ceil().cast<isize>();
+        size.x = max(size.x, 1_au);
+        return size;
     }
 
-    App::HitResult hitTest(Math::Vec2i) override {
+    App::HitResult hitTest(Math::Vec2Au) override {
         return App::HitResult::HIT;
     }
 };
@@ -584,9 +582,9 @@ struct SimpleInput : View<SimpleInput> {
         return *_prose;
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti) override {
+    void paint(Gfx::Canvas& g, Math::RectAu) override {
         g.push();
-        g.clip(bound());
+        g.clip(bound().cast<f64>());
         g.origin(bound().xy.cast<f64>());
 
         auto text = _ensureText();
@@ -609,10 +607,9 @@ struct SimpleInput : View<SimpleInput> {
         if (auto me = e.is<App::MouseEvent>()) {
             if (me->type == App::MouseEvent::PRESS and
                 me->button == App::MouseButton::LEFT and
-                bound().contains(me->pos)) {
-                _ensureText()->layout(Au{bound().width});
-                auto local = me->pos - bound().xy;
-                auto pos = _ensureText()->hitTest({Au{local.x}, Au{local.y}});
+                bound().contains(me->pos.cast<Au>())) {
+                _ensureText()->layout(bound().width);
+                auto pos = _ensureText()->hitTest(me->pos.cast<Au>() - bound().xy);
                 _mouseDown = true;
                 _selectionBoundary =
                     me->clicks == 1
@@ -623,9 +620,8 @@ struct SimpleInput : View<SimpleInput> {
                 e.accept();
                 shouldRepaint(*this);
             } else if (me->type == App::MouseEvent::MOVE and _mouseDown) {
-                _ensureText()->layout(Au{bound().width});
-                auto local = me->pos - bound().xy;
-                auto pos = _ensureText()->hitTest({Au{local.x}, Au{local.y}});
+                _ensureText()->layout(bound().width);
+                auto pos = _ensureText()->hitTest(me->pos.cast<Au>() - bound().xy);
                 _ensureModel().reduce(TextAction::selectTo(pos, _selectionBoundary));
                 e.accept();
                 shouldRepaint(*this);
@@ -648,19 +644,19 @@ struct SimpleInput : View<SimpleInput> {
         }
     }
 
-    void layout(Math::Recti bound) override {
-        _ensureText()->layout(Au{bound.width});
+    void layout(Math::RectAu bound) override {
+        _ensureText()->layout(bound.width);
         View::layout(bound);
     }
 
-    Math::Vec2i size(Math::Vec2i s, Hint) override {
-        auto size = _ensureText()->layout(Au{s.width});
+    Math::Vec2Au size(Math::Vec2Au s, Hint) override {
+        auto size = _ensureText()->layout(s.width);
         // NOTE: Ensure the input is always at least 1 pixel wide to show the caret.
-        size.x = max(size.x, Au{1});
-        return size.ceil().cast<isize>();
+        size.x = max(size.x, 1_au);
+        return size;
     }
 
-    App::HitResult hitTest(Math::Vec2i) override {
+    App::HitResult hitTest(Math::Vec2Au) override {
         return App::HitResult::HIT;
     }
 };
@@ -674,7 +670,7 @@ export Child input(Gfx::ProseProps style, String text, Send<String> onChange) {
 struct Slider : ProxyNode<Slider> {
     f64 _value = 0.0f;
     Send<f64> _onChange;
-    Math::Recti _bound;
+    Math::RectAu _bound;
     bool _grabbed = false;
 
     Slider(f64 value, Send<f64> onChange, Child child)
@@ -690,12 +686,12 @@ struct Slider : ProxyNode<Slider> {
         ProxyNode<Slider>::reconcile(o);
     }
 
-    void layout(Math::Recti r) override {
+    void layout(Math::RectAu r) override {
         _bound = r;
         child().layout(_bound.hsplit(((r.width - r.height) * _value) + r.height).v0);
     }
 
-    Math::Recti bound() override {
+    Math::RectAu bound() override {
         return _bound;
     }
 
@@ -712,7 +708,7 @@ struct Slider : ProxyNode<Slider> {
             } else if (it->type == App::MouseEvent::MOVE) {
                 auto max = bound().width - bound().height;
                 auto value = max * _value;
-                value = clamp(value + it->delta.x, 0.0f, max);
+                value = clamp(value + Au{it->delta.x}, 0_au, max);
                 _value = value / max;
                 _onChange(*this, _value);
                 e.accept();
@@ -728,7 +724,7 @@ struct Slider : ProxyNode<Slider> {
         ProxyNode::bubble(e);
     }
 
-    App::HitResult hitTest(Math::Vec2i) override {
+    App::HitResult hitTest(Math::Vec2Au) override {
         return App::HitResult::HIT;
     }
 };

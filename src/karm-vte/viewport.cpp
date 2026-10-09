@@ -16,9 +16,9 @@ struct Viewport : Ui::View<Viewport> {
     Viewport(Rc<Terminal> terminal, Ui::Send<App::KeyboardEvent> send)
         : _terminal(terminal), _send(send) {}
 
-    void paint(Gfx::Canvas& g, Math::Recti) override {
+    void paint(Gfx::Canvas& g, Math::RectAu) override {
         g.push();
-        g.clip(bound());
+        g.clip(bound().cast<f64>());
         g.origin(bound().xy.cast<f64>());
         _terminal->paint(g);
         g.pop();
@@ -45,12 +45,12 @@ struct Viewport : Ui::View<Viewport> {
             View::event(event);
     }
 
-    void layout(Math::Recti bound) override {
-        _terminal->updateViewport(bound.size());
+    void layout(Math::RectAu bound) override {
+        _terminal->updateViewport(bound.size().cast<isize>());
         View::layout(bound);
     }
 
-    Math::Vec2i size(Math::Vec2i s, Ui::Hint hint) override {
+    Math::Vec2Au size(Math::Vec2Au s, Ui::Hint hint) override {
         if (hint == Ui::Hint::MAX)
             return s;
         return {};

@@ -6,6 +6,8 @@ import Karm.Gfx;
 import Karm.Math;
 import Karm.Core;
 
+using namespace Karm::Math::Literals;
+
 namespace Karm::Kira {
 
 struct Radio : Ui::View<Radio> {
@@ -22,14 +24,14 @@ struct Radio : Ui::View<Radio> {
         _onChange = std::move(o._onChange);
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti) override {
+    void paint(Gfx::Canvas& g, Math::RectAu) override {
         g.push();
         if (_value) {
             g.fillStyle(_mouseListener.isHover() ? Ui::ACCENT400 : Ui::ACCENT500);
-            g.fill(bound(), 999);
+            g.fill(bound().cast<f64>(), 999);
 
             g.fillStyle(Gfx::GRAY50);
-            g.fill(bound().shrink(4), 999);
+            g.fill(bound().shrink(4_au).cast<f64>(), 999);
 
             if (_mouseListener.isPress()) {
                 g.strokeStyle(Gfx::stroke(Ui::ACCENT500).withWidth(1).withAlign(Gfx::INSIDE_ALIGN));
@@ -37,7 +39,7 @@ struct Radio : Ui::View<Radio> {
             }
         } else {
             g.fillStyle(_mouseListener.isHover() ? Ui::GRAY600 : Ui::GRAY700);
-            g.fill(bound(), 999);
+            g.fill(bound().cast<f64>(), 999);
 
             if (_mouseListener.isPress()) {
                 g.strokeStyle(Gfx::stroke(Ui::GRAY600).withWidth(1).withAlign(Gfx::INSIDE_ALIGN));
@@ -54,8 +56,8 @@ struct Radio : Ui::View<Radio> {
         }
     }
 
-    Math::Vec2i size(Math::Vec2i, Ui::Hint) override {
-        return {18, 18};
+    Math::Vec2Au size(Math::Vec2Au, Ui::Hint) override {
+        return {18_au, 18_au};
     }
 };
 

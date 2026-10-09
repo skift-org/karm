@@ -1,14 +1,17 @@
 export module Karm.Kira:sidePanel;
 
 import Karm.Core;
+import Karm.Math;
 import Karm.Ui;
 import Mdi;
+
+using namespace Karm::Math::Literals;
 
 namespace Karm::Kira {
 
 export Ui::Child sidePanelContent(Ui::Children children) {
     return Ui::vflow(children) |
-           Ui::pinSize({128, Ui::UNCONSTRAINED});
+           Ui::pinSize({128_au, Ui::UNCONSTRAINED});
 }
 
 export Ui::Child sidePanelTitle(Str title) {
@@ -16,7 +19,7 @@ export Ui::Child sidePanelTitle(Str title) {
                Ui::labelLarge(title),
                Ui::grow(NONE)
            ) |
-           Ui::insets(6);
+           Ui::insets(6_au);
 }
 
 export Ui::Child sidePanelTitle(Opt<Ui::Send<>> onClose, Str title) {
@@ -29,7 +32,7 @@ export Ui::Child sidePanelTitle(Opt<Ui::Send<>> onClose, Str title) {
                    Ui::icon(Mdi::CLOSE) | Ui::center()
                )
            ) |
-           Ui::insets(6);
+           Ui::insets(6_au);
 }
 
 } // namespace Karm::Kira

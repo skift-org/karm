@@ -11,6 +11,7 @@ import Karm.Gfx;
 import Karm.Math;
 
 using namespace Karm::Literals;
+using namespace Karm::Math::Literals;
 
 namespace Karm::Print {
 
@@ -98,14 +99,14 @@ using Model = Ui::Model<State, Action, reduce>;
 
 Ui::Child _printSelect(State const& s, usize index) {
     return Ui::hflow(
-               8,
+               8_au,
                Math::Align::CENTER,
                Kr::checkbox(true, Ui::SINK<bool>),
                Ui::labelMedium("Page {} of {}", index + 1, s.pages.len())
            ) |
            Ui::box({
-               .margin = 8,
-               .padding = Math::Insetsi{6, 12, 6, 6},
+               .margin = 8_au,
+               .padding = Math::InsetsAu{6_au, 12_au, 6_au, 6_au},
                .borderRadii = 9,
                .borderWidth = 1,
                .borderFill = Some(Ui::GRAY800),
@@ -135,7 +136,7 @@ Ui::Child _printPaper(State const& s, usize index) {
                    }),
                _printSelect(s, index) | Ui::align(Math::Align::BOTTOM_END)
            ) |
-           Ui::pinSize(previewSize.cast<isize>());
+           Ui::pinSize(previewSize.cast<Math::Au>());
 }
 
 Ui::Child _printPreviewMobile(State const& s) {
@@ -145,11 +146,11 @@ Ui::Child _printPreviewMobile(State const& s) {
     }
 
     return Ui::hflow(
-               8,
+               8_au,
                Math::Align::CENTER,
                std::move(pages)
            ) |
-           Ui::insets(32) |
+           Ui::insets(32_au) |
            Ui::hscroll();
 }
 
@@ -160,11 +161,11 @@ Ui::Child _printPreview(State const& s) {
     }
 
     return Ui::vflow(
-               8,
+               8_au,
                Math::Align::CENTER,
                std::move(pages)
            ) |
-           Ui::insets(32) |
+           Ui::insets(32_au) |
            Ui::vscroll();
 }
 
@@ -225,7 +226,7 @@ Ui::Child _paperSelect(State const& s) {
 
 Ui::Child _printSettings(State const& s) {
     return Ui::vflow(
-        4,
+        4_au,
         Ui::vflow(
             Kr::rowContent(
                 NONE,
@@ -345,26 +346,26 @@ Ui::Child _printControls(State const& s) {
     return _printSettings(s) |
            Ui::vscroll() |
            Ui::grow() |
-           Ui::minSize({280, Ui::UNCONSTRAINED});
+           Ui::minSize({280_au, Ui::UNCONSTRAINED});
 }
 
 Ui::Child _printDialog(State const& s) {
     return Kr::dialogContent({
         Kr::dialogTitleBar("Print"s),
         Ui::vflow(
-            4,
+            4_au,
             Ui::hflow(
-                4,
+                4_au,
                 _printPreview(s) | Kr::scaffoldContent() | Ui::grow(),
                 _printControls(s)
-            ) | Ui::insets({0, 8}) |
+            ) | Ui::insets({0_au, 8_au}) |
                 Ui::grow(),
             Kr::dialogFooter({
                 Ui::grow(NONE),
                 Kr::dialogCancel(),
                 Kr::dialogAction(Some(Model::bind(PrintAction::PRINT)), "Print"s),
             })
-        ) | Ui::maxSize({Ui::UNCONSTRAINED, 500}) |
+        ) | Ui::maxSize({Ui::UNCONSTRAINED, 500_au}) |
             Ui::grow(),
     });
 }
@@ -377,7 +378,7 @@ Ui::Child _printDialogMobile(State const& s) {
             _printPreviewMobile(s),
             Kr::separator(),
             _printSettings(s)
-        ) | Ui::minSize(500) |
+        ) | Ui::minSize(500_au) |
             Ui::vscroll() |
             Ui::grow(),
         Kr::separator(),

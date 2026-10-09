@@ -7,16 +7,18 @@ import Karm.Math;
 import :dialog;
 import :funcs;
 
+using namespace Karm::Math::Literals;
+
 namespace Karm::Ui {
 
 export struct ShowPopoverEvent {
-    Math::Vec2i at;
+    Math::Vec2Au at;
     Child child;
 };
 
 export struct ClosePopoverEvent {};
 
-export void showPopover(Node& n, Math::Vec2i at, Child child) {
+export void showPopover(Node& n, Math::Vec2Au at, Child child) {
     bubble<ShowPopoverEvent>(n, at, child);
 }
 
@@ -28,7 +30,7 @@ struct PopoverLayer : ProxyNode<PopoverLayer> {
     Opt<Child> _popover;
     Opt<Child> _shouldPopover;
     bool _shouldPopoverClose = false;
-    Math::Vec2i _popoverAt;
+    Math::Vec2Au _popoverAt;
 
     using ProxyNode::ProxyNode;
 
@@ -37,7 +39,7 @@ struct PopoverLayer : ProxyNode<PopoverLayer> {
             (*_popover)->detach(this);
     }
 
-    void _showPopover(Child child, Math::Vec2i at) {
+    void _showPopover(Child child, Math::Vec2Au at) {
         // We need to defer showing the dialog until the next frame,
         // otherwise replacing the dialog might cause some use after free down the tree
         _shouldPopover = Some(child);
@@ -52,17 +54,17 @@ struct PopoverLayer : ProxyNode<PopoverLayer> {
         shouldLayout(*this);
     }
 
-    Math::Recti _positionPopover(Math::Recti r) {
+    Math::RectAu _positionPopover(Math::RectAu r) {
         // Position the popover at the given point, but make sure it fits in the screen
         auto size = (*_popover)->size(r.size(), Hint::MIN);
         auto pos = _popoverAt;
-        pos.y = clamp(pos.y, 0, r.size().y - size.y);
+        pos.y = clamp(pos.y, 0_au, r.size().y - size.y);
         if (pos.x + size.x > r.end())
             pos.x = pos.x - size.x;
         return {pos, size};
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti r) override {
+    void paint(Gfx::Canvas& g, Math::RectAu r) override {
         ProxyNode::paint(g, r);
 
         if (_popover)
@@ -101,7 +103,7 @@ struct PopoverLayer : ProxyNode<PopoverLayer> {
         LeafNode<PopoverLayer>::bubble(event);
     }
 
-    void layout(Math::Recti r) override {
+    void layout(Math::RectAu r) override {
         ProxyNode::layout(r);
 
         if (_shouldPopoverClose) {
@@ -125,7 +127,7 @@ struct PopoverLayer : ProxyNode<PopoverLayer> {
             (*_popover)->layout(_positionPopover(r));
     }
 
-    App::HitResult hitTest(Math::Vec2i p) override {
+    App::HitResult hitTest(Math::Vec2Au p) override {
         if (auto& [popover] = _popover)
             return popover->hitTest(p);
         return _child->hitTest(p);

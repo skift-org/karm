@@ -2,6 +2,7 @@
 
 import Mdi;
 import Karm.Kira;
+import Karm.Math;
 import Karm.Ui;
 import Karm.Gfx;
 import Karm.Logger;
@@ -11,6 +12,7 @@ import Karm.Core;
 
 using namespace Karm;
 using namespace Karm::Literals;
+using namespace Karm::Math::Literals;
 using namespace Karm::Ref::Literals;
 
 struct IconMetadata {
@@ -62,11 +64,11 @@ struct State : Meta::Pinned {
 Ui::Child iconGrid(State const& s) {
     return Ui::grid(
                Ui::GridStyle::simpleFixed(
-                   {((isize)s.filtered.value().len() / 8) + 1, 48},
-                   {8, 48}, 4
+                   {((isize)s.filtered.value().len() / 8) + 1, 48_au},
+                   {8, 48_au}, 4_au
                ),
                iter(s.filtered.value()) | Select([&](IconMetadata const& i) {
-                   return Ui::icon(Gfx::Icon{i.path, 24}, 48) |
+                   return Ui::icon(Gfx::Icon{i.path, 24}, 48_au) |
                           Ui::center() |
                           Ui::bound() |
                           Ui::button(
@@ -80,17 +82,17 @@ Ui::Child iconGrid(State const& s) {
 
 Ui::Child iconDetails(IconMetadata const& metadata) {
     return Ui::vflow(
-               4,
+               4_au,
                Ui::hflow(
-                   4,
-                   Ui::icon(Gfx::Icon{metadata.path, 24}, 18),
-                   Ui::icon(Gfx::Icon{metadata.path, 24}, 24),
-                   Ui::icon(Gfx::Icon{metadata.path, 24}, 48),
-                   Ui::icon(Gfx::Icon{metadata.path, 24}, 96)
+                   4_au,
+                   Ui::icon(Gfx::Icon{metadata.path, 24}, 18_au),
+                   Ui::icon(Gfx::Icon{metadata.path, 24}, 24_au),
+                   Ui::icon(Gfx::Icon{metadata.path, 24}, 48_au),
+                   Ui::icon(Gfx::Icon{metadata.path, 24}, 96_au)
                ),
                Ui::titleMedium(metadata.name)
            ) |
-           Ui::pinSize({320, Ui::UNCONSTRAINED});
+           Ui::pinSize({320_au, Ui::UNCONSTRAINED});
 }
 
 Ui::Child app(State& s) {
@@ -104,12 +106,12 @@ Ui::Child app(State& s) {
                                Ui::grow();
 
                 if (auto& [metadata] = s.selected.value()) {
-                    content = Ui::hflow(4, content, iconDetails(metadata) | Kr::scaffoldContent()) |
+                    content = Ui::hflow(4_au, content, iconDetails(metadata) | Kr::scaffoldContent()) |
                               Ui::grow();
                 }
 
                 return Ui::vflow(
-                    4,
+                    4_au,
                     Kr::searchbar(
                         s.searchQuery.value(),
                         Ui::bind(s.searchQuery)

@@ -6,6 +6,8 @@ import Karm.Math;
 import Karm.Core;
 import Karm.Gfx;
 
+using namespace Karm::Math::Literals;
+
 namespace Karm::Kira {
 
 export enum struct ResizeHandlePosition {
@@ -16,13 +18,13 @@ export enum struct ResizeHandlePosition {
 };
 
 struct Resizable : Ui::ProxyNode<Resizable> {
-    Math::Vec2i _minSize;
+    Math::Vec2Au _minSize;
     Math::Vec2i _resizeDirection;
-    Opt<Ui::Send<Math::Vec2i>> _onChange;
+    Opt<Ui::Send<Math::Vec2Au>> _onChange;
     bool _grabbed = false;
-    Math::Vec2i _size;
+    Math::Vec2Au _size;
 
-    Resizable(Ui::Child child, Math::Vec2i minSize, Math::Vec2i resizeDirection, Opt<Ui::Send<Math::Vec2i>> onChange)
+    Resizable(Ui::Child child, Math::Vec2Au minSize, Math::Vec2i resizeDirection, Opt<Ui::Send<Math::Vec2Au>> onChange)
         : ProxyNode(child),
           _minSize(minSize),
           _resizeDirection{resizeDirection},
@@ -48,7 +50,7 @@ struct Resizable : Ui::ProxyNode<Resizable> {
                 _grabbed = false;
                 e.accept();
             } else if (it->type == App::MouseEvent::MOVE) {
-                _size = _size + it->delta * _resizeDirection;
+                _size = _size + (it->delta * _resizeDirection).cast<Math::Au>();
                 _size = _size.max(_minSize);
                 if (_onChange) {
                     _onChange(*this, _size);
@@ -70,20 +72,20 @@ struct Resizable : Ui::ProxyNode<Resizable> {
         ProxyNode::bubble(e);
     }
 
-    Math::Vec2i size(Math::Vec2i, Ui::Hint) override {
+    Math::Vec2Au size(Math::Vec2Au, Ui::Hint) override {
         return _size;
     }
 
-    App::HitResult hitTest(Math::Vec2i) override {
+    App::HitResult hitTest(Math::Vec2Au) override {
         return App::HitResult::HIT;
     }
 };
 
-export Ui::Child resizable(Ui::Child child, Math::Vec2i size, Math::Vec2i resizeDirection, Opt<Ui::Send<Math::Vec2i>> onChange) {
+export Ui::Child resizable(Ui::Child child, Math::Vec2Au size, Math::Vec2i resizeDirection, Opt<Ui::Send<Math::Vec2Au>> onChange) {
     return makeRc<Resizable>(child, size, resizeDirection, std::move(onChange));
 }
 
-export auto resizable(Math::Vec2i size, Math::Vec2i resizeDirection, Opt<Ui::Send<Math::Vec2i>> onChange) {
+export auto resizable(Math::Vec2Au size, Math::Vec2i resizeDirection, Opt<Ui::Send<Math::Vec2Au>> onChange) {
     return [size, onChange = std::move(onChange), resizeDirection](Ui::Child child) mutable -> Ui::Child {
         return resizable(child, size, resizeDirection, std::move(onChange));
     };
@@ -97,7 +99,7 @@ struct ResizeHandle : Ui::View<ResizeHandle> {
     ResizeHandle(App::CursorStyle cursor = App::CursorStyle::DEFAULT)
         : _cursor(cursor) {}
 
-    void paint(Gfx::Canvas& g, Math::Recti) override {
+    void paint(Gfx::Canvas& g, Math::RectAu) override {
         g.push();
         if (_pressed) {
             g.fillStyle(Ui::ACCENT700);
@@ -112,7 +114,7 @@ struct ResizeHandle : Ui::View<ResizeHandle> {
     void event(App::Event& event) override {
         if (auto it = event.is<App::MouseEvent>()) {
             bool wasHover = _hover;
-            _hover = bound().contains(it->pos);
+            _hover = bound().contains(it->pos.cast<Math::Au>());
             if (_hover and it->type == App::MouseEvent::PRESS) {
                 _pressed = true;
                 bubble<App::DragStartEvent>(*this);
@@ -131,12 +133,12 @@ struct ResizeHandle : Ui::View<ResizeHandle> {
         }
     }
 
-    Math::Vec2i size(Math::Vec2i, Ui::Hint) override {
-        return 4;
+    Math::Vec2Au size(Math::Vec2Au, Ui::Hint) override {
+        return 4_au;
     }
 };
 
-export Ui::Child resizable(Ui::Child child, ResizeHandlePosition handlePosition, Math::Vec2i size, Opt<Ui::Send<Math::Vec2i>> onChange) {
+export Ui::Child resizable(Ui::Child child, ResizeHandlePosition handlePosition, Math::Vec2Au size, Opt<Ui::Send<Math::Vec2Au>> onChange) {
     if (handlePosition == ResizeHandlePosition::TOP) {
         return Ui::vflow(
                    makeRc<ResizeHandle>(App::CursorStyle::RESIZE_NS),
@@ -166,7 +168,7 @@ export Ui::Child resizable(Ui::Child child, ResizeHandlePosition handlePosition,
     }
 }
 
-export auto resizable(ResizeHandlePosition handlePosition, Math::Vec2i size = {240}, Opt<Ui::Send<Math::Vec2i>> onChange = NONE) {
+export auto resizable(ResizeHandlePosition handlePosition, Math::Vec2Au size = {240_au}, Opt<Ui::Send<Math::Vec2Au>> onChange = NONE) {
     return [handlePosition, size, onChange](Ui::Child child) mutable -> Ui::Child {
         return resizable(child, handlePosition, size, onChange);
     };

@@ -116,7 +116,7 @@ struct Reducer :
         _rebuild = true;
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti r) override {
+    void paint(Gfx::Canvas& g, Math::RectAu r) override {
         ensureBuild();
         (*_child)->paint(g, r);
     }
@@ -163,22 +163,22 @@ struct Reducer :
         }
     }
 
-    void layout(Math::Recti r) override {
+    void layout(Math::RectAu r) override {
         ensureBuild();
         (*_child)->layout(r);
     }
 
-    Math::Vec2i size(Math::Vec2i s, Hint hint) override {
+    Math::Vec2Au size(Math::Vec2Au s, Hint hint) override {
         ensureBuild();
         return (*_child)->size(s, hint);
     }
 
-    Math::Recti bound() override {
+    Math::RectAu bound() override {
         ensureBuild();
         return (*_child)->bound();
     }
 
-    App::HitResult hitTest(Math::Vec2i p) override {
+    App::HitResult hitTest(Math::Vec2Au p) override {
         ensureBuild();
         return (*_child)->hitTest(p);
     }

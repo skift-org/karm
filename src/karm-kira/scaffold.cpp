@@ -10,6 +10,7 @@ import :toolbar;
 import :aboutDialog;
 import :contextMenu;
 
+using namespace Karm::Math::Literals;
 using namespace Karm::Fmt::Literals;
 
 namespace Karm::Kira {
@@ -24,7 +25,7 @@ export struct Scaffold : Meta::NoCopy {
     Opt<Ui::Slot> sidebar = NONE;
     Ui::Slot body;
 
-    Math::Vec2i size = {800, 600};
+    Math::Vec2Au size = {800_au, 600_au};
 
     struct State {
         bool sidebarOpen = false;
@@ -76,7 +77,7 @@ static Ui::Child _mobileScaffold(Scaffold::State const& s, Scaffold const& scaff
 
     if (scaffold.startTools)
         tools.pushBack(
-            hflow(4, scaffold.startTools().expect())
+            hflow(4_au, scaffold.startTools().expect())
         );
 
     if (scaffold.startTools and scaffold.endTools)
@@ -84,14 +85,14 @@ static Ui::Child _mobileScaffold(Scaffold::State const& s, Scaffold const& scaff
 
     if (scaffold.endTools)
         tools.pushBack(
-            hflow(4, scaffold.endTools().expect())
+            hflow(4_au, scaffold.endTools().expect())
         );
 
     if (tools.len())
         body.pushBack(bottombar(tools));
 
     return Ui::vflow(body) |
-           Ui::pinSize(Math::Vec2i{411, 731}) |
+           Ui::pinSize(Math::Vec2Au{411_au, 731_au}) |
            Ui::dialogLayer() |
            Ui::popoverLayer();
 }
@@ -118,12 +119,12 @@ static Ui::Child _desktopScaffoldToolbar(Scaffold::State const& s, Scaffold cons
 
     if (scaffold.startTools)
         tools.pushBack(
-            hflow(4, scaffold.startTools().expect())
+            hflow(4_au, scaffold.startTools().expect())
         );
 
     if (scaffold.middleTools)
         tools.pushBack(
-            hflow(4, scaffold.middleTools().expect()) | Ui::grow()
+            hflow(4_au, scaffold.middleTools().expect()) | Ui::grow()
         );
     else {
         tools.pushBack(Ui::labelMedium(scaffold.title) | Ui::center() | Ui::grow());
@@ -131,7 +132,7 @@ static Ui::Child _desktopScaffoldToolbar(Scaffold::State const& s, Scaffold cons
 
     if (scaffold.endTools)
         tools.pushBack(
-            hflow(4, scaffold.endTools().expect())
+            hflow(4_au, scaffold.endTools().expect())
         );
 
     tools.pushBack(titlebarClose());
@@ -176,16 +177,16 @@ static Ui::Child _desktopScaffold(Scaffold::State const& s, Scaffold const& scaf
         body.pushBack(
             hflow(
                 scaffold.sidebar().expect(),
-                Ui::reactive(scaffold.body) | Ui::insets({0, 4, 4, 0}) | Ui::grow()
+                Ui::reactive(scaffold.body) | Ui::insets({0_au, 4_au, 4_au, 0_au}) | Ui::grow()
             ) |
             Ui::grow()
         );
     } else {
-        body.pushBack(Ui::reactive(scaffold.body) | Ui::insets({0, 4, 4, 4}) | Ui::grow());
+        body.pushBack(Ui::reactive(scaffold.body) | Ui::insets({0_au, 4_au, 4_au, 4_au}) | Ui::grow());
     }
 
     return Ui::vflow(body) |
-           Ui::resizeRegion(8) |
+           Ui::resizeRegion(8_au) |
            Ui::pinSize(scaffold.size) |
            Ui::dialogLayer() |
            Ui::popoverLayer();

@@ -7,6 +7,8 @@ import Karm.Math;
 import :badge;
 import :dialog;
 
+using namespace Karm::Math::Literals;
+
 namespace Karm::Kira {
 
 static constexpr Str LICENSE = R"(This program is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
@@ -21,9 +23,9 @@ export Ui::Child licenseDialog() {
     return dialogContent({
         dialogTitleBar("License"s),
         Ui::bodySmall(LICENSE) |
-            Ui::insets(16) |
+            Ui::insets(16_au) |
             Ui::vscroll() |
-            Ui::maxSize({480, Ui::UNCONSTRAINED}) |
+            Ui::maxSize({480_au, Ui::UNCONSTRAINED}) |
             Ui::grow(),
     });
 }
@@ -31,7 +33,7 @@ export Ui::Child licenseDialog() {
 export Ui::Child aboutDialog(String name) {
     return dialogContent({
         dialogHeader({
-            Ui::hflow(6, Math::Align::CENTER, dialogTitle(name), versionBadge()),
+            Ui::hflow(6_au, Math::Align::CENTER, dialogTitle(name), versionBadge()),
             dialogDescription(
                 "Copyright © 2018-2026 The skiftOS Developers"s
             ),

@@ -5,6 +5,8 @@ import Karm.Ui;
 import Karm.Gfx;
 import Karm.Math;
 
+using namespace Karm::Math::Literals;
+
 namespace Karm::Kira {
 
 struct Clock : Ui::View<Clock> {
@@ -26,8 +28,8 @@ struct Clock : Ui::View<Clock> {
         g.pop();
     }
 
-    void paint(Gfx::Canvas& g, Math::Recti) override {
-        auto size = bound().size().min();
+    void paint(Gfx::Canvas& g, Math::RectAu) override {
+        auto size = bound().size().min().cast<f64>();
 
         g.push();
 

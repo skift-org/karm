@@ -1,22 +1,25 @@
 export module Karm.Kira:tabbar;
 
+import Karm.Math;
 import Karm.Ui;
 import Karm.Gfx;
 
 import :separator;
 
+using namespace Karm::Math::Literals;
+
 namespace Karm::Kira {
 
 export Ui::Child tabbarWrapper(Ui::Children children) {
     return Ui::hscroll(
-        Ui::hflow(2, children)
+        Ui::hflow(2_au, children)
     );
 }
 
 export Ui::Child tabbarContent(Ui::Children children) {
     return tabbarWrapper(children) |
            Ui::box({
-               .padding = 1,
+               .padding = 1_au,
                .borderRadii = 6,
                .borderWidth = 1,
                .borderFill = Some(Ui::GRAY800),
@@ -25,9 +28,9 @@ export Ui::Child tabbarContent(Ui::Children children) {
 }
 
 export Ui::Child tabbarItem(bool selected, Ui::Send<> onSelect, Ui::Child content) {
-    content = content | Ui::insets({0, 8}) |
+    content = content | Ui::insets({0_au, 8_au}) |
               Ui::center() |
-              Ui::minSize({Ui::UNCONSTRAINED, 30});
+              Ui::minSize({Ui::UNCONSTRAINED, 30_au});
 
     if (not selected) {
         return Ui::button(
@@ -48,7 +51,7 @@ export Ui::Child tabbarItem(bool selected, Ui::Send<> onSelect, Ui::Child conten
 
 export Ui::Child tabarItemLabel(Opt<Gfx::Icon> icon, String text) {
     if (auto& [i] = icon)
-        return Ui::hflow(8, Math::Align::CENTER, Ui::icon(i), Ui::labelMedium(text));
+        return Ui::hflow(8_au, Math::Align::CENTER, Ui::icon(i), Ui::labelMedium(text));
     return Ui::labelMedium(text);
 }
 

@@ -1,9 +1,11 @@
 #include <karm/entry>
 
 import Mdi;
+import Karm.Math;
 import Karm.Ui;
 import Karm.Kira;
 
+using namespace Karm::Math::Literals;
 using namespace Karm;
 using namespace Karm::Literals;
 
