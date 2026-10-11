@@ -11,6 +11,8 @@ using namespace Karm::Math::Literals;
 namespace Karm::Kira {
 
 struct Radio : Ui::View<Radio> {
+    static constexpr Math::Au SIZE = 18_au;
+
     bool _value = false;
     Ui::Send<bool> _onChange;
     Ui::MouseListener _mouseListener;
@@ -25,25 +27,27 @@ struct Radio : Ui::View<Radio> {
     }
 
     void paint(Gfx::Canvas& g, Math::RectAu) override {
+        auto b = Math::RectAu{SIZE}.center(bound());
+
         g.push();
         if (_value) {
             g.fillStyle(_mouseListener.isHover() ? Ui::ACCENT400 : Ui::ACCENT500);
-            g.fill(bound().cast<f64>(), 999);
+            g.fill(b.cast<f64>(), 999);
 
             g.fillStyle(Gfx::GRAY50);
-            g.fill(bound().shrink(4_au).cast<f64>(), 999);
+            g.fill(b.shrink(4_au).cast<f64>(), 999);
 
             if (_mouseListener.isPress()) {
                 g.strokeStyle(Gfx::stroke(Ui::ACCENT500).withWidth(1).withAlign(Gfx::INSIDE_ALIGN));
-                g.stroke(bound().cast<f64>(), 999);
+                g.stroke(b.cast<f64>(), 999);
             }
         } else {
             g.fillStyle(_mouseListener.isHover() ? Ui::GRAY600 : Ui::GRAY700);
-            g.fill(bound().cast<f64>(), 999);
+            g.fill(b.cast<f64>(), 999);
 
             if (_mouseListener.isPress()) {
                 g.strokeStyle(Gfx::stroke(Ui::GRAY600).withWidth(1).withAlign(Gfx::INSIDE_ALIGN));
-                g.stroke(bound().cast<f64>(), 999);
+                g.stroke(b.cast<f64>(), 999);
             }
         }
         g.pop();
@@ -57,12 +61,24 @@ struct Radio : Ui::View<Radio> {
     }
 
     Math::Vec2Au size(Math::Vec2Au, Ui::Hint) override {
-        return {18_au, 18_au};
+        return {32_au};
     }
 };
 
 export Ui::Child radio(bool value, Ui::Send<bool> onChange) {
     return makeRc<Radio>(value, std::move(onChange));
+}
+
+export Ui::Child radio(bool value, Ui::Send<bool> onChange, String label) {
+    return Ui::hflow(
+               8_au,
+               Math::Align::CENTER,
+               radio(value, onChange) | Ui::pinSize(18_au),
+               Ui::labelMedium(label)
+           ) |
+           Ui::insets({4_au, 14_au, 4_au, 10_au}) |
+           Ui::minSize({Ui::UNCONSTRAINED, 32_au}) |
+           Ui::bound();
 }
 
 } // namespace Karm::Kira

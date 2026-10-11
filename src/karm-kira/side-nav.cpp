@@ -43,7 +43,7 @@ export Ui::Child sidenavTree(Gfx::Icon icon, String title, Ui::Slot child) {
     });
 }
 
-export Ui::Child sidenavItem(bool selected, Opt<Ui::Send<>> onPress, Ui::Child content) {
+export Ui::Child sidenavItemContent(bool selected, Opt<Ui::Send<>> onPress, Ui::Child content) {
     auto buttonStyle = Ui::ButtonStyle::regular();
 
     buttonStyle.idleStyle = {
@@ -65,21 +65,25 @@ export Ui::Child sidenavItem(bool selected, Opt<Ui::Send<>> onPress, Ui::Child c
         Ui::hflow(
             indicator,
             Ui::empty(8_au),
-            content
+            content | Ui::grow()
         ) |
             Ui::insets({8_au, 12_au, 8_au, 0_au})
     );
 }
 
+export Ui::Child sidenavItemIconAndText(Gfx::Icon icon, String title) {
+    return Ui::hflow(
+        Ui::icon(icon, 18_au),
+        Ui::empty(12_au),
+        Ui::labelMedium(title) | Ui::center()
+    );
+}
+
 export Ui::Child sidenavItem(bool selected, Opt<Ui::Send<>> onPress, Gfx::Icon icon, String title) {
-    return sidenavItem(
+    return sidenavItemContent(
         selected,
         onPress,
-        Ui::hflow(
-            Ui::icon(icon, 18_au),
-            Ui::empty(12_au),
-            Ui::labelMedium(title) | Ui::center()
-        )
+        sidenavItemIconAndText(icon, title)
     );
 }
 

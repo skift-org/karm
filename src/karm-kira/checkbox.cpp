@@ -13,6 +13,8 @@ using namespace Karm::Math::Literals;
 namespace Karm::Kira {
 
 struct Checkbox : Ui::View<Checkbox> {
+    static constexpr Math::Au SIZE = 18_au;
+
     bool _value = false;
     Ui::Send<bool> _onChange;
     Ui::MouseListener _mouseListener;
@@ -27,29 +29,31 @@ struct Checkbox : Ui::View<Checkbox> {
     }
 
     void paint(Gfx::Canvas& g, Math::RectAu) override {
+        auto b = Math::RectAu{SIZE}.center(bound());
+
         g.push();
 
         if (_value) {
             g.fillStyle(_mouseListener.isHover() ? Ui::ACCENT400 : Ui::ACCENT500);
-            g.fill(bound().cast<f64>(), 4);
+            g.fill(b.cast<f64>(), 4);
 
             g.fillStyle(Gfx::GRAY50);
-            Gfx::Icon{Mdi::CHECK_BOLD}.fill(g, bound().topStart().cast<f64>(), 18);
+            Gfx::Icon{Mdi::CHECK_BOLD}.fill(g, b.topStart().cast<f64>(), 18);
 
             if (_mouseListener.isPress()) {
                 g.strokeStyle(Gfx::stroke(Ui::ACCENT400).withWidth(1).withAlign(Gfx::INSIDE_ALIGN));
-                g.stroke(bound().cast<f64>(), 4);
+                g.stroke(b.cast<f64>(), 4);
             }
         } else {
             g.fillStyle(_mouseListener.isHover() ? Ui::GRAY600 : Ui::GRAY700);
-            g.fill(bound().cast<f64>(), 4);
+            g.fill(b.cast<f64>(), 4);
 
             if (_mouseListener.isPress()) {
                 g.strokeStyle(Gfx::stroke(Ui::GRAY600).withWidth(1).withAlign(Gfx::INSIDE_ALIGN));
             } else {
                 g.strokeStyle(Gfx::stroke(Ui::GRAY500).withWidth(1).withAlign(Gfx::INSIDE_ALIGN));
             }
-            g.stroke(bound().cast<f64>(), 4);
+            g.stroke(b.cast<f64>(), 4);
         }
 
         g.pop();
@@ -63,7 +67,7 @@ struct Checkbox : Ui::View<Checkbox> {
     }
 
     Math::Vec2Au size(Math::Vec2Au, Ui::Hint) override {
-        return {18_au, 18_au};
+        return {32_au};
     }
 };
 
@@ -73,12 +77,14 @@ export Ui::Child checkbox(bool value, Ui::Send<bool> onChange) {
 
 export Ui::Child checkbox(bool value, Ui::Send<bool> onChange, String label) {
     return Ui::hflow(
-        4_au,
-        Math::Align::CENTER,
-        checkbox(value, onChange),
-        Ui::labelMedium(label),
-        Ui::empty(2_au)
-    );
+               8_au,
+               Math::Align::CENTER,
+               checkbox(value, onChange) | Ui::pinSize(18_au),
+               Ui::labelMedium(label)
+           ) |
+           Ui::insets({4_au, 14_au, 4_au, 10_au}) |
+           Ui::minSize({Ui::UNCONSTRAINED, 32_au}) |
+           Ui::bound();
 }
 
 } // namespace Karm::Kira

@@ -34,7 +34,7 @@ export Ui::Child rowContent(Opt<Ui::Child> leading, String title, Opt<String> su
                     ? *leading |
                           Ui::center() |
                           Ui::sizing(26_au, {Ui::UNCONSTRAINED, 26_au}) |
-                          Ui::insets({0_au, 12_au, 0_au, 0_au})
+                          Ui::insets({0_au, 6_au, 0_au, 0_au})
                     : Ui::empty();
 
     auto t = subtitle
@@ -46,9 +46,7 @@ export Ui::Child rowContent(Opt<Ui::Child> leading, String title, Opt<String> su
                  : Ui::labelMedium(title);
 
     auto trail = trailing
-                     ? *trailing |
-                           Ui::center() |
-                           Ui::sizing(26_au, {Ui::UNCONSTRAINED, 26_au})
+                     ? *trailing
                      : Ui::empty();
 
     return Ui::hflow(
@@ -58,8 +56,8 @@ export Ui::Child rowContent(Opt<Ui::Child> leading, String title, Opt<String> su
                t | Ui::grow(),
                trail
            ) |
-           Ui::insets({0_au, 16_au}) |
-           Ui::minSize({Ui::UNCONSTRAINED, 64_au});
+           Ui::minSize({Ui::UNCONSTRAINED, 32_au}) |
+           Ui::insets({8_au, 8_au, 8_au, leading ? 8_au : 12_au});
 }
 
 export Ui::Child titleRow(String t) {
@@ -189,7 +187,7 @@ export Ui::Child treeRow(Opt<Ui::Slot> leading, String title, Opt<String> subtit
                 leading(),
                 title,
                 subtitle,
-                Some(Ui::icon(state ? Mdi::CHEVRON_UP : Mdi::CHEVRON_DOWN, 24_au))
+                Some(Ui::icon(state ? Mdi::CHEVRON_UP : Mdi::CHEVRON_DOWN))
             ),
             state ? child() |
                         Ui::insets({0_au, 0_au, 0_au, 0_au}) |

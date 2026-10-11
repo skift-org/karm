@@ -42,7 +42,6 @@ export struct MemInfo {
     usize swapUsed() const {
         return swapTotal - swapFree;
     }
-
 };
 
 export Res<MemInfo> meminfo() {
@@ -59,6 +58,10 @@ export struct Cpu {
     Ticks userTime;
     Ticks systemTime;
     Ticks idleTime;
+
+    Ticks totalTime() {
+        return userTime + systemTime + idleTime;
+    }
 
     usize freq;
 

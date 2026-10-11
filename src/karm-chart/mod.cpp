@@ -18,6 +18,12 @@ export struct Serie {
         );
     }
 
+    Opt<f64> lastValue() const {
+        if (not values)
+            return NONE;
+        return Some(last(values));
+    }
+
     usize len() const {
         return values.len();
     }

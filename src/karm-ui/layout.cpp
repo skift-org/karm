@@ -588,7 +588,7 @@ export struct GridStyle {
     Vec<GridUnit> rows;
     Vec<GridUnit> columns;
 
-    Math::Vec2Au gaps;
+    Vec2Au gaps;
     Math::Flow flow = Math::Flow::LEFT_TO_RIGHT;
     Math::Align align = Math::Align::FILL;
 

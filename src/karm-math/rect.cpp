@@ -197,7 +197,7 @@ union Rect {
     }
 
     always_inline constexpr Rect center(Rect r) const {
-        Rect result{0, 0, width, height};
+        Rect result{T{}, T{}, width, height};
         result.xy = r.center() - center();
         return result;
     }
