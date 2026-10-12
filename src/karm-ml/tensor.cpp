@@ -12,7 +12,7 @@ export struct Tensor {
     static Tensor alloc(Shape shape) {
         Tensor res{0};
         res.shape = shape;
-        res._store = Vec{Buf<f32>::init(shape.v0 * shape.v1 * shape.v2 * shape.v3)};
+        res._store = Vec<f32>::filled(shape.v0 * shape.v1 * shape.v2 * shape.v3);
         return res;
     }
 

@@ -21,9 +21,8 @@ namespace Karm::Gpu {
 struct SoftBuffer : Buffer {
     Vec<u8> _buf;
 
-    SoftBuffer(usize size) {
-        _buf.resize(size);
-    }
+    SoftBuffer(usize size)
+        : _buf(Vec<u8>::filled(size)) {}
 
     MutBytes map() override {
         return _buf;

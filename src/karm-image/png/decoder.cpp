@@ -374,8 +374,7 @@ export struct Decoder {
         usize bytePerPixel = bitsPerPixel() < 8 ? 1 : bitsPerPixel() / 8;
         usize bytesPerScan = bytesPerScanline(passWidth);
 
-        Vec<u8> res;
-        res.resize(bytesPerScan * passHeight);
+        auto res = Vec<u8>::filled(bytesPerScan * passHeight);
 
         Bytes prev = {};
         for (usize scanline : urange::zeroTo(passHeight)) {

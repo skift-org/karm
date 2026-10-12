@@ -95,7 +95,7 @@ using DirectionalStatusStack = Vec<DirectionalStatusStackEntry>;
 Vec<usize> explicitLevelsAndDirections(
     MutSlice<BidiClass> paragraph, usize paragraphLevel, Vec<Opt<usize>> const& matchingPDIIndices
 ) {
-    Vec<usize> levels{Buf<usize>::init(paragraph.len(), 0)};
+    auto levels = Vec<usize>::filled(paragraph.len(), 0);
 
     static int const MAX_DEPTH = 125;
     // X1. At the beginning of a paragraph, perform the following steps:

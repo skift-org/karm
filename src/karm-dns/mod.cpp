@@ -193,7 +193,7 @@ struct Packet {
         return hdr;
     }
 
-    static Res<Buf<u8>> encode(Packet const& p) {
+    static Res<Vec<u8>> encode(Packet const& p) {
         Io::BufferWriter buf;
         Io::BEmit e(buf);
 

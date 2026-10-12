@@ -6,6 +6,7 @@ export module Karm.Core:base.vec;
 
 import :base.opt;
 import :base.buf;
+import :base.manual;
 
 namespace Karm {
 
@@ -23,7 +24,17 @@ struct _Vec {
 
     _Vec(Sliceable<T> auto const& other) : _buf(other) {}
 
-    _Vec(S storage) : _buf(storage) {}
+    _Vec(S storage) : _buf(std::move(storage)) {}
+
+    _Vec(Wrap, Manual<T>* buf, usize cap)
+        requires requires(Manual<T>* b, usize c) { S(b, c); }
+        : _buf(buf, cap) {}
+
+    static _Vec filled(usize len, T fill = {})
+        requires requires(usize l, T f) { S::init(l, f); }
+    {
+        return _Vec(S::init(len, fill));
+    }
 
     // MARK: Collection
 
@@ -52,6 +63,12 @@ struct _Vec {
     void fit() { _buf.fit(); }
 
     void clear() { _buf.trunc(0); }
+
+    void leak()
+        requires requires(S& s) { s.leak(); }
+    {
+        _buf.leak();
+    }
 
     usize cap() const { return _buf.cap(); }
 
@@ -179,6 +196,9 @@ using InlineVec = _Vec<InlineBuf<T, N>>;
 
 export template <typename T, usize N>
 using SmallVec = _Vec<SmallBuf<T, N>>;
+
+export template <typename T>
+using ViewVec = _Vec<ViewBuf<T>>;
 
 export template <Nicheable T>
 struct Niche<_Vec<T>> {

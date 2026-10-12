@@ -16,9 +16,9 @@ struct SdlDevice : Device {
     SDL_AudioStream* _sdlStream = nullptr;
     Vec<f32> _outputBuf;
 
-    SdlDevice(Options const& options) : Device(options) {
-        _outputBuf.resize(options.output.channels * options.output.frames);
-    }
+    SdlDevice(Options const& options)
+        : Device(options),
+          _outputBuf(Vec<f32>::filled(options.output.channels * options.output.frames)) {}
 
     ~SdlDevice() override {
         if (_sdlStream)

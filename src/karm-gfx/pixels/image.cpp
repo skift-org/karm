@@ -18,7 +18,7 @@ export struct Image {
 
     static Rc<Image> alloc(Math::Vec2i size, Format fmt = RGBA8888) {
         return makeRc<Image>(
-            Vec<u8>{Buf<u8>::init(size.x * size.y * fmt.bpp())},
+            Vec<u8>::filled(size.x * size.y * fmt.bpp()),
             size,
             size.x * fmt.bpp(),
             fmt

@@ -197,9 +197,7 @@ test$("norm-quick-check-unlisted-codepoints") {
     auto file = try$(Sys::File::open("bundle://karm-icu.tests/NormalizationTest.txt"_url));
     auto mmap = try$(Sys::mmap(file));
 
-    Vec<u64> listed;
-    for (usize i = 0; i < 0x110000 / 64; i++)
-        listed.pushBack(0);
+    auto listed = Vec<u64>::filled(0x110000 / 64, 0);
 
     usize listedCount = 0;
     for (auto testCase : normTestCasesFromFile(mmap)) {

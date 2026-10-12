@@ -14,8 +14,7 @@ namespace Karm::Image::Bmp {
 namespace {
 
 Vec<u8> _encodePixelData(Gfx::Pixels pixels) {
-    Vec<u8> data;
-    data.resize(pixels.height() * pixels.width() * 4);
+    auto data = Vec<u8>::filled(pixels.height() * pixels.width() * 4);
     usize i = 0;
     for (isize y = pixels.height() - 1; y >= 0; --y) {
         for (isize x = 0; x < pixels.width(); ++x) {

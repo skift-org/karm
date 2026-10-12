@@ -86,9 +86,8 @@ struct CountingBloom {
 
     Vec<u8> _buf = {};
 
-    CountingBloom(usize size = 16_KiB) {
-        _buf.resize(size);
-    }
+    CountingBloom(usize size = 16_KiB)
+        : _buf(Vec<u8>::filled(size)) {}
 
     void _increment(usize slot) {
         if (_buf[slot] != SATURATED)

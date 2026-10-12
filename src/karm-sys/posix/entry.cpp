@@ -14,7 +14,7 @@ import Karm.Sys.Posix;
 using namespace Karm::Ref::Literals;
 
 Karm::Res<Karm::Ref::Url> __pwd() {
-    auto buf = Karm::Buf<char>::init(256);
+    auto buf = Karm::Vec<char>::filled(256);
     while (true) {
         if (::getcwd(buf.buf(), buf.len()) != NULL)
             break;

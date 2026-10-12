@@ -326,10 +326,8 @@ static Res<> deflateFixed(Bytes input, Io::Writer& out) {
     // Emit a single final block using the fixed Huffman codes.
     try$(w.writeBits<u8>(0b011, 3));
 
-    Vec<i32> head;
-    head.resize(1uz << HASH_BITS, -1);
-    Vec<i32> prev;
-    prev.resize(MAX_DIST, -1);
+    auto head = Vec<i32>::filled(1uz << HASH_BITS, -1);
+    auto prev = Vec<i32>::filled(MAX_DIST, -1);
 
     u8 const* data = input.buf();
     usize len = input.len();

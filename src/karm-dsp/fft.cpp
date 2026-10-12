@@ -36,13 +36,11 @@ export struct Fft {
         while ((usize{1} << bits) < size)
             bits++;
 
-        Vec<usize> reversal;
-        reversal.resize(size);
+        auto reversal = Vec<usize>::filled(size);
         for (usize i = 0; i < size; i++)
             reversal[i] = reverseBits(i, bits);
 
-        Vec<Math::Complexf> twiddles;
-        twiddles.resize(size / 2);
+        auto twiddles = Vec<Math::Complexf>::filled(size / 2);
         for (usize i = 0; i < size / 2; i++) {
             f64 angle = -2.0 * Math::PI * f64(i) / f64(size);
             twiddles[i] = {f32(Math::cos(angle)), f32(Math::sin(angle))};
