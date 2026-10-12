@@ -23,94 +23,158 @@ export constexpr Array<usize, 64> ZIGZAG = {
 
 // MARK: Marker Constants ------------------------------------------------------
 
-export enum Marker : u8 {
-    NIL = 0x00,
+// Table B.1 Marker code assignments
+// https://www.w3.org/Graphics/JPEG/itu-t81.pdf#page=36
+export struct Marker {
+    enum Code : u8 {
+        NIL = 0x00,
 
-    // Start of Frame markers, non-differential, Huffman coding
-    SOF0 = 0xC0, // Baseline DCT
-    SOF1 = 0xC1, // Extended sequential DCT
-    SOF2 = 0xC2, // Progressive DCT
-    SOF3 = 0xC3, // Lossless (sequential)
+        // Start of Frame markers, non-differential, Huffman coding
+        SOF0 = 0xC0, // Baseline DCT
+        SOF1 = 0xC1, // Extended sequential DCT
+        SOF2 = 0xC2, // Progressive DCT
+        SOF3 = 0xC3, // Lossless (sequential)
 
-    // Start of Frame markers, differential, Huffman coding
-    SOF5 = 0xC5, // Differential sequential DCT
-    SOF6 = 0xC6, // Differential progressive DCT
-    SOF7 = 0xC7, // Differential lossless (sequential)
+        // Start of Frame markers, differential, Huffman coding
+        SOF5 = 0xC5, // Differential sequential DCT
+        SOF6 = 0xC6, // Differential progressive DCT
+        SOF7 = 0xC7, // Differential lossless (sequential)
 
-    // Start of Frame markers, non-differential, arithmetic coding
-    SOF9 = 0xC9,  // Extended sequential DCT
-    SOF10 = 0xCA, // Progressive DCT
-    SOF11 = 0xCB, // Lossless (sequential)
+        // Start of Frame markers, non-differential, arithmetic coding
+        SOF9 = 0xC9,  // Extended sequential DCT
+        SOF10 = 0xCA, // Progressive DCT
+        SOF11 = 0xCB, // Lossless (sequential)
 
-    // Start of Frame markers, differential, arithmetic coding
-    SOF13 = 0xCD, // Differential sequential DCT
-    SOF14 = 0xCE, // Differential progressive DCT
-    SOF15 = 0xCF, // Differential lossless (sequential)
+        // Start of Frame markers, differential, arithmetic coding
+        SOF13 = 0xCD, // Differential sequential DCT
+        SOF14 = 0xCE, // Differential progressive DCT
+        SOF15 = 0xCF, // Differential lossless (sequential)
 
-    // Define Huffman Table(s)
-    DHT = 0xC4,
+        // Define Huffman Table(s)
+        DHT = 0xC4,
 
-    // JPEG extensions
-    JPG = 0xC8,
+        // JPEG extensions
+        JPG = 0xC8,
 
-    // Define Arithmetic Coding Conditioning(s)
-    DAC = 0xCC,
+        // Define Arithmetic Coding Conditioning(s)
+        DAC = 0xCC,
 
-    // Restart interval Markers
-    RST0 = 0xD0,
-    RST1 = 0xD1,
-    RST2 = 0xD2,
-    RST3 = 0xD3,
-    RST4 = 0xD4,
-    RST5 = 0xD5,
-    RST6 = 0xD6,
-    RST7 = 0xD7,
+        // Restart interval Markers
+        RST0 = 0xD0,
+        RST1 = 0xD1,
+        RST2 = 0xD2,
+        RST3 = 0xD3,
+        RST4 = 0xD4,
+        RST5 = 0xD5,
+        RST6 = 0xD6,
+        RST7 = 0xD7,
 
-    // Other Markers
-    SOI = 0xD8, // Start of Image
-    EOI = 0xD9, // End of Image
-    SOS = 0xDA, // Start of Scan
-    DQT = 0xDB, // Define Quantization Table(s)
-    DNL = 0xDC, // Define Number of Lines
-    DRI = 0xDD, // Define Restart Interval
-    DHP = 0xDE, // Define Hierarchical Progression
-    EXP = 0xDF, // Expand Reference Component(s)
+        // Other Markers
+        SOI = 0xD8, // Start of Image
+        EOI = 0xD9, // End of Image
+        SOS = 0xDA, // Start of Scan
+        DQT = 0xDB, // Define Quantization Table(s)
+        DNL = 0xDC, // Define Number of Lines
+        DRI = 0xDD, // Define Restart Interval
+        DHP = 0xDE, // Define Hierarchical Progression
+        EXP = 0xDF, // Expand Reference Component(s)
 
-    // APPN Markers
-    APP0 = 0xE0,
-    APP1 = 0xE1,
-    APP2 = 0xE2,
-    APP3 = 0xE3,
-    APP4 = 0xE4,
-    APP5 = 0xE5,
-    APP6 = 0xE6,
-    APP7 = 0xE7,
-    APP8 = 0xE8,
-    APP9 = 0xE9,
-    APP10 = 0xEA,
-    APP11 = 0xEB,
-    APP12 = 0xEC,
-    APP13 = 0xED,
-    APP14 = 0xEE,
-    APP15 = 0xEF,
+        // APPN Markers
+        APP0 = 0xE0,
+        APP1 = 0xE1,
+        APP2 = 0xE2,
+        APP3 = 0xE3,
+        APP4 = 0xE4,
+        APP5 = 0xE5,
+        APP6 = 0xE6,
+        APP7 = 0xE7,
+        APP8 = 0xE8,
+        APP9 = 0xE9,
+        APP10 = 0xEA,
+        APP11 = 0xEB,
+        APP12 = 0xEC,
+        APP13 = 0xED,
+        APP14 = 0xEE,
+        APP15 = 0xEF,
 
-    // Misc Markers
-    JPG0 = 0xF0,
-    JPG1 = 0xF1,
-    JPG2 = 0xF2,
-    JPG3 = 0xF3,
-    JPG4 = 0xF4,
-    JPG5 = 0xF5,
-    JPG6 = 0xF6,
-    JPG7 = 0xF7,
-    JPG8 = 0xF8,
-    JPG9 = 0xF9,
-    JPG10 = 0xFA,
-    JPG11 = 0xFB,
-    JPG12 = 0xFC,
-    JPG13 = 0xFD,
-    COM = 0xFE,
-    TEM = 0x01,
+        // Misc Markers
+        JPG0 = 0xF0,
+        JPG1 = 0xF1,
+        JPG2 = 0xF2,
+        JPG3 = 0xF3,
+        JPG4 = 0xF4,
+        JPG5 = 0xF5,
+        JPG6 = 0xF6,
+        JPG7 = 0xF7,
+        JPG8 = 0xF8,
+        JPG9 = 0xF9,
+        JPG10 = 0xFA,
+        JPG11 = 0xFB,
+        JPG12 = 0xFC,
+        JPG13 = 0xFD,
+        COM = 0xFE,
+        TEM = 0x01,
+    };
+
+    Code code;
+
+    constexpr Marker(Code code) : code(code) {}
+
+    explicit constexpr Marker(u8 raw) : code(static_cast<Code>(raw)) {}
+
+    constexpr operator Code() const { return code; }
+
+    constexpr bool startsFrame() const {
+        return SOF0 <= code and code <= SOF15 and
+               code != DHT and code != JPG and code != DAC;
+    }
+
+    constexpr bool restarts() const {
+        return RST0 <= code and code <= RST7;
+    }
+
+    constexpr bool application() const {
+        return APP0 <= code and code <= APP15;
+    }
+
+    constexpr bool standalone() const {
+        return code == SOI or code == EOI or code == TEM or restarts();
+    }
+
+    Str _name() const {
+        switch (code) {
+        case NIL: return "NIL";
+        case DHT: return "DHT";
+        case JPG: return "JPG";
+        case DAC: return "DAC";
+        case SOI: return "SOI";
+        case EOI: return "EOI";
+        case SOS: return "SOS";
+        case DQT: return "DQT";
+        case DNL: return "DNL";
+        case DRI: return "DRI";
+        case DHP: return "DHP";
+        case EXP: return "EXP";
+        case COM: return "COM";
+        case TEM: return "TEM";
+        default: return "";
+        }
+    }
+
+    void repr(Io::Emit& e) const {
+        if (startsFrame())
+            e("SOF{}", code - SOF0);
+        else if (restarts())
+            e("RST{}", code - RST0);
+        else if (application())
+            e("APP{}", code - APP0);
+        else if (JPG0 <= code and code <= JPG13)
+            e("JPG{}", code - JPG0);
+        else if (auto name = _name(); name.len())
+            e("{}", name);
+        else
+            e("0x{:02x}", (u8)code);
+    }
 };
 
 // MARK: Reader/Writers --------------------------------------------------------
@@ -190,6 +254,11 @@ export struct BitReader {
         if (_len)
             return Ok();
 
+        if (s.ended()) {
+            logError("jpeg: unexpected end of entropy-coded data");
+            return Error::invalidData("unexpected end of entropy-coded data");
+        }
+
         _buf = s.nextU8be();
         while (_buf == 0xFF) {
             u8 marker = s.peekU8be();
@@ -202,7 +271,7 @@ export struct BitReader {
             if (marker == 0x00) {
                 s.nextU8be();
                 break;
-            } else if (RST0 <= marker and marker <= RST7) {
+            } else if (Marker{marker}.restarts()) {
                 s.nextU8be();
                 _buf = s.nextU8be();
             } else {
@@ -232,31 +301,31 @@ export struct BitReader {
     }
 };
 
-// MARK: MCUs ------------------------------------------------------------------
+// MARK: Blocks ----------------------------------------------------------------
 
-export using Mcu = Array<short, 64>;
+export using Block = Array<short, 64>;
 
 export usize mcuWidth(Gfx::Pixels pixels) {
-    return alignUp(pixels.size().x, 8) / 8;
+    return ceilDiv(pixels.size().x, 8);
 }
 
 export usize mcuHeight(Gfx::Pixels pixels) {
-    return alignUp(pixels.size().y, 8) / 8;
+    return ceilDiv(pixels.size().y, 8);
 }
 
 // MARK: Quantization Tables ---------------------------------------------------
 
 export using Quant = Array<usize, 64>;
 
-export void quantize(Mcu& mcu, Quant const& quant) {
+export void quantize(Block& block, Quant const& quant) {
     for (usize i = 0; i < 64; ++i) {
-        mcu[i] /= quant[i];
+        block[i] /= quant[i];
     }
 }
 
-export void dequantize(Mcu& mcu, Quant const& quant) {
+export void dequantize(Block& block, Quant const& quant) {
     for (usize i = 0; i < 64; ++i) {
-        mcu[i] *= quant[i];
+        block[i] *= quant[i];
     }
 }
 
@@ -310,6 +379,46 @@ export struct Huff {
         return false;
     }
 };
+
+// MARK: Coefficients ---------------------------------------------------------
+
+// F.1.2.1 Huffman encoding of DC coefficients
+// https://www.w3.org/Graphics/JPEG/itu-t81.pdf#page=92
+export constexpr usize additionalBits(isize value, usize len) {
+    if (value < 0)
+        return value + (isize)((1uz << len) - 1);
+    return value;
+}
+
+// F.2.2.1 Huffman decoding of DC coefficients
+// https://www.w3.org/Graphics/JPEG/itu-t81.pdf#page=108
+export constexpr isize extend(usize bits, usize len) {
+    if (len == 0)
+        return 0;
+
+    if (bits < (1uz << (len - 1)))
+        return (isize)bits - (isize)((1uz << len) - 1);
+
+    return (isize)bits;
+}
+
+static_assert(extend(0b000, 3) == -7);
+static_assert(extend(0b011, 3) == -4);
+static_assert(extend(0b100, 3) == 4);
+static_assert(extend(0b111, 3) == 7);
+
+static constexpr bool _coefficientsRoundtrip() {
+    for (usize len = 1; len <= 11; len++) {
+        for (isize v = 1 << (len - 1); v < (1 << len); v++) {
+            if (extend(additionalBits(v, len), len) != v or
+                extend(additionalBits(-v, len), len) != -v)
+                return false;
+        }
+    }
+    return true;
+}
+
+static_assert(_coefficientsRoundtrip());
 
 export usize bitLength(int v) {
     usize length = 0;

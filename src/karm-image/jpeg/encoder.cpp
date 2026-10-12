@@ -16,23 +16,20 @@ namespace Karm::Image::Jpeg {
 
 namespace {
 
-Res<> _encodeMcu(
+Res<> _encodeBlock(
     BitWriter& bitWriter,
-    Mcu& mcu,
+    Block& block,
     i16& previousDC,
     Huff& dcTable,
     Huff& acTable
 ) {
     // encode DC value
-    i16 coeff = mcu[0] - previousDC;
-    previousDC = mcu[0];
+    i16 coeff = block[0] - previousDC;
+    previousDC = block[0];
 
     usize coeffLength = bitLength(Math::abs(coeff));
     if (coeffLength > 11) {
         return Error::invalidData("dc coefficient length exceeds 11 bits");
-    }
-    if (coeff < 0) {
-        coeff += (1 << coeffLength) - 1;
     }
 
     usize code = 0;
@@ -41,13 +38,13 @@ Res<> _encodeMcu(
         return Error::invalidData("invalid dc huffman code length");
     }
     try$(bitWriter.writeBits(code, codeLength));
-    try$(bitWriter.writeBits(coeff, coeffLength));
+    try$(bitWriter.writeBits(additionalBits(coeff, coeffLength), coeffLength));
 
     // encode AC values
     for (usize i = 1; i < 64; ++i) {
         // find zero run length
         u8 numZeroes = 0;
-        while (i < 64 and mcu[ZIGZAG[i]] == 0) {
+        while (i < 64 and block[ZIGZAG[i]] == 0) {
             numZeroes += 1;
             i += 1;
         }
@@ -69,13 +66,10 @@ Res<> _encodeMcu(
         }
 
         // find coeff length
-        coeff = mcu[ZIGZAG[i]];
+        coeff = block[ZIGZAG[i]];
         coeffLength = bitLength(Math::abs(coeff));
         if (coeffLength > 10) {
             return Error::invalidData("ac coefficient length exceeds 10 bits");
-        }
-        if (coeff < 0) {
-            coeff += (1 << coeffLength) - 1;
         }
 
         // find symbol in table
@@ -84,23 +78,23 @@ Res<> _encodeMcu(
             return Error::invalidData("invalid ac huffman code");
 
         try$(bitWriter.writeBits(code, codeLength));
-        try$(bitWriter.writeBits(coeff, coeffLength));
+        try$(bitWriter.writeBits(additionalBits(coeff, coeffLength), coeffLength));
     }
 
     return Ok();
 }
 
-Mcu _mcuFetch(Gfx::Pixels pixels, usize mx, usize my, usize component) {
-    Mcu mcu;
+Block _fetchBlock(Gfx::Pixels pixels, usize mx, usize my, usize component) {
+    Block block;
     for (usize y = 0; y < 8; ++y) {
         for (usize x = 0; x < 8; ++x) {
             Math::Vec2u pos = {mx * 8 + x, my * 8 + y};
             auto color = pixels.load(pos.cast<isize>());
             auto ycbcr = Gfx::rgbToYCbCr(color);
-            mcu[y * 8 + x] = ycbcr[component] - 128;
+            block[y * 8 + x] = ycbcr[component] - 128;
         }
     }
-    return mcu;
+    return block;
 }
 
 Res<> _writePixelData(Gfx::Pixels pixels, BitWriter& w) {
@@ -109,15 +103,15 @@ Res<> _writePixelData(Gfx::Pixels pixels, BitWriter& w) {
     for (usize y = 0; y < mcuHeight(pixels); y++) {
         for (usize x = 0; x < mcuWidth(pixels); ++x) {
             for (usize i = 0; i < 3; ++i) {
-                auto mcu = _mcuFetch(pixels, x, y, i);
+                auto block = _fetchBlock(pixels, x, y, i);
 
-                fdtc(mcu);
+                fdtc(block);
 
-                quantize(mcu, *QUANT100[i]);
+                quantize(block, *QUANT100[i]);
 
-                try$(_encodeMcu(
+                try$(_encodeBlock(
                     w,
-                    mcu,
+                    block,
                     prev[i],
                     *HUFF_DC[i],
                     *HUFF_AC[i]
@@ -131,7 +125,7 @@ Res<> _writePixelData(Gfx::Pixels pixels, BitWriter& w) {
 
 Res<> _writeQuantizationTable(Io::BEmit& e, u8 tableID, Quant const& qTable) {
     try$(e.writeU8be(0xFF));
-    try$(e.writeU8be(DQT));
+    try$(e.writeU8be(Marker::DQT));
     try$(e.writeU16be(67));
     try$(e.writeU8be(tableID));
     for (usize i = 0; i < 64; ++i) {
@@ -142,7 +136,7 @@ Res<> _writeQuantizationTable(Io::BEmit& e, u8 tableID, Quant const& qTable) {
 
 Res<> _writeStartOfFrame(Io::BEmit& e, Gfx::Pixels pixels) {
     try$(e.writeU8be(0xFF));
-    try$(e.writeU8be(SOF0));
+    try$(e.writeU8be(Marker::SOF0));
     try$(e.writeU16be(17));
     try$(e.writeU8be(8));
     try$(e.writeU16be(pixels.height()));
@@ -158,7 +152,7 @@ Res<> _writeStartOfFrame(Io::BEmit& e, Gfx::Pixels pixels) {
 
 Res<> _writeAPP0(Io::BEmit& e) {
     try$(e.writeU8be(0xFF));
-    try$(e.writeU8be(APP0));
+    try$(e.writeU8be(Marker::APP0));
     try$(e.writeU16be(16));
     try$(e.writeU8be('J'));
     try$(e.writeU8be('F'));
@@ -177,7 +171,7 @@ Res<> _writeAPP0(Io::BEmit& e) {
 
 Res<> _writeHuffmanTable(Io::BEmit& e, u8 acdc, u8 tableID, Huff const& hTable) {
     try$(e.writeU8be(0xFF));
-    try$(e.writeU8be(DHT));
+    try$(e.writeU8be(Marker::DHT));
     try$(e.writeU16be(19 + hTable.offs[16]));
     try$(e.writeU8be(acdc << 4 | tableID));
     for (usize i = 0; i < 16; ++i) {
@@ -193,7 +187,7 @@ Res<> _writeHuffmanTable(Io::BEmit& e, u8 acdc, u8 tableID, Huff const& hTable) 
 
 Res<> _writeStartOfScan(Io::BEmit& e) {
     try$(e.writeU8be(0xFF));
-    try$(e.writeU8be(SOS));
+    try$(e.writeU8be(Marker::SOS));
     try$(e.writeU16be(12));
     try$(e.writeU8be(3));
     for (usize i = 1; i <= 3; ++i) {
@@ -211,7 +205,7 @@ Res<> _writeStartOfScan(Io::BEmit& e) {
 export Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
     // SOI
     try$(e.writeU8be(0xFF));
-    try$(e.writeU8be(SOI));
+    try$(e.writeU8be(Marker::SOI));
 
     // APP0
     try$(_writeAPP0(e));
@@ -238,7 +232,7 @@ export Res<> encode(Gfx::Pixels pixels, Io::BEmit& e) {
 
     // EOI
     try$(e.writeU8be(0xFF));
-    try$(e.writeU8be(EOI));
+    try$(e.writeU8be(Marker::EOI));
 
     return Ok();
 }

@@ -21,16 +21,16 @@ static f32 const s5 = Math::cos(5.0 / 16.0 * Math::PI) / 2.0;
 static f32 const s6 = Math::cos(6.0 / 16.0 * Math::PI) / 2.0;
 static f32 const s7 = Math::cos(7.0 / 16.0 * Math::PI) / 2.0;
 
-void idct(Mcu& mcu) {
+void idct(Block& block) {
     for (usize i = 0; i < 8; ++i) {
-        f32 g0 = mcu[0 * 8 + i] * s0;
-        f32 g1 = mcu[4 * 8 + i] * s4;
-        f32 g2 = mcu[2 * 8 + i] * s2;
-        f32 g3 = mcu[6 * 8 + i] * s6;
-        f32 g4 = mcu[5 * 8 + i] * s5;
-        f32 g5 = mcu[1 * 8 + i] * s1;
-        f32 g6 = mcu[7 * 8 + i] * s7;
-        f32 g7 = mcu[3 * 8 + i] * s3;
+        f32 g0 = block[0 * 8 + i] * s0;
+        f32 g1 = block[4 * 8 + i] * s4;
+        f32 g2 = block[2 * 8 + i] * s2;
+        f32 g3 = block[6 * 8 + i] * s6;
+        f32 g4 = block[5 * 8 + i] * s5;
+        f32 g5 = block[1 * 8 + i] * s1;
+        f32 g6 = block[7 * 8 + i] * s7;
+        f32 g7 = block[3 * 8 + i] * s3;
 
         f32 f0 = g0;
         f32 f1 = g1;
@@ -80,25 +80,25 @@ void idct(Mcu& mcu) {
         f32 b6 = c6 - c7;
         f32 b7 = c7;
 
-        mcu[0 * 8 + i] = b0 + b7;
-        mcu[1 * 8 + i] = b1 + b6;
-        mcu[2 * 8 + i] = b2 + b5;
-        mcu[3 * 8 + i] = b3 + b4;
-        mcu[4 * 8 + i] = b3 - b4;
-        mcu[5 * 8 + i] = b2 - b5;
-        mcu[6 * 8 + i] = b1 - b6;
-        mcu[7 * 8 + i] = b0 - b7;
+        block[0 * 8 + i] = b0 + b7;
+        block[1 * 8 + i] = b1 + b6;
+        block[2 * 8 + i] = b2 + b5;
+        block[3 * 8 + i] = b3 + b4;
+        block[4 * 8 + i] = b3 - b4;
+        block[5 * 8 + i] = b2 - b5;
+        block[6 * 8 + i] = b1 - b6;
+        block[7 * 8 + i] = b0 - b7;
     }
 
     for (usize i = 0; i < 8; ++i) {
-        f32 g0 = mcu[i * 8 + 0] * s0;
-        f32 g1 = mcu[i * 8 + 4] * s4;
-        f32 g2 = mcu[i * 8 + 2] * s2;
-        f32 g3 = mcu[i * 8 + 6] * s6;
-        f32 g4 = mcu[i * 8 + 5] * s5;
-        f32 g5 = mcu[i * 8 + 1] * s1;
-        f32 g6 = mcu[i * 8 + 7] * s7;
-        f32 g7 = mcu[i * 8 + 3] * s3;
+        f32 g0 = block[i * 8 + 0] * s0;
+        f32 g1 = block[i * 8 + 4] * s4;
+        f32 g2 = block[i * 8 + 2] * s2;
+        f32 g3 = block[i * 8 + 6] * s6;
+        f32 g4 = block[i * 8 + 5] * s5;
+        f32 g5 = block[i * 8 + 1] * s1;
+        f32 g6 = block[i * 8 + 7] * s7;
+        f32 g7 = block[i * 8 + 3] * s3;
 
         f32 f0 = g0;
         f32 f1 = g1;
@@ -148,27 +148,27 @@ void idct(Mcu& mcu) {
         f32 b6 = c6 - c7;
         f32 b7 = c7;
 
-        mcu[i * 8 + 0] = b0 + b7;
-        mcu[i * 8 + 1] = b1 + b6;
-        mcu[i * 8 + 2] = b2 + b5;
-        mcu[i * 8 + 3] = b3 + b4;
-        mcu[i * 8 + 4] = b3 - b4;
-        mcu[i * 8 + 5] = b2 - b5;
-        mcu[i * 8 + 6] = b1 - b6;
-        mcu[i * 8 + 7] = b0 - b7;
+        block[i * 8 + 0] = b0 + b7;
+        block[i * 8 + 1] = b1 + b6;
+        block[i * 8 + 2] = b2 + b5;
+        block[i * 8 + 3] = b3 + b4;
+        block[i * 8 + 4] = b3 - b4;
+        block[i * 8 + 5] = b2 - b5;
+        block[i * 8 + 6] = b1 - b6;
+        block[i * 8 + 7] = b0 - b7;
     }
 }
 
-void fdtc(Mcu& mcu) {
+void fdtc(Block& block) {
     for (usize i = 0; i < 8; ++i) {
-        f32 a0 = mcu[0 * 8 + i];
-        f32 a1 = mcu[1 * 8 + i];
-        f32 a2 = mcu[2 * 8 + i];
-        f32 a3 = mcu[3 * 8 + i];
-        f32 a4 = mcu[4 * 8 + i];
-        f32 a5 = mcu[5 * 8 + i];
-        f32 a6 = mcu[6 * 8 + i];
-        f32 a7 = mcu[7 * 8 + i];
+        f32 a0 = block[0 * 8 + i];
+        f32 a1 = block[1 * 8 + i];
+        f32 a2 = block[2 * 8 + i];
+        f32 a3 = block[3 * 8 + i];
+        f32 a4 = block[4 * 8 + i];
+        f32 a5 = block[5 * 8 + i];
+        f32 a6 = block[6 * 8 + i];
+        f32 a7 = block[7 * 8 + i];
 
         f32 b0 = a0 + a7;
         f32 b1 = a1 + a6;
@@ -226,25 +226,25 @@ void fdtc(Mcu& mcu) {
         f32 g6 = f5 - f6;
         f32 g7 = f7 - f4;
 
-        mcu[0 * 8 + i] = g0 * s0;
-        mcu[4 * 8 + i] = g1 * s4;
-        mcu[2 * 8 + i] = g2 * s2;
-        mcu[6 * 8 + i] = g3 * s6;
-        mcu[5 * 8 + i] = g4 * s5;
-        mcu[1 * 8 + i] = g5 * s1;
-        mcu[7 * 8 + i] = g6 * s7;
-        mcu[3 * 8 + i] = g7 * s3;
+        block[0 * 8 + i] = g0 * s0;
+        block[4 * 8 + i] = g1 * s4;
+        block[2 * 8 + i] = g2 * s2;
+        block[6 * 8 + i] = g3 * s6;
+        block[5 * 8 + i] = g4 * s5;
+        block[1 * 8 + i] = g5 * s1;
+        block[7 * 8 + i] = g6 * s7;
+        block[3 * 8 + i] = g7 * s3;
     }
 
     for (usize i = 0; i < 8; ++i) {
-        f32 a0 = mcu[i * 8 + 0];
-        f32 a1 = mcu[i * 8 + 1];
-        f32 a2 = mcu[i * 8 + 2];
-        f32 a3 = mcu[i * 8 + 3];
-        f32 a4 = mcu[i * 8 + 4];
-        f32 a5 = mcu[i * 8 + 5];
-        f32 a6 = mcu[i * 8 + 6];
-        f32 a7 = mcu[i * 8 + 7];
+        f32 a0 = block[i * 8 + 0];
+        f32 a1 = block[i * 8 + 1];
+        f32 a2 = block[i * 8 + 2];
+        f32 a3 = block[i * 8 + 3];
+        f32 a4 = block[i * 8 + 4];
+        f32 a5 = block[i * 8 + 5];
+        f32 a6 = block[i * 8 + 6];
+        f32 a7 = block[i * 8 + 7];
 
         f32 b0 = a0 + a7;
         f32 b1 = a1 + a6;
@@ -302,14 +302,14 @@ void fdtc(Mcu& mcu) {
         f32 g6 = f5 - f6;
         f32 g7 = f7 - f4;
 
-        mcu[i * 8 + 0] = g0 * s0;
-        mcu[i * 8 + 4] = g1 * s4;
-        mcu[i * 8 + 2] = g2 * s2;
-        mcu[i * 8 + 6] = g3 * s6;
-        mcu[i * 8 + 5] = g4 * s5;
-        mcu[i * 8 + 1] = g5 * s1;
-        mcu[i * 8 + 7] = g6 * s7;
-        mcu[i * 8 + 3] = g7 * s3;
+        block[i * 8 + 0] = g0 * s0;
+        block[i * 8 + 4] = g1 * s4;
+        block[i * 8 + 2] = g2 * s2;
+        block[i * 8 + 6] = g3 * s6;
+        block[i * 8 + 5] = g4 * s5;
+        block[i * 8 + 1] = g5 * s1;
+        block[i * 8 + 7] = g6 * s7;
+        block[i * 8 + 3] = g7 * s3;
     }
 }
 

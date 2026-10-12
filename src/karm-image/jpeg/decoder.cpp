@@ -20,11 +20,73 @@ import :jpeg.dct;
 //  - https://www.youtube.com/watch?v=CPT4FSkFUgs
 namespace Karm::Image::Jpeg {
 
+using Karm::begin, Karm::end;
+
+// B.1.1.5 Entropy-coded data segments
+// https://www.w3.org/Graphics/JPEG/itu-t81.pdf#page=37
+static usize _entropyCodedLen(Bytes data) {
+    for (usize i = 0; i + 1 < data.len(); i++) {
+        if (data[i] != 0xFF)
+            continue;
+
+        u8 next = data[i + 1];
+        if (next == 0x00 or Marker{next}.restarts()) {
+            i++;
+            continue;
+        }
+
+        return i;
+    }
+    return data.len();
+}
+
+// MARK: Segments --------------------------------------------------------------
+
+struct Segment {
+    Marker marker;
+    Bytes data = {};
+    Bytes entropyCoded = {};
+};
+
+struct SegmentIter {
+    Io::BScan s;
+
+    Opt<Segment> next() {
+        if (s.ended())
+            return NONE;
+
+        if (s.nextU8be() != 0xFF) {
+            logError("jpeg: expected a marker");
+            return NONE;
+        }
+
+        u8 code = s.nextU8be();
+        while (code == 0xFF and not s.ended())
+            code = s.nextU8be();
+
+        Segment segment{.marker = Marker{code}};
+        if (segment.marker.standalone())
+            return Some(segment);
+
+        u16 len = s.nextU16be();
+        if (len < 2) {
+            logError("jpeg: invalid segment length: {}", len);
+            return NONE;
+        }
+
+        segment.data = s.nextBytes(len - 2);
+        if (segment.marker == Marker::SOS)
+            segment.entropyCoded = s.nextBytes(_entropyCodedLen(s.remBytes()));
+
+        return Some(segment);
+    }
+};
+
 // MARK: Decoder ---------------------------------------------------------------
 
 export struct Decoder {
     static bool sniff(Bytes slice) {
-        return slice.len() > 2 and slice[0] == 0xFF and slice[1] == SOI;
+        return slice.len() > 2 and slice[0] == 0xFF and slice[1] == Marker::SOI;
     }
 
     static Res<Decoder> init(Bytes slice) {
@@ -33,88 +95,46 @@ export struct Decoder {
             return Error::invalidData("not a JPEG image");
         }
 
-        Decoder dec{};
-        Io::BScan s{slice};
+        Decoder dec{slice};
+        try$(dec._loadFrame());
+        return Ok(std::move(dec));
+    }
 
-        bool reachedEoi = false;
-        bool expectSoi = true;
+    Bytes _slice;
 
-        while (not s.ended()) {
-            u8 first = s.nextU8be();
+    Decoder(Bytes slice)
+        : _slice(slice) {}
 
-            if (first != 0xFF) {
-                logError("jpeg: invalid marker");
-                return Error::invalidData("invalid marker");
+    SegmentIter iterSegments() const {
+        return {_slice};
+    }
+
+    Res<> _loadFrame() {
+        for (auto segment : iterSegments()) {
+            if (segment.marker == Marker::SOF0)
+                return startOfFrame(segment.data);
+
+            if (segment.marker.startsFrame()) {
+                logError("jpeg: unsupported frame type {} (only baseline is supported)", segment.marker);
+                return Error::notImplemented("unsupported jpeg frame type");
             }
 
-            u8 marker = s.nextU8be();
-
-            if (expectSoi) {
-                if (marker != SOI) {
-                    logError("jpeg: missing SOI marker");
-                    return Error::invalidData("missing SOI marker");
-                }
-                expectSoi = false;
-            } else if (APP0 <= marker and marker <= APP15) {
-                logWarn("jpeg: skipping APP{}", marker - APP0);
-                dec.skipMarker(s);
-            } else if (marker == DQT) {
-                try$(dec.defineQuantizationTable(s));
-            } else if (marker == SOF0) {
-                try$(dec.startOfFrame(s));
-            } else if (marker == DRI) {
-                try$(dec.defineRestartInterval(s));
-            } else if (marker == DHT) {
-                try$(dec.defineHuffmanTable(s));
-            } else if (marker == SOS) {
-                try$(dec.startOfScan(s));
-                try$(dec.decodeHuffman(s));
-            } else if (marker == EOI) {
-                reachedEoi = true;
-            } else if (marker == TEM) {
-                logWarn("jpeg: ignoring TEM marker");
-            } else if (marker == COM) {
-                logDebug("jpeg: skipping comment");
-                dec.skipMarker(s);
-            } else if (marker == 0xff) {
-                logDebug("jpeg: skipping padding byte");
-                while (marker == 0xff) {
-                    marker = s.nextU8be();
-                }
-            } else {
-                logWarn("jpeg: unknown marker: {:02x}", marker);
-            }
+            if (segment.marker == Marker::SOS or segment.marker == Marker::EOI)
+                break;
         }
 
-        if (not reachedEoi) {
-            logError("jpeg: missing EOI marker");
-            return Error::invalidData("missing EOI marker");
-        }
-
-        return Ok(dec);
-    };
-
-    void skipMarker(Io::BScan& s) {
-        u16 len = s.nextU16be();
-        s.skip(len - 2);
+        logError("jpeg: missing start of frame");
+        return Error::invalidData("missing start of frame");
     }
 
     // MARK: Quantization Tables -----------------------------------------------
 
     Array<Opt<Quant>, 4> _quant;
-    bool _quirkZeroBased = false;
 
-    Res<> defineQuantizationTable(Io::BScan& x) {
-        // logDebug("jpeg: defining quantization table");
-
-        u16 len = x.nextU16be();
-        Io::BScan s = x.nextBytes(len - 2);
-
+    Res<> defineQuantizationTable(Io::BScan s) {
         while (not s.ended()) {
             u8 infos = s.nextU8be();
             u8 id = infos & 0x0F;
-
-            // logDebug("jpeg: quantization table id: {}", id);
 
             if (id > 3) {
                 logError("jpeg: invalid quantization table id: {}", id);
@@ -135,32 +155,56 @@ export struct Decoder {
 
     // MARK: Start of frame ----------------------------------------------------
 
-    isize _width = 8;
-    isize _height = 8;
+    struct Component {
+        u8 id;
+        u8 hSampling;
+        u8 vSampling;
+        u8 quantId;
+        u8 dcHuffId = 0;
+        u8 acHuffId = 0;
+
+        usize blocksPerLine = 0;
+        usize blocksPerColumn = 0;
+        Box<Block[]> blocks = {};
+
+        Block& blockAt(usize bx, usize by) {
+            return blocks[by * blocksPerLine + bx];
+        }
+
+        Block const& blockAt(usize bx, usize by) const {
+            return blocks[by * blocksPerLine + bx];
+        }
+
+        short sampleAt(usize px, usize py, u8 hMax, u8 vMax) const {
+            usize sx = px * hSampling / hMax;
+            usize sy = py * vSampling / vMax;
+            return blockAt(sx / 8, sy / 8)[(sy % 8) * 8 + (sx % 8)];
+        }
+    };
+
+    isize _width = 0;
+    isize _height = 0;
+    InlineVec<Component, 4> _components;
+    u8 _hMax = 1;
+    u8 _vMax = 1;
+    usize _mcusPerLine = 0;
+    usize _mcusPerColumn = 0;
 
     isize width() const { return _width; }
 
     isize height() const { return _height; }
 
-    isize mcuWidth() const { return (_width + 7) / 8; }
+    Opt<usize> _componentIndex(u8 id) const {
+        for (usize i = 0; i < _components.len(); ++i) {
+            if (_components[i].id == id)
+                return Some(i);
+        }
+        return NONE;
+    }
 
-    isize mcuHeight() const { return (_height + 7) / 8; }
-
-    struct Component {
-        u8 hFactor;
-        u8 vFactor;
-        u8 quantId;
-    };
-
-    Array<Opt<Component>, 4> _components;
-    usize _componentCount = 0;
-
-    Res<> startOfFrame(Io::BScan& x) {
-        // logDebug("jpeg: start of frame");
-
-        u16 len = x.nextU16be();
-        Io::BScan s = x.nextBytes(len - 2);
-
+    // B.2.2 Frame header syntax
+    // https://www.w3.org/Graphics/JPEG/itu-t81.pdf#page=39
+    Res<> startOfFrame(Io::BScan s) {
         u8 precision = s.nextU8be();
         if (precision != 8) {
             logError("jpeg: invalid precision: {}", precision);
@@ -169,6 +213,11 @@ export struct Decoder {
 
         _height = s.nextU16be();
         _width = s.nextU16be();
+
+        if (_width == 0 or _height == 0) {
+            logError("jpeg: invalid image size: {}x{}", _width, _height);
+            return Error::invalidData("invalid image size");
+        }
 
         u8 componentCount = s.nextU8be();
         if (componentCount != 1 and componentCount != 3) {
@@ -179,35 +228,43 @@ export struct Decoder {
         for (u8 i = 0; i < componentCount; ++i) {
             u8 id = s.nextU8be();
 
-            if (id == 0) {
-                logWarn("jpeg: zero-based component id");
-                _quirkZeroBased = true;
-            }
-
-            if (not _quirkZeroBased) {
-                id -= 1;
-            }
-
-            if (id > 3) {
-                logError("jpeg: invalid component id: {}", id);
-                return Error::invalidData("invalid component id");
-            }
-
-            if (_components[id]) {
+            if (_componentIndex(id)) {
                 logError("jpeg: duplicate component id: {}", id);
                 return Error::invalidData("duplicate component id");
             }
 
-            u8 factors = s.nextU8be();
-            u8 quantId = s.nextU8be();
+            u8 sampling = s.nextU8be();
+            u8 hSampling = sampling >> 4;
+            u8 vSampling = sampling & 0xF;
 
-            _components[id].emplace(Component{
-                (u8)(factors >> 4),
-                (u8)(factors & 0xF),
-                quantId,
+            if (hSampling < 1 or hSampling > 4 or vSampling < 1 or vSampling > 4) {
+                logError("jpeg: invalid sampling factors: {}x{}", hSampling, vSampling);
+                return Error::invalidData("invalid sampling factors");
+            }
+
+            u8 quantId = s.nextU8be();
+            if (quantId > 3) {
+                logError("jpeg: invalid quantization table id: {}", quantId);
+                return Error::invalidData("invalid quantization table id");
+            }
+
+            _components.pushBack(Component{
+                .id = id,
+                .hSampling = hSampling,
+                .vSampling = vSampling,
+                .quantId = quantId,
             });
 
-            _componentCount = max(_componentCount, (usize)id + 1);
+            _hMax = max(_hMax, hSampling);
+            _vMax = max(_vMax, vSampling);
+        }
+
+        _mcusPerLine = ceilDiv(_width, 8 * _hMax);
+        _mcusPerColumn = ceilDiv(_height, 8 * _vMax);
+
+        for (auto& c : _components) {
+            c.blocksPerLine = _mcusPerLine * c.hSampling;
+            c.blocksPerColumn = _mcusPerColumn * c.vSampling;
         }
 
         return Ok();
@@ -217,12 +274,7 @@ export struct Decoder {
 
     usize _restartInterval = 0;
 
-    Res<> defineRestartInterval(Io::BScan& x) {
-        // logDebug("jpeg: defining restart interval");
-
-        u16 len = x.nextU16be();
-        Io::BScan s = x.nextBytes(len - 2);
-
+    Res<> defineRestartInterval(Io::BScan s) {
         _restartInterval = s.nextU16be();
 
         if (not s.ended()) {
@@ -238,12 +290,7 @@ export struct Decoder {
     Array<Opt<Huff>, 4> _dcHuff;
     Array<Opt<Huff>, 4> _acHuff;
 
-    Res<> defineHuffmanTable(Io::BScan& x) {
-        // logDebug("jpeg: defining huffman table");
-
-        u16 len = x.nextU16be();
-        Io::BScan s = x.nextBytes(len - 2);
-
+    Res<> defineHuffmanTable(Io::BScan s) {
         while (not s.ended()) {
             u8 infos = s.nextU8be();
             u8 id = infos & 0x0F;
@@ -277,85 +324,55 @@ export struct Decoder {
 
     // MARK: Start of scan -----------------------------------------------------
 
-    struct ScanComponent {
-        u8 dcHuffId;
-        u8 acHuffId;
-    };
+    using Scan = InlineVec<usize, 4>;
 
-    Array<Opt<ScanComponent>, 4> _scanComponents;
-    u8 _ss = 0;
-    u8 _se = 0;
-    u8 _ah = 0;
-    u8 _al = 0;
-
-    Res<> startOfScan(Io::BScan& x) {
-        // logDebug("jpeg: start of scan");
-
-        if (_componentCount == 0) {
-            logError("jpeg: start of scan before start of frame");
-            return Error::invalidData("start of scan before start of frame");
-        }
-
-        u16 len = x.nextU16be();
-        Io::BScan s = x.nextBytes(len - 2);
-
+    // B.2.3 Scan header syntax
+    // https://www.w3.org/Graphics/JPEG/itu-t81.pdf#page=41
+    Res<Scan> startOfScan(Io::BScan s) {
         u8 componentCount = s.nextU8be();
-        if (componentCount != _componentCount) {
-            logError("jpeg: invalid component count: {}", componentCount);
-            return Error::invalidData("invalid component count");
+        if (componentCount == 0 or componentCount > _components.len()) {
+            logError("jpeg: invalid scan component count: {}", componentCount);
+            return Error::invalidData("invalid scan component count");
         }
 
+        Scan scan;
         for (u8 i = 0; i < componentCount; ++i) {
             u8 id = s.nextU8be();
 
-            if (not _quirkZeroBased and id == 0) {
-                logError("jpeg: component id is zero-based while SOF0 is not");
-                return Error::invalidData("component id is zero-based without SOF0");
-            }
-
-            if (not _quirkZeroBased) {
-                id -= 1;
-            }
-
-            if (id > 3) {
-                logError("jpeg: invalid component id: {}", id);
-                return Error::invalidData("invalid component id");
-            }
-
-            if (not _components[id]) {
+            auto index = _componentIndex(id);
+            if (not index) {
                 logError("jpeg: undefined component id: {}", id);
                 return Error::invalidData("undefined component id");
             }
 
             u8 huffIds = s.nextU8be();
-            u8 dcHuffId = huffIds >> 4;
-            u8 acHuffId = huffIds & 0xF;
+            auto& c = _components[*index];
+            c.dcHuffId = huffIds >> 4;
+            c.acHuffId = huffIds & 0xF;
 
-            if (dcHuffId > 3) {
-                logError("jpeg: invalid dc huffman table id: {}", dcHuffId);
-                return Error::invalidData("invalid dc huffman table id");
+            if (c.dcHuffId > 3 or not _dcHuff[c.dcHuffId]) {
+                logError("jpeg: undefined dc huffman table id: {}", c.dcHuffId);
+                return Error::invalidData("undefined dc huffman table id");
             }
 
-            if (acHuffId > 3) {
-                logError("jpeg: invalid ac huffman table id: {}", acHuffId);
-                return Error::invalidData("invalid ac huffman table id");
+            if (c.acHuffId > 3 or not _acHuff[c.acHuffId]) {
+                logError("jpeg: undefined ac huffman table id: {}", c.acHuffId);
+                return Error::invalidData("undefined ac huffman table id");
             }
 
-            _scanComponents[id].emplace(ScanComponent{dcHuffId, acHuffId});
+            scan.pushBack(*index);
         }
 
-        _ss = s.nextU8be();
-        _se = s.nextU8be();
+        u8 ss = s.nextU8be();
+        u8 se = s.nextU8be();
         u8 ahAl = s.nextU8be();
-        _ah = ahAl >> 4;
-        _al = ahAl & 0xF;
 
-        if (_ss != 0 or _se != 63) {
+        if (ss != 0 or se != 63) {
             logError("jpeg: unexpected spectral selection");
             return Error::invalidData("unexpected spectral selection");
         }
 
-        if (_ah != 0 or _al != 0) {
+        if (ahAl != 0) {
             logError("jpeg: unexpected successive approximation");
             return Error::invalidData("unexpected successive approximation");
         }
@@ -365,109 +382,104 @@ export struct Decoder {
             return Error::invalidData("unexpected data after SOS marker");
         }
 
-        return Ok();
+        return Ok(scan);
     }
 
     // MARK: Huffman Data ------------------------------------------------------
 
-    Vec<Mcu> _mcus;
-
-    Res<> decodeHuffman(Io::BScan& s) {
-        _mcus.resize(mcuWidth() * mcuHeight() * _componentCount);
-
-        Array<isize, 3> prevDc = {};
-
+    Res<> decodeScan(Bytes entropyCoded, Scan const& scan) {
+        Io::BScan s{entropyCoded};
         BitReader bs{s};
+        Array<isize, 4> prevDc = {};
+        usize mcuIndex = 0;
 
-        for (usize i = 0; i < _mcus.len(); ++i) {
-            Mcu& mcu = _mcus[i];
-            usize cid = i % _componentCount;
-
-            // logDebug("jpeg: decoding mcu {} of {} (cid: {})", i + 1, _mcus.len(), cid);
-
-            // handle restart interval
-            if (_restartInterval > 0 and (i / _componentCount) % _restartInterval == 0) {
-                prevDc = {};
+        auto nextMcu = [&] {
+            if (_restartInterval and mcuIndex and mcuIndex % _restartInterval == 0) {
                 bs.reset();
+                prevDc = {};
             }
+            mcuIndex++;
+        };
 
-            if (not _scanComponents[cid]) {
-                logError("jpeg: undefined component id: {}", cid);
-                return Error::invalidData("undefined component id");
-            }
+        if (scan.len() == 1) {
+            // A.2.2 Non-interleaved order
+            // https://www.w3.org/Graphics/JPEG/itu-t81.pdf#page=29
+            auto& c = _components[scan[0]];
+            usize blocksPerLine = ceilDiv(ceilDiv(_width * c.hSampling, _hMax), 8);
+            usize blocksPerColumn = ceilDiv(ceilDiv(_height * c.vSampling, _vMax), 8);
 
-            auto& c = _scanComponents[cid].expect();
-
-            // logDebug("jpeg: decoding using huffman table (dc: {}, ac: {})", c.dcHuffId, c.acHuffId);
-
-            if (not _dcHuff[c.dcHuffId]) {
-                logError("jpeg: undefined dc huffman table id: {}", c.dcHuffId);
-                return Error::invalidData("undefined dc huffman table id");
-            }
-
-            auto& dcHuff = _dcHuff[c.dcHuffId].expect();
-
-            if (not _acHuff[c.acHuffId]) {
-                logError("jpeg: undefined ac huffman table id: {}", c.acHuffId);
-                return Error::invalidData("undefined ac huffman table id");
-            }
-
-            auto& acHuff = _acHuff[c.acHuffId].expect();
-
-            u8 len = try$(dcHuff.next(bs));
-
-            if (len > 11) {
-                logError("jpeg: invalid dc huffman code length: {}", len);
-                return Error::invalidData("invalid dc huffman code length");
-            }
-
-            isize coeff = try$(bs.nextBits(len));
-
-            if (len != 0 and coeff < (1 << (len - 1))) {
-                coeff -= (1 << len) - 1;
-            }
-
-            mcu[0] = prevDc[cid] + coeff;
-            prevDc[cid] = mcu[0];
-
-            usize k = 1;
-            while (k < 64) {
-                u8 sym = try$(acHuff.next(bs));
-
-                if (sym == 0) {
-                    break;
+            for (usize by = 0; by < blocksPerColumn; ++by) {
+                for (usize bx = 0; bx < blocksPerLine; ++bx) {
+                    nextMcu();
+                    try$(decodeBlock(bs, c, prevDc[0], c.blockAt(bx, by)));
                 }
+            }
 
-                u8 numZeroes = sym >> 4;
+            return Ok();
+        }
 
-                if (sym == 0xF0) {
-                    numZeroes = 16;
-                }
+        // A.2.3 Interleaved order
+        // https://www.w3.org/Graphics/JPEG/itu-t81.pdf#page=30
+        for (usize my = 0; my < _mcusPerColumn; ++my) {
+            for (usize mx = 0; mx < _mcusPerLine; ++mx) {
+                nextMcu();
 
-                if (k + numZeroes >= 64) {
-                    logError("jpeg: zero run length exceeds block size: {}", k + numZeroes);
-                    return Error::invalidData("zero run length exceeds block size");
-                }
+                for (usize i = 0; i < scan.len(); ++i) {
+                    auto& c = _components[scan[i]];
 
-                k += numZeroes;
-
-                u8 len = sym & 0xF;
-
-                if (len > 10) {
-                    logError("jpeg: invalid ac huffman code length: {}", len);
-                    return Error::invalidData("invalid ac huffman code length");
-                }
-
-                if (len) {
-                    coeff = try$(bs.nextBits(len));
-
-                    if (coeff < (1 << (len - 1))) {
-                        coeff -= (1 << len) - 1;
+                    for (usize v = 0; v < c.vSampling; ++v) {
+                        for (usize h = 0; h < c.hSampling; ++h) {
+                            auto& block = c.blockAt(mx * c.hSampling + h, my * c.vSampling + v);
+                            try$(decodeBlock(bs, c, prevDc[i], block));
+                        }
                     }
-
-                    mcu[ZIGZAG[k++]] = coeff;
                 }
             }
+        }
+
+        return Ok();
+    }
+
+    Res<> decodeBlock(BitReader& bs, Component const& c, isize& prevDc, Block& block) {
+        auto& dcHuff = *_dcHuff[c.dcHuffId];
+        auto& acHuff = *_acHuff[c.acHuffId];
+
+        // F.2.2.1 Huffman decoding of DC coefficients
+        // https://www.w3.org/Graphics/JPEG/itu-t81.pdf#page=108
+        u8 dcLen = try$(dcHuff.next(bs));
+        if (dcLen > 11) {
+            logError("jpeg: invalid dc huffman code length: {}", dcLen);
+            return Error::invalidData("invalid dc huffman code length");
+        }
+
+        prevDc += extend(try$(bs.nextBits(dcLen)), dcLen);
+        block[0] = prevDc;
+
+        // F.2.2.2 Decoding procedure for AC coefficients
+        // https://www.w3.org/Graphics/JPEG/itu-t81.pdf#page=109
+        constexpr u8 END_OF_BLOCK = 0x00;
+        usize k = 1;
+        while (k < 64) {
+            u8 sym = try$(acHuff.next(bs));
+
+            if (sym == END_OF_BLOCK)
+                break;
+
+            u8 run = sym >> 4;
+            u8 len = sym & 0xF;
+
+            if (len > 10) {
+                logError("jpeg: invalid ac huffman code length: {}", len);
+                return Error::invalidData("invalid ac huffman code length");
+            }
+
+            k += run;
+            if (k >= 64) {
+                logError("jpeg: zero run length exceeds block size: {}", k);
+                return Error::invalidData("zero run length exceeds block size");
+            }
+
+            block[ZIGZAG[k++]] = extend(try$(bs.nextBits(len)), len);
         }
 
         return Ok();
@@ -476,40 +488,77 @@ export struct Decoder {
     // MARK: Decoding ----------------------------------------------------------
 
     Res<> decode(Gfx::MutPixels pixels) {
-        for (usize i = 0; i < _mcus.len(); i += _componentCount) {
-            usize x = (i / _componentCount) % mcuWidth();
-            usize y = (i / _componentCount) / mcuWidth();
+        try$(_decodeScans());
+        return _reconstruct(pixels);
+    }
 
-            for (usize j = 0; j < _componentCount; j++) {
-                auto& mcu = _mcus[i + j];
+    Res<> _decodeScans() {
+        for (auto& c : _components)
+            c.blocks = Box<Block[]>::filled(c.blocksPerLine * c.blocksPerColumn);
 
-                if (not _quant[_components[j]->quantId]) {
-                    logError("jpeg: undefined quantization table id: {}", _components[j]->quantId);
-                    return Error::invalidData("undefined quantization table id");
-                }
+        for (auto segment : iterSegments()) {
+            auto marker = segment.marker;
 
-                auto& quant = _quant[_components[j]->quantId].expect();
-                dequantize(mcu, quant);
-                idct(mcu);
+            if (marker == Marker::DQT) {
+                try$(defineQuantizationTable(segment.data));
+            } else if (marker == Marker::DHT) {
+                try$(defineHuffmanTable(segment.data));
+            } else if (marker == Marker::DRI) {
+                try$(defineRestartInterval(segment.data));
+            } else if (marker == Marker::SOS) {
+                auto scan = try$(startOfScan(segment.data));
+                try$(decodeScan(segment.entropyCoded, scan));
+            } else if (marker == Marker::EOI) {
+                return Ok();
+            } else if (marker == Marker::SOI or marker == Marker::SOF0) {
+                continue;
+            } else if (marker.application()) {
+                logWarn("jpeg: skipping {}", marker);
+            } else if (marker == Marker::COM) {
+                logDebug("jpeg: skipping comment");
+            } else if (marker == Marker::TEM) {
+                logWarn("jpeg: ignoring TEM marker");
+            } else {
+                logWarn("jpeg: unknown marker: {}", marker);
+            }
+        }
+
+        logError("jpeg: missing EOI marker");
+        return Error::invalidData("missing EOI marker");
+    }
+
+    Res<> _reconstruct(Gfx::MutPixels pixels) {
+        for (auto& c : _components) {
+            if (not _quant[c.quantId]) {
+                logError("jpeg: undefined quantization table id: {}", c.quantId);
+                return Error::invalidData("undefined quantization table id");
             }
 
-            auto& yMcu = _mcus[i + 0];
-            auto& cbMcu = _mcus[i + 1];
-            auto& crMcu = _mcus[i + 2];
+            auto& quant = *_quant[c.quantId];
+            for (auto& block : c.blocks) {
+                dequantize(block, quant);
+                idct(block);
+            }
+        }
 
-            for (usize k = 0; k < 64; ++k) {
-                isize px = x * 8 + k % 8;
-                isize py = y * 8 + k / 8;
-
-                if (px >= _width or py >= _height)
-                    continue;
-
-                Gfx::YCbCr ycbcr{(float)yMcu[k], (float)cbMcu[k], (float)crMcu[k]};
-                pixels.storeUnsafe({px, py}, Gfx::yCbCrToRgb(ycbcr));
+        for (isize y = 0; y < _height; ++y) {
+            for (isize x = 0; x < _width; ++x) {
+                pixels.storeUnsafe({x, y}, _colorAt(x, y));
             }
         }
 
         return Ok();
+    }
+
+    Gfx::Color _colorAt(usize x, usize y) const {
+        auto sample = [&](usize i) -> f32 {
+            return _components[i].sampleAt(x, y, _hMax, _vMax);
+        };
+
+        if (_components.len() == 1)
+            return Gfx::yCbCrToRgb({sample(0), 0, 0});
+
+        return Gfx::yCbCrToRgb({sample(0), sample(1), sample(2)});
     }
 
     // MARK: Dumping -----------------------------------------------------------
@@ -519,11 +568,10 @@ export struct Decoder {
         e.indentNewline();
         e.ln("width: {}", width());
         e.ln("height: {}", height());
+        e.ln("mcus: {}x{}", _mcusPerLine, _mcusPerColumn);
 
         e("quantization tables:");
         e.indentNewline();
-
-        e("zero-based (quirk): {}\n", _quirkZeroBased);
         for (usize i = 0; i < _quant.len(); ++i) {
             if (_quant[i]) {
                 e.ln("table {}:", i);
@@ -543,17 +591,15 @@ export struct Decoder {
 
         e("components:");
         e.indentNewline();
-        for (usize i = 0; i < _components.len(); ++i) {
-            if (_components[i]) {
-                e("component {}:", i);
-                e.indentNewline();
-                e.ln("hFactor: {}", (*_components[i]).hFactor);
-                e.ln("vFactor: {}", (*_components[i]).vFactor);
-                e.ln("quantId: {}", (*_components[i]).quantId);
-                e.deindent();
-            } else {
-                e("component {}: none\n", i);
-            }
+        for (auto const& c : _components) {
+            e("component {}:", c.id);
+            e.indentNewline();
+            e.ln("sampling: {}x{}", c.hSampling, c.vSampling);
+            e.ln("quantId: {}", c.quantId);
+            e.ln("dcHuffId: {}", c.dcHuffId);
+            e.ln("acHuffId: {}", c.acHuffId);
+            e.ln("blocks: {}x{}", c.blocksPerLine, c.blocksPerColumn);
+            e.deindent();
         }
         e.deindent();
 
@@ -599,26 +645,6 @@ export struct Decoder {
         }
 
         e.deindent();
-
-        e("scan components:");
-        e.indentNewline();
-        for (usize i = 0; i < _scanComponents.len(); ++i) {
-            if (_scanComponents[i]) {
-                e.ln("component {}:", i);
-                e.indent();
-                e.ln("dcHuffId: {}", (*_scanComponents[i]).dcHuffId);
-                e.ln("acHuffId: {}", (*_scanComponents[i]).acHuffId);
-                e.deindent();
-            } else {
-                e.ln("component {}: none", i);
-            }
-        }
-
-        e.ln("ss: {}", _ss);
-        e.ln("se: {}", _se);
-        e.ln("ah: {}", _ah);
-        e.ln("al: {}", _al);
-
         e.deindent();
     }
 };
