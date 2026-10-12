@@ -5,7 +5,9 @@ module;
 export module Karm.Core:base.box;
 
 import :meta.traits;
+import :base.manual;
 import :base.opt;
+import :base.slice;
 
 namespace Karm {
 
@@ -119,6 +121,100 @@ struct Box {
         Karm::hash(h, unwrap());
     }
 };
+
+// MARK: Boxed arrays ---------------------------------------------------------
+
+export template <typename T, typename D>
+struct Box<T[], D> {
+    static_assert(sizeof(D) == 0, "Box<T[]> doesn't support custom deleters");
+};
+
+export template <typename T>
+struct Box<T[], DeleteDeleter<T[]>> {
+    using Inner = T;
+
+    Manual<T>* _buf{};
+    usize _len{};
+
+    static Manual<T>* _alloc(usize len) {
+        return len ? new Manual<T>[len] : nullptr;
+    }
+
+    static Box filled(usize len, T fill = {}) {
+        Box box;
+        box._buf = _alloc(len);
+        box._len = len;
+        for (usize i = 0; i < len; i++)
+            box._buf[i].ctor(fill);
+        return box;
+    }
+
+    constexpr Box() = default;
+
+    Box(Move, T* buf, usize len)
+        : _buf(reinterpret_cast<Manual<T>*>(buf)), _len(len) {}
+
+    Box(Sliceable<T> auto const& other)
+        : _buf(_alloc(other.len())), _len(other.len()) {
+        for (usize i = 0; i < _len; i++)
+            _buf[i].ctor(other[i]);
+    }
+
+    Box(Box const& other)
+        : Box(Slice<T>{other.buf(), other.len()}) {}
+
+    Box(Box&& other)
+        : _buf(std::exchange(other._buf, nullptr)),
+          _len(std::exchange(other._len, 0)) {}
+
+    ~Box() {
+        if (not _buf)
+            return;
+        for (usize i = 0; i < _len; i++)
+            _buf[i].dtor();
+        delete[] _buf;
+    }
+
+    Box& operator=(Box const& other) {
+        *this = Box(other);
+        return *this;
+    }
+
+    Box& operator=(Box&& other) {
+        std::swap(_buf, other._buf);
+        std::swap(_len, other._len);
+        return *this;
+    }
+
+    T* take() {
+        T* buf = this->buf();
+        _buf = nullptr;
+        _len = 0;
+        return buf;
+    }
+
+    usize len() const {
+        return _len;
+    }
+
+    T* buf() lifetimebound {
+        return reinterpret_cast<T*>(_buf);
+    }
+
+    T const* buf() const lifetimebound {
+        return reinterpret_cast<T const*>(_buf);
+    }
+
+    T& operator[](usize i) lifetimebound {
+        return _buf[i].unwrap();
+    }
+
+    T const& operator[](usize i) const lifetimebound {
+        return _buf[i].unwrap();
+    }
+};
+
+// MARK: Niche ------------------------------------------------------------------
 
 export template <typename T, typename D>
 struct Niche<Box<T, D>> {

@@ -4,9 +4,10 @@ module;
 
 export module Karm.Core:base.vec;
 
-import :base.opt;
+import :base.box;
 import :base.buf;
 import :base.manual;
+import :base.opt;
 
 namespace Karm {
 
@@ -34,6 +35,13 @@ struct _Vec {
         requires requires(usize l, T f) { S::init(l, f); }
     {
         return _Vec(S::init(len, fill));
+    }
+
+    _Vec(Box<T[]>&& box)
+        requires Meta::Same<S, Buf<T>>
+    {
+        usize len = box.len();
+        _buf = S{MOVE, box.take(), len};
     }
 
     // MARK: Collection
@@ -68,6 +76,14 @@ struct _Vec {
         requires requires(S& s) { s.leak(); }
     {
         _buf.leak();
+    }
+
+    Box<T[]> boxed()
+        requires Meta::Same<S, Buf<T>>
+    {
+        _buf.fit();
+        usize len = _buf.len();
+        return {MOVE, _buf.take(), len};
     }
 
     usize cap() const { return _buf.cap(); }
