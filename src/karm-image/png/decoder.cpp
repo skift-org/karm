@@ -12,6 +12,8 @@ import Karm.Gfx.Pixels;
 import Karm.Math;
 import Karm.Logger;
 
+import :png.base;
+
 using namespace Karm::Literals;
 
 namespace Karm::Image::Png {
@@ -19,74 +21,6 @@ namespace Karm::Image::Png {
 using Karm::begin, Karm::end;
 
 static auto debugPng = Debug::Flag::debug("png", "Log PNG decoding"s);
-
-enum struct ColorType : u8 {
-    GREYSCALE = 0,
-    TRUECOLOR = 2,
-    INDEXED = 3,
-    GREYSCALE_ALPHA = 4,
-    TRUECOLOR_ALPHA = 6,
-
-    _LEN
-};
-
-enum struct CompressionMethod : u8 {
-    DEFLATE = 0,
-
-    _LEN
-};
-
-enum struct FilterMethod : u8 {
-    STANDARD = 0,
-
-    _LEN
-};
-
-enum struct Filter : u8 {
-    NONE,
-    SUB,
-    UP,
-    AVERAGE,
-    PAETH,
-
-    _LEN
-};
-
-enum struct InterlacingMethod : u8 {
-    NULL,
-    ADAM7,
-
-    _LEN,
-};
-
-// https://www.w3.org/TR/2003/REC-PNG-20031110/#8Interlace
-struct Adam7Pass {
-    usize startX;
-    usize startY;
-    usize stepX;
-    usize stepY;
-};
-
-static constexpr Array<Adam7Pass, 7> ADAM7_PASSES = {{
-    {0, 0, 8, 8},
-    {4, 0, 8, 8},
-    {0, 4, 4, 8},
-    {2, 0, 4, 4},
-    {0, 2, 2, 4},
-    {1, 0, 2, 2},
-    {0, 1, 1, 2},
-}};
-
-static constexpr Array<u8, 8> SIG = {
-    0x89, 0x50, 0x4E, 0x47,
-    0x0D, 0x0A, 0x1A, 0x0A
-};
-
-static constexpr Str IHDR = "IHDR";
-static constexpr Str PLTE = "PLTE";
-static constexpr Str TRNS = "tRNS";
-static constexpr Str IDAT = "IDAT";
-static constexpr Str IEND = "IEND";
 
 export struct Decoder {
     Bytes _slice;
@@ -197,7 +131,7 @@ export struct Decoder {
     }
 
     usize bytesPerScanline(usize passWidth) const {
-        return alignUp(bitsPerPixel() * passWidth, 8) / 8;
+        return ceilDiv(bitsPerPixel() * passWidth, 8);
     }
 
     isize width() const {

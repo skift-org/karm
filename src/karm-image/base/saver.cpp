@@ -12,6 +12,7 @@ import Karm.Gfx.Pixels;
 
 import :bmp.encoder;
 import :jpeg.encoder;
+import :png.encoder;
 import :qoi.encoder;
 import :tga.encoder;
 
@@ -37,6 +38,8 @@ export Res<> save(Gfx::Pixels pixels, Io::BEmit& e, Saver const& props = {}) {
         return Tga::encode(pixels, e);
     } else if (props.format == Ref::Uti::PUBLIC_JPEG) {
         return Jpeg::encode(pixels, e);
+    } else if (props.format == Ref::Uti::PUBLIC_PNG) {
+        return Png::encode(pixels, e);
     } else if (props.format == Ref::Uti::PUBLIC_QOI) {
         return Qoi::encode(pixels, e);
     } else {
