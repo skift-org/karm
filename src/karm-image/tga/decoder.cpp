@@ -102,7 +102,7 @@ export struct Decoder {
     Vec<Gfx::Color> _colorMap = {};
 
     usize colorMapSize() const {
-        return _header.cmSize * (alignUp(_header.cmBpc, 8) / 8);
+        return _header.cmSize * ceilDiv(_header.cmBpc, 8);
     }
 
     Res<> readColorMap(Io::BScan& s) {
