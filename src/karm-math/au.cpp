@@ -7,6 +7,8 @@ export module Karm.Math:au;
 import Karm.Core;
 import :fixed;
 
+using namespace Karm::Literals;
+
 namespace Karm::Math {
 
 // Au (aka Application Unit, Atomic Unit, Absurd Unit, Almighty Unit, Annoying Unit, Autistic Unit, Awesome Unit, Anarcho-Unit, Avocado Unit, Adorable Unit, etc...) is the fundamental
@@ -145,10 +147,6 @@ export struct Au {
         return cast<U>();
     }
 
-    void repr(Io::Emit& e) const {
-        e("{}au", cast<f64>());
-    }
-
     void hash(Meta::Derive<Hasher> auto& h) const {
         Karm::hash(h, _val);
     }
@@ -179,3 +177,15 @@ export constexpr Au operator""_au(long double val) {
 }
 
 } // namespace Karm::Math::Literals
+
+namespace Karm::Io {
+
+export template <>
+struct Formatter<Math::Au> : NumberFormatter {
+    Res<> format(TextWriter& writer, Math::Au const& val) {
+        try$(formatFloat(writer, val.cast<f64>()));
+        return writer.writeStr("au"s);
+    }
+};
+
+} // namespace Karm::Io
