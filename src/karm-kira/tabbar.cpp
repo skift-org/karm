@@ -3,6 +3,7 @@ export module Karm.Kira:tabbar;
 import Karm.Math;
 import Karm.Ui;
 import Karm.Gfx;
+import Mdi;
 
 import :separator;
 
@@ -57,6 +58,13 @@ export Ui::Child tabarItemLabel(Opt<Gfx::Icon> icon, String text) {
 
 export Ui::Child tabarItemIcon(Gfx::Icon icon) {
     return Ui::icon(icon);
+}
+
+export Ui::Child tabbarItemClose(Ui::Send<> onClose) {
+    return Ui::icon(Mdi::CLOSE, 14_au) |
+           Ui::insets(2_au) |
+           Ui::center() |
+           Ui::button(Some(onClose), Ui::ButtonStyle::subtle());
 }
 
 } // namespace Karm::Kira
