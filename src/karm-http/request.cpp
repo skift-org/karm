@@ -48,6 +48,9 @@ export struct Request {
         path.normalize();
         req.url.path = path;
 
+        if (s.skip('?'))
+            req.url.query = s.token(Re::until(' '_re));
+
         if (not s.skip(' '))
             return Error::invalidData("Expected space");
 
@@ -91,7 +94,10 @@ export struct Request {
         // Start line
         auto path = url.path;
         path.absolutize();
-        try$(Io::format(w, "{} {} ", method, path));
+        try$(Io::format(w, "{} {}", method, path));
+        if (url.query)
+            try$(Io::format(w, "?{}", url.query));
+        try$(w.writeStr(" "s));
 
         try$(version.unparse(w));
         try$(w.writeStr("\r\n"s));

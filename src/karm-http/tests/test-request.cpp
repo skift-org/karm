@@ -30,6 +30,29 @@ test$("request-parse-unparse-no-header") {
     return Ok();
 }
 
+test$("request-parse-unparse-no-header-query") {
+    auto rawRequest =
+        "GET /?email=cool HTTP/1.1\r\n"
+        "\r\n"s;
+
+    Io::SScan s{rawRequest};
+    auto request = try$(Request::parse(s));
+
+    assertEq$(request.url.path, "/"_path);
+    assertEq$(request.url.query, "email=cool"s);
+    assertEq$(request.method, Method::GET);
+
+    auto expectedVersion = Version{Protocol::HTTP, 1u, 1u};
+    assertEq$(request.version, expectedVersion);
+
+    Io::StringWriter sw;
+    try$(request.unparse(sw));
+
+    assertEq$(rawRequest, sw.take());
+
+    return Ok();
+}
+
 test$("request-parse-unparse-with-header") {
     auto rawRequest =
         "POST / HTTP/1.2\r\n"
