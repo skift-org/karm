@@ -1,0 +1,13 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "karm-bmp.plugin",
+    "type": "lib",
+    "description": "Register the BMP codec with karm-image",
+    "requires": [
+        "karm-bmp",
+        "karm-image"
+    ],
+    "injects": [
+        "karm-image"
+    ]
+}

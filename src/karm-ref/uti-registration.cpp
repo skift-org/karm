@@ -286,6 +286,36 @@ void Uti::Repository::registerCommonUti() {
         }
     );
     addRegistration(
+        PUBLIC_AVIF,
+        {
+            .name = "public.avif"_sym,
+            .description = "AV1 Image File Format"s,
+            .suffixes = {"avif"s},
+            .mimes = {"image/avif"_mime},
+            .conformsTo = {"public.image"_sym},
+        }
+    );
+    addRegistration(
+        PUBLIC_JXL,
+        {
+            .name = "public.jxl"_sym,
+            .description = "JPEG XL Image"s,
+            .suffixes = {"jxl"s},
+            .mimes = {"image/jxl"_mime},
+            .conformsTo = {"public.image"_sym},
+        }
+    );
+    addRegistration(
+        PUBLIC_TIFF,
+        {
+            .name = "public.tiff"_sym,
+            .description = "Tagged Image File Format"s,
+            .suffixes = {"tiff"s, "tif"s},
+            .mimes = {"image/tiff"_mime},
+            .conformsTo = {"public.image"_sym},
+        }
+    );
+    addRegistration(
         PUBLIC_SVG,
         {
             .name = "public.svg"_sym,

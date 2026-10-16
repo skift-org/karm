@@ -1,0 +1,13 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "libwebp.plugin",
+    "type": "lib",
+    "description": "Register the system WebP codec with karm-image",
+    "requires": [
+        "webp",
+        "karm-image"
+    ],
+    "injects": [
+        "karm-image"
+    ]
+}

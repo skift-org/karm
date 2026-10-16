@@ -1,0 +1,514 @@
+module;
+
+#include <karm/macros>
+
+export module Karm.Png:decoder;
+
+import Karm.Core;
+import Karm.Archive;
+import Karm.Crypto;
+import Karm.Debug;
+import Karm.Gfx.Pixels;
+import Karm.Math;
+import Karm.Logger;
+
+import :base;
+
+using namespace Karm::Literals;
+
+namespace Karm::Png {
+
+using Karm::begin, Karm::end;
+
+static auto debugPng = Debug::Flag::debug("png", "Log PNG decoding"s);
+
+export struct Decoder {
+    Bytes _slice;
+
+    Bytes sig() {
+        return begin().nextBytes(8);
+    }
+
+    static bool sniff(Bytes slice) {
+        return slice.len() >= 8 and sub(slice, 0, 8) == SIG;
+    }
+
+    static Res<Decoder> init(Bytes slice) {
+        Decoder dec{slice};
+
+        if (dec.sig() != SIG)
+            return Error::invalidData("invalid signature");
+
+        try$(dec._loaderHeader());
+
+        return Ok(dec);
+    }
+
+    Decoder(Bytes slice)
+        : _slice(slice) {}
+
+    Io::BScan begin() const {
+        return _slice;
+    }
+
+    auto iterChunks() {
+        auto s = begin();
+        s.skip(8);
+
+        struct Chunk {
+            Str sig;
+            usize len;
+            Bytes data;
+            u32 crc32;
+            Bytes checked;
+
+            bool validCrc() const {
+                return Crypto::crc32(checked) == crc32;
+            }
+        };
+
+        struct Iter {
+            Io::BScan s;
+
+            Opt<Chunk> next() {
+                if (s.ended())
+                    return NONE;
+
+                Chunk c;
+
+                c.len = s.nextI32be();
+                auto checked = s;
+                c.sig = s.nextStr(4);
+                c.data = s.nextBytes(c.len);
+                c.checked = checked.nextBytes(4 + c.data.len());
+                c.crc32 = s.nextI32be();
+
+                return Some(c);
+            }
+        };
+
+        return Iter{s};
+    }
+
+    // MARK: Header ------------------------------------------------------------
+
+    u32 _width = 0;
+    u32 _height = 0;
+    u8 _bitDepth = 0;
+    ColorType _colorType;
+    CompressionMethod _compressionMethod;
+    FilterMethod _filterMethod;
+    InterlacingMethod _interlacingMethod;
+
+    usize numChannels() const {
+        switch (_colorType) {
+        case ColorType::GREYSCALE:
+            return 1;
+
+        case ColorType::TRUECOLOR:
+            return 3;
+
+        case ColorType::INDEXED:
+            return 1;
+
+        case ColorType::GREYSCALE_ALPHA:
+            return 2;
+
+        case ColorType::TRUECOLOR_ALPHA:
+            return 4;
+
+        default:
+            unreachable();
+        }
+    }
+
+    usize bitsPerPixel() const {
+        return _bitDepth * numChannels();
+    }
+
+    usize bytesPerPixel() const {
+        return bitsPerPixel() / 8;
+    }
+
+    usize bytesPerScanline(usize passWidth) const {
+        return ceilDiv(bitsPerPixel() * passWidth, 8);
+    }
+
+    isize width() const {
+        return _width;
+    }
+
+    isize height() const {
+        return _height;
+    }
+
+    usize _passWidth(Adam7Pass const& pass) const {
+        if (_width <= pass.startX)
+            return 0;
+        return (_width - pass.startX + pass.stepX - 1) / pass.stepX;
+    }
+
+    usize _passHeight(Adam7Pass const& pass) const {
+        if (_height <= pass.startY)
+            return 0;
+        return (_height - pass.startY + pass.stepY - 1) / pass.stepY;
+    }
+
+    Res<> _loaderHeader() {
+        auto maybeIhdr = iterChunks().next();
+        if (not maybeIhdr)
+            return Error::invalidData("missing first chunk");
+
+        if (maybeIhdr->sig != IHDR)
+            return Error::invalidData("missing image header");
+
+        Io::BScan ihdr = maybeIhdr->data;
+        try$(_handleIhdr(ihdr));
+        return Ok();
+    }
+
+    Res<> _handleIhdr(Io::BScan& s) {
+        _width = s.nextU32be();
+        _height = s.nextU32be();
+        _bitDepth = s.nextU8be();
+        _colorType = static_cast<ColorType>(s.nextU8be());
+        _compressionMethod = static_cast<CompressionMethod>(s.nextU8be());
+        _filterMethod = static_cast<FilterMethod>(s.nextU8be());
+        _interlacingMethod = static_cast<InterlacingMethod>(s.nextU8be());
+
+        return Ok();
+    }
+
+    // MARK: Palette -----------------------------------------------------------
+
+    Vec<Gfx::Color> _palette;
+
+    Res<> _handlePlte(Io::BScan& s) {
+        while (not s.ended()) {
+            u8 red = s.nextU8le();
+            u8 green = s.nextU8le();
+            u8 blue = s.nextU8le();
+            _palette.pushBack(Gfx::Color{red, green, blue});
+        }
+
+        return Ok();
+    }
+
+    // MARK: Transparency ------------------------------------------------------
+
+    Opt<Math::Vec3<u16>> _transparentKey;
+
+    // https://www.w3.org/TR/png-3/#11tRNS
+    Res<> _handleTrns(Io::BScan& s) {
+        if (_colorType == ColorType::INDEXED) {
+            for (usize i = 0; not s.ended() and i < _palette.len(); i++)
+                _palette[i].alpha = s.nextU8be();
+        } else if (_colorType == ColorType::GREYSCALE) {
+            u16 grey = s.nextU16be();
+            _transparentKey = Some(Math::Vec3<u16>{grey, grey, grey});
+        } else if (_colorType == ColorType::TRUECOLOR) {
+            u16 red = s.nextU16be();
+            u16 green = s.nextU16be();
+            u16 blue = s.nextU16be();
+            _transparentKey = Some(Math::Vec3<u16>{red, green, blue});
+        }
+
+        return Ok();
+    }
+
+    // MARK: Image Data --------------------------------------------------------
+
+    Io::BufferWriter _compressedData;
+
+    Res<> _handleIdat(Io::BScan& s) {
+        try$(_compressedData.write(s.remBytes()));
+
+        return Ok();
+    }
+
+    // MARK: Image End ---------------------------------------------------------
+
+    bool _ended = false;
+
+    Res<> _handleIend(Io::BScan&) {
+        if (_ended)
+            return Error::invalidData("multiple image end");
+        _ended = true;
+
+        return Ok();
+    }
+
+    // MARK: Unfiltering -------------------------------------------------------
+
+    static u8 paeth(u16 a, u16 b, u16 c) {
+        u16 pa = Math::abs(b - c);
+        u16 pb = Math::abs(a - c);
+        u16 pc = Math::abs(a + b - c - c);
+
+        if (pb < pa) {
+            a = b;
+            pa = pb;
+        }
+
+        return (pc < pa) ? c : a;
+    }
+
+    // https://www.w3.org/TR/2003/REC-PNG-20031110/#9Filter-types
+    auto _unfilter(
+        Filter filter,
+        usize x,
+        usize bytesPerPixel,
+
+        Bytes filt,
+        MutBytes curr,
+        Bytes prev
+    ) {
+        u8 a = 0;
+        if (x >= bytesPerPixel)
+            a = curr[x - bytesPerPixel];
+
+        u8 b = 0;
+        if (prev)
+            b = prev[x];
+
+        u8 c = 0;
+        if (prev and x >= bytesPerPixel)
+            c = prev[x - bytesPerPixel];
+
+        if (filter == Filter::NONE) {
+            // Recon(x) = Filt(x)
+            curr[x] = filt[x];
+        } else if (filter == Filter::SUB) {
+            // Recon(x) = Filt(x) + Recon(a)
+            curr[x] = filt[x] + a;
+        } else if (filter == Filter::UP) {
+            // Recon(x) = Filt(x) + Recon(b)
+            curr[x] = filt[x] + b;
+        } else if (filter == Filter::AVERAGE) {
+            // Recon(x) = Filt(x) + floor((Recon(a) + Recon(b)) / 2)
+            curr[x] = filt[x] + (a + b) / 2;
+        } else if (filter == Filter::PAETH) {
+            // Recon(x) = Filt(x) + PaethPredictor(Recon(a), Recon(b), Recon(c))
+            curr[x] =
+                filt[x] +
+                paeth(
+                    (a < 0 ? 0 : a),
+                    (b < 0 ? 0 : b),
+                    (c < 0 ? 0 : c)
+                );
+        } else {
+            unreachable();
+        }
+    };
+
+    Res<Vec<u8>> _unfilterPass(Io::BScan& s, usize passWidth, usize passHeight) {
+        if (passWidth == 0 or passHeight == 0)
+            return Ok(Vec<u8>{});
+
+        usize bytePerPixel = bitsPerPixel() < 8 ? 1 : bitsPerPixel() / 8;
+        usize bytesPerScan = bytesPerScanline(passWidth);
+
+        auto res = Vec<u8>::filled(bytesPerScan * passHeight);
+
+        Bytes prev = {};
+        for (usize scanline : urange::zeroTo(passHeight)) {
+            Filter filter = static_cast<Filter>(s.nextU8be());
+            auto filt = s.nextBytes(bytesPerScan);
+            MutBytes curr = mutSub(res, bytesPerScan * scanline, bytesPerScan * scanline + bytesPerScan);
+
+            for (usize x : urange::zeroTo(bytesPerScan))
+                _unfilter(
+                    filter,
+                    x,
+                    bytePerPixel,
+                    filt,
+                    curr,
+                    prev
+                );
+
+            prev = curr;
+        }
+
+        return Ok(std::move(res));
+    }
+
+    // MARK: Decoding ----------------------------------------------------------
+
+    u16 _nextSample(Io::BScan& s) const {
+        if (_bitDepth == 16)
+            return s.nextU16be();
+        if (_bitDepth == 8)
+            return s.nextU8be();
+        return s.nextBitsbe(_bitDepth);
+    }
+
+    u8 _to8(u16 sample) const {
+        if (_bitDepth == 16)
+            return sample >> 8;
+        if (_bitDepth == 8)
+            return sample;
+        return sample * 255 / ((1u << _bitDepth) - 1);
+    }
+
+    Res<> _decodeScanline(Io::BScan s, Gfx::MutPixels out, usize passWidth, usize x0, usize y, usize dx) {
+        for (usize i : urange::zeroTo(passWidth)) {
+            usize x = x0 + i * dx;
+            Gfx::Color color;
+
+            if (_colorType == ColorType::INDEXED) {
+                auto index = _nextSample(s);
+                if (index >= _palette.len())
+                    return Error::invalidData("palette index out of range");
+                color = _palette[index];
+            } else if (_colorType == ColorType::GREYSCALE or _colorType == ColorType::GREYSCALE_ALPHA) {
+                auto grey = _nextSample(s);
+                u8 alpha = 255;
+                if (_colorType == ColorType::GREYSCALE_ALPHA)
+                    alpha = _to8(_nextSample(s));
+                else if (_transparentKey == Math::Vec3<u16>{grey, grey, grey})
+                    alpha = 0;
+                auto g = _to8(grey);
+                color = Gfx::Color{g, g, g, alpha};
+            } else {
+                auto red = _nextSample(s);
+                auto green = _nextSample(s);
+                auto blue = _nextSample(s);
+                u8 alpha = 255;
+                if (_colorType == ColorType::TRUECOLOR_ALPHA)
+                    alpha = _to8(_nextSample(s));
+                else if (_transparentKey == Math::Vec3<u16>{red, green, blue})
+                    alpha = 0;
+                color = Gfx::Color{_to8(red), _to8(green), _to8(blue), alpha};
+            }
+
+            out.store(Math::Vec2u{x, y}.cast<isize>(), color);
+        }
+        return Ok();
+    }
+
+    Res<> _decodePass(
+        Gfx::MutPixels out,
+        Bytes unfiltered,
+        usize passWidth,
+        usize passHeight,
+        usize x0,
+        usize y0,
+        usize dx,
+        usize dy
+    ) {
+        usize bytesPerScan = bytesPerScanline(passWidth);
+        for (usize row : urange::zeroTo(passHeight)) {
+            auto scanline = sub(unfiltered, row * bytesPerScan, row * bytesPerScan + bytesPerScan);
+            try$(_decodeScanline(scanline, out, passWidth, x0, y0 + row * dy, dx));
+        }
+        return Ok();
+    }
+
+    Res<> decode(Gfx::MutPixels out) {
+        for (auto chunk : iterChunks()) {
+            if (not chunk.validCrc())
+                return Error::invalidData("chunk checksum mismatch");
+
+            Io::BScan data = chunk.data;
+            if (chunk.sig == IHDR)
+                try$(_handleIhdr(data));
+            else if (chunk.sig == PLTE)
+                try$(_handlePlte(data));
+            else if (chunk.sig == TRNS)
+                try$(_handleTrns(data));
+            else if (chunk.sig == IDAT)
+                try$(_handleIdat(data));
+            else if (chunk.sig == IEND)
+                try$(_handleIend(data));
+            else
+                logWarnIf(debugPng, "unknown chunk {:#}", chunk.sig);
+        }
+
+        if (not _ended)
+            return Error::invalidData("missing image end");
+
+        logDebugIf(debugPng, "{}", *this);
+
+        bool validBitDepth = false;
+        switch (_colorType) {
+        case ColorType::GREYSCALE:
+            validBitDepth = oneOf(_bitDepth, 1, 2, 4, 8, 16);
+            break;
+        case ColorType::INDEXED:
+            validBitDepth = oneOf(_bitDepth, 1, 2, 4, 8);
+            break;
+        default:
+            validBitDepth = oneOf(_bitDepth, 8, 16);
+            break;
+        }
+
+        if (not validBitDepth)
+            return Error::invalidData("unsupported bit depth");
+
+        if (_compressionMethod != CompressionMethod::DEFLATE)
+            return Error::invalidData("unsupported compression method");
+
+        if (_filterMethod != FilterMethod::STANDARD)
+            return Error::invalidData("unsupported filter method");
+
+        if (not oneOf(
+                _colorType,
+                ColorType::INDEXED,
+                ColorType::GREYSCALE,
+                ColorType::GREYSCALE_ALPHA,
+                ColorType::TRUECOLOR,
+                ColorType::TRUECOLOR_ALPHA
+            ))
+            return Error::invalidData("unsupported color type");
+
+        auto imageData = try$(Archive::zlibDecompress(_compressedData.bytes()));
+        Io::BScan s = bytes(imageData);
+
+        if (_interlacingMethod == InterlacingMethod::NULL) {
+            auto unfiltered = try$(_unfilterPass(s, _width, _height));
+            try$(_decodePass(out, unfiltered, _width, _height, 0, 0, 1, 1));
+        } else if (_interlacingMethod == InterlacingMethod::ADAM7) {
+            for (auto const& pass : ADAM7_PASSES) {
+                usize passWidth = _passWidth(pass);
+                usize passHeight = _passHeight(pass);
+
+                if (passWidth == 0 or passHeight == 0)
+                    continue;
+
+                auto unfiltered = try$(_unfilterPass(s, passWidth, passHeight));
+                try$(_decodePass(
+                    out,
+                    unfiltered,
+                    passWidth,
+                    passHeight,
+                    pass.startX,
+                    pass.startY,
+                    pass.stepX,
+                    pass.stepY
+                ));
+            }
+        } else {
+            return Error::invalidData("unsupported interlacing method");
+        }
+
+        return Ok();
+    }
+
+    void repr(Io::Emit& e) const {
+        e("PNG image");
+
+        e.indentNewline();
+
+        e.ln("width: {}", _width);
+        e.ln("height: {}", _height);
+        e.ln("bit depth: {}", _bitDepth);
+        e.ln("color type: {}", _colorType);
+        e.ln("compression method: {}", _compressionMethod);
+        e.ln("filter method: {}", _filterMethod);
+        e.ln("interlacing method: {}", _interlacingMethod);
+
+        e.deindent();
+    }
+};
+
+} // namespace Karm::Png

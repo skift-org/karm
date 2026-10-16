@@ -1,0 +1,13 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "libjpeg-turbo.plugin",
+    "type": "lib",
+    "description": "Register the system JPEG codec with karm-image",
+    "requires": [
+        "turbojpeg",
+        "karm-image"
+    ],
+    "injects": [
+        "karm-image"
+    ]
+}

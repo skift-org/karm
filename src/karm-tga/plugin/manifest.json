@@ -1,0 +1,13 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "karm-tga.plugin",
+    "type": "lib",
+    "description": "Register the TGA codec with karm-image",
+    "requires": [
+        "karm-tga",
+        "karm-image"
+    ],
+    "injects": [
+        "karm-image"
+    ]
+}

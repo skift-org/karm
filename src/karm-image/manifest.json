@@ -4,18 +4,9 @@
     "type": "lib",
     "description": "Image decoding and encoding",
     "requires": [
-        "karm-image.bmp",
-        "karm-image.jpeg",
-        "karm-image.png",
-        "karm-image.qoi",
-        "karm-image.tga",
-        "karm-image.gif",
         "karm-gfx.pixels",
         "karm-sys",
         "karm-logger",
         "karm-debug"
-    ],
-    "subdirs": [
-        "base"
     ]
 }

@@ -1,4 +1,5 @@
 export module Karm.Image;
 
-export import :base.loader;
-export import :base.saver;
+export import :codec;
+export import :loader;
+export import :saver;

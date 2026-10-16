@@ -1,0 +1,15 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "karm-jpeg.tests",
+    "type": "lib",
+    "requires": [
+        "karm-jpeg",
+        "karm-image",
+        "karm-png.plugin",
+        "karm-sys",
+        "karm-test"
+    ],
+    "injects": [
+        "__tests__"
+    ]
+}

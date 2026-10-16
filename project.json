@@ -53,6 +53,43 @@
             "names": [
                 "libunwind"
             ]
+        },
+        "png": {
+            "description": "Official PNG reference library",
+            "names": [
+                "libpng16",
+                "libpng"
+            ]
+        },
+        "turbojpeg": {
+            "description": "SIMD accelerated JPEG codec",
+            "names": [
+                "libturbojpeg"
+            ]
+        },
+        "webp": {
+            "description": "WebP image codec",
+            "names": [
+                "libwebp"
+            ]
+        },
+        "avif": {
+            "description": "AV1 Image File Format library",
+            "names": [
+                "libavif"
+            ]
+        },
+        "jxl": {
+            "description": "JPEG XL reference library",
+            "names": [
+                "libjxl"
+            ]
+        },
+        "tiff": {
+            "description": "Tagged Image File Format library",
+            "names": [
+                "libtiff-4"
+            ]
         }
     }
 }

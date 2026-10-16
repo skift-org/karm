@@ -1,0 +1,14 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "libpng.plugin",
+    "type": "lib",
+    "description": "Register the system PNG codec with karm-image",
+    "requires": [
+        "png",
+        "karm-image",
+        "karm-logger"
+    ],
+    "injects": [
+        "karm-image"
+    ]
+}

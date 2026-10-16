@@ -1,0 +1,13 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "libavif.plugin",
+    "type": "lib",
+    "description": "Register the system AVIF codec with karm-image",
+    "requires": [
+        "avif",
+        "karm-image"
+    ],
+    "injects": [
+        "karm-image"
+    ]
+}

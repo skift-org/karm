@@ -1,0 +1,13 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "libwebp.tests",
+    "type": "lib",
+    "requires": [
+        "libwebp.plugin",
+        "karm-image",
+        "karm-test"
+    ],
+    "injects": [
+        "__tests__"
+    ]
+}

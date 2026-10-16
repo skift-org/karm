@@ -1,0 +1,13 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "libtiff.plugin",
+    "type": "lib",
+    "description": "Register the system TIFF codec with karm-image",
+    "requires": [
+        "tiff",
+        "karm-image"
+    ],
+    "injects": [
+        "karm-image"
+    ]
+}
