@@ -54,6 +54,13 @@ export Res<> base64Decode(Io::SScan& s, Io::Writer& out, Base64Props props = {})
     return Ok();
 }
 
+export Res<Vec<u8>> base64Decode(Str str, Base64Props props = {}) {
+    Io::SScan s{str};
+    Io::BufferWriter bw;
+    try$(base64Decode(s, bw, props));
+    return Ok(bw.take());
+}
+
 export constexpr usize base64EncodedLen(usize n) {
     return ((n + 2) / 3) * 4;
 }
