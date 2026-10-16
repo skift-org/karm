@@ -1,7 +1,6 @@
+#include <karm/macros>
 #include <webp/decode.h>
 #include <webp/encode.h>
-
-#include <karm/macros>
 
 import Karm.Core;
 import Karm.Gfx.Pixels;
@@ -66,6 +65,14 @@ static Res<> _encode(Gfx::Pixels pixels, Io::BEmit& e, Saver const& props) {
     return e.writeBytes({buf, size});
 }
 
-static Codec _codec{"libwebp", Ref::Uti::PUBLIC_WEBP, Codec::MAGIC, Codec::SYSTEM, _sniff, _decode, _encode};
+static Codec _codec{
+    "libwebp",
+    Ref::Uti::PUBLIC_WEBP,
+    Codec::MAGIC,
+    Codec::SYSTEM,
+    _sniff,
+    _decode,
+    _encode,
+};
 
 } // namespace Karm::Image::Libwebp

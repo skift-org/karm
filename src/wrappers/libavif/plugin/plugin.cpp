@@ -1,5 +1,4 @@
 #include <avif/avif.h>
-
 #include <karm/macros>
 
 import Karm.Core;
@@ -48,6 +47,13 @@ static Res<Rc<Gfx::Image>> _decode(Bytes bytes) {
     return Ok(img);
 }
 
-static Codec _codec{"libavif", Ref::Uti::PUBLIC_AVIF, Codec::MAGIC, Codec::SYSTEM, _sniff, _decode};
+static Codec _codec{
+    "libavif",
+    Ref::Uti::PUBLIC_AVIF,
+    Codec::MAGIC,
+    Codec::SYSTEM,
+    _sniff,
+    _decode,
+};
 
 } // namespace Karm::Image::Libavif

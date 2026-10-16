@@ -1,6 +1,5 @@
-#include <turbojpeg.h>
-
 #include <karm/macros>
+#include <turbojpeg.h>
 
 import Karm.Core;
 import Karm.Gfx.Pixels;
@@ -99,6 +98,14 @@ static Res<> _encode(Gfx::Pixels pixels, Io::BEmit& e, Saver const& props) {
     return e.writeBytes({buf, size});
 }
 
-static Codec _codec{"libjpeg-turbo", Ref::Uti::PUBLIC_JPEG, Codec::MAGIC, Codec::SYSTEM, _sniff, _decode, _encode};
+static Codec _codec{
+    "libjpeg-turbo",
+    Ref::Uti::PUBLIC_JPEG,
+    Codec::MAGIC,
+    Codec::SYSTEM,
+    _sniff,
+    _decode,
+    _encode,
+};
 
 } // namespace Karm::Image::LibjpegTurbo

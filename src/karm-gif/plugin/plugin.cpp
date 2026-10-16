@@ -15,6 +15,13 @@ static Res<Rc<Gfx::Image>> _decode(Bytes bytes) {
     return Ok(img);
 }
 
-static Image::Codec _codec{"gif", Ref::Uti::PUBLIC_GIF, Image::Codec::MAGIC, Image::Codec::BUILTIN, Decoder::sniff, _decode};
+static Image::Codec _codec{
+    "gif",
+    Ref::Uti::PUBLIC_GIF,
+    Image::Codec::MAGIC,
+    Image::Codec::BUILTIN,
+    Decoder::sniff,
+    _decode,
+};
 
 } // namespace Karm::Gif

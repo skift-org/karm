@@ -1,6 +1,5 @@
-#include <png.h>
-
 #include <karm/macros>
+#include <png.h>
 
 import Karm.Core;
 import Karm.Gfx.Pixels;
@@ -66,6 +65,14 @@ static Res<> _encode(Gfx::Pixels pixels, Io::BEmit& e, Saver const&) {
     return e.writeBytes(sub(buf, 0, size));
 }
 
-static Codec _codec{"libpng", Ref::Uti::PUBLIC_PNG, Codec::MAGIC, Codec::SYSTEM, _sniff, _decode, _encode};
+static Codec _codec{
+    "libpng",
+    Ref::Uti::PUBLIC_PNG,
+    Codec::MAGIC,
+    Codec::SYSTEM,
+    _sniff,
+    _decode,
+    _encode,
+};
 
 } // namespace Karm::Image::Libpng

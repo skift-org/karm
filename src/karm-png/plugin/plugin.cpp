@@ -19,6 +19,14 @@ static Res<> _encode(Gfx::Pixels pixels, Io::BEmit& e, Image::Saver const&) {
     return encode(pixels, e);
 }
 
-static Image::Codec _codec{"png", Ref::Uti::PUBLIC_PNG, Image::Codec::MAGIC, Image::Codec::BUILTIN, Decoder::sniff, _decode, _encode};
+static Image::Codec _codec{
+    "png",
+    Ref::Uti::PUBLIC_PNG,
+    Image::Codec::MAGIC,
+    Image::Codec::BUILTIN,
+    Decoder::sniff,
+    _decode,
+    _encode,
+};
 
 } // namespace Karm::Png

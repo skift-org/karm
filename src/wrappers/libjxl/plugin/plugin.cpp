@@ -1,6 +1,5 @@
 #include <jxl/decode.h>
 #include <jxl/encode.h>
-
 #include <karm/macros>
 
 import Karm.Core;
@@ -81,6 +80,13 @@ static Res<Rc<Gfx::Image>> _decode(Bytes bytes) {
     }
 }
 
-static Codec _codec{"libjxl", Ref::Uti::PUBLIC_JXL, Codec::MAGIC, Codec::SYSTEM, _sniff, _decode};
+static Codec _codec{
+    "libjxl",
+    Ref::Uti::PUBLIC_JXL,
+    Codec::MAGIC,
+    Codec::SYSTEM,
+    _sniff,
+    _decode,
+};
 
 } // namespace Karm::Image::Libjxl

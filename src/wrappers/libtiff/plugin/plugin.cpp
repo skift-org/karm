@@ -1,8 +1,7 @@
+#include <karm/macros>
 #include <stdio.h>
 #include <string.h>
 #include <tiffio.h>
-
-#include <karm/macros>
 
 import Karm.Core;
 import Karm.Gfx.Pixels;
@@ -142,6 +141,13 @@ static Res<Rc<Gfx::Image>> _decode(Bytes bytes) {
     return Ok(img);
 }
 
-static Codec _codec{"libtiff", Ref::Uti::PUBLIC_TIFF, Codec::MAGIC, Codec::SYSTEM, _sniff, _decode};
+static Codec _codec{
+    "libtiff",
+    Ref::Uti::PUBLIC_TIFF,
+    Codec::MAGIC,
+    Codec::SYSTEM,
+    _sniff,
+    _decode,
+};
 
 } // namespace Karm::Image::Libtiff
