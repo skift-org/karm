@@ -354,10 +354,6 @@ struct ScrollToMe : ProxyNode<ScrollToMe> {
         : ProxyNode(child), _margin(margin) {}
 
     void event(App::Event& event) override {
-        if (event.is<RebuiltEvent>()) {
-            _activated = true;
-        }
-
         ProxyNode::event(event);
     }
 
