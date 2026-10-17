@@ -68,17 +68,19 @@ struct RootNode : ProxyNode<RootNode> {
             _dirty.pushBack(physicalBound);
         }
 
-        auto [buffer, _] = _swapChain->acquire();
         if (_dirty.len()) {
+            auto [buffer, _] = _swapChain->acquire();
+
             auto pixels = Gfx::MutPixels::from(buffer);
             _g.begin(pixels);
             for (auto& d : _dirty) {
                 _paintPhysical(_g, d);
             }
             _g.end();
+
+            _swapChain->present(buffer, _dirty);
         }
 
-        _swapChain->present(buffer);
         _dirty.clear();
     }
 
