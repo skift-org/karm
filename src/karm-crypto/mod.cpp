@@ -11,3 +11,4 @@ export import :hotp;
 export import :md5;
 export import :sha1;
 export import :sha2;
+export import :blake2;
