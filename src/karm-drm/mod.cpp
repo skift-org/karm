@@ -38,6 +38,21 @@ export struct Buffer {
     virtual Bytes bytes() const { return {}; }
 };
 
+export struct OwnedBuffer : Buffer {
+    Box<u8[]> _buf;
+
+    OwnedBuffer(Format format, Math::Vec2u size, usize stride)
+        : Buffer(format, size, stride), _buf(Box<u8[]>::filled(bytesPerPixels(format) * size.y * stride)) {}
+
+    MutBytes mutBytes() override {
+        return _buf;
+    }
+
+    Bytes bytes() const override {
+        return _buf;
+    }
+};
+
 export struct ViewBuffer : Buffer {
     MutBytes _buf;
 

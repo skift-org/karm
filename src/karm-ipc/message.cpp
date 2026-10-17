@@ -60,7 +60,7 @@ export struct Message {
         return _len;
     }
 
-    Bytes bytes() {
+    Bytes bytes() const {
         return sub(_buf, 0, len());
     }
 
@@ -111,7 +111,7 @@ export struct Message {
     }
 
     template <typename T>
-    Res<T> unpack() {
+    Res<T> unpack() const {
         Io::BScan scan{bytes()};
         MessageDeserializer s{scan, handles()};
         if (not is<T>())

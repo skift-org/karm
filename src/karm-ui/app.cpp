@@ -164,8 +164,7 @@ struct Handler : App::Handler {
     }
 };
 
-export Async::Task<> runAsync(Sys::Env& env, Child child, Async::CancellationToken ct) {
-    auto app = co_trya$(App::Application::createAsync(env, {}, ct));
+export Async::Task<> runAsync(Rc<App::Application> app, Child child, Async::CancellationToken ct) {
     auto size = child->size({1024_au, 720_au}, Hint::MIN).ceili();
     auto win = co_trya$(app->createWindowAsync(
         {
@@ -176,6 +175,11 @@ export Async::Task<> runAsync(Sys::Env& env, Child child, Async::CancellationTok
     auto root = makeRc<RootNode>(child, win);
     auto handler = makeRc<Handler>(root);
     co_return co_await app->runAsync(handler, ct);
+}
+
+export Async::Task<> runAsync(Sys::Env& env, Child child, Async::CancellationToken ct) {
+    auto app = co_trya$(App::Application::createAsync(env, {}, ct));
+    co_return co_await runAsync(app, child, ct);
 }
 
 } // namespace Karm::Ui
