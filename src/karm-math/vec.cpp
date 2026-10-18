@@ -71,11 +71,17 @@ union Vec2 {
     }
 
     constexpr Vec2 min(Vec2 other) const {
-        return {Karm::min(x, other.x), Karm::min(y, other.y)};
+        return {
+            Karm::min(x, other.x),
+            Karm::min(y, other.y),
+        };
     }
 
     constexpr Vec2 max(Vec2 other) const {
-        return {Karm::max(x, other.x), Karm::max(y, other.y)};
+        return {
+            Karm::max(x, other.x),
+            Karm::max(y, other.y),
+        };
     }
 
     constexpr Vec2 abs() const {
