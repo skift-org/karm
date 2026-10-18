@@ -10,7 +10,7 @@
         },
         "cute-engineering/ce-heap": {
             "git": "https://codeberg.org/cute-engineering/ce-heap.git",
-            "tag": "v1.3.0"
+            "tag": "v1.4.0"
         },
         "cute-engineering/ce-mdi": {
             "git": "https://codeberg.org/cute-engineering/ce-mdi.git",
@@ -26,7 +26,7 @@
         },
         "cute-engineering/ce-stdcpp": {
             "git": "https://codeberg.org/cute-engineering/ce-stdcpp.git",
-            "tag": "v1.9.1"
+            "tag": "v1.9.2"
         },
         "cute-engineering/ce-targets": {
             "git": "https://codeberg.org/cute-engineering/ce-targets.git",
