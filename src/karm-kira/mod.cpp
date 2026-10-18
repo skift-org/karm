@@ -14,6 +14,7 @@ export import :empty;
 export import :handle;
 export import :input;
 export import :number;
+export import :pointer;
 export import :progress;
 export import :radio;
 export import :resizable;
