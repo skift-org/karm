@@ -10,6 +10,8 @@ import :io.traits;
 namespace Karm::Io {
 
 export struct TextWriter {
+    virtual ~TextWriter() = default;
+
     template <StaticEncoding E>
     Res<> writeStr(_Str<E> str) {
         for (auto rune : iterRunes(str))
@@ -22,9 +24,9 @@ export struct TextWriter {
 
 export template <StaticEncoding E = Utf8>
 struct TextEncoder : TextWriter {
-    Io::Writer& _writer;
+    Writer& _writer;
 
-    TextEncoder(Io::Writer& writer)
+    TextEncoder(Writer& writer)
         : _writer(writer) {}
 
     Res<> writeRune(Rune rune) override {
