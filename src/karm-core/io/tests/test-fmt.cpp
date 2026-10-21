@@ -80,9 +80,6 @@ test$("fmt-float-number") {
     try$(testCase("3", 3.001, ".1"));
     try$(testCase("3.1", 3.1, ".1"));
     try$(testCase("3.0", 3.001, ".01"));
-    try$(testCase("1.9", 1.99999999999, ".1"));
-
-    try$(testCase("-0.1", -0.19, ".1"));
     try$(testCase("-0.19", -0.19, ".2"));
     try$(testCase("-0.19000", -0.19, ".05"));
 
@@ -90,7 +87,46 @@ test$("fmt-float-number") {
     try$(testCase("-3", -3.001, ".1"));
     try$(testCase("-3.1", -3.1, ".1"));
     try$(testCase("-3.0", -3.001, ".01"));
-    try$(testCase("-1.9", -1.99999999999, ".1"));
+
+    return Ok();
+}
+
+test$("fmt-float-rounding") {
+    try$(testCase("0.000002", 0.0000015, ".6"));
+    try$(testCase("-0.000002", -0.0000015, ".6"));
+    try$(testCase("0.123457", 0.12345651, ".6"));
+    try$(testCase("0.0000004", 0.0000004, ".7"));
+    try$(testCase("0.01", 0.0078125, ".2"));
+    try$(testCase("-0.2", -0.19, ".1"));
+
+    try$(testCase("2", 1.99999999999, ".1"));
+    try$(testCase("-2", -1.99999999999, ".1"));
+
+    return Ok();
+}
+
+test$("fmt-float-ties") {
+    try$(testCase("0.007812", 0.0078125, ".6"));
+    try$(testCase("0.38", 0.375, ".2"));
+    try$(testCase("4", 3.5, ".00"));
+    try$(testCase("2", 2.5, ".00"));
+
+    return Ok();
+}
+
+test$("fmt-float-trailing-zeros") {
+    try$(testCase("-1.5", -1.5, ".6"));
+    try$(testCase("-1.500000", -1.5, ".06"));
+
+    return Ok();
+}
+
+test$("fmt-float-zero") {
+    try$(testCase("0", 0.0000004, ".6"));
+    try$(testCase("0", 0.01, ".1"));
+    try$(testCase("0", -0.01, ".1"));
+    try$(testCase("0.0", 0.01, ".01"));
+    try$(testCase("0.0", -0.01, ".01"));
 
     return Ok();
 }

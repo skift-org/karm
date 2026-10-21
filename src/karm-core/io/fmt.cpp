@@ -373,16 +373,38 @@ export struct NumberFormatter {
     }
 
 #ifndef __ck_freestanding__
+    Tuple<bool, isize, u64> _modfRounded(f64 val) {
+        isize ipart = (isize)val;
+        f64 fpart = Math::abs(val - (f64)ipart);
+        u64 scale = Math::pow(10uz, precision);
+        f64 scaled = fpart * scale;
+        u64 ifpart = (u64)scaled;
+        f64 remainder = scaled - ifpart;
+
+        // Ties round to even.
+        u64 lastDigit = precision > 0 ? ifpart : (u64)Math::abs(ipart);
+        if (remainder > 0.5 or (remainder == 0.5 and lastDigit % 2 != 0))
+            ifpart++;
+
+        // Carry into the integer part (e.g. 0.9999995 -> 1.000000).
+        if (ifpart == scale) {
+            ipart += val > 0 ? 1 : -1;
+            ifpart = 0;
+        }
+
+        bool isNeg = val < 0 and (ipart != 0 or ifpart != 0);
+
+        return {isNeg, ipart, ifpart};
+    }
+
     Res<> formatFloat(TextWriter& writer, f64 val) {
         if (Math::isNan(val))
             return writer.writeStr("nan"s);
 
         NumberFormatter formatter;
-        isize ipart = (isize)val;
-        f64 fpart = Math::abs(val - (f64)ipart);
-        u64 ifpart = (u64)(fpart * Math::pow(10uz, precision));
+        auto [isNeg, ipart, ifpart] = _modfRounded(val);
 
-        if (val < 0) {
+        if (isNeg) {
             try$(writer.writeRune('-'));
             ipart = -ipart;
         }
@@ -392,6 +414,12 @@ export struct NumberFormatter {
             try$(writer.writeRune('.'));
             formatter.width = precision;
             formatter.fillChar = '0';
+
+            while (not trailingZeros and ifpart != 0 and ifpart % 10 == 0) {
+                ifpart /= 10;
+                formatter.width--;
+            }
+
             try$(formatter.formatUnsigned(writer, ifpart));
         }
         return Ok();

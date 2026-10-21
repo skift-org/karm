@@ -97,7 +97,7 @@ test$("json-value-float") {
 
     assert$(value.isFloat());
     assert$(Math::epsilonEq(value.asFloat(), 3.14, 0.001));
-    assertEq$(value.asStr(), "3.140000"s); // FIXME: Once FloatFormatter can stop producing trailing zeros
+    assertEq$(value.asStr(), "3.14"s);
     assertEq$(value.asInt(), 3);
     assertEq$(value.asBool(), true);
     assertEq$(value.len(), 0uz);
