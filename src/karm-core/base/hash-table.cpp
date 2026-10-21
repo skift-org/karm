@@ -126,7 +126,8 @@ struct HashTable {
             auto& old = oldSlots[i];
             if (old.state != State::USED)
                 continue;
-            put(lookup(old.expect()), old.take());
+            auto* slot = lookup(old.expect());
+            put(slot, old.take());
         }
 
         delete[] oldSlots;
