@@ -6,6 +6,7 @@ export module Karm.Dl.Elf:parser;
 
 import Karm.Core;
 import :base;
+import :abi;
 
 namespace Karm::Elf {
 
@@ -118,7 +119,7 @@ struct ElfDynamicSection : ElfSection<Abi> {
     }
 };
 
-export template <typename Abi>
+export template <typename Abi = CurrentAbi>
 struct ElfObject : Io::BChunk {
     ElfHeader<Abi> header() const {
         return begin().template next<ElfHeader<Abi>>();
@@ -157,6 +158,19 @@ struct ElfObject : Io::BChunk {
                Select([&](auto i) {
                    return program(i);
                });
+    }
+
+    Opt<urange> vrange() const {
+        Opt<urange> result;
+        for (auto p : iterProgram()) {
+            if (p.type() != ElfPhdrType::PT_LOAD)
+                continue;
+            if (result)
+                result = Some(result->merge(p.vrange()));
+            else
+                result = Some(p.vrange());
+        }
+        return result;
     }
 
     Opt<Str> interp() const {
