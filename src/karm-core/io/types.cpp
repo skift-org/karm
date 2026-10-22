@@ -10,6 +10,35 @@ namespace Karm::Io {
 
 export constexpr usize DEFAULT_BUFFER_SIZE = 8_KiB;
 
+#ifdef __ck_sys_encoding_utf8__
+export using Encoding = Utf8;
+#elifdef __ck_sys_encoding_utf16__
+export using Encoding = Utf16;
+#elifdef __ck_sys_encoding_utf32__
+export using Encoding = Utf32;
+#elifdef __ck_sys_encoding_ascii__
+export using Encoding = Ascii;
+#else
+#    error "Unknown encoding"
+#endif
+
+#ifdef __ck_sys_line_ending_lf__
+export constexpr Str LINE_ENDING = "\n";
+#elifdef __ck_sys_line_ending_crlf__
+export constexpr Str LINE_ENDING = "\r\n";
+#else
+#    error "Unknown line ending"
+#endif
+
+#ifdef __ck_sys_path_separator_slash__
+export constexpr Str PATH_SEPARATOR = "/";
+#elifdef __ck_sys_path_separator_backslash__
+export constexpr Str PATH_SEPARATOR = "\\";
+#else
+#    error "Unknown path separator"
+#endif
+
+
 export enum struct Whence {
     BEGIN,
     CURRENT,

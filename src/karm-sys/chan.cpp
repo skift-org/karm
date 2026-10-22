@@ -9,7 +9,6 @@ import Karm.Core;
 import :_embed;
 import :fd;
 import :async;
-import :defs;
 
 namespace Karm::Sys {
 
@@ -36,7 +35,7 @@ export struct In :
 };
 
 export struct Out : Io::TextWriter, Io::Writer, Io::Flusher {
-    using E = Sys::Encoding;
+    using E = Io::Encoding;
     Rc<Fd> _fd;
 
     Out(Rc<Fd> fd)
@@ -64,7 +63,7 @@ export struct Out : Io::TextWriter, Io::Writer, Io::Flusher {
 };
 
 export struct Err : Io::TextWriter, Io::Writer, Io::Flusher {
-    using E = Sys::Encoding;
+    using E = Io::Encoding;
 
     Rc<Fd> _fd;
 
@@ -117,13 +116,13 @@ export void err(Str str = "", auto&&... args) {
 
 export void println(Str str = "", auto&&... args) {
     (void)Io::format(out(), str, std::forward<decltype(args)>(args)...);
-    (void)out().writeStr(Str{Sys::LINE_ENDING});
+    (void)out().writeStr(Str{Io::LINE_ENDING});
     (void)out().flush();
 }
 
 export void errln(Str str = "", auto&&... args) {
     (void)Io::format(err(), str, std::forward<decltype(args)>(args)...);
-    (void)err().writeStr(Str{Sys::LINE_ENDING});
+    (void)err().writeStr(Str{Io::LINE_ENDING});
     (void)err().flush();
 }
 

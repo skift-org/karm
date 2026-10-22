@@ -62,7 +62,7 @@ void _log(Level level, Format fmt, Io::_Args& args) {
     if (debugLogLocation)
         _catch(Io::format(out, "{}: ", fmt.location | TTY_LOCATION));
     _catch(Io::_format(out, fmt.str, args));
-    _catch(Io::format(out, "{}\n", Tty::RESET));
+    _catch(Io::format(out, "{}{}", Tty::RESET, Io::LINE_ENDING));
 
     Logger::_Embed::loggerUnlock();
 }
