@@ -226,6 +226,14 @@ struct [[nodiscard]] Opt {
     }
 
     template <typename U>
+    always_inline constexpr Opt(Opt<U>& other)
+        requires(Meta::LvalueRef<T>)
+    {
+        if (other.has())
+            _store.emplace(other.expect());
+    }
+
+    template <typename U>
     always_inline constexpr Opt(Opt<U>&& other)
         requires(Meta::MoveConstructible<T> or Meta::LvalueRef<T>)
     {
