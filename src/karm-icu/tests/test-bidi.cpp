@@ -11,16 +11,6 @@ using namespace Karm::Ref::Literals;
 
 namespace Karm::Icu {
 
-Slice<char> strip(Slice<char> row) {
-    usize l = 0;
-    usize r = row.len();
-    while (l < r and (row[l] == ' ' or row[l] == '\t'))
-        l++;
-    while (r > l and (row[r - 1] == ' ' or row[r - 1] == '\t'))
-        r--;
-    return sub(row, l, r);
-}
-
 struct TestCase {
     Vec<Rune> runes;
     usize paragraphLevel;
@@ -51,7 +41,7 @@ struct TestCase {
             if (not textColumn)
                 return NONE;
 
-            auto strippedColumn = strip(*textColumn);
+            auto strippedColumn = trim(*textColumn, isAsciiBlank);
 
             for (auto piece : split(strippedColumn, ' ')) {
                 Io::SScan scan{piece};
@@ -71,7 +61,7 @@ struct TestCase {
             if (not levelColumn)
                 return NONE;
 
-            auto strippedColumn = strip(*levelColumn);
+            auto strippedColumn = trim(*levelColumn, isAsciiBlank);
 
             Io::SScan scan{strippedColumn};
             auto level = atoi(scan, {.base = 10});
@@ -87,7 +77,7 @@ struct TestCase {
             if (not expectedColumn)
                 return NONE;
 
-            auto strippedColumn = strip(*expectedColumn);
+            auto strippedColumn = trim(*expectedColumn, isAsciiBlank);
             for (auto piece : split(strippedColumn, ' ')) {
                 if (piece == "x"s) {
                     testCase.levels.pushBack(NONE);
@@ -107,7 +97,7 @@ struct TestCase {
             if (not orderingColumn)
                 return NONE;
 
-            auto strippedColumn = strip(*orderingColumn);
+            auto strippedColumn = trim(*orderingColumn, isAsciiBlank);
             for (auto piece : split(strippedColumn, ' ')) {
                 Io::SScan scan{piece};
                 auto id = atoi(scan, {.base = 10});

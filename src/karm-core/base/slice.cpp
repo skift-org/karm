@@ -732,6 +732,17 @@ Yield<Slice<U>> split(T const& slice, Meta::Equatable<U> auto const delim) {
 }
 
 export template <Sliceable T, typename U = T::Inner>
+constexpr Slice<U> trim(T const& slice, auto pred) {
+    usize l = 0;
+    usize r = slice.len();
+    while (l < r and pred(slice[l]))
+        l++;
+    while (r > l and pred(slice[r - 1]))
+        r--;
+    return sub(slice, l, r);
+}
+
+export template <Sliceable T, typename U = T::Inner>
 always_inline constexpr bool contains(T const& slice, Meta::Equatable<U> auto const& needle) {
     return indexOf(slice, needle).has();
 }

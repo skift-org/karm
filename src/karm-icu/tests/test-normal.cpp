@@ -11,23 +11,11 @@ using namespace Karm::Ref::Literals;
 
 namespace Karm::Icu {
 
-// Helpers live in an anonymous namespace so they don't collide (ODR)
-// with the ones in the bidi tests when linked into the same binary.
 namespace {
-
-Slice<char> strip(Slice<char> row) {
-    usize l = 0;
-    usize r = row.len();
-    while (l < r and (row[l] == ' ' or row[l] == '\t'))
-        l++;
-    while (r > l and (row[r - 1] == ' ' or row[r - 1] == '\t'))
-        r--;
-    return sub(row, l, r);
-}
 
 Opt<Vec<Rune>> parseRunes(Slice<char> column) {
     Vec<Rune> runes;
-    for (auto piece : split(strip(column), ' ')) {
+    for (auto piece : split(trim(column, isAsciiBlank), ' ')) {
         if (piece.len() == 0)
             continue;
         Io::SScan scan{piece};

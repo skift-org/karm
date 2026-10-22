@@ -1164,13 +1164,11 @@ export enum struct WordBreak {
 
 #include "defs/tables/age.inc"
 #include "defs/tables/ascii-hex-digit.inc"
-#include "defs/tables/alnum.inc"
 #include "defs/tables/alphabetic.inc"
 #include "defs/tables/basic-emoji.inc"
 #include "defs/tables/bidi-class.inc"
 #include "defs/tables/bidi-control.inc"
 #include "defs/tables/bidi-mirrored.inc"
-#include "defs/tables/blank.inc"
 #include "defs/tables/block.inc"
 #include "defs/tables/bidi-mirroring-glyph.inc"
 #include "defs/tables/bidi-paired-bracket-type.inc"
@@ -1200,7 +1198,6 @@ export enum struct WordBreak {
 #include "defs/tables/extended-pictographic.inc"
 #include "defs/tables/general-category.inc"
 #include "defs/tables/grapheme-cluster-break.inc"
-#include "defs/tables/graph.inc"
 #include "defs/tables/grapheme-base.inc"
 #include "defs/tables/grapheme-extend.inc"
 #include "defs/tables/grapheme-link.inc"
@@ -1244,7 +1241,6 @@ export enum struct WordBreak {
 #include "defs/tables/pattern-syntax.inc"
 #include "defs/tables/pattern-white-space.inc"
 #include "defs/tables/prepended-concatenation-mark.inc"
-#include "defs/tables/print.inc"
 #include "defs/tables/quotation-mark.inc"
 #include "defs/tables/radical.inc"
 #include "defs/tables/rgi-emoji.inc"
@@ -1267,7 +1263,6 @@ export enum struct WordBreak {
 #include "defs/tables/variation-selector.inc"
 #include "defs/tables/word-break.inc"
 #include "defs/tables/white-space.inc"
-#include "defs/tables/xdigit.inc"
 #include "defs/tables/xid-continue.inc"
 #include "defs/tables/xid-start.inc"
 export struct Properties {
@@ -1281,10 +1276,6 @@ export struct Properties {
 
     bool asciiHexDigit() const {
         return (_AsciiHexDigitPages[(_AsciiHexDigitIndirect[_rune >> 8] << 4) + ((_rune & 255) >> 4)] >> (_rune & 15)) & 1;
-    }
-
-    bool alnum() const {
-        return (_AlnumPages[(_AlnumIndirect[_rune >> 8] << 4) + ((_rune & 255) >> 4)] >> (_rune & 15)) & 1;
     }
 
     bool alphabetic() const {
@@ -1305,10 +1296,6 @@ export struct Properties {
 
     bool bidiMirrored() const {
         return (_BidiMirroredPages[(_BidiMirroredIndirect[_rune >> 8] << 4) + ((_rune & 255) >> 4)] >> (_rune & 15)) & 1;
-    }
-
-    bool blank() const {
-        return (_BlankPages[(_BlankIndirect[_rune >> 8] << 4) + ((_rune & 255) >> 4)] >> (_rune & 15)) & 1;
     }
 
     Block block() const {
@@ -1446,10 +1433,6 @@ export struct Properties {
     }
 
     // TODO: Ignored property GeneralCategoryMask
-
-    bool graph() const {
-        return (_GraphPages[(_GraphIndirect[_rune >> 8] << 4) + ((_rune & 255) >> 4)] >> (_rune & 15)) & 1;
-    }
 
     bool graphemeBase() const {
         return (_GraphemeBasePages[(_GraphemeBaseIndirect[_rune >> 8] << 4) + ((_rune & 255) >> 4)] >> (_rune & 15)) & 1;
@@ -1649,10 +1632,6 @@ export struct Properties {
         return (_PrependedConcatenationMarkPages[(_PrependedConcatenationMarkIndirect[_rune >> 8] << 4) + ((_rune & 255) >> 4)] >> (_rune & 15)) & 1;
     }
 
-    bool print() const {
-        return (_PrintPages[(_PrintIndirect[_rune >> 8] << 4) + ((_rune & 255) >> 4)] >> (_rune & 15)) & 1;
-    }
-
     bool quotationMark() const {
         return (_QuotationMarkPages[(_QuotationMarkIndirect[_rune >> 8] << 4) + ((_rune & 255) >> 4)] >> (_rune & 15)) & 1;
     }
@@ -1757,10 +1736,6 @@ export struct Properties {
         return (_WhiteSpacePages[(_WhiteSpaceIndirect[_rune >> 8] << 4) + ((_rune & 255) >> 4)] >> (_rune & 15)) & 1;
     }
 
-    bool xdigit() const {
-        return (_XdigitPages[(_XdigitIndirect[_rune >> 8] << 4) + ((_rune & 255) >> 4)] >> (_rune & 15)) & 1;
-    }
-
     bool xidContinue() const {
         return (_XidContinuePages[(_XidContinueIndirect[_rune >> 8] << 4) + ((_rune & 255) >> 4)] >> (_rune & 15)) & 1;
     }
@@ -1768,10 +1743,6 @@ export struct Properties {
     bool xidStart() const {
         return (_XidStartPages[(_XidStartIndirect[_rune >> 8] << 4) + ((_rune & 255) >> 4)] >> (_rune & 15)) & 1;
     }
-
-    bool bmp() const { return _rune >= 0x0000 and _rune <= 0xffff; }
-
-    bool supplementary() const { return _rune >= 0x10000 and _rune <= 0x10ffff; }
 
 };
 

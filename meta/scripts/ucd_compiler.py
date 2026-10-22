@@ -319,6 +319,9 @@ export struct NumericValue {
 constexpr NumericValue NumericValue::NAN = {1, 0};
 """
 
+# https://www.unicode.org/reports/tr18/#Compatibility_Properties
+COMPATIBILITY_PROPERTY_NAMES = {"Alnum", "Blank", "Graph", "Print", "Xdigit"}
+
 def emitTypeDeclaration(ty : PropertyType, out):
     if ty.type in ("Catalog", "Enumerated"):
         print(f"export enum struct {ty.name} {{", file=out)
@@ -353,6 +356,8 @@ with open("src/karm-icu/ucd.cpp", "w") as out:
         emitTypeDeclaration(ty, out)
 
     for descriptor in database.descriptors:
+        if descriptor.name in COMPATIBILITY_PROPERTY_NAMES:
+            continue
         print("Compiling " + descriptor.name)
         property = propertyFor(descriptor)
         property.emitTable(database, out)
@@ -362,11 +367,10 @@ with open("src/karm-icu/ucd.cpp", "w") as out:
     print("    static Properties of(Rune r) { return Properties(r); }\n", file=out)
 
     for descriptor in database.descriptors:
+        if descriptor.name in COMPATIBILITY_PROPERTY_NAMES:
+            continue
         property = propertyFor(descriptor)
         property.emitAccessor(out)
-
-    print("    bool bmp() const { return _rune >= 0x0000 and _rune <= 0xffff; }\n", file=out)
-    print("    bool supplementary() const { return _rune >= 0x10000 and _rune <= 0x10ffff; }\n", file=out)
 
     print("};\n", file=out)
 
