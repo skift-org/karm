@@ -131,6 +131,20 @@ test$("fmt-float-zero") {
     return Ok();
 }
 
+test$("fmt-float-nan-and-inf") {
+    try$(testCase("nan", Math::NAN));
+    try$(testCase("nan", Math::NAN, ".02"));
+    try$(testCase("nan", -Math::NAN));
+
+    try$(testCase("inf", Math::INF));
+    try$(testCase("inf", Math::INF, ".02"));
+
+    try$(testCase("-inf", Math::NEG_INF));
+    try$(testCase("-inf", Math::NEG_INF, ".6"));
+
+    return Ok();
+}
+
 enum struct MyEnum {
     BAR,
     BAZ,

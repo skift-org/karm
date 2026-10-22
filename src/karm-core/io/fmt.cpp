@@ -400,6 +400,8 @@ export struct NumberFormatter {
     Res<> formatFloat(TextWriter& writer, f64 val) {
         if (Math::isNan(val))
             return writer.writeStr("nan"s);
+        if (Math::isInf(val))
+            return writer.writeStr(val < 0 ? "-inf"s : "inf"s);
 
         NumberFormatter formatter;
         auto [isNeg, ipart, ifpart] = _modfRounded(val);
