@@ -91,7 +91,7 @@ export Res<usize> skip(Readable auto& reader, usize n) {
 export Res<usize> copy(Readable auto& reader, MutBytes bytes) {
     usize read = 0;
     while (read < bytes.len()) {
-        read += try$(reader.read(next(bytes, read)));
+        read += try$(reader.read(mutNext(bytes, read)));
     }
     return Ok(read);
 }
