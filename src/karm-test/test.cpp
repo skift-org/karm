@@ -7,6 +7,8 @@ namespace Karm::Test {
 export struct Test;
 export struct Driver;
 
+export constexpr bool XFAIL = true;
+
 static Test* _first = nullptr;
 static Test* _last = nullptr;
 
@@ -29,6 +31,7 @@ export struct Test : Meta::Pinned {
     };
 
     SourceLocation sourceLocation;
+    bool xFail;
     Test* next = nullptr;
 
     static Test* first() {
@@ -45,8 +48,8 @@ export struct Test : Meta::Pinned {
         return n;
     }
 
-    Test(Str name, Func func, SourceLocation loc = SourceLocation::current())
-        : name(name), _kind(SYNC), _func(func), sourceLocation(loc) {
+    Test(Str name, Func func, bool xFail = false, SourceLocation loc = SourceLocation::current())
+        : name(name), _kind(SYNC), _func(func), sourceLocation(loc), xFail(xFail) {
         if (not _first) {
             _first = this;
             _last = this;
@@ -56,8 +59,8 @@ export struct Test : Meta::Pinned {
         }
     }
 
-    Test(Str name, FuncAsync func, SourceLocation loc = SourceLocation::current())
-        : name(name), _kind(ASYNC), _funcAsync(func), sourceLocation(loc) {
+    Test(Str name, FuncAsync func, bool xFail = false, SourceLocation loc = SourceLocation::current())
+        : name(name), _kind(ASYNC), _funcAsync(func), sourceLocation(loc), xFail(xFail) {
         if (not _first) {
             _first = this;
             _last = this;

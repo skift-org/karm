@@ -7,14 +7,14 @@ import Karm.Core;
 
 namespace Karm::Test {
 
-#define test$(ID)                                                                     \
-    static ::Karm::Res<> var$(func)([[maybe_unused]] ::Karm::Test::Driver & _driver); \
-    static ::Karm::Test::Test var$(test){ID, var$(func)};                             \
+#define test$(ID, ...)                                                                            \
+    static ::Karm::Res<> var$(func)([[maybe_unused]] ::Karm::Test::Driver & _driver);             \
+    static ::Karm::Test::Test var$(test){ID, var$(func) __VA_OPT__(, ::Karm::Test::__VA_ARGS__)}; \
     static ::Karm::Res<> var$(func)([[maybe_unused]] ::Karm::Test::Driver & _driver)
 
-#define testAsync$(ID)                                                                                                                           \
+#define testAsync$(ID, ...)                                                                                                                      \
     static ::Karm::Async::Task<> var$(funcAsync)([[maybe_unused]] ::Karm::Test::Driver & _driver, [[maybe_unused]] Async::CancellationToken ct); \
-    static ::Karm::Test::Test var$(test){ID, var$(funcAsync)};                                                                                   \
+    static ::Karm::Test::Test var$(test){ID, var$(funcAsync) __VA_OPT__(, ::Karm::Test::__VA_ARGS__)};                                           \
     static ::Karm::Async::Task<> var$(funcAsync)([[maybe_unused]] ::Karm::Test::Driver & _driver, [[maybe_unused]] Async::CancellationToken ct)
 
 #define __assert$(LHS, RHS, OP)                         \

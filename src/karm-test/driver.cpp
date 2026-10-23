@@ -14,6 +14,8 @@ namespace Karm::Test {
 
 static constexpr Tty::Style TTY_PASS = {.foreground = Tty::GREEN, .bold = true};
 static constexpr Tty::Style TTY_FAIL = {.foreground = Tty::RED, .bold = true};
+static constexpr Tty::Style TTY_XFAIL = {.foreground = Tty::CYAN, .bold = true};
+static constexpr Tty::Style TTY_XPASS = {.foreground = Tty::MAGENTA, .bold = true};
 static constexpr Tty::Style TTY_WARN = {.foreground = Tty::YELLOW, .bold = true};
 static constexpr Tty::Style TTY_NOTE = {.foreground = Tty::GRAY_DARK, .bold = true};
 
@@ -24,7 +26,7 @@ export struct RunOptions {
 
 export struct Driver {
     Async::Task<> runAllAsync(RunOptions options, Async::CancellationToken ct) {
-        usize passed = 0, failed = 0, skipped = 0;
+        usize passed = 0, failed = 0, skipped = 0, xFailed = 0, xPassed = 0;
 
         Sys::errln("Running {} tests…", Test::len());
         if (options.glob != "*")
@@ -43,6 +45,19 @@ export struct Driver {
             if (not result and result.none() == Error::SKIPPED) {
                 skipped++;
                 Sys::errln("{}", "SKIP"s | TTY_WARN);
+            } else if (test->xFail) {
+                if (result) {
+                    if (options.fast) {
+                        Sys::errln("{}", "XPASS"s | TTY_XPASS);
+                        Sys::errln("{}", test->sourceLocation);
+                        co_return Error::other("expected failure test passed");
+                    }
+                    xPassed++;
+                    Sys::errln("{}", "XPASS"s | TTY_XPASS);
+                } else {
+                    xFailed++;
+                    Sys::errln("{}", "XFAIL"s | TTY_XFAIL);
+                }
             } else if (not result) {
                 if (options.fast) {
                     Sys::errln("{}", "FAIL"s | TTY_FAIL);
@@ -66,13 +81,31 @@ export struct Driver {
             );
         }
 
-        if (failed) {
+        if (xFailed) {
             Sys::errln(
-                " {:5} failed - {} {}",
-                failed | TTY_FAIL,
-                witty(Sys::now().val()) | TTY_NOTE,
-                badEmoji(Sys::now().val())
+                " {:5} failed as expected",
+                xFailed | TTY_XFAIL
             );
+        }
+
+        if (failed or xPassed) {
+            if (failed) {
+                Sys::errln(
+                    " {:5} failed - {} {}",
+                    failed | TTY_FAIL,
+                    witty(Sys::now().val()) | TTY_NOTE,
+                    badEmoji(Sys::now().val())
+                );
+            }
+
+            if (xPassed) {
+                Sys::errln(
+                    " {:5} fixed - remove XFAIL from their test$ {}",
+                    xPassed | TTY_XPASS,
+                    goodEmoji(Sys::now().val())
+                );
+            }
+
             Sys::errln(
                 " {:5} passed\n",
                 passed | TTY_PASS
