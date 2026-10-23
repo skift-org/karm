@@ -6,6 +6,7 @@ export module Karm.Core:base.distinct;
 
 import :base.base;
 import :base.hash;
+import :base.niche;
 
 namespace Karm {
 
@@ -142,5 +143,10 @@ struct Distinct {
 
 static_assert(sizeof(Distinct<int, struct _Tag>) == sizeof(int));
 static_assert(alignof(Distinct<int, struct _Tag>) == alignof(int));
+
+export template <Nicheable T, typename Tag>
+struct Niche<Distinct<T, Tag>> {
+    using Content = Niche<T>::Content;
+};
 
 } // namespace Karm
