@@ -209,6 +209,12 @@ bool operator==(None, T* ptr) {
     return ptr == nullptr;
 }
 
+/* The object should construct without checking the validity of its input */
+
+export struct Unchecked {};
+
+export auto UNCHECKED = Unchecked{};
+
 // MARK: Forward Res, Opt, Error -----------------------------------------------
 
 export struct Error;
