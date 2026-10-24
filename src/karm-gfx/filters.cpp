@@ -23,23 +23,11 @@ export struct BlurFilter {
         isize _radius;
         Ring<Math::Vec4u> _queue;
         Math::Vec4u _sum;
+        Math::Vec4u _sumOut;
+        Math::Vec4u _sumIn;
 
         StackBlur(isize radius)
             : _radius(radius), _queue(width()) { clear(); }
-
-        Math::Vec4u outgoingSumCurrent() const {
-            Math::Vec4u sum = {};
-            for (isize i = 0; i <= _radius; i++)
-                sum = sum + _queue.peekFront(i);
-            return sum;
-        }
-
-        Math::Vec4u incomingSumWith(Math::Vec4u in) const {
-            Math::Vec4u sum = in;
-            for (isize i = 0; i < _radius; i++)
-                sum = sum + _queue.peekFront(width() - 1 - i);
-            return sum;
-        }
 
         isize width() const {
             return _radius * 2 + 1;
@@ -50,9 +38,15 @@ export struct BlurFilter {
         }
 
         void enqueue(Math::Vec4u color) {
-            _sum = _sum + incomingSumWith(color) - outgoingSumCurrent();
+            _sum = _sum + _sumIn + color - _sumOut;
+
+            _sumOut = _sumOut - _queue.peekFront(0);
             _queue.popFront();
             _queue.pushBack(color);
+
+            auto mid = _queue.peekFront(_radius);
+            _sumOut = _sumOut + mid;
+            _sumIn = _sumIn + color - mid;
         }
 
         Math::Vec4u dequeue() const {
@@ -62,6 +56,8 @@ export struct BlurFilter {
 
         void clear() {
             _sum = {};
+            _sumOut = {};
+            _sumIn = {};
             _queue.clear();
             for (isize i = 0; i < width(); i++)
                 _queue.pushBack({});
@@ -78,7 +74,6 @@ export struct BlurFilter {
         for (isize y = b.top(); y < b.bottom(); y++) {
             for (isize i = 0; i < stack.width(); i++) {
                 auto x = b.start() + i - (isize)amount;
-                stack.dequeue();
                 stack.enqueue(p.load({x, y}));
             }
 
@@ -93,7 +88,6 @@ export struct BlurFilter {
         for (isize x = b.start(); x < b.end(); x++) {
             for (isize i = 0; i < stack.width(); i++) {
                 isize const y = b.top() + i - (isize)amount;
-                stack.dequeue();
                 stack.enqueue(p.load({x, y}));
             }
 
@@ -211,9 +205,7 @@ export struct ColorMatrix {
     }
 
     ColorMatrix& operator*=(ColorMatrix const& other) {
-        matrix *= other.matrix;
-        bias = matrix * other.bias + bias;
-        return *this;
+        return *this = *this * other;
     }
 
     Math::Vec4f apply(Math::Vec4f color) const {
