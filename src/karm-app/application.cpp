@@ -133,7 +133,13 @@ export struct Handler {
     }
 };
 
+export enum struct ApplicationOptions {
+    ROOT = 1 << 0,
+};
+
 export struct ApplicationProps {
+    Flags<ApplicationOptions> options;
+
     static ApplicationProps simple() {
         return {};
     }
