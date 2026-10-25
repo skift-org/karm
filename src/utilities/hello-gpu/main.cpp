@@ -20,8 +20,8 @@ struct Handler : App::Handler {
           _window(window),
           _swapChain(window->createSwapChain().expect()) {}
 
-    void handle(App::WindowId, App::Event& e) override {
-        if (e.is<App::ResizeEvent>())
+    void handle(App::WindowId, App::Event& event) override {
+        if (event.is<App::ResizeEvent>())
             _swapChain = _window->createSwapChain().expect();
     }
 

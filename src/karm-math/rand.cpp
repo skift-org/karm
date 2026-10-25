@@ -91,8 +91,7 @@ export struct Rand {
         return Vec2<T>(nextDouble(max.x), nextDouble(max.y));
     }
 
-    template <typename T>
-    T pick(Slice<T> vals) {
+    auto pick(Sliceable auto vals) {
         return vals[nextInt(vals.len())];
     }
 };

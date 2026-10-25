@@ -1,0 +1,11 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "neko",
+    "type": "exe",
+    "requires": [
+        "karm-sys",
+        "karm-app",
+        "karm-image",
+        "karm-gfx"
+    ]
+}
