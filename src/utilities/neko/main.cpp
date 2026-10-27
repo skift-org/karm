@@ -320,15 +320,15 @@ struct Handler : App::Handler {
         if (_counter >= Neko::TICK_DURATION) {
             _counter -= Neko::TICK_DURATION;
             _neko.update(_mouse);
-        }
 
-        auto [drmBuffer, _] = _swapChain->acquire();
-        Gfx::CpuCanvas g;
-        g.begin(Gfx::MutPixels::from(drmBuffer));
-        g.scale(_window->scaleFactor());
-        g.clear(Gfx::ALPHA);
-        _neko.paint(g);
-        _swapChain->present(drmBuffer);
+            auto [drmBuffer, _] = _swapChain->acquire();
+            Gfx::CpuCanvas g;
+            g.begin(Gfx::MutPixels::from(drmBuffer));
+            g.scale(_window->scaleFactor());
+            g.clear(Gfx::ALPHA);
+            _neko.paint(g);
+            _swapChain->present(drmBuffer);
+        }
     }
 };
 
