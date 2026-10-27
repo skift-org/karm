@@ -97,7 +97,6 @@ export struct Process {
 };
 
 export struct Command {
-    String exe = ""s;
     Vec<String> args = {};
     Map<String, String> env = {};
     Opt<Ref::Url> cwd = NONE;

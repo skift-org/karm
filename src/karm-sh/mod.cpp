@@ -27,8 +27,7 @@ export struct Command {
 
     Res<> eval() {
         Sys::Command c{
-            segments[0],
-            next(segments, 1),
+            segments,
         };
         auto proc = try$(c.spawn());
         return proc->wait();
@@ -48,8 +47,7 @@ export struct Pipeline {
         for (auto& c : mutSub(commands, 0, commands.len() - 1)) {
             auto [in, out] = try$(Sys::Pipe::create());
             Sys::Command cmd = {
-                .exe = c.segments[0],
-                .args = next(c.segments, 1),
+                .args = c.segments,
                 .in = Some(prev),
                 .out = Some(out.fd()),
             };
@@ -59,8 +57,7 @@ export struct Pipeline {
 
         auto& c = last(commands);
         Sys::Command cmd = {
-            .exe = c.segments[0],
-            .args = next(c.segments, 1),
+            .args = c.segments,
             .in = Some(prev),
             .out = Some(Sys::out().fd()),
         };

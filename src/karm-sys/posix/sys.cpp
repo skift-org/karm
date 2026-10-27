@@ -588,11 +588,10 @@ Res<> populate(Vec<UserInfo>& infos) {
 // MARK: Process Management ----------------------------------------------------
 
 Res<Rc<Process>> spawn(Command const& cmd) {
-    if (not cmd.exe or cmd.exe.len() == 0)
+    if (not cmd.args.len() or not cmd.args[0])
         return Error::invalidInput("no executable provided");
 
     auto buildArgv = [&](Vec<char*>& argv) {
-        argv.pushBack(const_cast<char*>(cmd.exe.buf())); // argv[0]
         for (auto const& arg : cmd.args)
             argv.pushBack(const_cast<char*>(arg.buf()));
         argv.pushBack(nullptr);
@@ -656,9 +655,9 @@ Res<Rc<Process>> spawn(Command const& cmd) {
             Vec<String> kvStore;
             Vec<char*> envp;
             buildEnvp(kvStore, envp);
-            ::execve(cmd.exe.buf(), argv.buf(), envp.buf());
+            ::execve(argv[0], argv.buf(), envp.buf());
         } else {
-            ::execvp(cmd.exe.buf(), argv.buf());
+            ::execvp(argv[0], argv.buf());
         }
 
         _exit(127); // exec failed
@@ -669,11 +668,10 @@ Res<Rc<Process>> spawn(Command const& cmd) {
 }
 
 Res<Tuple<Rc<Process>, Rc<Fd>>> spawnPty(Command const& cmd) {
-    if (not cmd.exe or cmd.exe.len() == 0)
+    if (not cmd.args.len() or not cmd.args[0])
         return Error::invalidInput("no executable provided");
 
     auto buildArgv = [&](Vec<char*>& argv) {
-        argv.pushBack(const_cast<char*>(cmd.exe.buf())); // argv[0]
         for (auto const& arg : cmd.args)
             argv.pushBack(const_cast<char*>(arg.buf()));
         argv.pushBack(nullptr);
@@ -714,9 +712,9 @@ Res<Tuple<Rc<Process>, Rc<Fd>>> spawnPty(Command const& cmd) {
             Vec<String> kvStore;
             Vec<char*> envp;
             buildEnvp(kvStore, envp);
-            ::execve(cmd.exe.buf(), argv.buf(), envp.buf());
+            ::execve(argv[0], argv.buf(), envp.buf());
         } else {
-            ::execvp(cmd.exe.buf(), argv.buf());
+            ::execvp(argv[0], argv.buf());
         }
 
         _exit(127); // exec failed
