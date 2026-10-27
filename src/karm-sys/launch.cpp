@@ -15,16 +15,20 @@ export struct Object {
     Ref::Url url;
     Opt<Ref::Uti> type = NONE;
 
-    Object(Ref::Url url) : url(url) {}
-
-    Object(Ref::Url url, Ref::Uti type) : url(url), type(Some(type)) {}
+    void repr(Io::Emit& e) const {
+        e("(object url:{} type:{})", url, type);
+    }
 };
 
 export struct Intent {
-    Ref::Uti action;
+    Ref::Uti action = Ref::Uti::PUBLIC_OPEN;
     Vec<Object> objects = {};
     Opt<Ref::Url> handler = NONE;
     Opt<Ref::Url> callback = NONE;
+
+    void repr(Io::Emit& e) const {
+        e("(intent action:{} objects:{} handler:{} callback:{})", action, objects, handler, callback);
+    }
 };
 
 export Res<> launch(Intent intent) {

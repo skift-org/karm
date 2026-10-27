@@ -533,6 +533,17 @@ struct Serde<String> {
 };
 
 export template <>
+struct Serde<Symbol> {
+    static Res<> serialize(Serializer& ser, Symbol const& v) {
+        return ser.serializeString(v.str());
+    }
+
+    static Res<Symbol> deserialize(Deserializer& de) {
+        return Ok(Symbol::from(try$(de.deserializeString())));
+    }
+};
+
+export template <>
 struct Serde<Vec<u8>> {
     static Res<> serialize(Serializer& ser, Vec<u8> const& v) {
         return ser.serializeBytes(v);

@@ -1,3 +1,7 @@
+module;
+
+#include <karm/macros>
+
 export module Karm.Ref:uti;
 
 import Karm.Core;
@@ -252,6 +256,14 @@ export struct Uti {
 
     auto operator<=>(Uti const& other) const {
         return name() <=> other.name();
+    }
+
+    Res<> serialize(Serde::Serializer& ser) const {
+        return ser.serialize(name());
+    }
+
+    static Res<Uti> deserialize(Serde::Deserializer& de) {
+        return Ok(Uti(try$(de.deserialize<Symbol>())));
     }
 
     void repr(Io::Emit& e) const {
