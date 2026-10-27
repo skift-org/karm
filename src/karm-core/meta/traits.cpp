@@ -74,6 +74,12 @@ export template <typename T>
 concept Trivial = __is_trivial(T);
 
 export template <typename T>
+concept TriviallyConstructible = __is_trivially_constructible(T);
+
+export template <typename T>
+concept TriviallyDestructible = __is_trivially_destructible(T);
+
+export template <typename T>
 concept StandardLayout = __is_standard_layout(T);
 
 export template <typename T>

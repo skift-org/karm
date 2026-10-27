@@ -42,6 +42,14 @@ struct _OptStore {
         clear();
     }
 
+    // SAFETY: Must only be called on empty store.
+    template <typename... Args>
+    always_inline constexpr T& construct(Args&&... args) {
+        std::construct_at(&_inner._value, std::forward<Args>(args)...);
+        _present = true;
+        return unwrap();
+    }
+
     template <typename... Args>
     always_inline constexpr T& emplace(Args&&... args) {
         clear();
@@ -83,6 +91,12 @@ struct _OptStore<T&> {
 
     always_inline constexpr ~_OptStore() {
         clear();
+    }
+
+    // SAFETY: Must only be called on empty store.
+    always_inline constexpr T& construct(T& v) {
+        _value = &v;
+        return unwrap();
     }
 
     always_inline constexpr T& emplace(T& v) {
@@ -129,8 +143,19 @@ struct _OptStore<T> {
         : _content{} {
     }
 
+    always_inline constexpr ~_OptStore()
+        requires(Meta::TriviallyDestructible<T>)
+    = default;
+
     always_inline constexpr ~_OptStore() {
         clear();
+    }
+
+    // SAFETY: Must only be called on empty store.
+    template <typename... Args>
+    always_inline constexpr T& construct(Args&&... args) {
+        std::construct_at(&_value, std::forward<Args>(args)...);
+        return unwrap();
     }
 
     template <typename... Args>
@@ -148,6 +173,10 @@ struct _OptStore<T> {
     }
 
     always_inline constexpr bool has() const {
+        if consteval {
+            return __builtin_is_within_lifetime(&_value);
+        }
+
         return _content.has();
     }
 
@@ -191,7 +220,7 @@ struct [[nodiscard]] Opt {
             (Meta::CopyConstructible<T, U> or Meta::LvalueRef<T>)
         )
     {
-        _store.emplace(value.unwrap());
+        _store.construct(value.unwrap());
     }
 
     template <typename U = T>
@@ -200,21 +229,21 @@ struct [[nodiscard]] Opt {
             (Meta::MoveConstructible<T, U> or Meta::LvalueRef<T>)
         )
     {
-        _store.emplace(value.take());
+        _store.construct(value.take());
     }
 
     always_inline constexpr Opt(Opt const& other)
         requires(Meta::CopyConstructible<T> or Meta::LvalueRef<T>)
     {
         if (other.has())
-            _store.emplace(other.expect());
+            _store.construct(other.expect());
     }
 
     always_inline constexpr Opt(Opt&& other)
         requires(Meta::MoveConstructible<T> or Meta::LvalueRef<T>)
     {
         if (other.has())
-            _store.emplace(other.take());
+            _store.construct(other.take());
     }
 
     template <typename U>
@@ -222,7 +251,7 @@ struct [[nodiscard]] Opt {
         requires(Meta::CopyConstructible<T> or Meta::LvalueRef<T>)
     {
         if (other.has())
-            _store.emplace(other.expect());
+            _store.construct(other.expect());
     }
 
     template <typename U>
@@ -230,7 +259,7 @@ struct [[nodiscard]] Opt {
         requires(Meta::LvalueRef<T>)
     {
         if (other.has())
-            _store.emplace(other.expect());
+            _store.construct(other.expect());
     }
 
     template <typename U>
@@ -238,12 +267,10 @@ struct [[nodiscard]] Opt {
         requires(Meta::MoveConstructible<T> or Meta::LvalueRef<T>)
     {
         if (other.has())
-            _store.emplace(other.take());
+            _store.construct(other.take());
     }
 
-    always_inline constexpr ~Opt() {
-        _store.clear();
-    }
+    always_inline constexpr ~Opt() = default;
 
     always_inline constexpr Opt& operator=(None) {
         _store.clear();
