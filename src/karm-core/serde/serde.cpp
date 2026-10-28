@@ -620,7 +620,7 @@ struct Serde<Map<String, T>> {
             auto [type, value] = try$(scope.deserializeUnit<T>({
                 .kind = Type::MAP_ITEM,
             }));
-            res.put(type.tag.expect(), value);
+            res.put(type.tag.expect().str(), value);
         }
         try$(scope.end());
         return Ok(std::move(res));

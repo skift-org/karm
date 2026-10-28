@@ -65,6 +65,8 @@ export struct Fd : Meta::NoCopy {
         return Error::unsupported();
     }
 
+    virtual void repr(Io::Emit& e) const = 0;
+
     virtual Res<> serialize(Serde::Serializer&) const {
         return Error::notImplemented();
     };
@@ -124,6 +126,10 @@ export struct BlobFd : Fd {
     Res<_Received> recv(MutBytes, MutSlice<Handle>) override {
         return Error::notImplemented();
     }
+
+    void repr(Io::Emit& e) const override {
+        e("(blob)");
+    }
 };
 
 export struct NullFd : Fd {
@@ -168,6 +174,10 @@ export struct NullFd : Fd {
 
     Res<_Received> recv(MutBytes, MutSlice<Handle>) override {
         return Ok<_Received>(0uz, 0uz, Ip4::unspecified(0));
+    }
+
+    void repr(Io::Emit& e) const override {
+        e("(null)");
     }
 };
 

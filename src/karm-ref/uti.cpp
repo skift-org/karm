@@ -259,11 +259,11 @@ export struct Uti {
     }
 
     Res<> serialize(Serde::Serializer& ser) const {
-        return ser.serialize(name());
+        return Serde::serialize(ser, name());
     }
 
     static Res<Uti> deserialize(Serde::Deserializer& de) {
-        return Ok(Uti(try$(de.deserialize<Symbol>())));
+        return Ok(Uti(try$(Serde::deserialize<Symbol>(de))));
     }
 
     void repr(Io::Emit& e) const {

@@ -150,6 +150,10 @@ export struct Fd : Sys::Fd {
             fromSockAddr(addr_)
         );
     }
+
+    void repr(Io::Emit& e) const override {
+        e("(posix-fd {})", _raw);
+    }
 };
 
 export Res<Rc<Fd>> ensurePosixFd(Rc<Sys::Fd> fd) {

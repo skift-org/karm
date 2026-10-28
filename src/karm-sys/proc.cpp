@@ -102,6 +102,10 @@ export struct Command {
     Opt<Ref::Url> cwd = NONE;
     Opt<Rc<Fd>> in = NONE, out = NONE, err = NONE;
 
+    Opt<Str> executable() const {
+        return args.index(0);
+    }
+
     Res<Rc<Process>> spawn() {
         auto pid = try$(_Embed::spawn(*this));
         return Ok(pid);
@@ -110,6 +114,10 @@ export struct Command {
     Res<Tuple<Rc<Process>, Pty>> spawnPty() {
         auto [pid, fd] = try$(_Embed::spawnPty(*this));
         return Ok<Tuple<Rc<Process>, Pty>>(pid, Pty{fd});
+    }
+
+    void repr(Io::Emit& e) const {
+        e("(command args:{} env:{}, cwd:{} in:{} out:{} err:{})", args, env, cwd, in, out, err);
     }
 };
 
