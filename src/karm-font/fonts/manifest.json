@@ -1,0 +1,15 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "fonts",
+    "type": "lib",
+    "requires": [
+        "fonts.anton",
+        "fonts.arimo",
+        "fonts.blob-moji",
+        "fonts.comic-neue",
+        "fonts.cousine",
+        "fonts.stix-two-math",
+        "fonts.tinos",
+        "fonts.zhuque-fangsong"
+    ]
+}

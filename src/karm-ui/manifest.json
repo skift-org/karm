@@ -8,6 +8,8 @@
         "karm-font",
         "karm-gfx",
         "karm-app",
-        "karm-signals"
+        "karm-signals",
+        "fonts.arimo",
+        "fonts.cousine"
     ]
 }

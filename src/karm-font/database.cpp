@@ -173,15 +173,15 @@ export struct Database {
 
     // FIXME: these value depend on the correct loading of the bundle
     Map<Symbol, Symbol> _genericFamily = {
-        {"serif"_sym, "Noto Serif"_sym},
-        {"sans-serif"_sym, "Noto Sans"_sym},
-        {"monospace"_sym, "Fira Code"_sym},
-        {"cursive"_sym, "Dancing Script"_sym},
-        {"fantasy"_sym, "Excalibur"_sym},
-        {"system"_sym, "Noto Serif"_sym},
-        {"emoji"_sym, "Noto Emoji"_sym},
-        {"math"_sym, "Noto Sans Math"_sym},
-        {"fangsong"_sym, "Noto"_sym},
+        {"serif"_sym, "Tinos"_sym},
+        {"sans-serif"_sym, "Arimo"_sym},
+        {"monospace"_sym, "Cousine"_sym},
+        {"cursive"_sym, "Comic Neue"_sym},
+        {"fantasy"_sym, "Anton"_sym},
+        {"system"_sym, "Tinos"_sym},
+        {"emoji"_sym, "Blobmoji"_sym},
+        {"math"_sym, "STIX Two Math"_sym},
+        {"fangsong"_sym, "Zhuque Fangsong"_sym},
     };
 
     void add(Record record) {
@@ -207,7 +207,7 @@ export struct Database {
     Res<> loadSystemFonts() {
         auto bundles = try$(Sys::Bundle::installed());
         for (auto& bundle : bundles) {
-            auto maybeDir = Sys::Dir::open(bundle.url() / "fonts");
+            auto maybeDir = Sys::Dir::open(bundle.url() / "public" / "fonts");
             if (not maybeDir)
                 continue;
 

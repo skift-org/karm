@@ -7,7 +7,6 @@
         "mdi",
         "karm-ui",
         "karm-chart",
-        "fonts.inter",
-        "fonts.fira-code"
+        "fonts"
     ]
 }

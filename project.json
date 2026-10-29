@@ -4,10 +4,6 @@
     "type": "project",
     "description": "A batteries included framework for modern cross-platform C++ applications",
     "externs": {
-        "skift/assets": {
-            "git": "https://codeberg.org/skift/assets.git",
-            "tag": "main"
-        },
         "cute-engineering/ce-heap": {
             "git": "https://codeberg.org/cute-engineering/ce-heap.git",
             "tag": "v1.4.0"
