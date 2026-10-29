@@ -333,6 +333,12 @@ export struct Database {
         return matchingFace;
     }
 
+    Rc<Gfx::Fontface> queryClosestOrFallback(Symbol family, Query query = {}) const {
+        return queryClosest(family, query).unwrapOrElse([] {
+            return Gfx::Fontface::fallback();
+        });
+    }
+
     Vec<Rc<Gfx::Fontface>> queryFamily(Symbol family) const {
         Vec<Rc<Gfx::Fontface>> res;
         for (auto& info : _records)

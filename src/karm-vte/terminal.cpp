@@ -1,13 +1,11 @@
 export module Karm.Vte:terminal;
 
 import Karm.Font;
-import Karm.Ref;
 import Karm.Logger;
 import :buffer;
 import :parser;
 
 using namespace Karm::Literals;
-using namespace Karm::Ref::Literals;
 
 namespace Karm::Vte {
 
@@ -147,13 +145,13 @@ export struct ColorScheme {
 
 export struct Theme {
     Gfx::Font font = {
-        Font::loadFontfaceOrFallback("bundle://fonts.cousine/public/fonts/Cousine-Regular.ttf"_url).expect(),
+        Font::globalDatabase().queryClosestOrFallback("monospace"_sym),
         12,
         1.2,
     };
 
     Gfx::Font boldFont = {
-        Font::loadFontfaceOrFallback("bundle://fonts.cousine/public/fonts/Cousine-Bold.ttf"_url).expect(),
+        Font::globalDatabase().queryClosestOrFallback("monospace"_sym, {.weight = Gfx::FontWeight::BOLD}),
         12,
         1.2,
     };

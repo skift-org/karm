@@ -9,7 +9,7 @@ import Karm.Math;
 
 import :node;
 
-using namespace Karm::Ref::Literals;
+using namespace Karm::Literals;
 using namespace Karm::Math::Literals;
 
 namespace Karm::Ui {
@@ -35,7 +35,7 @@ static Opt<Rc<Gfx::Fontface>> _regularFontface = NONE;
 
 Rc<Gfx::Fontface> regularFontface() {
     if (not _regularFontface) {
-        _regularFontface = Some(Font::loadFontfaceOrFallback("bundle://fonts.arimo/public/fonts/Arimo-Regular.ttf"_url).expect());
+        _regularFontface = Some(Font::globalDatabase().queryClosestOrFallback("sans-serif"_sym));
     }
     return *_regularFontface;
 }
@@ -44,7 +44,7 @@ static Opt<Rc<Gfx::Fontface>> _mediumFontface = NONE;
 
 Rc<Gfx::Fontface> mediumFontface() {
     if (not _mediumFontface) {
-        _mediumFontface = Some(Font::loadFontfaceOrFallback("bundle://fonts.arimo/public/fonts/Arimo-Medium.ttf"_url).expect());
+        _mediumFontface = Some(Font::globalDatabase().queryClosestOrFallback("sans-serif"_sym, {.weight = Gfx::FontWeight::MEDIUM}));
     }
     return *_mediumFontface;
 }
@@ -53,7 +53,7 @@ static Opt<Rc<Gfx::Fontface>> _boldFontface = NONE;
 
 Rc<Gfx::Fontface> boldFontface() {
     if (not _boldFontface) {
-        _boldFontface = Some(Font::loadFontfaceOrFallback("bundle://fonts.arimo/public/fonts/Arimo-Bold.ttf"_url).expect());
+        _boldFontface = Some(Font::globalDatabase().queryClosestOrFallback("sans-serif"_sym, {.weight = Gfx::FontWeight::BOLD}));
     }
     return *_boldFontface;
 }
@@ -62,7 +62,7 @@ static Opt<Rc<Gfx::Fontface>> _italicFontface = NONE;
 
 Rc<Gfx::Fontface> italicFontface() {
     if (not _italicFontface) {
-        _italicFontface = Some(Font::loadFontfaceOrFallback("bundle://fonts.arimo/public/fonts/Arimo-Italic.ttf"_url).expect());
+        _italicFontface = Some(Font::globalDatabase().queryClosestOrFallback("sans-serif"_sym, {.style = Gfx::FontStyle::ITALIC}));
     }
     return *_italicFontface;
 }
@@ -71,7 +71,7 @@ static Opt<Rc<Gfx::Fontface>> _codeFontface = NONE;
 
 Rc<Gfx::Fontface> codeFontface() {
     if (not _codeFontface) {
-        _codeFontface = Some(Font::loadFontfaceOrFallback("bundle://fonts.cousine/public/fonts/Cousine-Regular.ttf"_url).expect());
+        _codeFontface = Some(Font::globalDatabase().queryClosestOrFallback("monospace"_sym));
     }
     return *_codeFontface;
 }

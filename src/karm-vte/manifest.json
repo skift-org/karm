@@ -4,6 +4,7 @@
     "type": "lib",
     "description": "Virtual terminal emulator",
     "requires": [
-        "karm-ui"
+        "karm-ui",
+        "fonts.cousine"
     ]
 }
