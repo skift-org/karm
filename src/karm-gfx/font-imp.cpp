@@ -9,70 +9,86 @@ namespace Karm::Gfx {
 
 // MARK: Fallback --------------------------------------------------------------
 
-struct VgaFontface : Fontface {
-    static constexpr isize WIDTH = 8;
-    static constexpr isize HEIGHT = 8;
-    static constexpr f64 UNIT_PER_EM = 8;
+struct TofuFontface : Fontface {
+    static constexpr f64 ADVANCE = 0.4;
+    static constexpr f64 ASCEND = 0.8;
+    static constexpr f64 CAPTOP = 0.7;
+    static constexpr f64 XHEIGHT = 0.5;
+    static constexpr f64 DESCEND = 0.2;
+    static constexpr f64 LINEGAP = 0.2;
 
-    static constexpr Array<u8, 1024> const DATA = {
-#include "defs/vga.inc"
-    };
+    static constexpr f64 INSET = 0.04;
+    static constexpr f64 STROKE = 0.06;
+
+    static constexpr u8 GLYPH_BLANK = 0;
+    static constexpr u8 GLYPH_BOX = 1;
+    static constexpr u8 GLYPH_NONE = 2;
 
     FontMetrics metrics() const override {
         return {
-            .ascend = 12 / UNIT_PER_EM,
-            .captop = 10 / UNIT_PER_EM,
-            .descend = 4 / UNIT_PER_EM,
-            .linegap = 4 / UNIT_PER_EM,
-            .advance = 8 / UNIT_PER_EM,
-            .xHeight = 6 / UNIT_PER_EM,
+            .ascend = ASCEND,
+            .captop = CAPTOP,
+            .descend = DESCEND,
+            .linegap = LINEGAP,
+            .advance = ADVANCE,
+            .xHeight = XHEIGHT,
         };
     }
 
     FontAttrs attrs() const override {
         return {
-            .family = "IBM VGA8"_sym,
+            .family = "Tofu"_sym,
             .monospace = Monospace::YES,
         };
     }
 
     Glyph glyph(Rune rune) const override {
-        if (rune > 128)
-            rune = '?';
-        One<Ibm437> one;
-        encodeOne<Ibm437>(rune, one);
-        return Glyph(one);
+        if (isAsciiBlank(rune))
+            return Glyph{GLYPH_BLANK, 0};
+        if (isUnicodeControl(rune))
+            return Glyph{GLYPH_NONE, 0};
+        return Glyph{GLYPH_BOX, 0};
     }
 
-    f64 advance(Glyph) const override {
-        return WIDTH / UNIT_PER_EM;
+    f64 advance(Glyph glyph) const override {
+        return glyph.index == GLYPH_NONE ? 0 : ADVANCE;
     }
 
     f64 kern(Glyph, Glyph) const override {
         return 0;
     }
 
-    void glyphContour(Gfx::Canvas& g, Glyph glyph) const override {
-        g.scale(1 / UNIT_PER_EM);
-        for (isize y = 0; y < HEIGHT; y++) {
-            for (isize x = 0; x < WIDTH; x++) {
-                u8 byte = DATA[glyph.index * HEIGHT + y];
-                if (byte & (0x80 >> x)) {
-                    g.rect(Math::Recti{x, y - 8, 1, 1}.cast<f64>());
-                }
-            }
-        }
+    void glyphContour(Canvas& g, Glyph glyph) const override {
+        if (glyph.index != GLYPH_BOX)
+            return;
+
+        f64 x0 = INSET;
+        f64 x1 = ADVANCE - INSET;
+        f64 y0 = -CAPTOP;
+        f64 y1 = 0;
+
+        g.moveTo({x0, y0});
+        g.lineTo({x1, y0});
+        g.lineTo({x1, y1});
+        g.lineTo({x0, y1});
+        g.closePath();
+
+        g.moveTo({x0 + STROKE, y0 + STROKE});
+        g.lineTo({x0 + STROKE, y1 - STROKE});
+        g.lineTo({x1 - STROKE, y1 - STROKE});
+        g.lineTo({x1 - STROKE, y0 + STROKE});
+        g.closePath();
     }
 };
 
 Rc<Fontface> Fontface::fallback() {
-    return makeRc<VgaFontface>();
+    return makeRc<TofuFontface>();
 }
 
 Font Font::fallback() {
     return {
         .fontface = Fontface::fallback(),
-        .fontsize = 8,
+        .fontsize = 12,
     };
 }
 
