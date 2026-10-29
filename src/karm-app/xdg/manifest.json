@@ -5,7 +5,8 @@
     "enableIf": {
         "sys": [
             "linux",
-            "darwin"
+            "darwin",
+            "freebsd"
         ]
     },
     "requires": [
@@ -14,6 +15,7 @@
         "karm-app.app"
     ],
     "provides": [
-        "karm-app.prefs"
+        "karm-app.prefs",
+        "karm-app.intent"
     ]
 }

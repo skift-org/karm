@@ -3,7 +3,8 @@
     "id": "karm-app.sdl",
     "type": "lib",
     "requires": [
-        "sdl3"
+        "sdl3",
+        "karm-drm"
     ],
     "provides": [
         "karm-app.app"

@@ -6,10 +6,10 @@
     "requires": [
         "karm-core",
         "karm-math",
-        "karm-gfx",
         "karm-sys",
         "karm-app.base",
         "karm-app.prefs",
-        "karm-app.app"
+        "karm-app.app",
+        "karm-app.intent"
     ]
 }

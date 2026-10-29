@@ -1,0 +1,10 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "shaper",
+    "type": "exe",
+    "description": "Experiment in text shaping",
+    "requires": [
+        "karm-sys",
+        "karm-icu"
+    ]
+}

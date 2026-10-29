@@ -5,6 +5,7 @@
     "requires": [
         "karm-app",
         "karm-sys",
+        "karm-gfx",
         "karm-gpu.rast",
         "karm-scene3d"
     ]

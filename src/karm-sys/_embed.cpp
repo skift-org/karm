@@ -9,7 +9,6 @@ import :types;
 
 namespace Karm::Sys {
 
-export struct Intent;
 export struct Fd;
 export struct _Connected;
 export struct Process;
@@ -53,12 +52,6 @@ export Res<> rename(Ref::Url const& from, Ref::Url const& to);
 export Res<> touch(Ref::Url const& url, Opt<SystemTime> const& time);
 
 export Res<> remove(Ref::Url const& url, Flags<RemoveOption> options);
-
-// MARK: User interactions -----------------------------------------------------
-
-export Res<> launch(Intent intent);
-
-export Async::Task<> launchAsync(Intent intent);
 
 // MARK: Sockets ---------------------------------------------------------------
 
