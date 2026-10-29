@@ -77,6 +77,21 @@ export struct Fontface : Gfx::Fontface {
         return attrs;
     }
 
+    Gfx::Run shape(Slice<Rune> runes) const override {
+        Gfx::Run run = {};
+        Gfx::Glyph prev = Gfx::Glyph::TOFU;
+        for (auto [r, i] : iter(runes) | Index()) {
+            auto g = glyph(r);
+            run.items.pushBack({
+                .glyph = g,
+                .advance = advance(g) + kern(prev, g),
+                .runeIndex = i,
+            });
+            prev = g;
+        }
+        return run;
+    }
+
     Gfx::Glyph glyph(Rune rune) const override {
         auto glyph = _cachedEntries.lookup(rune);
         if (glyph.has())

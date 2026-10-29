@@ -42,6 +42,19 @@ struct TofuFontface : Fontface {
         };
     }
 
+    Run shape(Slice<Rune> runes) const override {
+        Run run;
+        for (auto [r, i] : iter(runes) | Index()) {
+            auto g = glyph(r);
+            run.items.pushBack({
+                .glyph = g,
+                .advance = advance(g),
+                .runeIndex = i,
+            });
+        }
+        return run;
+    }
+
     Glyph glyph(Rune rune) const override {
         if (isAsciiBlank(rune))
             return Glyph{GLYPH_BLANK, 0};

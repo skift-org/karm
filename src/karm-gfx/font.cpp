@@ -32,6 +32,18 @@ export struct Glyph {
 
 constexpr Glyph Glyph::TOFU{0, 0};
 
+// MARK: Run -------------------------------------------------------------------
+
+export struct RunItem {
+    Glyph glyph;
+    f64 advance;
+    usize runeIndex;
+};
+
+export struct Run {
+    Vec<RunItem> items;
+};
+
 // MARK: FontStyle -------------------------------------------------------------
 
 export enum struct FontStyle {
@@ -95,27 +107,27 @@ export struct FontWeight : Distinct<u16, struct _FontWeightTag> {
         if (value() < 100)
             return FontWeight{value()};
         if (value() < 350)
-            return FontWeight::THIN;
+            return THIN;
         if (value() < 550)
-            return FontWeight::THIN;
+            return THIN;
         if (value() < 750)
-            return FontWeight::REGULAR;
+            return REGULAR;
         if (value() < 900)
-            return FontWeight::BOLD;
-        return FontWeight::BOLD;
+            return BOLD;
+        return BOLD;
     }
 
     FontWeight bolder() const {
         if (value() < 100)
-            return FontWeight::REGULAR;
+            return REGULAR;
         if (value() < 350)
-            return FontWeight::REGULAR;
+            return REGULAR;
         if (value() < 550)
-            return FontWeight::BOLD;
+            return BOLD;
         if (value() < 750)
-            return FontWeight::BLACK;
+            return BLACK;
         if (value() < 900)
-            return FontWeight::BLACK;
+            return BLACK;
         return FontWeight{value()};
     }
 
@@ -363,6 +375,8 @@ export struct Fontface {
 
     virtual FontAttrs attrs() const = 0;
 
+    virtual Run shape(Slice<Rune> runes) const = 0;
+
     virtual Glyph glyph(Rune rune) const = 0;
 
     virtual f64 advance(Glyph glyph) const = 0;
@@ -509,6 +523,13 @@ export struct Font {
         m.linegap += (lineheight - 1) * (m.ascend + m.descend);
 
         return m;
+    }
+
+    Run shape(Slice<Rune> runes) const {
+        auto run = fontface->shape(runes);
+        for (auto& i : run.items)
+            i.advance *= fontsize;
+        return run;
     }
 
     Glyph glyph(Rune rune) const {
