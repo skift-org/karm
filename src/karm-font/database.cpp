@@ -18,7 +18,7 @@ using namespace Karm::Ref::Literals;
 
 namespace Karm::Font {
 
-static auto debugDatabase = Debug::Flag::debug("font-database", "Log font database initialization and queries");
+static auto debugDatabase = Debug::Flag::debug("font-database", "Log font database initialization and queries", false);
 
 export struct Query {
     Gfx::FontWeight weight = Gfx::FontWeight::REGULAR;
@@ -44,7 +44,7 @@ export struct Record {
 
 Str _nextWord(Io::SScan& s) {
     s.eat(Re::space());
-    s.eat(Re::word());
+    s.eat(~Re::space());
     return s.end();
 }
 

@@ -45,6 +45,10 @@ export struct DirEntry {
     }
 
     bool operator==(DirEntry const&) const = default;
+
+    void repr(Io::Emit& e) const {
+        e("(dir-entry name:{} type:{})", name, type);
+    }
 };
 
 } // namespace Karm::Sys
