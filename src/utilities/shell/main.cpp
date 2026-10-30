@@ -50,7 +50,7 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
     }
 
     while (true) {
-        Sys::print("{} {} ", context.pwd | Tty::RESET, "λ"s | Tty::Style{.foreground = Tty::BLUE});
+        Sys::print("{} {} ", context.pwd | Tty::RESET, "$"s | Tty::Style{.foreground = Tty::BLUE, .bold = true});
         auto line = co_try$(Io::readLine<Utf8>(Sys::in()));
 
         Diag::Collector collector;

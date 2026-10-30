@@ -178,6 +178,10 @@ struct SdlApplication : Application {
         return SDL_HITTEST_NORMAL;
     }
 
+    Flags<ApplicationOptions> options() override {
+        return {};
+    }
+
     Async::Task<Rc<Window>> createWindowAsync(WindowProps const& props, Async::CancellationToken) override {
         SDL_Window* sdlWindow = SDL_CreateWindow(
             props.title.buf(),

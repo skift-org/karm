@@ -153,6 +153,8 @@ export struct Application : Meta::Pinned {
         return _Embed::createAppAsync(env, props, ct);
     }
 
+    virtual Flags<ApplicationOptions> options() = 0;
+
     virtual Async::Task<Rc<Window>> createWindowAsync(WindowProps const& props, Async::CancellationToken ct) = 0;
 
     virtual Async::Task<> runAsync(Rc<Handler> handler, Async::CancellationToken ct) = 0;
