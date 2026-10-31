@@ -67,6 +67,8 @@ export struct TtfGlyphInfoAdapter {
 
         Opt<u16> prevCid;
         for (auto const& [cid, gid] : iter(codeMappings)) {
+            if (prevCid and cid <= prevCid.expect())
+                continue;
 
             if (prevCid and prevCid.expect() + 1 != cid)
                 flushCollectedWidths();
@@ -96,6 +98,10 @@ export struct TtfGlyphInfoAdapter {
 
         usize last = 0;
         for (auto& rec : iter(codeMappings)) {
+            // Each CID owns exactly one 2-byte slot: a duplicated CID must not shift the map
+            if (rec.v0 < last)
+                continue;
+
             // handle unmapped CIDs
             for (usize i = last; i < rec.v0; ++i) {
                 buf.insert(buf.len(), 0);
