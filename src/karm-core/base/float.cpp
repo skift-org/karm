@@ -15,6 +15,26 @@ union FloatBits<f32> {
     static constexpr int exponentBits = 8;
     static constexpr unsigned exponentMax = (1 << exponentBits) - 1;
 
+    static FloatBits from(u32 sign, u32 exponent, u32 mantissa) {
+        if constexpr (isLittleEndian()) {
+            return {
+                .mantissa = mantissa,
+                .exponent = exponent,
+                .sign = sign,
+            };
+        } else {
+            return {
+                .sign = sign,
+                .exponent = exponent,
+                .mantissa = mantissa
+            };
+        }
+    }
+
+    static FloatBits from(f32 d) {
+        return {.d = d};
+    }
+
     struct [[gnu::packed]] {
 #if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
         u32 sign : 1;
@@ -40,6 +60,26 @@ union FloatBits<f64> {
     static constexpr int exponentBias = 1023;
     static constexpr int exponentBits = 11;
     static constexpr unsigned exponentMax = (1 << exponentBits) - 1;
+
+    static FloatBits from(u64 sign, u64 exponent, u64 mantissa) {
+        if constexpr (isLittleEndian()) {
+            return {
+                .mantissa = mantissa,
+                .exponent = exponent,
+                .sign = sign,
+            };
+        } else {
+            return {
+                .sign = sign,
+                .exponent = exponent,
+                .mantissa = mantissa
+            };
+        }
+    }
+
+    static FloatBits from(f64 d) {
+        return {.d = d};
+    }
 
     struct [[gnu::packed]] {
 #if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
@@ -68,6 +108,26 @@ union FloatBits<f128> {
     static constexpr int exponentBias = 16383;
     static constexpr int exponentBits = 15;
     static constexpr unsigned exponentMax = (1 << exponentBits) - 1;
+
+    static FloatBits from(u128 sign, u128 exponent, u128 mantissa) {
+        if constexpr (isLittleEndian()) {
+            return {
+                .mantissa = mantissa,
+                .exponent = exponent,
+                .sign = sign,
+            };
+        } else {
+            return {
+                .sign = sign,
+                .exponent = exponent,
+                .mantissa = mantissa
+            };
+        }
+    }
+
+    static FloatBits from(f128 d) {
+        return {.d = d};
+    }
 
     struct [[gnu::packed]] {
 #    if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
