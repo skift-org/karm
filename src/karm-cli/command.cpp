@@ -513,16 +513,22 @@ export struct Command : Meta::Pinned {
         Vec<DebugFlagDescriptor>{}
     );
 
+    bool _partial = false;
     bool _invoked = false;
 
     Command(
         String longName,
         String description = ""s,
-        Vec<Section> sections = {}
+        Vec<Section> sections = {},
+        bool partial = false
     )
         : _longName(std::move(longName)),
           _description(std::move(description)),
-          _sections(std::move(sections)) {
+          _sections(std::move(sections)),
+          _partial(partial) {
+
+        if (_partial)
+            return;
 
         _sections.pushFront({
             .title = "Common Options"s,
@@ -692,17 +698,24 @@ export struct Command : Meta::Pinned {
         Vec<Token> tokens;
         for (usize i = 0; i < env.argsLen(); ++i)
             tokenize(env[i], tokens);
-        return exec(tokens);
+        Cursor<Token> c = tokens;
+        return exec(c);
     }
 
     Res<> exec(Slice<Str> args) {
         Vec<Token> tokens;
         tokenize(args, tokens);
-        return exec(tokens);
+        Cursor<Token> c = tokens;
+        return exec(c);
     }
 
-    Res<> exec(Cursor<Token> c) {
+    Res<> exec(Cursor<Token>& c) {
         try$(_parseParams(c));
+
+        if (_partial) {
+            _invoked = true;
+            return Ok();
+        }
 
         if (_help.value()) {
             try$(_showHelp(Sys::out()));
