@@ -146,6 +146,30 @@ export App::Key bridgeSdlKeycode(SDL_Keycode sdl) {
         case SDLK_RALT: return App::Key::RALT;
         case SDLK_RGUI: return App::Key::RSUPER;
 
+        case SDLK_MINUS:        return App::Key::SYM1;
+        case SDLK_EQUALS:       return App::Key::SYM2;
+        case SDLK_LEFTBRACKET:  return App::Key::SYM3;
+        case SDLK_RIGHTBRACKET: return App::Key::SYM4;
+        case SDLK_SEMICOLON:    return App::Key::SYM5;
+        case SDLK_APOSTROPHE:   return App::Key::SYM6;
+        case SDLK_GRAVE:        return App::Key::SYM7;
+        case SDLK_BACKSLASH:    return App::Key::SYM8;
+        case SDLK_COMMA:        return App::Key::SYM9;
+        case SDLK_PERIOD:       return App::Key::SYM10;
+        case SDLK_SLASH:        return App::Key::SYM11;
+
+        case SDLK_KP_MULTIPLY:  return App::Key::SYM12;
+        case SDLK_KP_MINUS:     return App::Key::SYM13;
+        case SDLK_KP_PLUS:      return App::Key::SYM14;
+        case SDLK_KP_PERIOD:    return App::Key::SYM15;
+        case SDLK_KP_DIVIDE:    return App::Key::SYM16;
+
+        case SDLK_NUMLOCKCLEAR: return App::Key::NUMLOCK;
+        case SDLK_SCROLLLOCK:   return App::Key::SCROLLLOCK;
+        case SDLK_PRINTSCREEN:  return App::Key::CTRLPRINTSCRN;
+        case SDLK_PAUSE:        return App::Key::CTRLBREAK;
+        case SDLK_SYSREQ:       return App::Key::ALTSYSRQ;
+
         default: return App::Key::INVALID;
     }
     // clang-format on
@@ -235,7 +259,7 @@ export App::Key bridgeScancode(SDL_Scancode sdl) {
         case SDL_SCANCODE_KP_9: return App::Key::KPAD9;
         case SDL_SCANCODE_KP_0: return App::Key::KPAD0;
 
-        case SDL_SCANCODE_MENU: return App::Key::MENU;
+        case SDL_SCANCODE_APPLICATION: return App::Key::MENU;
 
         case SDL_SCANCODE_LCTRL: return App::Key::LCTRL;
         case SDL_SCANCODE_LSHIFT: return App::Key::LSHIFT;
@@ -246,6 +270,32 @@ export App::Key bridgeScancode(SDL_Scancode sdl) {
         case SDL_SCANCODE_RSHIFT: return App::Key::RSHIFT;
         case SDL_SCANCODE_RALT: return App::Key::RALT;
         case SDL_SCANCODE_RGUI: return App::Key::RSUPER;
+
+        case SDL_SCANCODE_MINUS:        return App::Key::SYM1;
+        case SDL_SCANCODE_EQUALS:       return App::Key::SYM2;
+        case SDL_SCANCODE_LEFTBRACKET:  return App::Key::SYM3;
+        case SDL_SCANCODE_RIGHTBRACKET: return App::Key::SYM4;
+        case SDL_SCANCODE_SEMICOLON:    return App::Key::SYM5;
+        case SDL_SCANCODE_APOSTROPHE:   return App::Key::SYM6;
+        case SDL_SCANCODE_GRAVE:        return App::Key::SYM7;
+        case SDL_SCANCODE_BACKSLASH:    return App::Key::SYM8;
+        case SDL_SCANCODE_NONUSHASH:    return App::Key::SYM8;  // same physical key on ISO boards
+        case SDL_SCANCODE_COMMA:        return App::Key::SYM9;
+        case SDL_SCANCODE_PERIOD:       return App::Key::SYM10;
+        case SDL_SCANCODE_SLASH:        return App::Key::SYM11;
+        case SDL_SCANCODE_NONUSBACKSLASH: return App::Key::NO_STANDARD_MEANING_2; // ISO key left of Z
+
+        case SDL_SCANCODE_KP_MULTIPLY:  return App::Key::SYM12;
+        case SDL_SCANCODE_KP_MINUS:     return App::Key::SYM13;
+        case SDL_SCANCODE_KP_PLUS:      return App::Key::SYM14;
+        case SDL_SCANCODE_KP_PERIOD:    return App::Key::SYM15;
+        case SDL_SCANCODE_KP_DIVIDE:    return App::Key::SYM16;
+
+        case SDL_SCANCODE_NUMLOCKCLEAR: return App::Key::NUMLOCK;
+        case SDL_SCANCODE_SCROLLLOCK:   return App::Key::SCROLLLOCK;
+        case SDL_SCANCODE_PRINTSCREEN:  return App::Key::CTRLPRINTSCRN;
+        case SDL_SCANCODE_PAUSE:        return App::Key::CTRLBREAK;
+        case SDL_SCANCODE_SYSREQ:       return App::Key::ALTSYSRQ;
 
         default: return App::Key::INVALID;
     }
