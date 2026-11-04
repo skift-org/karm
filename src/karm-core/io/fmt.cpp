@@ -245,6 +245,11 @@ struct Formatter<Aligned<T>> {
 
 // MARK: Number Formatting -----------------------------------------------------
 
+static constexpr usize _MAX_NUMBER_DIGITS = 128;
+
+// Large enough for any single number, formatting appends so it can also hold several short ones.
+export using NumberBuffer = InlineVec<char, 2 * _MAX_NUMBER_DIGITS + 8>;
+
 export struct NumberFormatter {
     bool prefix = false;
     bool isChar = false;
@@ -337,30 +342,35 @@ export struct NumberFormatter {
         }
     }
 
-    Res<> formatUnsigned(TextWriter& writer, usize val) {
-        auto digit = [&](usize v) {
+    void formatUnsigned(NumberBuffer& buf, usize val) {
+        auto digit = [&](usize v) -> char {
             if (v < 10)
                 return '0' + v;
             return (uppercase ? 'A' : 'a') + (v - 10);
         };
 
-        InlineVec<char, 128> buf;
+        if (prefix) {
+            auto p = formatPrefix();
+            buf.pushBack(p);
+        }
+
+        usize start = buf.len();
 
         do {
             buf.pushBack(digit(val % base));
             val /= base;
-        } while (val != 0 and buf.len() < buf.cap());
+        } while (val != 0 and buf.len() - start < _MAX_NUMBER_DIGITS);
 
-        while (width > buf.len())
+        while (buf.len() - start < min(width, _MAX_NUMBER_DIGITS))
             buf.pushBack(fillChar);
 
-        reverse(mutSub(buf));
+        reverse(mutSub(buf, start, buf.len()));
+    }
 
-        if (prefix)
-            try$(writer.writeStr(formatPrefix()));
-        try$(writer.writeStr(Str{buf}));
-
-        return Ok();
+    Res<> formatUnsigned(TextWriter& writer, usize val) {
+        NumberBuffer buf;
+        formatUnsigned(buf, val);
+        return writer.writeStr(Str{buf});
     }
 
     Res<> formatSigned(TextWriter& writer, isize val) {
@@ -397,34 +407,38 @@ export struct NumberFormatter {
         return {isNeg, ipart, ifpart};
     }
 
-    Res<> formatFloat(TextWriter& writer, f64 val) {
-        if (Math::isNan(val))
-            return writer.writeStr("nan"s);
-        if (Math::isInf(val))
-            return writer.writeStr(val < 0 ? "-inf"s : "inf"s);
+    void formatFloat(NumberBuffer& buf, f64 val) {
+        if (Math::isNan(val) or Math::isInf(val)) {
+            Str special = Math::isNan(val) ? "nan"s : (val < 0 ? "-inf"s : "inf"s);
+            buf.pushBack(special);
+            return;
+        }
 
-        NumberFormatter formatter;
         auto [isNeg, ipart, ifpart] = _modfRounded(val);
 
         if (isNeg) {
-            try$(writer.writeRune('-'));
+            buf.pushBack('-');
             ipart = -ipart;
         }
-        try$(formatUnsigned(writer, ipart));
+        formatUnsigned(buf, ipart);
 
         if ((ifpart != 0 or trailingZeros) and precision > 0) {
-            try$(writer.writeRune('.'));
-            formatter.width = precision;
-            formatter.fillChar = '0';
+            buf.pushBack('.');
+            NumberFormatter fraction{.width = precision, .fillChar = '0'};
 
             while (not trailingZeros and ifpart != 0 and ifpart % 10 == 0) {
                 ifpart /= 10;
-                formatter.width--;
+                fraction.width--;
             }
 
-            try$(formatter.formatUnsigned(writer, ifpart));
+            fraction.formatUnsigned(buf, ifpart);
         }
-        return Ok();
+    }
+
+    Res<> formatFloat(TextWriter& writer, f64 val) {
+        NumberBuffer buf;
+        formatFloat(buf, val);
+        return writer.writeStr(Str{buf});
     }
 #endif
 
