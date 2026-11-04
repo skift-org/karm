@@ -22,7 +22,7 @@ export struct PdfPrinter : FilePrinter {
 
     Gfx::Canvas& beginPage(Math::Vec2f size) override {
         auto& page = _pages.emplaceBack(size);
-        _canvas = Some(Pdf::Canvas{page.data, size, fontManager, imageManager, graphicalStates});
+        _canvas = Some(Pdf::Canvas{page.data, size * (72.0 / DPI), fontManager, imageManager, graphicalStates});
 
         // Convert from the karm-pdf internal units to PDF units (1/72 inch)
         _canvas->scale(72.0 / DPI);
@@ -71,7 +71,7 @@ export struct PdfPrinter : FilePrinter {
                 stateRef,
                 Pdf::Dict{
                     {"Type"s, Pdf::Name{"ExtGState"s}},
-                    {"ca"s, graphicalStates[i].opacity},
+                    {graphicalStates[i].stroking ? "CA"s : "ca"s, graphicalStates[i].opacity},
                 }
             );
 
