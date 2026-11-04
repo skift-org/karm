@@ -371,6 +371,13 @@ export struct Fontface {
 
     virtual ~Fontface() = default;
 
+    mutable Opt<f64> _zeroAdvance = NONE;
+    f64 zeroAdvance() const {
+        if (not _zeroAdvance)
+            _zeroAdvance = Some(advance(glyph('0')));
+        return *_zeroAdvance;
+    }
+
     virtual FontMetrics metrics() const = 0;
 
     virtual FontAttrs attrs() const = 0;
@@ -573,7 +580,7 @@ export struct Font {
     }
 
     f64 zeroAdvance() const {
-        return advance(glyph('0'));
+        return fontface->zeroAdvance() * fontsize;
     }
 
     f64 lineHeight() const {
