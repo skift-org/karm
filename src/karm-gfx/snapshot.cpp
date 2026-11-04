@@ -20,7 +20,8 @@ export struct Snapshot {
         Fill,
         Stroke,
         Filter,
-        Math::Trans2f>;
+        Math::Trans2f,
+        Font>;
 
     enum struct Op : u16 {
         PUSH,
@@ -63,6 +64,9 @@ export struct Snapshot {
         PLOT_POINT,
         PLOT_EDGE,
         PLOT_RECT,
+
+        RECT,
+        FILL_GLYPH,
 
         _LEN
     };
@@ -125,6 +129,13 @@ export struct Snapshot {
 
     Math::Vec2i size() const {
         return _size;
+    }
+
+    String disasm() const {
+        Io::StringWriter sw;
+        Io::Emit e{sw};
+        disasm(e);
+        return sw.take();
     }
 
     void disasm(Io::Emit& e) const {
@@ -318,6 +329,21 @@ export struct Snapshot {
                 e(" x:{} y:{} width:{} height:{} color:{:08x}", x, y, width, height, color);
             } break;
 
+            case Op::RECT: {
+                auto x = s.nextF32(), y = s.nextF32();
+                auto width = s.nextF32(), height = s.nextF32();
+                e(" x:{} y:{} width:{} height:{} radii:", x, y, width, height);
+                for (auto _ : Iota(8))
+                    e(" {}", s.nextF32());
+            } break;
+
+            case Op::FILL_GLYPH: {
+                auto font = s.nextI32le();
+                auto glyph = (u32)s.nextI32le();
+                auto x = s.nextF32(), y = s.nextF32();
+                e(" #font:{} glyph:{}/{} x:{} y:{}", font, glyph & 0xffff, glyph >> 16, x, y);
+            } break;
+
             default:
                 for (auto _ : Iota(len))
                     e(" {:08x}", s.nextU32le());
@@ -344,6 +370,19 @@ export struct Snapshot {
         g.begin(_size.cast<f64>());
         try$(replay(g));
         return Ok(g.finalize());
+    }
+
+    static Math::Radiif _loadRadii(Io::BScan& s) {
+        return {
+            s.nextF32(),
+            s.nextF32(),
+            s.nextF32(),
+            s.nextF32(),
+            s.nextF32(),
+            s.nextF32(),
+            s.nextF32(),
+            s.nextF32(),
+        };
     }
 
     [[gnu::flatten]] Res<> replay(Canvas& g) const {
@@ -481,18 +520,7 @@ export struct Snapshot {
                     s.nextF32(),
                 };
 
-                Math::Radiif radii{
-                    s.nextF32(),
-                    s.nextF32(),
-                    s.nextF32(),
-                    s.nextF32(),
-                    s.nextF32(),
-                    s.nextF32(),
-                    s.nextF32(),
-                    s.nextF32(),
-                };
-
-                g.fill(rect, radii);
+                g.fill(rect, _loadRadii(s));
                 break;
             }
 
@@ -594,6 +622,28 @@ export struct Snapshot {
 
                 auto color = Color::fromPacked(s.nextI32le());
                 g.plot(rect, color);
+            } break;
+
+            case Op::RECT: {
+                Math::Rectf rect{
+                    s.nextF32(),
+                    s.nextF32(),
+                    s.nextF32(),
+                    s.nextF32(),
+                };
+                g.rect(rect, _loadRadii(s));
+            } break;
+
+            case Op::FILL_GLYPH: {
+                auto fontId = s.nextI32le();
+                auto packed = static_cast<u32>(s.nextI32le());
+                Glyph glyph{
+                    .index = static_cast<u16>(packed & 0xffff),
+                    .font = static_cast<u16>(packed >> 16),
+                };
+                auto x = s.nextF32();
+                auto y = s.nextF32();
+                g.fill(try$(_state->load<Font>(fontId)), glyph, {x, y});
             } break;
 
             default:
@@ -768,9 +818,7 @@ export struct Snapshot {
             _state->emit(path);
         }
 
-        void fill(Math::Recti r, Math::Radiif radii) override {
-            _state->emit(Op::FILL_RECT, 12);
-
+        void _emitRect(Math::Rectf r, Math::Radiif radii) {
             _state->emit((f32)r.x);
             _state->emit((f32)r.y);
             _state->emit((f32)r.width);
@@ -784,6 +832,28 @@ export struct Snapshot {
             _state->emit((f32)radii.f);
             _state->emit((f32)radii.g);
             _state->emit((f32)radii.h);
+        }
+
+        void rect(Math::Rectf r, Math::Radiif radii) override {
+            _state->emit(Op::RECT, 12);
+            _emitRect(r, radii);
+        }
+
+        void fill(Math::Rectf r, Math::Radiif radii) override {
+            _state->emit(Op::FILL_RECT, 12);
+            _emitRect(r, radii);
+        }
+
+        void fill(Math::Recti r, Math::Radiif radii) override {
+            fill(r.cast<f64>(), radii);
+        }
+
+        void fill(Font const& font, Glyph glyph, Math::Vec2f baseline) override {
+            _state->emit(Op::FILL_GLYPH, 4);
+            _state->emit(font);
+            _state->emit((i32)(glyph.index | (u32)glyph.font << 16));
+            _state->emit((f32)baseline.x);
+            _state->emit((f32)baseline.y);
         }
 
         void fill(Rc<Prose> prose) override {
