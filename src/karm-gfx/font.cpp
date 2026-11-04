@@ -445,6 +445,13 @@ export struct FontFamily : Fontface {
             metrics = metrics.combine(m);
         }
 
+        // ex and cap units come from the first available font, not the tallest fallback.
+        if (any(_members)) {
+            auto primary = first(_members).face->metrics();
+            metrics.xHeight = primary.xHeight;
+            metrics.captop = primary.captop;
+        }
+
         _cachedMetrics.emplace(metrics);
         return metrics;
     }
@@ -523,6 +530,7 @@ export struct Font {
         m.advance *= fontsize;
         m.ascend *= fontsize;
         m.captop *= fontsize;
+        m.xHeight *= fontsize;
         m.descend *= fontsize;
         m.linegap *= fontsize;
 
@@ -571,12 +579,11 @@ export struct Font {
     }
 
     f64 xHeight() const {
-        // FIXME: capbound height as it is here is a font metric, not a glyph metric
-        return measure(glyph('x')).capbound.height;
+        return metrics().xHeight;
     }
 
     f64 capHeight() const {
-        return measure(glyph('H')).capbound.height;
+        return metrics().captop;
     }
 
     f64 zeroAdvance() const {

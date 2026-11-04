@@ -41,14 +41,40 @@ export struct Fontface : Gfx::Fontface {
             return _cachedMetrics.expect();
 
         auto m = _parser.metrics();
-        auto xHeight = _parser.glyphMetrics(glyph('x')).y;
+
+        auto glyphTop = [&](Rune rune) -> Opt<f64> {
+            auto g = glyph(rune);
+            if (g.index == 0)
+                return NONE;
+            f64 top = -_parser.glyphMetrics(g).y;
+            if (top <= 0)
+                return NONE;
+            return Some(top);
+        };
+
+        Opt<f64> xHeight = NONE;
+        Opt<f64> capHeight = NONE;
+
+        if (_parser._os2.present()) {
+            if (auto h = _parser._os2.xHeight(); h and *h > 0)
+                xHeight = Some<f64>(*h);
+            if (auto h = _parser._os2.capHeight(); h and *h > 0)
+                capHeight = Some<f64>(*h);
+        }
+
+        if (not xHeight)
+            xHeight = glyphTop('x');
+        if (not capHeight)
+            capHeight = glyphTop('H');
+
+        // https://drafts.csswg.org/css-values/#ex and #cap fallbacks: 0.5em and the ascent.
         _cachedMetrics.emplace(Gfx::FontMetrics{
             .ascend = m.ascend / _unitPerEm,
-            .captop = m.ascend / _unitPerEm,
+            .captop = capHeight.unwrapOr(m.ascend) / _unitPerEm,
             .descend = m.descend / _unitPerEm,
             .linegap = m.linegap / _unitPerEm,
             .advance = 0,
-            .xHeight = xHeight / _unitPerEm,
+            .xHeight = xHeight.unwrapOr(_unitPerEm / 2) / _unitPerEm,
         });
         return _cachedMetrics.expect();
     }
