@@ -380,6 +380,7 @@ export struct Prose : Meta::Pinned {
 
     // Various cached values
     bool _blocksMeasured = false;
+    Opt<Math::Au> _lastLayoutWidth = NONE;
 
     Math::Vec2Au _size;
 
@@ -443,6 +444,8 @@ export struct Prose : Meta::Pinned {
     }
 
     void append(Rune rune) {
+        _blocksMeasured = false;
+
         bool isCollapsibleSpace =
             _currentSpan->style.collapsibleWhitespace and
             isAsciiSpace(rune) and
@@ -483,6 +486,7 @@ export struct Prose : Meta::Pinned {
     }
 
     void appendSpacer(Math::Au width) {
+        _blocksMeasured = false;
         _cells.pushBack({
             .span = _currentSpan,
             .runeRange = {_runes.len(), 1},
@@ -516,6 +520,7 @@ export struct Prose : Meta::Pinned {
     }
 
     void append(StrutCell&& strut) {
+        _blocksMeasured = false;
         if (_blocks.len() and not last(_blocks).empty())
             _beginBlock();
 
@@ -746,6 +751,9 @@ export struct Prose : Meta::Pinned {
         if (isEmpty(_blocks))
             return {};
 
+        if (_blocksMeasured and _lastLayoutWidth == width)
+            return _size;
+
         // Blocks measurements can be reused between layouts changes
         // only line wrapping need to be re-done
         if (not _blocksMeasured) {
@@ -758,6 +766,7 @@ export struct Prose : Meta::Pinned {
         auto textHeight = _layoutVertically();
         auto textWidth = _layoutHorizontally(width);
         _size = {textWidth, textHeight};
+        _lastLayoutWidth = Some(width);
         return {textWidth, textHeight};
     }
 
