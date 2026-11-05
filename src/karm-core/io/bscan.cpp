@@ -439,14 +439,24 @@ export struct BChunk {
 
 export struct BEmit {
     Io::Writer& _writer;
+    usize _pos = 0;
 
     always_inline constexpr BEmit(Io::Writer& writer)
         : _writer(writer) {}
 
+    always_inline constexpr usize tell() const {
+        return _pos;
+    }
+
+    always_inline constexpr Res<> align(usize n) {
+        while (_pos % n)
+            try$(writeU8be(0));
+        return Ok();
+    }
+
     template <Meta::TriviallyCopyable T>
     always_inline constexpr Res<> writeFrom(T const& v) {
-        try$(_writer.write(Bytes{(u8 const*)&v, sizeof(v)}));
-        return Ok();
+        return writeBytes(Bytes{(u8 const*)&v, sizeof(v)});
     }
 
     always_inline constexpr Res<> writeU8be(u8be v) {
@@ -522,18 +532,16 @@ export struct BEmit {
     }
 
     always_inline constexpr Res<> writeStr(Str s) {
-        try$(_writer.write(Bytes{(u8 const*)s.buf(), s.len()}));
-        return Ok();
+        return writeBytes(Bytes{(u8 const*)s.buf(), s.len()});
     }
 
     always_inline constexpr Res<> writeCStr(Str s) {
-        try$(_writer.write(Bytes{(u8 const*)s.buf(), s.len()}));
-        try$(_writer.write(Bytes{(u8 const*)"\0", 1}));
-        return Ok();
+        try$(writeStr(s));
+        return writeBytes(Bytes{(u8 const*)"\0", 1});
     }
 
     always_inline constexpr Res<> writeBytes(Bytes b) {
-        try$(_writer.write(b));
+        _pos += try$(_writer.write(b));
         return Ok();
     }
 };
