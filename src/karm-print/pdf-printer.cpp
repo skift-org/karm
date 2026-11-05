@@ -11,6 +11,7 @@ namespace Karm::Print {
 struct PdfPage {
     Math::Vec2f size;
     Io::StringWriter data;
+    Set<usize> images = {};
 };
 
 export struct PdfPrinter : FilePrinter {
@@ -20,7 +21,15 @@ export struct PdfPrinter : FilePrinter {
     Pdf::ImageManager imageManager;
     Vec<Pdf::GraphicalStateDict> graphicalStates;
 
+    void _endPage() {
+        if (_pages.len() == 0)
+            return;
+        last(_pages).images.addFrom(imageManager.used);
+        imageManager.used.clear();
+    }
+
     Gfx::Canvas& beginPage(Math::Vec2f size) override {
+        _endPage();
         auto& page = _pages.emplaceBack(size);
         _canvas = Some(Pdf::Canvas{page.data, size * (72.0 / DPI), fontManager, imageManager, graphicalStates});
 
@@ -37,6 +46,8 @@ export struct PdfPrinter : FilePrinter {
     }
 
     Pdf::File pdf() {
+        _endPage();
+
         Pdf::Ref alloc;
 
         Pdf::File file;
@@ -82,7 +93,7 @@ export struct PdfPrinter : FilePrinter {
         }
 
         // Images
-        Pdf::Dict xObjectDict;
+        Map<usize, Pdf::Ref> imageId2XObjectRef;
         for (auto& [id, image] : imageManager.mapping.iterValue()) {
             auto pixels = image->pixels();
 
@@ -144,7 +155,7 @@ export struct PdfPrinter : FilePrinter {
                 )
             );
 
-            xObjectDict.put(Pdf::Name{Io::format("Im{}", id)}, xObjectRef);
+            imageId2XObjectRef.put(id, xObjectRef);
         }
 
         // Page
@@ -158,6 +169,12 @@ export struct PdfPrinter : FilePrinter {
                 auto formattedName = Io::format("F{}", managerId);
                 pageFontsDict.put(formattedName.str(), objRef);
             }
+
+            // Only the images drawn on this page: tools that split the document
+            // per page (e.g. Odoo) copy every resource a page references.
+            Pdf::Dict pageXObjectDict;
+            for (auto id : p.images.iter())
+                pageXObjectDict.put(Pdf::Name{Io::format("Im{}", id)}, imageId2XObjectRef.lookup(id).expect());
 
             file.add(
                 pageRef,
@@ -189,7 +206,7 @@ export struct PdfPrinter : FilePrinter {
                             },
                             {
                                 "XObject"s,
-                                xObjectDict,
+                                pageXObjectDict,
                             }
                         },
                     }

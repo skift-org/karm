@@ -82,13 +82,18 @@ export struct FontManager {
 
 export struct ImageManager {
     Map<usize, Tuple<usize, Rc<Gfx::Image>>> mapping;
+    // Images drawn since the last clear, so that each page only references its own.
+    Set<usize> used;
 
     usize getImageId(Rc<Gfx::Image> image) {
-        if (auto entry = mapping.lookup(reinterpret_cast<usize>(image._cell)))
+        if (auto entry = mapping.lookup(reinterpret_cast<usize>(image._cell))) {
+            used.add(entry.expect().v0);
             return entry.expect().v0;
+        }
 
         auto id = mapping.len() + 1;
         mapping.put(reinterpret_cast<usize>(image._cell), Tuple{id, image});
+        used.add(id);
         return id;
     }
 };
