@@ -32,7 +32,14 @@ export struct Cmap : Io::BChunk {
 
                 u32 glyphOffset = s.nextU32be();
 
-                for (usize r = startCode; r <= endCode; ++r) {
+                // The mapping is keyed by 16-bit codes (PDF Identity-H CIDs). Code points beyond the BMP
+                // would be truncated into duplicates of BMP codes, which shifts the CIDToGIDMap of every
+                // following character (CJK fonts carry hundreds of supplementary-plane characters).
+                // Groups are sorted by start code, so nothing after this one can fit either.
+                if (startCode > 0xFFFF)
+                    break;
+
+                for (usize r = startCode; r <= endCode and r <= 0xFFFF; ++r) {
                     codeMappings.pushBack({(u16)r, (u16)((r - startCode) + glyphOffset)});
                 }
             }
