@@ -104,6 +104,11 @@ constexpr T round(T x) {
     return static_cast<T>(roundi(x));
 }
 
+export template <typename T>
+constexpr T trunc(T x) {
+    return __builtin_trunc(x);
+}
+
 // MARK: Trigonometry ----------------------------------------------------------
 
 export enum Precision {
@@ -111,27 +116,35 @@ export enum Precision {
     FAST,
 };
 
-// https://stackoverflow.com/questions/18662261/fastest-implementation-of-sine-cosine-and-square-root-in-c-doesnt-need-to-b/28050328#28050328
-export template <Meta::Float T, Precision P = PRECISE>
+export template <Meta::Float T>
 constexpr T cos(T x) {
-    constexpr T tp = 1. / (2. * PI);
-    x *= tp;
-    x -= T(.25) + floor(x + T(.25));
-    x *= T(16.) * (abs(x) - T(.5));
-    if constexpr (P == PRECISE) {
-        x += T(.225) * x * (abs(x) - T(1.));
-    }
-    return x;
+    return __builtin_cos(x);
 }
 
-export template <Meta::Float T, Precision P = PRECISE>
+export template <Meta::Float T>
 constexpr T sin(T x) noexcept {
-    return cos<T, P>(x - T(.5 * PI));
+    return __builtin_sin(x);
 }
 
-export template <Meta::Float T, Precision P = PRECISE>
+export template <Meta::Float T>
 constexpr T tan(T x) noexcept {
-    return sin<T, P>(x) / cos<T, P>(x);
+    return __builtin_tan(x);
+}
+
+
+export template <Meta::Float T>
+constexpr T asin(T x) {
+    return __builtin_asin(x);
+}
+
+export template <Meta::Float T>
+constexpr T acos(T x) {
+    return __builtin_acos(x);
+}
+
+export template <Meta::Float T>
+constexpr T atan(T x) {
+    return __builtin_atan(x);
 }
 
 export template <Meta::Float T>
@@ -140,13 +153,8 @@ constexpr T atan2(T y, T x) {
 }
 
 export template <Meta::Float T>
-constexpr T atan(T x) {
-    return __builtin_atan(x);
-}
-
-export template <Meta::Float T, Precision P = PRECISE>
 constexpr T cot(T x) noexcept {
-    return T(1.) / tan<T, P>(x);
+    return T(1.) / tan<T>(x);
 }
 
 // MARK: Exponentials ----------------------------------------------------------
@@ -324,44 +332,9 @@ constexpr auto sqrt(T x) -> T {
     return __builtin_sqrt(x);
 }
 
-export template <Meta::Float T, Precision P = PRECISE>
-constexpr T asin(T x) {
-    if (x < 0)
-        return -asin<T, P>(-x);
-
-    if (x > 1)
-        return NAN;
-
-    if (x > static_cast<T>(0.5))
-        return 2 * atan<T>(x / (1 + sqrt<T>(1 - x * x)));
-
-    T squared = x * x;
-    T value = x;
-    T i = x * squared;
-
-    auto odd = [](this auto& self, auto i) {
-        if (i == 1)
-            return 1;
-        return i * self(i - 2);
-    };
-
-    auto even = [](this auto& self, auto i) {
-        if (i == 0)
-            return 2;
-        return i * self(i - 2);
-    };
-
-    for (auto it = 1; it < 15; it += 2) {
-        value += i * odd(it) / even(it + 1);
-        i *= squared;
-    }
-
-    return value;
-}
-
-export template <Meta::Float T, Precision P = PRECISE>
-constexpr T acos(T value) {
-    return static_cast<T>(0.5) * PI - asin<T, P>(value);
+export template <Meta::Float T>
+T hypot(T a, T b) {
+    return __builtin_hypot(a, b);
 }
 
 #endif

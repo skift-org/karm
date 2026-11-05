@@ -5,21 +5,20 @@ import :base;
 
 namespace Karm::Jpeg {
 
-static f32 const m0 = 2.0 * Math::cos(1.0 / 16.0 * 2.0 * Math::PI);
-static f32 const m1 = 2.0 * Math::cos(2.0 / 16.0 * 2.0 * Math::PI);
-static f32 const m3 = 2.0 * Math::cos(2.0 / 16.0 * 2.0 * Math::PI);
-static f32 const m5 = 2.0 * Math::cos(3.0 / 16.0 * 2.0 * Math::PI);
-static f32 const m2 = m0 - m5;
-static f32 const m4 = m0 + m5;
+static constexpr f32 m1 = 1.4142135623730951; // 2 * cos(2/16 * 2pi)
+static constexpr f32 m3 = 1.4142135623730951; // 2 * cos(2/16 * 2pi)
+static constexpr f32 m5 = 0.7653668647301797; // 2 * cos(3/16 * 2pi)
+static constexpr f32 m2 = 1.0823922002923938; // 2 * cos(1/16 * 2pi) - m5
+static constexpr f32 m4 = 2.6131259297527530; // 2 * cos(1/16 * 2pi) + m5
 
-static f32 const s0 = Math::cos(0.0 / 16.0 * Math::PI) / Math::sqrt(8.0);
-static f32 const s1 = Math::cos(1.0 / 16.0 * Math::PI) / 2.0;
-static f32 const s2 = Math::cos(2.0 / 16.0 * Math::PI) / 2.0;
-static f32 const s3 = Math::cos(3.0 / 16.0 * Math::PI) / 2.0;
-static f32 const s4 = Math::cos(4.0 / 16.0 * Math::PI) / 2.0;
-static f32 const s5 = Math::cos(5.0 / 16.0 * Math::PI) / 2.0;
-static f32 const s6 = Math::cos(6.0 / 16.0 * Math::PI) / 2.0;
-static f32 const s7 = Math::cos(7.0 / 16.0 * Math::PI) / 2.0;
+static constexpr f32 s0 = 0.35355339059327373; // cos(0/16 * pi) / sqrt(8)
+static constexpr f32 s1 = 0.49039264020161520; // cos(1/16 * pi) / 2
+static constexpr f32 s2 = 0.46193976625564337; // cos(2/16 * pi) / 2
+static constexpr f32 s3 = 0.41573480615127260; // cos(3/16 * pi) / 2
+static constexpr f32 s4 = 0.35355339059327380; // cos(4/16 * pi) / 2
+static constexpr f32 s5 = 0.27778511650980114; // cos(5/16 * pi) / 2
+static constexpr f32 s6 = 0.19134171618254492; // cos(6/16 * pi) / 2
+static constexpr f32 s7 = 0.09754516100806417; // cos(7/16 * pi) / 2
 
 void idct(Block& block) {
     for (usize i = 0; i < 8; ++i) {

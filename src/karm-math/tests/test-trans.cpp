@@ -77,13 +77,15 @@ test$("transform-composite-2") {
     auto m1 = Trans2f::translate({1.0, 1.0}).rotated(Math::PI / 2.0);
     auto m2 = Trans2f::rotate(Math::PI / 2.0).translated({1.0, 1.0});
 
-    assertEq$(m1.apply(a), (Vec2<f64>{1.0, 2.0}));
-    assertEq$(m1.apply(b), (Vec2<f64>{0.0, 1.0}));
-    assertEq$(m1.apply(c), (Vec2<f64>{0.0, 2.0}));
+    static constexpr f64 EPSILON = 1e-9;
 
-    assertEq$(m2.apply(a), (Vec2<f64>{-1.0, 2.0}));
-    assertEq$(m2.apply(b), (Vec2<f64>{-2.0, 1.0}));
-    assertEq$(m2.apply(c), (Vec2<f64>{-2.0, 2.0}));
+    assert$(epsilonEq(m1.apply(a), (Vec2<f64>{1.0, 2.0}), EPSILON));
+    assert$(epsilonEq(m1.apply(b), (Vec2<f64>{0.0, 1.0}), EPSILON));
+    assert$(epsilonEq(m1.apply(c), (Vec2<f64>{0.0, 2.0}), EPSILON));
+
+    assert$(epsilonEq(m2.apply(a), (Vec2<f64>{-1.0, 2.0}), EPSILON));
+    assert$(epsilonEq(m2.apply(b), (Vec2<f64>{-2.0, 1.0}), EPSILON));
+    assert$(epsilonEq(m2.apply(c), (Vec2<f64>{-2.0, 2.0}), EPSILON));
 
     return Ok();
 }
