@@ -13,15 +13,70 @@ namespace Karm::Pdf {
 static auto debugCanvas = Debug::Flag::debug("pdf-canvas", "Log PDF canvas failures");
 
 export struct FontManager {
-    Map<Gfx::FontAttrs, Tuple<usize, Rc<Gfx::Fontface>>> mapping;
+    struct Entry {
+        usize id;
+        Rc<Gfx::Fontface> fontface;
+        Map<u16, u16> codes = {};
+        Map<String, u16> missingCodes = {};
+        Vec<Gfx::Glyph> glyphs = {};
+        Vec<Vec<Rune>> texts = {};
+    };
+
+    Map<Gfx::FontAttrs, Entry> mapping;
+    void const* _lastFace = nullptr;
+    Entry* _last = nullptr;
+
+    Entry& entry(Rc<Gfx::Fontface> font) {
+        if (_last and _lastFace == font._cell)
+            return *_last;
+
+        auto attrs = font->attrs();
+        if (not mapping.contains(attrs)) {
+            Entry entry{.id = mapping.len() + 1, .fontface = font};
+            entry.codes.put(0, 0);
+            entry.glyphs.pushBack(Gfx::Glyph{.index = 0, .font = 0});
+            entry.texts.pushBack({});
+            mapping.put(attrs, std::move(entry));
+        }
+
+        auto found = mapping.lookup(attrs);
+        _last = &*found;
+        _lastFace = font._cell;
+        return *_last;
+    }
 
     usize getFontId(Rc<Gfx::Fontface> font) {
-        if (auto id = mapping.lookup(font->attrs()))
-            return id.expect().v0;
+        return entry(font).id;
+    }
 
-        auto id = mapping.len() + 1;
-        mapping.put(font->attrs(), Tuple{id, font});
-        return id;
+    u16 code(Rc<Gfx::Fontface> font, Gfx::Glyph glyph, Slice<Rune> text) {
+        auto& e = entry(font);
+
+        Opt<String> missingKey = NONE;
+        if (glyph.index == 0) {
+            if (isEmpty(text))
+                return 0;
+            StringBuilder key;
+            for (auto rune : text)
+                key.append(rune);
+            missingKey = Some(key.take());
+            if (auto existing = e.missingCodes.lookup(*missingKey))
+                return *existing;
+        } else if (auto existing = e.codes.lookup(glyph.index)) {
+            return *existing;
+        }
+
+        if (e.glyphs.len() > 0xffff)
+            return 0;
+
+        u16 code = e.glyphs.len();
+        if (missingKey)
+            e.missingCodes.put(*missingKey, code);
+        else
+            e.codes.put(glyph.index, code);
+        e.glyphs.pushBack(glyph);
+        e.texts.pushBack(Vec<Rune>{text});
+        return code;
     }
 };
 
@@ -569,8 +624,12 @@ export struct Canvas : Gfx::Canvas {
                         e.str("<"s);
                     }
 
-                    for (auto rune : cell.runes(prose))
-                        e.hex4(rune == '\n' ? ' ' : rune);
+                    if (cell.newline(prose)) {
+                        Array<Rune, 1> space = {' '};
+                        e.hex4(_fontManager.code(style.font.fontface, style.font.glyph(' '), space));
+                    } else {
+                        e.hex4(_fontManager.code(style.font.fontface, cell.glyph, cell.runes(prose)));
+                    }
 
                     prevEndPos = prevEndPos + glyphAdvance - kernDiff;
                 }

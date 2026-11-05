@@ -47,20 +47,20 @@ export struct PdfPrinter : FilePrinter {
 
         // Fonts
         Map<usize, Pdf::Ref> fontManagerId2FontObjRef;
-        for (auto const& [_, value] : fontManager.mapping.iterItems()) {
-            auto& [id, fontFace] = value;
-
-            if (not fontFace.is<Font::Ttf::Fontface>()) {
+        for (auto const& [_, entry] : fontManager.mapping.iterItems()) {
+            if (not entry.fontface.is<Font::Ttf::Fontface>()) {
                 panic("no support for printing fonts other than TrueType");
             }
 
             TrueTypeFontAdapter ttfAdapter{
-                fontFace.cast<Font::Ttf::Fontface>().expect(),
+                entry.fontface.cast<Font::Ttf::Fontface>().expect(),
+                entry.glyphs,
+                entry.texts,
                 alloc
             };
 
             auto fontRef = ttfAdapter.addToFile(file);
-            fontManagerId2FontObjRef.put(id, fontRef);
+            fontManagerId2FontObjRef.put(entry.id, fontRef);
         }
 
         // Graphical States
