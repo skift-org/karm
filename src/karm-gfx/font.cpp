@@ -3,6 +3,7 @@ export module Karm.Gfx:font;
 import Karm.Core;
 import Karm.Math;
 import Karm.Logger;
+import Karm.Ref;
 
 using namespace Karm::Literals;
 
@@ -366,6 +367,12 @@ export struct FontMeasure {
     Math::Vec2f baseline;
 };
 
+export struct FontSubset {
+    Ref::Uti format;
+    Vec<u8> data = {};
+    Vec<Glyph> glyphs = {};
+};
+
 export struct Fontface {
     static Rc<Fontface> fallback();
 
@@ -395,6 +402,10 @@ export struct Fontface {
     virtual Flags<GlyphAttr> glyphAttr(Glyph) const { return NONE; }
 
     virtual void paintGlyph(Canvas& g, Glyph glyph) const;
+
+    virtual Res<FontSubset> subset(Slice<Glyph>) const {
+        return Error::notImplemented("font subsetting not supported");
+    }
 };
 
 export struct FontAdjust {

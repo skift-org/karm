@@ -60,6 +60,7 @@ export struct Parser {
     Loca _loca;
     Hhea _hhea;
     Hmtx _hmtx;
+    Maxp _maxp;
     Gpos _gpos;
     Gsub _gsub;
     Name _name;
@@ -138,6 +139,7 @@ export struct Parser {
         }
         font._hhea = try$(font.requireTable<Hhea>());
         font._hmtx = try$(font.requireTable<Hmtx>());
+        font._maxp = font.lookupTable<Maxp>();
         font._gpos = font.lookupTable<Gpos>();
         font._gsub = font.lookupTable<Gsub>();
         font._name = font.lookupTable<Name>();
@@ -171,7 +173,7 @@ export struct Parser {
         return begin().nextU32be();
     }
 
-    auto iterTables() {
+    auto iterTables() const {
         auto scan = begin();
         /* auto version = */ scan.nextU32be();
         auto numTables = scan.nextU16be();
@@ -183,11 +185,11 @@ export struct Parser {
         struct Table {
             Str tag;
             u32 checkSum;
-            u32 offset;
-            u32 length;
+            Bytes bytes;
         };
 
         struct Iter {
+            Bytes slice;
             Io::BScan scan;
             usize i;
             usize numTables;
@@ -200,24 +202,29 @@ export struct Parser {
                 Table table{};
                 table.tag = scan.nextStr(4);
                 table.checkSum = scan.nextU32be();
-                table.offset = scan.nextU32be();
-                table.length = scan.nextU32be();
+                auto offset = scan.nextU32be();
+                auto length = scan.nextU32be();
+                table.bytes = sub(slice, offset, offset + length);
 
                 i++;
                 return Some(table);
             }
         };
 
-        return Iter{scan, 0, numTables};
+        return Iter{_slice, scan, 0, numTables};
+    }
+
+    Opt<Bytes> lookupTable(Str tag) const {
+        for (auto table : iterTables())
+            if (table.tag == tag)
+                return Some(table.bytes);
+        return NONE;
     }
 
     template <typename T>
     T lookupTable() {
-        for (auto table : iterTables()) {
-            if (table.tag == T::SIG) {
-                return T{sub(_slice, table.offset, table.offset + table.length)};
-            }
-        }
+        if (auto bytes = lookupTable(T::SIG))
+            return T{*bytes};
 
         logDebugIf(DEBUG_PARSER, "ttf: '{}' table not found", T::SIG);
         return T{};
@@ -225,11 +232,8 @@ export struct Parser {
 
     template <typename T>
     Res<T> requireTable() {
-        for (auto table : iterTables()) {
-            if (table.tag == T::SIG) {
-                return Ok(T{sub(_slice, table.offset, table.offset + table.length)});
-            }
-        }
+        if (auto bytes = lookupTable(T::SIG))
+            return Ok(T{*bytes});
 
         logError("ttf: '{}' table not found", T::SIG);
         return Error::other("table not found");

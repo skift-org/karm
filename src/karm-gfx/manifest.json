@@ -7,6 +7,7 @@
         "karm-math",
         "karm-core",
         "karm-icc",
+        "karm-ref",
         "karm-gfx.pixels"
     ],
     "subdirs": [

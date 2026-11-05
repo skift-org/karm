@@ -17,4 +17,17 @@ export struct Version {
     u16be minor;
 };
 
+// https://learn.microsoft.com/en-us/typography/opentype/spec/otff#calculating-checksums
+export u32 checksum(Bytes b) {
+    Io::BScan s{b};
+    u32 sum = 0;
+    while (not s.ended()) {
+        u32 word = 0;
+        for (usize j = 0; j < 4; j++)
+            word = (word << 8) | (s.ended() ? 0 : s.nextU8be());
+        sum += word;
+    }
+    return sum;
+}
+
 } // namespace Karm::Font::Ttf

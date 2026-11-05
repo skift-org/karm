@@ -12,6 +12,7 @@ import Karm.Image;
 import Karm.Logger;
 
 import :parser;
+import :subset;
 
 namespace Karm::Font::Ttf {
 
@@ -116,6 +117,10 @@ export struct Fontface : Gfx::Fontface {
             prev = g;
         }
         return run;
+    }
+
+    Res<Gfx::FontSubset> subset(Slice<Gfx::Glyph> glyphs) const override {
+        return Ttf::subset(_parser, glyphs);
     }
 
     Gfx::Glyph glyph(Rune rune) const override {
