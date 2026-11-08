@@ -16,6 +16,11 @@ struct Viewport : Ui::View<Viewport> {
     Viewport(Rc<Terminal> terminal, Ui::Send<App::KeyboardEvent> send)
         : _terminal(terminal), _send(send) {}
 
+    void reconcile(Viewport& o) override {
+        _terminal = o._terminal;
+        _send = o._send;
+    }
+
     void paint(Gfx::Canvas& g, Math::RectAu) override {
         g.push();
         g.clip(bound().cast<f64>());

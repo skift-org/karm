@@ -187,12 +187,26 @@ export struct Terminal {
 
     Terminal(Theme theme) : _theme(theme), _metrics(theme.metrics()) {}
 
+    isize _cellHeight() const {
+        return max(1, (isize)Math::ceil(_metrics.baseline + _metrics.descend));
+    }
+
+    isize _cellWidth() const {
+        return max(1, (isize)Math::ceil(_metrics.advance));
+    }
+
+    isize _visibleLines() const {
+        return max(1, _viewport.height / _cellHeight());
+    }
+
+    isize _maxScrollTop() const {
+        return max(0, (isize)_buffer.lines.len() - _visibleLines());
+    }
+
     void paint(Gfx::Canvas& g) {
         g.push();
-        isize cellHeight = Math::ceil(_metrics.baseline + _metrics.descend);
-        isize cellWidth = Math::ceil(_metrics.advance);
 
-        isize visibleLines = _viewport.height / cellHeight;
+        isize visibleLines = _visibleLines();
 
         for (isize i = _scrollTop; i < _scrollTop + visibleLines + 1; ++i) {
             if (i >= (isize)_buffer.lines.len())
@@ -200,7 +214,7 @@ export struct Terminal {
 
             auto& l = _buffer.lines[i];
 
-            auto lineY = (i - _scrollTop) * cellHeight;
+            auto lineY = (i - _scrollTop) * _cellHeight();
 
             if (l.separator)
                 g.plot(Math::Edgei{0, lineY, _viewport.width, lineY}, Gfx::ZINC800);
@@ -208,10 +222,10 @@ export struct Terminal {
             isize ci = 0;
             for (auto& c : l.cells) {
                 Math::Recti cellBound = {
-                    ci * cellWidth,
+                    ci * _cellWidth(),
                     lineY,
-                    cellWidth,
-                    cellHeight,
+                    _cellWidth(),
+                    _cellHeight(),
                 };
 
                 g.fillStyle(c.attrs.bg);
@@ -238,12 +252,12 @@ export struct Terminal {
 
         g.pop();
 
-        if (_buffer.cursor.y >= (usize)_scrollTop and _buffer.cursor.y < (usize)(_scrollTop + visibleLines)) {
+        if (_buffer.cursor.y >= (usize)_scrollTop and _buffer.cursor.y < (usize)(_scrollTop + visibleLines + 1)) {
             Math::Recti cellBound = {
-                (isize)_buffer.cursor.x * cellWidth,
-                (isize)(_buffer.cursor.y - _scrollTop) * cellHeight,
-                cellWidth,
-                cellHeight,
+                (isize)_buffer.cursor.x * _cellWidth(),
+                (isize)(_buffer.cursor.y - _scrollTop) * _cellHeight(),
+                _cellWidth(),
+                _cellHeight(),
             };
 
             g.push();
@@ -254,30 +268,27 @@ export struct Terminal {
     }
 
     void updateViewport(Math::Vec2i viewport) {
+        bool following = _scrollTop >= _maxScrollTop();
         _viewport = viewport;
+        if (following)
+            _scrollTop = _maxScrollTop();
+        _scrollTop = clamp(_scrollTop, 0, _maxScrollTop());
+        scrollToBottom();
     }
 
     void scroll(isize delta) {
-        isize cellHeight = Math::ceil(_metrics.baseline + _metrics.descend);
-        isize visibleLines = _viewport.height / cellHeight;
-        isize totalLines = _buffer.lines.len();
-
-        _scrollTop = clamp(_scrollTop + delta, 0, max(0, totalLines - visibleLines));
+        _scrollTop = clamp(_scrollTop + delta, 0, _maxScrollTop());
     }
 
     void scrollToBottom() {
-        isize cellHeight = Math::ceil(_metrics.baseline + _metrics.descend);
-        isize visibleLines = _viewport.height / cellHeight;
-
-        if (_buffer.cursor.y >= (usize)(_scrollTop + visibleLines)) {
-            _scrollTop = _buffer.cursor.y - visibleLines + 1;
-        }
+        isize cy = _buffer.cursor.y;
+        if (cy >= _scrollTop + _visibleLines())
+            _scrollTop = cy - _visibleLines() + 1;
     }
 
     void _handleCsi(u8 b, Slice<usize> params) {
         usize n = params.len() > 0 ? params[0] : 0;
         switch (b) {
-
         case 'A':
             _buffer.moveCursorRelative({0, -(isize)n});
             break;
