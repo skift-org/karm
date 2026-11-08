@@ -386,7 +386,7 @@ export struct NumberFormatter {
     Tuple<bool, isize, u64> _modfRounded(f64 val) {
         isize ipart = (isize)val;
         f64 fpart = Math::abs(val - (f64)ipart);
-        u64 scale = Math::pow(10uz, precision);
+        u64 scale = Math::pow<u64>(10uz, precision);
         f64 scaled = fpart * scale;
         u64 ifpart = (u64)scaled;
         f64 remainder = scaled - ifpart;

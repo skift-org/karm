@@ -5,7 +5,7 @@ import :base.vec;
 import :base.bits;
 import :base.size;
 import :base.range;
-import :math.funcs;
+import :math;
 
 using namespace Karm::Literals;
 

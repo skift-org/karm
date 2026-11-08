@@ -4,7 +4,7 @@ module;
 
 export module Karm.Core:io.aton;
 
-import :math.funcs;
+import :math;
 import :base.ctype;
 import :io.sscan;
 

@@ -173,7 +173,7 @@ export constexpr Au operator""_au(unsigned long long val) {
 }
 
 export constexpr Au operator""_au(long double val) {
-    return Au{val};
+    return Au{static_cast<f64>(val)};
 }
 
 } // namespace Karm::Math::Literals

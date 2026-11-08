@@ -58,6 +58,7 @@ using std::initializer_list;
 
 // <type_traits>
 using std::integral_constant;
+using std::is_constant_evaluated;
 
 // <utility>
 using std::declval;
