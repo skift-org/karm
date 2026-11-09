@@ -56,31 +56,27 @@ constexpr T frexp(T d, int* ep) {
     dispatchConstexpr$(frexp, d, ep);
 
     using Bits = FloatBits<T>;
-    using U = decltype(Bits::mantissaMax + 0);
-
-    constexpr int M_BITS = Bits::mantissaBits;
-    constexpr int E_MAX = Bits::exponentMax;
-    constexpr int BIAS = Bits::exponentBias - 1;
-    constexpr U IMPLICIT_BIT = U{1} << M_BITS;
+    using U = typename Bits::Raw;
 
     *ep = 0;
     auto x = Bits::from(d);
     int e = x.exponent;
     U m = x.mantissa;
 
-    if (e == E_MAX or d == 0)
+    if (e == Bits::exponentMax or d == 0)
         return d;
 
     if (e == 0) { /* normalize subnormal numbers */
         e = 1;
-        while (not(m & IMPLICIT_BIT)) {
+        while (not(m & Bits::implicitBit)) {
             m <<= 1;
             e--;
         }
     }
 
-    *ep = e - BIAS;
-    return Bits::from(static_cast<U>(x.sign), static_cast<U>(BIAS), m & Bits::mantissaMax).d;
+    /* result mantissa is in [0.5, 1), i.e. biased exponent is exponentBias - 1 */
+    *ep = e - (Bits::exponentBias - 1);
+    return Bits::from(static_cast<U>(x.sign), static_cast<U>(Bits::exponentBias - 1), m & Bits::mantissaMax).d;
 }
 
 // https://en.cppreference.com/cpp/numeric/math/ldexp
@@ -89,45 +85,41 @@ constexpr T ldexp(T d, int deltae) {
     dispatchConstexpr$(ldexp, d, deltae);
 
     using Bits = FloatBits<T>;
-    using U = decltype(Bits::mantissaMax + 0);
-
-    constexpr int mBits = Bits::mantissaBits;
-    constexpr int eMax = Bits::exponentMax;
-    constexpr U implicitBit = U{1} << mBits;
+    using U = typename Bits::Raw;
 
     auto x = Bits::from(d);
     int e = x.exponent;
     U m = x.mantissa;
     U sign = x.sign;
 
-    if (d == 0 or e == eMax)
+    if (d == 0 or e == Bits::exponentMax)
         return d;
 
     if (e == 0) {
         e = 1;
-        while (not(m & implicitBit)) {
+        while (not(m & Bits::implicitBit)) {
             m <<= 1;
             e--;
         }
     } else {
-        m |= implicitBit;
+        m |= Bits::implicitBit;
     }
 
-    constexpr int limit = 2 * eMax + mBits;
-    if (deltae > limit)
-        deltae = limit;
-    if (deltae < -limit)
-        deltae = -limit;
+    constexpr int LIMIT = 2 * Bits::exponentMax + Bits::mantissaBits;
+    if (deltae > LIMIT)
+        deltae = LIMIT;
+    if (deltae < -LIMIT)
+        deltae = -LIMIT;
     e += deltae;
 
-    if (e >= 1) {      /* no underflow */
-        if (e >= eMax) /* overflow */
-            return Bits::from(sign, (U)eMax, 0).d;
+    if (e >= 1) {                   /* no underflow */
+        if (e >= Bits::exponentMax) /* overflow */
+            return Bits::from(sign, (U)Bits::exponentMax, 0).d;
         return Bits::from(sign, (U)e, m & Bits::mantissaMax).d;
     } else { /* underflow gracefully */
         /* need to shift d right deltae */
         int shift = 1 - e;
-        if (shift > mBits + 1)
+        if (shift > Bits::mantissaBits + 1)
             return Bits::from(sign, 0, 0).d;
 
         /* shift bits down */
@@ -137,7 +129,7 @@ constexpr T ldexp(T d, int deltae) {
         if (rem > half or (rem == half and (q & 1)))
             q++;
 
-        return Bits::from(sign, q >> mBits, q & Bits::mantissaMax).d;
+        return Bits::from(sign, q >> Bits::mantissaBits, q & Bits::mantissaMax).d;
     }
 }
 
@@ -147,15 +139,11 @@ constexpr T modf(T d, T* ip) {
     dispatchConstexpr$(modf, d, ip);
 
     using Bits = FloatBits<T>;
-    using U = decltype(Bits::mantissaMax + 0);
-
-    constexpr int M_BITS = Bits::mantissaBits;
-    constexpr int E_MAX = Bits::exponentMax;
-    constexpr int BIAS = Bits::exponentBias;
+    using U = typename Bits::Raw;
 
     auto x = Bits::from(d);
 
-    if (static_cast<int>(x.exponent) == E_MAX) {
+    if (static_cast<int>(x.exponent) == Bits::exponentMax) {
         *ip = d;
         if (x.mantissa != 0) /* NaN */
             return d;
@@ -174,10 +162,10 @@ constexpr T modf(T d, T* ip) {
     }
 
     /* d >= 1, so d = 1.m × 2^e with e >= 0 */
-    int e = static_cast<int>(x.exponent) - BIAS;
-    if (e < M_BITS) {
-        /* the low (M_BITS - e) bits of the mantissa are the fraction: clear them */
-        U fracMask = (U{1} << (M_BITS - e)) - 1;
+    int e = static_cast<int>(x.exponent) - Bits::exponentBias;
+    if (e < Bits::mantissaBits) {
+        /* the low (mantissaBits - e) bits of the mantissa are the fraction: clear them */
+        U fracMask = (U{1} << (Bits::mantissaBits - e)) - 1;
         *ip = Bits::from(
                   static_cast<U>(x.sign),
                   static_cast<U>(x.exponent),
@@ -288,6 +276,36 @@ constexpr T round(T x) {
     return static_cast<T>(roundi(x));
 }
 
+// https://en.cppreference.com/c/numeric/math/trunc
+export template <Meta::Float T>
+constexpr T trunc(T d) {
+    dispatchConstexpr$(trunc, d);
+
+    using Bits = FloatBits<T>;
+    using U = typename Bits::Raw;
+
+    auto x = Bits::from(d);
+
+    if (static_cast<int>(x.exponent) == Bits::exponentMax) /* NaN or ±Inf */
+        return d;
+
+    int e = static_cast<int>(x.exponent) - Bits::exponentBias;
+    if (e < 0) /* |d| < 1 (incl. subnormals and ±0): result is ±0 */
+        return Bits::from(static_cast<U>(x.sign), U{0}, U{0}).d;
+
+    if (e >= Bits::mantissaBits) /* no fractional bits left, d is already an integer */
+        return d;
+
+    /* the low (mantissaBits - e) bits of the mantissa are the fraction: clear them */
+    U fracMask = (U{1} << (Bits::mantissaBits - e)) - 1;
+    return Bits::from(
+               static_cast<U>(x.sign),
+               static_cast<U>(x.exponent),
+               static_cast<U>(x.mantissa) & ~fracMask
+    )
+        .d;
+}
+
 // MARK: Classification and comparison -----------------------------------------
 
 // NOSPEC: return if a number is odd
@@ -360,9 +378,7 @@ constexpr T exp2(T arg) {
 export template <Meta::Float T>
 constexpr T exp(T arg) {
     dispatchConstexpr$(exp, arg);
-
-    static constexpr auto LOG2E = 1.4426950408889634073599247;
-    return exp2(arg * LOG2E);
+    return exp2(arg * L2_E);
 }
 
 // https://en.cppreference.com/c/numeric/math/log
@@ -587,6 +603,50 @@ constexpr T pow(T x, T y) {
     return ldexp(xy, ey);
 }
 
+// https://en.cppreference.com/c/numeric/math/hypot
+export template <Meta::Float T>
+constexpr T hypot(T x, T y) {
+    dispatchConstexpr$(hypot, x, y);
+
+    /* ±Inf wins even over NaN */
+    if (isInf(x) or isInf(y))
+        return INF;
+    if (isNan(x) or isNan(y))
+        return NAN;
+
+    T p = abs(x);
+    T q = abs(y);
+    if (p < q) {
+        T t = p;
+        p = q;
+        q = t;
+    }
+    if (p == 0)
+        return 0;
+
+    /*
+     * Moler-Morrison iteration: converges cubically to √(p² + q²)
+     * without ever squaring p or q, so it overflows only if the result does.
+     * See Cleve Moler and Donald Morrison,
+     * ``Replacing Square Roots by Pythagorean Sums,''
+     * IBM Journal of Research and Development,
+     * Vol. 27, Number 6, pp. 577-581, Nov. 1983
+     */
+    T pfac = p;
+    T r = q = q / p;
+    p = 1;
+    for (;;) {
+        r *= r;
+        T s = r + 4;
+        if (s == 4)
+            return p * pfac;
+        r /= s;
+        p += 2 * r * p;
+        q *= r;
+        r = q / p;
+    }
+}
+
 // MARK: Trigonometric functions -----------------------------------------------
 
 template <typename T>
@@ -747,21 +807,33 @@ constexpr T atan(T arg) {
 
 // https://en.cppreference.com/c/numeric/math/atan2
 export template <Meta::Float T>
-constexpr T atan2(T arg1, T arg2) {
-    dispatchConstexpr$(atan2, arg1, arg2);
+constexpr T atan2(T y, T x) {
+    dispatchConstexpr$(atan2, y, x);
 
-    if (arg1 + arg2 == arg1) {
-        if (arg1 >= 0)
-            return HALF_PI;
-        return -HALF_PI;
+    if (isNan(y) or isNan(x))
+        return NAN;
+
+    /* the result takes the sign of y, including when y is -0 */
+    bool neg = FloatBits<T>::from(y).sign;
+
+    if (isInf(y)) {
+        T r = isInf(x) ? (x > 0 ? PI / 4 : 3 * PI / 4) : HALF_PI;
+        return neg ? -r : r;
     }
-    arg1 = atan(arg1 / arg2);
-    if (arg2 < 0) {
-        if (arg1 <= 0)
-            return arg1 + PI;
-        return arg1 - PI;
+
+    if (y == 0 or isInf(x)) {
+        /* result is ±0 when x is +0 or positive, ±π when x is -0 or negative */
+        T r = FloatBits<T>::from(x).sign ? PI : 0;
+        return neg ? -r : r;
     }
-    return arg1;
+
+    if (x + y == y) /* x is negligible next to y, includes x = ±0 */
+        return neg ? -HALF_PI : HALF_PI;
+
+    T r = atan(y / x);
+    if (x < 0)
+        return neg ? r - PI : r + PI;
+    return r;
 }
 
 // https://en.cppreference.com/c/numeric/math/asin
@@ -803,13 +875,13 @@ export template <Meta::Float T>
 constexpr T sinh(T arg) {
     dispatchConstexpr$(sinh, arg);
 
-    static double P0 = -0.6307673640497716991184787251e+6;
-    static double P1 = -0.8991272022039509355398013511e+5;
-    static double P2 = -0.2894211355989563807284660366e+4;
-    static double P3 = -0.2630563213397497062819489e+2;
-    static double Q0 = -0.6307673640497716991212077277e+6;
-    static double Q1 = 0.1521517378790019070696485176e+5;
-    static double Q2 = -0.173678953558233699533450911e+3;
+    static constexpr double P0 = -0.6307673640497716991184787251e+6;
+    static constexpr double P1 = -0.8991272022039509355398013511e+5;
+    static constexpr double P2 = -0.2894211355989563807284660366e+4;
+    static constexpr double P3 = -0.2630563213397497062819489e+2;
+    static constexpr double Q0 = -0.6307673640497716991212077277e+6;
+    static constexpr double Q1 = 0.1521517378790019070696485176e+5;
+    static constexpr double Q2 = -0.173678953558233699533450911e+3;
 
     double temp;
     int sign = 0;

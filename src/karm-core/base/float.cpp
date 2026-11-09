@@ -9,13 +9,16 @@ union FloatBits;
 
 export template <>
 union FloatBits<f32> {
+    using Raw = u32;
+
     static constexpr int mantissaBits = 23;
-    static constexpr u32 mantissaMax = (((u32)1) << mantissaBits) - 1;
+    static constexpr Raw implicitBit = Raw{1} << mantissaBits;
+    static constexpr Raw mantissaMax = implicitBit - 1;
     static constexpr int exponentBias = 127;
     static constexpr int exponentBits = 8;
-    static constexpr unsigned exponentMax = (1 << exponentBits) - 1;
+    static constexpr int exponentMax = (1 << exponentBits) - 1;
 
-    static FloatBits from(u32 sign, u32 exponent, u32 mantissa) {
+    static FloatBits from(Raw sign, Raw exponent, Raw mantissa) {
         if constexpr (isLittleEndian()) {
             return {
                 .mantissa = mantissa,
@@ -37,13 +40,13 @@ union FloatBits<f32> {
 
     struct [[gnu::packed]] {
 #if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-        u32 sign : 1;
-        u32 exponent : 8;
-        u32 mantissa : 23;
+        Raw sign : 1;
+        Raw exponent : 8;
+        Raw mantissa : 23;
 #else
-        u32 mantissa : 23;
-        u32 exponent : 8;
-        u32 sign : 1;
+        Raw mantissa : 23;
+        Raw exponent : 8;
+        Raw sign : 1;
 #endif
     };
 
@@ -55,13 +58,16 @@ static_assert(sizeof(FloatBits<f32>) == sizeof(f32));
 
 export template <>
 union FloatBits<f64> {
+    using Raw = u64;
+
     static constexpr int mantissaBits = 52;
-    static constexpr u64 mantissaMax = (((u64)1) << mantissaBits) - 1;
+    static constexpr Raw implicitBit = Raw{1} << mantissaBits;
+    static constexpr Raw mantissaMax = implicitBit - 1;
     static constexpr int exponentBias = 1023;
     static constexpr int exponentBits = 11;
-    static constexpr unsigned exponentMax = (1 << exponentBits) - 1;
+    static constexpr int exponentMax = (1 << exponentBits) - 1;
 
-    static FloatBits from(u64 sign, u64 exponent, u64 mantissa) {
+    static FloatBits from(Raw sign, Raw exponent, Raw mantissa) {
         if constexpr (isLittleEndian()) {
             return {
                 .mantissa = mantissa,
@@ -83,13 +89,13 @@ union FloatBits<f64> {
 
     struct [[gnu::packed]] {
 #if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-        u64 sign : 1;
-        u64 exponent : 11;
-        u64 mantissa : 52;
+        Raw sign : 1;
+        Raw exponent : 11;
+        Raw mantissa : 52;
 #else
-        u64 mantissa : 52;
-        u64 exponent : 11;
-        u64 sign : 1;
+        Raw mantissa : 52;
+        Raw exponent : 11;
+        Raw sign : 1;
 #endif
     };
 
@@ -103,13 +109,16 @@ static_assert(sizeof(FloatBits<f64>) == sizeof(f64));
 
 export template <>
 union FloatBits<f128> {
+    using Raw = u128;
+
     static constexpr int mantissaBits = 112;
-    static constexpr u128 mantissaMax = (((u128)1) << mantissaBits) - 1;
+    static constexpr Raw implicitBit = Raw{1} << mantissaBits;
+    static constexpr Raw mantissaMax = implicitBit - 1;
     static constexpr int exponentBias = 16383;
     static constexpr int exponentBits = 15;
-    static constexpr unsigned exponentMax = (1 << exponentBits) - 1;
+    static constexpr int exponentMax = (1 << exponentBits) - 1;
 
-    static FloatBits from(u128 sign, u128 exponent, u128 mantissa) {
+    static FloatBits from(Raw sign, Raw exponent, Raw mantissa) {
         if constexpr (isLittleEndian()) {
             return {
                 .mantissa = mantissa,
@@ -131,13 +140,13 @@ union FloatBits<f128> {
 
     struct [[gnu::packed]] {
 #    if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-        u128 sign : 1;
-        u128 exponent : 15;
-        u128 mantissa : 112;
+        Raw sign : 1;
+        Raw exponent : 15;
+        Raw mantissa : 112;
 #    else
-        u128 mantissa : 112;
-        u128 exponent : 15;
-        u128 sign : 1;
+        Raw mantissa : 112;
+        Raw exponent : 15;
+        Raw sign : 1;
 #    endif
     };
 
