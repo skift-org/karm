@@ -187,7 +187,7 @@ constexpr T abs(T x) {
     return x < T{} ? -x : x;
 }
 
-export template <Meta::Float T>
+export template <typename T>
 constexpr bool epsilonEq(T lhs, T rhs, T epsilon = Limits<T>::EPSILON) {
     return abs(lhs - rhs) < epsilon;
 }
