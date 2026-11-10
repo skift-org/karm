@@ -78,7 +78,7 @@ struct Radii {
         requires(Meta::Equatable<T>)
     {
         return iter(radii) | All([](T radii) {
-                   return Math::epsilonEq(radii, static_cast<T>(0));
+                   return Math::epsilonEq<T>(radii, T{});
                });
     }
 
@@ -165,13 +165,6 @@ struct Radii {
     }
 
     void repr(Io::Emit& _e) const {
-        if constexpr (Meta::Equatable<T>) {
-            if (zero()) {
-                _e("(radii {})", a);
-                return;
-            }
-        }
-
         _e("(radii {} {} {} {} {} {} {} {})", a, b, c, d, e, f, g, h);
     }
 
