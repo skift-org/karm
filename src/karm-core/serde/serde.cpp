@@ -601,15 +601,19 @@ struct Serde<Vec<T>> {
 export template <typename T>
 struct Serde<Map<String, T>> {
     static Res<> serialize(Serializer& ser, Map<String, T> const& v) {
-        auto scope = try$(ser.beginScope({.kind = Type::MAP, .len = v.len()}));
-        for (auto& [k, v] : v.iter())
-            try$(scope->serializeUnit(
+        auto scope = try$(ser.beginScope({
+            .kind = Type::MAP,
+            .len = Some(v.len()),
+        }));
+        for (auto const& [key, value] : v.iterItems()) {
+            try$(scope.serializeUnit(
                 {
                     .kind = Type::MAP_ITEM,
-                    .tag = Symbol::from(k),
+                    .tag = Some(Symbol::from(key.str())),
                 },
-                v
+                value
             ));
+        }
         return scope.end();
     }
 

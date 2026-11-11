@@ -56,6 +56,16 @@ test$("pack-unpack-primitives") {
     Tuple<int, float, String> tuple{1, 0.99, "wow"s};
     try$(packUnpack(tuple));
 
+    Map<String, String> emptyMap;
+    try$(packUnpack(emptyMap));
+
+    Map<String, String> map{
+        {"HOME"s, "/home/user"s},
+        {"SHELL"s, "shell"s},
+        {"EMPTY"s, ""s},
+    };
+    try$(packUnpack(map));
+
     struct Foo {
         int a;
         float b;
