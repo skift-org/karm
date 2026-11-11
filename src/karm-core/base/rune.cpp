@@ -11,6 +11,7 @@ import :base.array;
 import :base.buf;
 import :base.cursor;
 import :base.endian;
+import :base.iter;
 
 namespace Karm {
 
@@ -21,6 +22,7 @@ export constexpr Rune REPLACEMENT = U'�';
 export template <typename T>
 concept StaticEncoding = requires(T t, Rune& r, typename T::Unit u, Cursor<typename T::Unit>& c, MutCursor<typename T::Unit>& m) {
     { T::unitLen(u) } -> Meta::Same<usize>;
+    { T::continuation(u) } -> Meta::Same<bool>;
     { T::runeLen(r) } -> Meta::Same<usize>;
     { T::decodeUnit(r, c) } -> Meta::Same<bool>;
     { T::encodeUnit(Rune{}, m) } -> Meta::Same<bool>;
@@ -108,6 +110,10 @@ export struct Utf8 {
             return 2;
         else
             return 1;
+    }
+
+    always_inline static constexpr bool continuation(Unit unit) {
+        return (unit & 0xc0) == 0x80;
     }
 
     always_inline static constexpr usize runeLen(Rune rune) {
@@ -198,6 +204,10 @@ struct _Utf16 {
             return 1;
     }
 
+    always_inline static constexpr bool continuation(Unit unit) {
+        return unit >= 0xdc00 and unit <= 0xdfff;
+    }
+
     always_inline static constexpr usize runeLen(Rune rune) {
         if (rune <= 0xffff)
             return 1;
@@ -271,6 +281,10 @@ export struct Utf32 {
         return 1;
     }
 
+    always_inline static constexpr bool continuation(Unit) {
+        return false;
+    }
+
     always_inline static constexpr usize runeLen(Rune) {
         return 1;
     }
@@ -298,6 +312,10 @@ export struct Ascii {
 
     always_inline static constexpr usize unitLen(Unit) {
         return 1;
+    }
+
+    always_inline static constexpr bool continuation(Unit) {
+        return false;
     }
 
     always_inline static constexpr usize runeLen(Rune) {
@@ -339,6 +357,10 @@ struct EAscii {
 
     always_inline static constexpr usize unitLen(Unit) {
         return 1;
+    }
+
+    always_inline static constexpr bool continuation(Unit) {
+        return false;
     }
 
     always_inline static constexpr usize runeLen(Rune) {
@@ -419,10 +441,12 @@ static_assert(StaticEncoding<Ibm437>);
 
 // MARK: Latin1 ----------------------------------------------------------------
 
-using Latin1Mapper = decltype([](u8 c) {
-    // HACK: """"Unicode is a "superset" of Latin1""" (please note the quotes)
-    return static_cast<Rune>(c);
-});
+struct Latin1Mapper {
+    Rune operator()(u8 c) const {
+        // HACK: """"Unicode is a "superset" of Latin1""" (please note the quotes)
+        return static_cast<Rune>(c);
+    }
+};
 
 export using Latin1 = EAscii<Latin1Mapper>;
 
@@ -484,6 +508,49 @@ export template <StaticEncoding E>
 bool encodeOne(One<E>& one, Rune& rune) {
     return E::decodeUnit(rune, one);
 }
+
+export template <StaticEncoding E>
+struct RuneDecoder {
+    using Unit = typename E::Unit;
+
+    _Multiple<Unit, 4> _pending{};
+
+    bool pending() const {
+        return _pending.len() > 0;
+    }
+
+    Rune _complete() {
+        Rune rune;
+        Cursor<Unit> units{_pending.buf(), _pending.len()};
+
+        if (not E::decodeUnit(rune, units) or E::runeLen(rune) != _pending.len())
+            rune = REPLACEMENT;
+
+        _pending = {};
+        return rune;
+    }
+
+    template <Meta::Convertible<Unit> U>
+    Yield<Rune> feed(Slice<U> units) {
+        for (Unit unit : units) {
+            bool continuation = E::continuation(unit);
+
+            if (pending() and not continuation) {
+                _pending = {};
+                co_yield REPLACEMENT;
+            }
+
+            if (not pending() and continuation) {
+                co_yield REPLACEMENT;
+                continue;
+            }
+
+            _pending.put(unit);
+            if (_pending.len() == E::unitLen(_pending[0]))
+                co_yield _complete();
+        }
+    }
+};
 
 export template <StaticEncoding E>
 Slice<typename E::Unit> stripPreamble(Slice<typename E::Unit> units) {
