@@ -19,7 +19,12 @@ namespace Karm::Ui {
 export auto FRAME_RATE = 60;
 export auto FRAME_TIME = 1.0 / FRAME_RATE;
 
+export struct RootProps {
+    Gfx::Color backgroundColor = GRAY900;
+};
+
 struct RootNode : ProxyNode<RootNode> {
+    RootProps _props;
     Rc<App::Window> _window;
     Rc<App::SwapChain> _swapChain;
     Gfx::CpuCanvas _g;
@@ -29,13 +34,13 @@ struct RootNode : ProxyNode<RootNode> {
     App::CursorStyle _cursorStyle = App::CursorStyle::DEFAULT;
     App::CursorStyle _cursorRequest = App::CursorStyle::DEFAULT;
 
-    RootNode(Child child, Rc<App::Window> window)
-        : ProxyNode(child), _window(window), _swapChain(window->createSwapChain().expect()) {}
+    RootNode(Child child, RootProps props, Rc<App::Window> window)
+        : ProxyNode(child), _props(props), _window(window), _swapChain(window->createSwapChain().expect()) {}
 
     void _paintPhysical(Gfx::Canvas& g, Math::Recti r) {
         g.push();
         g.clip(r);
-        g.clear(GRAY900);
+        g.clear(_props.backgroundColor);
         g.scale(_window->scaleFactor());
         auto logicalClip =
             Math::Trans2f::scale(1.0 / _window->scaleFactor())
@@ -166,7 +171,7 @@ struct Handler : App::Handler {
     }
 };
 
-export Async::Task<> runAsync(Rc<App::Application> app, Child child, Async::CancellationToken ct) {
+export Async::Task<> runAsync(Rc<App::Application> app, Child child, Async::CancellationToken ct, RootProps props = {}) {
     auto size = child->size({1024_au, 720_au}, Hint::MIN).ceili();
     auto win = co_trya$(app->createWindowAsync(
         {
@@ -174,14 +179,14 @@ export Async::Task<> runAsync(Rc<App::Application> app, Child child, Async::Canc
         },
         ct
     ));
-    auto root = makeRc<RootNode>(child, win);
+    auto root = makeRc<RootNode>(child, props, win);
     auto handler = makeRc<Handler>(root);
     co_return co_await app->runAsync(handler, ct);
 }
 
-export Async::Task<> runAsync(Sys::Env& env, Child child, Async::CancellationToken ct) {
+export Async::Task<> runAsync(Sys::Env& env, Child child, Async::CancellationToken ct, RootProps props = {}) {
     auto app = co_trya$(App::Application::createAsync(env, {}, ct));
-    co_return co_await runAsync(app, child, ct);
+    co_return co_await runAsync(app, child, ct, props);
 }
 
 } // namespace Karm::Ui

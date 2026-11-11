@@ -352,7 +352,7 @@ export struct Database {
     }
 };
 
-export Database const& globalDatabase() {
+export Database& globalDatabase() {
     static Database db = [] {
         Database res;
         (void)res.loadSystemFonts();
