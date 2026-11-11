@@ -29,6 +29,9 @@ module;
 //
 #include <karm/macros>
 
+// https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap08.html
+extern "C" char** environ;
+
 module Karm.Sys;
 
 import Karm.Core;
@@ -48,7 +51,7 @@ Res<Rc<Sys::Fd>> deserializeFd(Serde::Deserializer&) {
 // MARK: File I/O --------------------------------------------------------------
 
 Res<Rc<Fd>> openFile(Ref::Url const& url, Flags<OpenOption> options) {
-    i32 flags = 0;
+    i32 flags = O_CLOEXEC;
     if (options.has({OpenOption::READ, OpenOption::WRITE}))
         flags |= O_RDWR;
     else if (options.has({OpenOption::READ}))
@@ -98,6 +101,9 @@ Res<Pair<Rc<Fd>>> createPipe() {
 
     if (::pipe(fds) < 0)
         return Posix::fromLastErrno();
+
+    ::fcntl(fds[0], F_SETFD, FD_CLOEXEC);
+    ::fcntl(fds[1], F_SETFD, FD_CLOEXEC);
 
     return Ok(Pair<Rc<Fd>>{
         makeRc<Posix::Fd>(fds[1]),
@@ -220,7 +226,7 @@ Res<> rename(Ref::Url const& from, Ref::Url const& to) {
 
 Res<> touch(Ref::Url const& url, Opt<SystemTime> const& time) {
     String str = try$(Posix::resolve(url)).str();
-    int fd = ::open(str.buf(), O_WRONLY | O_CREAT | O_NOCTTY | O_NONBLOCK, 0666);
+    int fd = ::open(str.buf(), O_CLOEXEC | O_WRONLY | O_CREAT | O_NOCTTY | O_NONBLOCK, 0666);
     if (fd < 0)
         return Posix::fromLastErrno();
     Defer _ = [&] {
@@ -604,16 +610,20 @@ Res<Rc<Process>> spawn(Command const& cmd) {
         Vec<char*> argv;
         buildArgv(argv);
 
+        // NOTE: The executable is looked up in the PATH of the environment
+        //       it's going to run with.
+        Vec<String> kvStore;
+        Vec<char*> envp;
         if (cmd.env.len()) {
-            Vec<String> kvStore;
-            Vec<char*> envp;
             buildEnvp(kvStore, envp);
-            ::execve(argv[0], argv.buf(), envp.buf());
-        } else {
-            ::execvp(argv[0], argv.buf());
+            environ = envp.buf();
         }
 
-        _exit(127); // exec failed
+        ::execvp(argv[0], argv.buf());
+
+        // exec failed
+        ::perror(argv[0]);
+        _exit(127);
     } else {
         // Parent
         return Ok(makeRc<Posix::Process>(pid));
@@ -661,16 +671,20 @@ Res<Tuple<Rc<Process>, Rc<Fd>>> spawnPty(Command const& cmd) {
         Vec<char*> argv;
         buildArgv(argv);
 
+        // NOTE: The executable is looked up in the PATH of the environment
+        //       it's going to run with.
+        Vec<String> kvStore;
+        Vec<char*> envp;
         if (cmd.env.len()) {
-            Vec<String> kvStore;
-            Vec<char*> envp;
             buildEnvp(kvStore, envp);
-            ::execve(argv[0], argv.buf(), envp.buf());
-        } else {
-            ::execvp(argv[0], argv.buf());
+            environ = envp.buf();
         }
 
-        _exit(127); // exec failed
+        ::execvp(argv[0], argv.buf());
+
+        // exec failed
+        ::perror(argv[0]);
+        _exit(127);
     }
 
     deferClose.disarm();
