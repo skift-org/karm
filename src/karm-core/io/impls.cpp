@@ -201,7 +201,7 @@ export struct BufferWriter : Writer, Flusher {
     }
 };
 
-export struct BitReader {
+export struct BitReader : Reader {
     Reader& _reader;
     u8 _bits{};
     u8 _len{};
@@ -250,6 +250,11 @@ export struct BitReader {
         for (usize i = 0; i < n; i++)
             bytes |= try$(readByte()) << (8 * i);
         return Ok(bytes);
+    }
+
+    virtual Res<usize> read(MutBytes buf) {
+        align();
+        return _reader.read(buf);
     }
 };
 

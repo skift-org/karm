@@ -140,7 +140,7 @@ struct Window {
     // Peek the byte at distance `off` from the end of the output, where
     // a distance of 1 is the most recently emitted byte.
     Res<u8> peek(usize off) {
-        if (off > _r.cap())
+        if (off > _r.limit())
             return Error::invalidInput("peek outside of window");
         if (off > _r.len())
             return Ok(0);
