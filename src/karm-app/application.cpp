@@ -76,9 +76,16 @@ export struct SwapChain {
     virtual void present(Rc<Drm::Buffer>, Slice<Math::Recti> dirty) = 0;
 };
 
+export enum struct WindowDecoration {
+    CLIENT_SIDE,
+    SERVER_SIDE,
+    _LEN,
+};
+
 export struct WindowProps {
     String title = "Karm Application"s;
     Math::Vec2i size = {800, 600};
+    WindowDecoration decoration = WindowDecoration::SERVER_SIDE;
 };
 
 export struct Window : Meta::Pinned {

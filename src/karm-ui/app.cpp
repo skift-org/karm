@@ -176,6 +176,7 @@ export Async::Task<> runAsync(Rc<App::Application> app, Child child, Async::Canc
     auto win = co_trya$(app->createWindowAsync(
         {
             .size = size,
+            .decoration = App::WindowDecoration::CLIENT_SIDE,
         },
         ct
     ));
