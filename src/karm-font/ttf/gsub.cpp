@@ -1,3 +1,7 @@
+module;
+
+#include <karm/macros>
+
 export module Karm.Font.Ttf:gsub;
 
 import :opentype;
@@ -11,16 +15,16 @@ export struct Gsub : Io::BChunk {
     using FeatureListOffset = Io::BField<u16be, 6>;
     using LookupListOffset = Io::BField<u16be, 8>;
 
-    ScriptList scriptList() const {
-        return ScriptList{begin().skip(get<ScriptListOffset>()).remBytes()};
+    Res<ScriptList> scriptList() const {
+        return Ok(ScriptList{try$(begin(try$(get<ScriptListOffset>()))).remBytes()});
     }
 
-    FeatureList featureList() const {
-        return FeatureList{begin().skip(get<FeatureListOffset>()).remBytes()};
+    Res<FeatureList> featureList() const {
+        return Ok(FeatureList{try$(begin(try$(get<FeatureListOffset>()))).remBytes()});
     }
 
-    LookupList lookupList() const {
-        return LookupList{begin().skip(get<LookupListOffset>()).remBytes()};
+    Res<LookupList> lookupList() const {
+        return Ok(LookupList{try$(begin(try$(get<LookupListOffset>()))).remBytes()});
     }
 
     // 1. Locate the current script in the GSUB ScriptList table.

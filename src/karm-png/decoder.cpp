@@ -25,7 +25,7 @@ static auto debugPng = Debug::Flag::debug("png", "Log PNG decoding"s);
 export struct Decoder {
     Bytes _slice;
 
-    Bytes sig() {
+    Res<Bytes> sig() {
         return begin().nextBytes(8);
     }
 
@@ -36,7 +36,7 @@ export struct Decoder {
     static Res<Decoder> init(Bytes slice) {
         Decoder dec{slice};
 
-        if (dec.sig() != SIG)
+        if (try$(dec.sig()) != SIG)
             return Error::invalidData("invalid signature");
 
         try$(dec._loaderHeader());
@@ -51,43 +51,61 @@ export struct Decoder {
         return _slice;
     }
 
-    auto iterChunks() {
+    struct Chunk {
+        Str sig;
+        usize len;
+        Bytes data;
+        u32 crc32;
+        Bytes checked;
+
+        bool validCrc() const {
+            return Crypto::crc32(checked) == crc32;
+        }
+    };
+
+    struct ChunkIter {
+        Io::BScan s;
+        Res<> _status = Ok();
+        bool _end = false;
+
+        Opt<Chunk> next() {
+            // NOTE: Anything after IEND is ignored.
+            if (_end or not _status or s.ended())
+                return NONE;
+
+            auto chunk = _next();
+            if (not chunk) {
+                _status = chunk.none();
+                return NONE;
+            }
+            auto c = chunk.take();
+            _end = c.sig == IEND;
+            return Some(c);
+        }
+
+        Res<> status() const {
+            return _status;
+        }
+
+        Res<Chunk> _next() {
+            Chunk c;
+
+            c.len = try$(s.nextI32be());
+            auto checked = s;
+            c.sig = try$(s.nextStr(4));
+            c.data = try$(s.nextBytes(c.len));
+            c.checked = try$(checked.nextBytes(4 + c.data.len()));
+            c.crc32 = try$(s.nextI32be());
+
+            return Ok(c);
+        }
+    };
+
+    ChunkIter iterChunks() {
         auto s = begin();
-        s.skip(8);
-
-        struct Chunk {
-            Str sig;
-            usize len;
-            Bytes data;
-            u32 crc32;
-            Bytes checked;
-
-            bool validCrc() const {
-                return Crypto::crc32(checked) == crc32;
-            }
-        };
-
-        struct Iter {
-            Io::BScan s;
-
-            Opt<Chunk> next() {
-                if (s.ended())
-                    return NONE;
-
-                Chunk c;
-
-                c.len = s.nextI32be();
-                auto checked = s;
-                c.sig = s.nextStr(4);
-                c.data = s.nextBytes(c.len);
-                c.checked = checked.nextBytes(4 + c.data.len());
-                c.crc32 = s.nextI32be();
-
-                return Some(c);
-            }
-        };
-
-        return Iter{s};
+        if (auto res = s.skip(8); not res)
+            return {.s = s, ._status = res};
+        return {.s = s};
     }
 
     // MARK: Header ------------------------------------------------------------
@@ -155,7 +173,9 @@ export struct Decoder {
     }
 
     Res<> _loaderHeader() {
-        auto maybeIhdr = iterChunks().next();
+        auto chunks = iterChunks();
+        auto maybeIhdr = chunks.next();
+        try$(chunks.status());
         if (not maybeIhdr)
             return Error::invalidData("missing first chunk");
 
@@ -168,13 +188,13 @@ export struct Decoder {
     }
 
     Res<> _handleIhdr(Io::BScan& s) {
-        _width = s.nextU32be();
-        _height = s.nextU32be();
-        _bitDepth = s.nextU8be();
-        _colorType = static_cast<ColorType>(s.nextU8be());
-        _compressionMethod = static_cast<CompressionMethod>(s.nextU8be());
-        _filterMethod = static_cast<FilterMethod>(s.nextU8be());
-        _interlacingMethod = static_cast<InterlacingMethod>(s.nextU8be());
+        _width = try$(s.nextU32be());
+        _height = try$(s.nextU32be());
+        _bitDepth = try$(s.nextU8be());
+        _colorType = static_cast<ColorType>(try$(s.nextU8be()));
+        _compressionMethod = static_cast<CompressionMethod>(try$(s.nextU8be()));
+        _filterMethod = static_cast<FilterMethod>(try$(s.nextU8be()));
+        _interlacingMethod = static_cast<InterlacingMethod>(try$(s.nextU8be()));
 
         return Ok();
     }
@@ -185,9 +205,9 @@ export struct Decoder {
 
     Res<> _handlePlte(Io::BScan& s) {
         while (not s.ended()) {
-            u8 red = s.nextU8le();
-            u8 green = s.nextU8le();
-            u8 blue = s.nextU8le();
+            u8 red = try$(s.nextU8le());
+            u8 green = try$(s.nextU8le());
+            u8 blue = try$(s.nextU8le());
             _palette.pushBack(Gfx::Color{red, green, blue});
         }
 
@@ -202,14 +222,14 @@ export struct Decoder {
     Res<> _handleTrns(Io::BScan& s) {
         if (_colorType == ColorType::INDEXED) {
             for (usize i = 0; not s.ended() and i < _palette.len(); i++)
-                _palette[i].alpha = s.nextU8be();
+                _palette[i].alpha = try$(s.nextU8be());
         } else if (_colorType == ColorType::GREYSCALE) {
-            u16 grey = s.nextU16be();
+            u16 grey = try$(s.nextU16be());
             _transparentKey = Some(Math::Vec3<u16>{grey, grey, grey});
         } else if (_colorType == ColorType::TRUECOLOR) {
-            u16 red = s.nextU16be();
-            u16 green = s.nextU16be();
-            u16 blue = s.nextU16be();
+            u16 red = try$(s.nextU16be());
+            u16 green = try$(s.nextU16be());
+            u16 blue = try$(s.nextU16be());
             _transparentKey = Some(Math::Vec3<u16>{red, green, blue});
         }
 
@@ -312,8 +332,10 @@ export struct Decoder {
 
         Bytes prev = {};
         for (usize scanline : urange::zeroTo(passHeight)) {
-            Filter filter = static_cast<Filter>(s.nextU8be());
-            auto filt = s.nextBytes(bytesPerScan);
+            Filter filter = static_cast<Filter>(try$(s.nextU8be()));
+            if (filter >= Filter::_LEN)
+                return Error::invalidData("invalid filter type");
+            auto filt = try$(s.nextBytes(bytesPerScan));
             MutBytes curr = mutSub(res, bytesPerScan * scanline, bytesPerScan * scanline + bytesPerScan);
 
             for (usize x : urange::zeroTo(bytesPerScan))
@@ -334,12 +356,12 @@ export struct Decoder {
 
     // MARK: Decoding ----------------------------------------------------------
 
-    u16 _nextSample(Io::BScan& s) const {
+    Res<u16> _nextSample(Io::BScan& s) const {
         if (_bitDepth == 16)
             return s.nextU16be();
         if (_bitDepth == 8)
-            return s.nextU8be();
-        return s.nextBitsbe(_bitDepth);
+            return Ok<u16>(try$(s.nextU8be()));
+        return Ok<u16>(try$(s.nextBitsbe(_bitDepth)));
     }
 
     u8 _to8(u16 sample) const {
@@ -356,26 +378,26 @@ export struct Decoder {
             Gfx::Color color;
 
             if (_colorType == ColorType::INDEXED) {
-                auto index = _nextSample(s);
+                auto index = try$(_nextSample(s));
                 if (index >= _palette.len())
                     return Error::invalidData("palette index out of range");
                 color = _palette[index];
             } else if (_colorType == ColorType::GREYSCALE or _colorType == ColorType::GREYSCALE_ALPHA) {
-                auto grey = _nextSample(s);
+                auto grey = try$(_nextSample(s));
                 u8 alpha = 255;
                 if (_colorType == ColorType::GREYSCALE_ALPHA)
-                    alpha = _to8(_nextSample(s));
+                    alpha = _to8(try$(_nextSample(s)));
                 else if (_transparentKey == Math::Vec3<u16>{grey, grey, grey})
                     alpha = 0;
                 auto g = _to8(grey);
                 color = Gfx::Color{g, g, g, alpha};
             } else {
-                auto red = _nextSample(s);
-                auto green = _nextSample(s);
-                auto blue = _nextSample(s);
+                auto red = try$(_nextSample(s));
+                auto green = try$(_nextSample(s));
+                auto blue = try$(_nextSample(s));
                 u8 alpha = 255;
                 if (_colorType == ColorType::TRUECOLOR_ALPHA)
-                    alpha = _to8(_nextSample(s));
+                    alpha = _to8(try$(_nextSample(s)));
                 else if (_transparentKey == Math::Vec3<u16>{red, green, blue})
                     alpha = 0;
                 color = Gfx::Color{_to8(red), _to8(green), _to8(blue), alpha};
@@ -405,7 +427,8 @@ export struct Decoder {
     }
 
     Res<> decode(Gfx::MutPixels out) {
-        for (auto chunk : iterChunks()) {
+        auto chunks = iterChunks();
+        for (auto chunk : chunks) {
             if (not chunk.validCrc())
                 return Error::invalidData("chunk checksum mismatch");
 
@@ -423,6 +446,7 @@ export struct Decoder {
             else
                 logWarnIf(debugPng, "unknown chunk {:#}", chunk.sig);
         }
+        try$(chunks.status());
 
         if (not _ended)
             return Error::invalidData("missing image end");

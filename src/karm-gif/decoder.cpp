@@ -1,3 +1,7 @@
+module;
+
+#include <karm/macros>
+
 export module Karm.Gif:decoder;
 
 import Karm.Core;
@@ -50,10 +54,10 @@ export struct Decoder {
         Io::BScan scan{slice};
 
         Header header{};
-        scan.readTo(&header);
+        try$(scan.readTo(&header));
 
         LogicalScreenDescriptor lsd{};
-        scan.readTo(&lsd);
+        try$(scan.readTo(&lsd));
 
         dec._size = {lsd.width, lsd.height};
 

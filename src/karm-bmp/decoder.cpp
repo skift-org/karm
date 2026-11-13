@@ -51,10 +51,10 @@ export struct Decoder {
             return Error::invalidData("image too small");
         }
 
-        s.skip(2); // signature
-        s.skip(4); // file size
-        s.skip(4); // reserved
-        _dataOffset = s.nextI32le();
+        try$(s.skip(2)); // signature
+        try$(s.skip(4)); // file size
+        try$(s.skip(4)); // reserved
+        _dataOffset = try$(s.nextI32le());
 
         return Ok();
     }
@@ -81,37 +81,37 @@ export struct Decoder {
 
     Res<> _readInfoHeader(Io::BScan& s) {
         auto start = s.tell();
-        auto size = s.nextU32le(); // header size
+        auto size = try$(s.nextU32le()); // header size
         if (size < 40) {
             return Error::invalidData("invalid header size");
         }
 
-        _width = s.nextI32le();
-        _height = s.nextI32le();
+        _width = try$(s.nextI32le());
+        _height = try$(s.nextI32le());
 
-        auto planes = s.nextI16le();
+        auto planes = try$(s.nextI16le());
         logDebug("planes: {}", planes);
         if (planes != 1) {
             return Error::invalidData("invalid number of planes");
         }
 
-        _bpp = s.nextI16le();
+        _bpp = try$(s.nextI16le());
 
-        auto compression = s.nextI32le();
+        auto compression = try$(s.nextI32le());
         if (compression != RGB and compression != RLE8 and compression != RLE4) {
             return Error::invalidData("invalid compression");
         }
 
-        s.skip(4); // image size
-        s.skip(4); // x pixels per meter
-        s.skip(4); // y pixels per meter
-        _numsColors = s.nextI32le();
+        try$(s.skip(4)); // image size
+        try$(s.skip(4)); // x pixels per meter
+        try$(s.skip(4)); // y pixels per meter
+        _numsColors = try$(s.nextI32le());
         if (_numsColors == 0 and _bpp <= 8) {
             _numsColors = 1 << _bpp;
         }
 
-        s.skip(4); // important colors
-        s.skip(size - (s.tell() - start));
+        try$(s.skip(4)); // important colors
+        try$(s.skip(size - (s.tell() - start)));
 
         return Ok();
     }
@@ -122,10 +122,10 @@ export struct Decoder {
 
     Res<> _readPalette(Io::BScan& s) {
         for (usize i = 0; i < _numsColors; ++i) {
-            auto b = s.nextU8le();
-            auto g = s.nextU8le();
-            auto r = s.nextU8le();
-            s.skip(1); // reserved
+            auto b = try$(s.nextU8le());
+            auto g = try$(s.nextU8le());
+            auto r = try$(s.nextU8le());
+            try$(s.skip(1)); // reserved
 
             logDebug("palette[{}]: r: {}, g: {}, b: {}", i, r, g, b);
             _palette.pushBack(Gfx::Color{r, g, b});
@@ -139,7 +139,7 @@ export struct Decoder {
     Bytes _pixels;
 
     Res<> _readPixels(Io::BScan& s) {
-        s.seek(_dataOffset);
+        try$(s.seek(_dataOffset));
         _pixels = s.remBytes();
         return Ok();
     }
@@ -153,37 +153,37 @@ export struct Decoder {
             for (isize x = 0; x < width(); ++x) {
                 auto color = Gfx::Color{};
                 if (_bpp == 1) {
-                    auto bit = s.nextBitbe();
+                    auto bit = try$(s.nextBitbe());
                     if (bit >= _palette.len())
                         return Error::invalidData("invalid palette index");
                     color = _palette[bit];
                 } else if (_bpp == 4) {
-                    auto index = s.nextBitsbe(4);
+                    auto index = try$(s.nextBitsbe(4));
                     if (index >= _palette.len())
                         return Error::invalidData("invalid palette index");
                     color = _palette[index];
                 } else if (_bpp == 8) {
-                    auto index = s.nextU8le();
+                    auto index = try$(s.nextU8le());
                     if (index >= _palette.len()) {
                         return Error::invalidData("invalid palette index");
                     }
                     color = _palette[index];
                 } else if (_bpp == 16) {
-                    auto pixel = s.nextU16le();
+                    auto pixel = try$(s.nextU16le());
                     color.blue = (pixel & 0x1F) << 3;
                     color.green = ((pixel >> 5) & 0x1F) << 3;
                     color.red = ((pixel >> 10) & 0x1F) << 3;
                     color.alpha = 255;
                 } else if (_bpp == 24) {
-                    color.blue = s.nextU8le();
-                    color.green = s.nextU8le();
-                    color.red = s.nextU8le();
+                    color.blue = try$(s.nextU8le());
+                    color.green = try$(s.nextU8le());
+                    color.red = try$(s.nextU8le());
                     color.alpha = 255;
                 } else if (_bpp == 32) {
-                    color.blue = s.nextU8le();
-                    color.green = s.nextU8le();
-                    color.red = s.nextU8le();
-                    color.alpha = 255 - s.nextU8le();
+                    color.blue = try$(s.nextU8le());
+                    color.green = try$(s.nextU8le());
+                    color.red = try$(s.nextU8le());
+                    color.alpha = 255 - try$(s.nextU8le());
                 } else {
                     return Error::invalidData("invalid bpp");
                 }
@@ -204,7 +204,8 @@ export struct Decoder {
             }
 
             // Skip padding.
-            s.skip((4 - (_width * _bpp / 8) % 4) % 4);
+            s.alignBits();
+            try$(s.skip((4 - ceilDiv(width() * _bpp, 8) % 4) % 4));
         }
 
         return Ok();

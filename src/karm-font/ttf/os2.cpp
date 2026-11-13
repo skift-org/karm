@@ -1,3 +1,7 @@
+module;
+
+#include <karm/macros>
+
 export module Karm.Font.Ttf:os2;
 
 import Karm.Core;
@@ -16,15 +20,17 @@ export struct Os2 : Io::BChunk {
     using CapHeight = Io::BField<i16be, 88>;
 
     u16 version() const {
-        return get<Version>();
+        return get<Version>().unwrapOr(0);
     }
 
+    // NOTE: Falls back to FW_NORMAL if the table is truncated.
     u16 weightClass() const {
-        return get<WeightClass>();
+        return get<WeightClass>().unwrapOr(400);
     }
 
+    // NOTE: Falls back to FWIDTH_NORMAL if the table is truncated.
     u16 widthClass() const {
-        return get<WidthClass>();
+        return get<WidthClass>().unwrapOr(5);
     }
 
     // sxHeight and sCapHeight only exist from version 2 on.
@@ -35,13 +41,13 @@ export struct Os2 : Io::BChunk {
     Opt<i16> xHeight() const {
         if (not _hasHeights())
             return NONE;
-        return Some<i16>(get<XHeight>());
+        return Some<i16>(try$(get<XHeight>().ok()));
     }
 
     Opt<i16> capHeight() const {
         if (not _hasHeights())
             return NONE;
-        return Some<i16>(get<CapHeight>());
+        return Some<i16>(try$(get<CapHeight>().ok()));
     }
 };
 

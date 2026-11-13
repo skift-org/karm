@@ -114,9 +114,12 @@ export struct BScan {
         _cursor = _start;
     }
 
-    always_inline constexpr BScan& seek(usize n) {
+    always_inline constexpr Res<> seek(usize n) {
+        if (n > _start.rem()) [[unlikely]]
+            return Error::unexpectedEof("seek out of bounds");
         rewind();
-        return skip(n);
+        _cursor.next(n);
+        return Ok();
     }
 
     always_inline constexpr usize tell() const {
@@ -135,266 +138,295 @@ export struct BScan {
         return {_cursor.buf(), rem()};
     }
 
-    always_inline constexpr BScan& skip(usize n) {
-        n = min(n, rem());
+    /// Fails if fewer than `n` bytes remain.
+    always_inline constexpr Res<> ensure(usize n) const {
+        if (n > rem()) [[unlikely]]
+            return Error::unexpectedEof("not enough data");
+        return Ok();
+    }
+
+    always_inline constexpr Res<> skip(usize n) {
+        if (n > rem()) [[unlikely]]
+            return Error::unexpectedEof("skip out of bounds");
         _cursor.next(n);
-        return *this;
+        return Ok();
     }
 
-    always_inline constexpr BScan peek(usize n) {
+    always_inline constexpr Res<BScan> peek(usize n) const {
         BScan c{*this};
-        c.skip(n);
-        return c;
+        try$(c.skip(n));
+        return Ok(c);
     }
 
     template <typename T>
-    always_inline constexpr bool readTo(T* buf, usize n = 1) {
-        if (rem() < n) {
-            return false;
-        }
-
-        u8* b = reinterpret_cast<u8*>(buf);
-        for (usize i = 0; i < sizeof(T) * n; i++) {
-            b[i] = _cursor.next();
-        }
-        return true;
-    }
-
-    template <typename T>
-    always_inline constexpr bool peekTo(T* buf, usize n = 1) {
-        if (rem() < n)
-            return false;
+    always_inline constexpr Res<> peekTo(T* buf, usize n = 1) const {
+        if (n > rem() / sizeof(T)) [[unlikely]]
+            return Error::unexpectedEof("read out of bounds");
 
         u8* b = reinterpret_cast<u8*>(buf);
         for (usize i = 0; i < sizeof(T) * n; i++)
             b[i] = _cursor.buf()[i];
 
-        return true;
+        return Ok();
     }
 
     template <typename T>
-    always_inline constexpr T next() {
+    always_inline constexpr Res<> readTo(T* buf, usize n = 1) {
+        try$(peekTo(buf, n));
+        _cursor.next(sizeof(T) * n);
+        return Ok();
+    }
+
+    template <typename T>
+    always_inline constexpr Res<T> next() {
         T r{};
-        readTo(&r);
-        return r;
+        try$(readTo(&r));
+        return Ok(r);
     }
 
     template <typename T>
-    always_inline constexpr T nextBe() {
+    always_inline constexpr Res<T> nextBe() {
         Be<T> r{};
-        readTo(&r);
-        return r;
+        try$(readTo(&r));
+        return Ok(static_cast<T>(r));
     }
 
     template <typename T>
-    always_inline constexpr T nextLe() {
-        Le<T> r;
-        readTo(&r);
-        return r;
+    always_inline constexpr Res<T> nextLe() {
+        Le<T> r{};
+        try$(readTo(&r));
+        return Ok(static_cast<T>(r));
     }
 
     template <typename T>
-    always_inline constexpr T peek() {
+    always_inline constexpr Res<T> peek() const {
         T r{};
-        peekTo(&r);
-        return r;
+        try$(peekTo(&r));
+        return Ok(r);
     }
 
     template <typename T>
-    always_inline constexpr T peekBe() {
+    always_inline constexpr Res<T> peekBe() const {
         Be<T> r{};
-        peekTo(&r);
-        return r;
+        try$(peekTo(&r));
+        return Ok(static_cast<T>(r));
     }
 
     template <typename T>
-    always_inline constexpr T peekLe() {
-        Le<T> r;
-        peekTo(&r);
-        return r;
+    always_inline constexpr Res<T> peekLe() const {
+        Le<T> r{};
+        try$(peekTo(&r));
+        return Ok(static_cast<T>(r));
+    }
+
+    template <typename T>
+    always_inline constexpr Res<Slice<T>> peekSlice(usize n) const {
+        static_assert(alignof(T) == 1, "records must be packed");
+        static_assert(Meta::TriviallyCopyable<T>, "records must be trivially copyable");
+
+        if (n > rem() / sizeof(T)) [[unlikely]]
+            return Error::unexpectedEof("slice out of bounds");
+        return Ok(Slice<T>{reinterpret_cast<T const*>(_cursor.buf()), n});
+    }
+
+    template <typename T>
+    always_inline constexpr Res<Slice<T>> nextSlice(usize n) {
+        auto res = try$(peekSlice<T>(n));
+        _cursor.next(sizeof(T) * n);
+        return Ok(res);
     }
 
     always_inline constexpr void alignBits() {
         _bitsLen = 0;
     }
 
-    always_inline constexpr void align(usize n) {
-        skip((n - (tell() % n)) % n);
+    always_inline constexpr Res<> align(usize n) {
+        return skip((n - (tell() % n)) % n);
     }
 
     /// Read bits in most significant bit first order.
-    always_inline constexpr u8 nextBitbe() {
+    always_inline constexpr Res<u8> nextBitbe() {
         if (_bitsLen == 0) {
-            _bits = nextU8be();
+            _bits = try$(nextU8be());
             _bitsLen = 8;
         }
         u8 r = _bits >> 7;
         _bits <<= 1;
         _bitsLen--;
-        return r;
+        return Ok(r);
     }
 
-    always_inline constexpr u8 peekBitbe() {
+    always_inline constexpr Res<u8> peekBitbe() const {
         BScan c{*this};
         return c.nextBitbe();
     }
 
-    always_inline constexpr usize nextBitsbe(usize n) {
+    always_inline constexpr Res<usize> nextBitsbe(usize n) {
         usize r = 0;
         for (usize i = n - 1; i < n; i--) {
-            r |= nextBitbe() << i;
+            r |= static_cast<usize>(try$(nextBitbe())) << i;
         }
-        return r;
+        return Ok(r);
     }
 
-    always_inline constexpr usize peekBitsbe(usize n) {
+    always_inline constexpr Res<usize> peekBitsbe(usize n) const {
         BScan c{*this};
         return c.nextBitsbe(n);
     }
 
-    always_inline constexpr void skipBitsbe(usize n) {
+    always_inline constexpr Res<> skipBitsbe(usize n) {
         for (usize i = 0; i < n; i++) {
-            nextBitbe();
+            try$(nextBitbe());
         }
+        return Ok();
     }
 
     /// Read bits in least significant bit first order.
-    always_inline constexpr u8 nextBitle() {
+    always_inline constexpr Res<u8> nextBitle() {
         if (_bitsLen == 0) {
-            _bits = nextU8le();
+            _bits = try$(nextU8le());
             _bitsLen = 8;
         }
         u8 r = _bits & 1;
         _bits >>= 1;
         _bitsLen--;
-        return r;
+        return Ok(r);
     }
 
-    always_inline constexpr u8 peekBitle() {
+    always_inline constexpr Res<u8> peekBitle() const {
         BScan c{*this};
         return c.nextBitle();
     }
 
-    always_inline constexpr usize nextBitsle(usize n) {
+    always_inline constexpr Res<usize> nextBitsle(usize n) {
         usize r = 0;
         for (usize i = 0; i < n; i++) {
-            r |= nextBitle() << i;
+            r |= static_cast<usize>(try$(nextBitle())) << i;
         }
-        return r;
+        return Ok(r);
     }
 
-    always_inline constexpr usize peekBitsle(usize n) {
+    always_inline constexpr Res<usize> peekBitsle(usize n) const {
         BScan c{*this};
         return c.nextBitsle(n);
     }
 
-    always_inline constexpr void skipBitsle(usize n) {
+    always_inline constexpr Res<> skipBitsle(usize n) {
         for (usize i = 0; i < n; i++) {
-            nextBitle();
+            try$(nextBitle());
         }
+        return Ok();
     }
 
-    always_inline constexpr u8 nextU8be() { return nextBe<u8>(); }
+    always_inline constexpr Res<u8> nextU8be() { return nextBe<u8>(); }
 
-    always_inline constexpr u16 nextU16be() { return nextBe<u16>(); }
+    always_inline constexpr Res<u16> nextU16be() { return nextBe<u16>(); }
 
-    always_inline constexpr u32 nextU32be() { return nextBe<u32>(); }
+    always_inline constexpr Res<u32> nextU32be() { return nextBe<u32>(); }
 
-    always_inline constexpr u64 nextU64be() { return nextBe<u64>(); }
+    always_inline constexpr Res<u64> nextU64be() { return nextBe<u64>(); }
 
-    always_inline constexpr u8 nextU8le() { return nextLe<u8>(); }
+    always_inline constexpr Res<u8> nextU8le() { return nextLe<u8>(); }
 
-    always_inline constexpr u16 nextU16le() { return nextLe<u16>(); }
+    always_inline constexpr Res<u16> nextU16le() { return nextLe<u16>(); }
 
-    always_inline constexpr u32 nextU32le() { return nextLe<u32>(); }
+    always_inline constexpr Res<u32> nextU32le() { return nextLe<u32>(); }
 
-    always_inline constexpr u64 nextU64le() { return nextLe<u64>(); }
+    always_inline constexpr Res<u64> nextU64le() { return nextLe<u64>(); }
 
-    always_inline constexpr i8 nextI8be() { return nextBe<i8>(); }
+    always_inline constexpr Res<i8> nextI8be() { return nextBe<i8>(); }
 
-    always_inline constexpr i16 nextI16be() { return nextBe<i16>(); }
+    always_inline constexpr Res<i16> nextI16be() { return nextBe<i16>(); }
 
-    always_inline constexpr i32 nextI32be() { return nextBe<i32>(); }
+    always_inline constexpr Res<i32> nextI32be() { return nextBe<i32>(); }
 
-    always_inline constexpr i64 nextI64be() { return nextBe<i64>(); }
+    always_inline constexpr Res<i64> nextI64be() { return nextBe<i64>(); }
 
-    always_inline constexpr i8 nextI8le() { return nextLe<i8>(); }
+    always_inline constexpr Res<i8> nextI8le() { return nextLe<i8>(); }
 
-    always_inline constexpr i16 nextI16le() { return nextLe<i16>(); }
+    always_inline constexpr Res<i16> nextI16le() { return nextLe<i16>(); }
 
-    always_inline constexpr i32 nextI32le() { return nextLe<i32>(); }
+    always_inline constexpr Res<i32> nextI32le() { return nextLe<i32>(); }
 
-    always_inline constexpr i64 nextI64le() { return nextLe<i64>(); }
+    always_inline constexpr Res<i64> nextI64le() { return nextLe<i64>(); }
 
-    always_inline constexpr f32 nextF32() { return nextLe<f32>(); }
+    always_inline constexpr Res<f32> nextF32() { return nextLe<f32>(); }
 
-    always_inline constexpr f64 nextF64() { return nextLe<f64>(); }
+    always_inline constexpr Res<f64> nextF64() { return nextLe<f64>(); }
 
-    always_inline constexpr u8 peekU8be() { return peekBe<u8>(); }
+    always_inline constexpr Res<u8> peekU8be() const { return peekBe<u8>(); }
 
-    always_inline constexpr u16 peekU16be() { return peekBe<u16>(); }
+    always_inline constexpr Res<u16> peekU16be() const { return peekBe<u16>(); }
 
-    always_inline constexpr u32 peekU32be() { return peekBe<u32>(); }
+    always_inline constexpr Res<u32> peekU32be() const { return peekBe<u32>(); }
 
-    always_inline constexpr u64 peekU64be() { return peekBe<u64>(); }
+    always_inline constexpr Res<u64> peekU64be() const { return peekBe<u64>(); }
 
-    always_inline constexpr u8 peekU8le() { return peekLe<u8>(); }
+    always_inline constexpr Res<u8> peekU8le() const { return peekLe<u8>(); }
 
-    always_inline constexpr u16 peekU16le() { return peekLe<u16>(); }
+    always_inline constexpr Res<u16> peekU16le() const { return peekLe<u16>(); }
 
-    always_inline constexpr u32 peekU32le() { return peekLe<u32>(); }
+    always_inline constexpr Res<u32> peekU32le() const { return peekLe<u32>(); }
 
-    always_inline constexpr u64 peekU64le() { return peekLe<u64>(); }
+    always_inline constexpr Res<u64> peekU64le() const { return peekLe<u64>(); }
 
-    always_inline constexpr i8 peekI8be() { return peekBe<i8>(); }
+    always_inline constexpr Res<i8> peekI8be() const { return peekBe<i8>(); }
 
-    always_inline constexpr i16 peekI16be() { return peekBe<i16>(); }
+    always_inline constexpr Res<i16> peekI16be() const { return peekBe<i16>(); }
 
-    always_inline constexpr i32 peekI32be() { return peekBe<i32>(); }
+    always_inline constexpr Res<i32> peekI32be() const { return peekBe<i32>(); }
 
-    always_inline constexpr i64 peekI64be() { return peekBe<i64>(); }
+    always_inline constexpr Res<i64> peekI64be() const { return peekBe<i64>(); }
 
-    always_inline constexpr i8 peekI8le() { return peekLe<i8>(); }
+    always_inline constexpr Res<i8> peekI8le() const { return peekLe<i8>(); }
 
-    always_inline constexpr i16 peekI16le() { return peekLe<i16>(); }
+    always_inline constexpr Res<i16> peekI16le() const { return peekLe<i16>(); }
 
-    always_inline constexpr i32 peekI32le() { return peekLe<i32>(); }
+    always_inline constexpr Res<i32> peekI32le() const { return peekLe<i32>(); }
 
-    always_inline constexpr i64 peekI64le() { return peekLe<i64>(); }
+    always_inline constexpr Res<i64> peekI64le() const { return peekLe<i64>(); }
 
-    always_inline constexpr Str nextStr(usize n) {
-        n = clamp(n, 0uz, rem());
+    always_inline constexpr Res<Str> nextStr(usize n) {
+        if (n > rem()) [[unlikely]]
+            return Error::unexpectedEof("string out of bounds");
         Str s{(char const*)_cursor.buf(), n};
         _cursor.next(n);
-        return s;
+        return Ok(s);
     }
 
-    always_inline constexpr Str nextCStr(usize len = Limits<usize>::MAX) {
+    always_inline constexpr Res<Str> nextCStr(usize len = Limits<usize>::MAX) {
         usize n = 0;
-        while (n < rem() and n < len and _cursor.buf()[n] != '\0') {
+        while (n < rem() and n < len and _cursor.buf()[n] != '\0')
             n++;
+
+        if (n < rem() and n < len) {
+            auto res = try$(nextStr(n));
+            try$(skip(1));
+            return Ok(res);
         }
-        auto res = nextStr(n);
-        skip(1);
-        return res;
+
+        if (n == len)
+            return nextStr(n);
+
+        return Error::unexpectedEof("unterminated string");
     }
 
-    always_inline constexpr Bytes nextBytes(usize n) {
-        n = clamp(n, 0uz, rem());
+    always_inline constexpr Res<Bytes> nextBytes(usize n) {
+        if (n > rem()) [[unlikely]]
+            return Error::unexpectedEof("bytes out of bounds");
         Bytes b{_cursor.buf(), n};
         _cursor.next(n);
-        return b;
+        return Ok(b);
     }
 
-    always_inline constexpr bool copyTo(MutBytes dst) {
-        if (dst.len() < rem()) {
-            return false;
-        }
+    always_inline constexpr Res<> copyTo(MutBytes dst) const {
+        if (dst.len() < rem()) [[unlikely]]
+            return Error::invalidInput("destination too small");
 
         for (usize i = 0; i < rem(); i++) {
             dst[i] = _cursor.buf()[i];
         }
-        return true;
+        return Ok();
     }
 };
 
@@ -419,8 +451,8 @@ export struct BChunk {
         return _slice;
     }
 
-    always_inline constexpr BScan begin(usize offset) const {
-        return begin().skip(offset);
+    always_inline constexpr Res<BScan> begin(usize offset) const {
+        return begin().peek(offset);
     }
 
     always_inline constexpr Bytes bytes() const {
@@ -428,12 +460,11 @@ export struct BChunk {
     }
 
     template <typename T>
-    always_inline constexpr T::Type get() const {
+    always_inline constexpr Res<typename T::Type> get() const {
         typename T::Type r{};
-        begin()
-            .skip(T::offset)
-            .readTo(&r);
-        return r;
+        auto s = try$(begin(T::offset));
+        try$(s.readTo(&r));
+        return Ok(r);
     }
 };
 

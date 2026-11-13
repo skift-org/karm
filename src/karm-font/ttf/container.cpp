@@ -28,13 +28,16 @@ export struct FontContainer {
         _tables.insert(i, Table{tag, data});
     }
 
-    static u32 _tableChecksum(Table const& t) {
+    static Res<u32> _tableChecksum(Table const& t) {
         u32 sum = checksum(t.data);
         // https://learn.microsoft.com/en-us/typography/opentype/spec/head
         // checksumAdjustment is taken as zero when computing the head checksum.
-        if (t.tag == "head" and t.data.len() >= 12)
-            sum -= Io::BScan{t.data}.skip(8).nextU32be();
-        return sum;
+        if (t.tag == "head" and t.data.len() >= 12) {
+            Io::BScan s{t.data};
+            try$(s.skip(8));
+            sum -= try$(s.nextU32be());
+        }
+        return Ok(sum);
     }
 
     Res<> write(Io::Writer& w) const {
@@ -57,7 +60,7 @@ export struct FontContainer {
         usize offset = 12 + numTables * 16;
         u32 fontChecksum = 0;
         for (auto& t : _tables) {
-            u32 tableChecksum = _tableChecksum(t);
+            u32 tableChecksum = try$(_tableChecksum(t));
             try$(e.writeStr(t.tag));
             try$(e.writeU32be(tableChecksum));
             try$(e.writeU32be(offset));

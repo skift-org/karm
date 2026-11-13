@@ -50,21 +50,10 @@ struct ElfSymTabSection : ElfSection<Abi> {
     ElfSymTabSection(ElfSection<Abi> sect)
         : ElfSection<Abi>(sect) {}
 
-    auto iterSym() const {
-        struct Iter {
-            Io::BScan s;
-            usize entsize;
-
-            Opt<ElfSym<Abi>> next() {
-                if (s.ended())
-                    return NONE;
-                auto sym = s.peek<ElfSym<Abi>>();
-                s.skip(entsize);
-                return Some(sym);
-            }
-        };
-
-        return Iter{this->data, this->sh_entsize};
+    Res<Slice<ElfSym<Abi>>> iterSym() const {
+        if (this->sh_entsize != sizeof(ElfSym<Abi>))
+            return Error::invalidData("unsupported symbol size");
+        return Io::BScan{this->data}.template peekSlice<ElfSym<Abi>>(this->data.len() / sizeof(ElfSym<Abi>));
     }
 };
 
@@ -72,11 +61,11 @@ export template <typename Abi>
 struct ElfStrTab : ElfSection<Abi> {
     static constexpr auto TYPE = ElfShdrType::SHT_STRTAB;
 
-    Str string(usize off) const {
+    Res<Str> string(usize off) const {
         if (off == 0)
-            return "";
-        return Io::BScan{this->data}
-            .skip(off)
+            return Ok(Str{""});
+        return try$(Io::BScan{this->data}
+                        .peek(off))
             .nextCStr();
     }
 };
@@ -93,35 +82,24 @@ export template <typename Abi>
 struct ElfDynamicSection : ElfSection<Abi> {
     static constexpr auto TYPE = ElfShdrType::SHT_DYNAMIC;
 
-    auto iterDyn() const {
-        struct Iter {
-            Io::BScan s;
-            usize entsize;
-
-            Opt<ElfDyn<Abi>> next() {
-                if (s.ended())
-                    return NONE;
-                auto sym = s.peek<ElfDyn<Abi>>();
-                s.skip(entsize);
-                return Some(sym);
-            }
-        };
-
-        return Iter{this->data, this->sh_entsize};
+    Res<Slice<ElfDyn<Abi>>> iterDyn() const {
+        if (this->sh_entsize != sizeof(ElfDyn<Abi>))
+            return Error::invalidData("unsupported dynamic entry size");
+        return Io::BScan{this->data}.template peekSlice<ElfDyn<Abi>>(this->data.len() / sizeof(ElfDyn<Abi>));
     }
 
-    Opt<ElfDyn<Abi>> dyn(Elf::ElfDynTag tag) {
-        for (ElfDyn dyn : iterDyn())
+    Res<Opt<ElfDyn<Abi>>> dyn(Elf::ElfDynTag tag) {
+        for (ElfDyn dyn : try$(iterDyn()))
             if (dyn.tag() == tag)
-                return Some(dyn);
+                return Ok(Some(dyn));
 
-        return NONE;
+        return Ok(NONE);
     }
 };
 
 export template <typename Abi = CurrentAbi>
 struct ElfObject : Io::BChunk {
-    ElfHeader<Abi> header() const {
+    Res<ElfHeader<Abi>> header() const {
         return begin().template next<ElfHeader<Abi>>();
     }
 
@@ -129,40 +107,60 @@ struct ElfObject : Io::BChunk {
         if (bytes().len() < sizeof(ElfHeader<Abi>))
             return Error::invalidData("elf object too small");
 
-        auto h = header();
+        auto h = try$(header());
         if (h.e_ident.ei_magic != ElfIdent::MAGIC)
             return Error::invalidData("not an elf file");
 
         return Ok();
     }
 
-    ElfProgram<Abi> program(usize index) const {
-        auto h = header();
+    Res<ElfProgram<Abi>> program(usize index) const {
+        auto h = try$(header());
         auto phdr =
-            begin()
-                .skip(h.e_phoff)
-                .skip(h.e_phentsize * index)
-                .template next<ElfPhdr<Abi>>();
+            try$(try$(begin(h.e_phoff + h.e_phentsize * index))
+                     .template next<ElfPhdr<Abi>>());
 
         auto data =
-            begin()
-                .skip(phdr.p_offset)
-                .nextBytes(phdr.p_filesz);
+            try$(try$(begin(phdr.p_offset))
+                     .nextBytes(phdr.p_filesz));
 
-        return {phdr, data};
+        return Ok(ElfProgram<Abi>{phdr, data});
     }
 
-    auto iterProgram() const {
+    struct ProgramIter {
+        ElfObject object;
+        usize index;
+        usize len;
+        Res<> _status = Ok();
+
+        Opt<ElfProgram<Abi>> next() {
+            if (index >= len or not _status)
+                return NONE;
+
+            auto program = object.program(index++);
+            if (not program) {
+                _status = program.none();
+                return NONE;
+            }
+            return Some(program.take());
+        }
+
+        Res<> status() const {
+            return _status;
+        }
+    };
+
+    ProgramIter iterProgram() const {
         auto h = header();
-        return urange(0, h.e_phnum) |
-               Select([&](auto i) {
-                   return program(i);
-               });
+        if (not h)
+            return {*this, 0, 0, h.none()};
+        return {*this, 0, h.take().e_phnum};
     }
 
-    Opt<urange> vrange() const {
+    Res<Opt<urange>> vrange() const {
         Opt<urange> result;
-        for (auto p : iterProgram()) {
+        auto programs = iterProgram();
+        for (auto p : programs) {
             if (p.type() != ElfPhdrType::PT_LOAD)
                 continue;
             if (result)
@@ -170,46 +168,72 @@ struct ElfObject : Io::BChunk {
             else
                 result = Some(p.vrange());
         }
-        return result;
+        try$(programs.status());
+        return Ok(result);
     }
 
-    Opt<Str> interp() const {
-        for (ElfProgram pg : iterProgram()) {
+    Res<Opt<Str>> interp() const {
+        auto programs = iterProgram();
+        for (ElfProgram pg : programs) {
             if (pg.type() == ElfPhdrType::PT_INTERP) {
-                return Some(Str{sub(pg.data, 0, pg.data.len() - 1).template cast<char>()});
+                return Ok(Some(Str{sub(pg.data, 0, pg.data.len() - 1).template cast<char>()}));
             }
         }
-        return NONE;
+        try$(programs.status());
+        return Ok(NONE);
     }
 
-    ElfSection<Abi> section(usize index) const {
-        auto h = header();
+    Res<ElfSection<Abi>> section(usize index) const {
+        auto h = try$(header());
 
         auto shdr =
-            begin()
-                .skip(h.e_shoff)
-                .skip(h.e_shentsize * index)
-                .template next<ElfShdr<Abi>>();
+            try$(try$(begin(h.e_shoff + h.e_shentsize * index))
+                     .template next<ElfShdr<Abi>>());
+
+        // NOTE: SHT_NOBITS sections occupy no space in the file
+        if (static_cast<ElfShdrType>(shdr.sh_type.value()) == ElfShdrType::SHT_NOBITS)
+            return Ok(ElfSection<Abi>{shdr, Bytes{}});
 
         auto data =
-            begin()
-                .skip(shdr.sh_offset)
-                .nextBytes(shdr.sh_size);
+            try$(try$(begin(shdr.sh_offset))
+                     .nextBytes(shdr.sh_size));
 
-        return ElfSection<Abi>{shdr, data};
+        return Ok(ElfSection<Abi>{shdr, data});
     }
 
-    auto iterSection() {
+    struct SectionIter {
+        ElfObject object;
+        usize index;
+        usize len;
+        Res<> _status = Ok();
+
+        Opt<ElfSection<Abi>> next() {
+            if (index >= len or not _status)
+                return NONE;
+
+            auto section = object.section(index++);
+            if (not section) {
+                _status = section.none();
+                return NONE;
+            }
+            return Some(section.take());
+        }
+
+        Res<> status() const {
+            return _status;
+        }
+    };
+
+    SectionIter iterSection() const {
         auto h = header();
-        return urange(0, h.e_shnum) |
-               Select([&](auto i) {
-                   return section(i);
-               });
+        if (not h)
+            return {*this, 0, 0, h.none()};
+        return {*this, 0, h.take().e_shnum};
     }
 
     template <template <typename> typename Section>
     Res<Section<Abi>> section(usize index) {
-        auto sec = section(index);
+        auto sec = try$(section(index));
         if (sec.type() != Section<Abi>::TYPE)
             return Error::invalidData("invalid section type");
         return Ok(sec);
@@ -217,20 +241,24 @@ struct ElfObject : Io::BChunk {
 
     template <template <typename> typename Section>
     Res<Section<Abi>> section() {
-        for (ElfSection<Abi> sec : iterSection()) {
+        auto sections = iterSection();
+        for (ElfSection<Abi> sec : sections) {
             if (sec.type() == Section<Abi>::TYPE)
                 return Ok<Section<Abi>>(sec);
         }
+        try$(sections.status());
         return Error::invalidData("section not found");
     }
 
     Res<ElfSection<Abi>> section(Str name) {
-        auto shstr = try$(section<Elf::ElfStrTab>(header().e_shstrndx));
+        auto shstr = try$(section<Elf::ElfStrTab>(try$(header()).e_shstrndx));
 
-        for (ElfSection<Abi> sec : iterSection()) {
-            if (shstr.string(sec.sh_name) == name)
+        auto sections = iterSection();
+        for (ElfSection<Abi> sec : sections) {
+            if (try$(shstr.string(sec.sh_name)) == name)
                 return Ok(sec);
         }
+        try$(sections.status());
         return Error::invalidData("section not found");
     }
 };

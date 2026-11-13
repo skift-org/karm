@@ -259,21 +259,21 @@ export struct BitReader {
             return Error::invalidData("unexpected end of entropy-coded data");
         }
 
-        _buf = s.nextU8be();
+        _buf = try$(s.nextU8be());
         while (_buf == 0xFF) {
-            u8 marker = s.peekU8be();
+            u8 marker = try$(s.peekU8be());
 
             while (marker == 0xFF) {
-                s.nextU8be();
-                marker = s.peekU8be();
+                try$(s.nextU8be());
+                marker = try$(s.peekU8be());
             }
 
             if (marker == 0x00) {
-                s.nextU8be();
+                try$(s.nextU8be());
                 break;
             } else if (Marker{marker}.restarts()) {
-                s.nextU8be();
-                _buf = s.nextU8be();
+                try$(s.nextU8be());
+                _buf = try$(s.nextU8be());
             } else {
                 logError("jpeg: invalid marker {:02x}", marker);
                 return Error::invalidData("invalid marker");

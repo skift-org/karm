@@ -13,11 +13,11 @@ export struct Post : Io::BChunk {
     using IsFixedPitch = Io::BField<u32be, 12>;
 
     bool isFixedPitch() const {
-        return get<IsFixedPitch>();
+        return get<IsFixedPitch>().unwrapOr(0);
     }
 
     f64 italicAngle() const {
-        return get<ItalicAngle>().asF64();
+        return get<ItalicAngle>().unwrapOr(Fixed{0}).asF64();
     }
 };
 

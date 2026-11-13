@@ -23,7 +23,7 @@ enum struct ContentType : u8 {
 };
 
 static bool isHello(Bytes buf) {
-    return buf.len() >= 5 and
+    return buf.len() >= 6 and
            buf[0] == 0x16 and
            buf[1] == 0x03 and
            buf[2] <= 0x03 and

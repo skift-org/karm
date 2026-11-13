@@ -1,3 +1,7 @@
+module;
+
+#include <karm/macros>
+
 export module Karm.Font.Ttf:name;
 
 import Karm.Core;
@@ -42,13 +46,14 @@ export struct Name : Io::BChunk {
         _LEN,
     };
 
-    struct Record {
-        u16 platformId;
-        u16 encodingId;
-        u16 languageId;
-        NameId nameId;
-        u16 length;
-        u16 offset;
+    // https://learn.microsoft.com/en-us/typography/opentype/spec/name#name-records
+    struct [[gnu::packed]] Record {
+        u16be platformId;
+        u16be encodingId;
+        u16be languageId;
+        u16be nameId;
+        u16be length;
+        u16be offset;
 
         bool isUnicode() const {
             return (platformId == 0) or                   // unicode
@@ -58,58 +63,45 @@ export struct Name : Io::BChunk {
 
     using StorageOffset = Io::BField<u16be, 4>;
 
-    auto iterRecords() const {
+    Res<Slice<Record>> records() const {
         auto s = begin();
-        /* auto version = */ s.nextU16be();
-        u16 count = s.nextU16be();
-        s.skip(2); // stringOffset
-
-        struct Iter {
-            Io::BScan s;
-            usize count;
-            usize i = 0;
-
-            Opt<Record> next() {
-                if (i == count)
-                    return NONE;
-                i++;
-
-                Record r;
-                r.platformId = s.nextU16be();
-                r.encodingId = s.nextU16be();
-                r.languageId = s.nextU16be();
-                auto nameId = s.nextU16be();
-                r.nameId = static_cast<NameId>(nameId);
-
-                r.length = s.nextU16be();
-                r.offset = s.nextU16be();
-
-                return Some(r);
-            }
-        };
-
-        return Iter{s, count};
+        try$(s.skip(2)); // version
+        auto count = try$(s.nextU16be());
+        try$(s.skip(2)); // storageOffset
+        return s.nextSlice<Record>(count);
     }
 
-    Record lookupRecord(NameId nameId) const {
-        for (auto record : iterRecords()) {
+    Res<Opt<Record>> lookupRecord(NameId nameId) const {
+        for (auto const& record : try$(records())) {
             if (record.nameId == nameId and record.isUnicode())
-                return record;
+                return Ok(Some(record));
         }
 
-        return {};
+        return Ok(NONE);
     }
 
-    String string(Record const& r) const {
-        if (not r.isUnicode())
-            return ""s;
+    // NOTE: Returns an empty string if the record is missing or malformed.
+    String lookupString(NameId nameId) const {
+        auto record = lookupRecord(nameId).unwrapOr(NONE);
+        return record ? string(*record) : String{};
+    }
 
-        auto s = begin().skip(get<StorageOffset>() + r.offset);
+    // NOTE: Returns an empty string if the record points outside the table.
+    String string(Record const& r) const {
+        return _string(r).unwrapOr(""s);
+    }
+
+    Res<String> _string(Record const& r) const {
+        if (not r.isUnicode())
+            return Ok(""s);
+
+        auto s = try$(begin(try$(get<StorageOffset>()) + r.offset));
+        try$(s.ensure(r.length));
         StringBuilder sb;
         for (usize i = 0; i < r.length / 2; i++) {
-            sb.append(s.nextU16be());
+            sb.append(try$(s.nextU16be()));
         }
-        return sb.take();
+        return Ok(sb.take());
     }
 };
 

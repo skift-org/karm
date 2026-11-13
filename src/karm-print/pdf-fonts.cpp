@@ -51,7 +51,7 @@ export struct TrueTypeFontAdapter {
         if (not _subset)
             CIDToGIDMapRef = Some(alloc.alloc());
 
-        auto postscriptName = font->_parser._name.string(font->_parser._name.lookupRecord(Font::Ttf::Name::POSTSCRIPT));
+        auto postscriptName = font->_parser._name.lookupString(Font::Ttf::Name::POSTSCRIPT);
         if (_subset)
             CIDFontName = Pdf::Name{Io::format("{}+{}", _subsetTag(), postscriptName.str())};
         else

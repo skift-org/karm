@@ -51,21 +51,25 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
 
         if (interpFlag.value() or allFlag.value()) {
             Sys::println("Interp:");
-            Sys::println("{:#}", object.interp());
+            Sys::println("{:#}", try$(object.interp()));
         }
 
         if (sectionsFlag.value() or allFlag.value()) {
             Sys::println("Sections:");
-            auto shstr = try$(object.template section<Elf::ElfStrTab>(object.header().e_shstrndx));
-            for (auto section : object.iterSection())
-                Sys::println(" - {:#} {} {}", shstr.string(section.sh_name), section.type(), section.data.len());
+            auto shstr = try$(object.template section<Elf::ElfStrTab>(try$(object.header()).e_shstrndx));
+            auto sections = object.iterSection();
+            for (auto section : sections)
+                Sys::println(" - {:#} {} {}", try$(shstr.string(section.sh_name)), section.type(), section.data.len());
+            try$(sections.status());
             Sys::println();
         }
 
         if (programsFlag.value() or allFlag.value()) {
             Sys::println("Program:");
-            for (auto program : object.iterProgram())
+            auto programs = object.iterProgram();
+            for (auto program : programs)
                 Sys::println(" - {} {:#08x}:{:#08x} {} {}", program.type(), program.p_paddr, program.p_vaddr, DataSize{program.p_filesz}, DataSize{program.p_memsz});
+            try$(programs.status());
             Sys::println();
         }
 
@@ -74,8 +78,8 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
             if (auto const [symtab] = object.template section<Elf::ElfSymTabSection>().ok()) {
                 Sys::println("Symbols:");
                 auto symstr = try$(object.template section<Elf::ElfStrTab>(symtab.sh_link));
-                for (auto sym : symtab.iterSym())
-                    Sys::println(" - {:#}", symstr.string(sym.st_name));
+                for (auto sym : try$(symtab.iterSym()))
+                    Sys::println(" - {:#}", try$(symstr.string(sym.st_name)));
             } else {
                 Sys::println("ELF Object has no symbols");
             }
@@ -85,12 +89,13 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
         if (neededFlag.value() or allFlag.value()) {
             Sys::println("Needed:");
             Elf::ElfDynamicSection dynamic = try$(object.template section<Elf::ElfDynamicSection>());
-            auto strtabAddr = try$(dynamic.dyn(Elf::ElfDynTag::DT_STRTAB)).d_ptr;
-            auto strsz = try$(dynamic.dyn(Elf::ElfDynTag::DT_STRSZ)).d_val;
+            auto strtabAddr = try$(try$(dynamic.dyn(Elf::ElfDynTag::DT_STRTAB))).d_ptr;
+            auto strsz = try$(try$(dynamic.dyn(Elf::ElfDynTag::DT_STRSZ))).d_val;
             urange strrange = {strtabAddr, strsz};
 
             Bytes strtab = {};
-            for (Elf::ElfProgram program : object.iterProgram()) {
+            auto programs = object.iterProgram();
+            for (Elf::ElfProgram program : programs) {
                 if (program.type() == Elf::ElfPhdrType::PT_LOAD and
                     program.vrange().contains(strrange)) {
                     auto offset = strtabAddr - program.p_vaddr;
@@ -98,8 +103,9 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
                     break;
                 }
             }
+            try$(programs.status());
 
-            for (Elf::ElfDyn dyn : dynamic.iterDyn()) {
+            for (Elf::ElfDyn dyn : try$(dynamic.iterDyn())) {
                 if (dyn.tag() == Elf::ElfDynTag::DT_NEEDED) {
                     Str soname = Str::fromNullterminated(next(strtab, dyn.d_val).template cast<char>());
                     Sys::println("- {:#}", soname);

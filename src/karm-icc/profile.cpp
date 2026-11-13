@@ -23,7 +23,7 @@ export struct ColorProfile {
 
     static Res<Rc<ColorProfile>> from(Bytes data) {
         Parser parser{data};
-        auto header = parser.header();
+        auto header = try$(parser.header());
 
         if (not header.sniff())
             return Error::invalidData("not an icc profile");

@@ -158,6 +158,8 @@ Res<usize> decodeName(Cursor<u8> const start, Cursor<u8> curr, StringBuilder& ou
             // Label
             if (b > MAX_LABEL_LEN)
                 return Error::invalidData("dns label too long");
+            if (b > curr.rem())
+                return Error::unexpectedEof("unexpected end of dns name");
             if (out.len() + b + 1 > MAX_NAME_LEN)
                 return Error::invalidData("dns name too long");
             if (out.len() > 0)
@@ -224,18 +226,18 @@ struct Packet {
             return Error::unexpectedEof("packet too short");
 
         Header hdr;
-        s.readTo(&hdr);
+        try$(s.readTo(&hdr));
 
         Packet pkt{hdr.id, (Flags)hdr.flags.value()};
         Vec<Question>& qs = pkt._qs;
         for (auto i = 0; i < hdr.qdcount; i++) {
             StringBuilder name;
-            s.skip(try$(decodeName(buf, s.remBytes(), name)));
+            try$(s.skip(try$(decodeName(buf, s.remBytes(), name))));
 
             Question q{
                 name.take(),
-                (Type)s.nextU16be(),
-                (Class)s.nextU16be(),
+                (Type)try$(s.nextU16be()),
+                (Class)try$(s.nextU16be()),
             };
 
             qs.pushBack(std::move(q));
@@ -244,15 +246,15 @@ struct Packet {
         Vec<Answer>& ans = pkt._ans;
         for (auto i = 0; i < hdr.ancount; i++) {
             StringBuilder name;
-            s.skip(try$(decodeName(buf, s.remBytes(), name)));
+            try$(s.skip(try$(decodeName(buf, s.remBytes(), name))));
 
             Answer a;
             a.name = name.take();
-            a.type = (Type)s.nextU16be();
-            a.class_ = (Class)s.nextU16be();
-            a.ttl = Duration::fromSecs(s.nextU32be());
-            auto len = s.nextU16be();
-            a.data = s.nextBytes(len);
+            a.type = (Type)try$(s.nextU16be());
+            a.class_ = (Class)try$(s.nextU16be());
+            a.ttl = Duration::fromSecs(try$(s.nextU32be()));
+            auto len = try$(s.nextU16be());
+            a.data = try$(s.nextBytes(len));
 
             ans.pushBack(std::move(a));
         }

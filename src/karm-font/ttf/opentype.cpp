@@ -9,6 +9,16 @@ import Karm.Logger;
 
 namespace Karm::Font::Ttf {
 
+// https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#script-list-table-and-script-record
+export struct [[gnu::packed]] TagRecord {
+    Array<char, 4> _tag;
+    u16be offset;
+
+    Str tag() const {
+        return {_tag.buf(), _tag.len()};
+    }
+};
+
 // https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#language-system-table
 export struct LangSys : Io::BChunk {
     using LookupOrderOffset = Io::BField<u16be, 0>;
@@ -20,11 +30,8 @@ export struct LangSys : Io::BChunk {
     LangSys(Str tag, Bytes bytes)
         : BChunk{bytes}, tag(tag) {}
 
-    auto iterFeatures() const {
-        auto s = begin().skip(6);
-        return urange::zeroTo((usize)get<FeatureCount>()) | Select([s](auto) mutable {
-                   return s.nextU16be();
-               });
+    Res<Slice<u16be>> featureIndices() const {
+        return try$(begin(6)).peekSlice<u16be>(try$(get<FeatureCount>()));
     }
 };
 
@@ -38,23 +45,16 @@ export struct ScriptTable : Io::BChunk {
     ScriptTable(Str tag, Bytes bytes)
         : BChunk{bytes}, tag(tag) {}
 
-    LangSys defaultLangSys() const {
-        return {"DFLT", begin().skip(get<DefaultLangSysOffset>()).remBytes()};
+    Res<LangSys> defaultLangSys() const {
+        return Ok(LangSys{"DFLT", try$(begin(try$(get<DefaultLangSysOffset>()))).remBytes()});
     }
 
-    usize len() const {
-        return get<LangSysCount>();
+    Res<Slice<TagRecord>> records() const {
+        return try$(begin(4)).peekSlice<TagRecord>(try$(get<LangSysCount>()));
     }
 
-    LangSys at(usize i) const {
-        auto s = begin().skip(4 + i * 6);
-        return {s.nextStr(4), begin().skip(s.nextU16be()).remBytes()};
-    }
-
-    auto iter() const {
-        return urange::zeroTo(len()) | Select([this](auto i) {
-                   return at(i);
-               });
+    Res<LangSys> langSys(TagRecord const& record) const {
+        return Ok(LangSys{record.tag(), try$(begin(record.offset)).remBytes()});
     }
 };
 
@@ -62,28 +62,18 @@ export struct ScriptTable : Io::BChunk {
 export struct ScriptList : Io::BChunk {
     using ScriptCount = Io::BField<u16be, 0>;
 
-    usize len() const {
-        return get<ScriptCount>();
+    Res<Slice<TagRecord>> records() const {
+        return try$(begin(2)).peekSlice<TagRecord>(try$(get<ScriptCount>()));
     }
 
-    ScriptTable at(usize i) const {
-        auto s = begin().skip(2 + i * 6);
-        auto tag = s.nextStr(4);
-        auto off = s.nextU16be();
-        return ScriptTable{tag, begin().skip(off).remBytes()};
+    Res<ScriptTable> script(TagRecord const& record) const {
+        return Ok(ScriptTable{record.tag(), try$(begin(record.offset)).remBytes()});
     }
 
-    auto iter() const {
-        return urange::zeroTo(len()) | Select([this](auto i) {
-                   return at(i);
-               });
-    }
-
-    Res<ScriptTable> lookup(Str tag) {
-        for (auto const& script : iter()) {
-            if (script.tag == tag) {
-                return Ok(script);
-            }
+    Res<ScriptTable> lookup(Str tag) const {
+        for (auto const& record : try$(records())) {
+            if (record.tag() == tag)
+                return script(record);
         }
 
         return Error::invalidInput("script tag not found");
@@ -100,11 +90,8 @@ export struct FeatureTable : Io::BChunk {
     FeatureTable(Str tag, Bytes bytes)
         : BChunk{bytes}, tag(tag) {}
 
-    auto iterLookups() const {
-        auto s = begin().skip(4);
-        return urange::zeroTo((usize)get<LookupCount>()) | Select([s](auto) mutable {
-                   return s.nextU16be();
-               });
+    Res<Slice<u16be>> lookupIndices() const {
+        return try$(begin(4)).peekSlice<u16be>(try$(get<LookupCount>()));
     }
 };
 
@@ -112,21 +99,19 @@ export struct FeatureTable : Io::BChunk {
 export struct FeatureList : Io::BChunk {
     using featureCount = Io::BField<u16be, 0>;
 
-    usize len() const {
-        return get<featureCount>();
+    Res<Slice<TagRecord>> records() const {
+        return try$(begin(2)).peekSlice<TagRecord>(try$(get<featureCount>()));
     }
 
-    FeatureTable at(usize i) const {
-        auto s = begin().skip(2 + i * 6);
-        auto tag = s.nextStr(4);
-        auto off = s.nextU16be();
-        return FeatureTable{tag, begin().skip(off).remBytes()};
+    Res<FeatureTable> feature(TagRecord const& record) const {
+        return Ok(FeatureTable{record.tag(), try$(begin(record.offset)).remBytes()});
     }
 
-    auto iter() const {
-        return urange::zeroTo(len()) | Select([this](auto i) {
-                   return at(i);
-               });
+    Res<FeatureTable> at(usize index) const {
+        auto records = try$(this->records());
+        if (index >= records.len())
+            return Error::invalidData("feature index out of range");
+        return feature(records[index]);
     }
 };
 
@@ -135,72 +120,74 @@ export struct CoverageTable : Io::BChunk {
     using Format = Io::BField<u16be, 0>;
     using GlyphCount = Io::BField<u16be, 2>;
 
-    usize format() const { return get<Format>(); }
+    Res<usize> format() const { return Ok<usize>(try$(get<Format>())); }
 
-    usize len() const { return get<GlyphCount>(); }
+    Res<usize> len() const { return Ok<usize>(try$(get<GlyphCount>())); }
 
-    Opt<usize> coverageIndex(usize glyphId) {
-        auto s = begin().skip(4);
+    Res<Opt<usize>> coverageIndex(usize glyphId) {
+        auto s = try$(begin(4));
+        auto format = try$(this->format());
 
-        if (format() == 1) {
-            for (auto i : urange::zeroTo(len())) {
-                auto glyph = s.nextU16be();
+        if (format == 1) {
+            for (auto i : urange::zeroTo(try$(len()))) {
+                auto glyph = try$(s.nextU16be());
                 if (glyph == glyphId) {
-                    return Some(i);
+                    return Ok(Some(i));
                 }
             }
         }
 
-        if (format() == 2) {
-            for (auto i : urange::zeroTo(len())) {
+        if (format == 2) {
+            for (auto i : urange::zeroTo(try$(len()))) {
                 (void)i;
-                auto start = s.nextU16be();
-                auto end = s.nextU16be();
-                auto index = s.nextU16be();
+                auto start = try$(s.nextU16be());
+                auto end = try$(s.nextU16be());
+                auto index = try$(s.nextU16be());
                 if (start <= glyphId and glyphId <= end) {
-                    return Some(index + glyphId - start);
+                    return Ok(Some<usize>(index + glyphId - start));
                 }
             }
         }
 
-        return NONE;
+        return Ok(NONE);
     }
 };
 
 export struct LookupSubtable : Io::BChunk {
     using Format = Io::BField<u16be, 0>;
 
-    u16 format() const { return get<Format>(); }
+    Res<u16> format() const { return Ok<u16>(try$(get<Format>())); }
 };
 
 // https://learn.microsoft.com/en-us/typography/opentype/spec/chapter2#class-definition-table
 export struct ClassDef : Io::BChunk {
-    Opt<usize> classOf(usize glyphId) {
+    Res<Opt<usize>> classOf(usize glyphId) {
         auto s = begin();
-        auto format = s.nextU16be();
+        auto format = try$(s.nextU16be());
 
         if (format == 1) {
-            auto startGlyph = s.nextU16be();
-            auto glyphCount = s.nextU16be();
+            auto startGlyph = try$(s.nextU16be());
+            auto glyphCount = try$(s.nextU16be());
             if (startGlyph <= glyphId and glyphId < startGlyph + glyphCount) {
-                return Some(s.skip((glyphId - startGlyph) * 2).nextU16be());
+                try$(s.skip((glyphId - startGlyph) * 2));
+                return Ok(Some<usize>(try$(s.nextU16be())));
             }
         }
 
         if (format == 2) {
-            auto classRangeCount = s.nextU16be();
+            auto classRangeCount = try$(s.nextU16be());
             for (usize i : urange::zeroTo(classRangeCount)) {
                 (void)i;
-                auto startGlyph = s.nextU16be();
-                auto endGlyph = s.nextU16be();
-                auto glyphClass = s.nextU16be();
+                auto startGlyph = try$(s.nextU16be());
+                auto endGlyph = try$(s.nextU16be());
+                auto glyphClass = try$(s.nextU16be());
                 if (startGlyph <= glyphId and glyphId <= endGlyph) {
-                    return Some(glyphClass);
+                    return Ok(Some<usize>(glyphClass));
                 }
             }
         }
 
-        return NONE;
+        return Ok(NONE);
     }
 };
 
@@ -219,40 +206,37 @@ export struct LookupTable : Io::BChunk {
         MARK_ATTACHMENT_TYPE = 1 << 5,
     };
 
-    u16 lookupType() const { return get<LookupType>(); }
+    Res<u16> lookupType() const { return Ok<u16>(try$(get<LookupType>())); }
 
-    u16 lookupFlag() const { return get<LookupFlag>(); }
+    Res<u16> lookupFlag() const { return Ok<u16>(try$(get<LookupFlag>())); }
 
-    u16 markFilteringSet() const {
-        return lookupFlag() & USE_MARK_FILTERING_SET
-                   ? begin().skip(6 + get<SubTableCount>() * 2).nextU16be()
-                   : 0;
+    Res<u16> markFilteringSet() const {
+        if (not(try$(lookupFlag()) & USE_MARK_FILTERING_SET))
+            return Ok<u16>(0);
+        auto s = try$(begin(6 + try$(get<SubTableCount>()) * 2));
+        return s.nextU16be();
+    }
+
+    Res<Slice<u16be>> subtableOffsets() const {
+        return try$(begin(6)).peekSlice<u16be>(try$(get<SubTableCount>()));
     }
 
     template <typename T>
-    T at(usize i) const {
-        auto off = begin().skip(6 + i * 2).nextU16be();
-        auto subtable = begin().skip(off);
-        auto format = subtable.peekU16be();
+    Res<T> subtable(usize offset) const {
+        auto subtable = try$(begin(offset));
+        auto format = try$(subtable.peekU16be());
 
-        return T::any(
-                   [&]<typename U>() -> Opt<T> {
-                       if constexpr (requires { U::FORMAT; })
-                           if (format == U::FORMAT)
-                               return Some(U{subtable.remBytes()});
-                       return NONE;
-                   }
-        )
-            .unwrapOr(LookupSubtable{subtable.remBytes()});
-    }
-
-    usize len() const { return get<SubTableCount>(); }
-
-    template <typename T>
-    auto iter() const {
-        return urange::zeroTo(len()) | Select([&](auto i) {
-                   return at<T>(i);
-               });
+        return Ok(
+            T::any(
+                [&]<typename U>() -> Opt<T> {
+                    if constexpr (requires { U::FORMAT; })
+                        if (format == U::FORMAT)
+                            return Some(U{subtable.remBytes()});
+                    return NONE;
+                }
+            )
+                .unwrapOr(LookupSubtable{subtable.remBytes()})
+        );
     }
 };
 
@@ -260,18 +244,19 @@ export struct LookupTable : Io::BChunk {
 export struct LookupList : Io::BChunk {
     using LookupCount = Io::BField<u16be, 0>;
 
-    usize len() const { return get<LookupCount>(); }
-
-    LookupTable at(usize i) const {
-        auto s = begin().skip(2 + i * 2);
-        auto off = s.nextU16be();
-        return LookupTable{begin().skip(off).remBytes()};
+    Res<Slice<u16be>> offsets() const {
+        return try$(begin(2)).peekSlice<u16be>(try$(get<LookupCount>()));
     }
 
-    auto iter() const {
-        return urange::zeroTo(len()) | Select([&](auto i) {
-                   return at(i);
-               });
+    Res<LookupTable> lookup(usize offset) const {
+        return Ok(LookupTable{try$(begin(offset)).remBytes()});
+    }
+
+    Res<LookupTable> at(usize index) const {
+        auto offsets = try$(this->offsets());
+        if (index >= offsets.len())
+            return Error::invalidData("lookup index out of range");
+        return lookup(offsets[index]);
     }
 };
 

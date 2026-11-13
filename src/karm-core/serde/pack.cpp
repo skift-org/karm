@@ -110,15 +110,15 @@ export struct PackDeserializer : Deserializer {
         Type res = type;
         switch (type.kind) {
         case Type::NIL:
-            if (_scan.peek<u8>() != 0)
+            if (try$(_scan.peek<u8>()) != 0)
                 return Error::invalidData("expected nil");
-            _scan.next<u8>();
+            try$(_scan.next<u8>());
             break;
 
         case Type::SOME:
-            if (_scan.peek<u8>() != 1)
+            if (try$(_scan.peek<u8>()) != 1)
                 return Error::invalidData("expected some");
-            _scan.next<u8>();
+            try$(_scan.next<u8>());
             break;
 
         case Type::UNIT:
@@ -128,9 +128,9 @@ export struct PackDeserializer : Deserializer {
             break;
 
         case Type::UNION_ITEM:
-            if (_scan.peek<u8>() != type.index)
+            if (try$(_scan.peek<u8>()) != type.index)
                 return Error::invalidData("union index mismatch");
-            res.index = Some(_scan.next<u8>());
+            res.index = Some(try$(_scan.next<u8>()));
             break;
 
         case Type::ENUM:
@@ -173,29 +173,29 @@ export struct PackDeserializer : Deserializer {
     }
 
     Res<bool> deserializeBool() override {
-        return Ok(_scan.next<u8>());
+        return Ok(try$(_scan.next<u8>()) != 0);
     }
 
     Res<i64> deserializeInteger(SizeHint) override {
-        return Ok(_scan.next<i64>());
+        return _scan.next<i64>();
     }
 
     Res<u64> deserializeUnsigned(SizeHint) override {
-        return Ok(_scan.next<u64>());
+        return _scan.next<u64>();
     }
 
     Res<f64> deserializeFloat(SizeHint) override {
-        return Ok(_scan.next<f64>());
+        return _scan.next<f64>();
     }
 
     Res<Vec<u8>> deserializeBytes() override {
-        usize len = _scan.next<u64>();
-        return Ok(_scan.nextBytes(len));
+        usize len = try$(_scan.next<u64>());
+        return Ok(try$(_scan.nextBytes(len)));
     }
 
     Res<String> deserializeString() override {
-        usize len = _scan.next<u64>();
-        return Ok(_scan.nextStr(len));
+        usize len = try$(_scan.next<u64>());
+        return Ok(try$(_scan.nextStr(len)));
     }
 };
 

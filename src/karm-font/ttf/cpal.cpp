@@ -1,3 +1,7 @@
+module;
+
+#include <karm/macros>
+
 export module Karm.Font.Ttf:cpal;
 
 import Karm.Core;
@@ -17,30 +21,31 @@ export struct Cpal : Io::BChunk {
     static constexpr usize COLOR_RECORD_INDICES = 12;
     static constexpr usize COLOR_RECORD_SIZE = 4;
 
-    usize numPalettes() const {
-        return get<NumPalettes>();
+    Res<usize> numPalettes() const {
+        return Ok<usize>(try$(get<NumPalettes>()));
     }
 
-    usize numPaletteEntries() const {
-        return get<NumPaletteEntries>();
+    Res<usize> numPaletteEntries() const {
+        return Ok<usize>(try$(get<NumPaletteEntries>()));
     }
 
-    Opt<Gfx::Color> color(usize palette, usize entry) const {
-        if (palette >= numPalettes() or entry >= numPaletteEntries())
-            return NONE;
+    Res<Opt<Gfx::Color>> color(usize palette, usize entry) const {
+        if (palette >= try$(numPalettes()) or entry >= try$(numPaletteEntries()))
+            return Ok(NONE);
 
-        usize firstRecord = begin().skip(COLOR_RECORD_INDICES + palette * 2).nextU16be();
+        auto indices = try$(begin(COLOR_RECORD_INDICES + palette * 2));
+        usize firstRecord = try$(indices.nextU16be());
         usize record = firstRecord + entry;
-        if (record >= get<NumColorRecords>())
-            return NONE;
+        if (record >= try$(get<NumColorRecords>()))
+            return Ok(NONE);
 
         // NOTE: Color records are stored as BGRA.
-        auto s = begin().skip(get<ColorRecordsArrayOffset>() + record * COLOR_RECORD_SIZE);
-        auto blue = s.nextU8be();
-        auto green = s.nextU8be();
-        auto red = s.nextU8be();
-        auto alpha = s.nextU8be();
-        return Some(Gfx::Color{red, green, blue, alpha});
+        auto s = try$(begin(try$(get<ColorRecordsArrayOffset>()) + record * COLOR_RECORD_SIZE));
+        auto blue = try$(s.nextU8be());
+        auto green = try$(s.nextU8be());
+        auto red = try$(s.nextU8be());
+        auto alpha = try$(s.nextU8be());
+        return Ok(Some(Gfx::Color{red, green, blue, alpha}));
     }
 };
 

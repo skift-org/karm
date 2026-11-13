@@ -1,3 +1,7 @@
+module;
+
+#include <karm/macros>
+
 export module Karm.Font.Ttf:colr;
 
 import Karm.Core;
@@ -33,26 +37,25 @@ export struct Colr : Io::BChunk {
         usize len;
     };
 
-    Opt<Layers> layers(usize glyphId) const {
+    Res<Opt<Layers>> layers(usize glyphId) const {
         if (not present())
-            return NONE;
+            return Ok(NONE);
 
         usize lo = 0;
-        usize hi = get<NumBaseGlyphRecords>();
-        auto records = begin().skip(get<BaseGlyphRecordsOffset>());
+        usize hi = try$(get<NumBaseGlyphRecords>());
+        auto records = try$(begin(try$(get<BaseGlyphRecordsOffset>())));
 
         while (lo < hi) {
             usize mid = lo + (hi - lo) / 2;
-            auto s = records;
-            s.skip(mid * BASE_GLYPH_RECORD_SIZE);
-            usize id = s.nextU16be();
+            auto s = try$(records.peek(mid * BASE_GLYPH_RECORD_SIZE));
+            usize id = try$(s.nextU16be());
 
             if (id == glyphId) {
-                usize first = s.nextU16be();
-                usize len = s.nextU16be();
-                if (len == 0 or first + len > get<NumLayerRecords>())
-                    return NONE;
-                return Some(Layers{first, len});
+                usize first = try$(s.nextU16be());
+                usize len = try$(s.nextU16be());
+                if (len == 0 or first + len > try$(get<NumLayerRecords>()))
+                    return Ok(NONE);
+                return Ok(Some(Layers{first, len}));
             }
 
             if (id < glyphId)
@@ -61,42 +64,47 @@ export struct Colr : Io::BChunk {
                 hi = mid;
         }
 
-        return NONE;
+        return Ok(NONE);
     }
 
-    Layer layer(usize index) const {
-        auto s = begin().skip(get<LayerRecordsOffset>() + index * LAYER_RECORD_SIZE);
-        auto glyphId = s.nextU16be();
-        auto paletteIndex = s.nextU16be();
-        return {glyphId, paletteIndex};
+    Res<Layer> layer(usize index) const {
+        auto s = try$(begin(try$(get<LayerRecordsOffset>()) + index * LAYER_RECORD_SIZE));
+        auto glyphId = try$(s.nextU16be());
+        auto paletteIndex = try$(s.nextU16be());
+        return Ok(Layer{glyphId, paletteIndex});
     }
 
-    // Paint each layer of the glyph, contour(g, glyphId) appends the outline of a layer glyph.
-    void paint(Gfx::Canvas& g, usize glyphId, Cpal const& cpal, auto contour) const {
-        auto maybeLayers = layers(glyphId);
+    // Paint each layer of the glyph, contour(g, glyphId) -> Res<> appends the outline of a layer glyph.
+    Res<> paint(Gfx::Canvas& g, usize glyphId, Cpal const& cpal, auto contour) const {
+        auto maybeLayers = try$(layers(glyphId));
         if (not maybeLayers)
-            return;
+            return Ok();
         auto layers = *maybeLayers;
 
         for (auto i : urange::zeroTo(layers.len)) {
-            auto l = layer(layers.first + i);
-
-            g.push();
-            g.beginPath();
-            contour(g, l.glyphId);
+            auto l = try$(layer(layers.first + i));
 
             // NOTE: Always use the first palette, and fall back to
             //       the current fill for out-of-range palette entries.
             Opt<Gfx::Color> color = NONE;
             if (l.paletteIndex != FOREGROUND_PALETTE_INDEX)
-                color = cpal.color(0, l.paletteIndex);
+                color = try$(cpal.color(0, l.paletteIndex));
 
-            if (color)
-                g.fill(*color);
-            else
-                g.fill();
+            g.push();
+            g.beginPath();
+            auto res = contour(g, l.glyphId);
+
+            if (res) {
+                if (color)
+                    g.fill(*color);
+                else
+                    g.fill();
+            }
             g.pop();
+            try$(res);
         }
+
+        return Ok();
     }
 };
 

@@ -34,39 +34,41 @@ export struct Glyf : Io::BChunk {
         i16 yMax;
     };
 
-    always_inline Metrics metrics(Io::BScan& s, usize glyfOffset) const {
-        s.skip(glyfOffset);
-        auto numContours = s.nextI16be();
+    always_inline Res<Metrics> metrics(Io::BScan& s, usize glyfOffset) const {
+        try$(s.skip(glyfOffset));
+        auto numContours = try$(s.nextI16be());
         if (numContours == 0) {
-            return {};
+            return Ok(Metrics{});
         }
-        auto xMin = s.nextI16be();
-        auto yMin = s.nextI16be();
-        auto xMax = s.nextI16be();
-        auto yMax = s.nextI16be();
-        return {numContours, xMin, yMin, xMax, yMax};
+        auto xMin = try$(s.nextI16be());
+        auto yMin = try$(s.nextI16be());
+        auto xMax = try$(s.nextI16be());
+        auto yMax = try$(s.nextI16be());
+        return Ok(Metrics{numContours, xMin, yMin, xMax, yMax});
     }
 
-    always_inline Metrics metrics(usize glyfOffset) const {
+    always_inline Res<Metrics> metrics(usize glyfOffset) const {
         auto s = begin();
         return metrics(s, glyfOffset);
     }
 
     static constexpr usize MAX_COMPOSITE_DEPTH = 16;
 
-    void contour(Gfx::Canvas& g, usize glyfOffset, Loca const& loca, Head const& head, Math::Trans2f trans = Math::Trans2f::identity(), usize depth = 0) const {
+    Res<> contour(Gfx::Canvas& g, usize glyfOffset, Loca const& loca, Head const& head, Math::Trans2f trans = Math::Trans2f::identity(), usize depth = 0) const {
         auto s = begin();
-        auto m = metrics(s, glyfOffset);
+        auto m = try$(metrics(s, glyfOffset));
 
         if (m.numContours > 0) {
-            contourSimple(g, m, s, trans);
+            try$(contourSimple(g, m, s, trans));
         } else if (m.numContours < 0) {
             if (depth >= MAX_COMPOSITE_DEPTH) {
                 logWarn("glyf: composite glyph nesting too deep");
-                return;
+                return Ok();
             }
-            contourComposite(g, s, loca, head, trans, depth);
+            try$(contourComposite(g, s, loca, head, trans, depth));
         }
+
+        return Ok();
     }
 
     // MARK: Simple Contour ----------------------------------------------------
@@ -87,12 +89,14 @@ export struct Glyf : Io::BChunk {
         i16 y;
     };
 
-    void contourSimple(Gfx::Canvas& g, Metrics m, Io::BScan& s, Math::Trans2f trans) const {
+    Res<> contourSimple(Gfx::Canvas& g, Metrics m, Io::BScan& s, Math::Trans2f trans) const {
         auto endPtsOfContours = s;
-        auto nPoints = s.peek(2 * (m.numContours - 1)).nextU16be() + 1u;
-        u16 instructionLength = s.skip(m.numContours * 2).nextU16be();
+        auto nPoints = try$(try$(s.peek(2 * (m.numContours - 1))).nextU16be()) + 1u;
+        try$(s.skip(m.numContours * 2));
+        u16 instructionLength = try$(s.nextU16be());
 
-        auto flagsScan = s.skip(instructionLength);
+        try$(s.skip(instructionLength));
+        auto flagsScan = s;
 
         usize nXCoords = 0;
         u8 flags = 0;
@@ -100,9 +104,9 @@ export struct Glyf : Io::BChunk {
 
         for (usize i = 0; i < nPoints; i++) {
             if (not flagsRepeat) {
-                flags = s.nextU8be();
+                flags = try$(s.nextU8be());
                 if (flags & REPEAT) {
-                    flagsRepeat = s.nextU8be();
+                    flagsRepeat = try$(s.nextU8be());
                 }
             } else {
                 flagsRepeat--;
@@ -114,14 +118,15 @@ export struct Glyf : Io::BChunk {
         }
 
         auto xCoordsScan = s;
-        auto yCoordsScan = s.skip(nXCoords);
+        try$(s.skip(nXCoords));
+        auto yCoordsScan = s;
 
         usize start = 0;
         Math::Vec2f curr{};
         flags = 0;
         flagsRepeat = 0;
         for (isize c = 0; c < m.numContours; c++) {
-            usize end = endPtsOfContours.nextU16be();
+            usize end = try$(endPtsOfContours.nextU16be());
 
             Math::Vec2f cp{};
             Math::Vec2f startP{};
@@ -129,21 +134,21 @@ export struct Glyf : Io::BChunk {
 
             for (usize i = start; i <= end; i++) {
                 if (not flagsRepeat) {
-                    flags = flagsScan.nextU8be();
+                    flags = try$(flagsScan.nextU8be());
                     if (flags & REPEAT) {
-                        flagsRepeat = flagsScan.nextU8be();
+                        flagsRepeat = try$(flagsScan.nextU8be());
                     }
                 } else {
                     flagsRepeat--;
                 }
 
                 isize x = (flags & X_SHORT_VECTOR)
-                              ? ((flags & SAME_OR_POSITIVE_X) ? xCoordsScan.nextU8be() : -xCoordsScan.nextU8be())
-                              : ((flags & SAME_OR_POSITIVE_X) ? 0 : xCoordsScan.nextI16be());
+                              ? ((flags & SAME_OR_POSITIVE_X) ? try$(xCoordsScan.nextU8be()) : -try$(xCoordsScan.nextU8be()))
+                              : ((flags & SAME_OR_POSITIVE_X) ? 0 : try$(xCoordsScan.nextI16be()));
 
                 isize y = (flags & Y_SHORT_VECTOR)
-                              ? ((flags & SAME_OR_POSITIVE_Y) ? yCoordsScan.nextU8be() : -yCoordsScan.nextU8be())
-                              : ((flags & SAME_OR_POSITIVE_Y) ? 0 : yCoordsScan.nextI16be());
+                              ? ((flags & SAME_OR_POSITIVE_Y) ? try$(yCoordsScan.nextU8be()) : -try$(yCoordsScan.nextU8be()))
+                              : ((flags & SAME_OR_POSITIVE_Y) ? 0 : try$(yCoordsScan.nextI16be()));
 
                 curr = curr + Math::Vec2f{(f64)x, (f64)-y};
 
@@ -179,6 +184,8 @@ export struct Glyf : Io::BChunk {
             g.closePath();
             start = end + 1;
         }
+
+        return Ok();
     }
 
     // MARK: Composite Contour -------------------------------------------------
@@ -194,19 +201,19 @@ export struct Glyf : Io::BChunk {
     static constexpr u16 USE_MY_METRICS = 0x0200;
     static constexpr u16 OVERLAP_COMPOUND = 0x0400; // ignore for rasterless outline
 
-    void contourComposite(Gfx::Canvas& g, Io::BScan& s, Loca const& loca, Head const& head, Math::Trans2f parentTrans, usize depth) const {
+    Res<> contourComposite(Gfx::Canvas& g, Io::BScan& s, Loca const& loca, Head const& head, Math::Trans2f parentTrans, usize depth) const {
         while (true) {
-            u16 flags = s.nextU16be();
-            u16 glyphIndex = s.nextU16be();
+            u16 flags = try$(s.nextU16be());
+            u16 glyphIndex = try$(s.nextU16be());
 
             // args
             i16 arg1 = 0, arg2 = 0;
             if (flags & ARG_1_AND_2_ARE_WORDS) {
-                arg1 = s.nextI16be();
-                arg2 = s.nextI16be();
+                arg1 = try$(s.nextI16be());
+                arg2 = try$(s.nextI16be());
             } else {
-                arg1 = (i8)s.nextU8be();
-                arg2 = (i8)s.nextU8be();
+                arg1 = (i8)try$(s.nextU8be());
+                arg2 = (i8)try$(s.nextU8be());
             }
 
             f64 tx = 0, ty = 0;
@@ -227,35 +234,37 @@ export struct Glyf : Io::BChunk {
 
             f64 a = 1, b = 0, c = 0, d = 1;
             if (flags & WE_HAVE_A_SCALE) {
-                f64 s14 = (f64)s.nextI16be() / 16384.0;
+                f64 s14 = (f64)try$(s.nextI16be()) / 16384.0;
                 a = d = s14;
             } else if (flags & WE_HAVE_AN_X_AND_Y_SCALE) {
-                a = (f64)s.nextI16be() / 16384.0;
-                d = (f64)s.nextI16be() / 16384.0;
+                a = (f64)try$(s.nextI16be()) / 16384.0;
+                d = (f64)try$(s.nextI16be()) / 16384.0;
             } else if (flags & WE_HAVE_A_TWO_BY_TWO) {
-                a = (f64)s.nextI16be() / 16384.0;
-                b = (f64)s.nextI16be() / 16384.0;
-                c = (f64)s.nextI16be() / 16384.0;
-                d = (f64)s.nextI16be() / 16384.0;
+                a = (f64)try$(s.nextI16be()) / 16384.0;
+                b = (f64)try$(s.nextI16be()) / 16384.0;
+                c = (f64)try$(s.nextI16be()) / 16384.0;
+                d = (f64)try$(s.nextI16be()) / 16384.0;
             }
 
             // NOTE: TrueType maps x' = a*x + c*y and y' = b*x + d*y, in a y-up space.
             //       Glyph outlines are emitted y-down, so the off-diagonal terms flip sign.
             Math::Trans2f t{a, -b, -c, d, tx, ty};
 
-            auto subOff = loca.glyfOffset(glyphIndex, head);
-            if (subOff != loca.glyfOffset(glyphIndex + 1, head))
-                contour(g, subOff, loca, head, t.multiply(parentTrans), depth + 1);
+            auto subOff = try$(loca.glyfOffset(glyphIndex, head));
+            if (subOff != try$(loca.glyfOffset(glyphIndex + 1, head)))
+                try$(contour(g, subOff, loca, head, t.multiply(parentTrans), depth + 1));
 
             // last component?
             if (!(flags & MORE_COMPONENTS)) {
                 if (flags & WE_HAVE_INSTRUCTIONS) {
-                    u16 ilen = s.nextU16be();
-                    s.skip(ilen);
+                    u16 ilen = try$(s.nextU16be());
+                    try$(s.skip(ilen));
                 }
                 break;
             }
         }
+
+        return Ok();
     }
 };
 

@@ -50,35 +50,49 @@ struct Segment {
 
 struct SegmentIter {
     Io::BScan s;
+    Res<> _status = Ok();
 
     Opt<Segment> next() {
-        if (s.ended())
+        if (not _status or s.ended())
             return NONE;
 
-        if (s.nextU8be() != 0xFF) {
-            logError("jpeg: expected a marker");
+        auto segment = _next();
+        if (not segment) {
+            _status = segment.none();
             return NONE;
         }
+        return Some(segment.take());
+    }
 
-        u8 code = s.nextU8be();
+    Res<> status() const {
+        return _status;
+    }
+
+    Res<Segment> _next() {
+        if (try$(s.nextU8be()) != 0xFF) {
+            logError("jpeg: expected a marker");
+            return Error::invalidData("expected a marker");
+        }
+
+        u8 code = try$(s.nextU8be());
         while (code == 0xFF and not s.ended())
-            code = s.nextU8be();
+            code = try$(s.nextU8be());
 
         Segment segment{.marker = Marker{code}};
         if (segment.marker.standalone())
-            return Some(segment);
+            return Ok(segment);
 
-        u16 len = s.nextU16be();
+        u16 len = try$(s.nextU16be());
         if (len < 2) {
             logError("jpeg: invalid segment length: {}", len);
-            return NONE;
+            return Error::invalidData("invalid segment length");
         }
 
-        segment.data = s.nextBytes(len - 2);
+        segment.data = try$(s.nextBytes(len - 2));
         if (segment.marker == Marker::SOS)
-            segment.entropyCoded = s.nextBytes(_entropyCodedLen(s.remBytes()));
+            segment.entropyCoded = try$(s.nextBytes(_entropyCodedLen(s.remBytes())));
 
-        return Some(segment);
+        return Ok(segment);
     }
 };
 
@@ -110,7 +124,8 @@ export struct Decoder {
     }
 
     Res<> _loadFrame() {
-        for (auto segment : iterSegments()) {
+        auto segments = iterSegments();
+        for (auto segment : segments) {
             if (segment.marker == Marker::SOF0)
                 return startOfFrame(segment.data);
 
@@ -122,6 +137,7 @@ export struct Decoder {
             if (segment.marker == Marker::SOS or segment.marker == Marker::EOI)
                 break;
         }
+        try$(segments.status());
 
         logError("jpeg: missing start of frame");
         return Error::invalidData("missing start of frame");
@@ -133,7 +149,7 @@ export struct Decoder {
 
     Res<> defineQuantizationTable(Io::BScan s) {
         while (not s.ended()) {
-            u8 infos = s.nextU8be();
+            u8 infos = try$(s.nextU8be());
             u8 id = infos & 0x0F;
 
             if (id > 3) {
@@ -146,7 +162,7 @@ export struct Decoder {
 
             for (usize i = 0; i < 64; ++i) {
                 // NOTE: Quantization tables are stored in zig-zag order.
-                quant[ZIGZAG[i]] = is16bit ? s.nextU16be() : s.nextU8be();
+                quant[ZIGZAG[i]] = is16bit ? try$(s.nextU16be()) : try$(s.nextU8be());
             }
         }
 
@@ -205,35 +221,35 @@ export struct Decoder {
     // B.2.2 Frame header syntax
     // https://www.w3.org/Graphics/JPEG/itu-t81.pdf#page=39
     Res<> startOfFrame(Io::BScan s) {
-        u8 precision = s.nextU8be();
+        u8 precision = try$(s.nextU8be());
         if (precision != 8) {
             logError("jpeg: invalid precision: {}", precision);
             return Error::invalidData("invalid precision");
         }
 
-        _height = s.nextU16be();
-        _width = s.nextU16be();
+        _height = try$(s.nextU16be());
+        _width = try$(s.nextU16be());
 
         if (_width == 0 or _height == 0) {
             logError("jpeg: invalid image size: {}x{}", _width, _height);
             return Error::invalidData("invalid image size");
         }
 
-        u8 componentCount = s.nextU8be();
+        u8 componentCount = try$(s.nextU8be());
         if (componentCount != 1 and componentCount != 3) {
             logError("jpeg: invalid component count: {}", componentCount);
             return Error::invalidData("invalid component count");
         }
 
         for (u8 i = 0; i < componentCount; ++i) {
-            u8 id = s.nextU8be();
+            u8 id = try$(s.nextU8be());
 
             if (_componentIndex(id)) {
                 logError("jpeg: duplicate component id: {}", id);
                 return Error::invalidData("duplicate component id");
             }
 
-            u8 sampling = s.nextU8be();
+            u8 sampling = try$(s.nextU8be());
             u8 hSampling = sampling >> 4;
             u8 vSampling = sampling & 0xF;
 
@@ -242,7 +258,7 @@ export struct Decoder {
                 return Error::invalidData("invalid sampling factors");
             }
 
-            u8 quantId = s.nextU8be();
+            u8 quantId = try$(s.nextU8be());
             if (quantId > 3) {
                 logError("jpeg: invalid quantization table id: {}", quantId);
                 return Error::invalidData("invalid quantization table id");
@@ -275,7 +291,7 @@ export struct Decoder {
     usize _restartInterval = 0;
 
     Res<> defineRestartInterval(Io::BScan s) {
-        _restartInterval = s.nextU16be();
+        _restartInterval = try$(s.nextU16be());
 
         if (not s.ended()) {
             logError("jpeg: unexpected data after DRI marker");
@@ -292,7 +308,7 @@ export struct Decoder {
 
     Res<> defineHuffmanTable(Io::BScan s) {
         while (not s.ended()) {
-            u8 infos = s.nextU8be();
+            u8 infos = try$(s.nextU8be());
             u8 id = infos & 0x0F;
             bool isAc = (infos >> 4) == 1;
 
@@ -305,7 +321,7 @@ export struct Decoder {
 
             usize sum = 0;
             for (usize i = 1; i < 17; ++i) {
-                sum += s.nextU8be();
+                sum += try$(s.nextU8be());
                 table.offs[i] = sum;
             }
 
@@ -315,7 +331,7 @@ export struct Decoder {
             }
 
             for (usize i = 0; i < sum; ++i) {
-                table.syms[i] = s.nextU8be();
+                table.syms[i] = try$(s.nextU8be());
             }
         }
 
@@ -329,7 +345,7 @@ export struct Decoder {
     // B.2.3 Scan header syntax
     // https://www.w3.org/Graphics/JPEG/itu-t81.pdf#page=41
     Res<Scan> startOfScan(Io::BScan s) {
-        u8 componentCount = s.nextU8be();
+        u8 componentCount = try$(s.nextU8be());
         if (componentCount == 0 or componentCount > _components.len()) {
             logError("jpeg: invalid scan component count: {}", componentCount);
             return Error::invalidData("invalid scan component count");
@@ -337,7 +353,7 @@ export struct Decoder {
 
         Scan scan;
         for (u8 i = 0; i < componentCount; ++i) {
-            u8 id = s.nextU8be();
+            u8 id = try$(s.nextU8be());
 
             auto index = _componentIndex(id);
             if (not index) {
@@ -345,7 +361,7 @@ export struct Decoder {
                 return Error::invalidData("undefined component id");
             }
 
-            u8 huffIds = s.nextU8be();
+            u8 huffIds = try$(s.nextU8be());
             auto& c = _components[*index];
             c.dcHuffId = huffIds >> 4;
             c.acHuffId = huffIds & 0xF;
@@ -363,9 +379,9 @@ export struct Decoder {
             scan.pushBack(*index);
         }
 
-        u8 ss = s.nextU8be();
-        u8 se = s.nextU8be();
-        u8 ahAl = s.nextU8be();
+        u8 ss = try$(s.nextU8be());
+        u8 se = try$(s.nextU8be());
+        u8 ahAl = try$(s.nextU8be());
 
         if (ss != 0 or se != 63) {
             logError("jpeg: unexpected spectral selection");
@@ -496,7 +512,8 @@ export struct Decoder {
         for (auto& c : _components)
             c.blocks = Box<Block[]>::filled(c.blocksPerLine * c.blocksPerColumn);
 
-        for (auto segment : iterSegments()) {
+        auto segments = iterSegments();
+        for (auto segment : segments) {
             auto marker = segment.marker;
 
             if (marker == Marker::DQT) {
@@ -522,6 +539,7 @@ export struct Decoder {
                 logWarn("jpeg: unknown marker: {}", marker);
             }
         }
+        try$(segments.status());
 
         logError("jpeg: missing EOI marker");
         return Error::invalidData("missing EOI marker");

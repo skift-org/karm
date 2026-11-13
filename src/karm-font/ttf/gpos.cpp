@@ -44,34 +44,34 @@ export struct GposValueRecord {
         Y_ADVANCE_DEVICE = 1 << 7,
     };
 
-    static GposValueRecord read(Io::BScan& s, u16 format) {
+    static Res<GposValueRecord> read(Io::BScan& s, u16 format) {
         GposValueRecord r = {};
 
         if (format & X_PLACEMENT)
-            r.xPlacement = s.nextI16be();
+            r.xPlacement = try$(s.nextI16be());
 
         if (format & Y_PLACEMENT)
-            r.yPlacement = s.nextI16be();
+            r.yPlacement = try$(s.nextI16be());
 
         if (format & X_ADVANCE)
-            r.xAdvance = s.nextI16be();
+            r.xAdvance = try$(s.nextI16be());
 
         if (format & Y_ADVANCE)
-            r.yAdvance = s.nextI16be();
+            r.yAdvance = try$(s.nextI16be());
 
         if (format & X_PLACEMENT_DEVICE)
-            r.xPlacementDeviceOffset = s.nextI16be();
+            r.xPlacementDeviceOffset = try$(s.nextI16be());
 
         if (format & Y_PLACEMENT_DEVICE)
-            r.yPlacementDeviceOffset = s.nextI16be();
+            r.yPlacementDeviceOffset = try$(s.nextI16be());
 
         if (format & X_ADVANCE_DEVICE)
-            r.xAdvanceDeviceOffset = s.nextI16be();
+            r.xAdvanceDeviceOffset = try$(s.nextI16be());
 
         if (format & Y_ADVANCE_DEVICE)
-            r.yAdvanceDeviceOffset = s.nextI16be();
+            r.yAdvanceDeviceOffset = try$(s.nextI16be());
 
-        return r;
+        return Ok(r);
     }
 
     static usize len(usize format) {
@@ -84,43 +84,44 @@ export struct GposGlyphPairAdjustment : LookupSubtable {
     static constexpr auto LOOKUP_TYPE = GposLookupType::PAIR_ADJUSTMENT;
     static constexpr int FORMAT = 1;
 
-    Opt<Pair<GposValueRecord>> adjustments(usize prev, usize curr) {
+    Res<Opt<Pair<GposValueRecord>>> adjustments(usize prev, usize curr) {
         auto s = begin();
 
         // Read the table header
-        /* format = */ s.nextU16be();
-        auto coverageOffset = s.nextU16be();
-        auto valueFormat1 = s.nextU16be();
-        auto valueFormat2 = s.nextU16be();
-        auto pairSetCount = s.nextU16be();
+        try$(s.skip(2)); // format
+        auto coverageOffset = try$(s.nextU16be());
+        auto valueFormat1 = try$(s.nextU16be());
+        auto valueFormat2 = try$(s.nextU16be());
+        auto pairSetCount = try$(s.nextU16be());
 
         // Lookup the coverage index for the first glyph
-        CoverageTable coverage{begin().skip(coverageOffset).remBytes()};
-        auto coverageIndex = coverage.coverageIndex(prev);
+        CoverageTable coverage{try$(begin(coverageOffset)).remBytes()};
+        auto coverageIndex = try$(coverage.coverageIndex(prev));
 
         if (not coverageIndex or (*coverageIndex >= pairSetCount))
-            return NONE;
+            return Ok(NONE);
 
         auto value1len = GposValueRecord::len(valueFormat1);
         auto value2len = GposValueRecord::len(valueFormat2);
-        auto pairSetOffset = s.skip(coverageIndex.expect() * 2).nextU16be();
+        try$(s.skip(*coverageIndex * 2));
+        auto pairSetOffset = try$(s.nextU16be());
 
         // Lookup the PairSet table for the second glyph
-        auto pairSetTable = begin(pairSetOffset);
-        auto pairValueCount = pairSetTable.nextU16be();
+        auto pairSetTable = try$(begin(pairSetOffset));
+        auto pairValueCount = try$(pairSetTable.nextU16be());
 
         for (usize _ : urange::zeroTo(pairValueCount)) {
-            auto secondGlyph = pairSetTable.nextU16be();
+            auto secondGlyph = try$(pairSetTable.nextU16be());
             if (secondGlyph == curr) {
-                GposValueRecord value1 = GposValueRecord::read(pairSetTable, valueFormat1);
-                GposValueRecord value2 = GposValueRecord::read(pairSetTable, valueFormat2);
-                return Some(Pair<GposValueRecord>{value1, value2});
+                GposValueRecord value1 = try$(GposValueRecord::read(pairSetTable, valueFormat1));
+                GposValueRecord value2 = try$(GposValueRecord::read(pairSetTable, valueFormat2));
+                return Ok(Some(Pair<GposValueRecord>{value1, value2}));
             }
 
-            pairSetTable.skip(value1len + value2len);
+            try$(pairSetTable.skip(value1len + value2len));
         }
 
-        return NONE;
+        return Ok(NONE);
     }
 };
 
@@ -129,36 +130,38 @@ export struct GposClassPairAdjustment : LookupSubtable {
     static constexpr auto LOOKUP_TYPE = GposLookupType::PAIR_ADJUSTMENT;
     static constexpr int FORMAT = 2;
 
-    Opt<Pair<GposValueRecord>> adjustments(usize prev, usize curr) {
+    Res<Opt<Pair<GposValueRecord>>> adjustments(usize prev, usize curr) {
         auto s = begin();
 
         // Read the table header
-        /* format = */ s.nextU16be();
-        /* coverageOffset = */ s.nextU16be();
-        auto valueFormat1 = s.nextU16be();
-        auto valueFormat2 = s.nextU16be();
-        auto classDef1Offset = s.nextU16be();
-        auto classDef2Offset = s.nextU16be();
-        /* class1Count = */ s.nextU16be();
-        auto class2Count = s.nextU16be();
+        try$(s.skip(2)); // format
+        try$(s.skip(2)); // coverageOffset
+        auto valueFormat1 = try$(s.nextU16be());
+        auto valueFormat2 = try$(s.nextU16be());
+        auto classDef1Offset = try$(s.nextU16be());
+        auto classDef2Offset = try$(s.nextU16be());
+        try$(s.skip(2)); // class1Count
+        auto class2Count = try$(s.nextU16be());
 
-        ClassDef prevClassDef{begin().skip(classDef1Offset).remBytes()};
-        ClassDef currClassDef{begin().skip(classDef2Offset).remBytes()};
+        ClassDef prevClassDef{try$(begin(classDef1Offset)).remBytes()};
+        ClassDef currClassDef{try$(begin(classDef2Offset)).remBytes()};
 
         auto prevClass = try$(prevClassDef.classOf(prev));
         auto currClass = try$(currClassDef.classOf(curr));
+        if (not prevClass or not currClass)
+            return Ok(NONE);
 
         auto value1len = GposValueRecord::len(valueFormat1);
         auto value2len = GposValueRecord::len(valueFormat2);
 
         auto class2Size = value1len + value2len;
         auto class1Size = class2Count * class2Size;
-        s.skip((prevClass * class1Size) + (currClass * class2Size));
+        try$(s.skip((*prevClass * class1Size) + (*currClass * class2Size)));
 
-        GposValueRecord value1 = GposValueRecord::read(s, valueFormat1);
-        GposValueRecord value2 = GposValueRecord::read(s, valueFormat2);
+        GposValueRecord value1 = try$(GposValueRecord::read(s, valueFormat1));
+        GposValueRecord value2 = try$(GposValueRecord::read(s, valueFormat2));
 
-        return Some(Pair{value1, value2});
+        return Ok(Some(Pair{value1, value2}));
     }
 };
 
@@ -175,35 +178,36 @@ export struct Gpos : Io::BChunk {
     using FeatureListOffset = Io::BField<u16be, 6>;
     using LookupListOffset = Io::BField<u16be, 8>;
 
-    ScriptList scriptList() const {
-        return ScriptList{begin().skip(get<ScriptListOffset>()).remBytes()};
+    Res<ScriptList> scriptList() const {
+        return Ok(ScriptList{try$(begin(try$(get<ScriptListOffset>()))).remBytes()});
     }
 
-    FeatureList featureList() const {
-        return FeatureList{begin().skip(get<FeatureListOffset>()).remBytes()};
+    Res<FeatureList> featureList() const {
+        return Ok(FeatureList{try$(begin(try$(get<FeatureListOffset>()))).remBytes()});
     }
 
-    LookupList lookupList() const {
-        return LookupList{begin().skip(get<LookupListOffset>()).remBytes()};
+    Res<LookupList> lookupList() const {
+        return Ok(LookupList{try$(begin(try$(get<LookupListOffset>()))).remBytes()});
     }
 
     Res<Pair<GposValueRecord>> adjustments(usize prev, usize curr) const {
         // 1. Locate the current script in the GPOS ScriptList table.
 
         // FIXME: We assume that the script is always "latn".
-        auto scriptTable = try$(scriptList().lookup("latn"));
+        auto scriptTable = try$(try$(scriptList()).lookup("latn"));
 
         // 2. If the language system is known, search the script for the correct
         //    LangSys table; otherwise, use the script’s default LangSys table.
 
         // FIXME: We assume that the language system is always "dflt".
-        auto langSys = scriptTable.defaultLangSys();
+        auto langSys = try$(scriptTable.defaultLangSys());
 
         // 3. The LangSys table provides index numbers into the GPOS FeatureList
         //    table to access a required feature and a number of additional features.
         Opt<FeatureTable> kernFeatureTable;
-        for (auto featureIndex : langSys.iterFeatures()) {
-            auto featureTable = featureList().at(featureIndex);
+        auto features = try$(featureList());
+        for (u16 featureIndex : try$(langSys.featureIndices())) {
+            auto featureTable = try$(features.at(featureIndex));
 
             // 4. Inspect the featureTag of each feature, and select the feature
             //    tables to apply to an input glyph string.
@@ -227,20 +231,22 @@ export struct Gpos : Io::BChunk {
         //    LookupList table. Assemble all lookups from the set of chosen
         //    feature tables, and apply the lookups in the order given in the
         //    LookupList table.
-        for (auto lookupIndex : kernFeatureTable->iterLookups()) {
-            auto lookupTable = lookupList().at(lookupIndex);
+        auto lookups = try$(lookupList());
+        for (u16 lookupIndex : try$(kernFeatureTable->lookupIndices())) {
+            auto lookupTable = try$(lookups.at(lookupIndex));
 
             // FIXME: We only support pair adjustment lookups.
-            if (lookupTable.lookupType() != (u16)GposLookupType::PAIR_ADJUSTMENT)
+            if (try$(lookupTable.lookupType()) != (u16)GposLookupType::PAIR_ADJUSTMENT)
                 continue;
 
-            for (auto lookupSubtable : lookupTable.iter<GposLookupSubtable>()) {
+            for (u16 offset : try$(lookupTable.subtableOffsets())) {
+                auto lookupSubtable = try$(lookupTable.subtable<GposLookupSubtable>(offset));
                 if (auto glyphPair = lookupSubtable.is<GposGlyphPairAdjustment>()) {
-                    auto pair = glyphPair->adjustments(prev, curr);
+                    auto pair = try$(glyphPair->adjustments(prev, curr));
                     if (pair)
                         return Ok(*pair);
                 } else if (auto classPair = lookupSubtable.is<GposClassPairAdjustment>()) {
-                    auto pair = classPair->adjustments(prev, curr);
+                    auto pair = try$(classPair->adjustments(prev, curr));
                     if (pair)
                         return Ok(*pair);
                 } else {

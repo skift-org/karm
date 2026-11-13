@@ -290,49 +290,31 @@ struct MultiLocalizedUnicodeType : Io::BChunk {
         u32be stringOff;
     };
 
-    auto iterRecords() const {
-        struct Iter {
-            Io::BScan scan;
-            usize numberOfRecord;
-            usize recordSize;
-
-            Opt<Record> next() {
-                if (not numberOfRecord or scan.ended())
-                    return NONE;
-
-                auto record = scan.peek<Record>();
-                scan.skip(recordSize);
-                numberOfRecord--;
-                return Some(record);
-            }
-        };
-
+    Res<Slice<Record>> records() const {
         auto scan = begin();
-        auto header = scan.next<Header>();
-        return Iter{
-            begin().skip(sizeof(Header)),
-            header.numberOfRecord,
-            header.recordSize
-        };
+        auto header = try$(scan.next<Header>());
+        if (header.recordSize != sizeof(Record))
+            return Error::invalidData("unsupported mluc record size");
+        return scan.nextSlice<Record>(header.numberOfRecord);
     }
 
-    String lookupStringPreferringEnglish() const {
+    Res<String> lookupStringPreferringEnglish() const {
         _Str<Utf16be> best = {};
-        for (auto record : iterRecords()) {
+        for (auto const& record : try$(records())) {
+            auto scan = begin();
+            try$(scan.skip(record.stringOff));
             _Str<Utf16be> str =
-                begin()
-                    .skip(record.stringOff)
-                    .nextBytes(record.stringLen)
+                try$(scan.nextBytes(record.stringLen))
                     .cast<Utf16be::Unit>();
 
             if (not best)
                 best = str;
         }
-        return transcode(best);
+        return Ok(transcode(best));
     }
 
     void repr(Io::Emit& e) const {
-        e("multi localised string {:#}", lookupStringPreferringEnglish());
+        e("multi localised string {:#}", lookupStringPreferringEnglish().unwrapOr(""s));
     }
 };
 
@@ -341,19 +323,20 @@ struct MultiLocalizedUnicodeType : Io::BChunk {
 struct TextType : Io::BChunk {
     static constexpr Str SIG = "text"s;
 
-    Str text() const {
-        auto scan = begin().skip(8);
+    Res<Str> text() const {
+        auto scan = begin();
+        try$(scan.skip(8));
         return scan.nextCStr(scan.rem());
     }
 
     void repr(Io::Emit& e) const {
-        e("text {:#}", text());
+        e("text {:#}", text().unwrapOr(""s));
     }
 };
 
 struct UnknownType : Io::BChunk {
     void repr(Io::Emit& e) const {
-        e("unknown tag {:#}", begin().nextStr(4));
+        e("unknown tag {:#}", begin().nextStr(4).unwrapOr(""s));
     }
 };
 
@@ -370,7 +353,7 @@ bool tagTypeMatch(Str query, Str sig) {
 }
 
 TagType tagTypeFrom(Bytes bytes) {
-    auto query = Io::BScan{bytes}.nextStr(4);
+    auto query = Io::BScan{bytes}.nextStr(4).unwrapOr(""s);
     TagType result = UnknownType{bytes};
     TagType::any([&]<typename T>() {
         if constexpr (requires { T::SIG; })
@@ -390,35 +373,35 @@ struct Tag {
 export struct Parser : Io::BChunk {
     Opt<ProfileHeader> _header = NONE;
 
-    ProfileHeader header() {
+    Res<ProfileHeader> header() {
         if (not _header)
-            _header = Some(begin().next<ProfileHeader>());
-        return *_header;
+            _header = Some(try$(begin().next<ProfileHeader>()));
+        return Ok(*_header);
     }
 
-    auto iterTag() {
-        auto s = begin().skip(sizeof(ProfileHeader));
-        auto n = s.next<u32be>();
+    struct TagIter {
+        Bytes data;
+        Slice<TagTableEntry> entries;
+        usize index = 0;
 
-        struct Iter {
-            Bytes data;
-            Io::BScan s;
-            u32 n;
+        Opt<Tag> next() {
+            if (index >= entries.len())
+                return NONE;
+            auto const& entry = entries[index++];
+            return Some(Tag{entry.sig, tagTypeFrom(sub(data, entry.off, entry.off + entry.len))});
+        }
+    };
 
-            Opt<Tag> next() {
-                if (n == 0 or s.ended())
-                    return NONE;
-                auto entry = s.next<TagTableEntry>();
-                auto type =
-                    Io::BScan{data}
-                        .skip(entry.off)
-                        .nextBytes(entry.len);
-                n--;
-                return Some(Tag{entry.sig, tagTypeFrom(type)});
-            }
-        };
-
-        return Iter{bytes(), s, n};
+    Res<TagIter> iterTag() const {
+        auto s = begin();
+        try$(s.skip(sizeof(ProfileHeader)));
+        auto count = try$(s.nextU32be());
+        auto entries = try$(s.nextSlice<TagTableEntry>(count));
+        for (auto const& entry : entries) {
+            if (entry.off > bytes().len() or entry.len > bytes().len() - entry.off)
+                return Error::unexpectedEof("tag data out of bounds");
+        }
+        return Ok(TagIter{bytes(), entries});
     }
 };
 

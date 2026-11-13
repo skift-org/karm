@@ -21,22 +21,22 @@ namespace Karm::Font::Ttf {
 
 static Res<> _visitComponents(Bytes glyph, auto fn) {
     Io::BScan s{glyph};
-    if (s.rem() < 10 or s.nextI16be() >= 0)
+    if (s.rem() < 10 or try$(s.nextI16be()) >= 0)
         return Ok();
 
-    s.seek(10);
+    try$(s.seek(10));
     while (s.rem() >= 4) {
-        u16 flags = s.nextU16be();
+        u16 flags = try$(s.nextU16be());
         usize at = s.tell();
-        try$(fn(at, s.nextU16be()));
+        try$(fn(at, try$(s.nextU16be())));
 
-        s.skip((flags & Glyf::ARG_1_AND_2_ARE_WORDS) ? 4 : 2);
+        try$(s.skip((flags & Glyf::ARG_1_AND_2_ARE_WORDS) ? 4 : 2));
         if (flags & Glyf::WE_HAVE_A_SCALE)
-            s.skip(2);
+            try$(s.skip(2));
         else if (flags & Glyf::WE_HAVE_AN_X_AND_Y_SCALE)
-            s.skip(4);
+            try$(s.skip(4));
         else if (flags & Glyf::WE_HAVE_A_TWO_BY_TWO)
-            s.skip(8);
+            try$(s.skip(8));
 
         if (not(flags & Glyf::MORE_COMPONENTS))
             break;
@@ -63,17 +63,17 @@ export Res<Gfx::FontSubset> subset(Parser const& parser, Slice<Gfx::Glyph> glyph
     if (head.len() < 54 or hhea.len() < 36 or maxp.bytes().len() < 6)
         return Error::invalidData("truncated font tables");
 
-    u16 numGlyphs = maxp.numGlyphs();
+    u16 numGlyphs = try$(maxp.numGlyphs());
     auto glyf = parser._glyf.bytes();
 
-    auto glyphData = [&](u16 gid) -> Bytes {
+    auto glyphData = [&](u16 gid) -> Res<Bytes> {
         if (gid >= numGlyphs)
-            return {};
-        auto start = parser._loca.glyfOffset(gid, parser._head);
-        auto end = parser._loca.glyfOffset(gid + 1, parser._head);
+            return Ok(Bytes{});
+        auto start = try$(parser._loca.glyfOffset(gid, parser._head));
+        auto end = try$(parser._loca.glyfOffset(gid + 1, parser._head));
         if (end <= start or end > glyf.len())
-            return {};
-        return sub(glyf, start, end);
+            return Ok(Bytes{});
+        return Ok(sub(glyf, start, end));
     };
 
     Gfx::FontSubset result{.format = Ref::Uti::PUBLIC_TTF};
@@ -86,7 +86,7 @@ export Res<Gfx::FontSubset> subset(Parser const& parser, Slice<Gfx::Glyph> glyph
 
     for (usize i = 0; i < result.glyphs.len(); i++) {
         auto parent = result.glyphs[i];
-        try$(_visitComponents(glyphData(parent.index), [&](usize, u16 component) -> Res<> {
+        try$(_visitComponents(try$(glyphData(parent.index)), [&](usize, u16 component) -> Res<> {
             if (not newIds.contains(component)) {
                 newIds.put(component, result.glyphs.len());
                 result.glyphs.pushBack({component, parent.font});
@@ -104,7 +104,7 @@ export Res<Gfx::FontSubset> subset(Parser const& parser, Slice<Gfx::Glyph> glyph
     for (auto glyph : result.glyphs) {
         try$(locaOut.writeU32be(glyfOut.tell()));
 
-        auto data = glyphData(glyph.index);
+        auto data = try$(glyphData(glyph.index));
         usize from = 0;
         try$(_visitComponents(data, [&](usize at, u16 component) -> Res<> {
             try$(glyfOut.writeBytes(sub(data, from, at)));
@@ -115,7 +115,7 @@ export Res<Gfx::FontSubset> subset(Parser const& parser, Slice<Gfx::Glyph> glyph
         try$(glyfOut.writeBytes(sub(data, from, data.len())));
         try$(glyfOut.align(4));
 
-        auto m = parser._hmtx.metrics(glyph.index, parser._hhea);
+        auto m = try$(parser._hmtx.metrics(glyph.index, parser._hhea));
         try$(hmtxOut.writeU16be(m.advanceWidth));
         try$(hmtxOut.writeI16be(m.lsb));
     }

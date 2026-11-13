@@ -6,52 +6,61 @@ import Karm.Sys;
 
 using namespace Karm;
 
-static void _dumpGpos(Font::Ttf::Gpos const& gpos) {
+static Res<> _dumpGpos(Font::Ttf::Gpos const& gpos) {
     Sys::println("GPOS table:");
     if (not gpos.present()) {
         Sys::println("  not present");
-        return;
+        return Ok();
     }
 
-    Sys::println("  ScriptList (len:{})", gpos.scriptList().len());
-    for (auto script : gpos.scriptList().iter()) {
+    auto scriptList = try$(gpos.scriptList());
+    auto scripts = try$(scriptList.records());
+    Sys::println("  ScriptList (len:{})", scripts.len());
+    for (auto const& scriptRecord : scripts) {
+        auto script = try$(scriptList.script(scriptRecord));
         Sys::println("    '{}'", script.tag);
 
-        Sys::println("      '{}'", script.defaultLangSys().tag);
-        for (auto lang : script.iter()) {
+        Sys::println("      '{}'", try$(script.defaultLangSys()).tag);
+        for (auto const& langRecord : try$(script.records())) {
+            auto lang = try$(script.langSys(langRecord));
             Sys::println("      '{}'", lang.tag);
 
             Sys::println("        Features:");
-            for (auto feat : lang.iterFeatures()) {
+            for (u16 feat : try$(lang.featureIndices())) {
                 Sys::println("          '{}'", feat);
             }
         }
     }
 
-    Sys::println("  FeatureList (len:{})", gpos.featureList().len());
-    for (auto feat : gpos.featureList().iter()) {
+    auto featureList = try$(gpos.featureList());
+    auto features = try$(featureList.records());
+    Sys::println("  FeatureList (len:{})", features.len());
+    for (auto const& featureRecord : features) {
+        auto feat = try$(featureList.feature(featureRecord));
         Sys::println("    '{}'", feat.tag);
-        for (auto lookup : feat.iterLookups()) {
+        for (u16 lookup : try$(feat.lookupIndices())) {
             Sys::println("      LookupIndex: {}", lookup);
         }
     }
 
-    Sys::println("  LookupList (len:{})", gpos.lookupList().len());
+    Sys::println("  LookupList (len:{})", try$(try$(gpos.lookupList()).offsets()).len());
+    return Ok();
 }
 
-static void _dumpName(Font::Ttf::Name const& name) {
+static Res<> _dumpName(Font::Ttf::Name const& name) {
     Sys::println("Name table:");
     if (not name.present()) {
         Sys::println("  not present");
-        return;
+        return Ok();
     }
 
     Sys::println("  Records");
-    for (auto record : name.iterRecords()) {
+    for (auto const& record : try$(name.records())) {
         if (not record.isUnicode())
             continue;
-        Sys::println("    {}:{}:{} {}={:#}", record.platformId, record.encodingId, record.languageId, record.nameId, name.string(record));
+        Sys::println("    {}:{}:{} {}={:#}", (u16)record.platformId, (u16)record.encodingId, (u16)record.languageId, (u16)record.nameId, name.string(record));
     }
+    return Ok();
 }
 
 Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
@@ -70,8 +79,8 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
         auto ttf = co_try$(Font::Ttf::Parser::init(map.bytes()));
 
         Sys::println("ttf is valid");
-        _dumpGpos(ttf._gpos);
-        _dumpName(ttf._name);
+        co_try$(_dumpGpos(ttf._gpos));
+        co_try$(_dumpName(ttf._name));
 
         co_return Ok();
     } else if (verb == "dump-db") {

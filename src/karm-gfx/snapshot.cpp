@@ -139,9 +139,14 @@ export struct Snapshot {
     }
 
     void disasm(Io::Emit& e) const {
+        if (auto res = _disasm(e); not res)
+            e(" <malformed snapshot: {}>\n", res.none());
+    }
+
+    Res<> _disasm(Io::Emit& e) const {
         Io::BScan s{_state->_buf};
         while (not s.ended()) {
-            auto header = static_cast<u32>(s.nextI32le());
+            auto header = static_cast<u32>(try$(s.nextI32le()));
             Op op = static_cast<Op>(header >> 16);
             auto len = header & 0xffff;
             if (op < Op::_LEN)
@@ -158,199 +163,200 @@ export struct Snapshot {
                 break;
 
             case Op::FILL_STYLE:
-                e(" #fill:{}", s.nextI32le());
+                e(" #fill:{}", try$(s.nextI32le()));
                 break;
 
             case Op::STROKE_STYLE:
-                e(" #stroke:{}", s.nextI32le());
+                e(" #stroke:{}", try$(s.nextI32le()));
                 break;
 
             case Op::OPACITY:
-                e(" opacity:{}", s.nextF32());
+                e(" opacity:{}", try$(s.nextF32()));
                 break;
 
             case Op::ORIGIN: {
-                auto x = s.nextF32();
-                auto y = s.nextF32();
+                auto x = try$(s.nextF32());
+                auto y = try$(s.nextF32());
                 e(" x:{} y:{}", x, y);
             } break;
 
             case Op::TRANSFORM:
-                e(" #trans:{}", s.nextI32le());
+                e(" #trans:{}", try$(s.nextI32le()));
                 break;
 
             case Op::MOVE_TO:
             case Op::LINE_TO: {
-                auto x = s.nextF32();
-                auto y = s.nextF32();
-                auto f = (u32)s.nextI32le();
+                auto x = try$(s.nextF32());
+                auto y = try$(s.nextF32());
+                auto f = (u32)try$(s.nextI32le());
                 e(" x:{} y:{} options:{:08x}", x, y, f);
             } break;
 
             case Op::HLINE_TO: {
-                auto x = s.nextF32();
-                auto f = (u32)s.nextI32le();
+                auto x = try$(s.nextF32());
+                auto f = (u32)try$(s.nextI32le());
                 e(" x:{} options:{:08x}", x, f);
             } break;
 
             case Op::VLINE_TO: {
-                auto y = s.nextF32();
-                auto f = (u32)s.nextI32le();
+                auto y = try$(s.nextF32());
+                auto f = (u32)try$(s.nextI32le());
                 e(" y:{} options:{:08x}", y, f);
             } break;
 
             case Op::CUBIC_TO: {
-                auto cp1x = s.nextF32(), cp1y = s.nextF32();
-                auto cp2x = s.nextF32(), cp2y = s.nextF32();
-                auto x = s.nextF32(), y = s.nextF32();
-                auto f = (u32)s.nextI32le();
+                auto cp1x = try$(s.nextF32()), cp1y = try$(s.nextF32());
+                auto cp2x = try$(s.nextF32()), cp2y = try$(s.nextF32());
+                auto x = try$(s.nextF32()), y = try$(s.nextF32());
+                auto f = (u32)try$(s.nextI32le());
                 e(" cp1x:{} cp1y:{} cp2x:{} cp2y:{} x:{} y:{} options:{:08x}",
                   cp1x, cp1y, cp2x, cp2y, x, y, f);
             } break;
 
             case Op::QUAD_TO: {
-                auto cpx = s.nextF32(), cpy = s.nextF32();
-                auto x = s.nextF32(), y = s.nextF32();
-                auto f = (u32)s.nextI32le();
+                auto cpx = try$(s.nextF32()), cpy = try$(s.nextF32());
+                auto x = try$(s.nextF32()), y = try$(s.nextF32());
+                auto f = (u32)try$(s.nextI32le());
                 e(" cpx:{} cpy:{} x:{} y:{} options:{:08x}", cpx, cpy, x, y, f);
             } break;
 
             case Op::ARC_TO: {
-                auto rx = s.nextF32(), ry = s.nextF32();
-                auto angle = s.nextF32();
-                auto x = s.nextF32(), y = s.nextF32();
-                auto f = (u32)s.nextI32le();
+                auto rx = try$(s.nextF32()), ry = try$(s.nextF32());
+                auto angle = try$(s.nextF32());
+                auto x = try$(s.nextF32()), y = try$(s.nextF32());
+                auto f = (u32)try$(s.nextI32le());
                 e(" rx:{} ry:{} angle:{} x:{} y:{} options:{:08x}", rx, ry, angle, x, y, f);
             } break;
 
             case Op::LINE: {
-                auto sx = s.nextF32(), sy = s.nextF32();
-                auto ex = s.nextF32(), ey = s.nextF32();
+                auto sx = try$(s.nextF32()), sy = try$(s.nextF32());
+                auto ex = try$(s.nextF32()), ey = try$(s.nextF32());
                 e(" sx:{} sy:{} ex:{} ey:{}", sx, sy, ex, ey);
             } break;
 
             case Op::CURVE: {
-                auto ax = s.nextF32(), ay = s.nextF32();
-                auto bx = s.nextF32(), by = s.nextF32();
-                auto cx = s.nextF32(), cy = s.nextF32();
-                auto dx = s.nextF32(), dy = s.nextF32();
+                auto ax = try$(s.nextF32()), ay = try$(s.nextF32());
+                auto bx = try$(s.nextF32()), by = try$(s.nextF32());
+                auto cx = try$(s.nextF32()), cy = try$(s.nextF32());
+                auto dx = try$(s.nextF32()), dy = try$(s.nextF32());
                 e(" ax:{} ay:{} bx:{} by:{} cx:{} cy:{} dx:{} dy:{}",
                   ax, ay, bx, by, cx, cy, dx, dy);
             } break;
 
             case Op::ELLIPSE: {
-                auto cx = s.nextF32(), cy = s.nextF32();
-                auto rx = s.nextF32(), ry = s.nextF32();
+                auto cx = try$(s.nextF32()), cy = try$(s.nextF32());
+                auto rx = try$(s.nextF32()), ry = try$(s.nextF32());
                 e(" cx:{} cy:{} rx:{} ry:{}", cx, cy, rx, ry);
             } break;
 
             case Op::ARC: {
-                auto cx = s.nextF32(), cy = s.nextF32();
-                auto rx = s.nextF32(), ry = s.nextF32();
-                auto start = s.nextF32(), end = s.nextF32();
+                auto cx = try$(s.nextF32()), cy = try$(s.nextF32());
+                auto rx = try$(s.nextF32()), ry = try$(s.nextF32());
+                auto start = try$(s.nextF32()), end = try$(s.nextF32());
                 e(" cx:{} cy:{} rx:{} ry:{} start:{} end:{}", cx, cy, rx, ry, start, end);
             } break;
 
             case Op::PATH:
-                e(" #path:{}", s.nextI32le());
+                e(" #path:{}", try$(s.nextI32le()));
                 break;
 
             case Op::FILL:
-                e(" rule:{}", s.nextI32le());
+                e(" rule:{}", try$(s.nextI32le()));
                 break;
 
             case Op::FILL_RECT: {
-                auto x = s.nextF32(), y = s.nextF32();
-                auto width = s.nextF32(), height = s.nextF32();
-                auto a = s.nextF32(), b = s.nextF32();
-                auto c = s.nextF32(), d = s.nextF32();
-                auto f = s.nextF32(), g = s.nextF32();
-                auto h = s.nextF32(), i = s.nextF32();
+                auto x = try$(s.nextF32()), y = try$(s.nextF32());
+                auto width = try$(s.nextF32()), height = try$(s.nextF32());
+                auto a = try$(s.nextF32()), b = try$(s.nextF32());
+                auto c = try$(s.nextF32()), d = try$(s.nextF32());
+                auto f = try$(s.nextF32()), g = try$(s.nextF32());
+                auto h = try$(s.nextF32()), i = try$(s.nextF32());
                 e(" x:{} y:{} width:{} height:{}", x, y, width, height);
                 e(" a:{} b:{} c:{} d:{} e:{} f:{} g:{} h:{}", a, b, c, d, f, g, h, i);
             } break;
 
             case Op::FILL_PROSE:
-                e(" #prose:{}", s.nextI32le());
+                e(" #prose:{}", try$(s.nextI32le()));
                 break;
 
             case Op::CLIP:
-                e(" rule:{}", s.nextI32le());
+                e(" rule:{}", try$(s.nextI32le()));
                 break;
 
             case Op::CLIP_RECTI: {
-                auto x = s.nextI32le(), y = s.nextI32le();
-                auto width = s.nextI32le(), height = s.nextI32le();
+                auto x = try$(s.nextI32le()), y = try$(s.nextI32le());
+                auto width = try$(s.nextI32le()), height = try$(s.nextI32le());
                 e(" x:{} y:{} width:{} height:{}", x, y, width, height);
             } break;
 
             case Op::CLIP_RECTF: {
-                auto x = s.nextF32(), y = s.nextF32();
-                auto width = s.nextF32(), height = s.nextF32();
+                auto x = try$(s.nextF32()), y = try$(s.nextF32());
+                auto width = try$(s.nextF32()), height = try$(s.nextF32());
                 e(" x:{} y:{} width:{} height:{}", x, y, width, height);
             } break;
 
             case Op::FILTER:
-                e(" #filter:{}", s.nextI32le());
+                e(" #filter:{}", try$(s.nextI32le()));
                 break;
 
             case Op::BLIT: {
-                auto sx = s.nextI32le(), sy = s.nextI32le();
-                auto sw = s.nextI32le(), sh = s.nextI32le();
-                auto dx = s.nextI32le(), dy = s.nextI32le();
-                auto dw = s.nextI32le(), dh = s.nextI32le();
-                auto img = s.nextI32le();
+                auto sx = try$(s.nextI32le()), sy = try$(s.nextI32le());
+                auto sw = try$(s.nextI32le()), sh = try$(s.nextI32le());
+                auto dx = try$(s.nextI32le()), dy = try$(s.nextI32le());
+                auto dw = try$(s.nextI32le()), dh = try$(s.nextI32le());
+                auto img = try$(s.nextI32le());
                 e(" srcX:{} srcY:{} srcWidth:{} srcHeight:{}", sx, sy, sw, sh);
                 e(" destX:{} destY:{} destWidth:{} destHeight:{}", dx, dy, dw, dh);
                 e(" #image:{}", img);
             } break;
 
             case Op::CLEAR:
-                e(" color:{:08x}", (u32)s.nextI32le());
+                e(" color:{:08x}", (u32)try$(s.nextI32le()));
                 break;
 
             case Op::PLOT_POINT: {
-                auto x = s.nextI32le(), y = s.nextI32le();
-                auto color = (u32)s.nextI32le();
+                auto x = try$(s.nextI32le()), y = try$(s.nextI32le());
+                auto color = (u32)try$(s.nextI32le());
                 e(" x:{} y:{} color:{:08x}", x, y, color);
             } break;
 
             case Op::PLOT_EDGE: {
-                auto sx = s.nextI32le(), sy = s.nextI32le();
-                auto ex = s.nextI32le(), ey = s.nextI32le();
-                auto color = (u32)s.nextI32le();
+                auto sx = try$(s.nextI32le()), sy = try$(s.nextI32le());
+                auto ex = try$(s.nextI32le()), ey = try$(s.nextI32le());
+                auto color = (u32)try$(s.nextI32le());
                 e(" sx:{} sy:{} ex:{} ey:{} color:{:08x}", sx, sy, ex, ey, color);
             } break;
 
             case Op::PLOT_RECT: {
-                auto x = s.nextI32le(), y = s.nextI32le();
-                auto width = s.nextI32le(), height = s.nextI32le();
-                auto color = (u32)s.nextI32le();
+                auto x = try$(s.nextI32le()), y = try$(s.nextI32le());
+                auto width = try$(s.nextI32le()), height = try$(s.nextI32le());
+                auto color = (u32)try$(s.nextI32le());
                 e(" x:{} y:{} width:{} height:{} color:{:08x}", x, y, width, height, color);
             } break;
 
             case Op::RECT: {
-                auto x = s.nextF32(), y = s.nextF32();
-                auto width = s.nextF32(), height = s.nextF32();
+                auto x = try$(s.nextF32()), y = try$(s.nextF32());
+                auto width = try$(s.nextF32()), height = try$(s.nextF32());
                 e(" x:{} y:{} width:{} height:{} radii:", x, y, width, height);
                 for (auto _ : Iota(8))
-                    e(" {}", s.nextF32());
+                    e(" {}", try$(s.nextF32()));
             } break;
 
             case Op::FILL_GLYPH: {
-                auto font = s.nextI32le();
-                auto glyph = (u32)s.nextI32le();
-                auto x = s.nextF32(), y = s.nextF32();
+                auto font = try$(s.nextI32le());
+                auto glyph = (u32)try$(s.nextI32le());
+                auto x = try$(s.nextF32()), y = try$(s.nextF32());
                 e(" #font:{} glyph:{}/{} x:{} y:{}", font, glyph & 0xffff, glyph >> 16, x, y);
             } break;
 
             default:
                 for (auto _ : Iota(len))
-                    e(" {:08x}", s.nextU32le());
+                    e(" {:08x}", try$(s.nextU32le()));
                 break;
             }
             e("\n");
         }
+        return Ok();
     }
 
     Res<Rc<Image>> rasterize(f64 density = 1) const {
@@ -372,23 +378,23 @@ export struct Snapshot {
         return Ok(g.finalize());
     }
 
-    static Math::Radiif _loadRadii(Io::BScan& s) {
-        return {
-            s.nextF32(),
-            s.nextF32(),
-            s.nextF32(),
-            s.nextF32(),
-            s.nextF32(),
-            s.nextF32(),
-            s.nextF32(),
-            s.nextF32(),
-        };
+    static Res<Math::Radiif> _loadRadii(Io::BScan& s) {
+        return Ok(Math::Radiif{
+            try$(s.nextF32()),
+            try$(s.nextF32()),
+            try$(s.nextF32()),
+            try$(s.nextF32()),
+            try$(s.nextF32()),
+            try$(s.nextF32()),
+            try$(s.nextF32()),
+            try$(s.nextF32()),
+        });
     }
 
     [[gnu::flatten]] Res<> replay(Canvas& g) const {
         Io::BScan s{_state->_buf};
         while (not s.ended()) {
-            auto header = static_cast<u32>(s.nextI32le());
+            auto header = static_cast<u32>(try$(s.nextI32le()));
             auto op = static_cast<Op>(header >> 16);
             auto len = header & 0xffff;
 
@@ -402,26 +408,26 @@ export struct Snapshot {
                 break;
 
             case Op::FILL_STYLE:
-                g.fillStyle(try$(_state->load<Fill>(s.nextI32le())));
+                g.fillStyle(try$(_state->load<Fill>(try$(s.nextI32le()))));
                 break;
 
             case Op::STROKE_STYLE:
-                g.strokeStyle(try$(_state->load<Stroke>(s.nextI32le())));
+                g.strokeStyle(try$(_state->load<Stroke>(try$(s.nextI32le()))));
                 break;
 
             case Op::OPACITY:
-                g.opacity(s.nextF32());
+                g.opacity(try$(s.nextF32()));
                 break;
 
             case Op::ORIGIN:
                 g.origin({
-                    s.nextF32(),
-                    s.nextF32(),
+                    try$(s.nextF32()),
+                    try$(s.nextF32()),
                 });
                 break;
 
             case Op::TRANSFORM:
-                g.transform(try$(_state->load<Math::Trans2f>(s.nextI32le())));
+                g.transform(try$(_state->load<Math::Trans2f>(try$(s.nextI32le()))));
                 break;
 
             case Op::BEGIN_PATH:
@@ -433,104 +439,104 @@ export struct Snapshot {
                 break;
 
             case Op::MOVE_TO: {
-                auto x = s.nextF32();
-                auto y = s.nextF32();
-                auto f = Flags<Math::Path::Option>::fromUnderlying(s.nextI32le());
+                auto x = try$(s.nextF32());
+                auto y = try$(s.nextF32());
+                auto f = Flags<Math::Path::Option>::fromUnderlying(try$(s.nextI32le()));
                 g.moveTo({x, y}, f);
             } break;
 
             case Op::LINE_TO: {
-                auto x = s.nextF32();
-                auto y = s.nextF32();
-                auto f = Flags<Math::Path::Option>::fromUnderlying(s.nextI32le());
+                auto x = try$(s.nextF32());
+                auto y = try$(s.nextF32());
+                auto f = Flags<Math::Path::Option>::fromUnderlying(try$(s.nextI32le()));
                 g.lineTo({x, y}, f);
             } break;
 
             case Op::HLINE_TO: {
-                auto x = s.nextF32();
-                auto f = Flags<Math::Path::Option>::fromUnderlying(s.nextI32le());
+                auto x = try$(s.nextF32());
+                auto f = Flags<Math::Path::Option>::fromUnderlying(try$(s.nextI32le()));
                 g.hlineTo(x, f);
             } break;
 
             case Op::VLINE_TO: {
-                auto y = s.nextF32();
-                auto f = Flags<Math::Path::Option>::fromUnderlying(s.nextI32le());
+                auto y = try$(s.nextF32());
+                auto f = Flags<Math::Path::Option>::fromUnderlying(try$(s.nextI32le()));
                 g.vlineTo(y, f);
             } break;
 
             case Op::CUBIC_TO: {
-                auto bx = s.nextF32(), by = s.nextF32();
-                auto cx = s.nextF32(), cy = s.nextF32();
-                auto dx = s.nextF32(), dy = s.nextF32();
-                auto f = Flags<Math::Path::Option>::fromUnderlying(s.nextI32le());
+                auto bx = try$(s.nextF32()), by = try$(s.nextF32());
+                auto cx = try$(s.nextF32()), cy = try$(s.nextF32());
+                auto dx = try$(s.nextF32()), dy = try$(s.nextF32());
+                auto f = Flags<Math::Path::Option>::fromUnderlying(try$(s.nextI32le()));
                 g.cubicTo({bx, by}, {cx, cy}, {dx, dy}, f);
             } break;
 
             case Op::QUAD_TO: {
-                auto bx = s.nextF32(), by = s.nextF32();
-                auto cx = s.nextF32(), cy = s.nextF32();
-                auto f = Flags<Math::Path::Option>::fromUnderlying(s.nextI32le());
+                auto bx = try$(s.nextF32()), by = try$(s.nextF32());
+                auto cx = try$(s.nextF32()), cy = try$(s.nextF32());
+                auto f = Flags<Math::Path::Option>::fromUnderlying(try$(s.nextI32le()));
                 g.quadTo({bx, by}, {cx, cy}, f);
             } break;
 
             case Op::ARC_TO: {
-                auto rx = s.nextF32(), ry = s.nextF32();
-                auto a = s.nextF32();
-                auto px = s.nextF32(), py = s.nextF32();
-                auto f = Flags<Math::Path::Option>::fromUnderlying(s.nextI32le());
+                auto rx = try$(s.nextF32()), ry = try$(s.nextF32());
+                auto a = try$(s.nextF32());
+                auto px = try$(s.nextF32()), py = try$(s.nextF32());
+                auto f = Flags<Math::Path::Option>::fromUnderlying(try$(s.nextI32le()));
                 g.arcTo({rx, ry}, a, {px, py}, f);
             } break;
 
             case Op::LINE: {
-                auto sx = s.nextF32(), sy = s.nextF32();
-                auto ex = s.nextF32(), ey = s.nextF32();
+                auto sx = try$(s.nextF32()), sy = try$(s.nextF32());
+                auto ex = try$(s.nextF32()), ey = try$(s.nextF32());
                 g.line({sx, sy, ex, ey});
             } break;
 
             case Op::CURVE: {
-                auto ax = s.nextF32(), ay = s.nextF32();
-                auto bx = s.nextF32(), by = s.nextF32();
-                auto cx = s.nextF32(), cy = s.nextF32();
-                auto dx = s.nextF32(), dy = s.nextF32();
+                auto ax = try$(s.nextF32()), ay = try$(s.nextF32());
+                auto bx = try$(s.nextF32()), by = try$(s.nextF32());
+                auto cx = try$(s.nextF32()), cy = try$(s.nextF32());
+                auto dx = try$(s.nextF32()), dy = try$(s.nextF32());
                 g.curve({ax, ay, bx, by, cx, cy, dx, dy});
             } break;
 
             case Op::ARC: {
-                auto cx = s.nextF32(), cy = s.nextF32();
-                auto rx = s.nextF32(), ry = s.nextF32();
-                auto start = s.nextF32(), end = s.nextF32();
+                auto cx = try$(s.nextF32()), cy = try$(s.nextF32());
+                auto rx = try$(s.nextF32()), ry = try$(s.nextF32());
+                auto start = try$(s.nextF32()), end = try$(s.nextF32());
                 g.arc({cx, cy, rx, ry, start, end});
             } break;
 
             case Op::ELLIPSE: {
-                auto cx = s.nextF32(), cy = s.nextF32();
-                auto rx = s.nextF32(), ry = s.nextF32();
+                auto cx = try$(s.nextF32()), cy = try$(s.nextF32());
+                auto rx = try$(s.nextF32()), ry = try$(s.nextF32());
                 g.ellipse({cx, cy, rx, ry});
             } break;
 
             case Op::PATH:
-                g.path(try$(_state->load<Math::Path>(s.nextI32le())));
+                g.path(try$(_state->load<Math::Path>(try$(s.nextI32le()))));
                 break;
 
             case Op::FILL_RECT: {
                 Math::Rectf rect{
-                    s.nextF32(),
-                    s.nextF32(),
-                    s.nextF32(),
-                    s.nextF32(),
+                    try$(s.nextF32()),
+                    try$(s.nextF32()),
+                    try$(s.nextF32()),
+                    try$(s.nextF32()),
                 };
 
-                g.fill(rect, _loadRadii(s));
+                g.fill(rect, try$(_loadRadii(s)));
                 break;
             }
 
             case Op::FILL_PROSE: {
-                g.fill(try$(_state->load<Rc<Gfx::Prose>>(s.nextI32le())));
+                g.fill(try$(_state->load<Rc<Gfx::Prose>>(try$(s.nextI32le()))));
                 break;
             }
 
             case Op::FILL: {
-                auto rule = static_cast<FillRule>(s.nextI32le());
+                auto rule = static_cast<FillRule>(try$(s.nextI32le()));
                 g.fill(rule);
                 break;
             }
@@ -540,115 +546,114 @@ export struct Snapshot {
                 break;
 
             case Op::CLIP:
-                g.clip(static_cast<FillRule>(s.nextI32le()));
+                g.clip(static_cast<FillRule>(try$(s.nextI32le())));
                 break;
 
             case Op::CLIP_RECTI: {
                 Math::Recti rect{
-                    s.nextI32le(),
-                    s.nextI32le(),
-                    s.nextI32le(),
-                    s.nextI32le(),
+                    try$(s.nextI32le()),
+                    try$(s.nextI32le()),
+                    try$(s.nextI32le()),
+                    try$(s.nextI32le()),
                 };
                 g.clip(rect);
             } break;
 
             case Op::CLIP_RECTF: {
                 Math::Rectf rect{
-                    s.nextF32(),
-                    s.nextF32(),
-                    s.nextF32(),
-                    s.nextF32(),
+                    try$(s.nextF32()),
+                    try$(s.nextF32()),
+                    try$(s.nextF32()),
+                    try$(s.nextF32()),
                 };
                 g.clip(rect);
             } break;
 
             case Op::FILTER:
-                g.apply(try$(_state->load<Filter>(s.nextI32le())));
+                g.apply(try$(_state->load<Filter>(try$(s.nextI32le()))));
                 break;
 
             case Op::BLIT: {
                 Math::Recti src{
-                    s.nextI32le(),
-                    s.nextI32le(),
-                    s.nextI32le(),
-                    s.nextI32le(),
+                    try$(s.nextI32le()),
+                    try$(s.nextI32le()),
+                    try$(s.nextI32le()),
+                    try$(s.nextI32le()),
                 };
 
                 Math::Recti dest{
-                    s.nextI32le(),
-                    s.nextI32le(),
-                    s.nextI32le(),
-                    s.nextI32le(),
+                    try$(s.nextI32le()),
+                    try$(s.nextI32le()),
+                    try$(s.nextI32le()),
+                    try$(s.nextI32le()),
                 };
 
-                auto img = try$(_state->load<Rc<Image>>(s.nextI32le()));
+                auto img = try$(_state->load<Rc<Image>>(try$(s.nextI32le())));
                 g.blit(src, dest, img);
             } break;
 
             case Op::CLEAR: {
-                auto color = Color::fromPacked(s.nextI32le());
+                auto color = Color::fromPacked(try$(s.nextI32le()));
                 g.clear(color);
             } break;
 
             case Op::PLOT_POINT: {
                 Math::Vec2i point{
-                    s.nextI32le(),
-                    s.nextI32le(),
+                    try$(s.nextI32le()),
+                    try$(s.nextI32le()),
                 };
-                auto color = Color::fromPacked(s.nextI32le());
+                auto color = Color::fromPacked(try$(s.nextI32le()));
                 g.plot(point, color);
             } break;
 
             case Op::PLOT_EDGE: {
                 Math::Edgei edge{
-                    s.nextI32le(),
-                    s.nextI32le(),
-                    s.nextI32le(),
-                    s.nextI32le(),
+                    try$(s.nextI32le()),
+                    try$(s.nextI32le()),
+                    try$(s.nextI32le()),
+                    try$(s.nextI32le()),
                 };
 
-                auto color = Color::fromPacked(s.nextI32le());
+                auto color = Color::fromPacked(try$(s.nextI32le()));
                 g.plot(edge, color);
             } break;
 
             case Op::PLOT_RECT: {
                 Math::Recti rect{
-                    s.nextI32le(),
-                    s.nextI32le(),
-                    s.nextI32le(),
-                    s.nextI32le(),
+                    try$(s.nextI32le()),
+                    try$(s.nextI32le()),
+                    try$(s.nextI32le()),
+                    try$(s.nextI32le()),
                 };
 
-                auto color = Color::fromPacked(s.nextI32le());
+                auto color = Color::fromPacked(try$(s.nextI32le()));
                 g.plot(rect, color);
             } break;
 
             case Op::RECT: {
                 Math::Rectf rect{
-                    s.nextF32(),
-                    s.nextF32(),
-                    s.nextF32(),
-                    s.nextF32(),
+                    try$(s.nextF32()),
+                    try$(s.nextF32()),
+                    try$(s.nextF32()),
+                    try$(s.nextF32()),
                 };
-                g.rect(rect, _loadRadii(s));
+                g.rect(rect, try$(_loadRadii(s)));
             } break;
 
             case Op::FILL_GLYPH: {
-                auto fontId = s.nextI32le();
-                auto packed = static_cast<u32>(s.nextI32le());
+                auto fontId = try$(s.nextI32le());
+                auto packed = static_cast<u32>(try$(s.nextI32le()));
                 Glyph glyph{
                     .index = static_cast<u16>(packed & 0xffff),
                     .font = static_cast<u16>(packed >> 16),
                 };
-                auto x = s.nextF32();
-                auto y = s.nextF32();
+                auto x = try$(s.nextF32());
+                auto y = try$(s.nextF32());
                 g.fill(try$(_state->load<Font>(fontId)), glyph, {x, y});
             } break;
 
             default:
-                for (auto _ : Iota(len))
-                    s.nextI32le();
+                try$(s.skip(len * sizeof(u32)));
                 break;
             }
         }

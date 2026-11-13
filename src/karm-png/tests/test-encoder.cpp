@@ -45,4 +45,34 @@ test$("png-encode-roundtrip") {
     return Ok();
 }
 
+static Res<> _decode(Bytes bytes) {
+    auto decoder = try$(Decoder::init(bytes));
+    auto decoded = Gfx::Image::alloc({decoder.width(), decoder.height()});
+    return decoder.decode(*decoded);
+}
+
+test$("png-decode-truncated") {
+    Io::BufferWriter bw;
+    Io::BEmit e{bw};
+    try$(encode(_testPattern()->pixels(), e));
+    auto encoded = bw.take();
+
+    // NOTE: IEND is the last chunk, so every truncation must fail cleanly.
+    for (usize len = 0; len < encoded.len(); len++)
+        assert$(not _decode(sub(encoded, 0, len)));
+
+    try$(_decode(encoded));
+    return Ok();
+}
+
+test$("png-decode-ignores-data-after-iend") {
+    Io::BufferWriter bw;
+    Io::BEmit e{bw};
+    try$(encode(_testPattern()->pixels(), e));
+    try$(e.writeStr("trailing garbage"));
+
+    try$(_decode(bw.take()));
+    return Ok();
+}
+
 } // namespace Karm::Png::Tests

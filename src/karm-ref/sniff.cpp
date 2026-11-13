@@ -17,24 +17,28 @@ struct MimePattern {
     Uti::Common uti;
 
     bool match(Bytes bytes) const {
+        return _match(bytes).unwrapOr(false);
+    }
+
+    Res<bool> _match(Bytes bytes) const {
         Io::BScan s{bytes};
 
-        while (not s.ended() and contains(leading, s.peekU8le())) {
-            s.nextU8le();
+        while (not s.ended() and contains(leading, try$(s.peekU8le()))) {
+            try$(s.nextU8le());
         }
 
         if (pattern.match(s.remBytes()).v0 != Match::YES) {
-            return false;
+            return Ok(false);
         }
 
-        s.skip(pattern.len());
+        try$(s.skip(pattern.len()));
 
         if (terminating.len()) {
-            if (s.ended() or not contains(terminating, s.peekU8le())) {
-                return false;
+            if (s.ended() or not contains(terminating, try$(s.peekU8le()))) {
+                return Ok(false);
             }
         }
-        return true;
+        return Ok(true);
     }
 };
 

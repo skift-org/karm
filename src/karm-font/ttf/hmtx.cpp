@@ -1,3 +1,7 @@
+module;
+
+#include <karm/macros>
+
 export module Karm.Font.Ttf:hmtx;
 
 import :hhea;
@@ -14,20 +18,27 @@ export struct Hmtx : Io::BChunk {
         isize lsb;
     };
 
-    Metrics metrics(isize glyphId, Hhea const& hhea) const {
+    Res<Metrics> metrics(isize glyphId, Hhea const& hhea) const {
         if (glyphId < hhea.numberOfHMetrics()) {
-            auto s = begin().skip(glyphId * 4);
-            return {s.nextU16be(), s.nextI16be()};
+            auto s = try$(begin(glyphId * 4));
+            isize adv = try$(s.nextU16be());
+            isize lsb = try$(s.nextI16be());
+            return Ok(Metrics{adv, lsb});
         }
+
+        if (hhea.numberOfHMetrics() == 0)
+            return Error::invalidData("hmtx: no long horizontal metrics");
 
         usize advOffset = (hhea.numberOfHMetrics() - 1) * LONG_RECORD_SIZE;
         usize lsbOffset = hhea.numberOfHMetrics() * LONG_RECORD_SIZE +
                           (glyphId - hhea.numberOfHMetrics()) * SHORT_RECORD_SIZE;
 
-        isize adv = begin().skip(advOffset).nextU16be();
-        isize lsb = begin().skip(lsbOffset).nextI16be();
+        auto advScan = try$(begin(advOffset));
+        isize adv = try$(advScan.nextU16be());
+        auto lsbScan = try$(begin(lsbOffset));
+        isize lsb = try$(lsbScan.nextI16be());
 
-        return {adv, lsb};
+        return Ok(Metrics{adv, lsb});
     }
 };
 

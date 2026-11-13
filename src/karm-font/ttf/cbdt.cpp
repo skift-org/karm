@@ -56,165 +56,174 @@ export struct Cblc : Io::BChunk {
         Opt<Metrics> metrics;
     };
 
-    Strike strike(usize i) const {
-        auto s = begin(BITMAP_SIZES + i * BITMAP_SIZE_RECORD);
+    Res<Strike> strike(usize i) const {
+        auto s = try$(begin(BITMAP_SIZES + i * BITMAP_SIZE_RECORD));
         Strike strike{};
-        strike.indexSubTableArrayOffset = s.nextU32be();
-        /* indexTablesSize = */ s.nextU32be();
-        strike.numIndexSubTables = s.nextU32be();
-        /* colorRef = */ s.nextU32be();
-        s.skip(24); // hori and vert SbitLineMetrics
-        strike.startGlyph = s.nextU16be();
-        strike.endGlyph = s.nextU16be();
-        /* ppemX = */ s.nextU8be();
-        strike.ppem = s.nextU8be();
-        return strike;
+        strike.indexSubTableArrayOffset = try$(s.nextU32be());
+        try$(s.skip(4)); // indexTablesSize
+        strike.numIndexSubTables = try$(s.nextU32be());
+        try$(s.skip(4)); // colorRef
+        try$(s.skip(24)); // hori and vert SbitLineMetrics
+        strike.startGlyph = try$(s.nextU16be());
+        strike.endGlyph = try$(s.nextU16be());
+        try$(s.skip(1)); // ppemX
+        strike.ppem = try$(s.nextU8be());
+        return Ok(strike);
     }
 
     // NOTE: We don't know the rendering size ahead of time and bitmaps
     //       get scaled anyway, so pick the largest strike covering the glyph.
-    Opt<Strike> bestStrike(u16 glyph) const {
+    Res<Opt<Strike>> bestStrike(u16 glyph) const {
         Opt<Strike> best = NONE;
-        for (usize i : urange::zeroTo((usize)get<NumSizes>())) {
-            auto candidate = strike(i);
+        for (usize i : urange::zeroTo((usize)try$(get<NumSizes>()))) {
+            auto candidate = try$(strike(i));
             if (glyph < candidate.startGlyph or glyph > candidate.endGlyph)
                 continue;
             if (not best or candidate.ppem > best->ppem)
                 best = Some(candidate);
         }
-        return best;
+        return Ok(best);
     }
 
-    static Metrics _readBigMetrics(Io::BScan s) {
+    static Res<Metrics> _readBigMetrics(Io::BScan s) {
         Metrics m{};
-        m.height = s.nextU8be();
-        m.width = s.nextU8be();
-        m.bearingX = s.nextI8be();
-        m.bearingY = s.nextI8be();
-        return m;
+        m.height = try$(s.nextU8be());
+        m.width = try$(s.nextU8be());
+        m.bearingX = try$(s.nextI8be());
+        m.bearingY = try$(s.nextI8be());
+        return Ok(m);
     }
 
-    Opt<Location> locate(Strike const& strike, u16 glyph) const {
-        auto array = begin(strike.indexSubTableArrayOffset);
+    Res<Opt<Location>> locate(Strike const& strike, u16 glyph) const {
+        auto array = try$(begin(strike.indexSubTableArrayOffset));
 
         for (usize i : urange::zeroTo(strike.numIndexSubTables)) {
-            auto record = array;
-            record.skip(i * INDEX_SUBTABLE_RECORD);
-            u16 first = record.nextU16be();
-            u16 last = record.nextU16be();
-            usize additionalOffset = record.nextU32be();
+            auto record = try$(array.peek(i * INDEX_SUBTABLE_RECORD));
+            u16 first = try$(record.nextU16be());
+            u16 last = try$(record.nextU16be());
+            usize additionalOffset = try$(record.nextU32be());
 
             if (glyph < first or glyph > last)
                 continue;
 
-            auto sub = begin(strike.indexSubTableArrayOffset + additionalOffset);
-            u16 indexFormat = sub.nextU16be();
-            u16 imageFormat = sub.nextU16be();
-            usize imageDataOffset = sub.nextU32be();
+            auto sub = try$(begin(strike.indexSubTableArrayOffset + additionalOffset));
+            u16 indexFormat = try$(sub.nextU16be());
+            u16 imageFormat = try$(sub.nextU16be());
+            usize imageDataOffset = try$(sub.nextU32be());
             usize index = glyph - first;
 
             switch (indexFormat) {
             case 1: {
-                sub.skip(index * 4);
-                usize start = sub.nextU32be();
-                usize end = sub.nextU32be();
-                return Some(Location{imageDataOffset + start, end - start, imageFormat, NONE});
+                try$(sub.skip(index * 4));
+                usize start = try$(sub.nextU32be());
+                usize end = try$(sub.nextU32be());
+                return Ok(Some(Location{imageDataOffset + start, end - start, imageFormat, NONE}));
             }
 
             case 2: {
-                usize imageSize = sub.nextU32be();
-                auto metrics = _readBigMetrics(sub);
-                return Some(Location{imageDataOffset + index * imageSize, imageSize, imageFormat, Some(metrics)});
+                usize imageSize = try$(sub.nextU32be());
+                auto metrics = try$(_readBigMetrics(sub));
+                return Ok(Some(Location{imageDataOffset + index * imageSize, imageSize, imageFormat, Some(metrics)}));
             }
 
             case 3: {
-                sub.skip(index * 2);
-                usize start = sub.nextU16be();
-                usize end = sub.nextU16be();
-                return Some(Location{imageDataOffset + start, end - start, imageFormat, NONE});
+                try$(sub.skip(index * 2));
+                usize start = try$(sub.nextU16be());
+                usize end = try$(sub.nextU16be());
+                return Ok(Some(Location{imageDataOffset + start, end - start, imageFormat, NONE}));
             }
 
             case 4: {
-                usize numGlyphs = sub.nextU32be();
+                usize numGlyphs = try$(sub.nextU32be());
                 for (usize j : urange::zeroTo(numGlyphs)) {
                     (void)j;
-                    u16 id = sub.nextU16be();
-                    usize start = sub.nextU16be();
+                    u16 id = try$(sub.nextU16be());
+                    usize start = try$(sub.nextU16be());
                     if (id == glyph) {
-                        sub.skip(2);
-                        usize end = sub.nextU16be();
-                        return Some(Location{imageDataOffset + start, end - start, imageFormat, NONE});
+                        try$(sub.skip(2));
+                        usize end = try$(sub.nextU16be());
+                        return Ok(Some(Location{imageDataOffset + start, end - start, imageFormat, NONE}));
                     }
                 }
-                return NONE;
+                return Ok(NONE);
             }
 
             case 5: {
-                usize imageSize = sub.nextU32be();
-                auto metrics = _readBigMetrics(sub);
-                sub.skip(BIG_GLYPH_METRICS);
-                usize numGlyphs = sub.nextU32be();
+                usize imageSize = try$(sub.nextU32be());
+                auto metrics = try$(_readBigMetrics(sub));
+                try$(sub.skip(BIG_GLYPH_METRICS));
+                usize numGlyphs = try$(sub.nextU32be());
                 for (usize j : urange::zeroTo(numGlyphs)) {
-                    if (sub.nextU16be() == glyph)
-                        return Some(Location{imageDataOffset + j * imageSize, imageSize, imageFormat, Some(metrics)});
+                    if (try$(sub.nextU16be()) == glyph)
+                        return Ok(Some(Location{imageDataOffset + j * imageSize, imageSize, imageFormat, Some(metrics)}));
                 }
-                return NONE;
+                return Ok(NONE);
             }
 
             default:
-                return NONE;
+                return Ok(NONE);
             }
         }
 
-        return NONE;
+        return Ok(NONE);
     }
 
-    Opt<BitmapGlyph> bitmap(Cbdt const& cbdt, u16 glyph) const {
+    Res<Opt<BitmapGlyph>> bitmap(Cbdt const& cbdt, u16 glyph) const {
         if (not present() or not cbdt.present())
-            return NONE;
+            return Ok(NONE);
 
-        auto strike = try$(bestStrike(glyph));
-        auto location = try$(locate(strike, glyph));
+        auto maybeStrike = try$(bestStrike(glyph));
+        if (not maybeStrike)
+            return Ok(NONE);
+        auto strike = *maybeStrike;
+
+        auto maybeLocation = try$(locate(strike, glyph));
+        if (not maybeLocation)
+            return Ok(NONE);
+        auto location = *maybeLocation;
+
         if (location.len == 0 or location.offset + location.len > cbdt.bytes().len())
-            return NONE;
+            return Ok(NONE);
 
-        auto s = cbdt.begin(location.offset);
+        auto s = try$(cbdt.begin(location.offset));
         Metrics metrics{};
 
         switch (location.imageFormat) {
         case 17: // SmallGlyphMetrics + PNG
-            metrics.height = s.nextU8be();
-            metrics.width = s.nextU8be();
-            metrics.bearingX = s.nextI8be();
-            metrics.bearingY = s.nextI8be();
-            /* advance = */ s.nextU8be();
+            metrics.height = try$(s.nextU8be());
+            metrics.width = try$(s.nextU8be());
+            metrics.bearingX = try$(s.nextI8be());
+            metrics.bearingY = try$(s.nextI8be());
+            try$(s.skip(1)); // advance
             break;
 
         case 18: // BigGlyphMetrics + PNG
-            metrics = _readBigMetrics(s);
-            s.skip(BIG_GLYPH_METRICS);
+            metrics = try$(_readBigMetrics(s));
+            try$(s.skip(BIG_GLYPH_METRICS));
             break;
 
         case 19: // Metrics in CBLC + PNG
-            metrics = try$(location.metrics);
+            if (not location.metrics)
+                return Ok(NONE);
+            metrics = *location.metrics;
             break;
 
         default:
-            return NONE;
+            return Ok(NONE);
         }
 
-        usize dataLen = s.nextU32be();
+        usize dataLen = try$(s.nextU32be());
         if (dataLen > s.rem())
-            return NONE;
+            return Ok(NONE);
 
-        return Some(BitmapGlyph{
-            .png = s.nextBytes(dataLen),
+        return Ok(Some(BitmapGlyph{
+            .png = try$(s.nextBytes(dataLen)),
             .width = metrics.width,
             .height = metrics.height,
             .bearingX = metrics.bearingX,
             .bearingY = metrics.bearingY,
             .ppem = strike.ppem,
-        });
+        }));
     }
 };
 

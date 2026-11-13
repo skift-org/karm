@@ -16,7 +16,7 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
 
     Io::BChunk chunk{buf};
     Icc::Parser parser{chunk};
-    Icc::ProfileHeader header = parser.header();
+    Icc::ProfileHeader header = co_try$(parser.header());
 
     Sys::println("profile size: {}", DataSize{header.profileSize});
     Sys::println("profile version number: {:#x}", header.profileVersionNumber);
@@ -26,7 +26,7 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken) {
     Sys::println("creation date: {}", header.creationTime());
 
     Sys::println("tags:");
-    for (auto tag : parser.iterTag()) {
+    for (auto tag : co_try$(parser.iterTag())) {
         Sys::println(" - {}: {}", Str{tag.sig}, tag.type);
     }
 

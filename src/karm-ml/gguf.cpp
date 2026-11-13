@@ -76,70 +76,70 @@ struct [[gnu::packed]] Header {
 
 // MARK: Metadata --------------------------------------------------------------
 
-Serde::Value _loadMetadataValue(Io::BScan& s, ValueType type);
+Res<Serde::Value> _loadMetadataValue(Io::BScan& s, ValueType type);
 
-Str _loadMetadataString(Io::BScan& s) {
-    auto len = s.nextU64le();
+Res<Str> _loadMetadataString(Io::BScan& s) {
+    auto len = try$(s.nextU64le());
     return s.nextStr(len);
 }
 
-Serde::Value _loadMetaDataArray(Io::BScan& s) {
+Res<Serde::Value> _loadMetaDataArray(Io::BScan& s) {
     Serde::Array res;
-    auto type = static_cast<ValueType>(s.nextU32le());
-    auto len = s.nextU64le();
+    auto type = static_cast<ValueType>(try$(s.nextU32le()));
+    auto len = try$(s.nextU64le());
     for (usize _ : urange::zeroTo(len)) {
-        res.pushBack(_loadMetadataValue(s, type));
+        res.pushBack(try$(_loadMetadataValue(s, type)));
     }
-    return res;
+    return Ok(std::move(res));
 }
 
-Serde::Value _loadMetadataValue(Io::BScan& s, ValueType type) {
+Res<Serde::Value> _loadMetadataValue(Io::BScan& s, ValueType type) {
     switch (type) {
     case ValueType::BOOL:
-        return static_cast<bool>(s.nextU8le());
+        return Ok(static_cast<bool>(try$(s.nextU8le())));
 
     case ValueType::UINT8:
-        return static_cast<Serde::Integer>(s.nextU8le());
+        return Ok(static_cast<Serde::Integer>(try$(s.nextU8le())));
     case ValueType::INT8:
-        return static_cast<Serde::Integer>(s.nextI8le());
+        return Ok(static_cast<Serde::Integer>(try$(s.nextI8le())));
 
     case ValueType::UINT16:
-        return static_cast<Serde::Integer>(s.nextU16le());
+        return Ok(static_cast<Serde::Integer>(try$(s.nextU16le())));
     case ValueType::INT16:
-        return static_cast<Serde::Integer>(s.nextI16le());
+        return Ok(static_cast<Serde::Integer>(try$(s.nextI16le())));
 
     case ValueType::UINT32:
-        return static_cast<Serde::Integer>(s.nextU32le());
+        return Ok(static_cast<Serde::Integer>(try$(s.nextU32le())));
     case ValueType::INT32:
-        return static_cast<Serde::Integer>(s.nextI32le());
+        return Ok(static_cast<Serde::Integer>(try$(s.nextI32le())));
 
     case ValueType::UINT64:
-        return static_cast<Serde::Integer>(s.nextU64le());
+        return Ok(static_cast<Serde::Integer>(try$(s.nextU64le())));
 
     case ValueType::INT64:
-        return static_cast<Serde::Integer>(s.nextI64le());
+        return Ok(static_cast<Serde::Integer>(try$(s.nextI64le())));
 
     case ValueType::FLOAT32:
-        return s.next<f32>();
+        return Ok(try$(s.next<f32>()));
 
     case ValueType::FLOAT64:
-        return s.next<f32>();
+        return Ok(try$(s.next<f64>()));
 
     case ValueType::STRING:
-        return String{_loadMetadataString(s)};
+        return Ok(String{try$(_loadMetadataString(s))});
 
     case ValueType::ARRAY:
         return _loadMetaDataArray(s);
 
     default:
-        panic("unknown value type");
+        return Error::invalidData("unknown value type");
     }
 }
 
 Res<Tuple<Str, Serde::Value>> _loadMetadataRecord(Io::BScan& s) {
-    auto key = _loadMetadataString(s);
-    auto type = static_cast<ValueType>(s.nextU32le());
-    return Ok(Tuple<Str, Serde::Value>{key, _loadMetadataValue(s, type)});
+    auto key = try$(_loadMetadataString(s));
+    auto type = static_cast<ValueType>(try$(s.nextU32le()));
+    return Ok(Tuple<Str, Serde::Value>{key, try$(_loadMetadataValue(s, type))});
 }
 
 Res<Serde::Value> _loadMetadata(Io::BScan& s, usize len) {
@@ -183,24 +183,24 @@ struct TensorInfos {
     u64 offset;
 };
 
-TensorInfos _loadTensor(Io::BScan& s) {
+Res<TensorInfos> _loadTensor(Io::BScan& s) {
     TensorInfos infos;
-    infos.name = _loadMetadataString(s);
-    auto dimsLen = s.nextU32le();
+    infos.name = try$(_loadMetadataString(s));
+    auto dimsLen = try$(s.nextU32le());
     Vec<u64> dims;
     for (usize _ : urange::zeroTo(dimsLen)) {
-        infos.dims.pushBack(s.nextU64le());
+        infos.dims.pushBack(try$(s.nextU64le()));
     }
-    infos.type = static_cast<Type>(s.nextU32le());
-    infos.offset = s.nextU64le();
+    infos.type = static_cast<Type>(try$(s.nextU32le()));
+    infos.offset = try$(s.nextU64le());
 
-    return infos;
+    return Ok(std::move(infos));
 }
 
 Res<Vec<TensorInfos>> _loadTensors(Io::BScan& s, usize len) {
     Vec<TensorInfos> res;
     for (usize _ : urange::zeroTo(len))
-        res.pushBack(_loadTensor(s));
+        res.pushBack(try$(_loadTensor(s)));
     return Ok(std::move(res));
 }
 
@@ -211,7 +211,7 @@ export Res<> loadGguf(Ref::Url url) {
 
     yap("mmap'ed model file of {}", DataSize{mmap.bytes().len()});
     Io::BScan s{mmap.bytes()};
-    auto header = s.next<Header>();
+    auto header = try$(s.next<Header>());
 
     if (header.magic != Header::MAGIC)
         return Error::invalidData("not a gguf file");

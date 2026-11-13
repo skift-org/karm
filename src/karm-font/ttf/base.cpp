@@ -24,7 +24,7 @@ export u32 checksum(Bytes b) {
     while (not s.ended()) {
         u32 word = 0;
         for (usize j = 0; j < 4; j++)
-            word = (word << 8) | (s.ended() ? 0 : s.nextU8be());
+            word = (word << 8) | s.nextU8be().unwrapOr(0);
         sum += word;
     }
     return sum;

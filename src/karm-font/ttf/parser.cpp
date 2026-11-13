@@ -50,8 +50,21 @@ export struct Metrics {
     f64 maxWidth;
 };
 
+// https://learn.microsoft.com/en-us/typography/opentype/spec/otff#table-directory
+export struct [[gnu::packed]] TableRecord {
+    Array<char, 4> _tag;
+    u32be checkSum;
+    u32be offset;
+    u32be length;
+
+    Str tag() const {
+        return {_tag.buf(), _tag.len()};
+    }
+};
+
 export struct Parser {
     Bytes _slice;
+    Slice<TableRecord> _tables;
 
     Head _head;
     Cmap _cmap;
@@ -89,7 +102,8 @@ export struct Parser {
             KnowCmap{3, 10, 12, 1000},
         };
 
-        for (auto table : font._cmap.iterTables()) {
+        for (auto const& record : try$(font._cmap.records())) {
+            auto table = try$(font._cmap.table(record));
             for (auto& knowCmap : knowCmaps) {
                 if (knowCmap.platformId == table.platformId and
                     knowCmap.encodingId == table.encodingId and
@@ -118,13 +132,23 @@ export struct Parser {
     static Res<Parser> init(Bytes slice) {
         Parser font{slice};
 
-        if (font.version() != 0x00010000 and
-            font.version() != 0x4F54544F) {
-            logError("ttf: version {:x} is not supported", (u64)font.version());
+        auto version = try$(font.version());
+        if (version != 0x00010000 and
+            version != 0x4F54544F) {
+            logError("ttf: version {:x} is not supported", (u64)version);
             return Error::other("invalid version");
         }
 
+        auto directory = font.begin();
+        try$(directory.skip(4)); // sfntVersion
+        usize numTables = try$(directory.nextU16be());
+        try$(directory.skip(6)); // searchRange, entrySelector, rangeShift
+        font._tables = try$(directory.nextSlice<TableRecord>(numTables));
+
         font._head = try$(font.requireTable<Head>());
+        if (font._head.bytes().len() < Head::MIN_LEN)
+            return Error::invalidData("truncated 'head' table");
+
         font._cmap = try$(font.requireTable<Cmap>());
         font._cmapTable = try$(chooseCmap(font));
         // NOTE: Bitmap-only fonts (e.g. CBDT color emoji) have no outlines.
@@ -138,6 +162,9 @@ export struct Parser {
             font._loca = try$(font.requireTable<Loca>());
         }
         font._hhea = try$(font.requireTable<Hhea>());
+        if (font._hhea.bytes().len() < Hhea::MIN_LEN)
+            return Error::invalidData("truncated 'hhea' table");
+
         font._hmtx = try$(font.requireTable<Hmtx>());
         font._maxp = font.lookupTable<Maxp>();
         font._gpos = font.lookupTable<Gpos>();
@@ -169,55 +196,18 @@ export struct Parser {
         return _slice;
     }
 
-    u32 version() {
+    Res<u32> version() {
         return begin().nextU32be();
     }
 
-    auto iterTables() const {
-        auto scan = begin();
-        /* auto version = */ scan.nextU32be();
-        auto numTables = scan.nextU16be();
-
-        /* auto searchRange = */ scan.nextU16be();
-        /* auto entrySelector = */ scan.nextU16be();
-        /* auto rangeShift = */ scan.nextU16be();
-
-        struct Table {
-            Str tag;
-            u32 checkSum;
-            Bytes bytes;
-        };
-
-        struct Iter {
-            Bytes slice;
-            Io::BScan scan;
-            usize i;
-            usize numTables;
-
-            Opt<Table> next() {
-                if (i == numTables) {
-                    return NONE;
-                }
-
-                Table table{};
-                table.tag = scan.nextStr(4);
-                table.checkSum = scan.nextU32be();
-                auto offset = scan.nextU32be();
-                auto length = scan.nextU32be();
-                table.bytes = sub(slice, offset, offset + length);
-
-                i++;
-                return Some(table);
-            }
-        };
-
-        return Iter{_slice, scan, 0, numTables};
-    }
-
+    // NOTE: Tables extending past the end of the file are truncated.
     Opt<Bytes> lookupTable(Str tag) const {
-        for (auto table : iterTables())
-            if (table.tag == tag)
-                return Some(table.bytes);
+        for (auto const& table : _tables) {
+            if (table.tag() == tag) {
+                usize offset = table.offset;
+                return Some(sub(_slice, offset, offset + table.length));
+            }
+        }
         return NONE;
     }
 
@@ -239,26 +229,31 @@ export struct Parser {
         return Error::other("table not found");
     }
 
-    Gfx::Glyph glyph(Rune rune) const {
+    Res<Gfx::Glyph> glyph(Rune rune) const {
         return _cmapTable.glyphIdFor(rune);
     }
 
-    GlyphMetrics glyphMetrics(Gfx::Glyph glyph) const {
-        auto hmtx = _hmtx.metrics(glyph.index, _hhea);
+    Res<GlyphMetrics> glyphMetrics(Gfx::Glyph glyph) const {
+        auto hmtx = try$(_hmtx.metrics(glyph.index, _hhea));
         if (not _glyf.present() or not _loca.present())
-            return {0, 0, 0, 0, (f64)hmtx.lsb, (f64)hmtx.advanceWidth};
+            return Ok(GlyphMetrics{0, 0, 0, 0, (f64)hmtx.lsb, (f64)hmtx.advanceWidth});
 
-        auto glyfOffset = _loca.glyfOffset(glyph.index, _head);
-        auto glyf = _glyf.metrics(glyfOffset);
+        auto glyfOffset = try$(_loca.glyfOffset(glyph.index, _head));
 
-        return {
+        // NOTE: Glyphs without an outline (e.g. space) have no glyf entry.
+        if (glyfOffset == try$(_loca.glyfOffset(glyph.index + 1, _head)))
+            return Ok(GlyphMetrics{0, 0, 0, 0, (f64)hmtx.lsb, (f64)hmtx.advanceWidth});
+
+        auto glyf = try$(_glyf.metrics(glyfOffset));
+
+        return Ok(GlyphMetrics{
             (f64)glyf.xMin,
             (f64)-glyf.yMax,
             (f64)glyf.xMax - glyf.xMin,
             (f64)glyf.yMax - glyf.yMin,
             (f64)hmtx.lsb,
             (f64)hmtx.advanceWidth,
-        };
+        });
     }
 
     f64 glyphKern(Gfx::Glyph prev, Gfx::Glyph curr) const {
@@ -273,31 +268,31 @@ export struct Parser {
         return positioning.expect().v0.xAdvance;
     }
 
-    void glyphContour(Gfx::Canvas& g, Gfx::Glyph glyph) const {
+    Res<> glyphContour(Gfx::Canvas& g, Gfx::Glyph glyph) const {
         if (not _glyf.present() or not _loca.present())
-            return;
+            return Ok();
 
-        auto glyfOffset = _loca.glyfOffset(glyph.index, _head);
+        auto glyfOffset = try$(_loca.glyfOffset(glyph.index, _head));
 
-        if (glyfOffset == _loca.glyfOffset(glyph.index + 1, _head))
-            return;
+        if (glyfOffset == try$(_loca.glyfOffset(glyph.index + 1, _head)))
+            return Ok();
 
-        _glyf.contour(g, glyfOffset, _loca, _head);
+        return _glyf.contour(g, glyfOffset, _loca, _head);
     }
 
     // MARK: Color Glyphs ----------------------------------------------------
 
-    Opt<BitmapGlyph> glyphBitmap(Gfx::Glyph glyph) const {
+    Res<Opt<BitmapGlyph>> glyphBitmap(Gfx::Glyph glyph) const {
         return _cblc.bitmap(_cbdt, glyph.index);
     }
 
-    bool glyphHasColor(Gfx::Glyph glyph) const {
-        return _colr.layers(glyph.index).has();
+    Res<bool> glyphHasColor(Gfx::Glyph glyph) const {
+        return Ok(try$(_colr.layers(glyph.index)).has());
     }
 
-    void glyphPaint(Gfx::Canvas& g, Gfx::Glyph glyph) const {
-        _colr.paint(g, glyph.index, _cpal, [&](Gfx::Canvas& g, u16 layerGlyph) {
-            glyphContour(g, {layerGlyph, glyph.font});
+    Res<> glyphPaint(Gfx::Canvas& g, Gfx::Glyph glyph) const {
+        return _colr.paint(g, glyph.index, _cpal, [&](Gfx::Canvas& g, u16 layerGlyph) {
+            return glyphContour(g, {layerGlyph, glyph.font});
         });
     }
 

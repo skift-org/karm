@@ -1,3 +1,7 @@
+module;
+
+#include <karm/macros>
+
 export module Karm.Font.Ttf:cmap;
 
 import Karm.Core;
@@ -20,74 +24,85 @@ export struct Cmap : Io::BChunk {
             return slice;
         }
 
-        Vec<Tuple<u16, u16>> _extractMappingForType12() {
+        Res<Vec<Tuple<u16, u16>>> _extractMappingForType12() {
             Vec<Tuple<u16, u16>> codeMappings;
 
-            auto s = begin().skip(12);
-            u32 nGroups = s.nextU32be();
+            auto s = try$(begin().peek(12));
+            u32 nGroups = try$(s.nextU32be());
 
             for (usize i = 0; i < nGroups; i++) {
-                u32 startCode = s.nextU32be();
-                u32 endCode = s.nextU32be();
+                u32 startCode = try$(s.nextU32be());
+                u32 endCode = try$(s.nextU32be());
 
-                u32 glyphOffset = s.nextU32be();
+                u32 glyphOffset = try$(s.nextU32be());
 
                 for (usize r = startCode; r <= endCode; ++r) {
                     codeMappings.pushBack({(u16)r, (u16)((r - startCode) + glyphOffset)});
                 }
             }
-            return codeMappings;
+            return Ok(codeMappings);
         }
 
-        Gfx::Glyph _glyphIdForType4(Rune r) const {
-            u16 segCountX2 = begin().skip(6).nextU16be();
+        Res<Gfx::Glyph> _glyphIdForType4(Rune r) const {
+            auto header = try$(begin().peek(6));
+            u16 segCountX2 = try$(header.nextU16be());
             u16 segCount = segCountX2 / 2;
 
             for (usize i = 0; i < segCount; i++) {
-                auto s = begin().skip(14);
+                auto s = try$(begin().peek(14));
 
-                u16 endCode = s.skip(i * 2).peekU16be();
+                try$(s.skip(i * 2));
+                u16 endCode = try$(s.peekU16be());
 
                 if (r > endCode)
                     continue;
 
                 // + 2 for reserved padding
-                u16 startCode = s.skip(segCountX2 + 2).peekU16be();
+                try$(s.skip(segCountX2 + 2));
+                u16 startCode = try$(s.peekU16be());
 
                 if (r < startCode)
                     break;
 
-                u16 idDelta = s.skip(segCountX2).peekI16be();
-                u16 idRangeOffset = s.skip(segCountX2).peekU16be();
+                try$(s.skip(segCountX2));
+                u16 idDelta = try$(s.peekI16be());
+                try$(s.skip(segCountX2));
+                u16 idRangeOffset = try$(s.peekU16be());
 
                 if (idRangeOffset == 0) {
-                    return Gfx::Glyph((r + idDelta) & 0xFFFF);
+                    return Ok(Gfx::Glyph((r + idDelta) & 0xFFFF));
                 }
 
                 auto offset = idRangeOffset + (r - startCode) * 2;
-                return Gfx::Glyph(s.skip(offset).nextU16be());
+                try$(s.skip(offset));
+                return Ok(Gfx::Glyph(try$(s.nextU16be())));
             }
 
             logWarn("ttf: glyph not found for rune {:x}", r);
-            return Gfx::Glyph(0);
+            return Ok(Gfx::Glyph(0));
         }
 
-        Vec<Tuple<u16, u16>> _extractMappingForType4() {
+        Res<Vec<Tuple<u16, u16>>> _extractMappingForType4() {
             Vec<Tuple<u16, u16>> codeMappings;
 
-            u16 segCountX2 = begin().skip(6).nextU16be();
+            auto header = try$(begin().peek(6));
+            u16 segCountX2 = try$(header.nextU16be());
             u16 segCount = segCountX2 / 2;
 
             for (usize i = 0; i < segCount; i++) {
-                auto s = begin().skip(14);
+                auto s = try$(begin().peek(14));
 
-                u16 endCode = s.skip(i * 2).peekU16be();
+                try$(s.skip(i * 2));
+                u16 endCode = try$(s.peekU16be());
 
                 // + 2 for reserved padding
-                u16 startCode = s.skip(segCountX2 + 2).peekU16be();
+                try$(s.skip(segCountX2 + 2));
+                u16 startCode = try$(s.peekU16be());
 
-                u16 idDelta = s.skip(segCountX2).peekI16be();
-                u16 idRangeOffset = s.skip(segCountX2).peekU16be();
+                try$(s.skip(segCountX2));
+                u16 idDelta = try$(s.peekI16be());
+                try$(s.skip(segCountX2));
+                u16 idRangeOffset = try$(s.peekU16be());
 
                 if (idRangeOffset == 0) {
                     for (usize code = startCode; code <= endCode; code++) {
@@ -95,24 +110,24 @@ export struct Cmap : Io::BChunk {
                     }
                 } else {
                     for (usize code = startCode; code <= endCode; code++) {
-                        auto gs = s;
                         auto offset = idRangeOffset + (code - startCode) * 2;
-                        codeMappings.pushBack({(u16)code, gs.skip(offset).nextU16be()});
+                        auto gs = try$(s.peek(offset));
+                        codeMappings.pushBack({(u16)code, try$(gs.nextU16be())});
                     }
                 }
             }
 
-            return codeMappings;
+            return Ok(codeMappings);
         }
 
-        Gfx::Glyph _glyphForType12(Rune r) const {
-            auto s = begin().skip(12);
-            u32 nGroups = s.nextU32be();
+        Res<Gfx::Glyph> _glyphForType12(Rune r) const {
+            auto s = try$(begin().peek(12));
+            u32 nGroups = try$(s.nextU32be());
 
             for (usize i = 0; i < nGroups; i++) {
-                u32 startCode = s.nextU32be();
-                u32 endCode = s.nextU32be();
-                u32 glyphOffset = s.nextU32be();
+                u32 startCode = try$(s.nextU32be());
+                u32 endCode = try$(s.nextU32be());
+                u32 glyphOffset = try$(s.nextU32be());
 
                 if (r < startCode)
                     break;
@@ -121,63 +136,55 @@ export struct Cmap : Io::BChunk {
                     continue;
 
                 if (r >= startCode and r <= endCode) {
-                    return Gfx::Glyph((r - startCode) + glyphOffset);
+                    return Ok(Gfx::Glyph((r - startCode) + glyphOffset));
                 }
             }
 
-            return Gfx::Glyph(0);
+            return Ok(Gfx::Glyph(0));
         }
 
-        Vec<Tuple<u16, u16>> extractMapping() {
+        Res<Vec<Tuple<u16, u16>>> extractMapping() {
             if (type == 4) {
                 return _extractMappingForType4();
             } else if (type == 12) {
                 return _extractMappingForType12();
             } else {
-                return {};
+                return Ok(Vec<Tuple<u16, u16>>{});
             }
         }
 
-        Gfx::Glyph glyphIdFor(Rune r) const {
+        Res<Gfx::Glyph> glyphIdFor(Rune r) const {
             if (type == 4) {
                 return _glyphIdForType4(r);
             } else if (type == 12) {
                 return _glyphForType12(r);
             } else {
-                return Gfx::Glyph(0);
+                return Ok(Gfx::Glyph(0));
             }
         }
     };
 
-    auto iterTables() {
+    // https://learn.microsoft.com/en-us/typography/opentype/spec/cmap#encoding-records-and-encodings
+    struct [[gnu::packed]] EncodingRecord {
+        u16be platformId;
+        u16be encodingId;
+        u32be offset;
+    };
+
+    Res<Slice<EncodingRecord>> records() const {
         auto s = begin();
-        s.skip(2);
-        usize numTables = s.nextU16be();
+        try$(s.skip(2)); // version
+        auto numTables = try$(s.nextU16be());
+        return s.nextSlice<EncodingRecord>(numTables);
+    }
 
-        struct Iter {
-            Cmap* cmap;
-            Io::BScan s;
-            usize i;
-            usize numTables;
-
-            Opt<Table> next() {
-                if (i == numTables) {
-                    return NONE;
-                }
-                i++;
-
-                Table t;
-                t.platformId = s.nextU16be();
-                t.encodingId = s.nextU16be();
-                u32 offset = s.nextU32be();
-                t.slice = sub(cmap->_slice, offset, cmap->_slice.len());
-                t.type = Io::BScan{t.slice}.nextU16be();
-
-                return Some(t);
-            }
-        };
-
-        return Iter{this, s, 0, numTables};
+    Res<Table> table(EncodingRecord const& record) const {
+        Table t;
+        t.platformId = record.platformId;
+        t.encodingId = record.encodingId;
+        t.slice = try$(begin(record.offset)).remBytes();
+        t.type = try$(t.begin().nextU16be());
+        return Ok(t);
     }
 };
 

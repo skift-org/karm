@@ -47,7 +47,7 @@ export struct Fontface : Gfx::Fontface {
             auto g = glyph(rune);
             if (g.index == 0)
                 return NONE;
-            f64 top = -_parser.glyphMetrics(g).y;
+            f64 top = -_parser.glyphMetrics(g).unwrapOr({}).y;
             if (top <= 0)
                 return NONE;
             return Some(top);
@@ -85,7 +85,7 @@ export struct Fontface : Gfx::Fontface {
 
         if (_parser._name.present()) {
             auto name = _parser._name;
-            attrs.family = Symbol::from(name.string(name.lookupRecord(Ttf::Name::FAMILY)));
+            attrs.family = Symbol::from(name.lookupString(Ttf::Name::FAMILY));
         }
 
         if (_parser._post.present()) {
@@ -127,7 +127,7 @@ export struct Fontface : Gfx::Fontface {
         auto glyph = _cachedEntries.lookup(rune);
         if (glyph.has())
             return glyph.expect();
-        auto g = _parser.glyph(rune);
+        auto g = _parser.glyph(rune).unwrapOr(Gfx::Glyph(0));
         _cachedEntries.put(rune, g);
         return g;
     }
@@ -136,7 +136,7 @@ export struct Fontface : Gfx::Fontface {
         auto advance = _cachedAdvances.lookup(glyph);
         if (advance.has())
             return advance.expect();
-        auto a = _parser.glyphMetrics(glyph).advance / _unitPerEm;
+        auto a = _parser.glyphMetrics(glyph).unwrapOr({}).advance / _unitPerEm;
         _cachedAdvances.put(glyph, a);
         return a;
     }
@@ -153,7 +153,8 @@ export struct Fontface : Gfx::Fontface {
 
     void glyphContour(Gfx::Canvas& g, Gfx::Glyph glyph) const override {
         g.scale(1.0 / _unitPerEm);
-        _parser.glyphContour(g, glyph);
+        if (auto res = _parser.glyphContour(g, glyph); not res)
+            logWarn("ttf: malformed outline for glyph {}: {}", glyph.index, res.none());
     }
 
     Opt<Rc<Gfx::Image>> glyphBitmap(Gfx::Glyph glyph) const {
@@ -161,7 +162,7 @@ export struct Fontface : Gfx::Fontface {
             return cached.expect();
 
         Opt<Rc<Gfx::Image>> image = NONE;
-        if (auto bitmap = _parser.glyphBitmap(glyph)) {
+        if (auto bitmap = _parser.glyphBitmap(glyph).unwrapOr(NONE)) {
             if (auto decoded = Image::load(bitmap->png))
                 image = Some(decoded.take());
             else
@@ -174,21 +175,22 @@ export struct Fontface : Gfx::Fontface {
 
     Flags<Gfx::GlyphAttr> glyphAttr(Gfx::Glyph glyph) const override {
         Flags<Gfx::GlyphAttr> attrs = NONE;
-        if (_parser.glyphHasColor(glyph) or glyphBitmap(glyph).has())
+        if (_parser.glyphHasColor(glyph).unwrapOr(false) or glyphBitmap(glyph).has())
             attrs.set(Gfx::GlyphAttr::COLORED);
         return attrs;
     }
 
     void paintGlyph(Gfx::Canvas& g, Gfx::Glyph glyph) const override {
-        if (_parser.glyphHasColor(glyph)) {
+        if (_parser.glyphHasColor(glyph).unwrapOr(false)) {
             g.scale(1.0 / _unitPerEm);
-            _parser.glyphPaint(g, glyph);
+            if (auto res = _parser.glyphPaint(g, glyph); not res)
+                logWarn("ttf: malformed color glyph {}: {}", glyph.index, res.none());
             return;
         }
 
         if (auto image = glyphBitmap(glyph)) {
             // NOTE: Bitmap metrics are in pixels of the strike, one em is ppem pixels.
-            auto bitmap = _parser.glyphBitmap(glyph).expect();
+            auto bitmap = _parser.glyphBitmap(glyph).unwrapOr(NONE).expect();
             f64 ppem = bitmap.ppem;
             Math::Rectf bound = {
                 bitmap.bearingX / ppem,

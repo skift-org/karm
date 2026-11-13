@@ -14,24 +14,28 @@ export struct Hhea : Io::BChunk {
     using AdvanceWidthMax = Io::BField<u16be, 10>;
     using NumberOfHMetrics = Io::BField<u16be, 34>;
 
+    // NOTE: Parser::init() rejects 'hhea' tables shorter than this,
+    //       so the fallbacks below are never hit on a loaded font.
+    static constexpr usize MIN_LEN = 36;
+
     isize ascender() const {
-        return get<Ascender>();
+        return get<Ascender>().unwrapOr(0);
     }
 
     isize descender() const {
-        return -get<Descender>();
+        return -get<Descender>().unwrapOr(0);
     }
 
     isize lineGap() const {
-        return get<LineGap>();
+        return get<LineGap>().unwrapOr(0);
     }
 
     isize advanceWidthMax() const {
-        return get<AdvanceWidthMax>();
+        return get<AdvanceWidthMax>().unwrapOr(0);
     }
 
     isize numberOfHMetrics() const {
-        return get<NumberOfHMetrics>();
+        return get<NumberOfHMetrics>().unwrapOr(0);
     }
 };
 

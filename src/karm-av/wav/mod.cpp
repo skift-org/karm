@@ -50,10 +50,10 @@ struct Decoder {
 
     Res<> _handleFmt(Riff::Chunk& c) {
         Io::BScan s = c.begin();
-        Type type = s.nextLe<Type>();
+        Type type = try$(s.nextLe<Type>());
         if (type != Type::PCM)
             return Error::invalidData("only pcm data supported");
-        _format = s.next<PcmFormat>();
+        _format = try$(s.next<PcmFormat>());
         return Ok();
     }
 
@@ -80,7 +80,7 @@ struct Decoder {
 
         for (auto sample : audio->frames().iter()) {
             for (auto channel : urange::zeroTo(format.channels)) {
-                sample.samples[channel] = s.nextI16le() / static_cast<f32>(Limits<i16>::MAX);
+                sample.samples[channel] = try$(s.nextI16le()) / static_cast<f32>(Limits<i16>::MAX);
             }
         }
 
@@ -92,7 +92,7 @@ struct Decoder {
         try$(riffChunk.expectId(Riff::RIFF));
 
         Io::BScan s = riffChunk.begin();
-        if (s.next<Riff::Id>() != WAVE)
+        if (try$(s.next<Riff::Id>()) != WAVE)
             return Error::invalidData("expected wave data");
 
         while (not s.ended()) {

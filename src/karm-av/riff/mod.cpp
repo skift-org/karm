@@ -1,3 +1,7 @@
+module;
+
+#include <karm/macros>
+
 export module Karm.Av:riff;
 
 import Karm.Core;
@@ -28,11 +32,11 @@ export struct Chunk {
         if (s.rem() <= sizeof(ChunkHeader))
             return Error::invalidData("not a riff chunk");
 
-        auto header = s.next<ChunkHeader>();
+        auto header = try$(s.next<ChunkHeader>());
         if (header.size > s.rem())
             return Error::invalidData("not a riff chunk");
 
-        return Ok<Chunk>(header.id, s.nextBytes(header.size));
+        return Ok<Chunk>(header.id, try$(s.nextBytes(header.size)));
     }
 
     Io::BScan begin() const {
