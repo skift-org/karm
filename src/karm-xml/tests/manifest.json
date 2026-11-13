@@ -1,0 +1,12 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "karm-xml.tests",
+    "type": "lib",
+    "requires": [
+        "karm-xml",
+        "karm-test"
+    ],
+    "injects": [
+        "__tests__"
+    ]
+}
