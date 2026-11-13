@@ -177,7 +177,7 @@ struct Buf {
         ensure(_len + count);
 
         for (usize i = _len; i > index; i--) {
-            _buf[i].ctor(_buf[i - count].take());
+            _buf[i + count - 1].ctor(_buf[i - 1].take());
         }
 
         for (usize i = 0; i < count; i++) {
@@ -191,7 +191,7 @@ struct Buf {
         ensure(_len + count);
 
         for (usize i = _len; i > index; i--) {
-            _buf[i].ctor(_buf[i - count].take());
+            _buf[i + count - 1].ctor(_buf[i - 1].take());
         }
 
         for (usize i = 0; i < count; i++) {
@@ -421,12 +421,12 @@ struct InlineBuf {
         _len++;
     }
 
-    void insert(Copy, usize index, T* first, usize count) {
+    void insert(Copy, usize index, T const* first, usize count) {
         if (_len + count > N) [[unlikely]]
             panic("cap too large");
 
         for (usize i = _len; i > index; i--) {
-            _buf[i].ctor(_buf[i - count].take());
+            _buf[i + count - 1].ctor(_buf[i - 1].take());
         }
 
         for (usize i = 0; i < count; i++) {
@@ -441,7 +441,7 @@ struct InlineBuf {
             panic("cap too large");
 
         for (usize i = _len; i > index; i--) {
-            _buf[i].ctor(_buf[i - count].take());
+            _buf[i + count - 1].ctor(_buf[i - 1].take());
         }
 
         for (usize i = 0; i < count; i++) {
@@ -837,11 +837,11 @@ struct ViewBuf {
         _buf[index].ctor(std::move(value));
     }
 
-    void insert(Copy, usize index, T* first, usize count) {
+    void insert(Copy, usize index, T const* first, usize count) {
         ensure(_len + count);
 
         for (usize i = _len; i > index; i--) {
-            _buf[i].ctor(_buf[i - count].take());
+            _buf[i + count - 1].ctor(_buf[i - 1].take());
         }
 
         for (usize i = 0; i < count; i++) {
@@ -855,7 +855,7 @@ struct ViewBuf {
         ensure(_len + count);
 
         for (usize i = _len; i > index; i--) {
-            _buf[i].ctor(_buf[i - count].take());
+            _buf[i + count - 1].ctor(_buf[i - 1].take());
         }
 
         for (usize i = 0; i < count; i++) {

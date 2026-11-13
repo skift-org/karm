@@ -95,9 +95,7 @@ struct _Vec {
     always_inline void insert(usize index, T&& value) { _buf.insert(index, std::move(value)); }
 
     always_inline void insertMany(usize index, Sliceable<T> auto const& other) {
-        for (auto& v : other) {
-            insert(index++, v);
-        }
+        _buf.insert(COPY, index, other.buf(), other.len());
     }
 
     void replace(usize index, T const& value) { _buf[index] = T(value); }
@@ -130,8 +128,7 @@ struct _Vec {
     void pushFront(T&& value) { insert(0, std::move(value)); }
 
     void pushFront(Sliceable<T> auto& other) {
-        for (auto& v : iterRev(other))
-            pushFront(v);
+        insertMany(0, other);
     }
 
     template <typename... Args>
@@ -152,8 +149,7 @@ struct _Vec {
     void pushBack(T&& value) { insert(len(), std::move(value)); }
 
     void pushBack(Sliceable<T> auto& other) {
-        for (auto& v : other)
-            pushBack(v);
+        insertMany(len(), other);
     }
 
     template <typename... Args>

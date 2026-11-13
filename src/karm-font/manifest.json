@@ -8,6 +8,7 @@
         "karm-sys",
         "karm-logger",
         "karm-debug",
-        "karm-font.ttf"
+        "karm-font.ttf",
+        "karm-font.woff"
     ]
 }

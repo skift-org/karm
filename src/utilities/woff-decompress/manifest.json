@@ -1,0 +1,12 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "woff-decompress",
+    "type": "exe",
+    "description": "Unwrap a WOFF or WOFF2 file into the font it holds",
+    "requires": [
+        "karm-cli",
+        "karm-font.woff",
+        "karm-ref",
+        "karm-sys"
+    ]
+}

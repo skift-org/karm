@@ -17,7 +17,7 @@ import :subset;
 namespace Karm::Font::Ttf {
 
 export struct Fontface : Gfx::Fontface {
-    Sys::Mmap _mmap;
+    Union<Sys::Mmap, Vec<u8>> _data;
     Parser _parser;
     mutable Map<Rune, Gfx::Glyph> _cachedEntries;
     mutable Map<Gfx::Glyph, f64> _cachedAdvances;
@@ -31,10 +31,28 @@ export struct Fontface : Gfx::Fontface {
         return Ok(makeRc<Fontface>(std::move(mmap), ttf));
     }
 
-    Fontface(Sys::Mmap&& mmap, Parser parser)
-        : _mmap(std::move(mmap)),
+    static Res<Rc<Fontface>> load(Vec<u8>&& buf) {
+        // NOTE: The parser points into the buffer, which is fine as moving
+        //       a Vec doesn't move what it holds.
+        auto ttf = try$(Ttf::Parser::init(buf));
+        return Ok(makeRc<Fontface>(std::move(buf), ttf));
+    }
+
+    Fontface(Union<Sys::Mmap, Vec<u8>> data, Parser parser)
+        : _data(std::move(data)),
           _parser(std::move(parser)) {
         _unitPerEm = _parser.unitPerEm();
+    }
+
+    Bytes bytes() const {
+        return _data.visit(
+            [](Sys::Mmap const& mmap) -> Bytes {
+                return mmap.bytes();
+            },
+            [](Vec<u8> const& buf) -> Bytes {
+                return buf;
+            }
+        );
     }
 
     Gfx::FontMetrics metrics() const override {

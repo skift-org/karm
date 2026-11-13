@@ -9,6 +9,7 @@ export import :base.bits;
 export import :base.bloom;
 export import :base.box;
 export import :base.buf;
+export import :base.bufferBuilder;
 export import :base.checked;
 export import :base.clamp;
 export import :base.cow;

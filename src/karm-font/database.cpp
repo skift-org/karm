@@ -218,7 +218,8 @@ export struct Database {
                     continue;
 
                 auto fontUrl = dir.url() / diren.name;
-                if (fontUrl.path.suffix() != "ttf")
+                auto suffix = fontUrl.path.suffix();
+                if (suffix != "ttf" and suffix != "woff" and suffix != "woff2")
                     continue;
 
                 logDebugIf(debugDatabase, "loading font: {}", fontUrl);

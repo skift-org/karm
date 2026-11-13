@@ -5,6 +5,8 @@
     "description": "Dump a TrueType font file to stdout",
     "requires": [
         "karm-sys",
-        "karm-font"
+        "karm-font",
+        "karm-gfx",
+        "karm-image"
     ]
 }

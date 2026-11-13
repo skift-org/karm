@@ -8,11 +8,11 @@ import Karm.Core;
 import Karm.Gfx;
 import Karm.Ref;
 
-import :container;
 import :glyf;
 import :hhea;
 import :maxp;
 import :parser;
+import :sfnt;
 
 namespace Karm::Font::Ttf {
 
@@ -42,15 +42,6 @@ static Res<> _visitComponents(Bytes glyph, auto fn) {
             break;
     }
     return Ok();
-}
-
-static Res<Vec<u8>> _patchU16(Bytes table, usize at, u16 v) {
-    Io::BufferWriter buf;
-    Io::BEmit e{buf};
-    try$(e.writeBytes(sub(table, 0, at)));
-    try$(e.writeU16be(v));
-    try$(e.writeBytes(sub(table, at + 2, table.len())));
-    return Ok(buf.take());
 }
 
 export Res<Gfx::FontSubset> subset(Parser const& parser, Slice<Gfx::Glyph> glyphs) {
@@ -99,56 +90,60 @@ export Res<Gfx::FontSubset> subset(Parser const& parser, Slice<Gfx::Glyph> glyph
         return Error::invalidData("too many glyphs");
     u16 count = result.glyphs.len();
 
-    Io::BufferWriter glyfBuf, locaBuf, hmtxBuf;
-    Io::BEmit glyfOut{glyfBuf}, locaOut{locaBuf}, hmtxOut{hmtxBuf};
+    BufferBuilder glyfBuf, locaBuf, hmtxBuf;
     for (auto glyph : result.glyphs) {
-        try$(locaOut.writeU32be(glyfOut.tell()));
+        locaBuf.appendU32be(glyfBuf.len());
 
         auto data = try$(glyphData(glyph.index));
         usize from = 0;
         try$(_visitComponents(data, [&](usize at, u16 component) -> Res<> {
-            try$(glyfOut.writeBytes(sub(data, from, at)));
-            try$(glyfOut.writeU16be(*newIds.lookup(component)));
+            glyfBuf.append(sub(data, from, at));
+            glyfBuf.appendU16be(*newIds.lookup(component));
             from = at + 2;
             return Ok();
         }));
-        try$(glyfOut.writeBytes(sub(data, from, data.len())));
-        try$(glyfOut.align(4));
+        glyfBuf.append(sub(data, from, data.len()));
+        glyfBuf.align(4);
 
         auto m = try$(parser._hmtx.metrics(glyph.index, parser._hhea));
-        try$(hmtxOut.writeU16be(m.advanceWidth));
-        try$(hmtxOut.writeI16be(m.lsb));
+        hmtxBuf.appendU16be(m.advanceWidth);
+        hmtxBuf.appendI16be(m.lsb);
     }
-    try$(locaOut.writeU32be(glyfOut.tell()));
+    locaBuf.appendU32be(glyfBuf.len());
 
-    Io::BufferWriter postBuf;
-    Io::BEmit postOut{postBuf};
-    try$(postOut.writeU32be(0x00030000));
+    BufferBuilder postBuf;
+    postBuf.appendU32be(0x00030000);
     if (auto post = parser._post.bytes(); post.len() >= 32)
-        try$(postOut.writeBytes(sub(post, 4, 32)));
+        postBuf.append(sub(post, 4, 32));
     else
-        for (usize i = 4; i < 32; i++)
-            try$(postOut.writeU8be(0));
+        postBuf.appendFill(28);
 
-    auto newHead = try$(_patchU16(head, 50, 1));
-    auto newHhea = try$(_patchU16(hhea, Hhea::NumberOfHMetrics::offset, count));
-    auto newMaxp = try$(_patchU16(maxp.bytes(), 4, count));
+    BufferBuilder newHead{head};
+    newHead.patchU16be(50, 1); // indexToLocFormat, 'loca' is written long
 
-    FontContainer container;
-    for (Str tag : {"OS/2", "cvt ", "fpgm", "prep"})
+    BufferBuilder newHhea{hhea};
+    newHhea.patchU16be(Hhea::NumberOfHMetrics::offset, count);
+
+    BufferBuilder newMaxp{maxp.bytes()};
+    newMaxp.patchU16be(4, count); // numGlyphs
+
+    // NOTE: Tables are laid out in the order they are added, which is kept
+    //       the same as the one of their tags.
+    SfntBuilder sfnt;
+    for (Str tag : {"OS/2", "cvt ", "fpgm"})
         if (auto t = parser.lookupTable(tag))
-            container.add(tag, *t);
-    container.add("glyf", glyfBuf.bytes());
-    container.add("head", newHead);
-    container.add("hhea", newHhea);
-    container.add("hmtx", hmtxBuf.bytes());
-    container.add("loca", locaBuf.bytes());
-    container.add("maxp", newMaxp);
-    container.add("post", postBuf.bytes());
+            try$(sfnt.add(tag, *t));
+    try$(sfnt.add("glyf", glyfBuf.bytes()));
+    try$(sfnt.add("head", newHead.bytes()));
+    try$(sfnt.add("hhea", newHhea.bytes()));
+    try$(sfnt.add("hmtx", hmtxBuf.bytes()));
+    try$(sfnt.add("loca", locaBuf.bytes()));
+    try$(sfnt.add("maxp", newMaxp.bytes()));
+    try$(sfnt.add("post", postBuf.bytes()));
+    if (auto t = parser.lookupTable("prep"))
+        try$(sfnt.add("prep", *t));
 
-    Io::BufferWriter outBuf;
-    try$(container.write(outBuf));
-    result.data = outBuf.take();
+    result.data = try$(sfnt.finish());
     return Ok(std::move(result));
 }
 

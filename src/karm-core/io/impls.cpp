@@ -5,6 +5,8 @@ module;
 export module Karm.Core:io.impls;
 
 import :base.array;
+import :base.bufferBuilder;
+import :base.limits;
 import :base.vec;
 import :base.res;
 import :io.traits;
@@ -173,31 +175,24 @@ export struct BufWriter :
     }
 };
 
-export struct BufferWriter : Writer, Flusher {
-    Vec<u8> _buf{};
+export struct BufferWriter : Writer, Flusher, BufferBuilder {
+    usize _limit = Limits<usize>::MAX;
 
-    BufferWriter(usize cap = 16) : _buf(cap) {}
+    BufferWriter(usize cap = 16) : BufferBuilder(cap) {}
+
+    BufferWriter(usize cap, usize limit)
+        : BufferBuilder(cap), _limit(limit) {}
 
     Res<usize> write(Bytes bytes) override {
-        _buf.insertMany(_buf.len(), bytes);
+        if (len() > _limit or bytes.len() > _limit - len()) [[unlikely]]
+            return Error::limitReached("buffer limit reached");
+        append(bytes);
         return Ok(bytes.len());
     }
 
-    Bytes bytes() const {
-        return _buf;
-    }
-
     Res<> flush() override {
-        _buf.trunc(0);
+        clear();
         return Ok();
-    }
-
-    Vec<u8> take() {
-        return std::move(_buf);
-    }
-
-    void clear() {
-        _buf.clear();
     }
 };
 

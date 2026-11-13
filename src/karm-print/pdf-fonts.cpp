@@ -107,7 +107,7 @@ export struct TrueTypeFontAdapter {
 
     Pdf::Stream fontFile() {
         // 9.9 Embedded font programs
-        Bytes data = _subset ? Bytes{_subset->data} : _font->_mmap.bytes();
+        Bytes data = _subset ? Bytes{_subset->data} : _font->bytes();
         return Pdf::Stream::flate(
             data,
             Pdf::Dict{
