@@ -12,6 +12,7 @@ namespace Karm::Math {
 export template <typename T>
 union Vec2 {
     using Scalar = T;
+    static constexpr usize DIMENSION = 2;
 
     struct {
         T x, y;
@@ -68,6 +69,9 @@ union Vec2 {
 
     constexpr T max() const {
         return Karm::max(x, y);
+    }
+    constexpr T sum() const {
+        return x + y;
     }
 
     constexpr Vec2 min(Vec2 other) const {
@@ -369,6 +373,7 @@ bool epsilonEq(Vec2<T> const& lhs, Vec2<T> const& rhs, T epsilon = Limits<T>::EP
 export template <typename T>
 union Vec3 {
     using Scalar = T;
+    static constexpr usize DIMENSION = 3;
 
     struct {
         T x, y, z;
@@ -437,6 +442,10 @@ union Vec3 {
 
     constexpr T max() const {
         return Karm::max(x, y, z);
+    }
+
+    constexpr T sum() const {
+        return x + y + z;
     }
 
     constexpr Vec3 min(Vec3 const& other) const {
@@ -679,6 +688,7 @@ bool epsilonEq(Vec3<T> const& lhs, Vec3<T> const& rhs, T epsilon) {
 export template <typename T>
 union Vec4 {
     using Scalar = T;
+    static constexpr usize DIMENSION = 4;
 
     struct {
         T x, y, z, w;
@@ -744,6 +754,10 @@ union Vec4 {
 
     constexpr T max() const {
         return max(x, y, z, w);
+    }
+
+    constexpr T sum() const {
+        return x + y + z + w;
     }
 
     constexpr Vec4 min(Vec4 const& other) const {
