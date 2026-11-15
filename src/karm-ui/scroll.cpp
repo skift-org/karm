@@ -165,35 +165,35 @@ export struct ScrollListener {
         }
 
         if (auto ke = e.is<App::KeyboardEvent>(); ke and (ke->type == App::KeyboardEvent::PRESS or ke->type == App::KeyboardEvent::REPEAT)) {
-            if (ke->key == App::Key::PGUP) {
+            if (ke->logicalKey == App::Key::PGUP) {
                 scroll(_targetScroll + Math::Vec2Au{0_au, containerBound().height});
                 shouldAnimate(n);
                 e.accept();
-            } else if (ke->key == App::Key::PGDOWN) {
+            } else if (ke->logicalKey == App::Key::PGDOWN) {
                 scroll(_targetScroll - Math::Vec2Au{0_au, containerBound().height});
                 shouldAnimate(n);
                 e.accept();
-            } else if (ke->key == App::Key::UP) {
+            } else if (ke->logicalKey == App::Key::UP) {
                 scroll(_targetScroll + Math::Vec2Au{0_au, SCROLL_STEP});
                 shouldAnimate(n);
                 e.accept();
-            } else if (ke->key == App::Key::DOWN) {
+            } else if (ke->logicalKey == App::Key::DOWN) {
                 scroll(_targetScroll - Math::Vec2Au{0_au, SCROLL_STEP});
                 shouldAnimate(n);
                 e.accept();
-            } else if (ke->key == App::Key::LEFT) {
+            } else if (ke->logicalKey == App::Key::LEFT) {
                 scroll(_targetScroll + Math::Vec2Au{SCROLL_STEP, 0_au});
                 shouldAnimate(n);
                 e.accept();
-            } else if (ke->key == App::Key::RIGHT) {
+            } else if (ke->logicalKey == App::Key::RIGHT) {
                 scroll(_targetScroll - Math::Vec2Au{SCROLL_STEP, 0_au});
                 shouldAnimate(n);
                 e.accept();
-            } else if (ke->key == App::Key::HOME) {
+            } else if (ke->logicalKey == App::Key::HOME) {
                 scroll(Math::Vec2Au{0_au, 0_au});
                 shouldAnimate(n);
                 e.accept();
-            } else if (ke->key == App::Key::END) {
+            } else if (ke->logicalKey == App::Key::END) {
                 scroll(Math::Vec2Au{-(_contentBound.width - _containerBound.width), -(_contentBound.height - _containerBound.height)});
                 shouldAnimate(n);
                 e.accept();

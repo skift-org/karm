@@ -94,71 +94,71 @@ export struct TextAction {
             bool nomod = not(shift or ctrl or alt);
             bool optionallyShift = (nomod or shift);
 
-            if (ke->key == App::Key::HOME and ctrl and shift)
+            if (ke->logicalKey == App::Key::HOME and ctrl and shift)
                 return Some(SELECT_START);
-            else if (ke->key == App::Key::END and ctrl and shift)
+            else if (ke->logicalKey == App::Key::END and ctrl and shift)
                 return Some(SELECT_END);
-            else if (ke->key == App::Key::LEFT and ctrl and shift)
+            else if (ke->logicalKey == App::Key::LEFT and ctrl and shift)
                 return Some(SELECT_PREV_WORD);
-            else if (ke->key == App::Key::RIGHT and ctrl and shift)
+            else if (ke->logicalKey == App::Key::RIGHT and ctrl and shift)
                 return Some(SELECT_NEXT_WORD);
-            else if (ke->key == App::Key::Z and ctrl and shift)
+            else if (ke->logicalKey == App::Key::Z and ctrl and shift)
                 return Some(REDO);
 
-            else if (ke->key == App::Key::LEFT and shift)
+            else if (ke->logicalKey == App::Key::LEFT and shift)
                 return Some(SELECT_PREV);
-            else if (ke->key == App::Key::RIGHT and shift)
+            else if (ke->logicalKey == App::Key::RIGHT and shift)
                 return Some(SELECT_NEXT);
-            else if (ke->key == App::Key::UP and shift)
+            else if (ke->logicalKey == App::Key::UP and shift)
                 return Some(SELECT_UP);
-            else if (ke->key == App::Key::DOWN and shift)
+            else if (ke->logicalKey == App::Key::DOWN and shift)
                 return Some(SELECT_DOWN);
-            else if (ke->key == App::Key::HOME and shift)
+            else if (ke->logicalKey == App::Key::HOME and shift)
                 return Some(SELECT_LINE_START);
-            else if (ke->key == App::Key::END and shift)
+            else if (ke->logicalKey == App::Key::END and shift)
                 return Some(SELECT_LINE_END);
 
-            else if (ke->key == App::Key::BKSPC and ctrl)
+            else if (ke->logicalKey == App::Key::BKSPC and ctrl)
                 return Some(DELETE_PREV_WORD);
-            else if (ke->key == App::Key::DELETE and ctrl)
+            else if (ke->logicalKey == App::Key::DELETE and ctrl)
                 return Some(DELETE_NEXT_WORD);
-            else if (ke->key == App::Key::LEFT and ctrl)
+            else if (ke->logicalKey == App::Key::LEFT and ctrl)
                 return Some(MOVE_PREV_WORD);
-            else if (ke->key == App::Key::RIGHT and ctrl)
+            else if (ke->logicalKey == App::Key::RIGHT and ctrl)
                 return Some(MOVE_NEXT_WORD);
-            else if (ke->key == App::Key::HOME and ctrl)
+            else if (ke->logicalKey == App::Key::HOME and ctrl)
                 return Some(MOVE_START);
-            else if (ke->key == App::Key::END and ctrl)
+            else if (ke->logicalKey == App::Key::END and ctrl)
                 return Some(MOVE_END);
-            else if (ke->key == App::Key::A and ctrl)
+            else if (ke->logicalKey == App::Key::A and ctrl)
                 return Some(SELECT_ALL);
-            else if (ke->key == App::Key::C and ctrl)
+            else if (ke->logicalKey == App::Key::C and ctrl)
                 return Some(COPY);
-            else if (ke->key == App::Key::X and ctrl)
+            else if (ke->logicalKey == App::Key::X and ctrl)
                 return Some(CUT);
-            else if (ke->key == App::Key::V and ctrl)
+            else if (ke->logicalKey == App::Key::V and ctrl)
                 return Some(PASTE);
-            else if (ke->key == App::Key::Z and ctrl)
+            else if (ke->logicalKey == App::Key::Z and ctrl)
                 return Some(UNDO);
 
-            else if (ke->key == App::Key::LEFT and nomod)
+            else if (ke->logicalKey == App::Key::LEFT and nomod)
                 return Some(MOVE_PREV);
-            else if (ke->key == App::Key::RIGHT and nomod)
+            else if (ke->logicalKey == App::Key::RIGHT and nomod)
                 return Some(MOVE_NEXT);
-            else if (ke->key == App::Key::UP and nomod)
+            else if (ke->logicalKey == App::Key::UP and nomod)
                 return Some(MOVE_UP);
-            else if (ke->key == App::Key::DOWN and nomod)
+            else if (ke->logicalKey == App::Key::DOWN and nomod)
                 return Some(MOVE_DOWN);
-            else if (ke->key == App::Key::HOME and nomod)
+            else if (ke->logicalKey == App::Key::HOME and nomod)
                 return Some(MOVE_LINE_START);
-            else if (ke->key == App::Key::END and nomod)
+            else if (ke->logicalKey == App::Key::END and nomod)
                 return Some(MOVE_LINE_END);
-            else if (ke->key == App::Key::ENTER and nomod)
+            else if (ke->logicalKey == App::Key::ENTER and nomod)
                 return Some(NEWLINE);
 
-            else if (ke->key == App::Key::BKSPC and optionallyShift)
+            else if (ke->logicalKey == App::Key::BKSPC and optionallyShift)
                 return Some(BACKSPACE);
-            else if (ke->key == App::Key::DELETE and optionallyShift)
+            else if (ke->logicalKey == App::Key::DELETE and optionallyShift)
                 return Some(DELETE);
             else if (ke->rune)
                 return Some(TextAction{TYPE, ke->rune});

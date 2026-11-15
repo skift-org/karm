@@ -104,7 +104,7 @@ struct DialogLayer : LeafNode<DialogLayer> {
             _closeDialog();
             e.accept();
         } else if (_dialog) {
-            if (auto ke = e.is<App::KeyboardEvent>(); ke and ke->type == App::KeyboardEvent::PRESS and ke->key == App::Key::ESC) {
+            if (auto ke = e.is<App::KeyboardEvent>(); ke and ke->type == App::KeyboardEvent::PRESS and ke->logicalKey == App::Key::ESC) {
                 _closeDialog();
                 e.accept();
             } else {

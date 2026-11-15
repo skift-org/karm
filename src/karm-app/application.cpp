@@ -8,6 +8,7 @@ import Karm.Sys;
 import Karm.App.Base;
 import Karm.Logger;
 import :_embed;
+import :inputs;
 
 using namespace Karm::Literals;
 
@@ -133,10 +134,16 @@ export struct Handler {
         return HitResult::NORMAL;
     }
 
+    void dispatch(WindowId id, Event& e) {
+        globalMouse().update(e);
+        globalKeyboard().update(e);
+        handle(id, e);
+    }
+
     template <typename E, typename... Args>
-    void handle(WindowId windowId, Args&&... args) {
+    void dispatch(WindowId windowId, Args&&... args) {
         auto e = App::makeEvent<E>(std::forward<Args>(args)...);
-        handle(windowId, *e);
+        dispatch(windowId, *e);
     }
 };
 

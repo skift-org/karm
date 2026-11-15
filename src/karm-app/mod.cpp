@@ -4,3 +4,4 @@ export import Karm.App.Base;
 export import :prefs;
 export import :application;
 export import :intent;
+export import :inputs;

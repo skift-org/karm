@@ -154,6 +154,12 @@ export struct Key {
     }
 };
 
+export enum struct KeyboardKey {
+    PHYSICAL,
+    LOGICAL,
+    _LEN,
+};
+
 export struct KeyboardEvent {
     enum {
         PRESS,
@@ -165,11 +171,11 @@ export struct KeyboardEvent {
 
     /// The code of the key that was pressed or released
     /// This value takes the current keyboard layout into account
-    Key key;
+    Key logicalKey;
 
     /// The scancode of the key that was pressed or released
     /// This value is independent of the current keyboard layout
-    Key code;
+    Key physicalKey;
     Flags<KeyMod> mods = {};
     Rune rune = '\0';
 };

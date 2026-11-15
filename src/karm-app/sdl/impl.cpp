@@ -207,7 +207,7 @@ struct SdlApplication : Application {
         switch (sdlEvent.type) {
 
         case SDL_EVENT_WINDOW_RESIZED: {
-            handler->handle<ResizeEvent>(
+            handler->dispatch<ResizeEvent>(
                 WindowId{sdlEvent.window.windowID},
                 ResizeEvent{
                     .size = {
@@ -222,14 +222,14 @@ struct SdlApplication : Application {
         case SDL_EVENT_KEY_DOWN: {
             auto ev = Sdl::fromSdlKeyboardEvent(sdlEvent.key);
             ev.type = sdlEvent.key.repeat ? KeyboardEvent::REPEAT : KeyboardEvent::PRESS;
-            handler->handle<KeyboardEvent>(WindowId{sdlEvent.key.windowID}, ev);
+            handler->dispatch<KeyboardEvent>(WindowId{sdlEvent.key.windowID}, ev);
             break;
         }
 
         case SDL_EVENT_KEY_UP: {
             auto ev = Sdl::fromSdlKeyboardEvent(sdlEvent.key);
             ev.type = KeyboardEvent::RELEASE;
-            handler->handle<KeyboardEvent>(WindowId{sdlEvent.key.windowID}, ev);
+            handler->dispatch<KeyboardEvent>(WindowId{sdlEvent.key.windowID}, ev);
             break;
         }
 
@@ -239,7 +239,7 @@ struct SdlApplication : Application {
             Str text = sdlEvent.text.text;
             for (Rune r : iterRunes(text)) {
                 ev.rune = r;
-                handler->handle<KeyboardEvent>(WindowId{sdlEvent.key.windowID}, ev);
+                handler->dispatch<KeyboardEvent>(WindowId{sdlEvent.key.windowID}, ev);
             }
             break;
         }
@@ -262,7 +262,7 @@ struct SdlApplication : Application {
                 static_cast<isize>(sdlEvent.motion.y),
             };
 
-            handler->handle<MouseEvent>(
+            handler->dispatch<MouseEvent>(
                 WindowId{sdlEvent.motion.windowID},
                 MouseEvent{
                     .type = MouseEvent::MOVE,
@@ -296,7 +296,7 @@ struct SdlApplication : Application {
                 button = MouseButton::MIDDLE;
             }
 
-            handler->handle<MouseEvent>(
+            handler->dispatch<MouseEvent>(
                 WindowId{sdlEvent.button.windowID},
                 MouseEvent{
                     .type = MouseEvent::RELEASE,
@@ -331,7 +331,7 @@ struct SdlApplication : Application {
                 button = MouseButton::MIDDLE;
             }
 
-            handler->handle<MouseEvent>(
+            handler->dispatch<MouseEvent>(
                 WindowId{sdlEvent.button.windowID},
 
                 MouseEvent{
@@ -353,7 +353,7 @@ struct SdlApplication : Application {
             if (not window)
                 return;
 
-            handler->handle<MouseEvent>(
+            handler->dispatch<MouseEvent>(
                 WindowId{sdlEvent.wheel.windowID},
 
                 MouseEvent{

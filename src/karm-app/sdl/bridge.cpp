@@ -346,8 +346,8 @@ export Flags<App::KeyMod> bridgeSdlKeymod(SDL_Keymod sdl) {
 
 App::KeyboardEvent fromSdlKeyboardEvent(SDL_KeyboardEvent const& sdl) {
     App::KeyboardEvent ev{};
-    ev.key = bridgeSdlKeycode(sdl.key);
-    ev.code = bridgeScancode(sdl.scancode);
+    ev.logicalKey = bridgeSdlKeycode(sdl.key);
+    ev.physicalKey = bridgeScancode(sdl.scancode);
     ev.mods = bridgeSdlKeymod(sdl.mod);
     return ev;
 }
