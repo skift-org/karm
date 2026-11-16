@@ -18,7 +18,7 @@ namespace Karm::Gfx {
 
 using _CpuFills = Union<
     Color,
-    Gradient,
+    BakedGradient,
     Pixels>;
 
 export struct CpuFill : _CpuFills {
@@ -30,7 +30,7 @@ export struct CpuFill : _CpuFills {
                 return c;
             },
             [](Gradient const& g) -> CpuFill {
-                return g;
+                return g.bake();
             },
             [](Rc<Image> const& img) -> CpuFill {
                 return img->pixels();

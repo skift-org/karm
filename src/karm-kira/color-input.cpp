@@ -132,8 +132,7 @@ export Ui::Child hsvValueSlider(Gfx::Hsv hsv, Ui::Send<Gfx::Hsv> onChange) {
             .withColors(
                 Gfx::hsvToRgb(hsv.withValue(0)),
                 Gfx::hsvToRgb(hsv.withValue(1))
-            )
-            .bake();
+            );
 
     return _sliderThumb(Gfx::hsvToRgb(hsv)) |
            Ui::end() |
@@ -164,8 +163,7 @@ export Ui::Child hsvSaturationSlider(Gfx::Hsv hsv, Ui::Send<Gfx::Hsv> onChange) 
                         .withValue(1)
                         .withSaturation(1)
                 )
-            )
-            .bake();
+            );
 
     return _sliderThumb(Gfx::hsvToRgb(hsv.withValue(1))) |
            Ui::end() |
@@ -193,7 +191,7 @@ export Ui::Child hsvHueSlider(Gfx::Hsv hsv, Ui::Send<Gfx::Hsv> onChange) {
                .borderRadii = 99,
                .borderWidth = 1,
                .borderFill = Some(Ui::GRAY100.withOpacity(0.2)),
-               .backgroundFill = Some(Gfx::Gradient::hsv().bake()),
+               .backgroundFill = Some(Gfx::Gradient::hsv()),
            }) |
            Ui::maxSize({Ui::UNCONSTRAINED, 18_au});
 }

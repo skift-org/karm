@@ -59,8 +59,7 @@ export struct BoxShadow {
         shadowBound = shadowBound.offset(offset);
 
         auto grad = Gfx::Gradient::linear()
-                        .withColors(fill, fill.withOpacity(0))
-                        .bake();
+                        .withColors(fill, fill.withOpacity(0));
 
         auto topStart = Math::Recti::fromTwoPoint(
             shadowBound.topStart(),

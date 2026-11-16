@@ -59,7 +59,6 @@ test$("glyph-cache-matches-direct") {
         g.fillStyle(
             Gfx::Gradient::linear()
                 .withColors(Gfx::WHITE, Gfx::WHITE)
-                .bake()
         );
     });
 
@@ -79,7 +78,6 @@ test$("glyph-cache-matches-direct-scaled") {
         g.fillStyle(
             Gfx::Gradient::linear()
                 .withColors(Gfx::WHITE, Gfx::WHITE)
-                .bake()
         );
     });
 
