@@ -1,0 +1,9 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "karm-svg",
+    "type": "lib",
+    "requires": [
+        "karm-xml",
+        "karm-gfx"
+    ]
+}

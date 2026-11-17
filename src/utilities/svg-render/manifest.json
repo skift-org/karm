@@ -1,0 +1,11 @@
+{
+    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
+    "id": "svg-render",
+    "type": "exe",
+    "description": "Prints the current date and time",
+    "requires": [
+        "karm-sys",
+        "karm-svg",
+        "karm-image"
+    ]
+}

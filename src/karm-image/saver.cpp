@@ -34,7 +34,7 @@ export Res<Vec<u8>> save(Gfx::Pixels pixels, Saver const& props = {}) {
 }
 
 export Res<> save(Gfx::Pixels pixels, Ref::Url const& url, Saver const& props = {}) {
-    auto file = try$(Sys::File::create(url));
+    auto file = try$(Sys::File::openOrCreate(url));
     Io::BEmit e{file};
     return save(pixels, e, props);
 }

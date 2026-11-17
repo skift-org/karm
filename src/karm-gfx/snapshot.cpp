@@ -675,11 +675,15 @@ export struct Snapshot {
         using Canvas::fill;
         using Canvas::plot;
 
-        Recorder(Math::Vec2i size)
+        Recorder(Math::Vec2i size = {})
             : _size(size), _state(makeRc<_State>()) {}
 
         Snapshot finalize() {
             return {_size, std::move(_state)};
+        }
+
+        void size(Math::Vec2i size) {
+            _size = size;
         }
 
         void push() override {

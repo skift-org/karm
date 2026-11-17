@@ -23,11 +23,19 @@ export struct QualifiedName {
     Symbol name;
 
     bool operator==(QualifiedName const& other) const = default;
+
+    void repr(Io::Emit& e) const {
+        e("(qualified-name ns:{} name:{})", ns, name);
+    }
 };
 
 export struct Attr {
     QualifiedName name;
     String value;
+
+    void repr(Io::Emit& e) const {
+        e("(attr name:{} value:{})", name, value);
+    }
 };
 
 /// <?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -35,6 +43,10 @@ export struct XmlDecl {
     String version;
     Opt<String> encoding;
     Opt<String> standalone;
+
+    void repr(Io::Emit& e) const {
+        e("(xml-decl name:{} publicId:{} systemId:{})", version, encoding, standalone);
+    }
 };
 
 /// <!DOCTYPE name PUBLIC "publicId" "systemId">
@@ -42,6 +54,10 @@ export struct Doctype {
     Symbol name = ""_sym;
     String publicId = ""s;
     String systemId = ""s;
+
+    void repr(Io::Emit& e) const {
+        e("(doctype name:{} publicId:{} systemId:{})", name, publicId, systemId);
+    }
 };
 
 /// Attributes are in document order with their names resolved and their
@@ -49,18 +65,34 @@ export struct Doctype {
 export struct StartElement {
     QualifiedName name;
     Vec<Attr> attrs;
+
+    void repr(Io::Emit& e) const {
+        e("(start-element name:{} attrs:{})", name, attrs);
+    }
 };
 
 export struct EndElement {
     QualifiedName name;
+
+    void repr(Io::Emit& e) const {
+        e("(end-element name:{})", name);
+    }
 };
 
 export struct Text {
     String data;
+
+    void repr(Io::Emit& e) const {
+        e("(text data:{})", data);
+    }
 };
 
 export struct Comment {
     String data;
+
+    void repr(Io::Emit& e) const {
+        e("(comment data:{})", data);
+    }
 };
 
 export using Event = Union<
