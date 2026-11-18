@@ -58,7 +58,7 @@ static Ui::Child _mobileScaffold(Scaffold::State const& s, Scaffold const& scaff
             Ui::grow()
         );
     } else {
-        body.pushBack(Ui::reactive(scaffold.body) | Ui::grow());
+        body.pushBack(scaffold.body() | Ui::grow());
     }
 
     Ui::Children tools;
@@ -177,12 +177,12 @@ static Ui::Child _desktopScaffold(Scaffold::State const& s, Scaffold const& scaf
         body.pushBack(
             hflow(
                 scaffold.sidebar().expect(),
-                Ui::reactive(scaffold.body) | Ui::insets({0_au, 4_au, 4_au, 0_au}) | Ui::grow()
+                scaffold.body() | Ui::insets({0_au, 4_au, 4_au, 0_au}) | Ui::grow()
             ) |
             Ui::grow()
         );
     } else {
-        body.pushBack(Ui::reactive(scaffold.body) | Ui::insets({0_au, 4_au, 4_au, 4_au}) | Ui::grow());
+        body.pushBack(scaffold.body() | Ui::insets({0_au, 4_au, 4_au, 4_au}) | Ui::grow());
     }
 
     return Ui::vflow(body) |

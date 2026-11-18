@@ -1,4 +1,5 @@
 #include <karm/entry>
+#include <sys/stat.h>
 
 import Mdi;
 import Karm.Kira;
@@ -7,7 +8,6 @@ import Karm.Ui;
 import Karm.Gfx;
 import Karm.Logger;
 import Karm.Glob;
-import Karm.Signals;
 import Karm.Core;
 
 using namespace Karm;
@@ -20,60 +20,83 @@ struct IconMetadata {
     String path;
 };
 
-struct State : Meta::Pinned {
-    Signals::Signal<Vec<IconMetadata>> icons;
-    Signals::Signal<String> searchQuery;
-    Signals::Signal<Opt<String>> selectedName;
-    Signals::Computed<Vec<IconMetadata>> filtered = [icons = this->icons, searchQuery = this->searchQuery] {
-        Vec<Tuple<IconMetadata, int>> matches;
-        for (auto l : *icons) {
-            if (not searchQuery.value()) {
-                matches.pushBack({l, {}});
+struct State {
+    Vec<IconMetadata> icons;
+    String searchQuery = ""s;
+    Opt<usize> selected = NONE;
+    Vec<usize> filtered = Iota(icons.len()) | Collect<Vec<usize>>();
+
+    void filter() {
+        Vec<Tuple<usize, int>> matches;
+        for (auto [l, i] : iter(icons) | Index()) {
+            if (not searchQuery) {
+                matches.pushBack({i, {}});
                 continue;
             }
 
-            auto match = Glob::matchFuzzy(l.name, searchQuery.value());
+            auto match = Glob::matchFuzzy(l.name, searchQuery);
             if (not match)
                 continue;
-            matches.pushBack({l, match->score});
+            matches.pushBack({i, match->score});
         }
 
-        if (searchQuery.value())
+        if (searchQuery)
             sort(matches, [](auto& a, auto& b) {
                 return b.v1 <=> a.v1;
             });
 
-        return iter(matches) |
-               Select([](auto& m) {
-                   return m.v0;
-               }) |
-               Collect<Vec<IconMetadata>>();
-    };
-    Signals::Computed<Opt<IconMetadata>> selected = [filtered = this->filtered, selectedName = this->selectedName] -> Opt<IconMetadata> {
-        if (not selectedName.value())
-            return NONE;
-        return iter(filtered.value()) | FindFirst([&](auto& i) {
-                   return i.name == selectedName.value().expect();
-               });
-    };
+        filtered = iter(matches) |
+                   Select([](auto& m) {
+                       return m.v0;
+                   }) |
+                   Collect<Vec<usize>>();
+    }
 
-    State(Vec<IconMetadata> icons)
-        : icons(std::move(icons)) {}
+    Opt<IconMetadata const&> selectedIcon() const {
+        return icons.index(selected.unwrapOr(Limits<usize>::MAX));
+    }
 };
+
+struct SelectIcon {
+    usize selected;
+};
+
+struct UpdateSearch {
+    String query;
+};
+
+using Action = Union<
+    SelectIcon,
+    UpdateSearch>;
+
+Ui::Task<Action> reduce(State& state, Action action) {
+    action.visit(
+        [&](SelectIcon const& a) {
+            state.selected = Some(a.selected);
+        },
+        [&](UpdateSearch const& a) {
+            state.searchQuery = a.query;
+            state.filter();
+        }
+    );
+    return NONE;
+}
+
+using Model = Ui::Model<State, Action, reduce>;
 
 Ui::Child iconGrid(State const& s) {
     return Ui::grid(
                Ui::GridStyle::simpleFixed(
-                   {((isize)s.filtered.value().len() / 8) + 1, 48_au},
+                   {static_cast<isize>(s.filtered.len()) / 8 + 1, 48_au},
                    {8, 48_au}, 4_au
                ),
-               iter(s.filtered.value()) | Select([&](IconMetadata const& i) {
-                   return Ui::icon(Gfx::Icon{i.path, 24}, 48_au) |
+               iter(s.filtered) | Select([&](usize i) {
+                   return Ui::icon(Gfx::Icon{s.icons[i].path, 24}, 48_au) |
                           Ui::center() |
                           Ui::bound() |
                           Ui::button(
-                              Some(Ui::bind(s.selectedName, Some(i.name))),
-                              i.name == s.selectedName.value() ? Ui::ButtonStyle::regular() : Ui::ButtonStyle::subtle()
+                              Some(Model::bind<SelectIcon>(i)),
+                              i == s.selected ? Ui::ButtonStyle::regular() : Ui::ButtonStyle::subtle()
                           );
                }) | Collect<Ui::Children>()
            ) |
@@ -95,8 +118,8 @@ Ui::Child iconDetails(IconMetadata const& metadata) {
            Ui::pinSize({320_au, Ui::UNCONSTRAINED});
 }
 
-Ui::Child app(State& s) {
-    return Ui::reactive([&] mutable {
+Ui::Child app(Vec<IconMetadata> icons) {
+    return Ui::reducer<Model>(State{std::move(icons)}, [](State const& s) {
         return Kr::scaffold({
             .icon = Mdi::PALETTE,
             .title = "Icons"s,
@@ -105,7 +128,7 @@ Ui::Child app(State& s) {
                                Kr::scaffoldContent() |
                                Ui::grow();
 
-                if (auto& [metadata] = s.selected.value()) {
+                if (auto const& [metadata] = s.selectedIcon()) {
                     content = Ui::hflow(4_au, content, iconDetails(metadata) | Kr::scaffoldContent()) |
                               Ui::grow();
                 }
@@ -113,8 +136,8 @@ Ui::Child app(State& s) {
                 return Ui::vflow(
                     4_au,
                     Kr::searchbar(
-                        s.searchQuery.value(),
-                        Ui::bind(s.searchQuery)
+                        s.searchQuery,
+                        Model::map<UpdateSearch>()
                     ),
                     content
                 );
@@ -134,10 +157,9 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken ct) {
             icon.get("path"s).asStr(),
         });
     }
-    State state{metadatas};
     co_return co_await Ui::runAsync(
         env,
-        app(state),
+        app(std::move(metadatas)),
         ct
     );
 }

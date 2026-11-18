@@ -1,8 +1,0 @@
-{
-    "$schema": "https://schemas.cute.engineering/stable/cutekit.manifest.component.v1",
-    "id": "hello-ui",
-    "type": "exe",
-    "requires": [
-        "karm-ui"
-    ]
-}
