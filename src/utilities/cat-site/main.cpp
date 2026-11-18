@@ -129,47 +129,73 @@ struct Site : Http::Handler {
         return Template::Document::eval(templ, env);
     }
 
-    Async::Task<> handleAsync(Rc<Http::Request> req, Rc<Http::ResponseWriter> resp, Async::CancellationToken ct) override {
-        if (req->method == Http::Method::GET) {
-            auto url = resolve(req->url);
-
-            if (Sys::isDir(url).unwrapOr(false)) {
-                if (req->url.path.len() and not req->url.path.trailingSlash())
-                    co_return co_await resp->redirectAsync(Http::Code::MOVED_PERMANENTLY, req->url / "."_path, ct);
-                url = url / "index.html";
+    Res<> _build(Ref::Url base, Ref::Url output) {
+        (void)Sys::Dir::create(output);
+        for (auto& e : try$(Sys::Dir::open(base)).entries()) {
+            if (e.hidden()) {
+                continue;
+            } else if (e.type == Sys::Type::DIR) {
+                try$(_build(base / e.name, output / e.name));
+            } else if (e.uti() == Ref::Uti::PUBLIC_MARKDOWN) {
+                try$(Sys::writeAllText(output / "{}.html"_f(Ref::Path::parse(e.name).stem()), try$(renderPage(base / e.name))));
+            } else {
+                try$(Sys::copy(base / e.name, output / e.name));
             }
-
-            if (Sys::isFile(url).unwrapOr(false)) {
-                resp->code = Http::Code::OK;
-                co_return co_await resp->writeFileAsync(url, ct);
-            }
-
-            auto rewritten = url.parent(1) / "{}.md"_f(url.path.stem());
-            auto result = renderPage(rewritten);
-
-            if (not result)
-                co_return co_await resp->notFoundAsync(ct);
-
-            resp->code = Http::Code::OK;
-            co_return co_await resp->writeStrAsync(result.take(), ct);
-        } else {
-            co_return co_await resp->notFoundAsync(ct);
         }
+
+        return Ok();
+    }
+
+    Res<> build(Ref::Url output) {
+        return _build(baseurl, output);
+    }
+
+    Async::Task<> handleAsync(Rc<Http::Request> req, Rc<Http::ResponseWriter> resp, Async::CancellationToken ct) override {
+        if (req->method != Http::Method::GET)
+            co_return co_await resp->notFoundAsync(ct);
+
+        auto url = resolve(req->url);
+
+        if (Sys::isDir(url).unwrapOr(false)) {
+            if (req->url.path.len() and not req->url.path.trailingSlash())
+                co_return co_await resp->redirectAsync(Http::Code::MOVED_PERMANENTLY, req->url / "."_path, ct);
+            url = url / "index.html";
+        }
+
+        if (Sys::isFile(url).unwrapOr(false)) {
+            resp->code = Http::Code::OK;
+            co_return co_await resp->writeFileAsync(url, ct);
+        }
+
+        auto rewritten = url.parent(1) / "{}.md"_f(url.path.stem());
+        auto result = renderPage(rewritten);
+
+        if (not result)
+            co_return co_await resp->notFoundAsync(ct);
+
+        resp->code = Http::Code::OK;
+        co_return co_await resp->writeStrAsync(result.take(), ct);
     }
 };
 
 Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken ct) {
-    auto inputArg = Cli::operand<Ref::Url>("input"s, "Path to the directory containing the site"s, "bundle://catserve/public/site"_url);
+    auto inputArg = Cli::operand<Ref::Url>("input"s, "Path to the directory containing the site"s, "bundle://cat-site/public/site"_url);
     auto themeArg = Cli::option<Str>(NONE, "theme"s, "Theme to use."s, "default");
     auto portArg = Cli::option<isize>(Some('p'), "port"s, "TCP Port to serve the website on."s, 8080);
+    auto outputArg = Cli::option<Opt<Ref::Url>>(Some('o'), "output"s, "Build the site as a static directory, instead of serving the site on over HTTP"s, NONE);
 
     Cli::Command cmd{
-        "catserve"s,
+        "cat-site"s,
         "Tiny static markdown server"s,
         {
             Cli::Section{
                 "Site"s,
-                {inputArg, themeArg, portArg}
+                {
+                    inputArg,
+                    themeArg,
+                    portArg,
+                    outputArg,
+                }
             },
         }
     };
@@ -180,6 +206,10 @@ Async::Task<> entryPointAsync(Sys::Env& env, Async::CancellationToken ct) {
 
     logInfo("{} starting...", CAT);
     auto site = co_try$(Site::load(inputArg, Some(themeArg.value())));
+
+    if (auto const& [output] = outputArg.value())
+        co_return site->build(output);
+
     co_return co_await Http::serveAsync(
         site,
         {
