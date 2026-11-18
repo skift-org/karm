@@ -56,7 +56,7 @@ constexpr T frexp(T d, int* ep) {
     dispatchConstexpr$(frexp, d, ep);
 
     using Bits = FloatBits<T>;
-    using U = typename Bits::Raw;
+    using U = Bits::Raw;
 
     *ep = 0;
     auto x = Bits::from(d);

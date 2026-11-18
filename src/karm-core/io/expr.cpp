@@ -232,6 +232,17 @@ export constexpr Expr auto ctype(CType auto ctype) {
     };
 }
 
+export template <typename T>
+constexpr Expr auto icuProperty(bool (T::*fn)() const) {
+    return [=](auto& scan) {
+        if ((T::of(scan.peek()).*fn)()) {
+            scan.next();
+            return true;
+        }
+        return false;
+    };
+}
+
 /// Match a character range and consume it if it lies within the range.
 export constexpr Expr auto range(Rune start, Rune end) {
     return [=](auto& scan) {
