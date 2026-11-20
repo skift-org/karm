@@ -320,7 +320,9 @@ constexpr bool isOdd(T v) {
 // https://en.cppreference.com/c/numeric/math/isNan
 export template <Meta::Float T>
 constexpr bool isNan(T v) {
-    dispatchConstexpr$(isnan, v);
+    // NOTE: Clang only has one builtin for isnan()
+    if (std::is_constant_evaluated())
+        return __builtin_isnan(v);
     using Bits = FloatBits<T>;
     auto bits = Bits::from(v);
     return bits.exponent == Bits::exponentMax and bits.mantissa != 0;
@@ -509,7 +511,7 @@ export template <Meta::Float T>
 constexpr T pow(T x, T y) {
     dispatchConstexpr$(pow, x, y);
 
-    double xy, ye;
+    T xy, ye;
     long i;
     int ex, ey;
 
@@ -551,7 +553,7 @@ constexpr T pow(T x, T y) {
         y = -y;
         flip = 1;
     }
-    double y1 = modf(y, &ye);
+    T y1 = modf(y, &ye);
     if (y1 != 0.0) {
         if (x <= 0.)
             goto zreturn;
@@ -562,7 +564,7 @@ constexpr T pow(T x, T y) {
         xy = exp(y1 * log(x));
     } else
         xy = 1.0;
-    if (ye > 0x7FFFFFFF) { /* should be ~0UL but compiler can't convert double to ulong */
+    if (ye > static_cast<T>(0x7FFFFFFF)) { /* should be ~0UL but compiler can't convert double to ulong */
         if (x <= 0.) {
         zreturn:
             if (x == 0. and not flip)
@@ -579,7 +581,7 @@ constexpr T pow(T x, T y) {
     }
     x = frexp(x, &ex);
     ey = 0;
-    i = ye;
+    i = static_cast<long>(ye);
     if (i)
         for (;;) {
             if (i & 1) {
