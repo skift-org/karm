@@ -121,7 +121,7 @@ struct Slice {
     always_inline constexpr Opt<T const&> index(usize i) const {
         if (i >= _len)
             return NONE;
-        return _buf[i];
+        return Some(_buf[i]);
     }
 
     always_inline constexpr T const& operator[](usize i) const {
@@ -177,13 +177,13 @@ struct MutSlice {
     always_inline constexpr Opt<T&> index(usize i) {
         if (i >= _len)
             return NONE;
-        return _buf[i];
+        return Some(_buf[i]);
     }
 
     always_inline constexpr Opt<T const&> index(usize i) const {
         if (i >= _len)
             return NONE;
-        return _buf[i];
+        return Some(_buf[i]);
     }
 
     always_inline constexpr T& operator[](usize i) {
