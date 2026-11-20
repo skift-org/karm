@@ -1,5 +1,4 @@
 #include <karm/entry>
-#include <sys/stat.h>
 
 import Mdi;
 import Karm.Kira;
