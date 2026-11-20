@@ -39,7 +39,7 @@ struct Site : Http::Handler {
         manifest.navbar = json.get("navbar").asStr();
         manifest.footer = json.get("footer").asStr();
 
-        site->theme = try$(Sys::readAllText<Utf8>("bundle://catserve/themes"_url / "{}.css"_f(theme)).wrapErr(Error::notFound("could not load theme")));
+        site->theme = try$(Sys::readAllText<Utf8>("bundle://cat-site/themes"_url / "{}.css"_f(theme)).wrapErr(Error::notFound("could not load theme")));
 
         auto style = Sys::readAllText<Utf8>(baseurl / "style.css");
         site->style = style.unwrapOr(""s);
