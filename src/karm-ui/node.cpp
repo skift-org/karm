@@ -60,7 +60,9 @@ struct Node : App::Dispatch {
         return _key;
     }
 
-    virtual Opt<Child> reconcile(Child other) { return Some(other); }
+    virtual bool compatible(Child&) { return false; }
+
+    virtual void adopt(Child) {}
 
     virtual void paint(Gfx::Canvas&, Math::RectAu) {}
 
@@ -107,25 +109,28 @@ export template <typename Crtp>
 struct LeafNode : Node {
     Node* _parent = nullptr;
 
-    virtual void reconcile(Crtp&) {}
+    virtual void adopt(Crtp&) {}
 
-    Opt<Child> reconcile(Child other) override {
+    virtual void adoptChildren(Crtp&) {}
+
+    bool compatible(Child& other) override {
+        return other.is<Crtp>() and _key == other->key();
+    }
+
+    void adopt(Child other) override {
         // NOTE: Nodes should never be part of a state, to
         //       ensure this we check that nodes are not
         //       reused across rebuilds
-        if (other->_consumed)
-            panic("reconcile() called on consumed node, did you forget to wrap the node in a slot?");
-
         if (this == &other.unwrap())
-            panic("reconcile() called on self, did you forget to wrap the node in a slot?");
+            panic("adopt() called on self, did you forget to wrap the node in a slot?");
 
-        if (not other.is<Crtp>() or _key != other->key())
-            return Some(other);
+        if (not compatible(other))
+            return;
 
-        reconcile(other.expect<Crtp>());
         other->_consumed = true;
-
-        return NONE;
+        auto& old = other.expect<Crtp>();
+        adopt(old);
+        adoptChildren(old);
     }
 
     void bubble(App::Event& e) override {
@@ -183,28 +188,26 @@ struct GroupNode : LeafNode<Crtp> {
         return _children;
     }
 
-    void reconcile(Crtp& o) override {
-        auto& us = _children;
-        auto& them = o.children();
-
-        for (usize i = 0; i < them.len(); i++) {
-            if (i < us.len()) {
-                auto old = us[i];
-                auto next = us[i]->reconcile(them[i]).unwrapOr(us[i]);
-                if (&*next != &*old) {
-                    us.replace(i, next);
-                    old->detach(this);
-                    next->attach(this);
-                }
-            } else {
-                us.insert(i, them[i]);
-                us[i]->attach(this);
+    static Opt<Child> _counterpart(Child& child, usize index, Children& old) {
+        if (child->key()) {
+            for (auto& o : old) {
+                if (not o->_consumed and o->key() == child->key())
+                    return Some(o);
             }
+            return NONE;
         }
 
-        for (usize i = them.len(); i < us.len(); ++i)
-            us[i]->detach(this);
-        us.trunc(them.len());
+        if (index < old.len() and not old[index]->key())
+            return Some(old[index]);
+
+        return NONE;
+    }
+
+    void adoptChildren(Crtp& o) override {
+        for (usize i = 0; i < _children.len(); i++) {
+            if (auto old = _counterpart(_children[i], i, o.children()))
+                _children[i]->adopt(*old);
+        }
     }
 
     void paint(Gfx::Canvas& g, Math::RectAu r) override {
@@ -272,10 +275,8 @@ struct ProxyNode : LeafNode<Crtp> {
         return *_child;
     }
 
-    void reconcile(Crtp& o) override {
-        _child = _child->reconcile(o._child).unwrapOr(_child);
-        _child->attach(this);
-        LeafNode<Crtp>::reconcile(o);
+    void adoptChildren(Crtp& o) override {
+        _child->adopt(o._child);
     }
 
     void paint(Gfx::Canvas& g, Math::RectAu r) override {

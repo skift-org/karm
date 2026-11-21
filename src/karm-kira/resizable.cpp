@@ -31,12 +31,11 @@ struct Resizable : Ui::ProxyNode<Resizable> {
           _onChange(std::move(onChange)),
           _size(minSize) {}
 
-    void reconcile(Resizable& o) override {
-        if (o._onChange) {
+    void adopt(Resizable& o) override {
+        _grabbed = o._grabbed;
+
+        if (not _onChange)
             _size = o._size;
-        }
-        _onChange = std::move(o._onChange);
-        ProxyNode::reconcile(o);
     }
 
     void event(App::Event& e) override {
@@ -98,6 +97,11 @@ struct ResizeHandle : Ui::View<ResizeHandle> {
 
     ResizeHandle(App::CursorStyle cursor = App::CursorStyle::DEFAULT)
         : _cursor(cursor) {}
+
+    void adopt(ResizeHandle& o) override {
+        _pressed = o._pressed;
+        _hover = o._hover;
+    }
 
     void paint(Gfx::Canvas& g, Math::RectAu) override {
         g.push();

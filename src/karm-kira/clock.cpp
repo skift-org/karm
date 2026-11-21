@@ -14,10 +14,6 @@ struct Clock : Ui::View<Clock> {
 
     Clock(Time time) : _time(time) {}
 
-    void reconcile(Clock& o) override {
-        _time = o._time;
-    }
-
     void _drawHand(Gfx::Canvas& g, f64 angle, f64 length, Gfx::Color color, f64 width) {
         g.push();
         g.beginPath();

@@ -21,9 +21,8 @@ struct Radio : Ui::View<Radio> {
         : _value(value), _onChange(std::move(onChange)) {
     }
 
-    void reconcile(Radio& o) override {
-        _value = o._value;
-        _onChange = std::move(o._onChange);
+    void adopt(Radio& o) override {
+        _mouseListener = o._mouseListener;
     }
 
     void paint(Gfx::Canvas& g, Math::RectAu) override {

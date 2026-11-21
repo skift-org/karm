@@ -71,15 +71,24 @@ struct Reducer :
     using State = Model::State;
     using Action = Model::Action;
 
-    State _state;
+    struct StateCell {
+        State state;
+        Node* owner;
+    };
+
+    Rc<StateCell> _cell;
     Func<Child(State const&)> _build;
     bool _rebuild = true;
     Opt<Child> _child;
 
     Reducer(State state, Func<Child(State const&)> build)
-        : _state(std::move(state)), _build(std::move(build)) {}
+        : _cell(makeRc<StateCell>(std::move(state), this)),
+          _build(std::move(build)) {}
 
     ~Reducer() {
+        if (_cell->owner == this)
+            _cell->owner = nullptr;
+
         if (_child)
             (*_child)->detach(this);
     }
@@ -87,52 +96,56 @@ struct Reducer :
     // MARK: Build -------------------------------------------------------------
 
     void rebuild() {
-        if (_child) {
-            auto tmp = (*_child)->reconcile(_build(_state));
-            if (tmp) {
-                (*_child)->detach(this);
-                _child = tmp;
-                (*_child)->attach(this);
-            }
-        } else {
-            _child = Some(_build(_state));
-            (*_child)->attach(this);
+        auto next = _build(_cell->state);
+        next->attach(this);
+
+        if (auto& [prev] = _child) {
+            next->adopt(prev);
+            prev->detach(this);
         }
 
+        _child = Some(next);
         _rebuild = false;
         event<Node::RebuiltEvent>(*this);
     }
 
-    void ensureBuild() {
-        if (_rebuild) {
+    Node& ensure() {
+        if (_rebuild or not _child)
             rebuild();
+        return **_child;
+    }
+
+    void dispatch(Action const& a) {
+        auto task = Model::reduce(_cell->state, a);
+        if (task != NONE) {
+            Async::detach(task.take(), [cell = _cell](Opt<Action> const& a) {
+                if (a and cell->owner)
+                    Ui::bubble<Action>(*cell->owner, *a);
+            });
         }
+        _rebuild = true;
+        shouldLayout(*this);
     }
 
     // MARK: Node --------------------------------------------------------------
 
-    void reconcile(Reducer& o) override {
-        _build = std::move(o._build);
-        _rebuild = true;
+    void adopt(Reducer& o) override {
+        _cell = o._cell;
+        _cell->owner = this;
+
+        _child = std::exchange(o._child, NONE);
+        if (auto& [child] = _child)
+            child->attach(this);
     }
 
-    void paint(Gfx::Canvas& g, Math::RectAu r) override {
-        ensureBuild();
-        (*_child)->paint(g, r);
+    void paint(Gfx::Canvas& g, RectAu r) override {
+        ensure().paint(g, r);
     }
 
     void event(App::Event& e) override {
         if (auto a = e.is<Action>()) {
-            auto task = Model::reduce(_state, *a);
-            if (task != NONE) {
-                Async::detach(task.take(), [this](Opt<Action> const& a) {
-                    if (a)
-                        Ui::bubble<Action>(*this, *a);
-                });
-            }
+            dispatch(*a);
             e.accept();
-            _rebuild = true;
-            shouldLayout(*this);
         } else if (e.is<App::FormfactorEvent>()) {
             // FIXME: Probably the state should handle theses but for now
             //        let's just rebuild for element that use App::formFactor
@@ -140,47 +153,33 @@ struct Reducer :
             _rebuild = true;
             shouldLayout(*this);
         } else {
-            ensureBuild();
-            (*_child)->event(e);
+            ensure().event(e);
         }
     }
 
     void bubble(App::Event& e) override {
         if (auto a = e.is<Action>()) {
-            auto task = Model::reduce(_state, *a);
-            if (task != NONE) {
-                Async::detach(task.take(), [this](Opt<Action> const& a) {
-                    if (a)
-                        Ui::bubble<Action>(*this, *a);
-                });
-            }
+            dispatch(*a);
             e.accept();
-
-            _rebuild = true;
-            shouldLayout(*this);
         } else {
             LeafNode<Reducer<Model>>::bubble(e);
         }
     }
 
-    void layout(Math::RectAu r) override {
-        ensureBuild();
-        (*_child)->layout(r);
+    void layout(RectAu r) override {
+        ensure().layout(r);
     }
 
-    Math::Vec2Au size(Math::Vec2Au s, Hint hint) override {
-        ensureBuild();
-        return (*_child)->size(s, hint);
+    Vec2Au size(Vec2Au s, Hint hint) override {
+        return ensure().size(s, hint);
     }
 
-    Math::RectAu bound() override {
-        ensureBuild();
-        return (*_child)->bound();
+    RectAu bound() override {
+        return ensure().bound();
     }
 
-    App::HitResult hitTest(Math::Vec2Au p) override {
-        ensureBuild();
-        return (*_child)->hitTest(p);
+    App::HitResult hitTest(Vec2Au p) override {
+        return ensure().hitTest(p);
     }
 };
 
@@ -222,6 +221,6 @@ Child state(auto build) {
 }
 
 export template <typename T>
-using Action = SharedFunc<void(Ui::Node&, T const&)>;
+using Action = SharedFunc<void(Node&, T const&)>;
 
 } // namespace Karm::Ui

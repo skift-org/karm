@@ -21,9 +21,8 @@ struct HsvSquare : Ui::View<HsvSquare> {
     HsvSquare(Gfx::Hsv value, Ui::Send<Gfx::Hsv> onChange)
         : _value{value}, _onChange{std::move(onChange)} {}
 
-    void reconcile(HsvSquare& o) override {
-        _value = o._value;
-        _onChange = std::move(o._onChange);
+    void adopt(HsvSquare& o) override {
+        _mouseListener = o._mouseListener;
     }
 
     auto makeHsvSquare() {

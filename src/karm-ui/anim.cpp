@@ -239,6 +239,10 @@ struct SlideIn : ProxyNode<SlideIn> {
         Ui::ProxyNode<SlideIn>::event(e);
     }
 
+    void adopt(SlideIn& o) override {
+        _slide = o._slide;
+    }
+
     void attach(Node* parent) override {
         Ui::ProxyNode<SlideIn>::attach(parent);
         _slide.animate(*this, 1.0, 0.25, Math::Easing::cubicOut);
@@ -285,6 +289,10 @@ export struct ScaleIn : ProxyNode<ScaleIn> {
         Ui::ProxyNode<ScaleIn>::event(e);
     }
 
+    void adopt(ScaleIn& o) override {
+        _scale = o._scale;
+    }
+
     void attach(Node* parent) override {
         Ui::ProxyNode<ScaleIn>::attach(parent);
         _scale.animate(*this, 1.0, 0.25, Math::Easing::cubicOut);
@@ -312,12 +320,10 @@ struct Carousel : GroupNode<Carousel> {
         : GroupNode(children), _selected(selected), _flow(flow) {
     }
 
-    void reconcile(Carousel& o) override {
-        GroupNode::reconcile(o);
-        if (_selected != o._selected) {
-            _selected = o._selected;
+    void adopt(Carousel& o) override {
+        _slide = o._slide;
+        if (_selected != o._selected)
             _slide.animate(*this, _selected, 0.3, Math::Easing::cubicOut);
-        }
     }
 
     Math::Vec2Au translation() {

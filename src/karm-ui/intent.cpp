@@ -15,11 +15,6 @@ struct Intent : ProxyNode<Intent> {
     Intent(Send<App::Event&> map, Child child)
         : ProxyNode<Intent>(std::move(child)), _map(std::move(map)) {}
 
-    void reconcile(Intent& o) override {
-        _map = std::move(o._map);
-        ProxyNode<Intent>::reconcile(o);
-    }
-
     void event(App::Event& e) override {
         if (e.accepted())
             return;

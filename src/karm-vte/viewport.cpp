@@ -16,9 +16,9 @@ struct Viewport : Ui::View<Viewport> {
     Viewport(Rc<Terminal> terminal, Ui::Send<App::KeyboardEvent> send)
         : _terminal(terminal), _send(send) {}
 
-    void reconcile(Viewport& o) override {
-        _terminal = o._terminal;
-        _send = o._send;
+    void adopt(Viewport& o) override {
+        _listen = o._listen;
+        _animate = o._animate;
     }
 
     void paint(Gfx::Canvas& g, Math::RectAu) override {

@@ -23,9 +23,8 @@ struct Checkbox : Ui::View<Checkbox> {
         : _value(value), _onChange(std::move(onChange)) {
     }
 
-    void reconcile(Checkbox& o) override {
-        _value = o._value;
-        _onChange = std::move(o._onChange);
+    void adopt(Checkbox& o) override {
+        _mouseListener = o._mouseListener;
     }
 
     void paint(Gfx::Canvas& g, Math::RectAu) override {

@@ -28,6 +28,13 @@ struct Pointer : Ui::ProxyNode<Pointer> {
     Pointer(Ui::Child child)
         : ProxyNode(std::move(child)) {}
 
+    void adopt(Pointer& o) override {
+        _mouseDirty = o._mouseDirty;
+        _cursorStyle = o._cursorStyle;
+        _cursorRequest = o._cursorRequest;
+        _mousePos = o._mousePos;
+    }
+
     Math::Recti _pointerBound(App::CursorStyle style, Math::Vec2i pos) const {
         if (style == App::CursorStyle::DEFAULT) {
             return Math::Recti{

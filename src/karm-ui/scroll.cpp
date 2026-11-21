@@ -242,6 +242,12 @@ struct Scroll : ProxyNode<Scroll> {
     Scroll(Child child, Math::Orien orient)
         : ProxyNode(child), _listener(orient) {}
 
+    void adopt(Scroll& o) override {
+        auto orient = _listener._orient;
+        _listener = o._listener;
+        _listener._orient = orient;
+    }
+
     void paint(Gfx::Canvas& g, Math::RectAu r) override {
         g.push();
         g.clip(_listener.containerBound().cast<f64>());
@@ -352,6 +358,10 @@ struct ScrollToMe : ProxyNode<ScrollToMe> {
 
     explicit ScrollToMe(Child const& child, Math::InsetsAu margin)
         : ProxyNode(child), _margin(margin) {}
+
+    void adopt(ScrollToMe& o) override {
+        _activated = o._activated;
+    }
 
     void event(App::Event& event) override {
         ProxyNode::event(event);

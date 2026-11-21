@@ -18,8 +18,8 @@ struct IndeterminedProgress : Ui::View<IndeterminedProgress> {
         : _size(size) {
     }
 
-    void reconcile(IndeterminedProgress& o) override {
-        _size = o._size;
+    void adopt(IndeterminedProgress& o) override {
+        _spin = o._spin;
     }
 
     void paint(Gfx::Canvas& g, Math::RectAu) override {
@@ -73,10 +73,6 @@ struct PieCountDown : Ui::View<PieCountDown> {
 
     PieCountDown(f64 value, Math::Au size)
         : _value(value), _size(size) {
-    }
-
-    void reconcile(PieCountDown& o) override {
-        _value = o._value;
     }
 
     void paint(Gfx::Canvas& g, Math::RectAu) override {

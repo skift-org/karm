@@ -61,9 +61,18 @@ struct DialogLayer : LeafNode<DialogLayer> {
         _visibility.animate(*this, 0, 0.1);
     }
 
-    void reconcile(DialogLayer& o) override {
-        _child = _child->reconcile(o._child).unwrapOr(_child);
-        _child->attach(this);
+    void adopt(DialogLayer& o) override {
+        _visibility = o._visibility;
+        _shouldShow = o._shouldShow;
+        _shouldDialogClose = o._shouldDialogClose;
+
+        _dialog = o._dialog;
+        if (auto& [dialog] = _dialog)
+            dialog->attach(this);
+    }
+
+    void adoptChildren(DialogLayer& o) override {
+        _child->adopt(o._child);
     }
 
     void paint(Gfx::Canvas& g, Math::RectAu r) override {

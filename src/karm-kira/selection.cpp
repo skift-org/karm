@@ -43,6 +43,13 @@ struct SelectionArea : Ui::ProxyNode<SelectionArea> {
     explicit SelectionArea(Ui::Child const& child)
         : ProxyNode(child) {}
 
+    void adopt(SelectionArea& o) override {
+        _listener = o._listener;
+        _selecting = o._selecting;
+        _startPos = o._startPos;
+        _endPos = o._endPos;
+    }
+
     Math::RectAu selectionRect() const {
         return Math::RectAu::fromTwoPoint(_startPos, _endPos);
     }
@@ -106,12 +113,6 @@ struct SelectionItem : Ui::ProxyNode<SelectionItem> {
 
     explicit SelectionItem(bool selected, Ui::Send<bool> onChange, Ui::Child const& child)
         : ProxyNode(child), _selected(selected), _onChange(onChange) {}
-
-    void reconcile(SelectionItem& o) override {
-        ProxyNode::reconcile(o);
-        _selected = o._selected;
-        _onChange = std::move(o._onChange);
-    }
 
     void event(App::Event& e) override {
         if (auto selectionEvent = e.is<SelectionUpdateEvent>()) {

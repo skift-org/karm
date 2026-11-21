@@ -57,6 +57,10 @@ struct Focusable : ProxyNode<Focusable> {
         : ProxyNode(std::move(child)), _props(props) {
     }
 
+    void adopt(Focusable& o) override {
+        _focused = o._focused;
+    }
+
     void paint(Gfx::Canvas& g, Math::RectAu r) override {
         ProxyNode::paint(g, r);
 

@@ -30,10 +30,8 @@ export struct Slider : Ui::View<Slider> {
           _origin(origin),
           _onChange(std::move(onChange)) {}
 
-    void reconcile(Slider& o) override {
-        _value = o._value;
-        _origin = o._origin;
-        _onChange = std::move(o._onChange);
+    void adopt(Slider& o) override {
+        _mouseListener = o._mouseListener;
     }
 
     void paint(Gfx::Canvas& g, Math::RectAu) override {

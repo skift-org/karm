@@ -27,11 +27,6 @@ struct ContextMenu : Ui::ProxyNode<ContextMenu> {
           _menu(std::move(menu)) {
     }
 
-    void reconcile(ContextMenu& o) override {
-        Ui::ProxyNode<ContextMenu>::reconcile(o);
-        _menu = std::move(o._menu);
-    }
-
     void event(App::Event& event) override {
         Ui::ProxyNode<ContextMenu>::event(event);
 

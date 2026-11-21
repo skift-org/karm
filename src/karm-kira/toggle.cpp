@@ -24,12 +24,11 @@ export struct Toggle : Ui::View<Toggle> {
         _anim.set(*this, _value ? 1.0 : 0.0);
     }
 
-    void reconcile(Toggle& o) override {
-        if (_value != o._value) {
+    void adopt(Toggle& o) override {
+        _mouseListener = o._mouseListener;
+        _anim = o._anim;
+        if (_value != o._value)
             _anim.animate(*this, _value ? 1.0 : 0.0, 0.1);
-        }
-        _value = o._value;
-        _onChange = std::move(o._onChange);
     }
 
     void paint(Gfx::Canvas& g, Math::RectAu) override {

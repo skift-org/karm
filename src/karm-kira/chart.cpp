@@ -17,11 +17,6 @@ struct ChartView : Ui::View<ChartView> {
     ChartView(Chart::Chart chart, Math::Vec2Au size)
         : _chart(std::move(chart)), _size(size) {}
 
-    void reconcile(ChartView& o) override {
-        _chart = std::move(o._chart);
-        _size = o._size;
-    }
-
     Math::Vec2Au size(Math::Vec2Au, Ui::Hint) override {
         return _size;
     }

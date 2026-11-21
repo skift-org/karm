@@ -22,10 +22,6 @@ struct Empty : View<Empty> {
     Empty(Math::Vec2Au size)
         : _size(size) {}
 
-    void reconcile(Empty& o) override {
-        _size = o._size;
-    }
-
     Math::Vec2Au size(Math::Vec2Au, Hint) override {
         return _size;
     }
@@ -79,11 +75,6 @@ struct Placed : ProxyNode<Placed> {
 
     Placed(Math::RectAu place, Child child)
         : ProxyNode(child), _place(place) {}
-
-    void reconcile(Placed& o) override {
-        _place = o._place;
-        ProxyNode::reconcile(o);
-    }
 
     Math::RectAu bound() override {
         return _bound;
@@ -231,12 +222,6 @@ struct Sizing : ProxyNode<Sizing> {
         return _rect;
     }
 
-    void reconcile(Sizing& o) override {
-        _min = o._min;
-        _max = o._max;
-        ProxyNode<Sizing>::reconcile(o);
-    }
-
     void layout(Math::RectAu bound) override {
         _rect = bound;
         child().layout(bound);
@@ -299,11 +284,6 @@ struct Insets : ProxyNode<Insets> {
     Insets(Math::InsetsAu insets, Child child)
         : ProxyNode(child), _insets(insets) {}
 
-    void reconcile(Insets& o) override {
-        _insets = o._insets;
-        ProxyNode<Insets>::reconcile(o);
-    }
-
     void paint(Gfx::Canvas& g, Math::RectAu r) override {
         child().paint(g, r);
     }
@@ -334,11 +314,6 @@ struct AspectRatio : ProxyNode<AspectRatio> {
 
     AspectRatio(f64 ratio, Child child)
         : ProxyNode(child), _ratio(ratio) {}
-
-    void reconcile(AspectRatio& o) override {
-        _ratio = o._ratio;
-        ProxyNode::reconcile(o);
-    }
 
     void paint(Gfx::Canvas& g, Math::RectAu r) override {
         child().paint(g, r);
@@ -423,11 +398,6 @@ struct FlowLayout : GroupNode<FlowLayout> {
 
     FlowLayout(FlowStyle style, Children children)
         : GroupNode(children), _style(style) {}
-
-    void reconcile(FlowLayout& o) override {
-        _style = o._style;
-        GroupNode::reconcile(o);
-    }
 
     Au _computeGrowUnit(Math::RectAu r) {
         Au total = 0_au;
@@ -667,13 +637,6 @@ struct GridLayout : GroupNode<GridLayout> {
 
     GridLayout(GridStyle style, Children children)
         : GroupNode(children), _style(style) {}
-
-    void reconcile(GridLayout& o) override {
-        _style = std::move(o._style);
-        _rows.clear();
-        _columns.clear();
-        GroupNode::reconcile(o);
-    }
 
     Au computeGapsRows() {
         return _style.gaps.y * (max(1uz, _style.rows.len()) - 1);

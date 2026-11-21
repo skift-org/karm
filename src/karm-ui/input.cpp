@@ -279,16 +279,9 @@ struct Button : _Box<Button> {
           _onPress(std::move(onPress)),
           _buttonStyle(style) {}
 
-    void reconcile(Button& o) override {
-        _buttonStyle = o._buttonStyle;
-        _onPress = std::move(o._onPress);
-
-        if (not _onPress) {
-            // Reset the mouse listener if the button is disabled.
-            _mouseListener = {};
-        }
-
-        _Box<Button>::reconcile(o);
+    void adopt(Button& o) override {
+        if (_onPress)
+            _mouseListener = o._mouseListener;
     }
 
     BoxStyle& boxStyle() override {
@@ -438,14 +431,10 @@ struct Input : View<Input> {
     Input(Gfx::ProseProps style, Rc<TextModel> model, Send<TextAction> onChange)
         : _style(style), _model(model), _onChange(std::move(onChange)) {}
 
-    void reconcile(Input& o) override {
-        _style = o._style;
-        _model = o._model;
-        _onChange = std::move(o._onChange);
-
-        // NOTE: The model might have changed,
-        //       so we need to invalidate the presentation.
-        _text = NONE;
+    void adopt(Input& o) override {
+        _focus = o._focus;
+        _mouseDown = o._mouseDown;
+        _selectionBoundary = o._selectionBoundary;
     }
 
     Rc<Gfx::Prose> _ensureText() {
@@ -553,18 +542,13 @@ struct SimpleInput : View<SimpleInput> {
           _text(text),
           _onChange(std::move(onChange)) {}
 
-    void reconcile(SimpleInput& o) override {
-        _style = o._style;
-        _onChange = std::move(o._onChange);
-        if (_text != o._text) {
-            _text = o._text;
-            _model = NONE;
-            _prose = NONE;
-        }
+    void adopt(SimpleInput& o) override {
+        _focus = o._focus;
+        _mouseDown = o._mouseDown;
+        _selectionBoundary = o._selectionBoundary;
 
-        // NOTE: The model might have changed,
-        //       so we need to invalidate the presentation.
-        _prose = NONE;
+        if (_text == o._text)
+            _model = std::move(o._model);
     }
 
     TextModel& _ensureModel() {
@@ -679,11 +663,8 @@ struct Slider : ProxyNode<Slider> {
           _onChange(std::move(onChange)) {
     }
 
-    void reconcile(Slider& o) override {
-        _value = o._value;
-        _onChange = o._onChange;
-
-        ProxyNode<Slider>::reconcile(o);
+    void adopt(Slider& o) override {
+        _grabbed = o._grabbed;
     }
 
     void layout(Math::RectAu r) override {

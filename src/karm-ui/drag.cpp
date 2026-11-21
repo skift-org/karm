@@ -43,12 +43,11 @@ struct Dismisable :
           _dir(dir),
           _threshold(threshold) {}
 
-    void reconcile(Dismisable& o) override {
-        _onDismis = std::move(o._onDismis);
-        _dir = o._dir;
-        _threshold = o._threshold;
-
-        ProxyNode<Dismisable>::reconcile(o);
+    void adopt(Dismisable& o) override {
+        _drag = o._drag;
+        _last = o._last;
+        _dismissed = o._dismissed;
+        _grabbed = o._grabbed;
     }
 
     Math::Vec2Au drag() const {

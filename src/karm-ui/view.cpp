@@ -255,10 +255,6 @@ struct Text : View<Text> {
     Text(Gfx::ProseProps style, Str text)
         : _prose(makeRc<Gfx::Prose>(style, style, text)) {}
 
-    void reconcile(Text& o) override {
-        _prose = std::move(o._prose);
-    }
-
     void paint(Gfx::Canvas& g, Math::RectAu) override {
         g.push();
         g.origin(bound().xy.cast<f64>());
@@ -347,11 +343,6 @@ struct Icon : View<Icon> {
     Icon(Gfx::Icon icon, Au size, Opt<Gfx::Color> color = NONE)
         : _icon(icon), _size(size), _color(color) {}
 
-    void reconcile(Icon& o) override {
-        _icon = o._icon;
-        _color = o._color;
-    }
-
     void paint(Gfx::Canvas& g, Math::RectAu) override {
         g.push();
         if (_color)
@@ -381,11 +372,6 @@ struct Image : View<Image> {
 
     Image(Rc<Gfx::Image> image, Opt<Math::Radiif> radii = NONE)
         : _image(image), _radii(radii) {}
-
-    void reconcile(Image& other) override {
-        _image = other._image;
-        _radii = other._radii;
-    }
 
     void paint(Gfx::Canvas& g, Math::RectAu) override {
         g.push();
@@ -425,11 +411,6 @@ struct OnPainView : View<OnPainView> {
     OnPainView(OnPaint onPaint)
         : _onPaint(std::move(onPaint)) {}
 
-    void reconcile(OnPainView& o) override {
-        _onPaint = std::move(o._onPaint);
-        View::reconcile(o);
-    }
-
     void paint(Gfx::Canvas& g, Math::RectAu) override {
         g.push();
         g.clip(_bound.cast<f64>());
@@ -456,11 +437,6 @@ struct Canvas : View<Canvas> {
 
     Canvas(Gfx::Snapshot snapshot)
         : _snapshot(std::move(snapshot)) {}
-
-    void reconcile(Canvas& o) override {
-        _snapshot = std::move(o._snapshot);
-        View::reconcile(o);
-    }
 
     void paint(Gfx::Canvas& g, Math::RectAu) override {
         g.push();
@@ -493,11 +469,6 @@ struct BackgroundFilter : ProxyNode<BackgroundFilter> {
         : ProxyNode(std::move(child)),
           _filter(filter) {}
 
-    void reconcile(BackgroundFilter& o) override {
-        _filter = o._filter;
-        ProxyNode::reconcile(o);
-    }
-
     void paint(Gfx::Canvas& g, Math::RectAu r) override {
         g.push();
         g.clip(bound().cast<f64>());
@@ -523,11 +494,6 @@ struct ForegroundFilter : ProxyNode<ForegroundFilter> {
     ForegroundFilter(Gfx::Filter filter, Child child)
         : ProxyNode<ForegroundFilter>(std::move(child)),
           _filter(filter) {}
-
-    void reconcile(ForegroundFilter& o) override {
-        _filter = o._filter;
-        ProxyNode<ForegroundFilter>::reconcile(o);
-    }
 
     void paint(Gfx::Canvas& g, Math::RectAu r) override {
         ProxyNode<ForegroundFilter>::paint(g, r);
