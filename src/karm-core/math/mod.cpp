@@ -42,8 +42,8 @@ export constexpr f64 LN10O1 = .4342944819032518276511;               // 1/ln 10 
             return __builtin_##F##f(ARGS);        \
     } while (0)
 
-#define dispatchConstexpr$(F, ARGS...)                           \
-    if (std::is_constant_evaluated()) \
+#define dispatchConstexpr$(F, ARGS...) \
+    if (std::is_constant_evaluated())  \
         dispatchBuiltin$(F, ARGS);
 
 #ifndef __ck_freestanding__
@@ -488,7 +488,6 @@ constexpr T pow2(T x) {
     return x * x;
 }
 
-
 export template <Meta::Integral T>
 constexpr T pow(T base, T exponent) {
     if (exponent < 0)
@@ -603,6 +602,58 @@ constexpr T pow(T x, T y) {
         ey = -ey;
     }
     return ldexp(xy, ey);
+}
+
+// https://en.cppreference.com/c/numeric/math/cbrt
+export template <Meta::Float T>
+constexpr T cbrt(T x) {
+    dispatchConstexpr$(cbrt, x);
+
+    // Algorithm and coefficients from Ken Turkowski,
+    // "Computing the Cube Root", Apple Computer Technical Report #KT-32, 1998
+    // https://people.freebsd.org/~lstewart/references/apple_tr_kt32_cuberoot.pdf
+
+    /* quartic rational approximation of ∛fr on [0.125, 1), error < 2^-24 */
+    static constexpr auto P0 = .1636161226585754240958355063e0;
+    static constexpr auto P1 = .1343250139086239872172837314e2;
+    static constexpr auto P2 = .1191654824285581628956914143e3;
+    static constexpr auto P3 = .1922798368355061050458134625e3;
+    static constexpr auto P4 = .452548339756803022511987494e2;
+    static constexpr auto Q0 = 1.0;
+    static constexpr auto Q1 = .339905941350215598754191872e2;
+    static constexpr auto Q2 = .1685254414101568283957668343e3;
+    static constexpr auto Q3 = .1519714051044435648658557668e3;
+    static constexpr auto Q4 = .1480884093219134573786480845e2;
+
+    if (x == 0 or isNan(x) or isInf(x)) /* ±0, NaN and ±Inf are their own cube root */
+        return x;
+
+    int sign = 0;
+    if (x < 0) {
+        x = -x;
+        sign++;
+    }
+
+    /* argument reduction: x = fr × 2^ex, then shift so ex is a multiple of 3 */
+    int ex;
+    T fr = frexp(x, &ex); /* 0.5 <= fr < 1 */
+    int shx = ex % 3;
+    if (shx > 0)
+        shx -= 3;        /* ex - shx is now divisible by 3 */
+    ex = (ex - shx) / 3; /* exponent of the cube root */
+    fr = ldexp(fr, shx); /* 0.125 <= fr < 1 */
+
+    fr = ((((P4 * fr + P3) * fr + P2) * fr + P1) * fr + P0) /
+         ((((Q4 * fr + Q3) * fr + Q2) * fr + Q1) * fr + Q0);
+    T r = ldexp(fr, ex); /* 24 bits of precision */
+
+    /* Newton-Raphson: each step doubles the precision, 24 → 48 → 96 bits */
+    if constexpr (not Meta::Same<T, float>) {
+        r = (2 * r + x / (r * r)) / 3;
+        r = (2 * r + x / (r * r)) / 3;
+    }
+
+    return sign ? -r : r;
 }
 
 // https://en.cppreference.com/c/numeric/math/hypot
