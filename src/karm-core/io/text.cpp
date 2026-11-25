@@ -30,10 +30,10 @@ struct TextEncoder : TextWriter {
         : _writer(writer) {}
 
     Res<> writeRune(Rune rune) override {
-        typename E::One one;
-        if (not E::encodeUnit(rune, one))
+        typename E::Sequence sequence;
+        if (not E::encodeUnit(rune, sequence))
             return Error::invalidInput("encoding error");
-        try$(_writer.write(bytes(one)));
+        try$(_writer.write(bytes(sequence)));
         return Ok();
     }
 };

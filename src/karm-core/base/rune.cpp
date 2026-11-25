@@ -98,7 +98,7 @@ concept DecodeInput = requires(T t, U u) {
 
 export struct Utf8 {
     using Unit = char;
-    using One = _Multiple<Unit, 4>;
+    using Sequence = _Multiple<Unit, 4>;
     static constexpr Array<Unit, 3> PREAMBLE = {'\xef', '\xbb', '\xbf'};
 
     always_inline static constexpr usize unitLen(Unit first) {
@@ -194,7 +194,7 @@ static_assert(StaticEncoding<Utf8>);
 export template <typename T>
 struct _Utf16 {
     using Unit = T;
-    using One = _Multiple<Unit, 2>;
+    using Sequence = _Multiple<Unit, 2>;
     static constexpr Array PREAMBLE = {Unit(0xef), 0xbb, 0xbf};
 
     always_inline static constexpr usize unitLen(Unit first) {
@@ -274,7 +274,7 @@ static_assert(StaticEncoding<Utf16le>);
 
 export struct Utf32 {
     using Unit = char32_t;
-    using One = _Single<Unit>;
+    using Sequence = _Single<Unit>;
     static constexpr Array PREAMBLE = {Unit(0xef), 0xbb, 0xbf};
 
     always_inline static constexpr usize unitLen(Unit) {
@@ -308,7 +308,7 @@ static_assert(StaticEncoding<Utf32>);
 
 export struct Ascii {
     using Unit = char;
-    using One = _Single<Unit>;
+    using Sequence = _Single<Unit>;
 
     always_inline static constexpr usize unitLen(Unit) {
         return 1;
@@ -353,7 +353,7 @@ static_assert(StaticEncoding<Ascii>);
 export template <typename Mapper>
 struct EAscii {
     using Unit = u8;
-    using One = _Single<Unit>;
+    using Sequence = _Single<Unit>;
 
     always_inline static constexpr usize unitLen(Unit) {
         return 1;
@@ -497,15 +497,15 @@ usize transcodeUnits(Cursor<typename Source::Unit> input, MutCursor<typename Tar
 }
 
 export template <StaticEncoding T>
-using One = typename T::One;
+using Sequence = typename T::Sequence;
 
 export template <StaticEncoding E>
-bool encodeOne(Rune rune, One<E>& one) {
+bool encodeSequence(Rune rune, Sequence<E>& one) {
     return E::encodeUnit(rune, one);
 }
 
 export template <StaticEncoding E>
-bool encodeOne(One<E>& one, Rune& rune) {
+bool decodeSequence(Sequence<E>& one, Rune& rune) {
     return E::decodeUnit(rune, one);
 }
 

@@ -58,9 +58,9 @@ export String urlEncode(Io::SScan& s) {
     Io::StringWriter sw;
 
     while (not s.ended()) {
-        Utf8::One one;
-        Utf8::encodeUnit(s.next(), one);
-        for (auto c : one) {
+        Utf8::Sequence sequence;
+        Utf8::encodeUnit(s.next(), sequence);
+        for (auto c : sequence) {
             if (isAsciiAlphaNum(c) or c == '-' or c == '_' or c == '.' or c == '~') {
                 sw.append(c);
             } else {

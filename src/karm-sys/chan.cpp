@@ -46,10 +46,10 @@ export struct Out : Io::TextWriter, Io::Writer, Io::Flusher {
     }
 
     Res<> writeRune(Rune rune) override {
-        typename E::One one;
-        if (not E::encodeUnit(rune, one))
+        typename E::Sequence sequence;
+        if (not E::encodeUnit(rune, sequence))
             return Error::invalidInput("encoding error");
-        try$(write(bytes(one)));
+        try$(write(bytes(sequence)));
         return Ok();
     }
 
@@ -75,10 +75,10 @@ export struct Err : Io::TextWriter, Io::Writer, Io::Flusher {
     }
 
     Res<> writeRune(Rune rune) override {
-        typename E::One one;
-        if (not E::encodeUnit(rune, one))
+        typename E::Sequence sequence;
+        if (not E::encodeUnit(rune, sequence))
             return Error::invalidInput("encoding error");
-        try$(write(bytes(one)));
+        try$(write(bytes(sequence)));
         return Ok();
     }
 

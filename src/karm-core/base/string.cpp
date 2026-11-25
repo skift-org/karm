@@ -328,11 +328,11 @@ struct _StringBuilder {
     }
 
     void append(Rune rune) {
-        typename E::One one;
-        if (not E::encodeUnit(rune, one))
+        typename E::Sequence sequence;
+        if (not E::encodeUnit(rune, sequence))
             return;
 
-        for (auto unit : iter(one))
+        for (auto unit : iter(sequence))
             _buf.insert(_buf.len(), std::move(unit));
     }
 

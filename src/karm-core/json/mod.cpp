@@ -77,8 +77,8 @@ export Res<String> parseStr(Io::SScan& s) {
 
                 auto high = try$(parseCodeUnit());
 
-                Utf16::One units;
-                units.put(high);
+                Utf16::Sequence sequence;
+                sequence.put(high);
 
                 if (Utf16::unitLen(high) == 2) {
                     if (not s.skip('\\') or not s.skip('u'))
@@ -86,11 +86,11 @@ export Res<String> parseStr(Io::SScan& s) {
 
                     auto low = try$(parseCodeUnit());
 
-                    units.put(low);
+                    sequence.put(low);
                 }
 
                 Rune rune;
-                Cursor cursor{units.buf(), units.len()};
+                Cursor cursor{sub(sequence)};
                 if (not Utf16::decodeUnit(rune, cursor))
                     return Error::invalidData("invalid utf16");
 
@@ -304,7 +304,7 @@ export void escape(Io::Emit& emit, Str s) {
         } else if (c == '\t') {
             emit("\\t");
         } else if (c < 0x20 || c > 0x7E) {
-            Utf16::One units;
+            Utf16::Sequence units;
             Utf16::encodeUnit(c, units);
 
             if (units.len() == 2) {
