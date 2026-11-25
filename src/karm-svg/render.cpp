@@ -21,7 +21,7 @@ export Res<Math::Vec2i> render(Gfx::Canvas& g, Io::SScan& s) {
 
     for (auto& event : Xml::Parser::parse(s)) {
         try$(event.visit(
-            [&](Karm::Xml::StartElement& e) -> Res<> {
+            [&](Xml::StartElement& e) -> Res<> {
                 if (e.name.name == "svg"s) {
                     for (auto& attr : e.attrs) {
                         if (attr.name.name == "width"s)
@@ -41,19 +41,19 @@ export Res<Math::Vec2i> render(Gfx::Canvas& g, Io::SScan& s) {
                 }
                 return Ok();
             },
-            [&](Karm::Xml::EndElement&) -> Res<> {
+            [&](Xml::EndElement&) -> Res<> {
                 return Ok();
             },
-            [&](Karm::Xml::Text&) -> Res<> {
+            [&](Xml::Text&) -> Res<> {
                 return Ok();
             },
-            [&](Karm::Xml::Comment&) -> Res<> {
+            [&](Xml::Comment&) -> Res<> {
                 return Ok();
             },
-            [&](Karm::Xml::Doctype&) -> Res<> {
+            [&](Xml::Doctype&) -> Res<> {
                 return Ok();
             },
-            [&](Karm::Xml::XmlDecl&) -> Res<> {
+            [&](Xml::XmlDecl&) -> Res<> {
                 return Ok();
             },
             [](Error& e) -> Res<> {
