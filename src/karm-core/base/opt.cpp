@@ -382,13 +382,13 @@ struct [[nodiscard]] Opt {
         return NONE;
     }
 
-    always_inline constexpr Value& expect(char const* msg = "expecting some, got none") lifetimebound {
+    always_inline constexpr auto& expect(char const* msg = "expecting some, got none") {
         if (not _store.has()) [[unlikely]]
             panic(msg);
         return _store.unwrap();
     }
 
-    always_inline constexpr auto& expect(char const* msg = "expecting some, got none") const lifetimebound {
+    always_inline constexpr auto& expect(char const* msg = "expecting some, got none") const {
         if (not _store.has()) [[unlikely]]
             panic(msg);
         return _store.unwrap();
