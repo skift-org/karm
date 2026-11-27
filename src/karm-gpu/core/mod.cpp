@@ -44,9 +44,8 @@ export enum struct TextureType : u8 {
 
 export enum struct Format : u32 {
     NONE,
-#define FORMAT(NAME) NAME,
+#define FORMAT(NAME, ...) NAME,
 #include "defs/formats.inc"
-
 #undef FORMAT
     _LEN,
 };
