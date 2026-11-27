@@ -82,4 +82,14 @@ test$("str-niche") {
     return Ok();
 }
 
+test$("string-hash-ci") {
+    assertEq$(hashCi("Hello"s), hashCi("hELLO"s));
+    assertEq$(hashCi("data-x"s), hashCi("DATA-X"s));
+    assertNe$(hashCi("hello"s), hashCi("hell"s));
+    assertNe$(hashCi("hello"s), hashCi("world"s));
+    assertNe$(hashCi("\u00e9"s), hashCi("\u00c9"s));
+
+    return Ok();
+}
+
 } // namespace Karm::Base::Tests

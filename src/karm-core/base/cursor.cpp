@@ -111,6 +111,14 @@ struct Cursor {
         return false;
     }
 
+    always_inline constexpr bool skip(Meta::Callable<Cursor&> auto expr) {
+        auto rollback = rollbackPoint();
+        if (not expr(*this))
+            return false;
+        rollback.disarm();
+        return true;
+    }
+
     always_inline constexpr T const* buf() const {
         return _begin;
     }
@@ -233,6 +241,27 @@ struct MutCursor {
         auto slice = MutSlice<T>{_begin, n};
         _begin += n;
         return slice;
+    }
+
+    template <Meta::Equatable<T> U>
+    always_inline constexpr bool skip(U const& c) {
+        if (ended()) [[unlikely]]
+            return false;
+
+        if (peek() == c) {
+            _begin++;
+            return true;
+        }
+
+        return false;
+    }
+
+    always_inline constexpr bool skip(Meta::Callable<MutCursor&> auto expr) {
+        auto rollback = rollbackPoint();
+        if (not expr(*this))
+            return false;
+        rollback.disarm();
+        return true;
     }
 
     always_inline constexpr bool put(T c) {

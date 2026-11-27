@@ -6,6 +6,7 @@ export module Karm.Core:base.string;
 
 import :base.cstr;
 import :base.ctype;
+import :base.hash;
 import :base.rune;
 import :base.slice;
 
@@ -270,6 +271,21 @@ bool eqCi(_Str<E> a, _Str<E> b) {
 
 export bool eqAsciiCi(Rune a, Rune b) {
     return toAsciiLower(a) == toAsciiLower(b);
+}
+
+// NOTE: Strings that are equal according to eqCi() have the same hashCi().
+export template <StaticEncoding E>
+void hashCi(Meta::Derive<Hasher> auto& hasher, _Str<E> str) {
+    Karm::hash(hasher, str.len());
+    for (auto rune : iterRunes(str))
+        Karm::hash(hasher, toAsciiLower(rune));
+}
+
+export template <StaticEncoding E>
+u64 hashCi(_Str<E> str) {
+    DefaultHasher hasher;
+    hashCi(hasher, str);
+    return hasher.finish();
 }
 
 export template <StaticEncoding Target = Utf8, StaticEncoding Source>
