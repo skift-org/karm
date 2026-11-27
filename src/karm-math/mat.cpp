@@ -38,6 +38,26 @@ union Mat2 {
     Mat2(Vec2<T> col0, Vec2<T> col1)
         : cols{col0, col1} {}
 
+    constexpr Mat2(Mat2 const& other)
+        : _els{other._els} {}
+
+    constexpr Mat2(Mat2&& other)
+        : _els{std::move(other._els)} {}
+
+    constexpr Mat2& operator=(Mat2 const& other) {
+        _els = other._els;
+        return *this;
+    }
+
+    constexpr Mat2& operator=(Mat2&& other) {
+        _els = std::move(other._els);
+        return *this;
+    }
+
+    constexpr ~Mat2() {
+        _els.~Array();
+    }
+
     void repr(Io::Emit& e) const {
         e("(mat2 ");
         for (auto& col : cols) {
@@ -84,6 +104,26 @@ union Mat3 {
 
     Mat3(Vec3<T> col0, Vec3<T> col1, Vec3<T> col2)
         : cols{col0, col1, col2} {}
+
+    constexpr Mat3(Mat3 const& other)
+        : _els{other._els} {}
+
+    constexpr Mat3(Mat3&& other)
+        : _els{std::move(other._els)} {}
+
+    constexpr Mat3& operator=(Mat3 const& other) {
+        _els = other._els;
+        return *this;
+    }
+
+    constexpr Mat3& operator=(Mat3&& other) {
+        _els = std::move(other._els);
+        return *this;
+    }
+
+    constexpr ~Mat3() {
+        _els.~Array();
+    }
 
     Vec3<T>& operator[](usize i) { return cols[i]; }
 
